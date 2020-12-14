@@ -2950,6 +2950,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             runTest("idea/idea-completion/testData/basic/java/JavaPackage.kt");
         }
 
+        @TestMetadata("JavaSyntheticProperty.kt")
+        public void testJavaSyntheticProperty() throws Exception {
+            runTest("idea/idea-completion/testData/basic/java/JavaSyntheticProperty.kt");
+        }
+
         @TestMetadata("KProperty.kt")
         public void testKProperty() throws Exception {
             runTest("idea/idea-completion/testData/basic/java/KProperty.kt");

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // CHECK_STATE_MACHINE
@@ -72,7 +71,7 @@ import test.InlineMeKt;
 import helpers.CoroutineUtilKt;
 import helpers.EmptyContinuation;
 import kotlin.jvm.functions.Function1;
-import COROUTINES_PACKAGE.Continuation;
+import kotlin.coroutines.Continuation;
 import kotlin.Unit;
 
 public class A {
@@ -103,7 +102,7 @@ public class A {
 
 import test.*
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(CheckStateMachineContinuation)

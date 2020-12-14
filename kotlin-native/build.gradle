@@ -74,11 +74,8 @@ ext {
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
             ext.experimentalEnabled)
 
-    cacheableTargets = [
-            KonanTarget.MACOS_X64.INSTANCE,
-            KonanTarget.IOS_X64.INSTANCE
-    ]
-    cacheableTargetNames = cacheableTargets.collect { it.visibleName }
+    cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+    cacheableTargets = cacheableTargetNames.collect { platformManager.targetByName(it) }
 
     // Some targets miss zlib in their sysroots.
     // We skip these targets when generate a corresponding platform library.
@@ -323,6 +320,7 @@ task detectJarCollision(type: CollisionDetector) {
     resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativeInliningRule.class"] = "kotlin-compiler"
     resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativePlatformAnalyzerServices.class"] = "kotlin-compiler"
     resolvingRules["org/jetbrains/annotations/Nls.class"] = "kotlin-compiler"
+    resolvingRules["META-INF/extensions/core.xml"] = "kotlin-compiler"
     librariesWithIgnoredClassCollisions.addAll(["kotlin-util-klib", "kotlin-util-io", "kotlinx-metadata-klib", "kotlin-native-utils"])
     if (project.hasProperty('kotlinProjectPath')) {
         resolvingRulesWithRegexes[new Regex("META-INF/.+\\.kotlin_module")] = "kotlin-compiler"
@@ -713,8 +711,10 @@ configure([samplesZip, samplesTar]) {
     exclude '**/*.kt.bc-build/'
 }
 
-task copy_samples(dependsOn: 'copySamples')
-task copySamples(type: CopySamples) {
+project.tasks.register("copy_samples") {
+    dependsOn 'copySamples'
+}
+project.tasks.register("copySamples", CopySamples) {
     destinationDir file('build/samples-under-test')
 }
 
@@ -792,12 +792,20 @@ task compdb(type: Copy) {
 
 if (project.hasProperty("anotherDistro")) {
     targetList.each { targetName ->
-        task "${targetName}CheckAbiCompatibility"(type: CompareDistributionSignatures) {
+        task "${targetName}CheckPlatformAbiCompatibility"(type: CompareDistributionSignatures) {
             dependsOn "${targetName}PlatformLibs"
 
-            target = targetName
+            libraries = new CompareDistributionSignatures.Libraries.Platform(targetName)
             oldDistribution = project.findProperty("anotherDistro")
             onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
         }
+    }
+
+    task "checkStdlibAbiCompatibility"(type: CompareDistributionSignatures) {
+        dependsOn "distRuntime"
+
+        libraries = CompareDistributionSignatures.Libraries.Standard.INSTANCE
+        oldDistribution = project.findProperty("anotherDistro")
+        onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
     }
 }

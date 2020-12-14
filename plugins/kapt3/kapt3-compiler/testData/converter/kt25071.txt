@@ -4,13 +4,13 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class StaticImport {
-    private final java.util.Collection<java.lang.String> x = null;
     private final kapt.StaticMethod<java.lang.String> l = null;
     private final kapt.StaticMethod<java.lang.String> m = null;
+    private final java.util.Collection<java.lang.String> x = null;
     private final int y = 0;
 
-    public final java.util.Collection<java.lang.String> getX() {
-        return null;
+    public StaticImport() {
+        super();
     }
 
     public final kapt.StaticMethod<java.lang.String> getL() {
@@ -21,12 +21,12 @@ public final class StaticImport {
         return null;
     }
 
-    public final int getY() {
-        return 0;
+    public final java.util.Collection<java.lang.String> getX() {
+        return null;
     }
 
-    public StaticImport() {
-        super();
+    public final int getY() {
+        return 0;
     }
 }
 

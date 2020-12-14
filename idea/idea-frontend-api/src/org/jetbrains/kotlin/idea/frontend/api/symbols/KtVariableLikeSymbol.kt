@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
-abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
+abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithDeclarations, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
     abstract val containingEnumClassIdIfNonLocal: ClassId?
 
@@ -39,25 +40,45 @@ abstract class KtJavaFieldSymbol :
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
 
-abstract class KtPropertySymbol : KtVariableSymbol(),
+sealed class KtPropertySymbol : KtVariableSymbol(),
     KtPossibleExtensionSymbol,
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol,
     KtSymbolWithKind {
 
-    abstract val callableIdIfNonLocal: FqName?
+    abstract val hasGetter: Boolean
+    abstract val hasSetter: Boolean
 
     abstract val getter: KtPropertyGetterSymbol?
     abstract val setter: KtPropertySetterSymbol?
 
-    abstract val hasBackingField: Boolean
+    abstract val callableIdIfNonLocal: FqName?
 
-    abstract val isConst: Boolean
+    abstract val hasBackingField: Boolean
 
     abstract val isOverride: Boolean
 
+    abstract val initializer: KtConstantValue?
+
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
+}
+
+abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
+    abstract val isLateInit: Boolean
+
+    abstract val isConst: Boolean
+}
+
+abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
+    final override val hasBackingField: Boolean get() = true
+    final override val hasGetter: Boolean get() = true
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+
+    abstract override val getter: KtPropertyGetterSymbol
+
+    abstract val javaGetterName: Name
+    abstract val javaSetterName: Name?
 }
 
 abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {

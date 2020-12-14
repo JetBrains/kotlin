@@ -269,8 +269,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                val fullFileText =
-                    FileUtil.loadFile(file, true).replace("COROUTINES_PACKAGE", "kotlin.coroutines")
+                val fullFileText = FileUtil.loadFile(file, true)
 
                 if (fullFileText.contains("// WITH_COROUTINES")) {
                     if (fullFileText.contains("kotlin.coroutines.experimental")) continue
@@ -317,7 +316,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun createTestFiles(file: File, expectedText: String): List<KotlinBaseTest.TestFile> =
-        CodegenTestCase.createTestFilesFromFile(file, expectedText, "kotlin.coroutines", false, TargetBackend.JVM)
+        CodegenTestCase.createTestFilesFromFile(file, expectedText, false, TargetBackend.JVM)
 
     companion object {
         const val GRADLE_VERSION = "5.6.4" // update GRADLE_SHA_256 on change

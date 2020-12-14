@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
@@ -36,7 +37,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
+class UpdateConfigurationQuickFixTest : KotlinLightPlatformCodeInsightFixtureTestCase() {
     fun testDisableInlineClasses() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_3)

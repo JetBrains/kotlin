@@ -356,7 +356,9 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                         type,
                         varargElementType = null,
                         isCrossinline = false,
-                        isNoinline = false
+                        isNoinline = false,
+                        isHidden = false,
+                        isAssignable = false
                 ).apply {
                     it.bind(this)
                     parent = newFunction

@@ -1,0 +1,56 @@
+fun interface IRunnable {
+  abstract fun run() 
+
+}
+
+fun foo1(r: IRunnable, vararg s: String) {
+}
+
+fun foo2(r1: IRunnable, r2: IRunnable, vararg s: String) {
+}
+
+fun test(fn: Function0<Unit>, r: IRunnable, s: String, arr: Array<String>) {
+  foo1(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [s])
+  foo1(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [*arr])
+  foo1(r = fn /*-> IRunnable */, s = [s])
+  foo1(r = fn /*-> IRunnable */, s = [*arr])
+  foo1(r = r, s = [s])
+  foo1(r = r, s = [*arr])
+  foo2(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [s])
+  foo2(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [*arr])
+  foo2(r1 = fn /*-> IRunnable */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [s])
+  foo2(r1 = fn /*-> IRunnable */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [*arr])
+  foo2(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [s])
+  foo2(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> IRunnable */, s = [*arr])
+}
+

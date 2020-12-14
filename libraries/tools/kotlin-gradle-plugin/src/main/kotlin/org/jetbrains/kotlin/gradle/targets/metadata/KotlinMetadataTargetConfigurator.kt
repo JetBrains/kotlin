@@ -65,6 +65,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.ENABLED_HMPP, true)
 
             target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
+                // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
                 val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
                 if (isCompatibilityMetadataVariantEnabled) {
                     // Force the default 'main' compilation to produce *.kotlin_metadata regardless of the klib feature flag.
@@ -152,11 +153,13 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
         legacyJar.configure {
-            it.description = "Assembles an archive containing the Kotin metadata of the commonMain source set."
-            if (!target.project.isCompatibilityMetadataVariantEnabled) {
+            // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
+            val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
+            it.description = "Assembles an archive containing the Kotlin metadata of the commonMain source set."
+            if (!isCompatibilityMetadataVariantEnabled) {
                 it.archiveClassifier.set("commonMain")
             }
-            it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled }
+            it.onlyIf { isCompatibilityMetadataVariantEnabled }
             it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
         }
 

@@ -166,6 +166,7 @@ class FirSamResolverImpl(
 
         return buildSimpleFunction {
             session = firSession
+            source = firRegularClass.source
             name = classId.shortClassName
             origin = FirDeclarationOrigin.SamConstructor
             status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
@@ -287,13 +288,8 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
 
         classUseSiteMemberScope.processFunctionsByName(candidateName) { functionSymbol ->
             val firFunction = functionSymbol.fir
-            require(firFunction is FirSimpleFunction) {
-                "${functionSymbol.callableId
-                    .callableName} is expected to be _root_ide_package_.org.jetbrains.kotlin.fir.declarations.FirSimpleFunction, but ${functionSymbol::class} was found"
-            }
-
-            if (firFunction.modality != Modality.ABSTRACT || firFunction
-                    .isPublicInObject(checkOnlyName = false)
+            if (firFunction.modality != Modality.ABSTRACT ||
+                firFunction.isPublicInObject(checkOnlyName = false)
             ) return@processFunctionsByName
 
             if (resultMethod != null) {

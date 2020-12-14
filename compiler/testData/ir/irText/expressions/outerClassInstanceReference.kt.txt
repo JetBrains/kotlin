@@ -1,0 +1,25 @@
+class Outer {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun outer() {
+  }
+
+  inner class Inner {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun inner() {
+      return <this>.outer()
+    }
+
+  }
+
+}
+

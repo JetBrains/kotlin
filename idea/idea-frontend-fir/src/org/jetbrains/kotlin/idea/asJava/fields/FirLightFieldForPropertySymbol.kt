@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
+    private val fieldName: String,
     containingClass: FirLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
     isTopLevel: Boolean,
-    forceStatic: Boolean = false
+    forceStatic: Boolean,
+    takePropertyVisibility: Boolean
 ) : FirLightField(containingClass, lightMemberOrigin) {
 
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
@@ -35,45 +36,75 @@ internal class FirLightFieldForPropertySymbol(
         )
     }
 
+    private val _isDeprecated: Boolean by lazyPub {
+        propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD)
+    }
+
+    override fun isDeprecated(): Boolean = _isDeprecated
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, propertySymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
+
     override fun getType(): PsiType = _returnedType
 
-    private val _name = propertySymbol.name.asString()
-    override fun getName(): String = _name
+    override fun getName(): String = fieldName
 
     private val _modifierList: PsiModifierList by lazyPub {
 
-        val modifiersFromSymbol = propertySymbol.computeModalityForMethod(isTopLevel = isTopLevel, isOverride = false)
+        val modifiers = mutableSetOf<String>()
 
-        val basicModifiers = modifiersFromSymbol.add(
-            what = PsiModifier.STATIC,
-            `if` = forceStatic
+        val suppressFinal = !propertySymbol.isVal
+
+        propertySymbol.computeModalityForMethod(
+            isTopLevel = isTopLevel,
+            suppressFinal = suppressFinal,
+            result = modifiers
         )
 
-        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
+        if (forceStatic) {
+            modifiers.add(PsiModifier.STATIC)
+        }
 
         val visibility =
-            if (isJvmField) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
+            if (takePropertyVisibility) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
+        modifiers.add(visibility)
 
-        val modifiersWithVisibility = basicModifiers + visibility
+        if (!suppressFinal) {
+            modifiers.add(PsiModifier.FINAL)
+        }
+        if (propertySymbol.hasAnnotation("kotlin/jvm/Transient", null)) {
+            modifiers.add(PsiModifier.TRANSIENT)
+        }
+        if (propertySymbol.hasAnnotation("kotlin/jvm/Volatile", null)) {
+            modifiers.add(PsiModifier.VOLATILE)
+        }
 
-        val modifiers = modifiersWithVisibility.add(
-            what = PsiModifier.FINAL,
-            `if` = !isJvmField || propertySymbol.isVal
-        )
+        val nullability = if (visibility != PsiModifier.PRIVATE)
+            propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        else NullabilityType.Unknown
 
         val annotations = propertySymbol.computeAnnotations(
             parent = this,
-            nullability = propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE),
+            nullability = nullability,
             annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
         )
 
         FirLightClassModifierList(this, modifiers, annotations)
     }
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
+    override fun getModifierList(): PsiModifierList = _modifierList
 
+    private val _initializer by lazyPub {
+        if (propertySymbol !is KtKotlinPropertySymbol) return@lazyPub null
+        if (!propertySymbol.isConst) return@lazyPub null
+        if (!propertySymbol.isVal) return@lazyPub null
+        (propertySymbol.initializer as? KtSimpleConstantValue<*>)?.createPsiLiteral(this)
+    }
 
-    override fun getInitializer(): PsiExpression? = null //TODO
+    override fun getInitializer(): PsiExpression? = _initializer
 
     override fun equals(other: Any?): Boolean =
         this === other ||

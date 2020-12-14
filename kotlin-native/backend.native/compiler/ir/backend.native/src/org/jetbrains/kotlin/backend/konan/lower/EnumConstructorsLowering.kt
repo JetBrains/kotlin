@@ -141,7 +141,9 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                                 type,
                                 varargElementType = null,
                                 isCrossinline = false,
-                                isNoinline = false
+                                isNoinline = false,
+                                isHidden = false,
+                                isAssignable = false
                         ).apply {
                             it.bind(this)
                             parent = loweredConstructor

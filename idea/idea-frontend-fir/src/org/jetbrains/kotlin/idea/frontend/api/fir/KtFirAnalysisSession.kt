@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -41,9 +41,9 @@ private constructor(
     override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(this, firResolveState.rootModuleSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
-    override val completionCandidateChecker: KtCompletionCandidateChecker by threadLocal { KtFirCompletionCandidateChecker(this, token) }
-    override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
-            by threadLocal { KtFirSymbolDeclarationOverridesProvider(this, token) }
+    override val completionCandidateChecker: KtCompletionCandidateChecker = KtFirCompletionCandidateChecker(this, token)
+    override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider =
+        KtFirSymbolDeclarationOverridesProvider(this, token)
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
@@ -60,7 +60,7 @@ private constructor(
     companion object {
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
         internal fun createForElement(element: KtElement): KtFirAnalysisSession {
-            val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
+            val firResolveState = element.getResolveState()
             return createAnalysisSessionByResolveState(firResolveState)
         }
 

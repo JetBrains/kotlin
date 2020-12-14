@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
-import org.jetbrains.kotlin.idea.completion.FIR_COMPARISON
-import org.jetbrains.kotlin.idea.completion.runTestWithCustomEnableDirective
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import java.io.File
 
 abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
@@ -19,7 +17,7 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
     override fun isFirPlugin(): Boolean = true
 
     override fun doTest(filePath: String) {
-        runTestWithCustomEnableDirective(FIR_COMPARISON, testDataFile()) {
+        IgnoreTests.runTestIfEnabledByFileDirective(testDataFilePath(), IgnoreTests.DIRECTIVES.FIR_COMPARISON) {
             myFixture.configureByFile(fileName())
             checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
         }

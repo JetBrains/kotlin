@@ -18,7 +18,6 @@ abstract class AbstractIrJsTypeScriptExportTest(
 ) : BasicIrBoxTest(
     pathToTestDir = TEST_DATA_DIR_PATH + "typescript-export/",
     testGroupOutputDirPrefix = "typescript-export/",
-    pathToRootOutputDir = TEST_DATA_DIR_PATH,
     targetBackend = targetBackend
 ) {
     override val generateDts = true

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -45,10 +44,10 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
         if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType =
-        typeOperand.erasedUpperBound.defaultType
+        typeOperand.erasedUpperBound.rawType(context as JvmBackendContext)
 
     override fun getWrappedFunctionType(klass: IrClass): IrType =
-        klass.symbol.rawType(context as JvmBackendContext)
+        klass.rawType(context as JvmBackendContext)
 
     // The constructor of a SAM wrapper is non-synthetic and should not have line numbers.
     // Otherwise the debugger will try to step into it.

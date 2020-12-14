@@ -87,8 +87,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker =
         when (this) {
-            is IrSimpleType -> arguments[index]
-            else -> error("Type $this has no arguments")
+            is IrSimpleType ->
+                if (index >= arguments.size)
+                    error("No argument $index in type '${this.render()}'")
+                else
+                    arguments[index]
+            else ->
+                error("Type $this has no arguments")
         }
 
     override fun KotlinTypeMarker.asTypeArgument() = this as IrTypeArgument
@@ -385,9 +390,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 }
 
-fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
+fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
-    var current: IrDeclarationParent? = klass
+    var current: IrDeclarationParent? = parent
     while (current != null) {
         (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
         current =
@@ -399,9 +404,11 @@ fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass
-                is IrFunction -> if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null) {
-                    current.parent
-                } else null
+                is IrFunction ->
+                    if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                        current.parent
+                    else
+                        null
                 else -> null
             }
     }

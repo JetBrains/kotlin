@@ -38,10 +38,11 @@ data class OpenProject(val projectPath: String, val projectName: String, val jdk
 enum class ProjectOpenAction {
     SIMPLE_JAVA_MODULE {
         override fun openProject(projectPath: String, projectName: String, jdk: Sdk): Project {
-            val project = ProjectManagerEx.getInstanceEx().loadAndOpenProject(projectPath)!!
+            val path = File(projectPath).absolutePath
+            val project = ProjectManagerEx.getInstanceEx().loadAndOpenProject(path)!!
 
-            val modulePath = "$projectPath/$name${ModuleFileType.DOT_DEFAULT_EXTENSION}"
-            val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(projectPath))!!
+            val modulePath = "$path/$name${ModuleFileType.DOT_DEFAULT_EXTENSION}"
+            val projectFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(path))!!
             val srcFile = projectFile.findChild("src")!!
 
             val module = runWriteAction {
@@ -61,16 +62,17 @@ enum class ProjectOpenAction {
 
     EXISTING_IDEA_PROJECT {
         override fun openProject(projectPath: String, projectName: String, jdk: Sdk): Project {
+            val path = File(projectPath).absolutePath
             val projectManagerEx = ProjectManagerEx.getInstanceEx()
 
-            val project = loadProjectWithName(projectPath, projectName)
-                ?: error("project $projectName at $projectPath is not loaded")
+            val project = loadProjectWithName(path, projectName)
+                ?: error("project $projectName at $path is not loaded")
 
             runWriteAction {
                 ProjectRootManager.getInstance(project).projectSdk = jdk
             }
 
-            assertTrue(projectManagerEx.openProject(project), "project $projectName at $projectPath is not opened")
+            assertTrue(projectManagerEx.openProject(project), "project $projectName at $path is not opened")
 
             return project
         }
@@ -78,17 +80,18 @@ enum class ProjectOpenAction {
 
     GRADLE_PROJECT {
         override fun openProject(projectPath: String, projectName: String, jdk: Sdk): Project {
-            val project = ProjectManagerEx.getInstanceEx().loadAndOpenProject(projectPath)!!
+            val path = File(projectPath).absolutePath
+            val project = ProjectManagerEx.getInstanceEx().loadAndOpenProject(path)!!
             assertTrue(
                 !project.isDisposed,
-                "Gradle project $projectName at $projectPath is accidentally disposed immediately after import"
+                "Gradle project $projectName at $path is accidentally disposed immediately after import"
             )
 
             runWriteAction {
                 ProjectRootManager.getInstance(project).projectSdk = jdk
             }
 
-            refreshGradleProject(projectPath, project)
+            refreshGradleProject(path, project)
 
             return project
         }

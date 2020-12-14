@@ -10,17 +10,16 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 
 internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name).intern()
 internal val DEPRECATED_ANNOTATION_CID: ClassId = internedClassId(DEPRECATED_ANNOTATION_FQN)
 
-internal val STANDARD_KOTLIN_PACKAGE_FQNS: List<FqName> = listOf(
-    StandardNames.BUILT_INS_PACKAGE_FQ_NAME.intern(),
-    FqName("kotlinx").intern()
+private val STANDARD_KOTLIN_PACKAGES = listOf(
+    StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString(),
+    "kotlinx"
 )
-
-private val STANDARD_KOTLIN_PACKAGES = STANDARD_KOTLIN_PACKAGE_FQNS.map { it.asString() }
 
 private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES = ForwardDeclarationsFqNames.syntheticPackages
     .map { fqName ->
@@ -37,6 +36,9 @@ private val OBJC_INTEROP_CALLABLE_ANNOTATIONS = listOf(
     "ObjCFactory"
 )
 
+internal fun Name.strip(): String =
+    asString().removeSurrounding("<", ">")
+
 internal val FqName.isUnderStandardKotlinPackages: Boolean
     get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGES)
 
@@ -46,7 +48,8 @@ internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
 internal val FqName.isUnderDarwinPackage: Boolean
     get() = asString().hasPrefix(DARWIN_PACKAGE)
 
-private fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
+@Suppress("NOTHING_TO_INLINE")
+private inline fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
     asString().let { fqName -> prefixes.any(fqName::hasPrefix) }
 
 private fun String.hasPrefix(prefix: String): Boolean {

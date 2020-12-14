@@ -6,6 +6,8 @@
 #ifndef RUNTIME_MM_GLOBAL_DATA_H
 #define RUNTIME_MM_GLOBAL_DATA_H
 
+#include "GlobalsRegistry.hpp"
+#include "StableRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
 
@@ -18,6 +20,8 @@ public:
     static GlobalData& Instance() noexcept { return instance_; }
 
     ThreadRegistry& threadRegistry() { return threadRegistry_; }
+    GlobalsRegistry& globalsRegistry() { return globalsRegistry_; }
+    StableRefRegistry& stableRefRegistry() { return stableRefRegistry_; }
 
 private:
     GlobalData();
@@ -26,6 +30,8 @@ private:
     static GlobalData instance_;
 
     ThreadRegistry threadRegistry_;
+    GlobalsRegistry globalsRegistry_;
+    StableRefRegistry stableRefRegistry_;
 };
 
 } // namespace mm

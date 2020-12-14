@@ -93,7 +93,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
             checkInstantExecutionSucceeded()
         }
 
-        build("clean") {
+        build("clean", options = buildOptions) {
             assertSuccessful()
         }
 

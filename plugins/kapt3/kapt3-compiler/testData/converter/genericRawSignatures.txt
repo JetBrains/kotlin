@@ -3,6 +3,10 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class GenericRawSignatures {
 
+    public GenericRawSignatures() {
+        super();
+    }
+
     @org.jetbrains.annotations.Nullable()
     public final <T extends java.lang.Object>T genericFun() {
         return null;
@@ -11,9 +15,5 @@ public final class GenericRawSignatures {
     @org.jetbrains.annotations.Nullable()
     public final java.lang.String nonGenericFun() {
         return null;
-    }
-
-    public GenericRawSignatures() {
-        super();
     }
 }

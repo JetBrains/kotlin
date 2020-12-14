@@ -72,3 +72,6 @@ compile_commands.json
 
 # googletest framework used by runtime tests
 runtime/googletest/
+
+# Toolchain builder artifacts
+tools/toolchain_builder/artifacts

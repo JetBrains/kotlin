@@ -1,0 +1,69 @@
+fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
+  foo1(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
+  foo1(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
+  foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
+  foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
+  foo1(r = r, strs = [""]) /*~> Unit */
+  foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
+  foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
+  foo1(r = r, strs = [*arr]) /*~> Unit */
+  val i1: Test = Test(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = arr)
+  val i2: Test = Test(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [*arr])
+  val i3: Test = Test(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = arr)
+  val i4: Test = Test(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [""])
+  val i5: Test = Test(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [*arr])
+  val i6: Test = Test(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [*arr])
+  i1.foo2(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
+  i1.foo2(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [""]) /*~> Unit */
+  i1.foo2(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
+  i1.foo2(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
+}
+

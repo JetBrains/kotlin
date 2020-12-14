@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.ideaExt.idea
 import java.io.File
 
 plugins {
@@ -69,10 +70,20 @@ dependencies {
     antLauncherJar(toolsJar())
 }
 
+val generationRoot = projectDir.resolve("tests-gen")
+
 sourceSets {
     "main" {}
     "test" {
         projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
+}
+
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
     }
 }
 
@@ -87,6 +98,9 @@ projectTest(parallel = true) {
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
+val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt") {
+    dependsOn(generateTestData)
+}
 
 testsJar()

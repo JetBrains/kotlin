@@ -1,0 +1,52 @@
+package
+
+public fun </*0*/ A, /*1*/ DA : DataType<A>, /*2*/ B, /*3*/ DB : DataType<B>, /*4*/ C, /*5*/ DC : DataType<C>, /*6*/ D, /*7*/ DD : DataType<D>, /*8*/ E, /*9*/ DE : DataType<E>, /*10*/ F, /*11*/ DF : DataType<F>, /*12*/ G, /*13*/ DG : DataType<G>, /*14*/ H, /*15*/ DH : DataType<H>> either8(/*0*/ firstName: kotlin.String, /*1*/ firstType: DA, /*2*/ secondName: kotlin.String, /*3*/ secondType: DB, /*4*/ thirdName: kotlin.String, /*5*/ thirdType: DC, /*6*/ fourthName: kotlin.String, /*7*/ fourthType: DD, /*8*/ fifthName: kotlin.String, /*9*/ fifthType: DE, /*10*/ sixthName: kotlin.String, /*11*/ sixthType: DF, /*12*/ seventhName: kotlin.String, /*13*/ seventhType: DG, /*14*/ eighthName: kotlin.String, /*15*/ eighthType: DH): DataType.NotNull.Partial<Either8<A, B, C, D, E, F, G, H>>
+
+public sealed class DataType</*0*/ T> {
+    private constructor DataType</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public sealed class NotNull</*0*/ T> : DataType<T> {
+        private constructor NotNull</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public abstract class Partial</*0*/ T> : DataType.NotNull<T> {
+            public constructor Partial</*0*/ T>()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+public final class Either8</*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W, /*4*/ X, /*5*/ Y, /*6*/ Z, /*7*/ T1> {
+    public constructor Either8</*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W, /*4*/ X, /*5*/ Y, /*6*/ Z, /*7*/ T1>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class EitherType</*0*/ SCH : Schema<SCH>> {
+    public constructor EitherType</*0*/ SCH : Schema<SCH>>(/*0*/ schema: SCH)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Schema</*0*/ T> {
+    public constructor Schema</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Tuple8</*0*/ A, /*1*/ DA : DataType<A>, /*2*/ B, /*3*/ DB : DataType<B>, /*4*/ C, /*5*/ DC : DataType<C>, /*6*/ D, /*7*/ DD : DataType<D>, /*8*/ E, /*9*/ DE : DataType<E>, /*10*/ F, /*11*/ DF : DataType<F>, /*12*/ G, /*13*/ DG : DataType<G>, /*14*/ H, /*15*/ DH : DataType<H>> : Schema<Tuple8<A, DA, B, DB, C, DC, D, DD, E, DE, F, DF, G, DG, H, DH>> {
+    public constructor Tuple8</*0*/ A, /*1*/ DA : DataType<A>, /*2*/ B, /*3*/ DB : DataType<B>, /*4*/ C, /*5*/ DC : DataType<C>, /*6*/ D, /*7*/ DD : DataType<D>, /*8*/ E, /*9*/ DE : DataType<E>, /*10*/ F, /*11*/ DF : DataType<F>, /*12*/ G, /*13*/ DG : DataType<G>, /*14*/ H, /*15*/ DH : DataType<H>>(/*0*/ firstName: kotlin.String, /*1*/ firstType: DA, /*2*/ secondName: kotlin.String, /*3*/ secondType: DB, /*4*/ thirdName: kotlin.String, /*5*/ thirdType: DC, /*6*/ fourthName: kotlin.String, /*7*/ fourthType: DD, /*8*/ fifthName: kotlin.String, /*9*/ fifthType: DE, /*10*/ sixthName: kotlin.String, /*11*/ sixthType: DF, /*12*/ seventhName: kotlin.String, /*13*/ seventhType: DG, /*14*/ eighthName: kotlin.String, /*15*/ eighthType: DH)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

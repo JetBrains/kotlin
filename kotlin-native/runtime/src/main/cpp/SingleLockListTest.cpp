@@ -12,6 +12,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "TestSupport.hpp"
+
 using namespace kotlin;
 
 namespace {
@@ -105,19 +107,23 @@ TEST(SingleLockListTest, EraseToEmptyEmplaceAndIter) {
 
 TEST(SingleLockListTest, ConcurrentEmplace) {
     IntList list;
-    constexpr int kThreadCount = 100;
+    constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
+    std::atomic<int> readyCount(0);
     std::vector<std::thread> threads;
     std::vector<int> expected;
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
-        threads.emplace_back([i, &list, &canStart]() {
+        threads.emplace_back([i, &list, &canStart, &readyCount]() {
+            ++readyCount;
             while (!canStart) {
             }
             list.Emplace(i);
         });
     }
 
+    while (readyCount < kThreadCount) {
+    }
     canStart = true;
     for (auto& t : threads) {
         t.join();
@@ -133,22 +139,26 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
 
 TEST(SingleLockListTest, ConcurrentErase) {
     IntList list;
-    constexpr int kThreadCount = 100;
+    constexpr int kThreadCount = kDefaultThreadCount;
     std::vector<IntList::Node*> items;
     for (int i = 0; i < kThreadCount; ++i) {
         items.push_back(list.Emplace(i));
     }
 
     std::atomic<bool> canStart(false);
+    std::atomic<int> readyCount(0);
     std::vector<std::thread> threads;
     for (auto* item : items) {
-        threads.emplace_back([item, &list, &canStart]() {
+        threads.emplace_back([item, &list, &canStart, &readyCount]() {
+            ++readyCount;
             while (!canStart) {
             }
             list.Erase(item);
         });
     }
 
+    while (readyCount < kThreadCount) {
+    }
     canStart = true;
     for (auto& t : threads) {
         t.join();
@@ -165,7 +175,7 @@ TEST(SingleLockListTest, ConcurrentErase) {
 TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
     IntList list;
     constexpr int kStartCount = 50;
-    constexpr int kThreadCount = 100;
+    constexpr int kThreadCount = kDefaultThreadCount;
 
     std::deque<int> expectedBefore;
     std::vector<int> expectedAfter;
@@ -217,7 +227,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
 
 TEST(SingleLockListTest, IterWhileConcurrentErase) {
     IntList list;
-    constexpr int kThreadCount = 100;
+    constexpr int kThreadCount = kDefaultThreadCount;
 
     std::deque<int> expectedBefore;
     std::vector<IntList::Node*> items;

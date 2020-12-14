@@ -49,6 +49,7 @@ internal class CEnumClassGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
+    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
 
     private val enumClassMembersGenerator = EnumClassMembersGenerator(DeclarationGenerator(context))
 
@@ -97,38 +98,46 @@ internal class CEnumClassGenerator(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                     propertyDescriptor, propertyDescriptor.type.toIrType(), DescriptorVisibilities.PRIVATE
             ).also {
-                it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
-                    irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
+                postLinkageSteps.add {
+                    it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                        irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
+                    }
                 }
             }
         }
         val getter = irProperty.getter!!
         getter.correspondingPropertySymbol = irProperty.symbol
-        getter.body = irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            +irReturn(
-                    irGetField(
-                            irGet(getter.dispatchReceiverParameter!!),
-                            irProperty.backingField!!
-                    )
-            )
+        postLinkageSteps.add {
+            getter.body = irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                +irReturn(
+                        irGetField(
+                                irGet(getter.dispatchReceiverParameter!!),
+                                irProperty.backingField!!
+                        )
+                )
+            }
         }
         return irProperty
     }
 
     private fun createEnumEntry(enumDescriptor: ClassDescriptor, entryDescriptor: ClassDescriptor): IrEnumEntry {
-        return symbolTable.declareEnumEntry(
+        val enumEntry = symbolTable.declareEnumEntry(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, entryDescriptor
-        ).also { enumEntry ->
-            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl.fromSymbolDescriptor(
+        )
+        val constructorSymbol = symbolTable.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
+        postLinkageSteps.add {
+            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     type = irBuiltIns.unitType,
-                    symbol = symbolTable.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!),
-                    typeArgumentsCount = 0 // enums can't be generic
+                    symbol = constructorSymbol,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = constructorSymbol.owner.valueParameters.size
             ).also {
                 it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
             })
         }
+        return enumEntry
     }
 
     /**
@@ -146,16 +155,23 @@ internal class CEnumClassGenerator(
     private fun createEnumPrimaryConstructor(descriptor: ClassDescriptor): IrConstructor {
         val irConstructor = createConstructor(descriptor.unsubstitutedPrimaryConstructor!!)
         val enumConstructor = context.builtIns.enum.constructors.single()
-        irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            +IrEnumConstructorCallImpl.fromSymbolDescriptor(
-                    startOffset, endOffset,
-                    context.irBuiltIns.unitType,
-                    symbolTable.referenceConstructor(enumConstructor),
-                    typeArgumentsCount = 1 // kotlin.Enum<T> has a single type parameter.
-            ).apply {
-                putTypeArgument(0, descriptor.defaultType.toIrType())
-            }
-            +irInstanceInitializer(symbolTable.referenceClass(descriptor))
+        val constructorSymbol = symbolTable.referenceConstructor(enumConstructor)
+        val classSymbol = symbolTable.referenceClass(descriptor)
+        val type = descriptor.defaultType.toIrType()
+        postLinkageSteps.add {
+            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+                    .irBlockBody {
+                        +IrEnumConstructorCallImpl(
+                                startOffset, endOffset,
+                                context.irBuiltIns.unitType,
+                                constructorSymbol,
+                                typeArgumentsCount = 1, // kotlin.Enum<T> has a single type parameter.
+                                valueArgumentsCount = constructorSymbol.owner.valueParameters.size
+                        ).apply {
+                            putTypeArgument(0, type)
+                        }
+                        +irInstanceInitializer(classSymbol)
+                    }
         }
         return irConstructor
     }

@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
 class TargetProvider(
-    val target: InputTarget,
+    val target: LeafTarget,
     val builtInsClass: Class<out KotlinBuiltIns>,
     val builtInsProvider: BuiltInsProvider,
-    val modulesProvider: ModulesProvider
+    val modulesProvider: ModulesProvider,
+    val dependeeModulesProvider: ModulesProvider?
 )
 
 interface BuiltInsProvider {
@@ -28,8 +29,17 @@ interface BuiltInsProvider {
 }
 
 interface ModulesProvider {
-    class ModuleInfo(val name: String, val originalLocation: File)
+    class ModuleInfo(
+        val name: String,
+        val originalLocation: File,
+        val cInteropAttributes: CInteropModuleAttributes?
+    )
+
+    class CInteropModuleAttributes(
+        val mainPackageFqName: String,
+        val exportForwardDeclarations: Collection<String>
+    )
 
     fun loadModuleInfos(): Map<String, ModuleInfo>
-    fun loadModules(): Map<String, ModuleDescriptor>
+    fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor>
 }

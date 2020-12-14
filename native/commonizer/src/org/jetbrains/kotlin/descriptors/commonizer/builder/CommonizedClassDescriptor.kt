@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createPrimaryConstructorForObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
+import org.jetbrains.kotlin.resolve.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -51,7 +52,10 @@ class CommonizedClassDescriptor(
         MemberScope.Empty
 
     private val typeConstructor = CommonizedClassTypeConstructor(targetComponents, cirSupertypes)
-    private val sealedSubclasses = targetComponents.storageManager.createLazyValue { computeSealedSubclasses(this) }
+    private val sealedSubclasses = targetComponents.storageManager.createLazyValue {
+        // TODO: pass proper language version settings
+        SealedClassInheritorsProviderImpl.computeSealedSubclasses(this, freedomForSealedInterfacesSupported = false)
+    }
 
     private val declaredTypeParametersAndTypeParameterResolver = targetComponents.storageManager.createLazyValue {
         val parent = if (isInner) (containingDeclaration as? ClassDescriptor)?.getTypeParameterResolver() else null
@@ -80,6 +84,7 @@ class CommonizedClassDescriptor(
     override fun isExpect() = isExpect
     override fun isActual() = isActual
     override fun isFun() = false // TODO: modifier "fun" should be accessible from here too
+    override fun isValue() = false // TODO: modifier "value" should be accessible from here too
 
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): CommonizedMemberScope {
         check(kotlinTypeRefiner == KotlinTypeRefiner.Default) {

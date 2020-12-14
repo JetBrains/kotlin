@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.requiresMangling
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -26,13 +27,9 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.coerceToUnit
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
-import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -55,7 +52,9 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         expression.transformChildrenVoid()
 
-        if (shouldSubstituteAccessorWithField(property, simpleFunction)) {
+        if (shouldSubstituteAccessorWithField(property, simpleFunction) ||
+            isDefaultAccessorForCompanionPropertyBackingFieldOnCurrentClass(property, simpleFunction)
+        ) {
             backendContext.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).apply {
                 return when (simpleFunction) {
                     property.getter -> substituteGetter(property, expression)
@@ -68,8 +67,32 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         return expression
     }
 
+    private fun isDefaultAccessorForCompanionPropertyBackingFieldOnCurrentClass(
+        property: IrProperty,
+        function: IrSimpleFunction
+    ): Boolean {
+        if (function.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) return false
+        if (property.isLateinit) return false
+        // If this code could end up inlined in another class (either an inline function or an
+        // inlined lambda in an inline function) use the companion object accessor. Otherwise,
+        // we could break binary compatibility if we only recompile the class with the companion
+        // object and change to non-default field accessors. The inlined code would still attempt
+        // to get the backing field which would no longer exist.
+        val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
+        if (inInlineFunctionScope) return false
+        val backingField = property.resolveFakeOverride()!!.backingField
+        return backingField?.parent == currentClass?.irElement &&
+                backingField?.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
+    }
+
     private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression =
-        patchReceiver(irSetField(expression.dispatchReceiver, irProperty.resolveFakeOverride()!!.backingField!!, expression.getValueArgument(0)!!))
+        patchReceiver(
+            irSetField(
+                expression.dispatchReceiver,
+                irProperty.resolveFakeOverride()!!.backingField!!,
+                expression.getValueArgument(0)!!
+            )
+        )
 
     private fun IrBuilderWithScope.substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
         val backingField = irProperty.resolveFakeOverride()!!.backingField!!
@@ -124,15 +147,17 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
 
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrSimpleFunction =
         backendContext.irFactory.buildFun {
-            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
+            origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
             name = Name.identifier(computeSyntheticMethodName(declaration))
             visibility = declaration.visibility
             modality = Modality.OPEN
             returnType = backendContext.irBuiltIns.unitType
         }.apply {
             declaration.getter?.extensionReceiverParameter?.let { extensionReceiver ->
-                // Use raw type of extension receiver to avoid generic signature, which would be useless for this method.
-                extensionReceiverParameter = extensionReceiver.copyTo(this, type = extensionReceiver.type.classifierOrFail.typeWith())
+                extensionReceiverParameter = extensionReceiver.copyTo(
+                    this,
+                    type = extensionReceiver.type.erasePropertyAnnotationsExtensionReceiverType()
+                )
             }
 
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
@@ -141,6 +166,35 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             annotations = declaration.annotations
             metadata = declaration.metadata
         }
+
+    private fun IrType.erasePropertyAnnotationsExtensionReceiverType(): IrType {
+        // Use raw type of extension receiver to avoid generic signature,
+        // which should not be generated for '...$annotations' method.
+        if (this !is IrSimpleType) {
+            throw AssertionError("Unexpected property receiver type: $this")
+        }
+        val erasedType = if (isArray()) {
+            when (val arg0 = arguments[0]) {
+                is IrStarProjection -> {
+                    // 'Array<*>' becomes 'Array<*>'
+                    this
+                }
+                is IrTypeProjection -> {
+                    // 'Array<VARIANCE TYPE>' becomes 'Array<VARIANCE erase(TYPE)>'
+                    classifier.typeWithArguments(
+                        listOf(makeTypeProjection(arg0.type.erasePropertyAnnotationsExtensionReceiverType(), arg0.variance))
+                    )
+                }
+                else ->
+                    throw AssertionError("Unexpected type argument: $arg0")
+            }
+        } else {
+            classifier.typeWith()
+        }
+        return erasedType
+            .withHasQuestionMark(this.hasQuestionMark)
+            .addAnnotations(this.annotations)
+    }
 
     private fun computeSyntheticMethodName(property: IrProperty): String {
         val baseName =

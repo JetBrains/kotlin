@@ -28,6 +28,8 @@ class NewConstraintSystemImpl(
 {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
 
+    private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
+
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
     private val typeVariablesTransaction: MutableList<TypeVariableMarker> = SmartList()
@@ -321,42 +323,65 @@ class NewConstraintSystemImpl(
     }
 
     // KotlinConstraintSystemCompleter.Context
-    // TODO: simplify this: do only substitution a fixing type variable rather than running of subtyping and full incorporation
-    override fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>) {
+    override fun fixVariable(
+        variable: TypeVariableMarker,
+        resultType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>
+    ) = with(utilContext) {
         checkState(State.BUILDING, State.COMPLETION)
 
-        constraintInjector.addInitialEqualityConstraint(
-            this, variable.defaultType(), resultType, position
-        )
+        constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
-
         val variableWithConstraints = notFixedTypeVariables.remove(freshTypeConstructor)
-        checkOnlyInputTypesAnnotation(variableWithConstraints, resultType)
 
-        for (variableWithConstraint in notFixedTypeVariables.values) {
-            variableWithConstraint.removeConstrains {
-                it.type.contains { it.typeConstructor() == freshTypeConstructor }
+        for (otherVariableWithConstraints in notFixedTypeVariables.values) {
+            otherVariableWithConstraints.removeConstrains { otherConstraint ->
+                otherConstraint.type.contains { it.typeConstructor() == freshTypeConstructor }
             }
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
+
+        postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
+
+        doPostponedComputationsIfAllVariablesAreFixed()
     }
 
-    private fun checkOnlyInputTypesAnnotation(
+    private fun ConstraintSystemUtilContext.postponeOnlyInputTypesCheck(
         variableWithConstraints: MutableVariableWithConstraints?,
         resultType: KotlinTypeMarker
     ) {
-        if (variableWithConstraints == null) return
-        val variableHasOnlyInputTypes = with(utilContext) { variableWithConstraints.typeVariable.hasOnlyInputTypesAttribute() }
-        if (!variableHasOnlyInputTypes) return
-
-        val resultTypeIsInputType = variableWithConstraints.getProjectedInputCallTypes(utilContext).any { inputType ->
-            if (AbstractTypeChecker.equalTypes(this, resultType, inputType)) return@any true
-            val constructor = inputType.typeConstructor()
-            constructor.isIntersection() && constructor.supertypes().any { AbstractTypeChecker.equalTypes(this, resultType, it) }
+        if (variableWithConstraints != null && variableWithConstraints.typeVariable.hasOnlyInputTypesAttribute()) {
+            postponedComputationsAfterAllVariablesAreFixed.add { checkOnlyInputTypesAnnotation(variableWithConstraints, resultType) }
         }
-        if (!resultTypeIsInputType) {
+    }
+
+    private fun doPostponedComputationsIfAllVariablesAreFixed() {
+        if (notFixedTypeVariables.isEmpty()) {
+            postponedComputationsAfterAllVariablesAreFixed.forEach { it() }
+        }
+    }
+
+    private fun KotlinTypeMarker.substituteIfNecessary(substitutor: TypeSubstitutorMarker): KotlinTypeMarker {
+        val doesInputTypeContainsOtherVariables = this.contains { it.typeConstructor() is TypeVariableTypeConstructorMarker }
+        return if (doesInputTypeContainsOtherVariables) substitutor.safeSubstitute(this) else this
+    }
+
+    private fun checkOnlyInputTypesAnnotation(variableWithConstraints: MutableVariableWithConstraints, resultType: KotlinTypeMarker) {
+        val substitutor = buildCurrentSubstitutor()
+        val isResultTypeEqualSomeInputType = variableWithConstraints.getProjectedInputCallTypes(utilContext).any { inputType ->
+            val inputTypeConstructor = inputType.typeConstructor()
+
+            if (inputTypeConstructor.isIntersection()) {
+                inputTypeConstructor.supertypes().any {
+                    AbstractTypeChecker.equalTypes(this, resultType, it.substituteIfNecessary(substitutor))
+                }
+            } else {
+                AbstractTypeChecker.equalTypes(this, resultType, inputType.substituteIfNecessary(substitutor))
+            }
+        }
+        if (!isResultTypeEqualSomeInputType) {
             addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable))
         }
     }

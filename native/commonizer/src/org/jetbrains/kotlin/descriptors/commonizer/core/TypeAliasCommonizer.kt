@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -24,9 +23,9 @@ import org.jetbrains.kotlin.name.Name
  * Tertiary (backup) branch:
  * - Produce an "expect class" for "common" fragment and the corresponding "actual typealias" declarations for each platform fragment.
  */
-class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirClassifier>() {
-    private val primary = TypeAliasShortCircuitingCommonizer(cache)
-    private val secondary = TypeAliasLiftingUpCommonizer(cache)
+class TypeAliasCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirClassifier>() {
+    private val primary = TypeAliasShortCircuitingCommonizer(classifiers)
+    private val secondary = TypeAliasLiftingUpCommonizer(classifiers)
     private val tertiary = TypeAliasExpectClassCommonizer()
 
     override fun commonizationResult(): CirClassifier = primary.resultOrNull ?: secondary.resultOrNull ?: tertiary.result
@@ -43,11 +42,13 @@ class TypeAliasCommonizer(cache: CirClassifiersCache) : AbstractStandardCommoniz
     }
 }
 
-private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
+private class TypeAliasShortCircuitingCommonizer(
+    private val classifiers: CirKnownClassifiers
+) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
     private lateinit var name: Name
-    private val typeParameters = TypeParameterListCommonizer(cache)
+    private val typeParameters = TypeParameterListCommonizer(classifiers)
     private lateinit var underlyingType: CirClassOrTypeAliasType
-    private val expandedType = TypeCommonizer(cache)
+    private val expandedType = TypeCommonizer(classifiers)
     private val visibility = VisibilityCommonizer.lowering()
 
     override fun commonizationResult() = CirTypeAliasFactory.create(
@@ -75,7 +76,7 @@ private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : A
     private tailrec fun computeCommonizedUnderlyingType(underlyingType: CirClassOrTypeAliasType): CirClassOrTypeAliasType {
         return when (underlyingType) {
             is CirClassType -> underlyingType
-            is CirTypeAliasType -> if (underlyingType.classifierId.packageFqName.isUnderStandardKotlinPackages)
+            is CirTypeAliasType -> if (classifiers.commonDependeeLibraries.hasClassifier(underlyingType.classifierId))
                 underlyingType
             else
                 computeCommonizedUnderlyingType(underlyingType.underlyingType)
@@ -83,10 +84,10 @@ private class TypeAliasShortCircuitingCommonizer(cache: CirClassifiersCache) : A
     }
 }
 
-private class TypeAliasLiftingUpCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
+private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
     private lateinit var name: Name
-    private val typeParameters = TypeParameterListCommonizer(cache)
-    private val underlyingType = TypeCommonizer(cache)
+    private val typeParameters = TypeParameterListCommonizer(classifiers)
+    private val underlyingType = TypeCommonizer(classifiers)
     private val visibility = VisibilityCommonizer.lowering()
 
     override fun commonizationResult(): CirTypeAlias {

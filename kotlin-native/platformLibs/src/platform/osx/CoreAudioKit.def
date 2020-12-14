@@ -1,4 +1,4 @@
-depends = AppKit ApplicationServices AudioToolbox AudioUnit CFNetwork Cocoa CoreAudioTypes CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+depends = AppKit ApplicationServices AudioToolbox AudioUnit CFNetwork CloudKit Cocoa CoreAudioTypes CoreData CoreFoundation CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
 language = Objective-C
 package = platform.CoreAudioKit
 modules = CoreAudioKit

@@ -1,0 +1,14 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+JvmRecordSupport
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+warning: language version 1.5 is experimental, there are no backwards compatibility guarantees for new language and library features
+compiler/testData/cli/jvm/jvmRecord.kt:1:1: error: using @JvmRecord is only allowed with -jvm-target 15 and -Xjvm-enable-preview flag enabled
+@JvmRecord
+^
+COMPILATION_ERROR

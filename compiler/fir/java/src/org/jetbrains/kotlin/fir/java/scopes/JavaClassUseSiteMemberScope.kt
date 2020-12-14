@@ -41,7 +41,7 @@ class JavaClassUseSiteMemberScope(
     internal val symbol = klass.symbol
 
     internal fun bindOverrides(name: Name) {
-        val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
+        val overrideCandidates = mutableSetOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) {
             overrideCandidates += it
         }
@@ -93,7 +93,7 @@ class JavaClassUseSiteMemberScope(
                 var getterSymbol: FirNamedFunctionSymbol? = null
                 var setterSymbol: FirNamedFunctionSymbol? = null
                 declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
-                    if (getterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
+                    if (getterSymbol == null) {
                         val function = functionSymbol.fir
                         if (!function.isStatic && function.valueParameters.isEmpty()) {
                             getterSymbol = functionSymbol
@@ -103,7 +103,7 @@ class JavaClassUseSiteMemberScope(
                 val setterName = session.syntheticNamesProvider.setterNameByGetterName(getterName)
                 if (getterSymbol != null && setterName != null) {
                     declaredMemberScope.processFunctionsByName(setterName) { functionSymbol ->
-                        if (setterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
+                        if (setterSymbol == null) {
                             val function = functionSymbol.fir
                             if (!function.isStatic && function.valueParameters.size == 1) {
                                 val returnTypeRef = function.returnTypeRef
@@ -152,7 +152,7 @@ class JavaClassUseSiteMemberScope(
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (symbol.fir !is FirJavaClass) {
             return super.processFunctionsByName(name, processor)
         }

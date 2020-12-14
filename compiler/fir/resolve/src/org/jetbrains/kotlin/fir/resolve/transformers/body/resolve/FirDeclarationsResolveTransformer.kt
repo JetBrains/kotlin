@@ -192,7 +192,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     private fun transformPropertyWithDelegate(property: FirProperty) {
-        property.transformDelegate(transformer, ResolutionMode.ContextDependent)
+        property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
 
         val delegateExpression = property.delegate!!
 
@@ -230,7 +230,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): CompositeTransformResult<FirStatement> {
         dataFlowAnalyzer.enterDelegateExpression()
         try {
-            val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, ResolutionMode.ContextDependent)
+            val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, data)
             when (val calleeReference = (delegateProvider as FirResolvable).calleeReference) {
                 is FirResolvedNamedReference -> return delegateProvider.compose()
                 is FirNamedReferenceWithCandidate -> {
@@ -243,7 +243,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
             (delegateProvider as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
             return wrappedDelegateExpression.expression
-                .transformSingle(transformer, ResolutionMode.ContextDependent)
+                .transformSingle(transformer, data)
                 .approximateIfIsIntegerConst()
                 .compose()
         } finally {
@@ -669,7 +669,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             context.saveContextForAnonymousFunction(anonymousFunction)
         }
         return when (data) {
-            ResolutionMode.ContextDependent -> {
+            is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
                 dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
                 anonymousFunction.addReturn().compose()
             }

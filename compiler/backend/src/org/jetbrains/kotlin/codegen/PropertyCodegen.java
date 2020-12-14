@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -435,9 +436,10 @@ public class PropertyCodegen {
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, new Pair<>(type, name));
 
         if (isBackingFieldOwner) {
+            String signature = isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor);
             FieldVisitor fv = builder.newField(
                     JvmDeclarationOriginKt.OtherOrigin(propertyDescriptor), modifiers, name, type.getDescriptor(),
-                    isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+                    signature, defaultValue
             );
 
             if (annotatedField != null) {
@@ -449,6 +451,10 @@ public class PropertyCodegen {
                         propertyDescriptor.isLateInit();
                 AnnotationCodegen.forField(fv, memberCodegen, state, skipNullabilityAnnotations)
                         .genAnnotations(annotatedField, type, propertyDescriptor.getType(), null, additionalVisibleAnnotations);
+            }
+
+            if (propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor && JvmAnnotationUtilKt.isJvmRecord((ClassDescriptor) propertyDescriptor.getContainingDeclaration())) {
+                builder.newRecordComponent(name, type.getDescriptor(), signature);
             }
         }
     }

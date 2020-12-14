@@ -1,0 +1,71 @@
+open class ControlFlowInfo<K : Any?, V : Any?> : Map<K, V> {
+  constructor(map: Map<K, V>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = map
+  }
+
+  val map: Map<K, V>
+    field = map
+    get
+
+  override fun containsKey(key: K): Boolean {
+    return <this>.#<$$delegate_0>.containsKey(key = key)
+  }
+
+  override fun containsValue(value: V): Boolean {
+    return <this>.#<$$delegate_0>.containsValue(value = value)
+  }
+
+  override operator fun get(key: K): V? {
+    return <this>.#<$$delegate_0>.get(key = key)
+  }
+
+  @SinceKotlin(version = "1.1")
+  @PlatformDependent
+  override fun getOrDefault(key: K, defaultValue: V): V {
+    return <this>.#<$$delegate_0>.getOrDefault(key = key, defaultValue = defaultValue)
+  }
+
+  override fun isEmpty(): Boolean {
+    return <this>.#<$$delegate_0>.isEmpty()
+  }
+
+  override val entries: Set<Entry<K, V>>
+    override get(): Set<Entry<K, V>> {
+      return <this>.#<$$delegate_0>.<get-entries>()
+    }
+
+  override val keys: Set<K>
+    override get(): Set<K> {
+      return <this>.#<$$delegate_0>.<get-keys>()
+    }
+
+  override val size: Int
+    override get(): Int {
+      return <this>.#<$$delegate_0>.<get-size>()
+    }
+
+  override val values: Collection<V>
+    override get(): Collection<V> {
+      return <this>.#<$$delegate_0>.<get-values>()
+    }
+
+  local /* final field */ val <$$delegate_0>: Map<K, V>
+
+}
+
+class StringFlowInfo : ControlFlowInfo<String, String> {
+  constructor(map: Map<String, String>) /* primary */ {
+    super/*ControlFlowInfo*/<String, String>(map = map)
+    /* <init>() */
+
+  }
+
+  fun foo(info: StringFlowInfo) {
+    <this>.<get-keys>() /*~> Unit */
+    info.<get-keys>() /*~> Unit */
+  }
+
+}

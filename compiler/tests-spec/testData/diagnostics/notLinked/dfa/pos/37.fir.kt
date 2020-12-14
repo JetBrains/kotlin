@@ -98,7 +98,7 @@ fun case_9(x: Boolean?) {
     while (x ?: return)
     while (x == null)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>.equals(10)
 }
 

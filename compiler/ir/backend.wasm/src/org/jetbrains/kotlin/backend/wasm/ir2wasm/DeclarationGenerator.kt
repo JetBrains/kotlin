@@ -168,6 +168,23 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         if (declaration.isAnnotationClass) return
         val symbol = declaration.symbol
 
+
+        // Handle arrays
+        declaration.getWasmArrayAnnotation()?.let { wasmArrayAnnotation ->
+            val nameStr = declaration.fqNameWhenAvailable.toString()
+            val wasmArrayDeclaration = WasmArrayDeclaration(
+                nameStr,
+                WasmStructFieldDeclaration(
+                    name = "field",
+                    type = context.transformType(wasmArrayAnnotation.type),
+                    isMutable = true
+                )
+            )
+
+            context.defineGcType(symbol, wasmArrayDeclaration)
+            return
+        }
+
         if (declaration.isInterface) {
             context.registerInterface(symbol)
         } else {
@@ -183,7 +200,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 }
             )
 
-            context.defineStructType(symbol, structType)
+            context.defineGcType(symbol, structType)
 
             var depth = 2
             val metadata = context.getClassMetadata(symbol)

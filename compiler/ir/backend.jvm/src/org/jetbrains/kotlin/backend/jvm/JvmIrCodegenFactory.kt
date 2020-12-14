@@ -177,10 +177,10 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
-        serializerFactory: MetadataSerializerFactory,
+        extensions: JvmGeneratorExtensions,
+        serializerFactory: MetadataSerializerFactory
     ) {
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
-        val extensions = JvmGeneratorExtensions()
         val irProviders = generateTypicalIrProviderList(
             irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
         )

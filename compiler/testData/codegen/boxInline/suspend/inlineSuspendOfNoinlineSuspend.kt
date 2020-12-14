@@ -1,9 +1,8 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 // Block is allowed to be called from nested classes/lambdas (as common crossinlines)
@@ -43,9 +42,7 @@ suspend inline fun test4(noinline c: suspend () -> Unit) {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 suspend fun calculate() = "OK"

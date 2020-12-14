@@ -136,12 +136,12 @@ internal abstract class KotlinToolRunner(
         private val isolatedClassLoadersMap = ConcurrentHashMap<Any, ClassLoader>()
 
         private fun Map<String, String>.toPrettyString(): String = buildString {
-            append('{')
+            append('[')
             if (this@toPrettyString.isNotEmpty()) append('\n')
             this@toPrettyString.entries.forEach { (key, value) ->
                 append('\t').append(key).append(" = ").append(value.toPrettyString()).append('\n')
             }
-            append('}')
+            append(']')
         }
 
         private fun Collection<String>.toPrettyString(): String = buildString {

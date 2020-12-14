@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.tool
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.*
+import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 
 const val HEADER_FILTER_ADDITIONAL_SEARCH_PREFIX = "headerFilterAdditionalSearchPrefix"
 const val NODEFAULTLIBS_DEPRECATED = "nodefaultlibs"
@@ -46,7 +47,7 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple()
     val repo by argParser.option(ArgType.String, shortName = "r", description = "repository to resolve dependencies")
             .multiple()
-    val mode by argParser.option(ArgType.Choice(listOf(MODE_METADATA, MODE_SOURCECODE)), description = "the way interop library is generated")
+    val mode by argParser.option(ArgType.Choice<GenerationMode>(), description = "the way interop library is generated")
             .default(DEFAULT_MODE)
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
@@ -65,10 +66,7 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             description = "additional kotlinc compiler option").multiple()
 
     companion object {
-        const val MODE_SOURCECODE = "sourcecode"
-        const val MODE_METADATA = "metadata"
-
-        const val DEFAULT_MODE = MODE_METADATA
+        val DEFAULT_MODE = GenerationMode.METADATA
     }
 }
 
@@ -127,8 +125,13 @@ open class CInteropArguments(argParser: ArgParser =
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",
         prefixStyle = ArgParser.OptionPrefixStyle.JVM)): CommonInteropArguments(argParser) {
-    val target by argParser.option(ArgType.Choice(listOf("wasm32")),
-            description = "wasm target to compile to").default("wasm32")
+    enum class TargetType {
+        WASM32;
+
+        override fun toString() = name.toLowerCase()
+    }
+    val target by argParser.option(ArgType.Choice<TargetType>(),
+            description = "wasm target to compile to").default(TargetType.WASM32)
 }
 
 internal fun warn(msg: String) {

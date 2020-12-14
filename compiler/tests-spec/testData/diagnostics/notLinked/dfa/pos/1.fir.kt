@@ -2,6 +2,15 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 1
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, functions, typealiases, properties, enumClasses
+ */
+
 // FILE: other_package.kt
 
 package otherpackage
@@ -129,7 +138,7 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString")!>x<!>
+    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!>
     if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!>.equals(null)
     if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!>.propT
     if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!> != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableString & TypealiasNullableString")!>x<!>.propAny
@@ -208,7 +217,7 @@ fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndir
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndirect) =
     if (x == null) "1"
-    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableStringIndirect")!>x<!>
+    else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableStringIndirect & TypealiasNullableStringIndirect")!>x<!>
     else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableStringIndirect & TypealiasNullableStringIndirect")!>x<!>.equals(null)
     else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableStringIndirect & TypealiasNullableStringIndirect")!>x<!>.propT
     else if (y === null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & TypealiasNullableStringIndirect & TypealiasNullableStringIndirect")!>x<!>.propAny
@@ -604,7 +613,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.b != null) this.b.funAny()
         if (this.b != null) this.b.funNullableT()
         if (this.b != null) this.b.funNullableAny()
-        if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>
+        if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.equals(null)
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.propT
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.propAny
@@ -633,7 +642,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funAny()
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableT()
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>
+        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>
         if (b != null || this.b != null) this.b.equals(null)
         if (b != null || this.b != null) this.b.propT
         if (b != null || this.b != null) this.b.propAny
@@ -692,7 +701,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funAny()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableT()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableAny()
-        if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
+        if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.equals(null)
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.propT
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.propAny
@@ -702,7 +711,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funAny()
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableT()
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
+        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>
         if (c != null || this.c != null) this.c.equals(null)
         if (c != null || this.c != null) this.c.propT
         if (c != null || this.c != null) this.c.propAny
@@ -761,7 +770,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funAny()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableT()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableAny()
-        if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>d<!>
+        if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.equals(null)
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.propT
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.propAny
@@ -771,7 +780,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funAny()
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableT()
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>d<!>
+        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>
         if (d != null || this.d != null) this.d.equals(null)
         if (d != null || this.d != null) this.d.propT
         if (d != null || this.d != null) this.d.propAny
@@ -820,7 +829,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funAny()
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableT()
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableAny()
-        if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char")!>e<!>
+        if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>
         if (e != null) this.e.equals(null)
         if (e != null) this.e.propT
         if (e != null) this.e.propAny
@@ -840,7 +849,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funAny()
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableT()
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char")!>e<!>
+        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>
         if (e != null || this.e != null) this.e.equals(null)
         if (e != null || this.e != null) this.e.propT
         if (e != null || this.e != null) this.e.propAny
@@ -889,7 +898,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funAny()
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableT()
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableAny()
-        if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>f<!>
+        if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>
         if (f != null) this.f.equals(null)
         if (f != null) this.f.propT
         if (f != null) this.f.propAny
@@ -909,7 +918,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funAny()
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableT()
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>f<!>
+        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>
         if (f != null || this.f != null) this.f.equals(null)
         if (f != null || this.f != null) this.f.propT
         if (f != null || this.f != null) this.f.propAny
@@ -1260,7 +1269,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -1270,7 +1279,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -1280,7 +1289,7 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) this.w.equals(null)
         if (w != null || this.w != null) this.w.propT
         if (w != null || this.w != null) this.w.propAny
@@ -1295,9 +1304,9 @@ open class Case29(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
+        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
         if (s != null || this.s != null) this.s
     }
 
@@ -1657,7 +1666,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funAny()
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableT()
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableAny()
-        if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>
+        if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>
         if (b != null) this.b.equals(null)
         if (b != null) this.b.propT
         if (b != null) this.b.propAny
@@ -1677,7 +1686,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funAny()
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableT()
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>
+        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>
         if (b != null || this.b != null) this.b.equals(null)
         if (b != null || this.b != null) this.b.propT
         if (b != null || this.b != null) this.b.propAny
@@ -1736,7 +1745,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funAny()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableT()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableAny()
-        if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
+        if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.equals(null)
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.propT
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.propAny
@@ -1746,7 +1755,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funAny()
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableT()
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
+        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>
         if (c != null || this.c != null) this.c.equals(null)
         if (c != null || this.c != null) this.c.propT
         if (c != null || this.c != null) this.c.propAny
@@ -1805,7 +1814,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funAny()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableT()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableAny()
-        if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>d<!>
+        if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.equals(null)
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.propT
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.propAny
@@ -1815,7 +1824,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funAny()
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableT()
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>d<!>
+        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>
         if (d != null || this.d != null) this.d.equals(null)
         if (d != null || this.d != null) this.d.propT
         if (d != null || this.d != null) this.d.propAny
@@ -1864,7 +1873,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funAny()
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableT()
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableAny()
-        if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char")!>e<!>
+        if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>
         if (e != null) this.e.equals(null)
         if (e != null) this.e.propT
         if (e != null) this.e.propAny
@@ -1884,7 +1893,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funAny()
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableT()
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char")!>e<!>
+        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>
         if (e != null || this.e != null) this.e.equals(null)
         if (e != null || this.e != null) this.e.propT
         if (e != null || this.e != null) this.e.propAny
@@ -1933,7 +1942,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funAny()
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableT()
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableAny()
-        if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>f<!>
+        if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>
         if (f != null) this.f.equals(null)
         if (f != null) this.f.propT
         if (f != null) this.f.propAny
@@ -1953,7 +1962,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funAny()
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableT()
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>f<!>
+        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>
         if (f != null || this.f != null) this.f.equals(null)
         if (f != null || this.f != null) this.f.propT
         if (f != null || this.f != null) this.f.propAny
@@ -2304,7 +2313,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -2314,7 +2323,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -2324,7 +2333,7 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) this.w.equals(null)
         if (w != null || this.w != null) this.w.propT
         if (w != null || this.w != null) this.w.propAny
@@ -2339,9 +2348,9 @@ sealed class Case30(a: Int?, val b: Float?, private val c: Unit?, protected val 
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
+        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
         if (s != null || this.s != null) this.s
     }
 
@@ -2703,7 +2712,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funAny()
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableT()
         if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableAny()
-        if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>
+        if (this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>
         if (b != null) this.b.equals(null)
         if (b != null) this.b.propT
         if (b != null) this.b.propAny
@@ -2723,7 +2732,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funAny()
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableT()
         if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>.funNullableAny()
-        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>b<!>
+        if (b != null || this.b != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>
         if (b != null || this.b != null) this.b.equals(null)
         if (b != null || this.b != null) this.b.propT
         if (b != null || this.b != null) this.b.propAny
@@ -2782,7 +2791,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funAny()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableT()
         if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableAny()
-        if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
+        if (this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.equals(null)
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.propT
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.propAny
@@ -2792,7 +2801,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funAny()
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableT()
         if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>.funNullableAny()
-        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
+        if (c != null || this.c != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Unit?")!>c<!>
         if (c != null || this.c != null) this.c.equals(null)
         if (c != null || this.c != null) this.c.propT
         if (c != null || this.c != null) this.c.propAny
@@ -2851,7 +2860,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funAny()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableT()
         if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableAny()
-        if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>d<!>
+        if (this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.equals(null)
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.propT
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.propAny
@@ -2861,7 +2870,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funAny()
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableT()
         if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>.funNullableAny()
-        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>d<!>
+        if (d != null || this.d != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>d<!>
         if (d != null || this.d != null) this.d.equals(null)
         if (d != null || this.d != null) this.d.propT
         if (d != null || this.d != null) this.d.propAny
@@ -2910,7 +2919,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funAny()
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableT()
         if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableAny()
-        if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char")!>e<!>
+        if (this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>
         if (e != null) this.e.equals(null)
         if (e != null) this.e.propT
         if (e != null) this.e.propAny
@@ -2930,7 +2939,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funAny()
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableT()
         if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>.funNullableAny()
-        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char")!>e<!>
+        if (e != null || this.e != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char & kotlin.Char?")!>e<!>
         if (e != null || this.e != null) this.e.equals(null)
         if (e != null || this.e != null) this.e.propT
         if (e != null || this.e != null) this.e.propAny
@@ -2979,7 +2988,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funAny()
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableT()
         if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableAny()
-        if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>f<!>
+        if (this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>
         if (f != null) this.f.equals(null)
         if (f != null) this.f.propT
         if (f != null) this.f.propAny
@@ -2999,7 +3008,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funAny()
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableT()
         if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>.funNullableAny()
-        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>f<!>
+        if (f != null || this.f != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>f<!>
         if (f != null || this.f != null) this.f.equals(null)
         if (f != null || this.f != null) this.f.propT
         if (f != null || this.f != null) this.f.propAny
@@ -3349,7 +3358,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -3359,7 +3368,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -3369,7 +3378,7 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) this.w.equals(null)
         if (w != null || this.w != null) this.w.propT
         if (w != null || this.w != null) this.w.propAny
@@ -3384,9 +3393,9 @@ enum class Case31(a: Int?, val b: Float?, private val c: Unit?, protected val d:
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
+        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
         if (s != null || this.s != null) this.s
     }
 
@@ -3997,7 +4006,7 @@ object Case32 {
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -4007,7 +4016,7 @@ object Case32 {
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.equals(null)
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propT
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.propAny
@@ -4017,7 +4026,7 @@ object Case32 {
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funAny()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableT()
         if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>.funNullableAny()
-        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>w<!>
+        if (w != null || this.w != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number?")!>w<!>
         if (w != null || this.w != null) this.w.equals(null)
         if (w != null || this.w != null) this.w.propT
         if (w != null || this.w != null) this.w.propAny
@@ -4032,9 +4041,9 @@ object Case32 {
         s = null
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>.hashCode()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>s<!>
-        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
-        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>s<!>
+        if (s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
+        if (s != null || this.s != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>s<!>
         if (s != null || this.s != null) this.s
     }
 

@@ -1,0 +1,22 @@
+interface C {
+  abstract val test1: Int
+    abstract get
+
+  val test2: Int
+    get(): Int {
+      return 0
+    }
+
+  abstract var test3: Int
+    abstract get
+    abstract set
+
+  var test4: Int
+    get(): Int {
+      return 0
+    }
+    set(value: Int) {
+    }
+
+}
+

@@ -87,7 +87,9 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
                     varargElementType = null,
                     isCrossinline = false,
                     type = parameterType,
-                    isNoinline = false
+                    isNoinline = false,
+                    isHidden = false,
+                    isAssignable = false
             ).apply {
                 it.bind(this)
                 parent = function
@@ -142,7 +144,9 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
                     varargElementType = null,
                     isCrossinline = false,
                     type = parameterType,
-                    isNoinline = false
+                    isNoinline = false,
+                    isHidden = false,
+                    isAssignable = false
             ).apply {
                 it.bind(this)
                 parent = function

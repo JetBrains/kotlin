@@ -10,10 +10,17 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
 import java.io.File
 import kotlin.reflect.full.findAnnotation
 
+@WithMutedInDatabaseRunTest
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
+    override fun runTest() {
+        runTest { super.runTest() }
+    }
+
     protected open fun isFirPlugin(): Boolean = false
     override fun setUp() {
         super.setUp()

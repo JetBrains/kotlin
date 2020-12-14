@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.UserNotificationsUI
+
+modules = UserNotificationsUI
+compilerOpts = -framework UserNotificationsUI
+linkerOpts = -framework UserNotificationsUI

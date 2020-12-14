@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.doNothing
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.patchCallables
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isObjCInteropCallableAnnotation
 import org.jetbrains.kotlin.name.Name
 
 class CallableValueParametersCommonizer(
-    cache: CirClassifiersCache
+    classifiers: CirKnownClassifiers
 ) : Commonizer<CirCallableMemberWithParameters, CallableValueParametersCommonizer.Result> {
     class Result(
         val hasStableParameterNames: Boolean,
@@ -118,7 +118,7 @@ class CallableValueParametersCommonizer(
         }
     }
 
-    private val valueParameters = ValueParameterListCommonizer(cache)
+    private val valueParameters = ValueParameterListCommonizer(classifiers)
     private val callables: MutableList<CallableToPatch> = mutableListOf()
     private var hasStableParameterNames = true
     private var valueParameterNames: ValueParameterNames? = null

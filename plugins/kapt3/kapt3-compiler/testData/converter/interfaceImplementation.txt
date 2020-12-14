@@ -17,6 +17,11 @@ public final class Product2 implements Named {
     @org.jetbrains.annotations.Nullable()
     private java.lang.String name;
 
+    public Product2(@org.jetbrains.annotations.NotNull()
+    java.lang.String otherName) {
+        super();
+    }
+
     @org.jetbrains.annotations.Nullable()
     @java.lang.Override()
     public java.lang.String getName() {
@@ -25,10 +30,5 @@ public final class Product2 implements Named {
 
     public void setName(@org.jetbrains.annotations.Nullable()
     java.lang.String p0) {
-    }
-
-    public Product2(@org.jetbrains.annotations.NotNull()
-    java.lang.String otherName) {
-        super();
     }
 }

@@ -1221,7 +1221,12 @@ public class FunctionCodegen {
 
         // 'null' because the "could not find expected declaration" error has been already reported in isDefaultNeeded earlier
         List<ValueParameterDescriptor> valueParameters =
-                CodegenUtil.getFunctionParametersForDefaultValueGeneration(functionDescriptor, null);
+                functionDescriptor.isSuspend()
+                ? CollectionsKt.plus(
+                    CodegenUtil.getFunctionParametersForDefaultValueGeneration(
+                            CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(functionDescriptor), null),
+                    CollectionsKt.last(functionDescriptor.getValueParameters()))
+                : CodegenUtil.getFunctionParametersForDefaultValueGeneration(functionDescriptor, null);
 
         boolean isStatic = isStaticMethod(methodContext.getContextKind(), functionDescriptor);
         FrameMap frameMap = createFrameMap(state, signature, functionDescriptor.getExtensionReceiverParameter(), valueParameters, isStatic);
@@ -1589,7 +1594,7 @@ public class FunctionCodegen {
 
                         // When delegating to inline class, we invoke static implementation method
                         // that takes inline class underlying value as 1st argument.
-                        int toArgsShift = toClass.isInline() ? 1 : 0;
+                        int toArgsShift = InlineClassesUtilsKt.isInlineClass(toClass) ? 1 : 0;
 
                         int reg = 1;
                         for (int i = 0; i < argTypes.length; ++i) {
@@ -1609,7 +1614,7 @@ public class FunctionCodegen {
                         if (toClass.getKind() == ClassKind.INTERFACE) {
                             iv.invokeinterface(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor());
                         }
-                        else if (toClass.isInline()) {
+                        else if (InlineClassesUtilsKt.isInlineClass(toClass)) {
                             iv.invokestatic(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor(), false);
                         }
                         else {

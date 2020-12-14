@@ -4,6 +4,7 @@ public final class kotlin/_2Kt {
     public final static method foo-wfSZ3cc(p0: int, p1: int): void
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class test/IC {
     // source: '1.kt'

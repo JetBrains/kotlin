@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:Suppress("UNUSED_VARIABLE")
+
 package kotlinx.cli
 
 import kotlinx.cli.ArgParser

@@ -15,8 +15,8 @@ class PathReadWriteTest : AbstractPathTest() {
     fun appendText() {
         val file = createTempFile().cleanup()
         file.writeText("Hello\n")
-        file.appendText("World\n")
-        file.writeText("Again", Charsets.US_ASCII, StandardOpenOption.APPEND)
+        file.appendText("World\n" as CharSequence)
+        file.writeText(StringBuilder("Again"), Charsets.US_ASCII, StandardOpenOption.APPEND)
 
         assertEquals("Hello\nWorld\nAgain", file.readText())
         assertEquals(listOf("Hello", "World", "Again"), file.readLines(Charsets.UTF_8))

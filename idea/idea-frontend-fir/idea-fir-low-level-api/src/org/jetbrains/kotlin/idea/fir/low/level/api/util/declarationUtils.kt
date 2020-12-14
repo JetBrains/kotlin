@@ -128,3 +128,5 @@ private fun KtTypeAlias.findFir(firSymbolProvider: FirSymbolProvider): FirTypeAl
     }
 }
 
+val FirDeclaration.isGeneratedDeclaration
+    get() = realPsi == null

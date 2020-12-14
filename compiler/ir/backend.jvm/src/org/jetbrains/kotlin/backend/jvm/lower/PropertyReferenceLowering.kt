@@ -31,11 +31,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -154,23 +156,29 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         val wrapper: IrFunction
     )
 
-    private fun propertyReferenceKind(mutable: Boolean, i: Int) = PropertyReferenceKind(
-        context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
-        context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
-        context.ir.symbols.reflection.owner.functions.single { it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i") }
-    )
+    private fun propertyReferenceKind(expression: IrCallableReference<*>, mutable: Boolean, i: Int): PropertyReferenceKind {
+        check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
+        return PropertyReferenceKind(
+            context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
+            context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
+            context.ir.symbols.reflection.owner.functions.single {
+                it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i")
+            }
+        )
+    }
 
-    private fun propertyReferenceKindFor(expression: IrMemberAccessExpression<*>): PropertyReferenceKind =
+    private fun propertyReferenceKindFor(expression: IrCallableReference<*>): PropertyReferenceKind =
         expression.getter?.owner?.let {
             val boundReceivers = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver).size
             val needReceivers = listOfNotNull(it.dispatchReceiverParameter, it.extensionReceiverParameter).size
             // PropertyReference1 will swap the receivers if bound with the extension one, and PropertyReference0
             // has no way to bind two receivers at once.
-            if (boundReceivers == 2 || (expression.extensionReceiver != null && needReceivers == 2))
-                TODO("property reference with 2 receivers")
-            propertyReferenceKind(expression.setter != null, needReceivers - boundReceivers)
+            check(boundReceivers < 2 && (expression.extensionReceiver == null || needReceivers < 2)) {
+                "Property reference with two receivers is not supported: ${expression.render()}"
+            }
+            propertyReferenceKind(expression, expression.setter != null, needReceivers - boundReceivers)
         } ?: expression.field?.owner?.let {
-            propertyReferenceKind(!it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1)
+            propertyReferenceKind(expression, !it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1)
         } ?: throw AssertionError("property has no getter and no field: ${expression.dump()}")
 
     private data class PropertyInstance(val initializer: IrExpression, val index: Int)
@@ -301,9 +309,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).irBlock {
             +referenceClass
             +irCall(referenceClass.constructors.single()).apply {
-                var index = 0
-                expression.dispatchReceiver?.let { putValueArgument(index++, it) }
-                expression.extensionReceiver?.let { putValueArgument(index++, it) }
+                expression.getBoundReceiver()?.let { putValueArgument(0, it) }
             }
         }
     }
@@ -343,14 +349,15 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
                 var index = 1
                 call.copyTypeArgumentsFrom(expression)
+                val hasBoundReceiver = expression.getBoundReceiver() != null
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    if (expression.dispatchReceiver != null)
+                    if (hasBoundReceiver)
                         irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
                     else
                         irImplicitCast(irGet(arguments[index++]), it.type)
                 }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
-                    if (expression.extensionReceiver != null)
+                    if (hasBoundReceiver)
                         irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
                     else
                         irImplicitCast(irGet(arguments[index++]), it.type)
@@ -397,8 +404,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     }
 
     private fun addConstructor(expression: IrCallableReference<*>, referenceClass: IrClass, superClass: IrClass) {
-        // See propertyReferenceKindFor -- only one of them could ever be present.
-        val hasBoundReceiver = expression.dispatchReceiver != null || expression.extensionReceiver != null
+        val hasBoundReceiver = expression.getBoundReceiver() != null
         val numOfSuperArgs =
             (if (hasBoundReceiver) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
         val superConstructor = superClass.constructors.single { it.valueParameters.size == numOfSuperArgs }
@@ -433,5 +439,14 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                 }
             }
         }
+    }
+
+    private fun IrCallableReference<*>.getBoundReceiver(): IrExpression? {
+        val callee = symbol.owner
+        return if (callee is IrDeclaration && callee.isJvmStaticInObject()) {
+            // See FunctionReferenceLowering.FunctionReferenceBuilder.createFakeBoundReceiverForJvmStaticInObject.
+            val objectClass = callee.parentAsClass
+            IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
+        } else dispatchReceiver ?: extensionReceiver
     }
 }

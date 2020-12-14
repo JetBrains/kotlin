@@ -34,9 +34,13 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
             }
         }
 
-    fun createReceiverParameter(parameter: ReceiverParameterDescriptor?): ReadWriteProperty<Any?, IrValueParameter?> =
+    fun createReceiverParameter(
+        parameter: ReceiverParameterDescriptor?,
+        functionDispatchReceiver: Boolean = false,
+    ): ReadWriteProperty<Any?, IrValueParameter?> =
         lazyVar {
-            typeTranslator.buildWithScope(this) {
+            if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
+            else typeTranslator.buildWithScope(this) {
                 parameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
             }
         }

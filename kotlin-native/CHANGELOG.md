@@ -1,3 +1,31 @@
+# 1.4.21 (Dec 2020)
+  * Fixed [KT-43517](https://youtrack.jetbrains.com/issue/KT-43517)
+  * Fixed [KT-43530](https://youtrack.jetbrains.com/issue/KT-43530)
+  * Fixed [KT-43265](https://youtrack.jetbrains.com/issue/KT-43265)
+
+# 1.4.20 (Nov 2020)
+  * XCode 12 support
+  * Completely reworked escape analysis for object allocation
+  * Use ForeignException wrapper to handle native exceptions ([GH-3553](https://github.com/JetBrains/kotlin-native/issues/3553))
+  * CocoaPods plugin improvements
+  * equals/hashCode support for adapted callable references ([KT-39800](https://youtrack.jetbrains.com/issue/KT-39800))
+  * equals/hashCode support for fun interfaces ([KT-39798](https://youtrack.jetbrains.com/issue/KT-39798))
+  * IR-level optimizations
+    * Constant folding
+    * String concatenation flattenning
+  * Various fixes/improvements to compiler caches
+  * Some fixes to samples (calculator, tensorflow)
+  * Bug fixes
+    * Eliminate recursive GC calls ([KT-42275](https://youtrack.jetbrains.com/issue/KT-42275))
+    * Fix support for @OverrideInit constructors with default arguments ([KT-41910](https://youtrack.jetbrains.com/issue/KT-41910))
+    * Fix support for forward declarations ([KT-41655](https://youtrack.jetbrains.com/issue/KT-41655))
+    * [KT-41394](https://youtrack.jetbrains.com/issue/KT-41394)
+    * [KT-41811](https://youtrack.jetbrains.com/issue/KT-41811)
+    * [KT-41716](https://youtrack.jetbrains.com/issue/KT-41716)
+    * [KT-41250](https://youtrack.jetbrains.com/issue/KT-41250)
+    * [KT-42000](https://youtrack.jetbrains.com/issue/KT-42000)
+    * [KT-41907](https://youtrack.jetbrains.com/issue/KT-41907)
+
 # 1.4.10 (Sep 2020)
   * Fixed a newline handling in @Deprecated annotation in ObjCExport ([KT-39206](https://youtrack.jetbrains.com/issue/KT-39206))
   * Fixed suspend function types in ObjCExport ([KT-40976](https://youtrack.jetbrains.com/issue/KT-40976))

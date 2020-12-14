@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public final class<null>  AnonymousObjectInGenericFunKt$test$x$1 {
+    // source: 'anonymousObjectInGenericFun.kt'
+    public final <<S1:Ljava/lang/Object;>()V> method foo(): void
+    public final <<S2:Ljava/lang/Object;>(TS2;)V> method ext(p0: java.lang.Object): void
+    public final <<S3:Ljava/lang/Object;>(TS3;)I> method getExtVal(p0: java.lang.Object): int
+    public final <<S4:Ljava/lang/Object;>(TS4;)I> method getExtVar(p0: java.lang.Object): int
+    public final <<S4:Ljava/lang/Object;>(TS4;I)V> method setExtVar(p0: java.lang.Object, p1: int): void
+    <null> method <init>(): void
+    enclosing method AnonymousObjectInGenericFunKt.test()V
+    inner (anonymous) class AnonymousObjectInGenericFunKt$test$x$1
+}
+
+@kotlin.Metadata
+public final class<null>  AnonymousObjectInGenericFunKt {
+    // source: 'anonymousObjectInGenericFun.kt'
+    public final static <<T:Ljava/lang/Object;>()V> method test(): void
+    inner (anonymous) class AnonymousObjectInGenericFunKt$test$x$1
+}

@@ -19,14 +19,12 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elements) {
   RETURN_RESULT_OF(AllocArrayInstanceRelaxed, typeInfo, elements);
 }
 
-OBJ_GETTER(InitInstance,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(InitInstanceRelaxed, location, typeInfo, ctor);
+OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    RETURN_RESULT_OF(InitThreadLocalSingletonRelaxed, location, typeInfo, ctor);
 }
 
-OBJ_GETTER(InitSharedInstance,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(InitSharedInstanceRelaxed, location, typeInfo, ctor);
+OBJ_GETTER(InitSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    RETURN_RESULT_OF(InitSingletonRelaxed, location, typeInfo, ctor);
 }
 
 RUNTIME_NOTHROW void ReleaseHeapRef(const ObjHeader* object) {

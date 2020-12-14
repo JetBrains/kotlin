@@ -35,8 +35,6 @@ internal class ClassMemberGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
-    private val annotationGenerator = AnnotationGenerator(visitor)
-
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }

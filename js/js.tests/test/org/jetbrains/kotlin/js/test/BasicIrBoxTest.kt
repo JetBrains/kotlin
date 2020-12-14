@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,14 +30,12 @@ private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false,
     targetBackend: TargetBackend = TargetBackend.JS_IR
 ) : BasicBoxTest(
     pathToTestDir,
     testGroupOutputDirPrefix,
-    pathToRootOutputDir = pathToRootOutputDir,
     typedArraysEnabled = true,
     generateSourceMap = generateSourceMap,
     generateNodeJsRunner = generateNodeJsRunner,
@@ -58,8 +56,6 @@ abstract class BasicIrBoxTest(
     val runEs6Mode: Boolean = getBoolean("kotlin.js.ir.es6", false)
 
     val perModule: Boolean = getBoolean("kotlin.js.ir.perModule")
-
-    private val osName: String = System.getProperty("os.name").toLowerCase()
 
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
@@ -93,7 +89,8 @@ abstract class BasicIrBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         skipDceDriven: Boolean,
-        splitPerModule: Boolean
+        splitPerModule: Boolean,
+        propertyLazyInitialization: Boolean,
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -143,7 +140,8 @@ abstract class BasicIrBoxTest(
                     generateFullJs = true,
                     generateDceJs = runIrDce,
                     es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule
+                    multiModule = splitPerModule || perModule,
+                    propertyLazyInitialization = propertyLazyInitialization,
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -169,7 +167,8 @@ abstract class BasicIrBoxTest(
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     dceDriven = true,
                     es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule
+                    multiModule = splitPerModule || perModule,
+                    propertyLazyInitialization = propertyLazyInitialization
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {
@@ -204,17 +203,6 @@ abstract class BasicIrBoxTest(
         }
 
         cachedDependencies[outputFile.absolutePath] = dependencyPaths
-    }
-
-    override fun dontRunOnSpecificPlatform(targetBackend: TargetBackend): Boolean {
-        if (targetBackend != TargetBackend.JS_IR_ES6) return false
-        if (!runEs6Mode) return false
-
-        // TODO: Since j2v8 does not support ES6 on mac and windows, temporary don't run such test on those platforms.
-        if (osName.indexOf("win") >= 0) return true
-        if (osName.indexOf("mac") >= 0 || osName.indexOf("darwin") >= 0) return true
-
-        return false
     }
 
     override fun runGeneratedCode(

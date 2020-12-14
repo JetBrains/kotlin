@@ -276,11 +276,13 @@ class Fir2IrConverter(
             val declarationStorage = Fir2IrDeclarationStorage(components, fir2irVisitor, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
             val builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
+            val annotationGenerator = AnnotationGenerator(components)
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
             components.typeConverter = typeConverter
             components.visibilityConverter = visibilityConverter
             components.builtIns = builtIns
+            components.annotationGenerator = annotationGenerator
             val irFiles = mutableListOf<IrFile>()
 
             for (firFile in firFiles) {
@@ -301,7 +303,6 @@ class Fir2IrConverter(
             components.fakeOverrideGenerator = fakeOverrideGenerator
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
-            declarationStorage.annotationGenerator = AnnotationGenerator(components)
             for (firFile in firFiles) {
                 converter.processClassHeaders(firFile)
             }

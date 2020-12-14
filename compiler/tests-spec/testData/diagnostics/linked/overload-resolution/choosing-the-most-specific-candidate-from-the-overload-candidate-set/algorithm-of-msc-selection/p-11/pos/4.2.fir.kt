@@ -64,16 +64,16 @@ fun case2(case: Case2) {
     case.boo.boo(x = 1, y = 2)
 
     case.apply { 1.<!DEBUG_INFO_CALL("fqName: testPackCase2.Case2.Companion.boo; typeCall: extension function")!>boo(1, 1)<!> }
-    case.apply { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>1.boo(1, 1)<!> }
+    case.apply { 1.boo(1, 1) }
 
     case.let { 1.<!DEBUG_INFO_CALL("fqName: testPackCase2.Case2.Companion.boo; typeCall: extension function")!>boo(1, 1)<!> }
-    case.let { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>1.boo(1, 1)<!> }
+    case.let { 1.boo(1, 1) }
 
     case.also { 1.<!DEBUG_INFO_CALL("fqName: testPackCase2.Case2.Companion.boo; typeCall: extension function")!>boo(1, 1)<!> }
-    case.also { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>1.boo(1, 1)<!> }
+    case.also { 1.boo(1, 1) }
 
     case.run { 1.<!DEBUG_INFO_CALL("fqName: testPackCase2.Case2.Companion.boo; typeCall: extension function")!>boo(1, 1)<!> }
-    case.run { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>1.boo(1, 1)<!> }
+    case.run { 1.boo(1, 1) }
 }
 
 // FILE: TestCase1.kt

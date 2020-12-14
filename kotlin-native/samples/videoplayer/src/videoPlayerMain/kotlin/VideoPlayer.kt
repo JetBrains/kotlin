@@ -6,7 +6,6 @@
 package sample.videoplayer
 
 import ffmpeg.*
-import kotlin.system.*
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlinx.cli.*
@@ -32,12 +31,12 @@ enum class PlayMode {
     val useAudio: Boolean get() = this != VIDEO
 }
 
-class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
+class VideoPlayer(private val requestedSize: Dimensions?) : DisposableContainer() {
     private val decoder = disposable { DecoderWorker() }
     private val video = disposable { SDLVideo() }
     private val audio = disposable { SDLAudio(this) }
     private val input = disposable { SDLInput(this) }
-    private val now = arena.alloc<platform.posix.timespec>().ptr
+    private val now = arena.alloc<timespec>().ptr
 
     private var state = State.STOPPED
 
@@ -63,7 +62,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
     }
 
     private fun getTime(): Double {
-        clock_gettime(platform.posix.CLOCK_MONOTONIC, now)
+        clock_gettime(CLOCK_MONOTONIC, now)
         return now.pointed.tv_sec + now.pointed.tv_nsec / 1e9
     }
 
@@ -159,8 +158,8 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
 fun main(args: Array<String>) {
     val argParser = ArgParser("videoplayer")
     val mode by argParser.option(
-            ArgType.Choice(listOf("video", "audio", "both")), shortName = "m", description = "Play mode")
-            .default("both")
+            ArgType.Choice<PlayMode>(), shortName = "m", description = "Play mode")
+            .default(PlayMode.BOTH)
     val size by argParser.option(ArgType.Int, shortName = "s", description = "Required size of videoplayer window")
             .delimiter(",")
     val fileName by argParser.argument(ArgType.String, description = "File to play")
@@ -175,7 +174,7 @@ fun main(args: Array<String>) {
         Dimensions(size[0], size[1])
     val player = VideoPlayer(requestedSize)
     try {
-        player.playFile(fileName, PlayMode.valueOf(mode.toUpperCase()))
+        player.playFile(fileName, mode)
     } finally {
         player.dispose()
     }

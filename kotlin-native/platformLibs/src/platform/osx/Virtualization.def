@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.Virtualization
+
+modules = Virtualization
+compilerOpts = -framework Virtualization
+linkerOpts = -framework Virtualization

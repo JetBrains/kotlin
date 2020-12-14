@@ -1,8 +1,7 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
-// COMMON_COROUTINES_TEST
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun nonSuspend() {}
 

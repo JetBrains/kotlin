@@ -11,7 +11,6 @@ repositories {
     google()
     jcenter()
     mavenCentral()
-    maven { url = uri("KOTLIN_REPO") }
 }
 
 kotlin {

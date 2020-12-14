@@ -44,10 +44,9 @@ class ValueParameter(
 
         return buildProperty {
             val parameterSource = firValueParameter.source as? FirLightSourceElement
-            val parameterNode = parameterSource?.lightNode
+            val parameterNode = parameterSource?.lighterASTNode
             source = parameterNode?.toFirLightSourceElement(
-                parameterSource.startOffset, parameterSource.endOffset, parameterSource.tree,
-                FirFakeSourceElementKind.PropertyFromParameter
+                parameterSource.treeStructure, FirFakeSourceElementKind.PropertyFromParameter
             )
             this.session = session
             origin = FirDeclarationOrigin.Source

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.findUsages.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.idea.caches.resolve.PsiElementChecker
 import org.jetbrains.kotlin.idea.caches.resolve.findClass
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager

@@ -25,8 +25,9 @@ void ensureUsed(Ret (*f)(Args...)) {
 void EnsureDeclarationsEmitted() {
     ensureUsed(AllocInstance);
     ensureUsed(AllocArrayInstance);
-    ensureUsed(InitInstance);
-    ensureUsed(InitSharedInstance);
+    ensureUsed(InitThreadLocalSingleton);
+    ensureUsed(InitSingleton);
+    ensureUsed(InitAndRegisterGlobal);
     ensureUsed(UpdateHeapRef);
     ensureUsed(UpdateStackRef);
     ensureUsed(UpdateReturnRef);
@@ -35,7 +36,6 @@ void EnsureDeclarationsEmitted() {
     ensureUsed(EnterFrame);
     ensureUsed(LeaveFrame);
     ensureUsed(AddTLSRecord);
-    ensureUsed(ClearTLSRecord);
     ensureUsed(LookupTLS);
     ensureUsed(MutationCheck);
     ensureUsed(CheckLifetimesConstraint);

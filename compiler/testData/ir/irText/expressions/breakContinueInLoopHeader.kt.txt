@@ -1,0 +1,83 @@
+fun test1(c: Boolean?) {
+  L@ while (true) { // BLOCK
+    L2@ while ({ // BLOCK
+      val tmp0_elvis_lhs: Boolean? = c
+      when {
+        EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
+        else -> tmp0_elvis_lhs
+      }
+    }) 
+  }
+}
+
+fun test2(c: Boolean?) {
+  L@ while (true) { // BLOCK
+    L2@ while ({ // BLOCK
+      val tmp0_elvis_lhs: Boolean? = c
+      when {
+        EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
+        else -> tmp0_elvis_lhs
+      }
+    }) 
+  }
+}
+
+fun test3(ss: List<String>?) {
+  L@ while (true) { // BLOCK
+    { // BLOCK
+      val tmp1_iterator: Iterator<String> = { // BLOCK
+        val tmp0_elvis_lhs: List<String>? = ss
+        when {
+          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
+          else -> tmp0_elvis_lhs
+        }
+      }.iterator()
+      L2@ while (tmp1_iterator.hasNext()) { // BLOCK
+        val s: String = tmp1_iterator.next()
+      }
+    }
+  }
+}
+
+fun test4(ss: List<String>?) {
+  L@ while (true) { // BLOCK
+    { // BLOCK
+      val tmp1_iterator: Iterator<String> = { // BLOCK
+        val tmp0_elvis_lhs: List<String>? = ss
+        when {
+          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
+          else -> tmp0_elvis_lhs
+        }
+      }.iterator()
+      L2@ while (tmp1_iterator.hasNext()) { // BLOCK
+        val s: String = tmp1_iterator.next()
+      }
+    }
+  }
+}
+
+fun test5() {
+  var i: Int = 0
+  Outer@ while (true) { // BLOCK
+    { // BLOCK
+      i = i.inc()
+      i
+    } /*~> Unit */
+    var j: Int = 0
+    { // BLOCK
+      Inner@ do// COMPOSITE {
+      { // BLOCK
+        j = j.inc()
+        j
+      } /*~> Unit */
+      // }      while (when {
+        greaterOrEqual(arg0 = j, arg1 = 3) -> false
+        else -> break
+      })
+    }
+    when {
+      EQEQ(arg0 = i, arg1 = 3) -> break
+    }
+  }
+}
+

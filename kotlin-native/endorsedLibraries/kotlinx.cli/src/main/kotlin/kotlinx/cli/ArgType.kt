@@ -70,16 +70,45 @@ abstract class ArgType<T : Any>(val hasParameter: kotlin.Boolean) {
                     ?: throw ParsingException("Option $name is expected to be double number. $value is provided.")
     }
 
+    companion object {
+        /**
+         * Helper for arguments that have limited set of possible values represented as enumeration constants.
+         */
+        inline fun <reified T: Enum<T>> Choice(
+            noinline toVariant: (kotlin.String) -> T = {
+                enumValues<T>().find { e -> e.toString().equals(it, ignoreCase = true) } ?:
+                        throw IllegalArgumentException("No enum constant $it")
+            },
+            noinline toString: (T) -> kotlin.String = { it.toString().toLowerCase() }): Choice<T> {
+            return Choice(enumValues<T>().toList(), toVariant, toString)
+        }
+    }
+
     /**
      * Type for arguments that have limited set of possible values.
      */
-    class Choice(val values: List<kotlin.String>) : ArgType<kotlin.String>(true) {
-        override val description: kotlin.String
-            get() = "{ Value should be one of $values }"
+    class Choice<T: Any>(choices: List<T>,
+                             val toVariant: (kotlin.String) -> T,
+                             val variantToString: (T) -> kotlin.String = { it.toString() }): ArgType<T>(true) {
+        private val choicesMap: Map<kotlin.String, T> = choices.associateBy { variantToString(it) }
 
-        override fun convert(value: kotlin.String, name: kotlin.String): kotlin.String =
-            if (value in values) value
-            else throw ParsingException("Option $name is expected to be one of $values. $value is provided.")
+        init {
+            require(choicesMap.size == choices.size) {
+                "Command line representations of enum choices are not distinct"
+            }
+        }
+
+        override val description: kotlin.String
+            get() {
+                return "{ Value should be one of ${choicesMap.keys} }"
+            }
+
+        override fun convert(value: kotlin.String, name: kotlin.String) =
+            try {
+                toVariant(value)
+            } catch (e: Exception) {
+                throw ParsingException("Option $name is expected to be one of ${choicesMap.keys}. $value is provided.")
+            }
     }
 }
 

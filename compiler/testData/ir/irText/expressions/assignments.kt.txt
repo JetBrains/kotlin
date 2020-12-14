@@ -1,0 +1,24 @@
+class Ref {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var x: Int
+    field = x
+    get
+    set
+
+}
+
+fun test1() {
+  var x: Int = 0
+  x = 1
+  x = x.plus(other = 1)
+}
+
+fun test2(r: Ref) {
+  r.<set-x>(<set-?> = 0)
+}
+

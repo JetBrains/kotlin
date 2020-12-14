@@ -8,5 +8,5 @@ FILE: stringTemplates.kt
     public final fun foo(s: R|kotlin/String|): R|kotlin/Unit| {
     }
     public final fun test(a: R|A|): R|kotlin/Unit| {
-        R|/foo|(R|<local>/a|.R|kotlin/Any.toString|())
+        R|/foo|(<strcat>(R|<local>/a|.R|kotlin/Any.toString|()))
     }

@@ -28,7 +28,7 @@ class SubcommandsTests {
         }
         val action = Summary()
         argParser.subcommands(action)
-        argParser.parse(arrayOf("-o", "out.txt", "summary", "-i", "2", "3", "5"))
+        argParser.parse(arrayOf("summary", "-o", "out.txt", "-i", "2", "3", "5"))
         assertEquals("out.txt", output)
         assertEquals(-10, action.result)
     }
@@ -99,5 +99,38 @@ class SubcommandsTests {
         argParser.subcommands(action)
         argParser.parse(arrayOf("calc", "-i", "summary", "2", "3", "5"))
         assertEquals(-10, action.result)
+    }
+
+    @Test
+    fun testCommonDefaultInSubcommand() {
+        val parser = ArgParser("testParser")
+        val output by parser.option(ArgType.String, "output", "o", "Output file")
+            .default("any_file")
+        class Summary: Subcommand("summary", "Calculate summary") {
+            val invert by option(ArgType.Boolean, "invert", "i", "Invert results").default(false)
+            val addendums by argument(ArgType.Int, "addendums", description = "Addendums").vararg()
+            var result: Int = 0
+
+            override fun execute() {
+                result = addendums.sum()
+                result = if (invert) -1 * result else result
+                println("result is: $result and will output to $output")
+            }
+        }
+        class Multiply: Subcommand("mul", "Multiply") {
+            val numbers by argument(ArgType.Int, description = "Addendums").vararg()
+            var result: Int = 0
+
+            override fun execute() {
+                result = numbers.reduce{ acc, it -> acc * it }
+            }
+        }
+        val summary = Summary()
+        val multiple = Multiply()
+        parser.subcommands(summary, multiple)
+
+        parser.parse(arrayOf("summary", "1", "2", "4"))
+        assertEquals("any_file", output)
+        assertEquals(7, summary.result)
     }
 }

@@ -1,0 +1,29 @@
+annotation class A1 : Annotation {
+  constructor(x: Int) /* primary */ 
+  val x: Int
+    field = x
+    get
+
+}
+
+annotation class A2 : Annotation {
+  constructor(a: A1) /* primary */ 
+  val a: A1
+    field = a
+    get
+
+}
+
+annotation class AA : Annotation {
+  constructor(xs: Array<A1>) /* primary */ 
+  val xs: Array<A1>
+    field = xs
+    get
+
+}
+
+@A2(a = A1(x = 42))
+@AA(xs = [A1(x = 1), A1(x = 2)])
+fun test() {
+}
+

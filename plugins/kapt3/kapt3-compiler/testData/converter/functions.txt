@@ -3,6 +3,10 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class FunctionsTest {
 
+    public FunctionsTest() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final kotlin.reflect.KProperty1<java.lang.String, java.lang.Integer> f() {
         return null;
@@ -18,9 +22,5 @@ public final class FunctionsTest {
 
     public final int f4() {
         return 0;
-    }
-
-    public FunctionsTest() {
-        super();
     }
 }

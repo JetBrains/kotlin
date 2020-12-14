@@ -1,0 +1,20 @@
+annotation class A : Annotation {
+  constructor(klass: KClass<*>) /* primary */
+  val klass: KClass<*>
+    field = klass
+    get
+
+}
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@A(klass = C::class)
+fun test1() {
+}

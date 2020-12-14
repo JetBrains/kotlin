@@ -1,0 +1,48 @@
+open class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestProperty : Base {
+  val x: Int
+    field = 0
+    get
+
+  constructor() {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestInitBlock : Base {
+  val x: Int
+    get
+
+  init {
+    <this>.#x = 0
+  }
+
+  constructor() {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  constructor(z: Any) {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  constructor(y: Int) {
+    this/*TestInitBlock*/()
+  }
+
+}
+

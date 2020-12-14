@@ -88,11 +88,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
             result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
         }
-        if (StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
-            fileText.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())
-        ) {
-            result.add(ForTestCompileRuntime.coroutinesCompatForTests())
-        }
         return result
     }
 
@@ -152,7 +147,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 KotlinTestUtils.mkdirs(tmpFile.parentFile)
                 tmpFile.writeText(content, Charsets.UTF_8)
             }
-        }, coroutinesPackage)
+        })
     }
 
     companion object {

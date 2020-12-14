@@ -34,11 +34,13 @@ internal class KtFirPropertySetterSymbol(
     }
 
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 
     override val isDefault: Boolean get() = firRef.withFir { it is FirDefaultPropertyAccessor }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
+    override val hasBody: Boolean get() = firRef.withFir { it.body != null }
+
     override val modality: KtCommonSymbolModality get() = firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality() }
     override val visibility: KtSymbolVisibility get() = firRef.withFir(FirResolvePhase.STATUS) { it.visibility.getSymbolVisibility() }
     override val parameter: KtSetterParameterSymbol by firRef.withFirAndCache { fir ->

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
@@ -24,8 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -912,7 +901,8 @@ class SymbolTable(
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
                 startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
-                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline, false
+                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline,
+                isHidden = false, isAssignable = false
             )
         }
     ): IrValueParameter =
@@ -1036,24 +1026,24 @@ class SymbolTable(
     fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
         val result = mutableSetOf<DescriptorWithContainerSource>()
         for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedSimpleFunctionDescriptor && descriptor.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
         for (symbol in simpleFunctionSymbolTable.idSigToSymbol.values) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
+            if (descriptor is WrappedSimpleFunctionDescriptor && symbol.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
         for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedPropertyDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedPropertyDescriptor && descriptor.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
         for (symbol in propertySymbolTable.idSigToSymbol.values) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedPropertyDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
+            if (descriptor is WrappedPropertyDescriptor && symbol.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
@@ -1129,7 +1119,7 @@ fun SymbolTable.noUnboundLeft(message: String) {
     assert(unbound.isEmpty()) {
         "$message\n" +
                 unbound.joinToString("\n") {
-                    "$it ${it.signature?.toString() ?: "NON-PUBLIC API $it"}"
+                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}"
                 }
     }
 }

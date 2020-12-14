@@ -34,7 +34,7 @@ internal class KtFirClassOrObjectSymbol(
     private val builder: KtSymbolByFirBuilder
 ) : KtClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
     override val name: Name get() = firRef.withFir { it.symbol.classId.shortClassName }
     override val classIdIfNonLocal: ClassId?
         get() = firRef.withFir { fir ->
@@ -64,7 +64,7 @@ internal class KtFirClassOrObjectSymbol(
         fir.getPrimaryConstructorIfAny()?.let { builder.buildConstructorSymbol(it) }
     }
 
-    override val typeParameters by firRef.withFirAndCache {
+    override val typeParameters by firRef.withFirAndCache { fir ->
         fir.typeParameters.map { typeParameter ->
             builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }

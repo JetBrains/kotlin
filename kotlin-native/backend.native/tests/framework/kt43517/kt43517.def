@@ -1,0 +1,15 @@
+---
+enum E {
+    A, B, C
+};
+
+struct S {
+    int i;
+    float f;
+};
+
+struct S globalS = { .i = 3, .f = 3.14f };
+
+enum E createEnum() {
+    return A;
+}

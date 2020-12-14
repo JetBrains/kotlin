@@ -1,6 +1,6 @@
 apply plugin: "kotlin"
 
 dependencies {
-    compile project(':projA')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation project(':projA')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

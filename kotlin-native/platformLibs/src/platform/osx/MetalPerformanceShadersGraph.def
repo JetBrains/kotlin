@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit IOSurface ImageIO Metal MetalPerformanceShaders Security darwin libkern osx posix
+language = Objective-C
+package = platform.MetalPerformanceShadersGraph
+
+modules = MetalPerformanceShadersGraph
+compilerOpts = -framework MetalPerformanceShadersGraph
+linkerOpts = -framework MetalPerformanceShadersGraph

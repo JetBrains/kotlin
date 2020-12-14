@@ -309,6 +309,30 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         return declaration
     }
 
+    override fun visitCall(expression: IrCall): IrExpression {
+        expression.transformChildrenVoid(this)
+        // Make replacement only in optimized builds due to separate compilation and possibility to get broken
+        // debug information.
+        if (!context.shouldOptimize())
+            return expression
+
+        val property = expression.symbol.owner.correspondingPropertySymbol?.owner ?: return expression
+
+        property.parent.let {
+            if (it is IrClass && it.isInline && property.backingField != null) {
+                expression.dispatchReceiver?.let { receiver ->
+                    return builder.at(expression)
+                            .irCall(symbols.reinterpret, expression.type, listOf(receiver.type, expression.type))
+                            .apply {
+                                extensionReceiver = receiver
+                            }
+                }
+            }
+        }
+
+        return expression
+    }
+
     private fun IrBuilderWithScope.irIsNull(expression: IrExpression): IrExpression {
         val binary = expression.type.computeBinaryType()
         return when (binary) {

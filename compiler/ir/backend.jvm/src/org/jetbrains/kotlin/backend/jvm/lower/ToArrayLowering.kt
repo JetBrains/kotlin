@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -49,11 +49,11 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
             it.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         }?.isCollectionSubClass == true
 
-        irClass.findOrCreate(indirectCollectionSubClass, { it.isGenericToArray(context) }) {
+        irClass.findOrCreate(indirectCollectionSubClass, { it.isGenericToArray(context) }) { bridge ->
             irClass.addFunction {
                 name = Name.identifier("toArray")
                 origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-                modality = Modality.OPEN
+                modality = if (bridge != null) Modality.FINAL else Modality.OPEN
             }.apply {
                 val elementType = addTypeParameter {
                     name = Name.identifier("T")
@@ -67,19 +67,26 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 }
                 val prototype = addValueParameter("array", returnType, JvmLoweredDeclarationOrigin.TO_ARRAY)
                 body = context.createIrBuilder(symbol).irBlockBody {
-                    +irReturn(irCall(symbols.genericToArray, symbols.genericToArray.owner.returnType).apply {
-                        putValueArgument(0, irGet(receiver))
-                        putValueArgument(1, irGet(prototype))
-                    })
+                    if (bridge == null) {
+                        +irReturn(irCall(symbols.genericToArray, symbols.genericToArray.owner.returnType).apply {
+                            putValueArgument(0, irGet(receiver))
+                            putValueArgument(1, irGet(prototype))
+                        })
+                    } else {
+                        +irReturn(irCall(bridge.target.symbol, bridge.target.returnType).apply {
+                            dispatchReceiver = irGet(receiver)
+                            putValueArgument(0, irGet(prototype))
+                        })
+                    }
                 }
             }
         }
 
-        irClass.findOrCreate(indirectCollectionSubClass, { it.isNonGenericToArray(context) }) {
+        irClass.findOrCreate(indirectCollectionSubClass, IrSimpleFunction::isNonGenericToArray) { bridge ->
             irClass.addFunction {
                 name = Name.identifier("toArray")
                 origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-                modality = Modality.OPEN
+                modality = if (bridge != null) Modality.FINAL else Modality.OPEN
                 returnType = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType)
             }.apply {
                 val receiver = addDispatchReceiver {
@@ -87,28 +94,49 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                     origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                 }
                 body = context.createIrBuilder(symbol).irBlockBody {
-                    +irReturn(irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType).apply {
-                        putValueArgument(0, irGet(receiver))
-                    })
+                    if (bridge == null) {
+                        +irReturn(irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType).apply {
+                            putValueArgument(0, irGet(receiver))
+                        })
+                    } else {
+                        +irReturn(irCall(bridge.target.symbol, bridge.target.returnType).apply {
+                            dispatchReceiver = irGet(receiver)
+                        })
+                    }
                 }
             }
         }
     }
 
-    private fun IrClass.findOrCreate(indirectSubclass: Boolean, matcher: (IrSimpleFunction) -> Boolean, fallback: () -> IrSimpleFunction) {
+    private class ToArrayBridge(
+        val target: IrSimpleFunction
+    )
+
+    private fun IrClass.findOrCreate(
+        indirectSubclass: Boolean,
+        matcher: (IrSimpleFunction) -> Boolean,
+        fallback: (ToArrayBridge?) -> IrSimpleFunction
+    ) {
         val existing = functions.find(matcher)
         if (existing != null) {
             // This is an explicit override of a method defined in `kotlin.collections.AbstractCollection`
             // or `java.util.Collection`. From here on, the frontend will check the existence of implementations;
             // we just need to match visibility in the former case to the latter.
-            existing.visibility = DescriptorVisibilities.PUBLIC
+            if (existing.visibility == DescriptorVisibilities.INTERNAL) {
+                // If existing `toArray` is internal, create a public bridge method
+                // to preserve binary compatibility with code generated by the old back-end.
+                // NB This will preserve existing custom `toArray` signature.
+                fallback(ToArrayBridge(existing))
+            } else {
+                existing.visibility = DescriptorVisibilities.PUBLIC
+            }
             return
         }
         if (indirectSubclass) {
             // There's a Kotlin class up the hierarchy that should already have `toArray`.
             return
         }
-        fallback()
+        fallback(null)
     }
 }
 
@@ -132,7 +160,12 @@ internal fun IrSimpleFunction.isGenericToArray(context: JvmBackendContext): Bool
             returnType.isArrayOrNullableArrayOf(context, typeParameters[0].symbol) &&
             valueParameters[0].type.isArrayOrNullableArrayOf(context, typeParameters[0].symbol)
 
-// Match `fun toArray(): Array<Any?>`
-internal fun IrSimpleFunction.isNonGenericToArray(context: JvmBackendContext): Boolean =
+// Match `fun toArray(): Array<...>`.
+// It would be more correct to check that the return type is erased to `Object[]`, however the old backend doesn't do that
+// (see `FunctionDescriptor.isNonGenericToArray` and KT-43111).
+internal fun IrSimpleFunction.isNonGenericToArray(): Boolean =
     name.asString() == "toArray" && typeParameters.isEmpty() && valueParameters.isEmpty() &&
-            extensionReceiverParameter == null && returnType.isArrayOrNullableArrayOf(context, context.irBuiltIns.anyClass)
+            extensionReceiverParameter == null && returnType.isArrayOrNullableArray()
+
+private fun IrType.isArrayOrNullableArray(): Boolean =
+    this is IrSimpleType && (isArray() || isNullableArray())

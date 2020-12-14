@@ -5,9 +5,8 @@ public final class A {
     @org.jetbrains.annotations.Nullable()
     private final A x = null;
 
-    @org.jetbrains.annotations.Nullable()
-    public final A getX() {
-        return null;
+    public A() {
+        super();
     }
 
     @org.jetbrains.annotations.Nullable()
@@ -17,8 +16,9 @@ public final class A {
         return null;
     }
 
-    public A() {
-        super();
+    @org.jetbrains.annotations.Nullable()
+    public final A getX() {
+        return null;
     }
 
     @kotlin.Metadata()

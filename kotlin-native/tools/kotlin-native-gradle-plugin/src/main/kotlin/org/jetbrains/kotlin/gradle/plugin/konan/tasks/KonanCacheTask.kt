@@ -4,10 +4,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanCompilerRunner
-import org.jetbrains.kotlin.gradle.plugin.konan.hostManager
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import java.io.File
 
 enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
@@ -56,14 +55,17 @@ open class KonanCacheTask: DefaultTask() {
             val deleted = cacheFile.deleteRecursively()
             check(deleted) { "Cannot delete stale cache: ${cacheFile.absolutePath}" }
         }
-
+        val konanHome = compilerDistributionPath.get().absolutePath
+        val additionalCacheFlags = PlatformManager(konanHome).let {
+            it.targetByName(target).let(it::loader).additionalCacheFlags
+        }
         val args = listOf(
             "-g",
             "-target", target,
             "-produce", cacheKind.outputKind.name.toLowerCase(),
             "-Xadd-cache=${originalKlib.absolutePath}",
             "-Xcache-directory=${cacheDirectory.absolutePath}"
-        )
-        KonanCompilerRunner(project, konanHome = compilerDistributionPath.get().absolutePath).run(args)
+        ) + additionalCacheFlags
+        KonanCompilerRunner(project, konanHome = konanHome).run(args)
     }
 }

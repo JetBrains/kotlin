@@ -34,6 +34,7 @@ internal class CEnumVarClassGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
+    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
 
     fun generate(enumIrClass: IrClass): IrClass {
         val enumVarClassDescriptor = enumIrClass.descriptor.unsubstitutedMemberScope
@@ -56,13 +57,16 @@ internal class CEnumVarClassGenerator(
         val enumVarConstructorSymbol = symbolTable.referenceConstructor(
                 interopBuiltIns.cEnumVar.unsubstitutedPrimaryConstructor!!
         )
-        irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-                    startOffset, endOffset, context.irBuiltIns.unitType, enumVarConstructorSymbol
-            ).also {
-                it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+        val classSymbol = symbolTable.referenceClass(enumVarClass.descriptor)
+        postLinkageSteps.add {
+            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                +IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                        startOffset, endOffset, context.irBuiltIns.unitType, enumVarConstructorSymbol
+                ).also {
+                    it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+                }
+                +irInstanceInitializer(classSymbol)
             }
-            +irInstanceInitializer(symbolTable.referenceClass(enumVarClass.descriptor))
         }
         return irConstructor
     }
@@ -77,15 +81,18 @@ internal class CEnumVarClassGenerator(
 
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor, typeSize: Int): IrConstructor {
         val superConstructorSymbol = symbolTable.referenceConstructor(interopBuiltIns.cPrimitiveVarType.unsubstitutedPrimaryConstructor!!)
+        val classSymbol = symbolTable.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
-            it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-                        startOffset, endOffset, context.irBuiltIns.unitType,
-                        superConstructorSymbol
-                ).also {
-                    it.putValueArgument(0, irInt(typeSize))
+            postLinkageSteps.add {
+                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    +IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                            startOffset, endOffset, context.irBuiltIns.unitType,
+                            superConstructorSymbol
+                    ).also {
+                        it.putValueArgument(0, irInt(typeSize))
+                    }
+                    +irInstanceInitializer(classSymbol)
                 }
-                +irInstanceInitializer(symbolTable.referenceClass(companionObjectDescriptor))
             }
         }
     }

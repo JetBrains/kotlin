@@ -381,13 +381,17 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
   visibility: PUBLIC
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: kotlin.collections.List.size
   getter: null
   hasBackingField: false
+  hasGetter: false
+  hasSetter: false
+  initializer: null
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: ABSTRACT

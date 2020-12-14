@@ -28,11 +28,6 @@ public final class KBox implements androidx.annotation.Box {
     @org.jetbrains.annotations.NotNull()
     private final androidx.annotation.Box delegate = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public final androidx.annotation.Box getDelegate() {
-        return null;
-    }
-
     public KBox(@org.jetbrains.annotations.NotNull()
     androidx.annotation.Box delegate) {
         super();
@@ -41,6 +36,11 @@ public final class KBox implements androidx.annotation.Box {
     @androidx.annotation.RecentlyNullable()
     @java.lang.Override()
     public java.lang.String foo() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.annotation.Box getDelegate() {
         return null;
     }
 }

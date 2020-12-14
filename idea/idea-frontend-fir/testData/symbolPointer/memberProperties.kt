@@ -4,13 +4,17 @@ class A {
 }
 
 // SYMBOLS:
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: A.x
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 10
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL
@@ -23,22 +27,27 @@ KtFirPropertySymbol:
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  hasBody: true
   isDefault: false
   isInline: false
   isOverride: false
   modality: FINAL
   origin: SOURCE
   symbolKind: TOP_LEVEL
-  type: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl cannot be cast to org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+  type: kotlin/Int
   visibility: PUBLIC
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: A.y
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
   isConst: false
   isExtension: true
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL

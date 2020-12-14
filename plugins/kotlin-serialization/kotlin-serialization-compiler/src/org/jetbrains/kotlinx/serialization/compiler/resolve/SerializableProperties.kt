@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
@@ -52,6 +51,9 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
                     prop,
                     primaryConstructorProperties[prop] ?: false,
                     prop.hasBackingField(bindingContext) || (prop is DeserializedPropertyDescriptor && prop.backingField != null) // workaround for TODO in .hasBackingField
+                            // workaround for overridden getter (val) and getter+setter (var) - in this case hasBackingField returning false
+                            // but initializer presents only for property with backing field
+                            || prop.declaresDefaultValue
                 )
             }
             .filterNot { it.transient }

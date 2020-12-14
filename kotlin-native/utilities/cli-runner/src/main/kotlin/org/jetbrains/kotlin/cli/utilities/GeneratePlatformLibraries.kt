@@ -12,16 +12,12 @@ import kotlinx.cli.*
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.files.renameAtomic
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.DEFAULT_MODE
-import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_METADATA
-import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_SOURCECODE
 import org.jetbrains.kotlin.native.interop.tool.SHORT_MODULE_NAME
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -29,7 +25,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
-import java.io.File as JFile
 
 // TODO: We definitely need to unify logging in different parts of the compiler.
 private class Logger(val level: Level = Level.NORMAL) {
@@ -64,6 +59,11 @@ private fun Logger.logStackTrace(error: Throwable) {
     verbose(stringWriter.toString())
 }
 
+private enum class CacheKind(val outputKind: CompilerOutputKind) {
+    DYNAMIC_CACHE(CompilerOutputKind.DYNAMIC_CACHE),
+    STATIC_CACHE(CompilerOutputKind.STATIC_CACHE)
+}
+
 // TODO: Use Distribution's paths after compiler update.
 fun generatePlatformLibraries(args: Array<String>) {
     // IMPORTANT! These command line keys are used by the Gradle plugin to configure platform libraries generation,
@@ -90,17 +90,15 @@ fun generatePlatformLibraries(args: Array<String>) {
             "Place where stdlib is located. Default value is <dist>/klib/common/stdlib"
     )
 
-    val dynamicCacheKind = CompilerOutputKind.DYNAMIC_CACHE.visibleName
-    val staticCacheKind = CompilerOutputKind.STATIC_CACHE.visibleName
     val cacheKind by argParser.option(
-            ArgType.Choice(listOf(dynamicCacheKind, staticCacheKind)), "cache-kind", "k", "Type of cache."
-    ).default(dynamicCacheKind)
+            ArgType.Choice<CacheKind>(toString = { it.outputKind.visibleName }), "cache-kind", "k", "Type of cache."
+    ).default(CacheKind.DYNAMIC_CACHE)
 
     val cacheDirectoryPath by argParser.option(
             ArgType.String, "cache-directory", "c", "Cache output directory")
 
     val mode by argParser.option(
-            ArgType.Choice(listOf(MODE_METADATA, MODE_SOURCECODE)),
+            ArgType.Choice<GenerationMode>(),
             fullName = "mode",
             shortName = "m",
             description = "The way interop library is generated."
@@ -124,8 +122,11 @@ fun generatePlatformLibraries(args: Array<String>) {
     argParser.parse(args)
 
     val distribution = customerDistribution(KonanHomeProvider.determineKonanHome())
-    val target = HostManager(distribution).targetByName(targetName)
-
+    val platformManager = PlatformManager(distribution)
+    val target = platformManager.targetByName(targetName)
+    val targetCacheArgs = platformManager.let {
+        target.let(it::loader).additionalCacheFlags
+    }
     val inputDirectory = inputDirectoryPath?.File()
             ?: File(distribution.konanSubdir, "platformDef").child(target.visibleName)
 
@@ -146,7 +147,9 @@ fun generatePlatformLibraries(args: Array<String>) {
 
     val logger = Logger(if (verbose) Logger.Level.VERBOSE else Logger.Level.NORMAL)
 
-    val cacheInfo = cacheDirectory?.let { CacheInfo(it, cacheKind, cacheArgs) }
+    val cacheInfo = cacheDirectory?.let {
+        CacheInfo(it, cacheKind.outputKind.visibleName, cacheArgs + targetCacheArgs)
+    }
 
     generatePlatformLibraries(
             target, mode,
@@ -217,7 +220,7 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
 
 private fun generateLibrary(
         target: KonanTarget,
-        mode: String,
+        mode: GenerationMode,
         def: DefFile,
         directories: DirectoriesInfo,
         tmpDirectory: File,
@@ -242,7 +245,7 @@ private fun generateLibrary(
                 "-compiler-option", "-fmodules-cache-path=${tmpDirectory.child("clangModulesCache").absolutePath}",
                 "-repo", outputDirectory.absolutePath,
                 "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
-                "-mode", mode,
+                "-mode", mode.modeName,
                 "-$SHORT_MODULE_NAME", def.shortLibraryName,
                 *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.libraryName}") }.toTypedArray()
         )
@@ -327,7 +330,7 @@ private fun buildStdlibCache(
     K2Native.mainNoExit(compilerArgs)
 }
 
-private fun generatePlatformLibraries(target: KonanTarget, mode: String,
+private fun generatePlatformLibraries(target: KonanTarget, mode: GenerationMode,
                                       directories: DirectoriesInfo, cacheInfo: CacheInfo?,
                                       rebuild: Boolean, saveTemps: Boolean, logger: Logger) = with(directories) {
     if (cacheInfo != null) {

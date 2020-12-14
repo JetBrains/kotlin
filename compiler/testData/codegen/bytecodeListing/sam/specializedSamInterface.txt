@@ -1,0 +1,13 @@
+@kotlin.Metadata
+final class<null>  TKt$sam$Sam$0 {
+    // source: 't.kt'
+    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
+    public synthetic final <null> method get(): java.lang.Object
+    private synthetic final field <null> function: kotlin.jvm.functions.Function0
+}
+
+@kotlin.Metadata
+public final class<null>  TKt {
+    // source: 't.kt'
+    public final static <(Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;)Ljava/lang/String;> method specializedSam(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.String
+}

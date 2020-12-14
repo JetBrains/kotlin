@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumCompanionGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumVarClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarClassGenerator
+import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarCompanionGenerator
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -50,8 +51,10 @@ internal class IrProviderForCEnumAndCStructStubs(
             CEnumVarClassGenerator(context, interopBuiltIns)
     private val cEnumClassGenerator =
             CEnumClassGenerator(context, cEnumCompanionGenerator, cEnumVarClassGenerator)
+    private val cStructCompanionGenerator =
+            CStructVarCompanionGenerator(context, interopBuiltIns)
     private val cStructClassGenerator =
-            CStructVarClassGenerator(context, interopBuiltIns)
+            CStructVarClassGenerator(context, interopBuiltIns, cStructCompanionGenerator)
 
     fun isCEnumOrCStruct(declarationDescriptor: DeclarationDescriptor): Boolean =
             declarationDescriptor.run { findCEnumDescriptor(interopBuiltIns) ?: findCStructDescriptor(interopBuiltIns) } != null
@@ -71,6 +74,19 @@ internal class IrProviderForCEnumAndCStructStubs(
         symbol.findCStructDescriptor(interopBuiltIns)?.let { structDescriptor ->
             cStructClassGenerator.findOrGenerateCStruct(structDescriptor, file)
         }
+    }
+
+    /**
+     * We postpone generation of bodies until IR linkage is complete.
+     * This way we ensure that all used symbols are resolved.
+     */
+    fun generateBodies() {
+        cEnumCompanionGenerator.invokePostLinkageSteps()
+        cEnumByValueFunctionGenerator.invokePostLinkageSteps()
+        cEnumClassGenerator.invokePostLinkageSteps()
+        cEnumVarClassGenerator.invokePostLinkageSteps()
+        cStructClassGenerator.invokePostLinkageSteps()
+        cStructCompanionGenerator.invokePostLinkageSteps()
     }
 
     fun getDeclaration(descriptor: DeclarationDescriptor, idSignature: IdSignature, file: IrFile, symbolKind: BinarySymbolData.SymbolKind): IrSymbolOwner {

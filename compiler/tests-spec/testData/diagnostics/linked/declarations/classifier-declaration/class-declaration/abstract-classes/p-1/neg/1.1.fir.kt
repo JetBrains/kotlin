@@ -7,7 +7,7 @@
 abstract class Base() {
     abstract fun foo() = {}
     fun boo() : Unit
-    abstract val a = ""
+    abstract val a = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>""<!>
     val b
     var d
 }

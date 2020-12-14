@@ -9,19 +9,19 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
-    cache: CirClassifiersCache
+    classifiers: CirKnownClassifiers
 ) : AbstractStandardCommonizer<T, T>() {
     protected lateinit var name: Name
     protected val modality = ModalityCommonizer()
     protected val visibility = VisibilityCommonizer.lowering()
-    protected val extensionReceiver = ExtensionReceiverCommonizer(cache)
-    protected val returnType = TypeCommonizer(cache)
+    protected val extensionReceiver = ExtensionReceiverCommonizer(classifiers)
+    protected val returnType = TypeCommonizer(classifiers)
     protected lateinit var kind: CallableMemberDescriptor.Kind
-    protected val typeParameters = TypeParameterListCommonizer(cache)
+    protected val typeParameters = TypeParameterListCommonizer(classifiers)
 
     override fun initialize(first: T) {
         name = first.name

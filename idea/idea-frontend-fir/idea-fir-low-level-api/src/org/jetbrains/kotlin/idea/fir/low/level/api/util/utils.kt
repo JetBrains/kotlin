@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
@@ -32,7 +35,7 @@ internal inline fun <T : Any> executeWithoutPCE(crossinline action: () -> T): T 
     return result!!
 }
 
-internal inline fun <T : Any> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
+internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
     var needToRun = true
     var result: T? = null
     while (needToRun) {
@@ -61,7 +64,18 @@ internal val FirDeclaration.ktDeclaration: KtDeclaration
     get() {
         val psi = psi
             ?: error("PSI element was not found for${render()}")
-        return psi as KtDeclaration
+        return when (psi) {
+            is KtDeclaration -> psi
+            is KtObjectLiteralExpression -> psi.objectDeclaration
+            else -> error(
+                """
+                   FirDeclaration.psi (${this::class.simpleName}) should be KtDeclaration but was ${psi::class.simpleName}
+                   ${(psi as? KtElement)?.getElementTextInContext() ?: psi.text}
+                   
+                   ${render()}
+                   """.trimIndent()
+            )
+        }
     }
 
 internal val FirDeclaration.containingKtFileIfAny: KtFile?

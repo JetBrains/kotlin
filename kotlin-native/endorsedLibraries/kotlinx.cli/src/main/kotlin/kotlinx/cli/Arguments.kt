@@ -159,7 +159,7 @@ class MultipleArgument<T : Any, DefaultRequired: DefaultRequiredType> internal c
 fun <T : Any, TResult, DefaultRequired: DefaultRequiredType>
         AbstractSingleArgument<T, TResult, DefaultRequired>.multiple(number: Int): MultipleArgument<T, DefaultRequired> {
     require(number >= 2) { "multiple() modifier with value less than 2 is unavailable. It's already set to 1." }
-    val newArgument = with(delegate.cast<ParsingValue<T, T>>().descriptor as ArgDescriptor) {
+    val newArgument = with((delegate.cast<ParsingValue<T, T>>()).descriptor as ArgDescriptor) {
         MultipleArgument<T, DefaultRequired>(ArgDescriptor(type, fullName, number, description, listOfNotNull(defaultValue),
                 required, deprecatedWarning), owner)
     }
@@ -172,7 +172,7 @@ fun <T : Any, TResult, DefaultRequired: DefaultRequiredType>
  */
 fun <T : Any, TResult, DefaultRequired: DefaultRequiredType> AbstractSingleArgument<T, TResult, DefaultRequired>.vararg():
         MultipleArgument<T, DefaultRequired> {
-    val newArgument = with(delegate.cast<ParsingValue<T, T>>().descriptor as ArgDescriptor) {
+    val newArgument = with((delegate.cast<ParsingValue<T, T>>()).descriptor as ArgDescriptor) {
         MultipleArgument<T, DefaultRequired>(ArgDescriptor(type, fullName, null, description, listOfNotNull(defaultValue),
                 required, deprecatedWarning), owner)
     }
@@ -189,7 +189,7 @@ fun <T : Any, TResult, DefaultRequired: DefaultRequiredType> AbstractSingleArgum
  * @param value the default value.
  */
 fun <T: Any> SingleNullableArgument<T>.default(value: T): SingleArgument<T, DefaultRequiredType.Default> {
-    val newArgument = with(delegate.cast<ParsingValue<T, T>>().descriptor as ArgDescriptor) {
+    val newArgument = with((delegate.cast<ParsingValue<T, T>>()).descriptor as ArgDescriptor) {
         SingleArgument<T, DefaultRequiredType.Default>(ArgDescriptor(type, fullName, number, description, value,
             false, deprecatedWarning), owner)
     }
@@ -208,7 +208,7 @@ fun <T: Any> SingleNullableArgument<T>.default(value: T): SingleArgument<T, Defa
 fun <T: Any> MultipleArgument<T, DefaultRequiredType.None>.default(value: Collection<T>):
         MultipleArgument<T, DefaultRequiredType.Default> {
     require (value.isNotEmpty()) { "Default value for argument can't be empty collection." }
-    val newArgument = with(delegate.cast<ParsingValue<T, List<T>>>().descriptor as ArgDescriptor) {
+    val newArgument = with((delegate.cast<ParsingValue<T, List<T>>>()).descriptor as ArgDescriptor) {
         MultipleArgument<T, DefaultRequiredType.Default>(ArgDescriptor(type, fullName, number, description, value.toList(),
                 required, deprecatedWarning), owner)
     }
@@ -224,7 +224,7 @@ fun <T: Any> MultipleArgument<T, DefaultRequiredType.None>.default(value: Collec
  * Note that only trailing arguments can be optional, i.e. no required arguments can follow optional ones.
  */
 fun <T: Any> SingleArgument<T, DefaultRequiredType.Required>.optional(): SingleNullableArgument<T> {
-    val newArgument = with(delegate.cast<ParsingValue<T, T>>().descriptor as ArgDescriptor) {
+    val newArgument = with((delegate.cast<ParsingValue<T, T>>()).descriptor as ArgDescriptor) {
         SingleNullableArgument(ArgDescriptor(type, fullName, number, description, defaultValue,
                 false, deprecatedWarning), owner)
     }
@@ -240,7 +240,7 @@ fun <T: Any> SingleArgument<T, DefaultRequiredType.Required>.optional(): SingleN
  * Note that only trailing arguments can be optional: no required arguments can follow the optional ones.
  */
 fun <T: Any> MultipleArgument<T, DefaultRequiredType.Required>.optional(): MultipleArgument<T, DefaultRequiredType.None> {
-    val newArgument = with(delegate.cast<ParsingValue<T, List<T>>>().descriptor as ArgDescriptor) {
+    val newArgument = with((delegate.cast<ParsingValue<T, List<T>>>()).descriptor as ArgDescriptor) {
         MultipleArgument<T, DefaultRequiredType.None>(ArgDescriptor(type, fullName, number, description,
                 defaultValue?.toList() ?: listOf(), false, deprecatedWarning), owner)
     }

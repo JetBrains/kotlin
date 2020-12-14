@@ -38,6 +38,9 @@ interface Configurables : TargetableExternalStorage {
     val llvmVersion get() = hostString("llvmVersion")
     val libffiDir get() = hostString("libffiDir")
 
+    val cacheableTargets get() = hostList("cacheableTargets")
+    val additionalCacheFlags get() = targetList("additionalCacheFlags")
+
     // TODO: Delegate to a map?
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
@@ -60,6 +63,15 @@ interface Configurables : TargetableExternalStorage {
     val runtimeDefinitions get() = targetList("runtimeDefinitions")
 }
 
+interface ConfigurablesWithEmulator : Configurables {
+    val emulatorDependency get() = hostTargetString("emulatorDependency")
+    // TODO: We need to find a way to represent absolute path in properties.
+    //  In case of QEMU, absolute path to dynamic linker should be specified.
+    val emulatorExecutable get() = hostTargetString("emulatorExecutable")
+
+    val absoluteEmulatorExecutable get() = absolute(emulatorExecutable)
+}
+
 interface TargetableConfigurables : Configurables {
     val targetArg get() = targetString("quadruple")
 }
@@ -75,12 +87,13 @@ interface AppleConfigurables : Configurables, ClangFlags {
 interface MingwConfigurables : TargetableConfigurables, ClangFlags
 
 interface GccConfigurables : TargetableConfigurables, ClangFlags {
-    val gccToolchain get() = hostString("gccToolchain")
+    val gccToolchain get() = targetString("gccToolchain")
     val absoluteGccToolchain get() = absolute(gccToolchain)
 
     val libGcc get() = targetString("libGcc")!!
     val dynamicLinker get() = targetString("dynamicLinker")!!
     val abiSpecificLibraries get() = targetList("abiSpecificLibraries")
+    val crtFilesLocation get() = targetString("crtFilesLocation")!!
     val linkerGccFlags get() = targetList("linkerGccFlags")
 }
 

@@ -50,7 +50,7 @@ class JavaSymbolProvider(
     private val searchScope: GlobalSearchScope,
 ) : FirSymbolProvider(session) {
     companion object {
-        private val VALUE_METHOD_NAME = Name.identifier("value")
+        internal val VALUE_METHOD_NAME = Name.identifier("value")
     }
 
     private val classCache = SymbolProviderCache<ClassId, FirRegularClassSymbol>()
@@ -168,6 +168,7 @@ class JavaSymbolProvider(
                 javaTypeParameterStack.addStack(parentStack)
             }
         }
+        val methodMap = mutableMapOf<JavaMethod, FirJavaMethod>()
         val firJavaClass = buildJavaClass {
             source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
             session = this@JavaSymbolProvider.session
@@ -219,7 +220,9 @@ class JavaSymbolProvider(
                     classIsAnnotation,
                     valueParametersForAnnotationConstructor,
                     dispatchReceiver
-                )
+                ).apply {
+                    methodMap[javaMethod] = this
+                }
             }
             val javaClassDeclaredConstructors = javaClass.constructors
             val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
@@ -270,6 +273,10 @@ class JavaSymbolProvider(
             }
         )
         firJavaClass.addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
+        // NB: this is done here to unbind possible annotation cycle
+        for ((javaMethod, firJavaMethod) in methodMap) {
+            firJavaMethod.annotations.addAnnotationsFrom(session, javaMethod, javaTypeParameterStack)
+        }
         return firJavaClass
     }
 
@@ -364,7 +371,6 @@ class JavaSymbolProvider(
             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
             isStatic = javaMethod.isStatic
             typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack)
-            addAnnotationsFrom(this@JavaSymbolProvider.session, javaMethod, javaTypeParameterStack)
             for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
                 valueParameters += valueParameter.toFirValueParameter(
                     this@JavaSymbolProvider.session, index, javaTypeParameterStack,

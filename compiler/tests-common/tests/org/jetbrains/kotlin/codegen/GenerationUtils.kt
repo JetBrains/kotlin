@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -118,7 +119,8 @@ object GenerationUtils {
 
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)
-        val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr()
+        val extensions = JvmGeneratorExtensions()
+        val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -140,9 +142,9 @@ object GenerationUtils {
 
         generationState.beforeCompile()
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, sourceManager
+            generationState, moduleFragment, symbolTable, sourceManager, extensions
         ) { context, irClass, _, serializationBindings, parent ->
-            FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
+            FirMetadataSerializer(session, context, irClass, serializationBindings, components, parent)
         }
 
         generationState.factory.done()

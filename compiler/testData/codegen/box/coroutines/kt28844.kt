@@ -1,10 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // IGNORE_BACKEND: NATIVE
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun builder(block: suspend Unit.() -> Unit) {
     block.startCoroutine(Unit, EmptyContinuation)

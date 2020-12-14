@@ -1,0 +1,13 @@
+fun outer() {
+  var x: Int = 0
+  local fun local() {
+    { // BLOCK
+      val tmp0: Int = x
+      x = tmp0.inc()
+      tmp0
+    } /*~> Unit */
+  }
+
+  local()
+}
+

@@ -69,10 +69,10 @@ class DataClassMembersGenerator(
                 FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
             }
 
-            override fun getBackingField(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrField? =
+            override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? =
                 parameter?.let {
                     val property = getOrFail(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter)
-                    return getBackingField(property)
+                    return getProperty(property)
                 }
 
             override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType =
@@ -86,8 +86,8 @@ class DataClassMembersGenerator(
         override fun generateComponentFunction(function: FunctionDescriptor, parameter: ValueParameterDescriptor) {
             if (!irClass.isData) return
 
-            val backingField = irDataClassMembersGenerator.getBackingField(parameter, null) ?: return
-            irDataClassMembersGenerator.generateComponentFunction(function, backingField)
+            val irProperty = irDataClassMembersGenerator.getProperty(parameter, null) ?: return
+            irDataClassMembersGenerator.generateComponentFunction(function, irProperty)
         }
 
         override fun generateCopyFunction(function: FunctionDescriptor, constructorParameters: List<KtParameter>) {

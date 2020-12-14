@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.AppTrackingTransparency
+
+modules = AppTrackingTransparency
+compilerOpts = -framework AppTrackingTransparency
+linkerOpts = -framework AppTrackingTransparency

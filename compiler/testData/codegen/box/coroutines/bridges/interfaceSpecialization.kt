@@ -1,9 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 interface I1<A, B> {
     suspend fun f(a: A, b: B): String

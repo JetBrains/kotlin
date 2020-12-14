@@ -10,20 +10,15 @@ import org.jetbrains.report.*
 
 import kotlin.math.abs
 
+enum class RenderType(val createRender: () -> Render) {
+    TEXT(::TextRender),
+    HTML(::HTMLRender),
+    TEAMCITY(::TeamCityStatisticsRender),
+    STATISTICS(::StatisticsRender)
+}
+
 // Base class for printing report in different formats.
 abstract class Render {
-
-    companion object {
-        fun getRenderByName(name: String) =
-            when (name) {
-                "text" -> TextRender()
-                "html" -> HTMLRender()
-                "teamcity" -> TeamCityStatisticsRender()
-                "statistics" -> StatisticsRender()
-                "metrics" -> MetricResultsRender()
-                else -> error("Unknown render $name")
-            }
-    }
 
     abstract val name: String
 

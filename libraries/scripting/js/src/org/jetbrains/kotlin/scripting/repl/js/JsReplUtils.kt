@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.js.engine.ScriptEngine
+import org.jetbrains.kotlin.js.engine.ScriptEngineWithTypedResult
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.CompiledScript
@@ -31,9 +31,9 @@ abstract class JsCompilationState(
     val nameTables: NameTables,
     val dependencies: List<ModuleDescriptor>) : JsState(lock)
 
-class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngine) : JsState(lock) {
+class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngineWithTypedResult) : JsState(lock) {
     override fun dispose() {
-        engine.release()
+        engine.reset()
     }
 }
 

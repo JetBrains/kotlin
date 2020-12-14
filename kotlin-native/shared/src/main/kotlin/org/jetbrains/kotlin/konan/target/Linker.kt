@@ -316,7 +316,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
     private val ar = if (HostManager.hostIsMac) "$absoluteTargetToolchain/bin/llvm-ar"
         else "$absoluteTargetToolchain/bin/ar"
     override val libGcc = "$absoluteTargetSysRoot/${super.libGcc}"
-    private val linker = "$absoluteLlvmHome/bin/ld.lld"
+
     private val specificLibs = abiSpecificLibraries.map { "-L${absoluteTargetSysRoot}/$it" }
 
     override fun provideCompilerRtLibrary(libraryName: String): String? {
@@ -337,10 +337,15 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
+        // TODO: Control via properties.
+        val (linker, linkerSpecificFlags) = when {
+            HostManager.hostIsMac -> "$absoluteLlvmHome/bin/ld.lld" to listOf("--no-threads")
+            else -> "$absoluteTargetToolchain/bin/ld.gold" to emptyList()
+        }
 
         val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
-        val crtPrefix = if (configurables.target == KonanTarget.LINUX_ARM64) "usr/lib" else "usr/lib64"
+        val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
         // TODO: Can we extract more to the konan.configurables?
         return listOf(Command(linker).apply {
             +"--sysroot=${absoluteTargetSysRoot}"
@@ -350,17 +355,16 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +"--build-id"
             +"--eh-frame-hdr"
             +"-dynamic-linker"
+            linkerSpecificFlags.forEach { +it }
             +dynamicLinker
             +"-o"
             +executable
-            if (!dynamic) +"$absoluteTargetSysRoot/$crtPrefix/crt1.o"
-            +"$absoluteTargetSysRoot/$crtPrefix/crti.o"
+            if (!dynamic) +"$crtPrefix/crt1.o"
+            +"$crtPrefix/crti.o"
             +if (dynamic) "$libGcc/crtbeginS.o" else "$libGcc/crtbegin.o"
-            +"-L$llvmLib"
             +"-L$libGcc"
             if (!isMips) +"--hash-style=gnu" // MIPS doesn't support hash-style=gnu
             +specificLibs
-            +listOf("-L$absoluteTargetSysRoot/../lib", "-L$absoluteTargetSysRoot/lib", "-L$absoluteTargetSysRoot/usr/lib")
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
@@ -371,7 +375,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +linkerKonanFlags
             +linkerGccFlags
             +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
-            +"$absoluteTargetSysRoot/$crtPrefix/crtn.o"
+            +"$crtPrefix/crtn.o"
             +libraries
             +linkerArgs
             if (mimallocEnabled) +mimallocLinkerDependencies

@@ -1,0 +1,55 @@
+FILE: compilerPhase.kt
+    public abstract interface CommonBackendContext : R|kotlin/Any| {
+    }
+    public abstract interface PhaserState<Data> : R|kotlin/Any| {
+        public abstract var depth: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public abstract interface PhaseConfig : R|kotlin/Any| {
+        public abstract val needProfiling: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final inline fun <R, D> R|PhaserState<D>|.downlevel(nlevels: R|kotlin/Int|, block: R|() -> R|): R|R| {
+        this@R|/downlevel|.R|/PhaserState.depth| = this@R|/downlevel|.R|/PhaserState.depth|.R|kotlin/Int.plus|(R|<local>/nlevels|)
+        lval result: R|R| = R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+        this@R|/downlevel|.R|/PhaserState.depth| = this@R|/downlevel|.R|/PhaserState.depth|.R|kotlin/Int.minus|(R|<local>/nlevels|)
+        ^downlevel R|<local>/result|
+    }
+    public abstract interface CompilerPhase<in Context : R|CommonBackendContext|, Input, Output> : R|kotlin/Any| {
+        public abstract fun invoke(phaseConfig: R|PhaseConfig|, phaserState: R|PhaserState<Input>|, context: R|Context|, input: R|Input|): R|Output|
+
+    }
+    public final class NamedCompilerPhase<in Context : R|CommonBackendContext|, Data> : R|CompilerPhase<Context, Data, Data>| {
+        public constructor<in Context : R|CommonBackendContext|, Data>(lower: R|CompilerPhase<Context, Data, Data>|): R|NamedCompilerPhase<Context, Data>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val lower: R|CompilerPhase<Context, Data, Data>| = R|<local>/lower|
+            private get(): R|CompilerPhase<Context, Data, Data>|
+
+        public final override fun invoke(phaseConfig: R|PhaseConfig|, phaserState: R|PhaserState<Data>|, context: R|Context|, input: R|Data|): R|Data| {
+            lval output: R|Data| = when () {
+                R|<local>/phaseConfig|.R|/PhaseConfig.needProfiling| ->  {
+                    this@R|/NamedCompilerPhase|.R|/NamedCompilerPhase.runAndProfile|(R|<local>/phaseConfig|, R|<local>/phaserState|, R|<local>/context|, R|<local>/input|)
+                }
+                else ->  {
+                    R|<local>/phaserState|.R|/downlevel|<R|Data|, R|Data|>(Int(1), <L> = downlevel@fun <anonymous>(): R|Data| <kind=UNKNOWN>  {
+                        ^ this@R|/NamedCompilerPhase|.R|/NamedCompilerPhase.lower|.R|SubstitutionOverride</CompilerPhase.invoke: R|Data|>|(R|<local>/phaseConfig|, R|<local>/phaserState|, R|<local>/context|, R|<local>/input|)
+                    }
+                    )
+                }
+            }
+
+            this@R|/NamedCompilerPhase|.R|/NamedCompilerPhase.runAfter|(R|<local>/phaseConfig|, R|<local>/phaserState|, R|<local>/context|, R|<local>/output|)
+        }
+
+        private final fun runAfter(phaseConfig: R|PhaseConfig|, phaserState: R|PhaserState<Data>|, context: R|Context|, output: R|Data|): R|kotlin/Unit| {
+        }
+
+        private final fun runAndProfile(phaseConfig: R|PhaseConfig|, phaserState: R|PhaserState<Data>|, context: R|Context|, source: R|Data|): R|Data| {
+        }
+
+    }

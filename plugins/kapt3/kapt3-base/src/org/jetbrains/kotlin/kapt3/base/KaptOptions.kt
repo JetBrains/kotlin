@@ -168,6 +168,15 @@ fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = 
     }
 }
 
+fun collectAggregatedTypes(sourcesToReprocess: SourcesToReprocess = SourcesToReprocess.FullRebuild): List<String> {
+    return when (sourcesToReprocess) {
+        is SourcesToReprocess.FullRebuild -> emptyList()
+        is SourcesToReprocess.Incremental -> {
+            sourcesToReprocess.unchangedAggregatedTypes
+        }
+    }
+}
+
 fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     val additionalInfoRendered = if (additionalInfo.isEmpty()) "" else " ($additionalInfo)"
     appendLine("Kapt3 is enabled$additionalInfoRendered.")

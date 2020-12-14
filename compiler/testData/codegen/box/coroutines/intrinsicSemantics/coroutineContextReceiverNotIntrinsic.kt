@@ -1,8 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import kotlin.test.assertEquals
 
 @Suppress("DEPRECATION_ERROR")

@@ -57,6 +57,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.reflect.full.findAnnotation
+import java.nio.file.Path
 
 abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFixtureTestCaseBase() {
 
@@ -67,6 +68,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 
     protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected fun testDataFilePath(): Path = testDataFile().toPath()
 
     protected fun testPath(fileName: String = fileName()): String = testDataFile(fileName).toString()
 

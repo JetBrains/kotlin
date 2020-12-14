@@ -125,6 +125,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-dce-print-reachability-info", description = "Print declarations' reachability info to stdout during performing DCE")
     var irDcePrintReachabilityInfo: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
+    var irPropertyLazyInitialization: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
 

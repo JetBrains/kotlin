@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
-        private val interopBuiltIns: InteropBuiltIns
+        private val interopBuiltIns: InteropBuiltIns,
+        private val companionGenerator: CStructVarCompanionGenerator
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-
-    private val companionGenerator = CStructVarCompanionGenerator(context, interopBuiltIns)
+    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
 
     fun findOrGenerateCStruct(classDescriptor: ClassDescriptor, parent: IrDeclarationContainer): IrClass {
         val irClassSymbol = symbolTable.referenceClass(classDescriptor)
@@ -61,14 +61,16 @@ internal class CStructVarClassGenerator(
                 interopBuiltIns.cStructVar.unsubstitutedPrimaryConstructor!!
         )
         return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
-            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-                        startOffset, endOffset,
-                        context.irBuiltIns.unitType, enumVarConstructorSymbol
-                ).also {
-                    it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+            postLinkageSteps.add {
+                irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    +IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                            startOffset, endOffset,
+                            context.irBuiltIns.unitType, enumVarConstructorSymbol
+                    ).also {
+                        it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+                    }
+                    +irInstanceInitializer(symbolTable.referenceClass(irClass.descriptor))
                 }
-                +irInstanceInitializer(symbolTable.referenceClass(irClass.descriptor))
             }
         }
     }

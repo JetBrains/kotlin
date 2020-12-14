@@ -121,7 +121,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     }
                     return TestFile(fileName, linesWithoutDirectives.joinToString(separator = "\n"))
                 }
-            }, ""
+            }
         )
 
         val afterFile = subFiles.firstOrNull { file -> file.path.contains(".after") }

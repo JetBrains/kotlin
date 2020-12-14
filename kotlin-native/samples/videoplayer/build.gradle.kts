@@ -40,7 +40,7 @@ kotlin {
             val sdl by creating {
                 when (preset) {
                     presets["macosX64"] -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
-                    presets["linuxX64"] -> includeDirs("/usr/include/SDL2")
+                    presets["linuxX64"] -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")
                     presets["mingwX64"] -> includeDirs(mingwPath.resolve("include/SDL2"))
                 }
             }

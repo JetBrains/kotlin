@@ -23,16 +23,16 @@ public final class ClassWithParent implements java.lang.CharSequence {
     }
 
     @java.lang.Override()
-    public final int length() {
-        return 0;
-    }
-
-    public abstract int getLength();
-
-    @java.lang.Override()
     public final char charAt(int p0) {
         return '\u0000';
     }
 
     public abstract char get(int p0);
+
+    public abstract int getLength();
+
+    @java.lang.Override()
+    public final int length() {
+        return 0;
+    }
 }

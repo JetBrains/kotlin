@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -325,9 +325,8 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun Iterable<FirDiagnostic<*>>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
-        mapTo(result) {
-            val oldDiagnostic = (it as FirPsiDiagnostic<*>).asPsiBasedDiagnostic()
-            ActualDiagnostic(oldDiagnostic, null, true)
+        filterIsInstance<Diagnostic>().mapTo(result) {
+            ActualDiagnostic(it, null, true)
         }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
             result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))

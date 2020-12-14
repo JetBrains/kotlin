@@ -21,6 +21,8 @@
 
 #if KONAN_OBJC_INTEROP
 
+#import <mutex>
+
 #import <Foundation/NSObject.h>
 #import <Foundation/NSValue.h>
 #import <Foundation/NSString.h>
@@ -959,7 +961,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
   return result;
 }
 
-static SimpleMutex typeInfoCreationMutex;
+static kotlin::SpinLock typeInfoCreationMutex;
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz);
@@ -973,7 +975,7 @@ static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
     theForeignObjCObjectTypeInfo :
     getOrCreateTypeInfo(superClass);
 
-  LockGuard<SimpleMutex> lockGuard(typeInfoCreationMutex);
+  std::lock_guard<kotlin::SpinLock> lockGuard(typeInfoCreationMutex);
 
   result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz); // double-checking.
   if (result == nullptr) {
@@ -993,7 +995,7 @@ const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz
   return createTypeInfo(clazz, superType, fieldsInfo);
 }
 
-static SimpleMutex classCreationMutex;
+static kotlin::SpinLock classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) {
@@ -1067,7 +1069,7 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
   } else {
     Class superClass = getOrCreateClass(typeInfo->superType_);
 
-    LockGuard<SimpleMutex> lockGuard(classCreationMutex); // Note: non-recursive
+    std::lock_guard<kotlin::SpinLock> lockGuard(classCreationMutex); // Note: non-recursive
 
     result = typeInfo->writableInfo_->objCExport.objCClass; // double-checking.
     if (result == nullptr) {

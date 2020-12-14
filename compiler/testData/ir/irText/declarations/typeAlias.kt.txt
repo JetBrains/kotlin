@@ -1,0 +1,18 @@
+typealias Test1 = String
+fun foo() {
+  { // BLOCK
+  }
+}
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @Suppress(names = ["TOPLEVEL_TYPEALIASES_ONLY"])
+  typealias TestNested = String
+
+}
+

@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
+import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -26,11 +27,20 @@ import org.junit.Test
 
 class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
-    private lateinit var cache: CirClassifiersCacheImpl
+    private lateinit var classifiers: CirKnownClassifiers
 
     @Before
     fun initialize() {
-        cache = CirClassifiersCacheImpl() // reset cache
+        // reset cache
+        classifiers = CirKnownClassifiers(
+            commonized = CirCommonizedClassifiers.default(),
+            forwardDeclarations = CirForwardDeclarations.default(),
+            dependeeLibraries = mapOf(
+                FAKE_SHARED_TARGET to object : CirProvidedClassifiers {
+                    override fun hasClassifier(classifierId: ClassId): Boolean = classifierId.packageFqName.isUnderStandardKotlinPackages
+                }
+            )
+        )
     }
 
     @Test
@@ -467,11 +477,11 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             when (descriptor) {
                 is ClassDescriptor -> {
                     val classId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
-                    val node = cache.classes.getOrPut(classId) {
+                    val node = classifiers.classNode(classId) {
                         buildClassNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
-                            cacheRW = cache,
+                            classifiers = classifiers,
                             parentCommonDeclaration = null,
                             classId = classId
                         )
@@ -479,13 +489,13 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                     node.targetDeclarations[index] = CirClassFactory.create(descriptor)
                 }
                 is TypeAliasDescriptor -> {
-                    val classId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
-                    val node = cache.typeAliases.getOrPut(classId) {
+                    val typeAliasId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
+                    val node = classifiers.typeAliasNode(typeAliasId) {
                         buildTypeAliasNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
-                            cacheRW = cache,
-                            classId = classId
+                            classifiers = classifiers,
+                            typeAliasId = typeAliasId
                         )
                     }
                     node.targetDeclarations[index] = CirTypeAliasFactory.create(descriptor)
@@ -519,12 +529,20 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         )
     }
 
-    override fun createCommonizer() = TypeCommonizer(cache)
+    override fun createCommonizer() = TypeCommonizer(classifiers)
 
-    override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areEqual(cache, a, b))
+    override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areEqual(classifiers, a, b))
 
     companion object {
-        fun areEqual(cache: CirClassifiersCache, a: CirType, b: CirType): Boolean =
-            TypeCommonizer(cache).run { commonizeWith(a) && commonizeWith(b) }
+        fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
+            TypeCommonizer(classifiers).run { commonizeWith(a) && commonizeWith(b) }
+
+        private val FAKE_SHARED_TARGET = SharedTarget(setOf(LeafTarget("a"), LeafTarget("b")))
+
+        private fun CirKnownClassifiers.classNode(classId: ClassId, computation: () -> CirClassNode) =
+            commonized.classNode(classId) ?: computation()
+
+        private fun CirKnownClassifiers.typeAliasNode(typeAliasId: ClassId, computation: () -> CirTypeAliasNode) =
+            commonized.typeAliasNode(typeAliasId) ?: computation()
     }
 }

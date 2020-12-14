@@ -1,0 +1,27 @@
+val test1: Function0<Unit>
+  field = local fun <anonymous>(): Int {
+    return 42
+  }
+
+  get
+
+fun test2(mc: MutableCollection<String>) {
+  mc.add(element = "") /*~> Unit */
+}
+
+fun test3() {
+  { // BLOCK
+    val tmp0_safe_receiver: PrintStream? = #out
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.println(p0 = "Hello,")
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp1_safe_receiver: PrintStream? = #out
+    when {
+      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+      else -> tmp1_safe_receiver.println(p0 = "world!")
+    }
+  } /*~> Unit */
+}

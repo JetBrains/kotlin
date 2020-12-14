@@ -35,8 +35,8 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTestCase {
     private File tmpdir;
-    private File aDir;
-    private File bDir;
+    protected File aDir;
+    protected File bDir;
 
     @Override
     protected void setUp() throws Exception {
@@ -80,7 +80,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         return new Pair<>(factoryA, factoryB);
     }
 
-    private void invokeBox(@NotNull String className) throws Exception {
+    protected void invokeBox(@NotNull String className) throws Exception {
         callBoxMethodAndCheckResult(createGeneratedClassLoader(), className);
     }
 

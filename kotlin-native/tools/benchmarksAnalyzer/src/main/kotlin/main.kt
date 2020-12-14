@@ -150,8 +150,8 @@ fun main(args: Array<String>) {
             "Meaningful performance changes").default(1.0)
     val useShortForm by argParser.option(ArgType.Boolean, "short", "s",
             "Show short version of report").default(false)
-    val renders by argParser.option(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
-            shortName = "r", description = "Renders for showing information").multiple().default(listOf("text"))
+    val renders by argParser.option(ArgType.Choice<RenderType>(), shortName = "r",
+            description = "Renders for showing information").multiple().default(listOf(RenderType.TEXT))
     val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
 
     argParser.parse(args)
@@ -169,7 +169,7 @@ fun main(args: Array<String>) {
 
     var outputFile = output
     renders.forEach {
-        Render.getRenderByName(it).print(summaryReport, useShortForm, outputFile)
+        it.createRender().print(summaryReport, useShortForm, outputFile)
         outputFile = null
     }
 }

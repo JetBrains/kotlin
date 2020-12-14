@@ -1,0 +1,11 @@
+@Target(allowedTargets = [AnnotationTarget.TYPEALIAS])
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+}
+
+@TestAnn(x = "TestTypeAlias")
+typealias TestTypeAlias = String

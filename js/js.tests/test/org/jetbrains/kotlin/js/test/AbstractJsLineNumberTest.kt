@@ -44,7 +44,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         val sourceCode = file.readText()
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles = TestFiles.createTestFiles(file.name, sourceCode, testFactory, true, "")
+            val inputFiles = TestFiles.createTestFiles(file.name, sourceCode, testFactory, true)
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .associateBy { it.name }

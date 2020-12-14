@@ -45,7 +45,7 @@ class AnnotationPresentationInfo(
 
                         if (fixes.isEmpty()) {
                             // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
-                            annotation.newFix(EmptyIntentionAction(diagnostic.factory.name)).registerFix()
+                            annotation.newFix(EmptyIntentionAction(diagnostic.factory.name!!)).registerFix()
                         }
                     }
                 }

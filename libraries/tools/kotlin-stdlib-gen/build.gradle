@@ -10,6 +10,7 @@ sourceSets {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
+    compile project(":wasm:wasm.ir")
 }
 
 compileKotlin {

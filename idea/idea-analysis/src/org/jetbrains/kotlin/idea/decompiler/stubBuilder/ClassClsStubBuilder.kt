@@ -102,7 +102,7 @@ private class ClassClsStubBuilder(
             relevantFlags.add(INNER)
             relevantFlags.add(DATA)
             relevantFlags.add(MODALITY)
-            relevantFlags.add(INLINE_CLASS)
+            relevantFlags.add(VALUE_CLASS)
         }
         if (isInterface()) {
             relevantFlags.add(FUN_INTERFACE)

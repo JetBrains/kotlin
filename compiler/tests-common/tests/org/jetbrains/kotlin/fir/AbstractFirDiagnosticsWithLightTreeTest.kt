@@ -57,7 +57,7 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
                 val expected = existingDiagnostics[startOffset] ?: emptyMap()
                 val actual = actualDiagnostics[startOffset] ?: emptyMap()
                 for (name in expected.keys + actual.keys) {
-                    if (name == "SYNTAX") continue
+                    if (name == null || name == "SYNTAX") continue
                     val expectedCount = expected[name] ?: 0
                     val actualCount = actual[name] ?: 0
                     if (expectedCount != actualCount) {

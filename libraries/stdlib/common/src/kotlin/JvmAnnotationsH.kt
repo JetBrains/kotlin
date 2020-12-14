@@ -101,7 +101,26 @@ public expect annotation class JvmSuppressWildcards(val suppress: Boolean = true
 @OptionalExpectation
 public expect annotation class JvmWildcard()
 
+/**
+ * Specifies that given value class is inline class.
+ *
+ * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
+ * in their signature are mangled.
+ */
+@Target(CLASS)
+@MustBeDocumented
+@SinceKotlin("1.5")
+@OptionalExpectation
+public expect annotation class JvmInline()
 
+/**
+ * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ */
+@Target(AnnotationTarget.CLASS)
+@MustBeDocumented
+@OptionalExpectation
+@SinceKotlin("1.5")
+public expect annotation class JvmRecord
 
 /**
  * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field

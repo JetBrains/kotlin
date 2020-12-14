@@ -1,0 +1,8 @@
+fun test1(d: dynamic): dynamic {
+  return d.foo(123)
+}
+
+fun test2(d: dynamic): dynamic {
+  return d.invoke(123)
+}
+

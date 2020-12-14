@@ -1,0 +1,22 @@
+fun test1(a: Boolean, b: Boolean): Boolean {
+  return when {
+    a -> b
+    else -> false
+  }
+}
+
+fun test2(a: Boolean, b: Boolean): Boolean {
+  return when {
+    a -> true
+    else -> b
+  }
+}
+
+fun test1x(a: Boolean, b: Boolean): Boolean {
+  return a.and(other = b)
+}
+
+fun test2x(a: Boolean, b: Boolean): Boolean {
+  return a.or(other = b)
+}
+

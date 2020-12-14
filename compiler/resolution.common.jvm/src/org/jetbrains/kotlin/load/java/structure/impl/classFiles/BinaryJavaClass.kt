@@ -47,6 +47,8 @@ class BinaryJavaClass(
     override val methods = arrayListOf<JavaMethod>()
     override val fields = arrayListOf<JavaField>()
     override val constructors = arrayListOf<JavaConstructor>()
+    override val recordComponents = arrayListOf<JavaRecordComponent>()
+
     override fun hasDefaultConstructor() = false // never: all constructors explicit in bytecode
 
     override val annotationsByFqName by buildLazyValueForMap()
@@ -63,7 +65,13 @@ class BinaryJavaClass(
     override val isInterface get() = isSet(Opcodes.ACC_INTERFACE)
     override val isAnnotationType get() = isSet(Opcodes.ACC_ANNOTATION)
     override val isEnum get() = isSet(Opcodes.ACC_ENUM)
+
+    override val isRecord get() = isSet(Opcodes.ACC_RECORD)
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
+
+    override val isSealed: Boolean get() = permittedTypes.isNotEmpty()
+    override val permittedTypes = arrayListOf<JavaClassifierType>()
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
@@ -77,7 +85,7 @@ class BinaryJavaClass(
         try {
             ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
                 this,
-                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+                ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
         } catch (e: Throwable) {
             throw IllegalStateException("Could not read class: $virtualFile", e)
@@ -184,6 +192,16 @@ class BinaryJavaClass(
         }
     }
 
+
+    override fun visitRecordComponent(name: String, descriptor: String, signature: String?): RecordComponentVisitor? {
+        val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: descriptor), context)
+        // TODO: Read isVararg properly
+        val isVararg = false
+        recordComponents.add(BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg))
+
+        return null
+    }
+
     /**
      * All the int-like values (including Char/Boolean) come in visitor as Integer instances
      */
@@ -217,5 +235,9 @@ class BinaryJavaClass(
                 classFileContent
             )
         }
+    }
+
+    override fun visitPermittedSubtypeExperimental(permittedSubtype: String?) {
+        permittedTypes.addIfNotNull(permittedSubtype?.convertInternalNameToClassifierType())
     }
 }

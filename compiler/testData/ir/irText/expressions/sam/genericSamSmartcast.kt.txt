@@ -1,0 +1,12 @@
+fun f(x: Any): String {
+  when {
+    x is A<*> -> { // BLOCK
+      return x /*as A<T> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
+        return "OK"
+      }
+ /*-> @FlexibleNullability I<@FlexibleNullability T?>? */) /*!! String */
+    }
+  }
+  return "Fail"
+}
+

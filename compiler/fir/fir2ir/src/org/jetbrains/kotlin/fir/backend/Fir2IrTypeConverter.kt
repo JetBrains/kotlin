@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.types.Variance
 class Fir2IrTypeConverter(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
-    private val annotationGenerator = AnnotationGenerator(this)
 
     internal val classIdToSymbolMap = mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingClass,

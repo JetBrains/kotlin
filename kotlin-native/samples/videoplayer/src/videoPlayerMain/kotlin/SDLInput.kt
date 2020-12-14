@@ -8,7 +8,7 @@ package sample.videoplayer
 import kotlinx.cinterop.*
 import sdl.*
 
-class SDLInput(val player: VideoPlayer) : DisposableContainer() {
+class SDLInput(private val player: VideoPlayer) : DisposableContainer() {
     private val event = arena.alloc<SDL_Event>().ptr
 
     fun check() {

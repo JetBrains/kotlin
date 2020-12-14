@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -42,8 +40,6 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
             is IrClass -> WrappedClassDescriptor().apply { bind(owner) }
             is IrConstructor -> WrappedClassConstructorDescriptor().apply { bind(owner) }
             is IrSimpleFunction -> when {
-                containerSource != null ->
-                    WrappedFunctionDescriptorWithContainerSource()
                 owner.name.isSpecial && owner.name.asString().startsWith(GETTER_PREFIX) ->
                     WrappedPropertyGetterDescriptor()
                 owner.name.isSpecial && owner.name.asString().startsWith(SETTER_PREFIX) ->
@@ -54,11 +50,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
             is IrVariable -> WrappedVariableDescriptor().apply { bind(owner) }
             is IrValueParameter -> WrappedValueParameterDescriptor().apply { bind(owner) }
             is IrTypeParameter -> WrappedTypeParameterDescriptor().apply { bind(owner) }
-            is IrProperty -> if (containerSource != null) {
-                WrappedPropertyDescriptorWithContainerSource()
-            } else {
-                WrappedPropertyDescriptor()
-            }.apply { bind(owner) }
+            is IrProperty -> WrappedPropertyDescriptor().apply { bind(owner) }
             is IrField -> WrappedFieldDescriptor().apply { bind(owner) }
             is IrTypeAlias -> WrappedTypeAliasDescriptor().apply { bind(owner) }
             else -> throw IllegalStateException("Unsupported owner in Fir2IrBindableSymbol: $owner")

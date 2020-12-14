@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -245,7 +246,7 @@ class DeclarationStubGenerator(
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         symbolTable.irFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
-            varargElementType?.toIrType(), isCrossinline, isNoinline, false
+            varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false
         ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue =
@@ -274,7 +275,7 @@ class DeclarationStubGenerator(
                 isInner = descriptor.isInner,
                 isData = descriptor.isData,
                 isExternal = descriptor.isEffectivelyExternal(),
-                isInline = descriptor.isInline,
+                isInline = descriptor.isInlineClass(),
                 isExpect = descriptor.isExpect,
                 isFun = descriptor.isFun,
                 stubGenerator = this,

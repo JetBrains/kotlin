@@ -1,0 +1,29 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class A {
+    // source: 'kt43399.kt'
+}
+
+@kotlin.Metadata
+public final class B$DefaultImpls {
+    // source: 'kt43399.kt'
+    public synthetic deprecated static @A method getA$annotations(p0: java.lang.Integer[]): void
+    public synthetic deprecated static @A method getB$annotations(p0: java.lang.Integer[][]): void
+    public synthetic deprecated static @A method getC$annotations(p0: int[][]): void
+    public synthetic deprecated static @A method getD$annotations(p0: java.lang.Object[]): void
+    public synthetic deprecated static @A method getE$annotations(p0: java.lang.String[]): void
+    public synthetic deprecated static @A method getF$annotations(p0: java.lang.Object[]): void
+    public final inner class B$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface B {
+    // source: 'kt43399.kt'
+    public abstract method getA(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[]): int
+    public abstract method getB(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[][]): int
+    public abstract method getC(@org.jetbrains.annotations.NotNull p0: int[][]): int
+    public abstract method getD(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): int
+    public abstract method getE(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): int
+    public abstract method getF(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): int
+    public final inner class B$DefaultImpls
+}

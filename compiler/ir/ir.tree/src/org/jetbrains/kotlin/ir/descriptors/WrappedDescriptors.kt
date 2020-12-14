@@ -365,8 +365,11 @@ open class WrappedVariableDescriptorWithAccessor : VariableDescriptorWithAccesso
 
 }
 
+// We make all wrapped function descriptors instances of DescriptorWithContainerSource, and use .parentClassId to
+// check whether declaration is deserialized. See IrInlineCodegen.descriptorIsDeserialized
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-open class WrappedSimpleFunctionDescriptor : SimpleFunctionDescriptor, WrappedCallableDescriptor<IrSimpleFunction>() {
+open class WrappedSimpleFunctionDescriptor :
+    SimpleFunctionDescriptor, DescriptorWithContainerSource, WrappedCallableDescriptor<IrSimpleFunction>() {
 
     override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
 
@@ -401,6 +404,9 @@ open class WrappedSimpleFunctionDescriptor : SimpleFunctionDescriptor, WrappedCa
     override fun isActual() = false
     override fun isInfix() = false
     override fun isOperator() = false
+
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
 
     override fun getOriginal() = this
     override fun substitute(substitutor: TypeSubstitutor): SimpleFunctionDescriptor {
@@ -442,12 +448,6 @@ open class WrappedSimpleFunctionDescriptor : SimpleFunctionDescriptor, WrappedCa
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         visitor!!.visitFunctionDescriptor(this, null)
     }
-}
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-class WrappedFunctionDescriptorWithContainerSource : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource {
-    override val containerSource
-        get() = owner.containerSource
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -583,6 +583,8 @@ open class WrappedClassDescriptor : ClassDescriptor, WrappedDeclarationDescripto
 
     override fun isFun() = owner.isFun
 
+    override fun isValue() = owner.isInline
+
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.descriptor as ReceiverParameterDescriptor
 
     override fun getUnsubstitutedPrimaryConstructor() =
@@ -681,6 +683,8 @@ open class WrappedScriptDescriptor : ScriptDescriptor, WrappedDeclarationDescrip
     override fun isInline() = false
 
     override fun isFun() = false
+
+    override fun isValue() = false
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver.descriptor as ReceiverParameterDescriptor
 
@@ -822,6 +826,8 @@ open class WrappedEnumEntryDescriptor : ClassDescriptor, WrappedDeclarationDescr
 
     override fun isFun() = false
 
+    override fun isValue() = false
+
     override fun getThisAsReceiverParameter() = (owner.parent as IrClass).descriptor.thisAsReceiverParameter
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? {
@@ -871,7 +877,8 @@ open class WrappedEnumEntryDescriptor : ClassDescriptor, WrappedDeclarationDescr
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-open class WrappedPropertyDescriptor : PropertyDescriptor, WrappedDeclarationDescriptor<IrProperty>() {
+open class WrappedPropertyDescriptor :
+    PropertyDescriptor, DescriptorWithContainerSource, WrappedDeclarationDescriptor<IrProperty>() {
     override fun getModality() = owner.modality
 
     override fun setOverriddenDescriptors(overriddenDescriptors: MutableCollection<out CallableMemberDescriptor>) {
@@ -917,6 +924,9 @@ open class WrappedPropertyDescriptor : PropertyDescriptor, WrappedDeclarationDes
     override fun getVisibility() = owner.visibility
 
     override val setter: PropertySetterDescriptor? get() = owner.setter?.descriptor as? PropertySetterDescriptor
+
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
 
     override fun getOriginal() = this
 
@@ -971,11 +981,6 @@ open class WrappedPropertyDescriptor : PropertyDescriptor, WrappedDeclarationDes
     }
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
-}
-
-class WrappedPropertyDescriptorWithContainerSource : WrappedPropertyDescriptor(), DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource?
-        get() = owner.containerSource
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

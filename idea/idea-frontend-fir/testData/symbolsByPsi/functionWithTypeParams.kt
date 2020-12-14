@@ -5,6 +5,7 @@ fun <X> foo(x: X) {}
 KtFirTypeParameterSymbol:
   name: X
   origin: SOURCE
+  upperBounds: [kotlin/Any?]
 
 KtFirFunctionValueParameterSymbol:
   annotations: []

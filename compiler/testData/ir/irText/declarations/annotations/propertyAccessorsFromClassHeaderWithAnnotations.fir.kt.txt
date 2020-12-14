@@ -1,0 +1,28 @@
+annotation class A : Annotation {
+  constructor(x: String) /* primary */
+  val x: String
+    field = x
+    get
+
+}
+
+class C {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    @A(x = "C.x.get")
+    get
+
+  var y: Int
+    field = y
+    @A(x = "C.y.get")
+    get
+    @A(x = "C.y.set")
+    set
+
+}

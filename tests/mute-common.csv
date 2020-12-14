@@ -80,3 +80,4 @@ org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.Facades.test
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testActualTypeAliasCustomJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testReceiverFun, Analysing of facade annotation with receiver site is broken (connected with KT-40403),,
+org.jetbrains.kotlin.checkers.FirPsiCheckerTestGenerated.Regression.testJet53,,, FLAKY

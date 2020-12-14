@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -84,11 +81,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 // TODO
             }
 
-            override fun getBackingField(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrField? =
+            override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? =
                 irValueParameter?.let {
                     irClass.properties.single { irProperty ->
                         irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
-                    }.backingField
+                    }
                 }
 
             override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
@@ -159,9 +156,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                             withForcedTypeCalculator = true
                         ).processFunctionsByName(name) {
                             val declaration = it.fir
-                            if (declaration is FirSimpleFunction &&
-                                declaration.matchesDataClassSyntheticMemberSignatures
-                            ) {
+                            if (declaration.matchesDataClassSyntheticMemberSignatures) {
                                 putIfAbsent(declaration.name, declaration)
                             }
                         }
@@ -216,8 +211,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         fun generateComponentBody(irFunction: IrFunction) {
             val index = getComponentIndex(irFunction)!!
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
-            val backingField = irDataClassMembersGenerator.getBackingField(null, valueParameter)!!
-            irDataClassMembersGenerator.generateComponentFunction(irFunction, backingField)
+            val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
+            irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
         }
 
         fun generateCopyBody(irFunction: IrFunction) =
@@ -295,7 +290,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             ) { symbol ->
                 components.irFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, index, type, null,
-                    isCrossinline = false, isNoinline = false, isAssignable = false
+                    isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
                 )
             }.apply {
                 parent = irFunction

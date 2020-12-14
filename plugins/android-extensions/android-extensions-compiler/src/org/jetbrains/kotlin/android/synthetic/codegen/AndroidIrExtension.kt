@@ -244,7 +244,8 @@ private fun TranslationPluginContext.declareParameterStub(parameterDescriptor: P
     val varargElementType = parameterDescriptor.varargElementType?.let { typeTranslator.translateType(it) }
     return irFactory.createValueParameter(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, symbol, parameterDescriptor.name,
-        parameterDescriptor.indexOrMinusOne, type, varargElementType, parameterDescriptor.isCrossinline, parameterDescriptor.isNoinline
+        parameterDescriptor.indexOrMinusOne, type, varargElementType, parameterDescriptor.isCrossinline,
+        parameterDescriptor.isNoinline, isHidden = false, isAssignable = false
     )
 }
 

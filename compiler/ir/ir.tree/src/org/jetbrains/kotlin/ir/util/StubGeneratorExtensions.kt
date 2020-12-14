@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -20,6 +21,8 @@ open class StubGeneratorExtensions {
     open fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? = null
 
     open fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean = false
+
+    open fun isStaticFunction(descriptor: FunctionDescriptor): Boolean = false
 
     open val enhancedNullability: EnhancedNullability
         get() = EnhancedNullability

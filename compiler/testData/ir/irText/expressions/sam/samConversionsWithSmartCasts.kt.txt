@@ -1,0 +1,67 @@
+fun test1(a: Function0<Unit>) {
+  when {
+    a is Runnable -> { // BLOCK
+      runStatic(r = a /*as Runnable */)
+    }
+  }
+}
+
+fun test2(a: Function0<Unit>) {
+  when {
+    a is Runnable -> { // BLOCK
+      J().run1(r = a /*as Runnable */)
+    }
+  }
+}
+
+fun test3(a: Function0<Unit>) {
+  when {
+    a is Runnable -> { // BLOCK
+      J().run2(r1 = a /*as Runnable */, r2 = a /*as Runnable */)
+    }
+  }
+}
+
+fun test4(a: Function0<Unit>, b: Function0<Unit>) {
+  when {
+    a is Runnable -> { // BLOCK
+      J().run2(r1 = a /*-> @FlexibleNullability Runnable? */, r2 = b /*-> @FlexibleNullability Runnable? */)
+    }
+  }
+}
+
+fun test5(a: Any) {
+  when {
+    a is Runnable -> { // BLOCK
+      J().run1(r = a /*as Runnable */)
+    }
+  }
+}
+
+fun test5x(a: Any) {
+  when {
+    a is Runnable -> { // BLOCK
+      a as Function0<Unit> /*~> Unit */
+      J().run1(r = a /*as Runnable */)
+    }
+  }
+}
+
+fun test6(a: Any) {
+  a as Function0<Unit> /*~> Unit */
+  J().run1(r = a /*as Function0<Unit> */ /*-> @FlexibleNullability Runnable? */)
+}
+
+fun test7(a: Function1<Int, Int>) {
+  a as Function0<Unit> /*~> Unit */
+  J().run1(r = a /*as Function0<Unit> */ /*-> @FlexibleNullability Runnable? */)
+}
+
+fun test8(a: Function0<Unit>) {
+  J().run1(r = id<@FlexibleNullability Function0<Unit>?>(x = a) /*!! Function0<Unit> */ /*-> @FlexibleNullability Runnable? */)
+}
+
+fun test9() {
+  J().run1(r = ::test9 /*-> @FlexibleNullability Runnable? */)
+}
+

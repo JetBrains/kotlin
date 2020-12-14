@@ -63,6 +63,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
           receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo' type=<root>.DFoo origin=null
           value: GET_VAR 'd: <root>.IFoo declared in <root>.DFoo.<init>' type=<root>.IFoo origin=null
     FUN DELEGATED_MEMBER name:testFun visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.Unit
+      annotations:
+        Ann
       overridden:
         public abstract fun testFun (): kotlin.Unit declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
@@ -71,6 +73,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IFoo visibility:local [final]' type=<root>.IFoo origin=null
             receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testFun' type=<root>.DFoo origin=null
     FUN DELEGATED_MEMBER name:testExtFun visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.Unit
+      annotations:
+        Ann
       overridden:
         public abstract fun testExtFun (): kotlin.Unit declared in <root>.IFoo
       $this: VALUE_PARAMETER name:<this> type:<root>.DFoo
@@ -81,6 +85,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
             receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.testExtFun' type=<root>.DFoo origin=null
           $receiver: GET_VAR '<this>: kotlin.String declared in <root>.DFoo.testExtFun' type=kotlin.String origin=null
     PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
+      annotations:
+        Ann
       FUN DELEGATED_MEMBER name:<get-testVal> visibility:public modality:OPEN <> ($this:<root>.DFoo) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:testVal visibility:public modality:OPEN [val]
         overridden:
@@ -92,6 +98,8 @@ FILE fqName:<root> fileName:/annotationsOnDelegatedMembers.kt
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IFoo visibility:local [final]' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.DFoo declared in <root>.DFoo.<get-testVal>' type=<root>.DFoo origin=null
     PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
+      annotations:
+        Ann
       FUN DELEGATED_MEMBER name:<get-testExtVal> visibility:public modality:OPEN <> ($this:<root>.DFoo, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:testExtVal visibility:public modality:OPEN [val]
         overridden:

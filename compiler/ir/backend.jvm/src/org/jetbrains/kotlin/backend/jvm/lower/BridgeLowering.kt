@@ -188,8 +188,16 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 return false
 
             // We don't produce bridges for abstract functions in interfaces.
-            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode))
-                return !irFunction.parentAsClass.isJvmInterface
+            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode)) {
+                if (irFunction.parentAsClass.isJvmInterface) {
+                    // If function requires a special bridge, we should record it for generic signatures generation.
+                    if (irFunction.specialBridgeOrNull != null) {
+                        context.functionsWithSpecialBridges.add(irFunction)
+                    }
+                    return false
+                }
+                return true
+            }
 
             // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
             // This is sound, since we do not generate type-specialized versions of fake overrides and if the method

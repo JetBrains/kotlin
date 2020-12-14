@@ -1,0 +1,61 @@
+class Impl : A, B {
+  constructor(b: B) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = b
+  }
+
+  override fun add(element: String?): Boolean {
+    return <this>.#<$$delegate_0>.add(element = element)
+  }
+
+  override fun addAll(elements: Collection<String?>): Boolean {
+    return <this>.#<$$delegate_0>.addAll(elements = elements)
+  }
+
+  override fun clear() {
+    <this>.#<$$delegate_0>.clear()
+  }
+
+  override operator fun iterator(): MutableIterator<String?> {
+    return <this>.#<$$delegate_0>.iterator()
+  }
+
+  override fun remove(element: String?): Boolean {
+    return <this>.#<$$delegate_0>.remove(element = element)
+  }
+
+  override fun removeAll(elements: Collection<String?>): Boolean {
+    return <this>.#<$$delegate_0>.removeAll(elements = elements)
+  }
+
+  override fun retainAll(elements: Collection<String?>): Boolean {
+    return <this>.#<$$delegate_0>.retainAll(elements = elements)
+  }
+
+  override operator fun contains(element: String?): Boolean {
+    return <this>.#<$$delegate_0>.contains(element = element)
+  }
+
+  override fun containsAll(elements: Collection<String?>): Boolean {
+    return <this>.#<$$delegate_0>.containsAll(elements = elements)
+  }
+
+  override fun isEmpty(): Boolean {
+    return <this>.#<$$delegate_0>.isEmpty()
+  }
+
+  override val size: Int
+    override get(): Int {
+      return <this>.#<$$delegate_0>.<get-size>()
+    }
+
+  local /* final field */ val <$$delegate_0>: B
+
+}
+
+fun box(): String {
+  return "OK"
+}
+

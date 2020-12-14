@@ -92,6 +92,7 @@ public class DescriptorResolver {
     private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
     private final DataFlowValueFactory dataFlowValueFactory;
     private final Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers;
+    private final AdditionalClassPartsProvider additionalClassPartsProvider;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -111,7 +112,8 @@ public class DescriptorResolver {
             @NotNull TypeApproximator approximator,
             @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers
+            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers,
+            @NotNull AdditionalClassPartsProvider additionalClassPartsProvider
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -131,6 +133,7 @@ public class DescriptorResolver {
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
         this.dataFlowValueFactory = dataFlowValueFactory;
         this.anonymousTypeTransformers = anonymousTypeTransformers;
+        this.additionalClassPartsProvider = additionalClassPartsProvider;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -156,6 +159,7 @@ public class DescriptorResolver {
         }
 
         syntheticResolveExtension.addSyntheticSupertypes(classDescriptor, supertypes);
+        supertypes.addAll(additionalClassPartsProvider.getAdditionalSupertypes(classDescriptor, supertypes));
 
         if (supertypes.isEmpty()) {
             addValidSupertype(supertypes, getDefaultSupertype(classDescriptor));

@@ -1,0 +1,50 @@
+fun test() {
+  var x: Int = 0
+  while (less(arg0 = x, arg1 = 0)) 
+  while (less(arg0 = x, arg1 = 5)) { // BLOCK
+    val tmp0: Int = x
+    x = tmp0.inc()
+    tmp0
+  } /*~> Unit */
+  while (less(arg0 = x, arg1 = 10)) { // BLOCK
+    { // BLOCK
+      val tmp1: Int = x
+      x = tmp1.inc()
+      tmp1
+    } /*~> Unit */
+  }
+  { // BLOCK
+    do    while (less(arg0 = x, arg1 = 0))
+  }
+  { // BLOCK
+    do{ // BLOCK
+      val tmp2: Int = x
+      x = tmp2.inc()
+      tmp2
+    } /*~> Unit */    while (less(arg0 = x, arg1 = 15))
+  }
+  { // BLOCK
+    do// COMPOSITE {
+    { // BLOCK
+      val tmp3: Int = x
+      x = tmp3.inc()
+      tmp3
+    } /*~> Unit */
+    // }    while (less(arg0 = x, arg1 = 20))
+  }
+}
+
+fun testSmartcastInCondition() {
+  val a: Any? = null
+  when {
+    a is Boolean -> { // BLOCK
+      while (a /*as Boolean */) { // BLOCK
+      }
+      { // BLOCK
+        do// COMPOSITE {
+        // }        while (a /*as Boolean */)
+      }
+    }
+  }
+}
+

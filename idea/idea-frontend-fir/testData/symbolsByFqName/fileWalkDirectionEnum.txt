@@ -21,7 +21,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
-  annotations: [kotlin/internal/InlineOnly()]
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
   isExternal: false

@@ -67,9 +67,9 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
     private val scopeNameFilter: KtScopeNameFilter =
         { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
 
-    private fun CompletionResultSet.addSymbolToCompletion(symbol: KtSymbol) {
+    private fun KtAnalysisSession.addSymbolToCompletion(completionResultSet: CompletionResultSet, symbol: KtSymbol) {
         if (symbol !is KtNamedSymbol) return
-        lookupElementFactory.createLookupElement(symbol)?.let(::addElement)
+        with(lookupElementFactory) { createLookupElement(symbol)?.let(completionResultSet::addElement) }
     }
 
     private fun recordOriginalFile(completionParameters: CompletionParameters) {
@@ -103,9 +103,9 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         }
     }
 
-    private fun collectTypesCompletion(result: CompletionResultSet, implicitScopes: KtScope) {
+    private fun KtAnalysisSession.collectTypesCompletion(result: CompletionResultSet, implicitScopes: KtScope) {
         val availableClasses = implicitScopes.getClassifierSymbols(scopeNameFilter)
-        availableClasses.forEach { result.addSymbolToCompletion(it) }
+        availableClasses.forEach { addSymbolToCompletion(result, it) }
     }
 
     private fun KtAnalysisSession.collectDotCompletion(
@@ -125,11 +125,11 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
             .getCallableSymbols(scopeNameFilter)
             .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
 
-        nonExtensionMembers.forEach { result.addSymbolToCompletion(it) }
-        extensionNonMembers.forEach { result.addSymbolToCompletion(it) }
+        nonExtensionMembers.forEach { addSymbolToCompletion(result, it) }
+        extensionNonMembers.forEach { addSymbolToCompletion(result, it) }
     }
 
-    private fun collectDefaultCompletion(
+    private fun KtAnalysisSession.collectDefaultCompletion(
         result: CompletionResultSet,
         implicitScopes: KtCompositeScope,
         hasSuitableExtensionReceiver: KtCallableSymbol.() -> Boolean,
@@ -142,8 +142,8 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
             .getCallableSymbols(scopeNameFilter)
             .filter { it.isExtension && it.hasSuitableExtensionReceiver() }
 
-        availableNonExtensions.forEach { result.addSymbolToCompletion(it) }
-        extensionsWhichCanBeCalled.forEach { result.addSymbolToCompletion(it) }
+        availableNonExtensions.forEach { addSymbolToCompletion(result, it) }
+        extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, it) }
 
         collectTypesCompletion(result, implicitScopes)
     }

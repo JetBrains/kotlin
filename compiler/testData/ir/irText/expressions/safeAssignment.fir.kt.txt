@@ -1,0 +1,23 @@
+class C {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var x: Int
+    field = x
+    get
+    set
+
+}
+
+fun test(nc: C?) {
+  { // BLOCK
+    val tmp0_safe_receiver: C? = nc
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.<set-x>(<set-?> = 42)
+    }
+  } /*~> Unit */
+}

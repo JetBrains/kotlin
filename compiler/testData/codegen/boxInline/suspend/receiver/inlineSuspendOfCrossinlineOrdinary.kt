@@ -1,9 +1,8 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // IGNORE_BACKEND: JS
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 // Block is allowed to be called inside the body of owner inline function
@@ -45,9 +44,7 @@ fun builder(controller : Controller, c: suspend Controller.() -> Unit) {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 fun box() : String {

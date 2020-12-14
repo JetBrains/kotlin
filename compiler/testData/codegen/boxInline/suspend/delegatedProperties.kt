@@ -1,10 +1,9 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // WITH_REFLECT
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 import kotlin.reflect.KProperty
 
@@ -29,9 +28,7 @@ suspend inline fun test(crossinline c: suspend (String) -> String): String {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

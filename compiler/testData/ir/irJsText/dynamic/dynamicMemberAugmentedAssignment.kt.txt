@@ -1,0 +1,46 @@
+fun testAugmentedMemberAssignment(d: dynamic) {
+  d.m += "+="
+  d.m -= "-="
+  d.m *= "*="
+  d.m /= "/="
+  d.m %= "%="
+}
+
+fun testSafeAugmentedMemberAssignment(d: dynamic) {
+  { // BLOCK
+    val tmp0_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
+      else -> tmp0_safe_receiver.m += "+="
+    }
+  }
+  { // BLOCK
+    val tmp1_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null /*~> Unit */
+      else -> tmp1_safe_receiver.m -= "-="
+    }
+  }
+  { // BLOCK
+    val tmp2_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null /*~> Unit */
+      else -> tmp2_safe_receiver.m *= "*="
+    }
+  }
+  { // BLOCK
+    val tmp3_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null /*~> Unit */
+      else -> tmp3_safe_receiver.m /= "/="
+    }
+  }
+  { // BLOCK
+    val tmp4_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp4_safe_receiver, arg1 = null) -> null /*~> Unit */
+      else -> tmp4_safe_receiver.m %= "%="
+    }
+  }
+}
+

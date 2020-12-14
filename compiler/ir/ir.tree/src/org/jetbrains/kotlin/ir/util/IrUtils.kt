@@ -259,6 +259,7 @@ val IrClass.isInterface get() = kind == ClassKind.INTERFACE
 val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
+val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     get() = when (val parent = parent) {
         is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
@@ -525,7 +526,16 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
 
     val result = mutableMapOf<IrTypeParameterSymbol, IrType>()
     if (dispatchReceiverTypeArguments.isNotEmpty()) {
-        val parentTypeParameters = extractTypeParameters(irFunction.parentClassOrNull!!)
+        val parentTypeParameters =
+            if (irFunction is IrConstructor) {
+                val constructedClass = irFunction.parentAsClass
+                if (!constructedClass.isInner && dispatchReceiver != null) {
+                    throw AssertionError("Non-inner class constructor reference with dispatch receiver:\n${this.dump()}")
+                }
+                extractTypeParameters(constructedClass.parent as IrClass)
+            } else {
+                extractTypeParameters(irFunction.parentClassOrNull!!)
+            }
         parentTypeParameters.withIndex().forEach { (index, typeParam) ->
             dispatchReceiverTypeArguments[index].typeOrNull?.let {
                 result[typeParam.symbol] = it
@@ -560,3 +570,38 @@ val IrFunction.originalFunction: IrFunction
 
 val IrProperty.originalProperty: IrProperty
     get() = attributeOwnerId as? IrProperty ?: this
+
+// TODO: support more cases like built-in operator call and so on
+
+fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boolean {
+    if (this == null) return true
+
+    fun IrExpression.isPureImpl(): Boolean {
+        return when (this) {
+            is IrConst<*> -> true
+            is IrGetValue -> {
+                if (anyVariable) return true
+                val valueDeclaration = symbol.owner
+                if (valueDeclaration is IrVariable) !valueDeclaration.isVar
+                else true
+            }
+            is IrGetObjectValue -> type.isUnit()
+            else -> false
+        }
+    }
+
+    if (isPureImpl()) return true
+
+    if (!checkFields) return false
+
+    if (this is IrGetField) {
+        if (!symbol.owner.isFinal) {
+            if (!anyVariable) {
+                return false
+            }
+        }
+        return receiver.isPure(anyVariable)
+    }
+
+    return false
+}

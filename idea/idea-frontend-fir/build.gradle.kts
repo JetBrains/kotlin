@@ -41,10 +41,13 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (kotlinBuildProperties.useFirIdeaPlugin)  {
-    projectTest {
-        dependsOn(":dist")
-        workingDir = rootDir
+projectTest {
+    dependsOn(":dist")
+    workingDir = rootDir
+    doFirst {
+        if (!kotlinBuildProperties.useFirIdeaPlugin) {
+            error("Test task in the module should be executed with -Pidea.fir.plugin=true")
+        }
     }
 }
 

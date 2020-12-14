@@ -1,0 +1,32 @@
+operator fun Any.plusAssign(lambda: Function0<Unit>) {
+}
+
+operator fun Any.get(index: Function0<Unit>): Int {
+  return 42
+}
+
+operator fun Any.set(index: Function0<Unit>, value: Int) {
+}
+
+fun test1(a: Any) {
+  a.plusAssign(lambda = local fun <anonymous>() {
+    return Unit
+  }
+)
+}
+
+fun test2(a: Any) {
+  error("") /* ErrorCallExpression */
+}
+
+fun test3(a: Any) {
+  val <array>: Any = a
+  val <index0>: Function0<Unit> = local fun <anonymous>() {
+    return Unit
+  }
+
+  val <unary>: Int = <array>.get(index = <index0>)
+  <array>.set(index = <index0>, value = <unary>.inc())
+  <unary> /*~> Unit */
+}
+

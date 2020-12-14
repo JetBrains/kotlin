@@ -32,6 +32,7 @@ internal class CEnumByValueFunctionGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
+    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
 
     fun generateByValueFunction(
             companionIrClass: IrClass,
@@ -51,46 +52,48 @@ internal class CEnumByValueFunctionGenerator(
         //      i++
         // }
         // throw NPE
-        byValueIrFunction.body = irBuilder(irBuiltIns, byValueIrFunction.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-            +irReturn(irBlock {
-                val values = irTemporary(irCall(valuesIrFunctionSymbol), isMutable = true)
-                val inductionVariable = irTemporary(irInt(0), isMutable = true)
-                val arrayClass = values.type.classOrNull!!
-                val valuesSize = irCall(symbols.arraySize.getValue(arrayClass), irBuiltIns.intType).also { irCall ->
-                    irCall.dispatchReceiver = irGet(values)
-                }
-                val getElementFn = symbols.arrayGet.getValue(arrayClass)
-                val plusFun = symbols.getBinaryOperator(OperatorNameConventions.PLUS, irBuiltIns.intType, irBuiltIns.intType)
-                val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
-                +irWhile().also { loop ->
-                    loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->
-                        irCall.putValueArgument(0, irGet(inductionVariable))
-                        irCall.putValueArgument(1, valuesSize)
+        postLinkageSteps.add {
+            byValueIrFunction.body = irBuilder(irBuiltIns, byValueIrFunction.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                +irReturn(irBlock {
+                    val values = irTemporary(irCall(valuesIrFunctionSymbol), isMutable = true)
+                    val inductionVariable = irTemporary(irInt(0), isMutable = true)
+                    val arrayClass = values.type.classOrNull!!
+                    val valuesSize = irCall(symbols.arraySize.getValue(arrayClass), irBuiltIns.intType).also { irCall ->
+                        irCall.dispatchReceiver = irGet(values)
                     }
-                    loop.body = irBlock {
-                        val entry = irTemporary(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
-                            irCall.dispatchReceiver = irGet(values)
+                    val getElementFn = symbols.arrayGet.getValue(arrayClass)
+                    val plusFun = symbols.getBinaryOperator(OperatorNameConventions.PLUS, irBuiltIns.intType, irBuiltIns.intType)
+                    val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
+                    +irWhile().also { loop ->
+                        loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->
                             irCall.putValueArgument(0, irGet(inductionVariable))
-                        }, isMutable = true)
-                        val valueGetter = entry.type.getClass()!!.getPropertyGetter("value")!!
-                        val entryValue = irGet(irValueParameter.type, irGet(entry), valueGetter)
-                        +irIfThenElse(
-                                type = irBuiltIns.unitType,
-                                condition = irEquals(entryValue, irGet(irValueParameter)),
-                                thenPart = irReturn(irGet(entry)),
-                                elsePart = irSetVar(
-                                        inductionVariable,
-                                        irCallOp(plusFun, irBuiltIns.intType,
-                                                irGet(inductionVariable),
-                                                irInt(1)
-                                        )
-                                )
-                        )
+                            irCall.putValueArgument(1, valuesSize)
+                        }
+                        loop.body = irBlock {
+                            val entry = irTemporary(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
+                                irCall.dispatchReceiver = irGet(values)
+                                irCall.putValueArgument(0, irGet(inductionVariable))
+                            }, isMutable = true)
+                            val valueGetter = entry.type.getClass()!!.getPropertyGetter("value")!!
+                            val entryValue = irGet(irValueParameter.type, irGet(entry), valueGetter)
+                            +irIfThenElse(
+                                    type = irBuiltIns.unitType,
+                                    condition = irEquals(entryValue, irGet(irValueParameter)),
+                                    thenPart = irReturn(irGet(entry)),
+                                    elsePart = irSetVar(
+                                            inductionVariable,
+                                            irCallOp(plusFun, irBuiltIns.intType,
+                                                    irGet(inductionVariable),
+                                                    irInt(1)
+                                            )
+                                    )
+                            )
+                        }
                     }
-                }
-                +IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, irBuiltIns.nothingType,
-                        symbols.throwNullPointerException)
-            })
+                    +IrCallImpl.fromSymbolOwner(startOffset, endOffset, irBuiltIns.nothingType,
+                            symbols.throwNullPointerException)
+                })
+            }
         }
         return byValueIrFunction
     }

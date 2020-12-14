@@ -1,0 +1,81 @@
+val test1: Int
+  get(): Int {
+    return 42
+  }
+
+var test2: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+val String.testExt1: Int
+  get(): Int {
+    return 42
+  }
+
+var String.testExt2: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+val <T : Any?> T.testExt3: Int
+  get(): Int {
+    return 42
+  }
+
+var <T : Any?> T.testExt4: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+class Host<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val testMem1: Int
+    get(): Int {
+      return 42
+    }
+
+  var testMem2: Int
+    get(): Int {
+      return 42
+    }
+    set(value: Int) {
+    }
+
+  val String.testMemExt1: Int
+    get(): Int {
+      return 42
+    }
+
+  var String.testMemExt2: Int
+    get(): Int {
+      return 42
+    }
+    set(value: Int) {
+    }
+
+  val <TT : Any?> TT.testMemExt3: Int
+    get(): Int {
+      return 42
+    }
+
+  var <TT : Any?> TT.testMemExt4: Int
+    get(): Int {
+      return 42
+    }
+    set(value: Int) {
+    }
+
+}
+

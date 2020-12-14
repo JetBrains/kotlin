@@ -59,11 +59,11 @@ fun testVariableWithBound() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>c1<!>
 
-    val c2 = <!TYPE_MISMATCH!>select<!>(SubInv<String>(), createWithNumberBound())
+    val c2 = <!TYPE_MISMATCH!>select<!>(SubInv<String>(), <!TYPE_MISMATCH!>createWithNumberBound<!>())
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>c2<!>
 
-    val c3 = <!TYPE_MISMATCH!>select<!>(SubInv<Double>(), createWithIntBound())
+    val c3 = <!TYPE_MISMATCH!>select<!>(SubInv<Double>(), <!TYPE_MISMATCH!>createWithIntBound<!>())
 
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Double>")!>c3<!>
 }

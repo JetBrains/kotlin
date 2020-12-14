@@ -59,11 +59,7 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements) {
     RuntimeCheck(false, "Unimplemented");
 }
 
-OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-OBJ_GETTER(InitSharedInstance, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
     RuntimeCheck(false, "Unimplemented");
 }
 
@@ -130,22 +126,6 @@ RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
     RuntimeCheck(false, "Unimplemented");
 }
 
-RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void*) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void*) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
 void MutationCheck(ObjHeader* obj) {
     RuntimeCheck(false, "Unimplemented");
 }
@@ -159,18 +139,6 @@ void FreezeSubgraph(ObjHeader* obj) {
 }
 
 void EnsureNeverFrozen(ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void ClearTLSRecord(MemoryState* memory, void** key) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
     RuntimeCheck(false, "Unimplemented");
 }
 
@@ -207,22 +175,6 @@ RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
 }
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-ForeignRefContext InitForeignRef(ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-void AdoptReferenceFromSharedVariable(ObjHeader* object) {
     RuntimeCheck(false, "Unimplemented");
 }
 

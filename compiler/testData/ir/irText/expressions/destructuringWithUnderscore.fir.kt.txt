@@ -1,0 +1,36 @@
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object B {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun A.component1(): Int {
+    return 1
+  }
+
+  operator fun A.component2(): Int {
+    return 2
+  }
+
+  operator fun A.component3(): Int {
+    return 3
+  }
+
+}
+
+fun B.test() {
+  val <destruct>: A = A
+  val x: Int = (<this>, <destruct>).component1()
+  val _: Int = (<this>, <destruct>).component2()
+  val z: Int = (<this>, <destruct>).component3()
+}

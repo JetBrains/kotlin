@@ -1,0 +1,32 @@
+class Host {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun plusAssign(x: Int) {
+  }
+
+  fun test1() {
+    <this>.plusAssign(x = 1)
+  }
+
+}
+
+fun foo(): Host {
+  return Host()
+}
+
+fun Host.test2() {
+  <this>.plusAssign(x = 1)
+}
+
+fun test3() {
+  foo().plusAssign(x = 1)
+}
+
+fun test4(a: Function0<Host>) {
+  a.invoke().plusAssign(x = 1)
+}
+

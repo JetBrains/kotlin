@@ -50,7 +50,7 @@ public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironmen
             public KtFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
-        }, "");
+        });
         expectedResolveData.checkResult(ExpectedResolveData.analyze(files, getEnvironment()));
     }
 }

@@ -33,6 +33,9 @@ object JvmAnalysisFlags {
     @JvmStatic
     val disableUltraLightClasses by AnalysisFlag.Delegates.Boolean
 
+    @JvmStatic
+    val enableJvmPreview by AnalysisFlag.Delegates.Boolean
+
     private object Delegates {
         object JavaTypeEnhancementStateWarnByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JavaTypeEnhancementState> =

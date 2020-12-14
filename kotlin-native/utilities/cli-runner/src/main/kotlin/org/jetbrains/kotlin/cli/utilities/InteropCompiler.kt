@@ -39,7 +39,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
     val libraries = arguments.library
     val repos = arguments.repo
     val targetRequest = if (arguments is CInteropArguments) arguments.target
-        else (arguments as JSInteropArguments).target
+        else (arguments as JSInteropArguments).target.toString()
     val target = PlatformManager(KonanHomeProvider.determineKonanHome()).targetManager(targetRequest).target
 
     val cinteropArgsToCompiler = interop(flavor, args,

@@ -6,28 +6,33 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import com.google.common.collect.MapMaker
+import com.intellij.openapi.diagnostic.logger
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.locks.ReadWriteLock
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
-internal class LockProvider<KEY, out LOCK>(private val createLock: () -> LOCK) {
-    private val locks: ConcurrentMap<KEY, LOCK> = MapMaker().weakKeys().makeMap()
-    fun getLockFor(key: KEY) = locks.getOrPut(key) { createLock() }
-}
+internal class LockProvider<KEY> {
+    private val locks: ConcurrentMap<KEY, ReadWriteLock> = MapMaker().weakKeys().makeMap()
 
-internal inline fun <KEY, R> LockProvider<KEY, ReadWriteLock>.withReadLock(key: KEY, action: () -> R): R {
-    val readLock = getLockFor(key).readLock()
-    return readLock.withLock { action() }
-}
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun getLockFor(key: KEY) = locks.getOrPut(key) { ReentrantReadWriteLock() }
 
-internal inline fun <KEY, R> LockProvider<KEY, ReadWriteLock>.withWriteLock(key: KEY, action: () -> R): R {
-    val writeLock = getLockFor(key).writeLock()
-    return writeLock.withLock { action() }
-}
+    inline fun <R> withReadLock(key: KEY, action: () -> R): R {
+        val readLock = getLockFor(key).readLock()
+        return readLock.withLock { action() }
+    }
 
 
-internal inline fun <KEY, R> LockProvider<KEY, ReentrantLock>.withLock(key: KEY, action: () -> R): R {
-    val lock = getLockFor(key)
-    return lock.withLock { action() }
+    inline fun <R> withWriteLock(key: KEY, action: () -> R): R {
+        val writeLock = getLockFor(key).writeLock()
+        return writeLock.withLock { action() }
+    }
+
+    inline fun <R> withWriteLockPCECheck(key: KEY, lockingIntervalMs: Long, action: () -> R): R {
+        val writeLock = getLockFor(key).writeLock()
+        return writeLock.lockWithPCECheck(lockingIntervalMs, action)
+    }
 }

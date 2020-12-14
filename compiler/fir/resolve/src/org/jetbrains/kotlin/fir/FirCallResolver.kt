@@ -168,7 +168,7 @@ class FirCallResolver(
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
-        qualifiedResolver.initProcessingQualifiedAccess(callee)
+        qualifiedResolver.initProcessingQualifiedAccess(callee, qualifiedAccess.typeArguments)
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()

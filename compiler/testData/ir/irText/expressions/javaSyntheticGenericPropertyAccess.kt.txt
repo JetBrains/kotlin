@@ -1,0 +1,17 @@
+fun <F : Any?> test(j: J<F>) {
+  j.getFoo<F>() /*~> Unit */
+  j.setFoo<F>(x = 1)
+  { // BLOCK
+    val tmp0_receiver: J<F> = j
+    { // BLOCK
+      val tmp1: Int = tmp0_receiver.getFoo<F>()
+      tmp0_receiver.setFoo<F>(x = tmp1.inc())
+      tmp1
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp2_receiver: J<F> = j
+    tmp2_receiver.setFoo<F>(x = tmp2_receiver.getFoo<F>().plus(other = 1))
+  }
+}
+

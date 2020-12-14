@@ -1,0 +1,42 @@
+fun use(fn: Function1<Int, Any>): Any {
+  return fn.invoke(p1 = 42)
+}
+
+class C {
+  constructor(vararg xs: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Outer {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  inner class Inner {
+    constructor(vararg xs: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}
+
+fun testConstructor(): Any {
+  return use(fn = C::<init>)
+}
+
+fun testInnerClassConstructor(outer: Outer): Any {
+  return use(fn = outer::<init>)
+}
+
+fun testInnerClassConstructorCapturingOuter(): Any {
+  return use(fn = Outer()::<init>)
+}

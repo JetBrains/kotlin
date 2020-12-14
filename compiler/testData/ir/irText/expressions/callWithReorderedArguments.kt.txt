@@ -1,0 +1,32 @@
+fun foo(a: Int, b: Int) {
+}
+
+fun noReorder1(): Int {
+  return 1
+}
+
+fun noReorder2(): Int {
+  return 2
+}
+
+fun reordered1(): Int {
+  return 1
+}
+
+fun reordered2(): Int {
+  return 2
+}
+
+fun test() {
+  foo(a = noReorder1(), b = noReorder2())
+  { // BLOCK
+    val tmp0_b: Int = reordered1()
+    val tmp1_a: Int = reordered2()
+    foo(a = tmp1_a, b = tmp0_b)
+  }
+  { // BLOCK
+    val tmp2_a: Int = reordered2()
+    foo(a = tmp2_a, b = 1)
+  }
+}
+

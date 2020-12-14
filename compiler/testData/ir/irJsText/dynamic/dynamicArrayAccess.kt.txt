@@ -1,0 +1,12 @@
+fun testArrayAccess1(d: dynamic): dynamic {
+  return d["KEY"]
+}
+
+fun testArrayAccess2(d: dynamic): dynamic {
+  return d()["KEY"]
+}
+
+fun testArrayAccess3(d: dynamic): dynamic {
+  return d.get("KEY")
+}
+

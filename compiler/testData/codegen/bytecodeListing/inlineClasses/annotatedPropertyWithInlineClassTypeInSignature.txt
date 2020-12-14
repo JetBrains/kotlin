@@ -25,6 +25,7 @@ public final class C {
     public final method getReturnType-a_XrcN0(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'annotatedPropertyWithInlineClassTypeInSignature.kt'

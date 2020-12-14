@@ -92,8 +92,8 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.globals.define(irField, wasmGlobal)
     }
 
-    override fun defineStructType(irClass: IrClassSymbol, wasmStruct: WasmStructDeclaration) {
-        wasmFragment.structTypes.define(irClass, wasmStruct)
+    override fun defineGcType(irClass: IrClassSymbol, wasmStruct: WasmTypeDeclaration) {
+        wasmFragment.gcTypes.define(irClass, wasmStruct)
     }
 
     override fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
@@ -122,12 +122,12 @@ class WasmModuleCodegenContextImpl(
     override fun referenceGlobal(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =
         wasmFragment.globals.reference(irField)
 
-    override fun referenceStructType(irClass: IrClassSymbol): WasmSymbol<WasmStructDeclaration> {
+    override fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> {
         val type = irClass.defaultType
         require(!type.isNothing()) {
             "Can't reference Nothing type"
         }
-        return wasmFragment.structTypes.reference(irClass)
+        return wasmFragment.gcTypes.reference(irClass)
     }
 
     override fun referenceClassRTT(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =

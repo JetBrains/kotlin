@@ -6,14 +6,14 @@ public final class Foo {
     private final Foo.Bar bar = null;
     private final java.lang.String string = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public final Foo.Bar getBar() {
-        return null;
-    }
-
     public Foo(@org.jetbrains.annotations.NotNull()
     java.lang.String string) {
         super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Foo.Bar getBar() {
+        return null;
     }
 
     @kotlin.Metadata()
@@ -23,6 +23,11 @@ public final class Foo {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String string = null;
 
+        public Bar(@org.jetbrains.annotations.NotNull()
+        java.lang.String string) {
+            super();
+        }
+
         @org.jetbrains.annotations.NotNull()
         public final java.util.ArrayList<Foo.Bar.Bar> getBars() {
             return null;
@@ -31,11 +36,6 @@ public final class Foo {
         @org.jetbrains.annotations.NotNull()
         public final java.lang.String getString() {
             return null;
-        }
-
-        public Bar(@org.jetbrains.annotations.NotNull()
-        java.lang.String string) {
-            super();
         }
     }
 }

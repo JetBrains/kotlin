@@ -1,0 +1,9 @@
+package test
+
+/*record*/ public final class GenericRecord</*0*/ T : kotlin.Any!, /*1*/ E : kotlin.Any!> : java.lang.Record {
+    public constructor GenericRecord</*0*/ T : kotlin.Any!, /*1*/ E : kotlin.Any!>(/*0*/ x: T!, /*1*/ y: E!)
+    /*record component*/ public open fun x(): T!
+    /*record component*/ public open fun y(): E!
+    public open fun y(/*0*/ n: E!): E!
+    public open fun z(): kotlin.Double
+}

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.ir
 
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
-    val structs: List<WasmStructDeclaration> = emptyList(),
+    val gcTypes: List<WasmTypeDeclaration> = emptyList(),
 
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
@@ -143,6 +143,11 @@ class WasmFunctionType(
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>
+) : WasmTypeDeclaration(name)
+
+class WasmArrayDeclaration(
+    name: String,
+    val field: WasmStructFieldDeclaration
 ) : WasmTypeDeclaration(name)
 
 class WasmStructFieldDeclaration(

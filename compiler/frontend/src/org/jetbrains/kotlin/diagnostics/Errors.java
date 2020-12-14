@@ -347,7 +347,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> NON_PRIVATE_CONSTRUCTOR_IN_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> NON_PRIVATE_CONSTRUCTOR_IN_SEALED = DiagnosticFactory0.create(ERROR);
 
-    // Inline classes
+    // Inline and value classes
 
     DiagnosticFactory0<PsiElement> INLINE_CLASS_NOT_TOP_LEVEL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_NOT_FINAL = DiagnosticFactory0.create(ERROR);
@@ -355,6 +355,7 @@ public interface Errors {
     DiagnosticFactory0<KtElement> INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtProperty> PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<PsiElement> RESERVED_VAR_PROPERTY_OF_VALUE_CLASS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> DELEGATED_PROPERTY_INSIDE_INLINE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtTypeReference, KotlinType> INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION = DiagnosticFactory0.create(ERROR);
@@ -362,6 +363,8 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> INLINE_CLASS_CANNOT_BE_RECURSIVE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> RESERVED_MEMBER_INSIDE_INLINE_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INNER_CLASS_INSIDE_INLINE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_BE_CLONEABLE = DiagnosticFactory0.create(ERROR);
 
     // Result class
 
@@ -423,6 +426,9 @@ public interface Errors {
     DiagnosticFactory0<KtCallExpression> SEALED_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SEALED_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SEALED_SUPERTYPE_IN_LOCAL_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<KtTypeReference, FqName, FqName> SEALED_INHERITOR_IN_DIFFERENT_PACKAGE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> SEALED_INHERITOR_IN_DIFFERENT_MODULE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> CLASS_INHERITS_JAVA_SEALED_CLASS = DiagnosticFactory0.create(ERROR);
 
     // Companion objects
 
@@ -1199,7 +1205,7 @@ public interface Errors {
                         Object value = field.get(null);
                         if (value instanceof DiagnosticFactory) {
                             DiagnosticFactory<?> factory = (DiagnosticFactory<?>)value;
-                            factory.setName(field.getName());
+                            factory.initializeName(field.getName());
 
                             factory.setDefaultRenderer((DiagnosticRenderer) diagnosticToRendererMap.get(factory));
                         }

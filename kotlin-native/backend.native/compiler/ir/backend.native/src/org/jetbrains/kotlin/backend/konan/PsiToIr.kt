@@ -133,6 +133,11 @@ internal fun Context.psiToIr(
             modulesWithoutDCE
                     .filter(ModuleDescriptor::isFromInteropLibrary)
                     .forEach(irProviderForCEnumsAndCStructs::referenceAllEnumsAndStructsFrom)
+
+
+            translator.addPostprocessingStep {
+                irProviderForCEnumsAndCStructs.generateBodies()
+            }
         }
     }
 

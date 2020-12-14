@@ -1,0 +1,53 @@
+abstract class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: B
+    field = B()
+    get
+
+  var y: Int
+    field = 0
+    get
+    set
+
+}
+
+class B {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun plusAssign(x: Int) {
+  }
+
+}
+
+class Test1 : A {
+  constructor() {
+    super/*A*/()
+    /* <init>() */
+
+    <this>.<get-x>().plusAssign(x = 42)
+    <this>.<set-y>(<set-?> = <this>.<get-y>().plus(other = 42))
+  }
+
+}
+
+class Test2 : J {
+  constructor() /* primary */ {
+    super/*J*/()
+    /* <init>() */
+
+  }
+
+  init {
+    <this>.#field = 42
+  }
+
+}

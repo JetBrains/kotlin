@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -254,7 +255,7 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
         else type.constructor.supertypes.asSequence().flatMap { computeFullErasure(it) }
     }
 
-    override fun hasInlineModifier(clazz: ClassDescriptor): Boolean = clazz.isInline
+    override fun hasInlineModifier(clazz: ClassDescriptor): Boolean = clazz.isInlineClass()
 
     override fun getNativePointedSuperclass(clazz: ClassDescriptor): ClassDescriptor? = clazz.getAllSuperClassifiers()
             .firstOrNull { it.fqNameUnsafe == InteropFqNames.nativePointed } as ClassDescriptor?
@@ -295,7 +296,7 @@ private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType
         }
     }
 
-    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.descriptor.isInline
+    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isInline
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? {
         var superClass: IrClass? = clazz

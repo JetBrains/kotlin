@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -58,8 +57,6 @@ class Fir2IrDeclarationStorage(
     private val visitor: Fir2IrVisitor,
     private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
-
-    internal var annotationGenerator: AnnotationGenerator? = null
 
     private val firSymbolProvider = session.firSymbolProvider
 
@@ -251,24 +248,34 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType): T {
-        val parent = this
-        val descriptor = WrappedValueParameterDescriptor()
         valueParameters = listOf(
-            symbolTable.declareValueParameter(
-                startOffset, endOffset, origin, descriptor, type
-            ) { symbol ->
-                irFactory.createValueParameter(
-                    startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
-                    Name.special("<set-?>"), 0, type,
-                    varargElementType = null,
-                    isCrossinline = false, isNoinline = false, isAssignable = false
-                ).apply {
-                    this.parent = parent
-                    descriptor.bind(this)
-                }
-            }
+            createDefaultSetterParameter(startOffset, endOffset, origin, type, parent = this)
         )
         return this
+    }
+
+    internal fun createDefaultSetterParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        type: IrType,
+        parent: IrFunction
+    ): IrValueParameter {
+        val descriptor = WrappedValueParameterDescriptor()
+        return symbolTable.declareValueParameter(
+            startOffset, endOffset, origin, descriptor, type
+        ) { symbol ->
+            irFactory.createValueParameter(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED, symbol,
+                Name.special("<set-?>"), 0, type,
+                varargElementType = null,
+                isCrossinline = false, isNoinline = false,
+                isHidden = false, isAssignable = false
+            ).apply {
+                this.parent = parent
+                descriptor.bind(this)
+            }
+        }
     }
 
     private fun <T : IrFunction> T.declareParameters(
@@ -398,9 +405,7 @@ class Fir2IrDeclarationStorage(
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction {
         if (signature == null) {
-            val descriptor =
-                if (containerSource != null) WrappedFunctionDescriptorWithContainerSource()
-                else WrappedSimpleFunctionDescriptor()
+            val descriptor = WrappedSimpleFunctionDescriptor()
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
         return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
@@ -681,9 +686,7 @@ class Fir2IrDeclarationStorage(
         factory: (IrPropertySymbol) -> IrProperty
     ): IrProperty {
         if (signature == null) {
-            val descriptor =
-                if (containerSource != null) WrappedPropertyDescriptorWithContainerSource()
-                else WrappedPropertyDescriptor()
+            val descriptor = WrappedPropertyDescriptor()
             return symbolTable.declareProperty(0, 0, IrDeclarationOrigin.DEFINED, descriptor, isDelegated = false, factory).apply {
                 descriptor.bind(this)
             }
@@ -893,7 +896,8 @@ class Fir2IrDeclarationStorage(
                     valueParameter.name, index, type,
                     if (!valueParameter.isVararg) null
                     else valueParameter.returnTypeRef.coneType.arrayElementType()?.toIrType(typeContext),
-                    valueParameter.isCrossinline, valueParameter.isNoinline
+                    isCrossinline = valueParameter.isCrossinline, isNoinline = valueParameter.isNoinline,
+                    isHidden = false, isAssignable = false
                 ).apply {
                     descriptor.bind(this)
                     if (valueParameter.defaultValue.let {

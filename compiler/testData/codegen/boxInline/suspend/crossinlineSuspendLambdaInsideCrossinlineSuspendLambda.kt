@@ -1,9 +1,8 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 inline suspend fun foo(crossinline a: suspend () -> Unit, crossinline b: suspend () -> Unit) {
@@ -21,8 +20,6 @@ fun builder(c: suspend () -> Unit) {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
 fun box(): String {
     var y = "fail"
     builder {

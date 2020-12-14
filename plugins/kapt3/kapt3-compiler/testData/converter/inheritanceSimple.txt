@@ -3,13 +3,13 @@ import java.lang.System;
 @kotlin.Metadata()
 public abstract class BaseClass {
 
-    @org.jetbrains.annotations.NotNull()
-    public abstract Result doJob();
-
     public BaseClass(@org.jetbrains.annotations.NotNull()
     Context context, int num, boolean bool) {
         super();
     }
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract Result doJob();
 }
 
 ////////////////////
@@ -29,15 +29,15 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Inheritor extends BaseClass {
 
+    public Inheritor(@org.jetbrains.annotations.NotNull()
+    Context context) {
+        super(null, 0, false);
+    }
+
     @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
     public Result doJob() {
         return null;
-    }
-
-    public Inheritor(@org.jetbrains.annotations.NotNull()
-    Context context) {
-        super(null, 0, false);
     }
 }
 

@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.properties.*
 
 class GccConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : GccConfigurables, KonanPropertiesLoader(target, properties, baseDir)
+    : GccConfigurables, KonanPropertiesLoader(target, properties, baseDir), ConfigurablesWithEmulator {
+    override val dependencies: List<String>
+        get() = super.dependencies + listOfNotNull(emulatorDependency)
+    }
 
 class AndroidConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
     : AndroidConfigurables, KonanPropertiesLoader(target, properties, baseDir)

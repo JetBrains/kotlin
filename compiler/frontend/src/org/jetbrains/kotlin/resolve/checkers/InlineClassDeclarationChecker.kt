@@ -6,31 +6,39 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
+
 object InlineClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtClass) return
-        if (descriptor !is ClassDescriptor || !descriptor.isInline) return
+        if (descriptor !is ClassDescriptor || !descriptor.isInline && !descriptor.isValue) return
         if (descriptor.kind != ClassKind.CLASS) return
 
-        val inlineKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
-        require(inlineKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
+        val inlineOrValueKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
+            ?: declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD)
+        require(inlineOrValueKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
 
         val trace = context.trace
-        if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(inlineKeyword))
+        if (descriptor.isInner || DescriptorUtils.isLocal(descriptor)) {
+            trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(inlineOrValueKeyword))
             return
         }
 
@@ -42,7 +50,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null) {
-            trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(inlineKeyword))
+            trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(inlineOrValueKeyword))
             return
         }
 
@@ -87,6 +95,13 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                 }
             }
         }
+
+        if (descriptor.getAllSuperClassifiers().any {
+                it.fqNameUnsafe == StandardNames.FqNames.cloneable || it.fqNameUnsafe == javaLangCloneable }
+        ) {
+            trace.report(Errors.VALUE_CLASS_CANNOT_BE_CLONEABLE.on(inlineOrValueKeyword))
+            return
+        }
     }
 
     private fun KotlinType.isInapplicableParameterType() =
@@ -107,20 +122,40 @@ object InlineClassDeclarationChecker : DeclarationChecker {
     }
 }
 
-class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
+class PropertiesWithInlineClassAsReceiver : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtProperty) return
         if (descriptor !is PropertyDescriptor) return
 
+        if (descriptor.containingDeclaration.isInlineClass()) {
+            if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
+                context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS.on(declaration))
+            }
+
+            declaration.delegate?.let {
+                context.trace.report(Errors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS.on(it))
+            }
+        }
+
+        if (!descriptor.isVar) return
+
+        if (descriptor.containingDeclaration.isInlineClass() ||
+            descriptor.extensionReceiverParameter?.type?.isInlineClassType() == true
+        ) {
+            context.trace.report(Errors.RESERVED_VAR_PROPERTY_OF_VALUE_CLASS.on(declaration.valOrVarKeyword))
+        }
+    }
+}
+
+class InnerClassInsideInlineClass : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (declaration !is KtClass) return
+        if (descriptor !is ClassDescriptor) return
+        if (!descriptor.isInner) return
+
         if (!descriptor.containingDeclaration.isInlineClass()) return
 
-        if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
-            context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS.on(declaration))
-        }
-
-        declaration.delegate?.let {
-            context.trace.report(Errors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS.on(it))
-        }
+        context.trace.report(Errors.INNER_CLASS_INSIDE_INLINE_CLASS.on(declaration.modifierList!!.getModifier(KtTokens.INNER_KEYWORD)!!))
     }
 }
 

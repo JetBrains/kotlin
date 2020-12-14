@@ -41,6 +41,12 @@ internal interface DescriptorToIrTranslationMixin {
 
     val typeTranslator: TypeTranslator
 
+    val postLinkageSteps: MutableList<() -> Unit>
+
+    fun invokePostLinkageSteps() {
+        postLinkageSteps.forEach { it() }
+    }
+
     fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     /**

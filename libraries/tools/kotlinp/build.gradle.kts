@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
 }
 
-val kotlinpAsmVersion = "7.0.1"
+val kotlinpAsmVersion = "8.0.1"
 
 val shadows by configurations.creating
 

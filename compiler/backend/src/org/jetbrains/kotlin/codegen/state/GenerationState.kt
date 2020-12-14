@@ -201,7 +201,7 @@ class GenerationState private constructor(
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =
-        if (target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion)
+        if (target.majorVersion >= JvmTarget.JVM_9.majorVersion)
             configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INLINE
         else JvmStringConcat.INLINE
 
@@ -272,7 +272,10 @@ class GenerationState private constructor(
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
-    val classFileVersion: Int = target.bytecodeVersion
+    val classFileVersion: Int = run {
+        val minorVersion = if (configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)) 0xffff else 0
+        (minorVersion shl 16) + target.majorVersion
+    }
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
 

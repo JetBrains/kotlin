@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -42,10 +42,12 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 interface IrBuilderExtension {
     val compilerContext: SerializationPluginContext
 
+    private inline fun <reified T : IrDeclaration> IrClass.searchForDeclaration(descriptor: DeclarationDescriptor): T? {
+        return declarations.singleOrNull { it.descriptor == descriptor } as? T
+    }
+
     fun IrClass.contributeFunction(descriptor: FunctionDescriptor, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
-        val functionSymbol = compilerContext.symbolTable.referenceSimpleFunction(descriptor)
-        assert(functionSymbol.isBound)
-        val f: IrSimpleFunction = functionSymbol.owner
+        val f: IrSimpleFunction = searchForDeclaration(descriptor) ?: compilerContext.symbolTable.referenceSimpleFunction(descriptor).owner
         // TODO: default parameters
         f.body = DeclarationIrBuilder(compilerContext, f.symbol, this.startOffset, this.endOffset).irBlockBody(
             this.startOffset,
@@ -59,15 +61,35 @@ interface IrBuilderExtension {
         overwriteValueParameters: Boolean = false,
         bodyGen: IrBlockBodyBuilder.(IrConstructor) -> Unit
     ) {
-        val ctorSymbol = compilerContext.symbolTable.referenceConstructor(descriptor)
-        assert(ctorSymbol.isBound)
-
-        val c = ctorSymbol.owner
-
+        val c: IrConstructor = searchForDeclaration(descriptor) ?: compilerContext.symbolTable.referenceConstructor(descriptor).owner
         c.body = DeclarationIrBuilder(compilerContext, c.symbol, this.startOffset, this.endOffset).irBlockBody(
             this.startOffset,
             this.endOffset
         ) { bodyGen(c) }
+    }
+
+    // function will not be created in the real class
+    fun IrClass.createInlinedFunction(
+        name: Name,
+        visibility: DescriptorVisibility,
+        origin: IrDeclarationOrigin,
+        returnType: IrType,
+        bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit
+    ): IrSimpleFunction {
+        val function = factory.buildFun {
+            this.name = name
+            this.visibility = visibility
+            this.origin = origin
+            this.isInline = true
+            this.returnType = returnType
+        }
+        val functionSymbol = function.symbol
+        function.parent = this
+        function.body = DeclarationIrBuilder(compilerContext, functionSymbol, startOffset, endOffset).irBlockBody(
+            startOffset,
+            endOffset
+        ) { bodyGen(function) }
+        return function
     }
 
     fun IrBuilderWithScope.irInvoke(
@@ -94,7 +116,7 @@ interface IrBuilderExtension {
         irInvoke(
             dispatchReceiver,
             callee,
-            *valueArguments.toTypedArray(),
+            args = valueArguments.toTypedArray(),
             typeHint = returnTypeHint
         ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
 
@@ -106,6 +128,19 @@ interface IrBuilderExtension {
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(arrayElementType)
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
         val typeArguments = listOf(arrayElementType)
+
+        return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
+            putValueArgument(0, arg0)
+        }
+    }
+
+    fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
+        elementPrimitiveType: IrType,
+        arrayElements: List<IrExpression>
+    ): IrExpression {
+        val arrayType = compilerContext.irBuiltIns.primitiveArrayForType.getValue(elementPrimitiveType).defaultType
+        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
+        val typeArguments = listOf(elementPrimitiveType)
 
         return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
@@ -226,16 +261,12 @@ interface IrBuilderExtension {
     fun generateSimplePropertyWithBackingField(
         propertyDescriptor: PropertyDescriptor,
         propertyParent: IrClass,
-        declare: Boolean,
         fieldName: Name = propertyDescriptor.name,
     ): IrProperty {
-        val irPropertySymbol = compilerContext.symbolTable.referenceProperty(propertyDescriptor)
-        assert(irPropertySymbol.isBound || declare)
-
-        if (!irPropertySymbol.isBound) {
+        val irProperty = propertyParent.searchForDeclaration<IrProperty>(propertyDescriptor) ?: run {
             with(propertyDescriptor) {
                 propertyParent.factory.createProperty(
-                    propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irPropertySymbol,
+                    propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrPropertySymbolImpl(propertyDescriptor),
                     name, visibility, modality, isVar, isConst, isLateInit, isDelegated, isExternal
                 ).also {
                     it.parent = propertyParent
@@ -243,50 +274,54 @@ interface IrBuilderExtension {
                 }
             }
         }
-        val irProperty = irPropertySymbol.owner
 
-        irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty, fieldName).apply {
-            parent = propertyParent
-            correspondingPropertySymbol = irPropertySymbol
-        }
+        propertyParent.generatePropertyBackingFieldIfNeeded(propertyDescriptor, irProperty, fieldName)
         val fieldSymbol = irProperty.backingField!!.symbol
-        irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(irProperty, it, fieldSymbol, declare) }
-            ?.apply { parent = propertyParent }
-        irProperty.setter = propertyDescriptor.setter?.let { generatePropertyAccessor(irProperty, it, fieldSymbol, declare) }
-            ?.apply { parent = propertyParent }
+        irProperty.getter = propertyDescriptor.getter?.let {
+            propertyParent.generatePropertyAccessor(propertyDescriptor, irProperty, it, fieldSymbol, isGetter = true)
+        }?.apply { parent = propertyParent }
+        irProperty.setter = propertyDescriptor.setter?.let {
+            propertyParent.generatePropertyAccessor(propertyDescriptor, irProperty, it, fieldSymbol, isGetter = false)
+        }?.apply { parent = propertyParent }
         return irProperty
     }
 
-    private fun generatePropertyBackingField(
-        descriptor: PropertyDescriptor,
+    private fun IrClass.generatePropertyBackingFieldIfNeeded(
+        propertyDescriptor: PropertyDescriptor,
         originProperty: IrProperty,
         name: Name,
-    ): IrField {
-        val fieldSymbol = compilerContext.symbolTable.referenceField(descriptor)
-        if (fieldSymbol.isBound) return fieldSymbol.owner
+    ) {
+        if (originProperty.backingField != null) return
 
-        return with(descriptor) {
+        val field = with(propertyDescriptor) {
             // TODO: type parameters
             originProperty.factory.createField(
-                originProperty.startOffset, originProperty.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, fieldSymbol, name, type.toIrType(),
+                originProperty.startOffset, originProperty.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrFieldSymbolImpl(propertyDescriptor), name, type.toIrType(),
                 visibility, !isVar, isEffectivelyExternal(), dispatchReceiverParameter == null
             )
         }
+        field.apply {
+            parent = this@generatePropertyBackingFieldIfNeeded
+            correspondingPropertySymbol = originProperty.symbol
+        }
+
+        originProperty.backingField = field
     }
 
-    private fun generatePropertyAccessor(
+    private fun IrClass.generatePropertyAccessor(
+        propertyDescriptor: PropertyDescriptor,
         property: IrProperty,
         descriptor: PropertyAccessorDescriptor,
         fieldSymbol: IrFieldSymbol,
-        declare: Boolean
+        isGetter: Boolean,
     ): IrSimpleFunction {
-        val symbol = compilerContext.symbolTable.referenceSimpleFunction(descriptor)
-        assert(symbol.isBound || declare)
-
-        if (!symbol.isBound) {
+        val irAccessor: IrSimpleFunction = when (isGetter) {
+            true -> searchForDeclaration<IrProperty>(propertyDescriptor)?.getter
+            false -> searchForDeclaration<IrProperty>(propertyDescriptor)?.setter
+        } ?: run {
             with(descriptor) {
                 property.factory.createFunction(
-                    fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol,
+                    fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrSimpleFunctionSymbolImpl(descriptor),
                     name, visibility, modality, returnType!!.toIrType(),
                     isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
                 )
@@ -298,11 +333,9 @@ interface IrBuilderExtension {
             }
         }
 
-        val irAccessor = symbol.owner
-        irAccessor.body = when (descriptor) {
-            is PropertyGetterDescriptor -> generateDefaultGetterBody(descriptor, irAccessor)
-            is PropertySetterDescriptor -> generateDefaultSetterBody(descriptor, irAccessor)
-            else -> throw AssertionError("Should be getter or setter: $descriptor")
+        irAccessor.body = when (isGetter) {
+            true -> generateDefaultGetterBody(descriptor as PropertyGetterDescriptor, irAccessor)
+            false -> generateDefaultSetterBody(descriptor as PropertySetterDescriptor, irAccessor)
         }
 
         return irAccessor
@@ -385,7 +418,8 @@ interface IrBuilderExtension {
         fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
             factory.createValueParameter(
                 function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
-                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline, false
+                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline,
+                isHidden = false, isAssignable = false
             ).also {
                 it.parent = function
             }
@@ -557,8 +591,8 @@ interface IrBuilderExtension {
         kType,
         genericIndex
     ) { it, _ ->
-        val prop = enclosingGenerator.localSerializersFieldsDescriptors[it]
-        irGetField(irGet(dispatchReceiverParameter), compilerContext.symbolTable.referenceField(prop).owner)
+        val (prop, ir) = enclosingGenerator.localSerializersFieldsDescriptors[it]
+        irGetField(irGet(dispatchReceiverParameter), ir.backingField!!)
     }
 
     fun IrBuilderWithScope.serializerInstance(
