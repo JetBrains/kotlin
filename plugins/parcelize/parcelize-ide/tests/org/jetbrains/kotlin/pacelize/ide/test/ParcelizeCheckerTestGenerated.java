@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.pacelize.ide.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ParcelizeCheckerTestGenerated extends AbstractParcelizeCheckerTest 
     }
 
     public void testAllFilesPresentInChecker() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/checker"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/checker"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("constructors.kt")

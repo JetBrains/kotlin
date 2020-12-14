@@ -26,7 +26,7 @@ public class ParcelCheckerTestGenerated extends AbstractParcelCheckerTest {
     }
 
     public void testAllFilesPresentInChecker() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/parcel/checker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("constructors.kt")

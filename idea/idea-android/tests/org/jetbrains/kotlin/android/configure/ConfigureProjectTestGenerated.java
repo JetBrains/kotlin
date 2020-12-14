@@ -28,7 +28,7 @@ public class ConfigureProjectTestGenerated extends AbstractConfigureProjectTest 
         }
 
         public void testAllFilesPresentInAndroid_gradle() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("androidStudioDefault_before.gradle")
@@ -95,7 +95,7 @@ public class ConfigureProjectTestGenerated extends AbstractConfigureProjectTest 
             }
 
             public void testAllFilesPresentInGradleExamples() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle/gradleExamples"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gradle/gradleExamples"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("gradleExample0_before.gradle")
@@ -154,7 +154,7 @@ public class ConfigureProjectTestGenerated extends AbstractConfigureProjectTest 
         }
 
         public void testAllFilesPresentInAndroid_gsk() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gsk"), Pattern.compile("(\\w+)_before\\.gradle.kts$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/android-gsk"), Pattern.compile("(\\w+)_before\\.gradle.kts$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("emptyFile_before.gradle.kts")

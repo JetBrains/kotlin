@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.repl;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     }
 
     public void testAllFilesPresentInRepl() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl"), Pattern.compile("^(.+)\\.repl$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl"), Pattern.compile("^(.+)\\.repl$"), null, true);
     }
 
     @TestMetadata("analyzeErrors.repl")
@@ -137,7 +138,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/classes"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/classes"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("classInheritance.repl")
@@ -200,7 +201,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInControlFlow() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/controlFlow"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/controlFlow"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("functionWithoutReturn.repl")
@@ -248,7 +249,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInModules() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/modules"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/modules"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("kt10001.repl")
@@ -266,7 +267,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInMultiline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/multiline"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/multiline"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("blankLinesAndComments.repl")
@@ -304,7 +305,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInObjects() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/objects"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/objects"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("emptyObject.repl")
@@ -332,7 +333,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInPrimitiveTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/primitiveTypes"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/primitiveTypes"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("arrayOfBoxed.repl")
@@ -355,7 +356,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInRegressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/regressions"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/regressions"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("kt6843.repl")
@@ -373,7 +374,7 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
         }
 
         public void testAllFilesPresentInUseJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/useJava"), Pattern.compile("^(.+)\\.repl$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/repl/useJava"), Pattern.compile("^(.+)\\.repl$"), null, true);
         }
 
         @TestMetadata("syntheticProperty.repl")

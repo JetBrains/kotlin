@@ -26,7 +26,7 @@ public class AndroidResourceFoldingTestGenerated extends AbstractAndroidResource
     }
 
     public void testAllFilesPresentInFolding() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/folding"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/folding"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("dimensions.kt")

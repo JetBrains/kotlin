@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class DceTestGenerated extends AbstractDceTest {
     }
 
     public void testAllFilesPresentInDce() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), null, TargetBackend.JS, true);
     }
 
     @TestMetadata("amd.js")

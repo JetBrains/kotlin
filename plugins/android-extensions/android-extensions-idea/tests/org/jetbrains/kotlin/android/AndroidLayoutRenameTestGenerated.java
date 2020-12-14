@@ -26,7 +26,7 @@ public class AndroidLayoutRenameTestGenerated extends AbstractAndroidLayoutRenam
     }
 
     public void testAllFilesPresentInRenameLayout() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/renameLayout"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/renameLayout"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("simple")

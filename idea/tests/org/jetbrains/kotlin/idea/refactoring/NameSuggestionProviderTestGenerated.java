@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class NameSuggestionProviderTestGenerated extends AbstractNameSuggestionP
     }
 
     public void testAllFilesPresentInNameSuggestionProvider() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/nameSuggestionProvider"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/nameSuggestionProvider"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("localVarAsCallArgument.kt")

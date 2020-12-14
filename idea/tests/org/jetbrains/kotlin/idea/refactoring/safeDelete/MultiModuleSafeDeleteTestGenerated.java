@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.safeDelete;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class MultiModuleSafeDeleteTestGenerated extends AbstractMultiModuleSafeD
     }
 
     public void testAllFilesPresentInSafeDeleteMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"), null);
+        KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("byActualClass/byActualClass.test")

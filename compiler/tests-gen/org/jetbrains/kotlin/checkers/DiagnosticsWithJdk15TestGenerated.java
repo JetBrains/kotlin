@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
     }
 
     public void testAllFilesPresentInTestsWithJava15() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJava15/jvmRecord")
@@ -37,7 +38,7 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
         }
 
         public void testAllFilesPresentInJvmRecord() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("diagnostics.kt")
@@ -80,7 +81,7 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
         }
 
         public void testAllFilesPresentInSealedClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15/sealedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15/sealedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("javaSealedClassExhaustiveness.kt")

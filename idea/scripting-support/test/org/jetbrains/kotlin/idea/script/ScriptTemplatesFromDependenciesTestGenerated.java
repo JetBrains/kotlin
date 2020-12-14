@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.script;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ScriptTemplatesFromDependenciesTestGenerated extends AbstractScript
     }
 
     public void testAllFilesPresentInTemplatesFromDependencies() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/script/templatesFromDependencies"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/script/templatesFromDependencies"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("inJar")
