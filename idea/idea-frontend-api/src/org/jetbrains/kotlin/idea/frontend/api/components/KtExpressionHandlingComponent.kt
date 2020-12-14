@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
 abstract class KtExpressionHandlingComponent : KtAnalysisSessionComponent() {
-   abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtFunctionLikeSymbol?
+   abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol?
 }

@@ -42,13 +42,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
 internal class KtFirScopeProvider(
-    analysisSession: KtAnalysisSession,
+    analysisSession: KtFirAnalysisSession,
     builder: KtSymbolByFirBuilder,
     private val project: Project,
     firResolveState: FirModuleResolveState,
     override val token: ValidityToken,
 ) : KtScopeProvider(), ValidityTokenOwner {
-    override val analysisSession: KtAnalysisSession by weakRef(analysisSession)
+    override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
     private val builder by weakRef(builder)
     private val firResolveState by weakRef(firResolveState)
     private val firScopeStorage = FirScopeRegistry()
@@ -136,9 +136,7 @@ internal class KtFirScopeProvider(
         originalFile: KtFile,
         positionInFakeFile: KtElement
     ): KtScopeContext = withValidityAssertion {
-        val completionContext = buildCompletionContextForEnclosingDeclaration(originalFile, positionInFakeFile)
-
-        val towerDataContext = completionContext.getTowerDataContext(positionInFakeFile)
+        val towerDataContext = analysisSession.towerDataContextProvider.getTowerDataContext(positionInFakeFile)
 
         val implicitReceivers = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver }.distinct()
         val implicitReceiversTypes = implicitReceivers.map { builder.buildKtType(it.type) }
@@ -158,16 +156,6 @@ internal class KtFirScopeProvider(
             getCompositeScope(allKtScopes.asReversed()),
             implicitReceiversTypes.asReversed()
         )
-    }
-
-    private fun buildCompletionContextForEnclosingDeclaration(
-        ktFile: KtFile,
-        positionInFakeFile: KtElement
-    ): LowLevelFirApiFacadeForCompletion.FirCompletionContext {
-        val firFile = ktFile.getFirFile(firResolveState)
-        val declarationContext = EnclosingDeclarationContext.detect(ktFile, positionInFakeFile)
-
-        return declarationContext.buildCompletionContext(firFile, firResolveState)
     }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {

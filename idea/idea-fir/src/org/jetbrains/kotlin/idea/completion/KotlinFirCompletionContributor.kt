@@ -111,7 +111,7 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
 
         val explicitReceiver = nameExpression.getReceiverExpression()
 
-        with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
+        with(getAnalysisSessionFor(originalFile).createContextDependentCopy(originalFile, nameExpression)) {
             val expectedType = nameExpression.getExpectedType()
 
             val (implicitScopes, _) = originalFile.getScopeContextForPosition(nameExpression)
