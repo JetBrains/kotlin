@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators.model
 
-import org.jetbrains.kotlin.test.MuteExtraSuffix
 import org.jetbrains.kotlin.utils.Printer
 
 class AnnotationModel(
@@ -17,6 +16,3 @@ class AnnotationModel(
         p.print("@${annotation.simpleName}($argumentsString)")
     }
 }
-
-fun muteExtraSuffix(suffix: String) = AnnotationModel(MuteExtraSuffix::class.java, arguments = listOf(suffix))
-

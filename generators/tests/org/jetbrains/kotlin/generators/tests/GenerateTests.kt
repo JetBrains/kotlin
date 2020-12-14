@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuite
-import org.jetbrains.kotlin.generators.model.muteExtraSuffix
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
@@ -384,15 +383,15 @@ fun main(args: Array<String>) {
                 model("navigation/gotoSymbol", testMethod = "doSymbolTest")
             }
 
-            testClass<AbstractNavigateToLibrarySourceTest>(annotations = listOf(muteExtraSuffix(".libsrc"))) {
+            testClass<AbstractNavigateToLibrarySourceTest>() {
                 model("decompiler/navigation/usercode")
             }
 
-            testClass<AbstractNavigateJavaToLibrarySourceTest>(annotations = listOf(muteExtraSuffix(".libsrc"))) {
+            testClass<AbstractNavigateJavaToLibrarySourceTest>() {
                 model("decompiler/navigation/userJavaCode", pattern = "^(.+)\\.java$")
             }
 
-            testClass<AbstractNavigateToLibrarySourceTestWithJS>(annotations = listOf(muteExtraSuffix(".libsrcjs"))) {
+            testClass<AbstractNavigateToLibrarySourceTestWithJS>() {
                 model("decompiler/navigation/usercode", testClassName = "UsercodeWithJSModule")
             }
 
@@ -1528,7 +1527,7 @@ fun main(args: Array<String>) {
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalJsKlibCompilerRunnerTest>(annotations = listOf(muteExtraSuffix(".jsklib"))) {
+            testClass<AbstractIncrementalJsKlibCompilerRunnerTest>() {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)

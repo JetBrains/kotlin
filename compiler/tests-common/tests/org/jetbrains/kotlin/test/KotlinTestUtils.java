@@ -599,7 +599,7 @@ public class KotlinTestUtils {
                 return;
             }
         }
-        MuteWithFileKt.testWithMuteInFile(test, testCase).invoke(testDataFilePath);
+        test.invoke(testDataFilePath);
     }
 
     private static boolean isRunTestOverridden(TestCase testCase) {
