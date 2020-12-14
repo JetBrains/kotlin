@@ -190,9 +190,9 @@ open class KtLightClassForFacade constructor(
 
     override fun getNavigationElement() = firstFileInFacade
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is KtLightClassForFacade && Comparing.equal(another.qualifiedName, qualifiedName)
-    }
+    override fun isEquivalentTo(another: PsiElement?): Boolean =
+        equals(another) ||
+                (another is KtLightClassForFacade && another.facadeClassFqName == facadeClassFqName)
 
     override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
 
