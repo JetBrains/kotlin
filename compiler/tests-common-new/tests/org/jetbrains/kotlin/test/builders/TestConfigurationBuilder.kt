@@ -16,7 +16,7 @@ typealias Constructor<T> = (TestServices) -> T
 @DefaultsDsl
 class TestConfigurationBuilder {
     val defaultsProviderBuilder: DefaultsProviderBuilder = DefaultsProviderBuilder()
-    lateinit var assertions: Assertions
+    lateinit var assertions: AssertionsService
 
     private val facades: MutableList<Constructor<AbstractTestFacade<*, *>>> = mutableListOf()
 

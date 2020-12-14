@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys

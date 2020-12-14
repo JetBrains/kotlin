@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
+import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration;
 import org.junit.Assert;
 
 import java.io.File;
@@ -44,14 +46,18 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.compileKotlinWithJava;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
-import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.*;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.compareDescriptors;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile;
 
 /*
     The generated test compares package descriptors loaded from kotlin sources and read from compiled java.
 */
 public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     // There are two modules in each test case (sources and dependencies), so we should render declarations from both of them
-    public static final Configuration COMPARATOR_CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.renderDeclarationsFromOtherModules(true);
+    public static final Configuration
+            COMPARATOR_CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.renderDeclarationsFromOtherModules(true);
 
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, COMPARATOR_CONFIGURATION);
@@ -346,7 +352,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     ) {
         boolean fail = false;
         try {
-            ExpectedLoadErrorsUtil.checkForLoadErrors(javaPackage, bindingContext);
+            ExpectedLoadErrorsUtil.checkForLoadErrors(javaPackage, bindingContext, JUnit4Assertions.INSTANCE);
         }
         catch (ComparisonFailure e) {
             // to let the next check run even if this one failed

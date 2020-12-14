@@ -5,27 +5,8 @@
 
 package org.jetbrains.kotlin.test.services
 
-import java.io.File
+import org.jetbrains.kotlin.test.Assertions
 
-abstract class Assertions : TestService {
-    fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }) {
-        assertEqualsToFile(expectedFile, actual, sanitizer) { "Actual data differs from file content" }
-    }
+abstract class AssertionsService : Assertions(), TestService
 
-    abstract fun assertEqualsToFile(
-        expectedFile: File,
-        actual: String,
-        sanitizer: (String) -> String = { it },
-        message: (() -> String)
-    )
-
-    abstract fun assertEquals(expected: Any?, actual: Any?, message: (() -> String)? = null)
-    abstract fun assertNotEquals(expected: Any?, actual: Any?, message: (() -> String)? = null)
-    abstract fun assertTrue(value: Boolean, message: (() -> String)? = null)
-    abstract fun assertFalse(value: Boolean, message: (() -> String)? = null)
-    abstract fun assertAll(exceptions: List<AssertionError>)
-
-    abstract fun fail(message: () -> String): Nothing
-}
-
-val TestServices.assertions: Assertions by TestServices.testServiceAccessor()
+val TestServices.assertions: AssertionsService by TestServices.testServiceAccessor()

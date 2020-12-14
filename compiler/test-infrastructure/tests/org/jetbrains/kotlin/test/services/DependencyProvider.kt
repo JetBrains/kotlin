@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.*
 
 abstract class DependencyProvider : TestService {

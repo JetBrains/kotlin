@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.services.Assertions
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions

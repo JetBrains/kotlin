@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.utils.TestDisposable
 
 class TestConfigurationImpl(
     defaultsProvider: DefaultsProvider,
-    assertions: Assertions,
+    assertions: AssertionsService,
 
     facades: List<Constructor<AbstractTestFacade<*, *>>>,
 
@@ -86,7 +86,7 @@ class TestConfigurationImpl(
             )
             register(CompilerConfigurationProvider::class, environmentProvider)
 
-            register(Assertions::class, assertions)
+            register(AssertionsService::class, assertions)
             register(DefaultsProvider::class, defaultsProvider)
 
             register(DefaultRegisteredDirectivesProvider::class, DefaultRegisteredDirectivesProvider(defaultRegisteredDirectives))

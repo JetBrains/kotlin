@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
@@ -94,7 +94,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
         val differentResultFile = KotlinTestUtils.replaceExtension(file, "runtime.txt")
         if (differentResultFile.exists()) {
-            RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, differentResultFile)
+            RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, differentResultFile)
             return
         }
 
@@ -102,7 +102,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true, false, false, null
         ).first
 
-        RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
     }
 
     private fun DeclarationDescriptor.isJavaAnnotationConstructor() =

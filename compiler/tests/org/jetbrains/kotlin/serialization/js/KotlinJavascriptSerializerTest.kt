@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.sure
@@ -62,10 +63,10 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         serialize(configuration, metaFile)
         val module = deserialize(metaFile)
 
-        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                module.getPackage(TEST_PACKAGE_FQNAME),
-                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
-                File(source.replace(".kt", ".txt"))
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(
+            module.getPackage(TEST_PACKAGE_FQNAME),
+            RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+            File(source.replace(".kt", ".txt"))
         )
     }
 

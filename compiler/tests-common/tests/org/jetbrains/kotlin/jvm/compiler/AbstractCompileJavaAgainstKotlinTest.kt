@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
 import java.io.File
 import java.io.IOException
@@ -83,8 +83,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
         if (!compiledSuccessfully) return
 
-        val configuration = newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
-                                             KtTestUtil.getAnnotationsJar(), out)
+        val configuration = newConfiguration(
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
+            KtTestUtil.getAnnotationsJar(), out)
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         setupLanguageVersionSettingsForCompilerTests(ktFile.readText(), environment)

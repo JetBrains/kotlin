@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
 import java.io.File
 import java.lang.annotation.Retention
@@ -69,8 +69,9 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(
             testRootDisposable,
-            newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK,
-                             KtTestUtil.getAnnotationsJar(), out),
+            newConfiguration(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK,
+                KtTestUtil.getAnnotationsJar(), out),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 

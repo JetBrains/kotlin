@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.directives.model.*
-import org.jetbrains.kotlin.test.services.Assertions
 
 class RegisteredDirectivesParser(private val container: DirectivesContainer, private val assertions: Assertions) {
     companion object {

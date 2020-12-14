@@ -72,7 +72,7 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         val environment =
                 KotlinTestUtils
                         .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                                testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
+                            testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
                         )
         val moduleDescriptor =
                 JvmResolveUtil.analyze(

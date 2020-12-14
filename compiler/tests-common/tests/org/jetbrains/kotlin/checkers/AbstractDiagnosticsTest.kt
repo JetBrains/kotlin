@@ -525,7 +525,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             return
         }
 
-        val comparator = RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles, modules.values))
+        val comparator = RecursiveDescriptorComparator(
+            createdAffectedPackagesConfiguration(
+                testFiles,
+                modules.values
+            )
+        )
 
         val isMultiModuleTest = modules.size != 1
 

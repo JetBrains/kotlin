@@ -87,15 +87,15 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
 
     private fun buildTypeQualifierResolverAndFindClass(className: String): Pair<AnnotationTypeQualifierResolver, ClassDescriptor> {
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
-                listOf(
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
+            listOf(
                     KtTestUtil.getAnnotationsJar(),
                     MockLibraryUtil.compileJavaFilesLibraryToJar(
                                 FOREIGN_ANNOTATIONS_SOURCES_PATH,
                                 "foreign-annotations"
                         )
                 ),
-                listOf(File(TEST_DATA_PATH))
+            listOf(File(TEST_DATA_PATH))
         ).apply {
             languageVersionSettings = LanguageVersionSettingsImpl(
                     LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState.STRICT)

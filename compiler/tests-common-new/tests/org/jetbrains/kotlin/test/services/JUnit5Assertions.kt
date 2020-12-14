@@ -14,7 +14,7 @@ import java.io.File
 import java.io.IOException
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
-object JUnit5Assertions : Assertions() {
+object JUnit5Assertions : AssertionsService() {
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
         try {
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
@@ -54,6 +54,14 @@ object JUnit5Assertions : Assertions() {
     override fun assertAll(exceptions: List<AssertionError>) {
         exceptions.singleOrNull()?.let { throw it }
         JUnit5PlatformAssertions.assertAll(exceptions.map { Executable { throw it } })
+    }
+
+    override fun assertNotNull(value: Any?, message: (() -> String)?) {
+        JUnit5PlatformAssertions.assertNotNull(value, message)
+    }
+
+    override fun <T> assertSameElements(expected: Collection<T>, actual: Collection<T>, message: (() -> String)?) {
+        JUnit5PlatformAssertions.assertIterableEquals(expected, actual, message)
     }
 
     override fun fail(message: () -> String): Nothing {
