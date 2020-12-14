@@ -357,7 +357,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
     WasmI32 -> g.buildConstI32(0)
-    WasmI1 -> g.buildConstI32(0)
     WasmI64 -> g.buildConstI64(0)
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)

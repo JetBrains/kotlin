@@ -15,7 +15,6 @@ sealed class WasmType(
 // TODO: Remove this type.
 object WasmUnreachableType : WasmType("unreachable", -0x40)
 object WasmI32 : WasmType("i32", -0x1)
-object WasmI1 : WasmType("i32", -0x1)
 object WasmI64 : WasmType("i64", -0x2)
 object WasmF32 : WasmType("f32", -0x3)
 object WasmF64 : WasmType("f64", -0x4)
