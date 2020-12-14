@@ -9,7 +9,7 @@ import org.gradle.api.Project
 
 internal class KotlinRootNpmResolution(
     val rootProject: Project,
-    internal val projects: Map<Project, KotlinProjectNpmResolution>
+    internal val projects: Map<String, KotlinProjectNpmResolution>
 ) {
-    operator fun get(project: Project) = projects[project] ?: KotlinProjectNpmResolution.empty(project)
+    operator fun get(project: String) = projects[project] ?: KotlinProjectNpmResolution.empty(project)
 }

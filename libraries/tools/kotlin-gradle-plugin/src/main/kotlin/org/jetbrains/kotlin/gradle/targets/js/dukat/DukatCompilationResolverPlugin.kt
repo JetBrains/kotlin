@@ -90,7 +90,7 @@ internal class DukatCompilationResolverPlugin(
         packageJsonIsUpdated: Boolean,
         resolution: KotlinRootNpmResolution
     ) {
-        val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
+        val externalNpmDependencies = resolution[project.path][compilation].externalNpmDependencies
 
         val target = compilation.target
         val externalsOutputFormat = compilation.externalsOutputFormat

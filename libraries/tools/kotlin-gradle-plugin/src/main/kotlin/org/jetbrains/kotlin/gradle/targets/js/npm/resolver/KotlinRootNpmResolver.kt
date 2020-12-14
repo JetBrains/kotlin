@@ -124,8 +124,8 @@ internal class KotlinRootNpmResolver internal constructor(
         }
     }
 
-    open inner class Installation(val projectResolutions: Map<Project, KotlinProjectNpmResolution>) {
-        operator fun get(project: Project) =
+    open inner class Installation(val projectResolutions: Map<String, KotlinProjectNpmResolution>) {
+        operator fun get(project: String) =
             projectResolutions[project] ?: KotlinProjectNpmResolution.empty(project)
 
         internal fun install(
