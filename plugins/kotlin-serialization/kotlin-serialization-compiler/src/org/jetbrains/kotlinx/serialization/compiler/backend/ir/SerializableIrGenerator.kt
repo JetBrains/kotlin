@@ -75,13 +75,15 @@ class SerializableIrGenerator(
             for (index in startPropOffset until serializableProperties.size) {
                 val prop = serializableProperties[index]
                 val paramRef = ctor.valueParameters[index + seenVarsOffset]
-                // assign this.a = a in else branch
-                val assignParamExpr = setProperty(irGet(thiz), prop.irProp, irGet(paramRef))
+                // Assign this.a = a in else branch
+                // Set field directly w/o setter to match behavior of old backend plugin
+                val backingFieldToAssign = prop.getIrPropertyFrom(irClass).backingField!!
+                val assignParamExpr = irSetField(irGet(thiz), backingFieldToAssign, irGet(paramRef))
 
                 val ifNotSeenExpr: IrExpression = if (prop.optional) {
                     val initializerBody =
                         requireNotNull(transformFieldInitializer(prop.irField)) { "Optional value without an initializer" } // todo: filter abstract here
-                    setProperty(irGet(thiz), prop.irProp, initializerBody)
+                    irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
                 } else {
                     irThrow(irInvoke(null, exceptionCtorRef, irString(prop.name), typeHint = exceptionType))
                 }

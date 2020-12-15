@@ -139,7 +139,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             if (classProp.transient) continue
             +addFieldCall(classProp)
             // add property annotations
-            val property = classProp.irProp
+            val property = classProp.getIrPropertyFrom(serializableIrClass)
             copySerialInfoAnnotationsToDescriptor(
                 property.annotations,
                 localDescriptor,
@@ -254,7 +254,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                 irGet(
                     type = ownerType,
                     variable = objectToSerialize.symbol
-                ), irProp
+                ), getIrPropertyFrom(serializableIrClass)
             )
         }
 
