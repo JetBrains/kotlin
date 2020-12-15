@@ -6,7 +6,6 @@
 package kotlin.random
 
 import kotlin.math.nextDown
-import kotlin.jvm.Transient
 
 /**
  * An abstract class that is implemented by random number generator algorithms.
@@ -269,12 +268,15 @@ public abstract class Random {
      * @sample samples.random.Randoms.defaultRandom
      */
     companion object Default : Random(), Serializable {
-        private const val serialVersionUID = 0L
-
-        @Transient
         private val defaultRandom: Random = defaultPlatformRandom()
 
-        private fun readResolve(): Any = Default
+        private object Dummy : Serializable {
+            private const val serialVersionUID = 0L
+
+            private fun readResolve(): Any = Random
+        }
+
+        private fun writeReplace(): Any = Dummy
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
@@ -295,7 +297,8 @@ public abstract class Random {
 
         override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
-        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
+        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray =
+            defaultRandom.nextBytes(array, fromIndex, toIndex)
     }
 }
 
@@ -328,7 +331,6 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
  */
 @SinceKotlin("1.3")
 public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).toInt())
-
 
 
 /**

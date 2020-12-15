@@ -40,7 +40,7 @@ class RandomSerializationTest {
     @Test
     fun deserializeDefault() = assertSame(
         expected = Random,
-        actual = deserializeFromHex("ac ed 00 05 73 72 00 1c 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 52 61 6e 64 6f 6d 24 44 65 66 61 75 6c 74 59 81 49 e9 14 4e a8 28 02 00 00 78 70")
+        actual = deserializeFromHex("ac ed 00 05 73 72 00 22 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 52 61 6e 64 6f 6d 24 44 65 66 61 75 6c 74 24 44 75 6d 6d 79 00 00 00 00 00 00 00 00 02 00 00 78 70"),
     )
 
     @Test
