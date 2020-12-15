@@ -452,8 +452,9 @@ open class MarkdownParser(
                     if (link is DocumentationLink) link.dri else null
                 }
 
+                val allTags = listOf(kDocTag) + if(kDocTag.canHaveParent()) getAllKDocTags(findParent(kDocTag)) else emptyList()
                 DocumentationNode(
-                    (listOf(kDocTag) + getAllKDocTags(findParent(kDocTag))).map {
+                    allTags.map {
                         when (it.knownTag) {
                             null -> if (it.name == null) Description(parseStringToDocNode(it.getContent())) else CustomTagWrapper(
                                 parseStringToDocNode(it.getContent()),
@@ -511,7 +512,9 @@ open class MarkdownParser(
         fun DRI.fqName(): String? = "$packageName.$classNames".takeIf { packageName != null && classNames != null }
 
         private fun findParent(kDoc: PsiElement): PsiElement =
-            if (kDoc is KDocSection) findParent(kDoc.parent) else kDoc
+            if (kDoc.canHaveParent()) findParent(kDoc.parent) else kDoc
+
+        private fun PsiElement.canHaveParent(): Boolean = this is KDocSection && knownTag != KDocKnownTag.PROPERTY
 
         private fun getAllKDocTags(kDocImpl: PsiElement): List<KDocTag> =
             kDocImpl.children.filterIsInstance<KDocTag>().filterNot { it is KDocSection } + kDocImpl.children.flatMap {
