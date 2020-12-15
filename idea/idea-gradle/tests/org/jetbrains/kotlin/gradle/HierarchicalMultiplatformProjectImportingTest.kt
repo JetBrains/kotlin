@@ -340,6 +340,86 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         }
     }
 
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testPrecisePlatformsHmpp() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val anyNative = NativePlatforms.unspecifiedNativePlatform
+        val linux = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.LINUX_X64)
+        val macos = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.MACOS_X64)
+
+        checkProjectStructure(exhaustiveModuleList = true, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app") {
+                targetPlatform(jvm)
+            }
+
+            module("my-app.commonMain") { targetPlatform(jvm, anyNative) }
+            module("my-app.commonTest") { targetPlatform(jvm, anyNative) }
+
+            module("my-app.jvmAndLinuxMain") { targetPlatform(jvm, anyNative) }
+            module("my-app.jvmAndLinuxTest") { targetPlatform(jvm, anyNative) }
+
+            module("my-app.jvmMain") { targetPlatform(jvm) }
+            module("my-app.jvmTest") { targetPlatform(jvm) }
+
+            module("my-app.linuxX64Main") { targetPlatform(linux) }
+            module("my-app.linuxX64Test") { targetPlatform(linux) }
+
+            module("my-app.macosX64Main") { targetPlatform(macos) }
+            module("my-app.macosX64Test") { targetPlatform(macos) }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testPrecisePlatformsWithUnrelatedModuleHmpp() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val anyNative = NativePlatforms.unspecifiedNativePlatform
+        val js = JsPlatforms.defaultJsPlatform
+        val linux = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.LINUX_X64)
+        val macos = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.MACOS_X64)
+
+        checkProjectStructure(exhaustiveModuleList = true, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            // root project
+            module("my-app") {
+                targetPlatform(jvm)
+            }
+
+            module("my-app.commonMain") { targetPlatform(jvm, anyNative, js) } // :( should be (jvm, anyNative)
+            module("my-app.commonTest") { targetPlatform(jvm, anyNative, js) } // :( should be (jvm, anyNative)
+
+            module("my-app.jvmAndLinuxMain") { targetPlatform(jvm, anyNative) }
+            module("my-app.jvmAndLinuxTest") { targetPlatform(jvm, anyNative) }
+
+            module("my-app.jvmMain") { targetPlatform(jvm) }
+            module("my-app.jvmTest") { targetPlatform(jvm) }
+
+            module("my-app.linuxX64Main") { targetPlatform(linux) }
+            module("my-app.linuxX64Test") { targetPlatform(linux) }
+
+            module("my-app.macosX64Main") { targetPlatform(macos) }
+            module("my-app.macosX64Test") { targetPlatform(macos) }
+
+
+            // submodule
+            module("my-app.submodule") { targetPlatform(jvm) }
+
+            module("my-app.submodule.commonMain") { targetPlatform(js, jvm, anyNative) } // :( should be (js, jvm)
+            module("my-app.submodule.commonTest") { targetPlatform(js, jvm, anyNative) } // :( should be (js, jvm)
+
+            module("my-app.submodule.jvmMain") { targetPlatform(jvm) }
+            module("my-app.submodule.jvmTest") { targetPlatform(jvm) }
+
+            module("my-app.submodule.jsMain") { targetPlatform(js) }
+            module("my-app.submodule.jsTest") { targetPlatform(js) }
+        }
+    }
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
