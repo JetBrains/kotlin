@@ -17,8 +17,6 @@ class DokkaGenerator(
     private val logger: DokkaLogger
 ) {
     fun generate() = timed(logger) {
-        printDokkaMaturityWarning(logger)
-
         report("Initializing plugins")
         val context = initializePlugins(configuration, logger)
 
