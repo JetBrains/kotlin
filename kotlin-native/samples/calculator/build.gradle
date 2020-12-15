@@ -5,6 +5,9 @@ buildscript {
         mavenCentral()
         maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        if (project.hasProperty("kotlinCompilerRepo")) {
+            maven { setUrl(project.property("kotlinCompilerRepo")) }
+        }
     }
 
     dependencies {
@@ -20,5 +23,8 @@ allprojects {
         mavenCentral()
         maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        if (project.hasProperty("kotlinCompilerRepo")) {
+            maven { setUrl(project.property("kotlinCompilerRepo")) }
+        }
     }
 }
