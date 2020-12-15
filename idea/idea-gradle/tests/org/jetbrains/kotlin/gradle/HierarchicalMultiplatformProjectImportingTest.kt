@@ -420,6 +420,153 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("my-app.submodule.jsTest") { targetPlatform(js) }
         }
     }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testOrphanSourceSet() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val js = JsPlatforms.defaultJsPlatform
+        val native = NativePlatforms.unspecifiedNativePlatform
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.commonMain") {
+                // must not be (jvm, js, native)
+                targetPlatform(jvm, js)
+            }
+
+            module("my-app.orphan") {
+                targetPlatform(jvm, js)
+            }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testSourceSetIncludedIntoCompilationDirectly() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val js = JsPlatforms.defaultJsPlatform
+        val native = NativePlatforms.unspecifiedNativePlatform
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.commonMain") {
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
+            }
+
+            module("my-app.includedIntoJvm") {
+                targetPlatform(jvm) // !
+            }
+
+            module("my-app.includedIntoJvmAndJs") {
+                targetPlatform(jvm, js) // !
+            }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testDefaultSourceSetDependsOnDefaultSourceSet() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val js = JsPlatforms.defaultJsPlatform
+        val native = NativePlatforms.unspecifiedNativePlatform
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.commonMain") {
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
+            }
+
+            module("my-app.intermediateBetweenJsAndCommon") {
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
+            }
+
+            module("my-app.jsMain") {
+                targetPlatform(js) // must not be (jvm, js)
+            }
+
+            module("my-app.jvmMain") {
+                targetPlatform(jvm)
+            }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testDefaultSourceSetIncludedIntoAnotherCompilationDirectly() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val js = JsPlatforms.defaultJsPlatform
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.jvmMain") {
+                targetPlatform(jvm) // must not be (jvm, js)
+            }
+
+            module("my-app.jsMain") {
+                targetPlatform(js)
+            }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testSourceSetsWithDependsOnButNotIncludedIntoCompilation() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+        val js = JsPlatforms.defaultJsPlatform
+        val native = NativePlatforms.unspecifiedNativePlatform
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+
+            // (jvm, js, native) is highly undesirable
+            module("my-app.danglingOnJvm") {
+                targetPlatform(jvm, js)
+            }
+
+            module("my-app.commonMain") {
+                targetPlatform(jvm, js)
+            }
+
+            module("my-app.danglingOnCommon") {
+                targetPlatform(jvm, js)
+            }
+
+            module("my-app.danglingOnJvmAndJs") {
+                targetPlatform(jvm, js)
+            }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testCustomAddToCompilationPlusDependsOn() {
+        configureByFiles()
+        importProject()
+
+        val jvm = JvmPlatforms.defaultJvmPlatform
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.includedIntoJvm") {
+                targetPlatform(jvm) // !
+            }
+
+            module("my-app.pseudoOrphan") {
+                targetPlatform(jvm) // !
+            }
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
