@@ -86,6 +86,25 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 <!--decompiler-->
 
   <extensions defaultExtensionNs="com.intellij">
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.refactoring" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.migrationTool" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.new.wizard" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.performance" version="1"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.IDESettingsFUSCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
     <!-- fir-specific -->
     <projectService serviceInterface="org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider"
                         serviceImplementation="org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider"/>
