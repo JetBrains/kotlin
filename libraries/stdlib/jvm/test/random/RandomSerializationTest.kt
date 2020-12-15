@@ -44,6 +44,16 @@ class RandomSerializationTest {
     )
 
     @Test
+    fun deserializeXorWow() {
+        val instance = Random(0)
+
+        val deserialized =
+            deserializeFromHex<Random>("ac ed 00 05 73 72 00 1a 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 58 6f 72 57 6f 77 52 61 6e 64 6f 6d 00 00 00 00 00 00 00 00 02 00 06 49 00 06 61 64 64 65 6e 64 49 00 01 76 49 00 01 77 49 00 01 78 49 00 01 79 49 00 01 7a 78 70 01 61 f1 40 23 9d 3d b3 c9 07 82 1d 6a 67 48 b0 e3 f9 bd 0c b6 5b de 32")
+
+        testRandomsHaveSameState(instance, deserialized)
+    }
+
+    @Test
     fun xorwowIsSerializable() {
         val instance = Random(0)
         discardSomeValues(instance)
