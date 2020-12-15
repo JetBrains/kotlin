@@ -10,14 +10,12 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.DefaultsDsl
+import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.regex.Pattern
 
 @DefaultsDsl
 class LanguageVersionSettingsBuilder {
     companion object {
-        private val languageFeaturePattern = Pattern.compile("""(\+|-|warn:)(\w+)\s*""")
-
         fun fromExistingSettings(builder: LanguageVersionSettingsBuilder): LanguageVersionSettingsBuilder {
             return LanguageVersionSettingsBuilder().apply {
                 languageVersion = builder.languageVersion
@@ -79,7 +77,7 @@ class LanguageVersionSettingsBuilder {
     }
 
     private fun parseLanguageFeature(featureString: String) {
-        val matcher = languageFeaturePattern.matcher(featureString)
+        val matcher = LANGUAGE_FEATURE_PATTERN.matcher(featureString)
         if (!matcher.find()) {
             error(
                 """Wrong syntax in the '// !${LanguageSettingsDirectives.LANGUAGE.name}: ...' directive:
