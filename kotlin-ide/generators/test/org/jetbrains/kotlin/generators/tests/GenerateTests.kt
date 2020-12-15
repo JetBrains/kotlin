@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractReturnExpressionTargetTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractFileScopeTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -949,6 +950,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractMemberScopeByFqNameTest> {
             model("memberScopeByFqName", pattern = TXT)
+        }
+
+        testClass<AbstractFileScopeTest> {
+            model("fileScopeTest", pattern = KT)
         }
 
         testClass<AbstractSymbolFromSourcePointerRestoreTest> {

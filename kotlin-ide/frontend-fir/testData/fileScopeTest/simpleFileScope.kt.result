@@ -1,0 +1,83 @@
+FILE SYMBOL:
+KtFirFileSymbol:
+  annotations: []
+  origin: SOURCE
+
+CALLABLE NAMES:
+[test, testVal]
+
+CALLABLE SYMBOLS:
+KtFirFunctionSymbol:
+  annotations: []
+  callableIdIfNonLocal: test
+  isExtension: false
+  isExternal: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isSuspend: false
+  modality: FINAL
+  name: test
+  origin: SOURCE
+  receiverTypeAndAnnotations: null
+  symbolKind: TOP_LEVEL
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+
+KtFirKotlinPropertySymbol:
+  annotations: []
+  callableIdIfNonLocal: testVal
+  getter: KtFirPropertyGetterSymbol(<getter>)
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 2
+  isConst: false
+  isExtension: false
+  isLateInit: false
+  isOverride: false
+  isVal: true
+  modality: FINAL
+  name: testVal
+  origin: SOURCE
+  receiverTypeAndAnnotations: null
+  setter: null
+  symbolKind: TOP_LEVEL
+  type: kotlin/Int
+  visibility: PUBLIC
+
+CLASSIFIER NAMES:
+[C, I]
+
+CLASSIFIER SYMBOLS:
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: C
+  classKind: CLASS
+  companionObject: null
+  isInner: false
+  modality: FINAL
+  name: C
+  origin: SOURCE
+  primaryConstructor: KtFirConstructorSymbol(<constructor>)
+  superTypes: [kotlin/Any]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: PUBLIC
+
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: I
+  classKind: INTERFACE
+  companionObject: null
+  isInner: false
+  modality: ABSTRACT
+  name: I
+  origin: SOURCE
+  primaryConstructor: null
+  superTypes: [kotlin/Any]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: PUBLIC
