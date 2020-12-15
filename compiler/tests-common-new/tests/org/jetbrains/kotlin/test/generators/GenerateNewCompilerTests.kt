@@ -19,8 +19,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticUsingJavacTest> {
-                model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/tests/javac", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractFirDiagnosticTest>(suiteTestClassName = "FirOldFrontendDiagnosticsTestGenerated") {

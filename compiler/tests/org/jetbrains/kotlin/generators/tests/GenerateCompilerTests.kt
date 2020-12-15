@@ -66,25 +66,8 @@ import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
-
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-gen", "compiler/testData") {
-            testClass<AbstractJavacDiagnosticsTest> {
-                model("javac/diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-                model(
-                    "javac/diagnostics/tests",
-                    testClassName = "TestsWithoutJavac",
-                    testMethod = "doTestWithoutJavacWrapper",
-                    excludedPattern = excludedFirTestdataPattern
-                )
-            }
-
-            testClass<AbstractJavacFieldResolutionTest> {
-                model("javac/fieldsResolution/tests")
-                model("javac/fieldsResolution/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
-            }
-
             testClass<AbstractDiagnosticsTestWithJsStdLib> {
                 model("diagnostics/testsWithJsStdLib")
             }
