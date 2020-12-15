@@ -15,7 +15,7 @@ object CodeMetaInfoParser {
 
     /*
      * ([\S&&[^,(){}]]+) -- tag, allowing all non-space characters except bracers and curly bracers
-     * ([{](.*?)[}])? -- list of platforms
+     * ([{](.*?)[}])? -- list of attributes
      * (\("(.*?)"\))? -- arguments of meta info
      * (, )? -- possible separator between different infos
      */
@@ -60,14 +60,14 @@ object CodeMetaInfoParser {
             val allMetaInfos = openingMatchResult.groups[2]!!.value
             tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
                 val tag = it[1]!!.value
-                val platforms = it[3]?.value?.split(";") ?: emptyList()
+                val attributes = it[3]?.value?.split(";") ?: emptyList()
                 val description = it[5]?.value
 
                 result.add(
                     ParsedCodeMetaInfo(
                         openingMatchResult.range.first,
                         closingMatchResult.range.first,
-                        platforms.toMutableList(),
+                        attributes.toMutableList(),
                         tag,
                         description
                     )

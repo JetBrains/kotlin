@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 
 abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean = true) {
     private val clickOrPressRegex = "Click or press (.*)to navigate".toRegex() // We have different hotkeys on different platforms
-    open fun asString(codeMetaInfo: CodeMetaInfo): String = codeMetaInfo.tag + getPlatformsString(codeMetaInfo)
+    open fun asString(codeMetaInfo: CodeMetaInfo): String = codeMetaInfo.tag + getAttributesString(codeMetaInfo)
 
     open fun getAdditionalParams(codeMetaInfo: CodeMetaInfo) = ""
 
@@ -31,7 +31,7 @@ abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean
         return sanitizedText
     }
 
-    protected fun getPlatformsString(codeMetaInfo: CodeMetaInfo): String {
+    protected fun getAttributesString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo.attributes.isEmpty()) return ""
         return "{${codeMetaInfo.attributes.joinToString(";")}}"
     }

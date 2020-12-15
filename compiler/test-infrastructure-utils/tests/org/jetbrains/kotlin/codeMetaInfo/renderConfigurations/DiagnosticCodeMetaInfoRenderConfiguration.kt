@@ -21,7 +21,7 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
     override fun asString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo !is DiagnosticCodeMetaInfo) return ""
         return (getTag(codeMetaInfo)
-                + getPlatformsString(codeMetaInfo)
+                + getAttributesString(codeMetaInfo)
                 + getParamsString(codeMetaInfo))
             .replace(crossPlatformLineBreak, "")
     }
