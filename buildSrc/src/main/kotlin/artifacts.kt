@@ -248,7 +248,7 @@ fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
 }
 
 fun Project.publishProjectJarsForIde(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
-    buildDir.resolve("artifacts-for-ide-to-modules-mapping/$name.txt").run {
+    buildDir.resolve("artifacts-to-modules-mapping.txt").run {
         parentFile.mkdirs()
         writeText(projects.joinToString("\n"))
     }
