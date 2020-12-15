@@ -36,9 +36,9 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
     // TODO: we need to disentangle signature construction with declaration tables.
     lateinit var table: DeclarationTable
 
-    fun reset() {
-        localIndex = 0
-        scopeIndex = 0
+    fun reset(newLocalIndex: Long = 0L, newScopeIndex: Int = 0) {
+        localIndex = newLocalIndex
+        scopeIndex = newScopeIndex
     }
 
     private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration>(), IrElementVisitorVoid {

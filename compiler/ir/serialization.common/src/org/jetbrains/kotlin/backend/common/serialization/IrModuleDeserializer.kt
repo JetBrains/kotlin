@@ -55,8 +55,6 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun addModuleReachableTopLevel(idSig: IdSignature) { error("Unsupported Operation (sig: $idSig") }
 
-    open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
-
     abstract val moduleFragment: IrModuleFragment
 
     abstract val moduleDependencies: Collection<IrModuleDeserializer>
@@ -64,6 +62,8 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
     open val strategy: DeserializationStrategy = DeserializationStrategy.ONLY_DECLARATION_HEADERS
 
     open val isCurrent = false
+
+    open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
@@ -102,10 +102,6 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
         delegate.referencePropertyByLocalSignature(file, idSignature)
-
-    override fun deserializeReachableDeclarations() {
-        delegate.deserializeReachableDeclarations()
-    }
 
     private fun computeFunctionDescriptor(className: String): FunctionClassDescriptor {
         val isK = className[0] == 'K'
@@ -200,6 +196,10 @@ class IrModuleDeserializerWithBuiltIns(
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
     override val isCurrent get() = delegate.isCurrent
+
+    override fun fileDeserializers(): Collection<IrFileDeserializer> {
+        return delegate.fileDeserializers()
+    }
 }
 
 open class CurrentModuleDeserializer(

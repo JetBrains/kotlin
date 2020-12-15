@@ -19,13 +19,15 @@ class JsIrFileSerializer(
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     skipExpects: Boolean,
-    bodiesOnlyForInlines: Boolean = false
+    bodiesOnlyForInlines: Boolean = false,
+    icMode: Boolean = false,
 ) : IrFileSerializer(
     logger,
     declarationTable,
     expectDescriptorToSymbol,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    skipExpects = skipExpects
+    skipExpects = skipExpects,
+    skipMutableState = icMode
 ) {
     companion object {
         private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")
