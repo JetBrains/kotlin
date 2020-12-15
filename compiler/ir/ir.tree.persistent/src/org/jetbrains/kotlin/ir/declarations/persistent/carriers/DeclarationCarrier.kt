@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 interface DeclarationCarrier : Carrier {
-    var parentField: IrDeclarationParent?
+    var parentSymbolField: IrSymbol?
     var originField: IrDeclarationOrigin
     var annotationsField: List<IrConstructorCall>
 }

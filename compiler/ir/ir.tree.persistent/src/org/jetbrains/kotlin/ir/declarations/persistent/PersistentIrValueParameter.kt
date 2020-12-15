@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ValueParameterCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -51,7 +51,7 @@ internal class PersistentIrValueParameter(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var parentField: IrDeclarationParent? = null
+    override var parentSymbolField: IrSymbol? = null
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
@@ -88,4 +88,14 @@ internal class PersistentIrValueParameter(
                 setCarrier().varargElementTypeField = v
             }
         }
+
+    override fun setState(t: ValueParameterCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        defaultValueField = t.defaultValueField
+        typeField = t.typeField
+        varargElementTypeField = t.varargElementTypeField
+    }
 }

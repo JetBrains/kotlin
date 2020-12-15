@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -48,7 +48,7 @@ internal class PersistentIrField(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var parentField: IrDeclarationParent? = null
+    override var parentSymbolField: IrSymbol? = null
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
@@ -80,15 +80,7 @@ internal class PersistentIrField(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     override var typeField: IrType = type
 
@@ -99,4 +91,14 @@ internal class PersistentIrField(
                 setCarrier().typeField = v
             }
         }
+
+    override fun setState(t: FieldCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        typeField = t.typeField
+        initializerField = t.initializerField
+        correspondingPropertySymbolField = t.correspondingPropertySymbolField
+    }
 }

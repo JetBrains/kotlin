@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.TypeAliasCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -44,7 +45,7 @@ internal class PersistentIrTypeAlias(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var parentField: IrDeclarationParent? = null
+    override var parentSymbolField: IrSymbol? = null
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
@@ -53,13 +54,13 @@ internal class PersistentIrTypeAlias(
     override val descriptor: TypeAliasDescriptor
         get() = symbol.descriptor
 
-    override var typeParametersField: List<IrTypeParameter> = emptyList()
+    override var typeParametersField: List<IrTypeParameterSymbol> = emptyList()
 
     override var typeParameters: List<IrTypeParameter>
-        get() = getCarrier().typeParametersField
+        get() = getCarrier().typeParametersField.map { it.owner }
         set(v) {
             if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
+                setCarrier().typeParametersField = v.map { it.symbol }
             }
         }
 
@@ -72,4 +73,13 @@ internal class PersistentIrTypeAlias(
                 setCarrier().expandedTypeField = v
             }
         }
+
+    override fun setState(t: TypeAliasCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        typeParametersField = t.typeParametersField
+        expandedTypeField = t.expandedTypeField
+    }
 }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -19,6 +18,9 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ConstructorCarri
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
@@ -54,7 +56,7 @@ internal class PersistentIrConstructor(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var parentField: IrDeclarationParent? = null
+    override var parentSymbolField: IrSymbol? = null
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
@@ -77,43 +79,43 @@ internal class PersistentIrConstructor(
             returnTypeField = c
         }
 
-    override var typeParametersField: List<IrTypeParameter> = emptyList()
+    override var typeParametersField: List<IrTypeParameterSymbol> = emptyList()
 
     override var typeParameters: List<IrTypeParameter>
-        get() = getCarrier().typeParametersField
+        get() = getCarrier().typeParametersField.map { it.owner }
         set(v) {
             if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
+                setCarrier().typeParametersField = v.map { it.symbol }
             }
         }
 
-    override var dispatchReceiverParameterField: IrValueParameter? = null
+    override var dispatchReceiverParameterField: IrValueParameterSymbol? = null
 
     override var dispatchReceiverParameter: IrValueParameter?
-        get() = getCarrier().dispatchReceiverParameterField
+        get() = getCarrier().dispatchReceiverParameterField?.owner
         set(v) {
             if (dispatchReceiverParameter !== v) {
-                setCarrier().dispatchReceiverParameterField = v
+                setCarrier().dispatchReceiverParameterField = v?.symbol
             }
         }
 
-    override var extensionReceiverParameterField: IrValueParameter? = null
+    override var extensionReceiverParameterField: IrValueParameterSymbol? = null
 
     override var extensionReceiverParameter: IrValueParameter?
-        get() = getCarrier().extensionReceiverParameterField
+        get() = getCarrier().extensionReceiverParameterField?.owner
         set(v) {
             if (extensionReceiverParameter !== v) {
-                setCarrier().extensionReceiverParameterField = v
+                setCarrier().extensionReceiverParameterField = v?.symbol
             }
         }
 
-    override var valueParametersField: List<IrValueParameter> = emptyList()
+    override var valueParametersField: List<IrValueParameterSymbol> = emptyList()
 
     override var valueParameters: List<IrValueParameter>
-        get() = getCarrier().valueParametersField
+        get() = getCarrier().valueParametersField.map { it.owner }
         set(v) {
             if (valueParameters !== v) {
-                setCarrier().valueParametersField = v
+                setCarrier().valueParametersField = v.map { it.symbol }
             }
         }
 
@@ -130,15 +132,7 @@ internal class PersistentIrConstructor(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     override var visibilityField: DescriptorVisibility = visibility
 
@@ -153,4 +147,18 @@ internal class PersistentIrConstructor(
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor
         get() = symbol.descriptor
+
+    override fun setState(t: ConstructorCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        returnTypeFieldField = t.returnTypeFieldField
+        dispatchReceiverParameterField = t.dispatchReceiverParameterField
+        extensionReceiverParameterField = t.extensionReceiverParameterField
+        bodyField = t.bodyField
+        visibilityField = t.visibilityField
+        typeParametersField = t.typeParametersField
+        valueParametersField = t.valueParametersField
+    }
 }

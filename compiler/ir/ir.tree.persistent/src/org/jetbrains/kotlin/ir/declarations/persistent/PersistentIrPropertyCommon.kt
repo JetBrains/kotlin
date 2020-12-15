@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -16,6 +15,9 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -44,59 +46,52 @@ internal abstract class PersistentIrPropertyCommon(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var parentField: IrDeclarationParent? = null
+    override var parentSymbolField: IrSymbol? = null
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
 
-    override var backingFieldField: IrField? = null
+    override var backingFieldField: IrFieldSymbol? = null
 
     override var backingField: IrField?
-        get() = getCarrier().backingFieldField
+        get() = getCarrier().backingFieldField?.owner
         set(v) {
             if (backingField !== v) {
-                setCarrier().backingFieldField = v
+                setCarrier().backingFieldField = v?.symbol
             }
         }
 
-    override var getterField: IrSimpleFunction? = null
+    override var getterField: IrSimpleFunctionSymbol? = null
 
     override var getter: IrSimpleFunction?
-        get() = getCarrier().getterField
+        get() = getCarrier().getterField?.owner
         set(v) {
             if (getter !== v) {
-                setCarrier().getterField = v
+                setCarrier().getterField = v?.symbol
             }
         }
 
-    override var setterField: IrSimpleFunction? = null
+    override var setterField: IrSimpleFunctionSymbol? = null
 
     override var setter: IrSimpleFunction?
-        get() = getCarrier().setterField
+        get() = getCarrier().setterField?.owner
         set(v) {
             if (setter !== v) {
-                setCarrier().setterField = v
+                setCarrier().setterField = v?.symbol
             }
         }
 
-    override var metadataField: MetadataSource? = null
+    override var metadata: MetadataSource? = null
 
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override var attributeOwnerId: IrAttributeContainer = this
 
-    @Suppress("LeakingThis")
-    override var attributeOwnerIdField: IrAttributeContainer = this
-
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
-            }
-        }
+    override fun setState(t: PropertyCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        backingFieldField = t.backingFieldField
+        getterField = t.getterField
+        setterField = t.setterField
+    }
 }

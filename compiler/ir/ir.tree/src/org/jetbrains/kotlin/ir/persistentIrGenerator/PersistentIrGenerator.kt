@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.File
+import java.lang.IllegalStateException
 import java.lang.StringBuilder
 
 internal interface R {
@@ -20,11 +20,39 @@ internal interface R {
 
 internal typealias E = R.() -> R
 
-internal class Field(val name: String, val type: E, val lateinit: Boolean = false)
+internal val id: E get() = { this }
+
+internal enum class FieldKind {
+    REQUIRED, OPTIONAL, REPEATED
+}
+
+internal class Proto(
+    val protoPrefix: String?, // null if flag, proto type if not
+    val entityName: String,   // what to deserialize
+    val protoType: E,         // what type ProtoBuf generates
+    val irType: E,            // what Ir class this maps to
+    val fieldKind: FieldKind = FieldKind.OPTIONAL
+)
+
+internal class Field(
+    val name: String,
+    val propType: E,
+    val proto: Proto? = null,
+    val lateinit: Boolean = false,
+    val fieldType: E = propType,
+    val fieldToPropValueConversion: E = id,
+    val propToFieldValueConversion: E = id,
+)
 
 internal object PersistentIrGenerator {
 
+    private val protoPackage = "org.jetbrains.kotlin.backend.common.serialization.proto"
+    val carrierPackage = "org.jetbrains.kotlin.ir.declarations.persistent.carriers"
+
     // Imports
+
+    val codedInputStream: E = import("codedInputStream", "org.jetbrains.kotlin.backend.common.serialization")
+    val ExtensionRegistryLite: E = import("ExtensionRegistryLite", "org.jetbrains.kotlin.protobuf")
 
     val ClassDescriptor: E = descriptorType("ClassDescriptor")
     val DeclarationDescriptor: E = descriptorType("DeclarationDescriptor")
@@ -36,10 +64,14 @@ internal object PersistentIrGenerator {
     val IrDeclarationParent = irDeclaration("IrDeclarationParent")
     val IrAnonymousInitializer = irDeclaration("IrAnonymousInitializer")
     val IrClass = irDeclaration("IrClass")
+    val IrFunction = irDeclaration("IrFunction")
+    val IrSimpleFunction = irDeclaration("IrSimpleFunction")
+    val IrField = irDeclaration("IrField")
     val IrTypeParameter = irDeclaration("IrTypeParameter")
     val IrValueParameter = irDeclaration("IrValueParameter")
     val MetadataSource = irDeclaration("MetadataSource")
     val IrAttributeContainer = irDeclaration("IrAttributeContainer")
+    val IrVariable = irDeclaration("IrVariable")
 
     val IrConstructorCall = irExpression("IrConstructorCall")
     val IrBody = irExpression("IrBody")
@@ -56,7 +88,13 @@ internal object PersistentIrGenerator {
 
     val IrType = import("IrType", "org.jetbrains.kotlin.ir.types")
 
+    val IrSymbol = irSymbol("IrSymbol")
     val IrPropertySymbol = irSymbol("IrPropertySymbol")
+    val IrSimpleFunctionSymbol = irSymbol("IrSimpleFunctionSymbol")
+    val IrFunctionSymbol = irSymbol("IrFunctionSymbol")
+    val IrFieldSymbol = irSymbol("IrFieldSymbol")
+    val IrValueParameterSymbol = irSymbol("IrValueParameterSymbol")
+    val IrTypeParameterSymbol = irSymbol("IrTypeParameterSymbol")
 
     // Constructor parameters
 
@@ -79,12 +117,65 @@ internal object PersistentIrGenerator {
     val source = +"override val source: " + descriptorType("SourceElement") + " = SourceElement.NO_SOURCE"
     val returnType = +"returnType: " + IrType
     val isPrimary = +"override val isPrimary: Boolean"
-    val containerSource = +"override val containerSource: " + import("DeserializedContainerSource", "org.jetbrains.kotlin.serialization.deserialization.descriptors") + "?"
+    val containerSource = +"override val containerSource: " + import(
+        "DeserializedContainerSource",
+        "org.jetbrains.kotlin.serialization.deserialization.descriptors"
+    ) + "?"
 
     val irFactory = +"override val factory: PersistentIrFactory"
 
     val initBlock = +"init " + block(
         +"symbol.bind(this)"
+    )
+
+    // Proto types
+
+    val protoValueParameterType = import("IrValueParameter", protoPackage, "ProtoIrValueParameter")
+    val protoTypeParameterType = import("IrTypeParameter", protoPackage, "ProtoIrTypeParameter")
+    val protoVariable = import("IrVariable", protoPackage, "ProtoIrVariable")
+    val protoIrConstructorCall = import("IrConstructorCall", protoPackage, "ProtoIrConstructorCall")
+
+    val bodyProto = Proto("int32", "body", +"Int", IrBody)
+    val blockBodyProto = Proto("int32", "blockBody", +"Int", IrBlockBody)
+    val expressionBodyProto = Proto("int32", "expressionBody", +"Int", IrExpressionBody)
+    val valueParameterProto = Proto("int64", "valueParameter", +"Long", IrValueParameterSymbol)
+    val valueParameterListProto = Proto("int64", "valueParameter", +"Long", IrValueParameterSymbol, fieldKind = FieldKind.REPEATED)
+    val typeParameterListProto = Proto("int64", "typeParameter", +"Long", IrTypeParameterSymbol, fieldKind = FieldKind.REPEATED)
+    val superTypeListProto = Proto("int32", "superType", +"Int", IrType, fieldKind = FieldKind.REPEATED)
+    val typeProto = Proto("int32", "type", +"Int", IrType, fieldKind = FieldKind.REQUIRED)
+    val optionalTypeProto = Proto("int32", "type", +"Int", IrType, fieldKind = FieldKind.OPTIONAL)
+    val variableProto = Proto("IrVariable", "variable", protoVariable, IrVariable)
+
+    val classProto = Proto("int64", "class", +"Long", IrClassSymbol)
+    val propertySymbolProto = Proto("int64", "propertySymbol", +"Long", IrPropertySymbol)
+    val simpleFunctionProto = Proto("int64", "simpleFunction", +"Long", IrSimpleFunctionSymbol)
+    val simpleFunctionSymbolListProto =
+        Proto("int64", "simpleFunctionSymbol", +"Long", IrSimpleFunctionSymbol, fieldKind = FieldKind.REPEATED)
+    val functionProto = Proto("int64", "function", +"Long", IrFunctionSymbol)
+    val fieldProto = Proto("int64", "field", +"Long", IrFieldSymbol)
+
+    val visibilityProto = Proto(null, "visibility", +"Long", DescriptorVisibility)
+    val modalityProto = Proto(null, "modality", +"Long", descriptorType("Modality"))
+
+    private val allProto = listOf(
+        bodyProto,
+        blockBodyProto,
+        expressionBodyProto,
+        valueParameterProto,
+        valueParameterListProto,
+        typeParameterListProto,
+        superTypeListProto,
+        typeProto,
+        optionalTypeProto,
+        classProto,
+        propertySymbolProto,
+        simpleFunctionProto,
+        simpleFunctionSymbolListProto,
+        functionProto,
+        fieldProto,
+        variableProto,
+        visibilityProto,
+        modalityProto
     )
 
     // Fields
@@ -93,7 +184,7 @@ internal object PersistentIrGenerator {
     val values = +"override var values: Array<" + Carrier + ">? = null"
     val createdOn = +"override val createdOn: Int = factory.stageController.currentStage"
 
-    val parentField = +"override var parentField: " + IrDeclarationParent + "? = null"
+    val parentSymbolField = +"override var parentSymbolField: " + IrSymbol + "? = null"
     val originField = +"override var originField: " + IrDeclarationOrigin + " = origin"
     val removedOn = +"override var removedOn: Int = Int.MAX_VALUE"
     val annotationsField = +"override var annotationsField: List<" + IrConstructorCall + "> = emptyList()"
@@ -104,16 +195,218 @@ internal object PersistentIrGenerator {
         values,
         createdOn,
         id,
-        parentField,
+        parentSymbolField,
         originField,
         removedOn,
         annotationsField,
     )
 
-    fun Field.toPersistentField(initializer: E, modifier: String = "override") =
-        persistentField(name, type, initializer, lateinit, modifier)
+    val typeParametersField = Field(
+        "typeParameters",
+        +"List<" + IrTypeParameter + ">",
+        typeParameterListProto,
+        fieldType = +"List<" + IrTypeParameterSymbol + ">",
+        fieldToPropValueConversion = +".map { it.owner }",
+        propToFieldValueConversion = +".map { it.symbol }"
+    )
 
-    fun Field.toBody() = body(type, lateinit, name)
+    val valueParametersField = Field(
+        "valueParameters",
+        +"List<" + IrValueParameter + ">",
+        valueParameterListProto,
+        fieldType = +"List<" + IrValueParameterSymbol + ">",
+        fieldToPropValueConversion = +".map { it.owner }",
+        propToFieldValueConversion = +".map { it.symbol }"
+    )
+
+    val dispatchReceiverParameterField = Field(
+        "dispatchReceiverParameter",
+        IrValueParameter + "?",
+        valueParameterProto,
+        fieldType = IrValueParameterSymbol + "?",
+        fieldToPropValueConversion = +"?.owner",
+        propToFieldValueConversion = +"?.symbol"
+    )
+
+    val extensionReceiverParameterField = Field(
+        "extensionReceiverParameter",
+        IrValueParameter + "?",
+        valueParameterProto,
+        fieldType = IrValueParameterSymbol + "?",
+        fieldToPropValueConversion = +"?.owner",
+        propToFieldValueConversion = +"?.symbol"
+    )
+
+
+    fun Field.toPersistentField(initializer: E, modifier: String = "override") =
+        persistentField(
+            name,
+            propType,
+            initializer,
+            lateinit,
+            modifier,
+            fieldType = fieldType,
+            fieldToPropValueConversion = fieldToPropValueConversion,
+            propToFieldValueConversion = propToFieldValueConversion
+        )
+
+    fun Field.toBody() = body(propType, lateinit, name)
+
+    val protoMessages = mutableListOf<String>()
+
+    fun addCarrierProtoMessage(carrierName: String, vararg fields: Field) {
+        val protoFields = mutableListOf(
+            "required int32 lastModified",
+            "optional int64 parentSymbol",
+            "optional int32 origin",
+            "repeated IrConstructorCall annotation"
+        )
+
+        protoFields += fields.mapNotNull { f ->
+            f.proto?.protoPrefix?.let { p ->
+                val modifier = f.proto.fieldKind.toString().toLowerCase()
+                "$modifier $p ${f.name}"
+            }
+        }
+
+        val sb = StringBuilder("message Pir${carrierName}Carrier {\n")
+        protoFields.forEachIndexed { i, f ->
+            sb.append("    $f = ${i + 1}")
+            sb.append(";\n")
+        }
+
+        if (fields.any { it.proto != null && it.proto.protoPrefix == null }) {
+            sb.append("    optional int64 flags = ${protoFields.size + 1} [default = 0];\n")
+        }
+
+        sb.append("}\n")
+
+        protoMessages += sb.toString()
+
+        addDeserializerMessage(carrierName, *fields)
+        addSerializerMessage(carrierName, *fields)
+    }
+
+    val deserializerMethods = mutableListOf<E>().also { list ->
+
+        list += +"abstract fun deserializeParentSymbol(proto: Long): " + IrSymbol
+        list += +"abstract fun deserializeOrigin(proto: Int): " + IrDeclarationOrigin
+        list += +"abstract fun deserializeAnnotation(proto: " + protoIrConstructorCall + "): " + IrConstructorCall
+
+        val seenEntities = mutableSetOf<String>()
+
+        allProto.forEach { p ->
+            if (p.entityName !in seenEntities) {
+                seenEntities += p.entityName
+                list += +"abstract fun deserialize${p.entityName.capitalize()}(proto: " + p.protoType + "): " + p.irType
+            }
+        }
+    }
+
+    fun addDeserializerMessage(carrierName: String, vararg fields: Field) {
+        val argumentType = import("Pir${carrierName}Carrier", protoPackage)
+        val returnType = import("${carrierName}Carrier", carrierPackage)
+        val carrierImpl = import("${carrierName}CarrierImpl", carrierPackage)
+
+        deserializerMethods += lines(
+            +"fun deserialize${carrierName}Carrier(bytes: ByteArray): " + returnType + " {",
+            lines(
+                +"val proto = " + argumentType + ".parseFrom(bytes." + codedInputStream + ", " + ExtensionRegistryLite + ".newInstance())",
+                +"return " + carrierImpl + "(",
+                arrayOf(
+                    +"proto.lastModified",
+                    +"if (proto.hasParentSymbol()) deserializeParentSymbol(proto.parentSymbol) else null",
+                    +"deserializeOrigin(proto.origin)",
+                    +"proto.annotationList.map { deserializeAnnotation(it) }",
+                    *fields.map { f ->
+                        if (f.proto == null) {
+                            +"null"
+                        } else {
+                            val deserialize = "deserialize${f.proto.entityName.capitalize()}"
+
+                            when {
+                                f.proto.fieldKind == FieldKind.REPEATED ->
+                                    +"proto.${f.name}List.map { $deserialize(it) }"
+                                f.proto.protoPrefix != null && f.proto.fieldKind == FieldKind.OPTIONAL ->
+                                    +"if (proto.has${f.name.capitalize()}()) $deserialize(proto.${f.name}) else null"
+                                f.proto.protoPrefix == null ->
+                                    +"$deserialize(proto.flags)"
+                                else ->
+                                    +"$deserialize(proto.${f.name})"
+                            }
+                        }
+                    }.toTypedArray()
+                ).join(separator = ",\n").indent(),
+                +")",
+            ).indent(),
+            +"}",
+        )
+    }
+
+    val serializerMethods = mutableListOf<E>().also { list ->
+
+        list += +"abstract fun serializeParentSymbol(value: " + IrSymbol + "): Long"
+        list += +"abstract fun serializeOrigin(value: " + IrDeclarationOrigin + "): Int"
+        list += +"abstract fun serializeAnnotation(value: " + IrConstructorCall + "): " + protoIrConstructorCall
+
+        val seenEntities = mutableSetOf<String>()
+
+        allProto.forEach { p ->
+            if (p.entityName !in seenEntities) {
+                seenEntities += p.entityName
+                list += +"abstract fun serialize${p.entityName.capitalize()}(value: " + p.irType + "): " + p.protoType
+            }
+        }
+    }
+
+
+    fun addSerializerMessage(carrierName: String, vararg fields: Field) {
+        val argumentType = import("${carrierName}Carrier", carrierPackage)
+        val returnType = import("Pir${carrierName}Carrier", protoPackage)
+
+        var flagsHandled = false
+
+        serializerMethods += lines(
+            +"fun serialize${carrierName}Carrier(carrier: " + argumentType + "): ByteArray {",
+            lines(
+                +"val proto = " + returnType + ".newBuilder()",
+                +"proto.setLastModified(carrier.lastModified)",
+                +"carrier.parentSymbolField?.let { proto.setParentSymbol(serializeParentSymbol(it)) }",
+                +"proto.setOrigin(serializeOrigin(carrier.originField))",
+                +"proto.addAllAnnotation(carrier.annotationsField.map { serializeAnnotation(it) })",
+                *(fields.mapNotNull { f ->
+                    f.proto?.let { p ->
+                        if (p.protoPrefix != null) {
+                            val action = "proto." + (if (p.fieldKind == FieldKind.REPEATED) "addAll" else "set") + f.name.capitalize()
+                            val serializationFun = "serialize${f.proto.entityName.capitalize()}"
+                            val argument = "carrier.${f.name}Field"
+
+                            when {
+                                p.fieldKind == FieldKind.OPTIONAL ->
+                                    +"$argument?.let { $action($serializationFun(it)) }"
+                                p.fieldKind == FieldKind.REPEATED ->
+                                    +"$action($argument.map { $serializationFun(it) })"
+                                else ->
+                                    +"$action($serializationFun($argument))"
+                            }
+                        } else {
+                            // It's a flag
+                            if (!flagsHandled) {
+                                flagsHandled = true
+                                val flags = fields.filter { it.proto?.protoPrefix == null }
+
+                                val calls = flags.map { f -> "serialize${f.proto!!.entityName.capitalize()}(carrier.${f.name}Field)" }
+
+                                +"proto.setFlags(${calls.joinToString(separator = " or ")})"
+                            } else null
+                        }
+                    }
+                }).toTypedArray(),
+                +"return proto.build().toByteArray()",
+            ).indent(),
+            +"}",
+        )
+    }
 
     // Helpers
 
@@ -123,12 +416,22 @@ internal object PersistentIrGenerator {
         +"    ${name}Carrier",
     )
 
-    fun persistentField(name: String, type: E, initializer: E, lateinit: Boolean = false, modifier: String = "override", isBody: Boolean = false): E = lines(
-        +"override var ${name}Field: " + type + "${if (lateinit) "?" else ""} = " + initializer,
+    fun persistentField(
+        name: String,
+        type: E,
+        initializer: E,
+        lateinit: Boolean = false,
+        modifier: String = "override",
+        isBody: Boolean = false,
+        fieldType: E = type,
+        fieldToPropValueConversion: E = id,
+        propToFieldValueConversion: E = id,
+    ): E = lines(
+        +"override var ${name}Field: " + fieldType + "${if (lateinit) "?" else ""} = " + initializer,
         id,
         +"$modifier var $name: " + type,
         lines(
-            +"get() = getCarrier().${name}Field${if (lateinit) "!!" else ""}",
+            +"get() = getCarrier().${name}Field${if (lateinit) "!!" else ""}" + fieldToPropValueConversion,
             +"set(v) " + block(
                 +"if (${if (lateinit) "getCarrier().${name}Field" else name} !== v) " + block(
                     (if (isBody) lines(
@@ -136,7 +439,7 @@ internal object PersistentIrGenerator {
                             +"v.container = this"
                         ),
                         id
-                    ) else id) + "setCarrier().${name}Field = v"
+                    ) else id) + "setCarrier().${name}Field = v" + propToFieldValueConversion
                 )
             )
         ).indent()
@@ -144,6 +447,21 @@ internal object PersistentIrGenerator {
 
     fun body(bodyType: E, lateinit: Boolean = false, fieldName: String = "body"): E =
         persistentField(fieldName, bodyType, initializer = +"null", lateinit, isBody = true)
+
+    fun setState(name: String, vararg fields: Field): E {
+        return lines(
+            +"override fun setState(t: ${name}Carrier) " + block(
+                *(arrayOf(
+                   +"lastModified = t.lastModified",
+                   +"parentSymbolField = t.parentSymbolField",
+                   +"originField = t.originField",
+                   +"annotationsField = t.annotationsField",
+                ) + (fields.map {
+                    +"${it.name}Field = t.${it.name}Field"
+                }).toTypedArray())
+            )
+        )
+    }
 
     fun descriptor(type: E) = lines(
         +"@" + ObsoleteDescriptorBasedAPI,
@@ -154,13 +472,13 @@ internal object PersistentIrGenerator {
     fun carriers(name: String, vararg fields: Field): E = lines(
         id,
         +"internal interface ${name}Carrier : DeclarationCarrier" + block(
-            *(fields.map { +"var ${it.name}Field: " + it.type + if (it.lateinit) "?" else "" }.toTypedArray()),
+            *(fields.map { +"var ${it.name}Field: " + it.fieldType + if (it.lateinit) "?" else "" }.toTypedArray()),
             id,
             +"override fun clone(): ${name}Carrier " + block(
                 +"return ${name}CarrierImpl(",
                 arrayOf(
                     +"lastModified",
-                    +"parentField",
+                    +"parentSymbolField",
                     +"originField",
                     +"annotationsField",
                     *(fields.map { +"${it.name}Field" }.toTypedArray())
@@ -172,10 +490,10 @@ internal object PersistentIrGenerator {
         +"internal class ${name}CarrierImpl(",
         arrayOf(
             +"override val lastModified: Int",
-            +"override var parentField: " + IrDeclarationParent + "?",
+            +"override var parentSymbolField: " + IrSymbol + "?",
             +"override var originField: " + IrDeclarationOrigin,
             +"override var annotationsField: List<" + IrConstructorCall + ">",
-            *(fields.map { +"override var ${it.name}Field: " + it.type + if (it.lateinit) "?" else "" }.toTypedArray()),
+            *(fields.map { +"override var ${it.name}Field: " + it.fieldType + if (it.lateinit) "?" else "" }.toTypedArray()),
         ).join(separator = ",\n").indent(),
         +") : ${name}Carrier",
         id,
@@ -189,7 +507,8 @@ internal object PersistentIrGenerator {
         return block(*(fn.flatMap { listOf(id, it) }.toTypedArray()))
     }
 
-    fun import(name: String, pkg: String): E = { import("$pkg.$name").text(name) }
+    fun import(name: String, pkg: String, alias: String = name): E =
+        { import("$pkg.$name${if (alias != name) " as $alias" else ""}").text(alias) }
 
     fun descriptorType(name: String): E = import(name, "org.jetbrains.kotlin.descriptors")
 
@@ -206,8 +525,6 @@ internal object PersistentIrGenerator {
     infix operator fun E.plus(e: String): E = this + (+e)
 
     operator fun String.unaryPlus(): E = { text(this@unaryPlus) }
-
-    val id: E get() = { this }
 
     fun E?.safe(): E = this ?: id
 
@@ -312,5 +629,53 @@ internal object PersistentIrGenerator {
 
     fun writeFile(path: String, content: String) {
         File(prefix + path).writeText(content)
+    }
+
+    fun updateKotlinIrProto() {
+        val file = File("compiler/ir/serialization.common/src/KotlinIr.proto")
+
+        if (!file.exists()) throw IllegalStateException("KotlinIr.proto file not found!")
+
+        val lines = file.readText().lines()
+
+        val start = lines.indexOf("// PIR GENERATOR START")
+        if (start < 0) throw IllegalStateException("Couldn't find the '// PIR GENERATOR START' line. Don't know where to write generated messages.")
+
+        val end = lines.indexOf("// PIR GENERATOR END")
+        if (end < 0) throw IllegalStateException("Couldn't find the '// PIR GENERATOR END' line. Don't know where to write generated messages.")
+
+        val sb = StringBuilder(lines.subList(0, start + 1).joinToString(separator = "\n"))
+
+        for (m in protoMessages) {
+            sb.append("\n").append(m)
+        }
+
+        sb.append("\n").append(lines.subList(end, lines.size).joinToString(separator = "\n"))
+
+        file.writeText(sb.toString())
+    }
+
+    fun generateCarrierDeserializer() {
+        writeFile("../../serialization/IrCarrierDeserializer.kt", renderFile("org.jetbrains.kotlin.ir.serialization") {
+            lines(
+                id,
+                +"internal abstract class IrCarrierDeserializer " + blockSpaced(
+                    *deserializerMethods.toTypedArray()
+                ),
+                id,
+            )()
+        })
+    }
+
+    fun generateCarrierSerializer() {
+        writeFile("../../serialization/IrCarrierSerializer.kt", renderFile("org.jetbrains.kotlin.ir.serialization") {
+            lines(
+                id,
+                +"internal abstract class IrCarrierSerializer " + blockSpaced(
+                    *serializerMethods.toTypedArray()
+                ),
+                id,
+            )()
+        })
     }
 }

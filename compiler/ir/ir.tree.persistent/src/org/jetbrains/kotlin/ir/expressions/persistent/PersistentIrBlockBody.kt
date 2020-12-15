@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.ir.expressions.persistent
 
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 internal class PersistentIrBlockBody(
     override val startOffset: Int,
@@ -34,7 +35,7 @@ internal class PersistentIrBlockBody(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var containerField: IrDeclaration? = null
+    override var containerField: IrSymbol? = null
 
     constructor(startOffset: Int, endOffset: Int, statements: List<IrStatement>, factory: PersistentIrFactory) : this(startOffset, endOffset, factory) {
         statementsField.addAll(statements)
@@ -44,4 +45,9 @@ internal class PersistentIrBlockBody(
 
     override val statements: MutableList<IrStatement>
         get() = checkEnabled { statementsField }
+
+    override fun setState(t: BodyCarrier) {
+        lastModified = t.lastModified
+        containerField = t.containerField
+    }
 }

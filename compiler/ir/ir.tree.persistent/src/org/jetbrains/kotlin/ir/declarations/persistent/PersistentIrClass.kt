@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -25,6 +24,9 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ClassCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -61,7 +63,7 @@ internal class PersistentIrClass(
     override var values: Array<Carrier>? = null
     override val createdOn: Int = factory.stageController.currentStage
 
-    override var parentField: IrDeclarationParent? = null
+    override var parentSymbolField: IrSymbol? = null
     override var originField: IrDeclarationOrigin = origin
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
@@ -80,13 +82,13 @@ internal class PersistentIrClass(
             }
         }
 
-    override var thisReceiverField: IrValueParameter? = null
+    override var thisReceiverField: IrValueParameterSymbol? = null
 
     override var thisReceiver: IrValueParameter?
-        get() = getCarrier().thisReceiverField
+        get() = getCarrier().thisReceiverField?.owner
         set(v) {
             if (thisReceiver !== v) {
-                setCarrier().thisReceiverField = v
+                setCarrier().thisReceiverField = v?.symbol
             }
         }
 
@@ -106,13 +108,13 @@ internal class PersistentIrClass(
             }
         }
 
-    override var typeParametersField: List<IrTypeParameter> = emptyList()
+    override var typeParametersField: List<IrTypeParameterSymbol> = emptyList()
 
     override var typeParameters: List<IrTypeParameter>
-        get() = getCarrier().typeParametersField
+        get() = getCarrier().typeParametersField.map { it.owner }
         set(v) {
             if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
+                setCarrier().typeParametersField = v.map { it.symbol }
             }
         }
 
@@ -126,15 +128,7 @@ internal class PersistentIrClass(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     override var modalityField: Modality = modality
 
@@ -146,13 +140,17 @@ internal class PersistentIrClass(
             }
         }
 
-    override var attributeOwnerIdField: IrAttributeContainer = this
+    override var attributeOwnerId: IrAttributeContainer = this
 
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
-            }
-        }
+    override fun setState(t: ClassCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        thisReceiverField = t.thisReceiverField
+        visibilityField = t.visibilityField
+        modalityField = t.modalityField
+        typeParametersField = t.typeParametersField
+        superTypesField = t.superTypesField
+    }
 }

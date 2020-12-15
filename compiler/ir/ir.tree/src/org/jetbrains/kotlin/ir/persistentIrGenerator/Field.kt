@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateField() {
-    val initializerField = Field("initializer", IrExpressionBody + "?")
-    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?")
-    val metadataField = Field("metadata", MetadataSource + "?")
-    val typeField = Field("type", IrType)
+    val initializerField = Field("initializer", IrExpressionBody + "?", expressionBodyProto)
+    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", propertySymbolProto)
+    val typeField = Field("type", IrType, typeProto)
 
     writeFile("PersistentIrField.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -34,8 +33,9 @@ internal fun PersistentIrGenerator.generateField() {
                 descriptor(descriptorType("PropertyDescriptor")),
                 initializerField.toBody(),
                 correspondingPropertySymbolField.toPersistentField(+"null"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 typeField.toPersistentField(+"type"),
+                setState("Field", typeField, initializerField, correspondingPropertySymbolField)
             ),
             id,
         )()
@@ -47,7 +47,8 @@ internal fun PersistentIrGenerator.generateField() {
             typeField,
             initializerField,
             correspondingPropertySymbolField,
-            metadataField,
         )()
     })
+
+    addCarrierProtoMessage("Field", typeField, initializerField, correspondingPropertySymbolField)
 }

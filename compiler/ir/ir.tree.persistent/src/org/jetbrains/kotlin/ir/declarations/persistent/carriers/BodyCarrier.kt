@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 interface BodyCarrier : Carrier {
-    var containerField: IrDeclaration?
+    var containerField: IrSymbol?
 
     override fun clone(): BodyCarrier {
         return BodyCarrierImpl(lastModified, containerField)
@@ -17,5 +17,5 @@ interface BodyCarrier : Carrier {
 
 internal class BodyCarrierImpl(
     override val lastModified: Int,
-    override var containerField: IrDeclaration?
+    override var containerField: IrSymbol?
 ) : BodyCarrier

@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateClass() {
-    val visibilityField = Field("visibility", descriptorType("DescriptorVisibility"))
-    val thisReceiverField = Field("thisReceiver", irDeclaration("IrValueParameter") + "?")
-    val typeParametersField = Field("typeParameters", +"List<" + irDeclaration("IrTypeParameter") + ">")
-    val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">")
-    val metadataField = Field("metadata", irDeclaration("MetadataSource") + "?")
-    val modalityField = Field("modality", descriptorType("Modality"))
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
+    val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
+    val thisReceiverField = Field(
+        "thisReceiver",
+        IrValueParameter + "?",
+        valueParameterProto,
+        fieldType = IrValueParameterSymbol + "?",
+        fieldToPropValueConversion = +"?.owner",
+        propToFieldValueConversion = +"?.symbol"
+    )
+    val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">", superTypeListProto)
+    val modalityField = Field("modality", descriptorType("Modality"), modalityProto)
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -49,12 +53,12 @@ internal fun PersistentIrGenerator.generateClass() {
                     +"override val declarations: MutableList<IrDeclaration> = " + import("ArrayList", "java.util") + "()",
                     lines(
                         +"get() " + block(
-                            +"if (createdOn < stageController.currentStage && initialDeclarations == null) " + block(
+                            +"if (createdOn < factory.stageController.currentStage && initialDeclarations == null) " + block(
                                 +"initialDeclarations = " + import("Collections", "java.util") + ".unmodifiableList(ArrayList(field))"
                             ),
                             id,
                             +"""
-                                return if (stageController.canAccessDeclarationsOf(this)) {
+                                return if (factory.stageController.canAccessDeclarationsOf(this)) {
                                     ensureLowered()
                                     field
                                 } else {
@@ -66,9 +70,17 @@ internal fun PersistentIrGenerator.generateClass() {
                 ),
                 typeParametersField.toPersistentField(+"emptyList()"),
                 superTypesField.toPersistentField(+"emptyList()"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 modalityField.toPersistentField(+"modality"),
-                attributeOwnerIdField.toPersistentField(+"this"),
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
+                setState(
+                    "Class",
+                    thisReceiverField,
+                    visibilityField,
+                    modalityField,
+                    typeParametersField,
+                    superTypesField,
+                )
             ),
             id,
         )()
@@ -78,12 +90,19 @@ internal fun PersistentIrGenerator.generateClass() {
         carriers(
             "Class",
             thisReceiverField,
-            metadataField,
             visibilityField,
             modalityField,
-            attributeOwnerIdField,
             typeParametersField,
             superTypesField
         )()
     })
+
+    addCarrierProtoMessage(
+        "Class",
+        thisReceiverField,
+        visibilityField,
+        modalityField,
+        typeParametersField,
+        superTypesField,
+    )
 }

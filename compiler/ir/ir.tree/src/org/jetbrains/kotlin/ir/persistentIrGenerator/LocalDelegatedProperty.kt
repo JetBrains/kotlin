@@ -6,11 +6,25 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
-    val typeField = Field("type", IrType)
-    val delegateField = Field("delegate", irDeclaration("IrVariable"), lateinit = true)
-    val getterField = Field("getter", irDeclaration("IrFunction"), lateinit = true)
-    val setterField = Field("setter", irDeclaration("IrFunction") + "?")
-    val metadataField = Field("metadata", MetadataSource + "?")
+    val typeField = Field("type", IrType, typeProto)
+    val delegateField = Field("delegate", IrVariable, variableProto, lateinit = true)
+    val getterField = Field(
+        "getter",
+        IrFunction,
+        functionProto,
+        lateinit = true,
+        fieldType = IrFunctionSymbol,
+        fieldToPropValueConversion = +".owner",
+        propToFieldValueConversion = +".symbol"
+    )
+    val setterField = Field(
+        "setter",
+        IrFunction + "?",
+        functionProto,
+        fieldType = IrFunctionSymbol + "?",
+        fieldToPropValueConversion = +"?.owner",
+        propToFieldValueConversion = +"?.symbol"
+    )
 
     writeFile("PersistentIrLocalDelegatedProperty.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -35,7 +49,14 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
                 delegateField.toPersistentField(+"null"),
                 getterField.toPersistentField(+"null"),
                 setterField.toPersistentField(+"null"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
+                setState(
+                    "LocalDelegatedProperty",
+                    typeField,
+                    delegateField,
+                    getterField,
+                    setterField,
+                )
             ),
             id,
         )()
@@ -48,7 +69,14 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
             delegateField,
             getterField,
             setterField,
-            metadataField,
         )()
     })
+
+    addCarrierProtoMessage(
+        "LocalDelegatedProperty",
+        typeField,
+        delegateField,
+        getterField,
+        setterField,
+    )
 }

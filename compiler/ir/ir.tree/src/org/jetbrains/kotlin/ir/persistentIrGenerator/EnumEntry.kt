@@ -6,8 +6,15 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateEnumEntry() {
-    val correspondingClassField = Field("correspondingClass", IrClass + "?")
-    val initializerExpressionField = Field("initializerExpression", IrExpressionBody + "?")
+    val correspondingClassField = Field(
+        "correspondingClass",
+        IrClass + "?",
+        classProto,
+        fieldType = IrClassSymbol + "?",
+        fieldToPropValueConversion = +"?.owner",
+        propToFieldValueConversion = +"?.symbol"
+    )
+    val initializerExpressionField = Field("initializerExpression", IrExpressionBody + "?", expressionBodyProto)
 
     writeFile("PersistentIrEnumEntry.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -27,7 +34,9 @@ internal fun PersistentIrGenerator.generateEnumEntry() {
                 descriptor(ClassDescriptor),
 
                 correspondingClassField.toPersistentField(+"null"),
-                initializerExpressionField.toBody()
+                initializerExpressionField.toBody(),
+
+                setState("EnumEntry", correspondingClassField, initializerExpressionField)
             ),
             id,
         )()
@@ -40,4 +49,6 @@ internal fun PersistentIrGenerator.generateEnumEntry() {
             initializerExpressionField,
         )()
     })
+
+    addCarrierProtoMessage("EnumEntry", correspondingClassField, initializerExpressionField)
 }
