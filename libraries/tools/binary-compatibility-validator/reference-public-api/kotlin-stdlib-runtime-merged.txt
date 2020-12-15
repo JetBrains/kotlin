@@ -4232,7 +4232,7 @@ public abstract class kotlin/random/Random {
 	public fun nextLong (JJ)J
 }
 
-public final class kotlin/random/Random$Default : kotlin/random/Random {
+public final class kotlin/random/Random$Default : kotlin/random/Random, java/io/Serializable {
 	public fun nextBits (I)I
 	public fun nextBoolean ()Z
 	public fun nextBytes (I)[B
