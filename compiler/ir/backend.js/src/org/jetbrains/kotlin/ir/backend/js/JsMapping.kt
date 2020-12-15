@@ -12,26 +12,28 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.library.impl.*
 
-class JsMapping(val irFactory: IrFactory, val delegateFactory: DelegateFactory = JsMappingState(irFactory)) : DefaultMapping(delegateFactory) {
-    val outerThisFieldSymbols = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val innerClassConstructors = delegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
-    val originalInnerClassPrimaryConstructorByClass = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
-    val secondaryConstructorToDelegate = delegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-    val secondaryConstructorToFactory = delegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
-    val objectToGetInstanceFunction = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
-    val objectToInstanceField = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val classToSyntheticPrimaryConstructor = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
-    val privateMemberToCorrespondingStatic = delegateFactory.newDeclarationToDeclarationMapping<IrFunction, IrSimpleFunction>()
+fun JsMapping(irFactory: IrFactory) = JsMapping(JsMappingState(irFactory))
 
-    val constructorToInitFunction = delegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
+class JsMapping(val state: JsMappingState) : DefaultMapping(state) {
+    val outerThisFieldSymbols = state.newDeclarationToDeclarationMapping<IrClass, IrField>()
+    val innerClassConstructors = state.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
+    val originalInnerClassPrimaryConstructorByClass = state.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
+    val secondaryConstructorToDelegate = state.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
+    val secondaryConstructorToFactory = state.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
+    val objectToGetInstanceFunction = state.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val objectToInstanceField = state.newDeclarationToDeclarationMapping<IrClass, IrField>()
+    val classToSyntheticPrimaryConstructor = state.newDeclarationToDeclarationMapping<IrClass, IrConstructor>()
+    val privateMemberToCorrespondingStatic = state.newDeclarationToDeclarationMapping<IrFunction, IrSimpleFunction>()
 
-    val enumEntryToGetInstanceFun = delegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrSimpleFunction>()
-    val enumEntryToInstanceField = delegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
-    val enumConstructorToNewConstructor = delegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
-    val enumClassToCorrespondingEnumEntry = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrEnumEntry>()
-    val enumConstructorOldToNewValueParameters = delegateFactory.newDeclarationToDeclarationMapping<IrValueDeclaration, IrValueParameter>()
-    val enumEntryToCorrespondingField = delegateFactory.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
-    val enumClassToInitEntryInstancesFun = delegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val constructorToInitFunction = state.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
+
+    val enumEntryToGetInstanceFun = state.newDeclarationToDeclarationMapping<IrEnumEntry, IrSimpleFunction>()
+    val enumEntryToInstanceField = state.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
+    val enumConstructorToNewConstructor = state.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()
+    val enumClassToCorrespondingEnumEntry = state.newDeclarationToDeclarationMapping<IrClass, IrEnumEntry>()
+    val enumConstructorOldToNewValueParameters = state.newDeclarationToDeclarationMapping<IrValueDeclaration, IrValueParameter>()
+    val enumEntryToCorrespondingField = state.newDeclarationToDeclarationMapping<IrEnumEntry, IrField>()
+    val enumClassToInitEntryInstancesFun = state.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
 }
 
 

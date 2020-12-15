@@ -54,7 +54,7 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
     protected val table = mutableMapOf<IrDeclaration, IdSignature>()
     protected open val globalDeclarationTable: GlobalDeclarationTable = globalTable
     // TODO: we need to disentangle signature construction with declaration tables.
-    private val signaturer: IdSignatureSerializer = globalTable.signaturer.also {
+    protected val signaturer: IdSignatureSerializer = globalTable.signaturer.also {
         it.reset()
         it.table = this
     }
@@ -63,7 +63,7 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
         return !isExportedDeclaration(this)
     }
 
-    fun isExportedDeclaration(declaration: IrDeclaration) = globalDeclarationTable.isExportedDeclaration(declaration)
+    open fun isExportedDeclaration(declaration: IrDeclaration) = globalDeclarationTable.isExportedDeclaration(declaration)
 
     protected open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? = null
 
@@ -79,7 +79,7 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
         return table.getOrPut(declaration) { builder() }
     }
 
-    fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
+    open fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
         return computeSignatureByDeclaration(declaration)
     }
 

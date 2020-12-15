@@ -59,7 +59,7 @@ class IrDeclarationDeserializer(
     private val irFactory: IrFactory,
     private val fileReader: IrLibraryFile,
     private val file: IrFile,
-    private val allowErrorNodes: Boolean,
+    val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
     val symbolDeserializer: IrSymbolDeserializer,

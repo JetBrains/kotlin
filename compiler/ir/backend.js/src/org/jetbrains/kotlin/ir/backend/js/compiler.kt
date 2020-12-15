@@ -7,18 +7,25 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.backend.js.ic.loadIrForIc
+import org.jetbrains.kotlin.ir.backend.js.ic.prepareIcCaches
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -51,8 +58,9 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
+    useStdlibCache: Boolean = false,
 ): CompilerResult {
-    val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
+    val irFactory = PersistentIrFactory()
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
@@ -84,7 +92,18 @@ fun compile(
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
-    allModules.forEach { module ->
+    val modulesToLower = if (useStdlibCache) {
+        // Lower and save stdlib IC data if needed
+        prepareIcCaches(project, analyzer, configuration, allDependencies)
+
+        // Inject carriers, new declarations and mappings into the stdlib IrModule
+        loadIrForIc(deserializer, allModules.first(), context)
+
+        allModules.drop(1)
+    } else allModules
+
+    // This won't work incrementally
+    modulesToLower.forEach { module ->
         moveBodilessDeclarationsToSeparatePlace(context, module)
     }
 
@@ -94,7 +113,6 @@ fun compile(
     if (dceDriven) {
         val controller = MutableController(context, pirLowerings)
 
-        check(irFactory is PersistentIrFactory)
         irFactory.stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
@@ -113,7 +131,8 @@ fun compile(
         )
         return transformer.generateModule(allModules)
     } else {
-        jsPhases.invokeToplevel(phaseConfig, context, allModules)
+        lowerPreservingIcData(modulesToLower, irFactory, context)
+
         val transformer = IrModuleToJsTransformer(
             context,
             mainArguments,
@@ -122,6 +141,7 @@ fun compile(
             multiModule = multiModule,
             relativeRequirePath = relativeRequirePath
         )
+
         return transformer.generateModule(allModules)
     }
 }
@@ -136,4 +156,59 @@ fun generateJsCode(
 
     val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
     return transformer.generateModule(listOf(moduleFragment)).jsCode!!.mainModule
+}
+
+// Only allows to apply a lowering to the whole world and save the result
+class WholeWorldStageController : StageController() {
+    override var currentStage: Int = 0
+
+    // TODO assert lowered
+
+    private var currentDeclaration: IrDeclaration? = null
+    private var index: Int = 0
+
+    override fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T {
+        val previousCurrentDeclaration = currentDeclaration
+        val previousIndex = index
+
+        currentDeclaration = declaration
+        index = 0
+
+        return try {
+            fn()
+        } finally {
+            currentDeclaration = previousCurrentDeclaration
+            index = previousIndex
+        }
+    }
+
+    override fun createSignature(): IdSignature {
+        return IdSignature.LoweredDeclarationSignature(currentDeclaration!!.symbol.signature!!, currentStage, index)
+    }
+}
+
+fun lowerPreservingIcData(allModules: Iterable<IrModuleFragment>, irFactory: PersistentIrFactory, context: JsIrBackendContext) {
+    val controller = WholeWorldStageController()
+    irFactory.stageController = controller
+
+    // TODO what about other lowering?
+    val lowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering }
+
+    // Lower all the things
+    lowerings.forEachIndexed { i, lowering ->
+        controller.currentStage = i + 1
+        when (lowering) {
+            is DeclarationLowering ->
+                lowering.declarationTransformer(context).let { declarationTransformer ->
+                    allModules.forEach { declarationTransformer.lower(it) }
+                }
+            is BodyLowering ->
+                lowering.bodyLowering(context).let { bodyLoweringPass ->
+                    allModules.forEach { bodyLoweringPass.lower(it) }
+                }
+            // else -> TODO what about other lowerings?
+        }
+    }
+
+    controller.currentStage++
 }

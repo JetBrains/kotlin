@@ -715,7 +715,7 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     description = "Clean up IR before codegen"
 )
 
-private val loweringList = listOf<Lowering>(
+val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     expectDeclarationsRemovingPhase,
