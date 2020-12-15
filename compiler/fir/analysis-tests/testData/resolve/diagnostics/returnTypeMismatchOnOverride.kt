@@ -27,7 +27,7 @@ class G<E : Double>(val balue: E) : F<E>(balue) {
     override fun rest(): E = balue
 }
 
-class H<E : String>(val balue: E) : <!INAPPLICABLE_CANDIDATE!>F<E><!>(balue) {
+class H<E : String>(val balue: E) : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>F<E><!>(balue)<!> {
     override fun rest(): E = balue // no report because of INAPPLICABLE_CANDIDATE
 }
 

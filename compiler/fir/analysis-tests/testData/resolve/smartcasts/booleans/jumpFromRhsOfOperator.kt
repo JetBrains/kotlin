@@ -34,24 +34,24 @@ fun test_4(a: A?) {
 
 fun test_5(a: A?) {
     a == null || throw Exception()
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }
 
 fun teat_6(a: A?) {
     a != null && throw Exception()
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }
 
 fun test_7(a: A?) {
     if (a == null || throw Exception()) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
     }
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }
 
 fun test_8(a: A?) {
     if (a != null && throw Exception()) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
     }
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }

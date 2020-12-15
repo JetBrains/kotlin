@@ -49,7 +49,7 @@ fun lol(a: Array<Boolean>) {}
 <!CONFLICTING_OVERLOADS!>fun <T> mem(t: T) where T : String, T : () -> Boolean {}<!>
 
 class M {
-    companion <!REDECLARATION!>object<!> {}
+    <!REDECLARATION{LT}!>companion <!REDECLARATION{PSI}!>object<!> {}<!>
     <!REDECLARATION!>val Companion = object : Any {}<!>
 }
 

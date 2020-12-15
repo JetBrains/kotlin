@@ -26,7 +26,7 @@ fun test_3(a: A?, b: Boolean) {
     if (b && a!!.foo()) {
         a.foo() // OK
     }
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>() // Bad
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!> // Bad
 }
 
 fun test_4(a: A?, b: Boolean) {
@@ -38,9 +38,9 @@ fun test_4(a: A?, b: Boolean) {
 
 fun test_5(a: A?, b: Boolean) {
     if (b || a!!.foo()) {
-        a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
     }
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }
 
 fun <X : A?> test_6(x: X) {
