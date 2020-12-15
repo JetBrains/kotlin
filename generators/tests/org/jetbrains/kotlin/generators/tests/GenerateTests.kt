@@ -194,7 +194,6 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnostic
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-
     generateTestGroupSuite(args) {
         testGroup("idea/jvm-debugger/jvm-debugger-test/test", "idea/jvm-debugger/jvm-debugger-test/testData") {
             testClass<AbstractKotlinSteppingTest> {
@@ -1530,7 +1529,8 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIncrementalJsKlibCompilerRunnerTest>(annotations = listOf(muteExtraSuffix(".jsklib"))) {
-                model("incremental/pureKotlin", extension = null, recursive = false)
+                // IC of sealed interfaces are not supported in JS
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
@@ -1542,7 +1542,8 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
+                // IC of sealed interfaces are not supported in JS
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
