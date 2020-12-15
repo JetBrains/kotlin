@@ -1,3 +1,1 @@
-idePluginDependency {
-    publishProjectJarsForIde(listOf(":kotlin-scripting-jvm"))
-}
+publishProjectJarsForIde(listOf(":kotlin-scripting-jvm"))

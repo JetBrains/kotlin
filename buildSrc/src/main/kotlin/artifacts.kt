@@ -247,13 +247,6 @@ fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
     }
 }
 
-fun Project.idePluginDependency(block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
-    if (shouldActivate) {
-        block()
-    }
-}
-
 fun Project.publishProjectJarsForIde(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
     buildDir.resolve("artifacts-for-ide-to-modules-mapping/$name.txt").run {
         parentFile.mkdirs()

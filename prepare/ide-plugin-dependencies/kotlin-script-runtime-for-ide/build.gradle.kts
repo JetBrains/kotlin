@@ -1,3 +1,1 @@
-idePluginDependency {
-    publishProjectJarsForIde(listOf(":kotlin-script-runtime"))
-}
+publishProjectJarsForIde(listOf(":kotlin-script-runtime"))

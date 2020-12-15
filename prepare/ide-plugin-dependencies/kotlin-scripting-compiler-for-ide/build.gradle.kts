@@ -1,3 +1,1 @@
-idePluginDependency {
-    publishProjectJarsForIde(listOf(":kotlin-scripting-compiler"))
-}
+publishProjectJarsForIde(listOf(":kotlin-scripting-compiler"))

@@ -902,34 +902,32 @@ tasks {
     }
 
     register("publishIdeArtifacts") {
-        idePluginDependency {
-            dependsOn(
-                ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-reflect-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:compiler-components-for-jps-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-script-runtime-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-script-util-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-scripting-common-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-scripting-jvm-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-scripting-compiler-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-scripting-compiler-impl-for-ide:publish",
-                ":kotlin-stdlib-common:publish",
-                ":kotlin-stdlib:publish",
-                ":kotlin-stdlib-jdk7:publish",
-                ":kotlin-stdlib-jdk8:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-coroutines-experimental-compat:publish"
-            )
-        }
+        dependsOn(
+            ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-reflect-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:compiler-components-for-jps-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-script-runtime-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-script-util-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-scripting-common-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-scripting-jvm-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-scripting-compiler-for-ide:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-scripting-compiler-impl-for-ide:publish",
+            ":kotlin-stdlib-common:publish",
+            ":kotlin-stdlib:publish",
+            ":kotlin-stdlib-jdk7:publish",
+            ":kotlin-stdlib-jdk8:publish",
+            ":prepare:ide-plugin-dependencies:kotlin-coroutines-experimental-compat:publish"
+        )
     }
 
     register("jarsForIde") {

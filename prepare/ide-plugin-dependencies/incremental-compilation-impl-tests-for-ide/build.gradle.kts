@@ -1,3 +1,1 @@
-idePluginDependency {
-    publishTestJar(":compiler:incremental-compilation-impl")
-}
+publishTestJar(":compiler:incremental-compilation-impl")

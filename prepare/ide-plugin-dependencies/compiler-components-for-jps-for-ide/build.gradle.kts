@@ -1,8 +1,6 @@
-idePluginDependency {
-    @Suppress("UNCHECKED_CAST")
-    val compilerComponents = rootProject.extra["compilerModulesForJps"] as List<String>
+@Suppress("UNCHECKED_CAST")
+val compilerComponents = rootProject.extra["compilerModulesForJps"] as List<String>
 
-    val otherProjects = listOf(":kotlin-daemon-client")
+val otherProjects = listOf(":kotlin-daemon-client")
 
-    publishProjectJarsForIde(compilerComponents + otherProjects)
-}
+publishProjectJarsForIde(compilerComponents + otherProjects)

@@ -1,3 +1,1 @@
-idePluginDependency {
-    publishProjectJarsForIde(listOf(":kotlin-reflect"))
-}
+publishProjectJarsForIde(listOf(":kotlin-reflect"))
