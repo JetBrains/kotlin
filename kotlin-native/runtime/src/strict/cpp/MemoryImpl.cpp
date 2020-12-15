@@ -9,7 +9,7 @@
 
 extern "C" {
 
-const bool IsStrictMemoryModel = true;
+const MemoryModel CurrentMemoryModel = MemoryModel::kStrict;
 
 OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
   RETURN_RESULT_OF(AllocInstanceStrict, typeInfo);

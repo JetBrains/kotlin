@@ -27,6 +27,19 @@
 
 RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message);
 
+namespace internal {
+
+inline RUNTIME_NORETURN void TODOImpl(const char* location) {
+    RuntimeAssertFailed(location, "Unimplemented");
+}
+
+// TODO: Support format string when `RuntimeAssertFailed` supports it.
+inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message) {
+    RuntimeAssertFailed(location, message);
+}
+
+} // namespace internal
+
 // During codegeneration we set this constant to 1 or 0 to allow bitcode optimizer
 // to get rid of code behind condition.
 extern "C" const int KonanNeedDebugInfo;
@@ -47,5 +60,10 @@ if (KonanNeedDebugInfo && (!(condition))) {                         \
   if (!(condition)) {                      \
     RuntimeAssertFailed(nullptr, message); \
   }
+
+#define TODO(...) \
+    do { \
+        ::internal::TODOImpl(__FILE__ ":" TOSTRING(__LINE__), ##__VA_ARGS__); \
+    } while (false)
 
 #endif // RUNTIME_ASSERT_H

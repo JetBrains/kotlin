@@ -73,6 +73,10 @@
 
 namespace {
 
+ALWAYS_INLINE bool IsStrictMemoryModel() noexcept {
+    return CurrentMemoryModel == MemoryModel::kStrict;
+}
+
 typedef uint32_t container_size_t;
 
 // Granularity of arena container chunks.
@@ -1026,7 +1030,7 @@ inline void unlock(KInt* spinlock) {
 }
 
 inline bool canFreeze(ContainerHeader* container) {
-  if (IsStrictMemoryModel)
+  if (IsStrictMemoryModel())
     // In strict memory model we ignore permanent, frozen and shared object when recursively freezing.
     return container != nullptr && !container->shareable();
   else
@@ -1393,14 +1397,14 @@ inline void decrementRC(ContainerHeader* container) {
 
 inline void decrementRC(ContainerHeader* container) {
   auto* state = memoryState;
-  RuntimeAssert(!IsStrictMemoryModel || state->gcInProgress, "Must only be called during GC");
+  RuntimeAssert(!IsStrictMemoryModel() || state->gcInProgress, "Must only be called during GC");
   // TODO: enable me, once account for inner references in frozen objects correctly.
   // RuntimeAssert(container->refCount() > 0, "Must be positive");
   bool useCycleCollector = container->local();
   if (container->decRefCount() == 0) {
     freeContainer(container);
   } else if (useCycleCollector && state->toFree != nullptr) {
-      RuntimeAssert(IsStrictMemoryModel, "No cycle collector in relaxed mode yet");
+      RuntimeAssert(IsStrictMemoryModel(), "No cycle collector in relaxed mode yet");
       RuntimeAssert(container->refCount() > 0, "Must be positive");
       RuntimeAssert(!container->shareable(), "Cycle collector shalln't be used with shared objects yet");
       RuntimeAssert(container->objectCount() == 1, "cycle collector shall only work with single object containers");
@@ -1819,7 +1823,7 @@ void incrementStack(MemoryState* state) {
 }
 
 void processDecrements(MemoryState* state) {
-  RuntimeAssert(IsStrictMemoryModel, "Only works in strict model now");
+  RuntimeAssert(IsStrictMemoryModel(), "Only works in strict model now");
   auto* toRelease = state->toRelease;
   state->gcSuspendCount++;
   while (toRelease->size() > 0) {
@@ -1840,7 +1844,7 @@ void processDecrements(MemoryState* state) {
 }
 
 void decrementStack(MemoryState* state) {
-  RuntimeAssert(IsStrictMemoryModel, "Only works in strict model now");
+  RuntimeAssert(IsStrictMemoryModel(), "Only works in strict model now");
   state->gcSuspendCount++;
   FrameOverlay* frame = currentFrame;
   while (frame != nullptr) {
@@ -1868,7 +1872,7 @@ void garbageCollect(MemoryState* state, bool force) {
 #endif  // TRACE_GC
   state->allocSinceLastGc = 0;
 
-  if (!IsStrictMemoryModel) {
+  if (!IsStrictMemoryModel()) {
     // In relaxed model we just process finalizer queue and be done with it.
     processFinalizerQueue(state);
     return;
@@ -1988,7 +1992,7 @@ void garbageCollect() {
 #endif  // USE_GC
 
 ForeignRefManager* initLocalForeignRef(ObjHeader* object) {
-  if (!IsStrictMemoryModel) return nullptr;
+  if (!IsStrictMemoryModel()) return nullptr;
 
   return memoryState->foreignRefManager;
 }
@@ -1996,7 +2000,7 @@ ForeignRefManager* initLocalForeignRef(ObjHeader* object) {
 ForeignRefManager* initForeignRef(ObjHeader* object) {
   addHeapRef(object);
 
-  if (!IsStrictMemoryModel) return nullptr;
+  if (!IsStrictMemoryModel()) return nullptr;
 
   // Note: it is possible to return nullptr for shared object as an optimization,
   // but this will force the implementation to release objects on uninitialized threads
@@ -2007,7 +2011,7 @@ ForeignRefManager* initForeignRef(ObjHeader* object) {
 }
 
 bool isForeignRefAccessible(ObjHeader* object, ForeignRefManager* manager) {
-  if (!IsStrictMemoryModel) return true;
+  if (!IsStrictMemoryModel()) return true;
 
   if (manager == memoryState->foreignRefManager) {
     // Note: it is important that this code neither crashes nor returns false-negative result
@@ -2021,7 +2025,7 @@ bool isForeignRefAccessible(ObjHeader* object, ForeignRefManager* manager) {
 }
 
 void deinitForeignRef(ObjHeader* object, ForeignRefManager* manager) {
-  if (IsStrictMemoryModel) {
+  if (IsStrictMemoryModel()) {
     if (memoryState != nullptr && isForeignRefAccessible(object, manager)) {
       releaseHeapRef<true>(object);
     } else {
@@ -2127,13 +2131,13 @@ void deinitMemory(MemoryState* memoryState, bool destroyRuntime) {
   atomicAdd(&pendingDeinit, -1);
 
 #if TRACE_MEMORY
-  if (IsStrictMemoryModel && destroyRuntime && allocCount > 0) {
+  if (IsStrictMemoryModel() && destroyRuntime && allocCount > 0) {
     MEMORY_LOG("*** Memory leaks, leaked %d containers ***\n", allocCount);
     dumpReachable("", memoryState->containers);
   }
 #else
 #if USE_GC
-  if (IsStrictMemoryModel && allocCount > 0 && checkLeaks) {
+  if (IsStrictMemoryModel() && allocCount > 0 && checkLeaks) {
     konan::consoleErrorf(
         "Memory leaks detected, %d objects leaked!\n"
         "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n", allocCount);
@@ -2441,7 +2445,7 @@ OBJ_GETTER(swapHeapRefLocked,
   lock(spinlock);
   ObjHeader* oldValue = *location;
   bool shallRemember = false;
-  if (IsStrictMemoryModel) {
+  if (IsStrictMemoryModel()) {
     auto realCookie = computeCookie();
     shallRemember = *cookie != realCookie;
     if (shallRemember) *cookie = realCookie;
@@ -2455,7 +2459,7 @@ OBJ_GETTER(swapHeapRefLocked,
   }
   UpdateReturnRef(OBJ_RESULT, oldValue);
 
-  if (IsStrictMemoryModel && shallRemember && oldValue != nullptr && oldValue != expectedValue) {
+  if (IsStrictMemoryModel() && shallRemember && oldValue != nullptr && oldValue != expectedValue) {
     // Only remember container if it is not known to this thread (i.e. != expectedValue).
     rememberNewContainer(containerFor(oldValue));
   }
@@ -2491,7 +2495,7 @@ OBJ_GETTER(readHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* 
   if (shallRemember) *cookie = realCookie;
   UpdateReturnRef(OBJ_RESULT, value);
 #if USE_GC
-  if (IsStrictMemoryModel && shallRemember && value != nullptr) {
+  if (IsStrictMemoryModel() && shallRemember && value != nullptr) {
     auto* container = containerFor(value);
     rememberNewContainer(container);
   }
@@ -2506,7 +2510,7 @@ OBJ_GETTER(readHeapRefNoLock, ObjHeader* object, KInt index) {
     reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]);
   ObjHeader* value = *location;
 #if USE_GC
-  if (IsStrictMemoryModel && (value != nullptr)) {
+  if (IsStrictMemoryModel() && (value != nullptr)) {
     // Maybe not so good to do that under lock.
     rememberNewContainer(containerFor(value));
   }
@@ -3300,7 +3304,7 @@ bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
 
 void AdoptReferenceFromSharedVariable(ObjHeader* object) {
 #if USE_GC
-  if (IsStrictMemoryModel && object != nullptr && isShareable(containerFor(object)))
+  if (IsStrictMemoryModel() && object != nullptr && isShareable(containerFor(object)))
     rememberNewContainer(containerFor(object));
 #endif  // USE_GC
 }

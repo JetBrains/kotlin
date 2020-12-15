@@ -173,8 +173,15 @@ void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) 
 //    in intermediate frames when throwing
 //
 
+// NOTE: Must match `MemoryModel` in `Platform.kt`
+enum class MemoryModel {
+    kStrict = 0,
+    kRelaxed = 1,
+    kExperimental = 2,
+};
+
 // Controls the current memory model, is compile-time constant.
-extern const bool IsStrictMemoryModel;
+extern const MemoryModel CurrentMemoryModel;
 
 // Sets stack location.
 void SetStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
