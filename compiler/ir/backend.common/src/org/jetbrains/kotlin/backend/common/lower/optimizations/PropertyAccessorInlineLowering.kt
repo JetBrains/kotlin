@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -83,9 +84,17 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
         private fun tryInlineSimpleGetter(call: IrCall, callee: IrSimpleFunction, backingField: IrField): IrExpression? {
             if (!isSimpleGetter(callee, backingField)) return null
 
-            return call.run {
+            val builder = context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)
+
+            val getField = call.run {
                 IrGetFieldImpl(startOffset, endOffset, backingField.symbol, backingField.type, call.dispatchReceiver, origin)
             }
+
+            // Preserve call types when backingField have different type. This usually happens with generic field types.
+            return if (backingField.type != call.type)
+                builder.irImplicitCast(getField, call.type)
+            else
+                getField
         }
 
         private fun isSimpleGetter(callee: IrSimpleFunction, backingField: IrField): Boolean {
