@@ -16,14 +16,21 @@ import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import java.io.File
 
 class FirFrontendFacade(
     testServices: TestServices
 ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirModuleInfoProvider))
+
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = listOf(FirDiagnosticsDirectives)
 
     override fun analyze(module: TestModule): FirOutputArtifact {
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -34,7 +41,12 @@ class FirFrontendFacade(
 
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
-        val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values
+        val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
+        val (ktFiles, originalFiles) = if (lightTreeEnabled) {
+            emptyList<KtFile>() to module.files.filter { it.isKtFile }.map { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
+        } else {
+            testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
+        }
 
         val sessionProvider = moduleInfoProvider.firSessionProvider
 
@@ -55,7 +67,7 @@ class FirFrontendFacade(
             languageVersionSettings = languageVersionSettings
         )
 
-        val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles)
+        val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles, originalFiles, lightTreeEnabled)
         val firFiles = firAnalyzerFacade.runResolution()
         val filesMap = firFiles.mapNotNull { firFile ->
             val testFile = module.files.firstOrNull { it.name == firFile.name } ?: return@mapNotNull null

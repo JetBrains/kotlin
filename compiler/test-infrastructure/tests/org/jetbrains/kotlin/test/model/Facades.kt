@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -15,6 +16,9 @@ abstract class AbstractTestFacade<I : ResultingArtifact<I>, O : ResultingArtifac
     abstract fun transform(module: TestModule, inputArtifact: I): O
 
     open val additionalServices: List<ServiceRegistrationData>
+        get() = emptyList()
+
+    open val additionalDirectives: List<DirectivesContainer>
         get() = emptyList()
 }
 

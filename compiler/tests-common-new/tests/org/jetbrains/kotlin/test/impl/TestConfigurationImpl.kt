@@ -123,7 +123,12 @@ class TestConfigurationImpl(
 
     init {
         testServices.apply {
-            this@TestConfigurationImpl.facades.values.forEach { it.values.forEach { facade -> register(facade.additionalServices) } }
+            this@TestConfigurationImpl.facades.values.forEach {
+                it.values.forEach { facade ->
+                    register(facade.additionalServices)
+                    allDirectives += facade.additionalDirectives
+                }
+            }
         }
     }
 
