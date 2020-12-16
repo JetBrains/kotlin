@@ -83,11 +83,9 @@ class LazyAnnotationDescriptor(
 
     override val source = annotationEntry.toSourceElement()
 
-    private val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
-        LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
-    } else {
-        c.scope
-    }
+    private val scope = (c.scope.ownerDescriptor as? PackageFragmentDescriptor)?.let {
+        LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, it))
+    } ?: c.scope
 
     override val allValueArguments by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
@@ -110,10 +108,9 @@ class LazyAnnotationDescriptor(
 
     private class FileDescriptorForVisibilityChecks(
         private val source: SourceElement,
-        private val containingDeclaration: DeclarationDescriptor
-    ) : DeclarationDescriptorWithSource {
+        private val containingDeclaration: PackageFragmentDescriptor
+    ) : DeclarationDescriptorWithSource, PackageFragmentDescriptor by containingDeclaration {
         override val annotations: Annotations get() = Annotations.EMPTY
-        override fun getContainingDeclaration() = containingDeclaration
         override fun getSource() = source
         override fun getOriginal() = this
         override fun getName() = Name.special("< file descriptor for annotation resolution >")
