@@ -77,15 +77,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     ): Map<String, KotlinSourceSetImpl> {
         if (importingContext.properties.importOrphanSourceSets) return importingContext.sourceSetsByNames
 
-        // TODO: similar to importingContext.sourceSetsByCompilations.keys, will be deduplicated in further commits
-        val compiledSourceSets: Collection<String> =
-            importingContext.targets
-                .flatMap { it.compilations }
-                .flatMap { it.sourceSets }
-                .flatMap { it.dependsOnSourceSets.union(listOf(it.name)) }
-                .distinct()
-
-        val (orphanSourceSets, nonOrphanSourceSets) = importingContext.sourceSets.partition { !compiledSourceSets.contains(it.name) }
+        val (orphanSourceSets, nonOrphanSourceSets) = importingContext.sourceSets.partition { importingContext.isOrphanSourceSet(it) }
 
         orphanSourceSets.forEach {
             logger.warn("[sync warning] Source set \"${it.name}\" is not compiled with any compilation. This source set is not imported in the IDE.")

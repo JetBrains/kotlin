@@ -20,6 +20,15 @@ interface MultiplatformModelImportingContext {
 
     fun sourceSetByName(name: String): KotlinSourceSet?
     fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>?
+
+    /**
+     * "Orphan" is a source set which is not actually compiled by the compiler, i.e. the one
+     * which doesn't belong to any [KotlinCompilation].
+     *
+     * Orphan source sets might appear if one creates a source-set manually and doesn't link
+     * it anywhere (essentially this is a misconfiguration)
+     */
+    fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = compilationsBySourceSet(sourceSet) == null
 }
 
 class ImportProperties(val project: Project) {
@@ -76,6 +85,9 @@ class MultiplatformModelImportingContextImpl(override val project: Project) : Mu
 
         allSourceSetToCompilations
     }
+
+    // overload for small optimization
+    override fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in sourceSetToParticipatedCompilations.keys
 
     override fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? =
         sourceSetToParticipatedCompilations[sourceSet]
