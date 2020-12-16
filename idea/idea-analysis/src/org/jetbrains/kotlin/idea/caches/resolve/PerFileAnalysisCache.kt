@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.trackers.clearInBlockModifications
 import org.jetbrains.kotlin.idea.caches.trackers.inBlockModifications
+import org.jetbrains.kotlin.idea.compiler.IdeMainFunctionDetectorFactory
 import org.jetbrains.kotlin.idea.project.IdeaModuleStructureOracle
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -449,7 +450,8 @@ private object KotlinResolveDataProvider {
                 bodyResolveCache,
                 targetPlatform.findAnalyzerServices(project),
                 analyzableElement.languageVersionSettings,
-                IdeaModuleStructureOracle()
+                IdeaModuleStructureOracle(),
+                IdeMainFunctionDetectorFactory()
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
