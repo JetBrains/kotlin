@@ -26,7 +26,7 @@ internal class KtFirTypeParameterSymbol(
     private val builder: KtSymbolByFirBuilder
 ) : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameter> {
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 
     override val name: Name get() = firRef.withFir { it.name }
 

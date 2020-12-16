@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -45,12 +45,12 @@ internal class KtFirKotlinPropertySymbol(
 
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
-    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
 
-    override val receiverType: KtTypeAndAnnotations? by firRef.withFirAndCache { fir ->
-        fir.receiverTypeRef?.let { typeRef ->
-            KtFirTypeAndAnnotations(fir, typeRef, resolveState, token, builder)
-        }
+    override val annotatedType: KtTypeAndAnnotations by cached {
+        firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    }
+    override val receiverType: KtTypeAndAnnotations? by cached {
+        firRef.receiverTypeAndAnnotations(builder)
     }
 
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
@@ -66,8 +66,8 @@ internal class KtFirKotlinPropertySymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
-        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
+    override val annotations: List<KtAnnotationCall> by cached {
+        firRef.toAnnotationsList()
     }
 
     override val callableIdIfNonLocal: FqName?

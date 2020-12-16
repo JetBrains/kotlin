@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
@@ -27,37 +30,33 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
-class KtFirAnnotationCall(
-    containingDeclaration: FirDeclaration,
-    annotationCall: FirAnnotationCall,
-    resolveState: FirModuleResolveState,
-    override val token: ValidityToken,
+internal class KtFirAnnotationCall(
+    private val containingDeclaration: FirRefWithValidityCheck<FirDeclaration>,
+    annotationCall: FirAnnotationCall
 ) : KtAnnotationCall() {
 
-    private val containingDeclarationRef = firRef(containingDeclaration, resolveState)
     private val annotationCallRef by weakRef(annotationCall)
 
-    override val psi: KtCallElement? by containingDeclarationRef.withFirAndCache { fir ->
-        annotationCallRef.findPsi(fir.session) as? KtCallElement
+    override val token: ValidityToken get() = containingDeclaration.token
+
+    override val psi: KtCallElement? by containingDeclaration.withFirAndCache { fir ->
+        fir.findPsi(fir.session) as? KtCallElement
     }
 
-    private fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {
-        val firTypeAlias = lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this
-        val expandedType = firTypeAlias.fir.expandedTypeRef.coneType
-        return expandedType.fullyExpandedType(session) as? ConeClassLikeType
-            ?: return this
-    }
-
-    override val classId: ClassId? by containingDeclarationRef.withFirAndCache(FirResolvePhase.TYPES) {
+    override val classId: ClassId? by containingDeclaration.withFirAndCache(FirResolvePhase.TYPES) { fir ->
         val declaredCone = annotationCallRef.annotationTypeRef.coneType as? ConeClassLikeType
-        declaredCone?.expandTypeAliasIfNeeded(it.session)?.classId
+        declaredCone?.expandTypeAliasIfNeeded(fir.session)?.classId
     }
 
     override val useSiteTarget: AnnotationUseSiteTarget? get() = annotationCallRef.useSiteTarget
 
-    override val arguments: List<KtNamedConstantValue> by containingDeclarationRef.withFirAndCache(FirResolvePhase.TYPES) {
-        mapAnnotationParameters(annotationCallRef, it.session).map { (name, expression) ->
+    override val arguments: List<KtNamedConstantValue> by containingDeclaration.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+        mapAnnotationParameters(annotationCallRef, fir.session).map { (name, expression) ->
             KtNamedConstantValue(name, expression.convertConstantExpression())
         }
     }
+}
+
+internal fun FirRefWithValidityCheck<FirAnnotatedDeclaration>.toAnnotationsList() = withFir { fir ->
+    fir.annotations.map { KtFirAnnotationCall(this, it) }
 }

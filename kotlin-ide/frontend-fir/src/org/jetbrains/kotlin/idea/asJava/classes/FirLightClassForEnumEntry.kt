@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.asJava.FirLightPsiJavaCodeReferenceElementWithN
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -83,9 +82,9 @@ internal class FirLightClassForEnumEntry(
 
     private val _extendsList: PsiReferenceList? by lazyPub {
 
-        val mappedType = (enumEntrySymbol.type as? KtClassType)?.let {
-            it.mapSupertype(this@FirLightClassForEnumEntry)
-        } ?: return@lazyPub null
+        val mappedType = enumEntrySymbol.annotatedType
+            .mapSupertype(this@FirLightClassForEnumEntry)
+            ?: return@lazyPub null
 
         KotlinSuperTypeListBuilder(
             kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),

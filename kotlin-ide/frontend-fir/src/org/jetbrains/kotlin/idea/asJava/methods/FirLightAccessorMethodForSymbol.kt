@@ -71,7 +71,7 @@ internal class FirLightAccessorMethodForSymbol(
                 !isPrivate &&
                 !(isParameter && (containingClass.isAnnotationType || containingClass.isEnum))
 
-        val nullabilityType = if (nullabilityApplicable) containingPropertySymbol.type
+        val nullabilityType = if (nullabilityApplicable) containingPropertySymbol.annotatedType.type
             .getTypeNullability(containingPropertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         else NullabilityType.Unknown
 
@@ -144,7 +144,7 @@ internal class FirLightAccessorMethodForSymbol(
 
     private val _returnedType: PsiType? by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
-        return@lazyPub containingPropertySymbol.type.asPsiType(
+        return@lazyPub containingPropertySymbol.annotatedType.asPsiType(
             context = containingPropertySymbol,
             parent = this@FirLightAccessorMethodForSymbol,
             phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE

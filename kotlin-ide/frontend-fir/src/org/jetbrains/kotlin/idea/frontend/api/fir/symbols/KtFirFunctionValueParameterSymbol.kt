@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFunctionValueParameterSymbol(
@@ -31,12 +32,14 @@ internal class KtFirFunctionValueParameterSymbol(
 
     override val name: Name get() = firRef.withFir { it.name }
     override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
-    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> builder.buildKtType(fir.returnTypeRef) }
+    override val annotatedType: KtTypeAndAnnotations by cached {
+        firRef.returnTypeAndAnnotations(FirResolvePhase.TYPES, builder)
+    }
 
     override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
 
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
-        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
+    override val annotations: List<KtAnnotationCall> by cached {
+        firRef.toAnnotationsList()
     }
 
     override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol> {

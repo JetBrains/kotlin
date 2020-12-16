@@ -44,7 +44,7 @@ abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(),
 
     abstract val companionObject: KtClassOrObjectSymbol?
 
-    abstract val superTypes: List<KtType>
+    abstract val superTypes: List<KtTypeAndAnnotations>
 
     abstract val primaryConstructor: KtConstructorSymbol?
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -268,7 +269,7 @@ internal fun FirLightClassBase.createField(
     )
 }
 
-internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
+internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtTypeAndAnnotations>): PsiReferenceList {
 
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
@@ -296,8 +297,7 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
 
     //TODO Add support for kotlin.collections.
     superTypes.asSequence()
-        .filterIsInstance<KtClassType>()
-        .filter { it.needToAddTypeIntoList() }
+        .filter { it.type.needToAddTypeIntoList() }
         .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }
         .forEach { listBuilder.addReference(it) }
 

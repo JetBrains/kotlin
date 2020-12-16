@@ -34,6 +34,6 @@ internal class KtFirFileSymbol(
     }
 
     override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
-        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
+        fir.annotations.map { KtFirAnnotationCall(firRef, it) }
     }
 }
