@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
 import java.io.File
 
 abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -51,7 +52,7 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
 
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     private fun invalidateAllCaches(ktFile: KtFile) {
-        project.service<KotlinFirOutOfBlockModificationTrackerFactory>().incrementModificationsCount()
+        (project.service<KotlinOutOfBlockModificationTrackerFactory>() as KotlinFirOutOfBlockModificationTrackerFactory).incrementModificationsCount()
         (project.service<KtAnalysisSessionProvider>() as KtFirAnalysisSessionProvider).clearCaches()
         executeOnPooledThreadInReadAction { analyze(ktFile) {} }
     }

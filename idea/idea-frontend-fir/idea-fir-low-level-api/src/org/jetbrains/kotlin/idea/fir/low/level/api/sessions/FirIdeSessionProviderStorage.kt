@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
+import org.jetbrains.kotlin.trackers.createModuleWithoutDependenciesOutOfBlockModificationTracker
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FirIdeSessionProviderStorage(private val project: Project) {
@@ -113,8 +113,7 @@ private class FromModuleViewSessionCache(
 private class FirSessionWithModificationTracker(
     val firSession: FirIdeSourcesSession,
 ) {
-    private val modificationTracker = firSession.project.service<KotlinFirOutOfBlockModificationTrackerFactory>()
-        .createModuleWithoutDependenciesOutOfBlockModificationTracker(firSession.moduleInfo.module)
+    private val modificationTracker = firSession.moduleInfo.module.createModuleWithoutDependenciesOutOfBlockModificationTracker()
 
     private val timeStamp = modificationTracker.modificationCount
 

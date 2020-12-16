@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvide
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.util.cachedValue
 import org.jetbrains.kotlin.idea.util.getValue
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FirIdeResolveStateService(project: Project) {
@@ -24,7 +25,7 @@ internal class FirIdeResolveStateService(project: Project) {
 
     private val stateCache by cachedValue(
         project,
-        project.service<KotlinFirOutOfBlockModificationTrackerFactory>().createProjectWideOutOfBlockModificationTracker(),
+        project.createProjectWideOutOfBlockModificationTracker(),
         ProjectRootModificationTracker.getInstance(project),
     ) {
         ConcurrentHashMap<IdeaModuleInfo, FirModuleResolveStateImpl>()
