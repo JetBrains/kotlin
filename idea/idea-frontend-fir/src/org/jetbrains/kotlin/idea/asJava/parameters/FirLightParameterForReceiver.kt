@@ -72,7 +72,7 @@ internal class FirLightParameterForReceiver private constructor(
     }
 
     private val _type: PsiType by lazyPub {
-        receiverTypeAndAnnotations.type.asPsiType(context, method, FirResolvePhase.TYPES)
+        receiverTypeAndAnnotations.asPsiType(context, method, FirResolvePhase.TYPES)
     }
 
     override fun getType(): PsiType = _type

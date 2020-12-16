@@ -58,7 +58,7 @@ internal class FirLightSimpleMethodForSymbol(
     private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> {
         val nullability = if (isVoidReturnType || isPrivate)
             NullabilityType.Unknown
-        else functionSymbol.type.getTypeNullability(
+        else functionSymbol.annotatedType.type.getTypeNullability(
             context = functionSymbol,
             phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
         )
@@ -122,7 +122,7 @@ internal class FirLightSimpleMethodForSymbol(
     override fun isConstructor(): Boolean = false
 
     private val isVoidReturnType: Boolean
-        get() = functionSymbol.type.run {
+        get() = functionSymbol.annotatedType.type.run {
             isUnit && nullabilityType != NullabilityType.Nullable
         }
 

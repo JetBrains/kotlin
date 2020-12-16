@@ -64,7 +64,13 @@ internal class FirLightTypeParameter(
         typeParameterSymbol.upperBounds
             .filterIsInstance<KtClassType>()
             .filter { it.classId != StandardClassIds.Any }
-            .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }
+            .mapNotNull {
+                it.mapSupertype(
+                    psiContext = this,
+                    kotlinCollectionAsIs = true,
+                    annotations = emptyList()
+                )
+            }
             .forEach { listBuilder.addReference(it) }
 
         listBuilder

@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class FirLightParameterBaseForSymbol(
@@ -33,13 +30,17 @@ internal abstract class FirLightParameterBaseForSymbol(
         FirLightIdentifier(this, parameterSymbol)
     }
 
-    protected val nullabilityType: NullabilityType get() {
-        val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum } &&
-                !containingMethod.hasModifierProperty(PsiModifier.PRIVATE)
+    protected val nullabilityType: NullabilityType
+        get() {
+            val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum } &&
+                    !containingMethod.hasModifierProperty(PsiModifier.PRIVATE)
 
-        return if (nullabilityApplicable) parameterSymbol.type.getTypeNullability(parameterSymbol, FirResolvePhase.TYPES)
-        else NullabilityType.Unknown
-    }
+            return if (nullabilityApplicable) parameterSymbol.annotatedType.type.getTypeNullability(
+                parameterSymbol,
+                FirResolvePhase.TYPES
+            )
+            else NullabilityType.Unknown
+        }
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 

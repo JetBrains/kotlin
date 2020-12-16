@@ -5,36 +5,73 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-internal class KtFirTypeAndAnnotations(
-    containingDeclaration: FirDeclaration,
-    receiverTypeRef: FirTypeRef,
-    resolveState: FirModuleResolveState,
-    override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder
+internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
+    private val containingDeclaration: FirRefWithValidityCheck<T>,
+    typeResolvePhase: FirResolvePhase,
+    private val builder: KtSymbolByFirBuilder,
+    private val typeRef: (T) -> FirTypeRef,
 ) : KtTypeAndAnnotations() {
 
-    private val containingDeclarationRef = firRef(containingDeclaration, resolveState)
-    private val receiverWeakTypeRef by weakRef(receiverTypeRef)
+    override val token: ValidityToken get() = containingDeclaration.token
 
-    override val type: KtType by containingDeclarationRef.withFirAndCache(FirResolvePhase.TYPES) {
-        builder.buildKtType(receiverWeakTypeRef)
+    override val type: KtType by containingDeclaration.withFirAndCache(typeResolvePhase) { fir ->
+        builder.buildKtType(typeRef(fir))
     }
 
-    override val annotations: List<KtAnnotationCall> by containingDeclarationRef.withFirAndCache { fir ->
-        receiverWeakTypeRef.annotations.map {
-            KtFirAnnotationCall(fir, it, resolveState, token)
+    override val annotations: List<KtAnnotationCall> by containingDeclaration.withFirAndCache { fir ->
+        typeRef(fir).annotations.map {
+            KtFirAnnotationCall(containingDeclaration, it)
+        }
+    }
+}
+
+internal class KtSimpleFirTypeAndAnnotations(
+    coneType: ConeKotlinType,
+    annotationsList: List<KtAnnotationCall>,
+    builder: KtSymbolByFirBuilder,
+    override val token: ValidityToken
+) : KtTypeAndAnnotations() {
+
+    private val coneTypeRef by weakRef(coneType)
+    private val annotationsListRef by weakRef(annotationsList)
+
+    override val type: KtType by cached {
+        builder.buildKtType(coneTypeRef)
+    }
+
+    override val annotations: List<KtAnnotationCall> get() = annotationsListRef
+}
+
+internal fun FirRefWithValidityCheck<FirClass<*>>.superTypesAndAnnotationsList(builder: KtSymbolByFirBuilder): List<KtTypeAndAnnotations> =
+    withFir(FirResolvePhase.SUPER_TYPES) { fir ->
+        fir.superTypeRefs.map { typeRef ->
+            val annotations = typeRef.annotations.map { annotation ->
+                KtFirAnnotationCall(this, annotation)
+            }
+            KtSimpleFirTypeAndAnnotations(typeRef.coneType, annotations, builder, token)
+        }
+    }
+
+internal fun FirRefWithValidityCheck<FirTypedDeclaration>.returnTypeAndAnnotations(
+    typeResolvePhase: FirResolvePhase,
+    builder: KtSymbolByFirBuilder
+) = KtFirTypeAndAnnotations(this, typeResolvePhase, builder) { it.returnTypeRef }
+
+internal fun FirRefWithValidityCheck<FirCallableDeclaration<*>>.receiverTypeAndAnnotations(builder: KtSymbolByFirBuilder) = withFir { fir ->
+    fir.receiverTypeRef?.let { _ ->
+        KtFirTypeAndAnnotations(this, FirResolvePhase.TYPES, builder) {
+            it.receiverTypeRef ?: error { "Receiver expected for callable declaration but it is null" }
         }
     }
 }

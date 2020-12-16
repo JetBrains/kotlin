@@ -31,7 +31,7 @@ internal object ExpectedTypeWeigher {
     ) = when {
         expectedType == null -> MatchesExpectedType.NON_TYPABLE
         symbol !is KtTypedSymbol -> MatchesExpectedType.NON_TYPABLE
-        else -> MatchesExpectedType.matches(symbol.type isSubTypeOf expectedType)
+        else -> MatchesExpectedType.matches(symbol.annotatedType.type isSubTypeOf expectedType)
     }
 
 

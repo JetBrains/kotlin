@@ -19,7 +19,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
@@ -67,7 +66,7 @@ private class TypeParameterLookupElementFactory {
 private class VariableLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
-            .withTypeText(symbol.type.render())
+            .withTypeText(symbol.annotatedType.type.render())
             .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(createInsertHandler(symbol))
     }
@@ -95,7 +94,7 @@ private class FunctionLookupElementFactory {
         return try {
             LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
-                .withTypeText(symbol.type.render())
+                .withTypeText(symbol.annotatedType.type.render())
                 .withInsertHandler(createInsertHandler(symbol))
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
@@ -110,7 +109,7 @@ private class FunctionLookupElementFactory {
 
     private fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
         val singleParam = symbol.valueParameters.singleOrNull()
-        return singleParam != null && !singleParam.hasDefaultValue && singleParam.type.isBuiltInFunctionalType()
+        return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type.isBuiltInFunctionalType()
     }
 
     private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
@@ -232,7 +231,7 @@ private object ShortNamesRenderer {
         function.valueParameters.joinToString(", ", "(", ")") { renderFunctionParameter(it) }
 
     private fun KtAnalysisSession.renderFunctionParameter(param: KtFunctionParameterSymbol): String =
-        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.type.render()}"
+        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.annotatedType.type.render()}"
 }
 
 private fun Document.isTextAt(offset: Int, text: String) =

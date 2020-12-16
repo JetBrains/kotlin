@@ -65,7 +65,7 @@ internal class FirLightFieldForEnumEntry(
     override fun getName(): String = enumEntrySymbol.name.asString()
 
     private val _type: PsiType by lazyPub {
-        enumEntrySymbol.type.asPsiType(enumEntrySymbol, this@FirLightFieldForEnumEntry, FirResolvePhase.TYPES)
+        enumEntrySymbol.annotatedType.asPsiType(enumEntrySymbol, this@FirLightFieldForEnumEntry, FirResolvePhase.TYPES)
     }
 
     override fun getType(): PsiType = _type

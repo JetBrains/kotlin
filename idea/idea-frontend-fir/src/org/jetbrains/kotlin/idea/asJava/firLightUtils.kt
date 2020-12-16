@@ -16,14 +16,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.TypeMappingModeInternals
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import java.text.StringCharacterIterator
@@ -52,17 +49,18 @@ private fun PsiElement.nonExistentType() = JavaPsiFacade.getElementFactory(proje
     .createTypeFromText("error.NonExistentClass", this)
 
 internal fun KtTypedSymbol.asPsiType(parent: PsiElement, phase: FirResolvePhase): PsiType =
-    type.asPsiType(this, parent, phase)
+    annotatedType.asPsiType(this, parent, phase)
 
-internal fun KtType.asPsiType(
+internal fun KtTypeAndAnnotations.asPsiType(
     context: KtSymbol,
     parent: PsiElement,
     phase: FirResolvePhase
 ): PsiType {
-    require(this is KtFirType)
+    val type = this.type
+    require(type is KtFirType)
     require(context is KtFirSymbol<*>)
     val session = context.firRef.withFir(phase) { it.session }
-    return coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
+    return type.coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
 internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
@@ -153,12 +151,19 @@ private fun mapSupertype(
         psiContext
     ) as? PsiClassType
 
-internal fun KtClassType.mapSupertype(
+internal fun KtTypeAndAnnotations.mapSupertype(
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false
+): PsiClassType? = type.mapSupertype(psiContext, kotlinCollectionAsIs, emptyList())
+
+internal fun KtType.mapSupertype(
+    psiContext: PsiElement,
+    kotlinCollectionAsIs: Boolean = false,
+    annotations: List<KtAnnotationCall>
 ): PsiClassType? {
+    if (this !is KtClassType) return null
     require(this is KtFirClassType)
-    val contextSymbol = this.classSymbol
+    val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
 
     val session = contextSymbol.firRef.withFir { it.session }
@@ -167,7 +172,7 @@ internal fun KtClassType.mapSupertype(
         psiContext,
         session,
         contextSymbol.firRef.resolveState,
-        this.coneType,
+        coneType,
         kotlinCollectionAsIs,
     )
 }

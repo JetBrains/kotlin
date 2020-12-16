@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 abstract class KtAnonymousObjectSymbol : KtSymbolWithKind, KtAnnotatedSymbol, KtSymbolWithMembers {
-    abstract val superTypes: List<KtType>
+    abstract val superTypes: List<KtTypeAndAnnotations>
 
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol>
 }

@@ -12,15 +12,12 @@ import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 internal class KtFirPropertyGetterSymbol(
     fir: FirPropertyAccessor,
@@ -48,11 +45,13 @@ internal class KtFirPropertyGetterSymbol(
             }
         }
 
-    override val type: KtType by firRef.withFirAndCache { builder.buildKtType(it.returnTypeRef) }
+    override val annotatedType: KtTypeAndAnnotations by cached {
+        firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    }
     override val modality: KtCommonSymbolModality get() = firRef.withFir(FirResolvePhase.STATUS) { it.modality.getSymbolModality() }
     override val visibility: KtSymbolVisibility get() = firRef.withFir(FirResolvePhase.STATUS) { it.visibility.getSymbolVisibility() }
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
-        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
+    override val annotations: List<KtAnnotationCall> by cached {
+        firRef.toAnnotationsList()
     }
 
     override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol> {

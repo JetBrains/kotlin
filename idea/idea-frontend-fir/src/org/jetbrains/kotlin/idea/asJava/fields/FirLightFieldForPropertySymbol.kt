@@ -29,7 +29,7 @@ internal class FirLightFieldForPropertySymbol(
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
 
     private val _returnedType: PsiType by lazyPub {
-        propertySymbol.type.asPsiType(
+        propertySymbol.annotatedType.asPsiType(
             propertySymbol,
             this@FirLightFieldForPropertySymbol,
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
@@ -83,7 +83,7 @@ internal class FirLightFieldForPropertySymbol(
         }
 
         val nullability = if (visibility != PsiModifier.PRIVATE && !(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit))
-            propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            propertySymbol.annotatedType.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         else NullabilityType.Unknown
 
         val annotations = propertySymbol.computeAnnotations(
