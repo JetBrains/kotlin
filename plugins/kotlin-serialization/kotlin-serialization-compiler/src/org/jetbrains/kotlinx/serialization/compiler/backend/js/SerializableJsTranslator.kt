@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
@@ -50,7 +39,8 @@ class SerializableJsTranslator(
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 
         val missingExceptionClassRef = serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
-            .let { context.translateQualifiedReference(it) }
+            .constructors.single { it.valueParameters.size == 1 }
+            .let { context.getInnerNameForDescriptor(it).makeRef() }
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
@@ -98,7 +88,7 @@ class SerializableJsTranslator(
                     val initExpr = Translation.translateAsExpression(initializer, context)
                     TranslationUtils.assignmentToBackingField(context, prop.descriptor, initExpr).makeStmt()
                 } else {
-                    JsThrow(JsNew(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
+                    JsThrow(JsInvocation(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
                 }
                 // (seen & 1 << i == 0) -- not seen
                 val notSeenTest = propNotSeenTest(seenVars[bitMaskSlotAt(index)], index)
