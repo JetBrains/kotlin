@@ -1,5 +1,5 @@
-// Issue: KT-25114
 // FIR_IDENTICAL
+// Issue: KT-25114
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class WithPrivateCompanion {
