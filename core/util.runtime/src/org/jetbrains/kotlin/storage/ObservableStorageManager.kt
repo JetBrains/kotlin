@@ -26,12 +26,20 @@ abstract class ObservableStorageManager(private val delegate: StorageManager) : 
         return delegate.createMemoizedFunction(compute.observable)
     }
 
+    override fun <K, V : Any> createMemoizedFunction(compute: (K) -> V, onRecursiveCall: (K, Boolean) -> V): MemoizedFunctionToNotNull<K, V> {
+        return delegate.createMemoizedFunction(compute.observable, onRecursiveCall)
+    }
+
     override fun <K, V: Any> createMemoizedFunctionWithNullableValues(compute: (K) -> V?): MemoizedFunctionToNullable<K, V> {
         return delegate.createMemoizedFunctionWithNullableValues(compute.observable)
     }
 
     override fun <K, V: Any> createMemoizedFunction(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V> {
         return delegate.createMemoizedFunction(compute.observable, map)
+    }
+
+    override fun <K, V : Any> createMemoizedFunction(compute: (K) -> V, onRecursiveCall: (K, Boolean) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V> {
+        return delegate.createMemoizedFunction(compute.observable, onRecursiveCall, map)
     }
 
     override fun <K, V: Any> createMemoizedFunctionWithNullableValues(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V> {
