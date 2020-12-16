@@ -101,25 +101,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return getCoroutines(experimentalExt) as? String
     }
 
-
-    private fun calculateDependsOnClosure(
-        sourceSet: KotlinSourceSetImpl?,
-        sourceSetsMap: Map<String, KotlinSourceSetImpl>,
-        cache: MutableMap<String, Set<String>>
-    ): Set<String> {
-        return if (sourceSet == null) {
-            emptySet()
-        } else {
-            cache[sourceSet.name] ?: sourceSet.dependsOnSourceSets.flatMap { name ->
-                calculateDependsOnClosure(
-                    sourceSetsMap[name],
-                    sourceSetsMap,
-                    cache
-                ).union(setOf(name))
-            }.toSet().also { cache[sourceSet.name] = it }
-        }
-    }
-
     private fun buildSourceSets(
         importingContext: MultiplatformModelImportingContext,
         dependencyResolver: DependencyResolver,
@@ -133,35 +114,22 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             (getSourceSets(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
         val androidDeps = buildAndroidDeps(importingContext, kotlinExt.javaClass.classLoader)
 
-        val allSourceSetsProtos = sourceSets.mapNotNull {
+        val allSourceSetsProtosByNames = sourceSets.mapNotNull {
             buildSourceSet(it, dependencyResolver, importingContext.project, dependencyMapper, androidDeps)
-        }
+        }.associateBy { it.name }
+        val dependsOnCache = HashMap<String, Set<String>>()
 
         // Some performance optimisation: do not build metadata dependencies if source set is not common
-        val allSourceSets = if (importingContext.properties.buildMetadataDependencies) {
-            allSourceSetsProtos.map { proto -> proto.buildKotlinSourceSetImpl(true) }
+        return if (importingContext.properties.buildMetadataDependencies) {
+            allSourceSetsProtosByNames.mapValues { (_, proto) ->
+                proto.buildKotlinSourceSetImpl(true, allSourceSetsProtosByNames, dependsOnCache)
+            }
         } else {
-            val unactualizedSourceSets = allSourceSetsProtos.flatMap { it.dependsOnSourceSets }.distinct()
-            allSourceSetsProtos.map { proto -> proto.buildKotlinSourceSetImpl(unactualizedSourceSets.contains(proto.name)) }
+            val unactualizedSourceSets = allSourceSetsProtosByNames.values.flatMap { it.dependsOnSourceSets }.distinct()
+            allSourceSetsProtosByNames.mapValues { (name, proto) ->
+                proto.buildKotlinSourceSetImpl(unactualizedSourceSets.contains(name), allSourceSetsProtosByNames, dependsOnCache)
+            }
         }
-
-        // TODO: Weird quirk, we actually *recreate* all source-sets, because those contain
-        //       wrong (non-closured) dependsOnNames, so we can not save this map in the importingContext straight away
-        //       This will be fixed in later commit
-        val map = allSourceSets.map { it.name to it }.toMap()
-        val dependsOnCache = HashMap<String, Set<String>>()
-        return allSourceSets.map { sourceSet ->
-            sourceSet.name to KotlinSourceSetImpl(
-                sourceSet.name,
-                sourceSet.languageSettings,
-                sourceSet.sourceDirs,
-                sourceSet.resourceDirs,
-                sourceSet.dependencies,
-                calculateDependsOnClosure(sourceSet, map, dependsOnCache),
-                sourceSet.actualPlatforms as KotlinPlatformContainerImpl,
-                sourceSet.isTestModule
-            )
-        }.toMap()
     }
 
     private fun buildAndroidDeps(importingContext: MultiplatformModelImportingContext, classLoader: ClassLoader): Map<String, List<Any>>? {

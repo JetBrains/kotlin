@@ -17,14 +17,33 @@ class KotlinSourceSetProto(
     val dependsOnSourceSets: Set<String>
 ) {
 
-    fun buildKotlinSourceSetImpl(doBuildDependencies: Boolean) = KotlinSourceSetImpl(
+    fun buildKotlinSourceSetImpl(
+        doBuildDependencies: Boolean,
+        allSourceSetsProtosByNames: Map<String, KotlinSourceSetProto>,
+        dependsOnCache: HashMap<String, Set<String>>
+    ) = KotlinSourceSetImpl(
         name,
         languageSettings,
         sourceDirs,
         resourceDirs,
         if (doBuildDependencies) dependencies.invoke() else emptyArray(),
-        dependsOnSourceSets
+        calculateDependsOnClosure(this, allSourceSetsProtosByNames, dependsOnCache)
     )
+
+    private fun calculateDependsOnClosure(
+        currentSourceSetProto: KotlinSourceSetProto,
+        sourceSetsMap: Map<String, KotlinSourceSetProto>,
+        cache: MutableMap<String, Set<String>>
+    ): Set<String> {
+        return cache.computeIfAbsent(currentSourceSetProto.name) {
+            currentSourceSetProto.dependsOnSourceSets.flatMap { name ->
+                // TODO DISCUSS AT REVIEW: we can omit !! here and be more safe, but is it really necessary?
+                calculateDependsOnClosure(sourceSetsMap[name]!!, sourceSetsMap, cache).union(setOf(name))
+            }.toSet()
+        }
+    }
+
+
 
 }
 
