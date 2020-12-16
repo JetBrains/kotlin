@@ -1,4 +1,4 @@
-// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+FreedomForSealedClasses
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 package sealed
 
