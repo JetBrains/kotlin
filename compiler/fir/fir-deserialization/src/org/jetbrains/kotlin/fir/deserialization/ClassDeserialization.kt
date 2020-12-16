@@ -203,6 +203,8 @@ fun deserializeClassToSymbol(
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         it.versionRequirementsTable = context.versionRequirementTable
+
+        it.sourceElement = containerSource
     }
 }
 
