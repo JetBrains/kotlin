@@ -1,11 +1,16 @@
 package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.*
 import java.io.File
 import java.nio.file.Paths
 
 object KonanHomeProvider {
-
+    internal val validPropertiesNames = listOf("kotlin.native.home",
+                                               "org.jetbrains.kotlin.native.home",
+                                               "konan.home")
+    internal val kotlinNativeHome
+        get() = validPropertiesNames.mapNotNull(System::getProperty).first()
     /**
      * Determines a path to the current Kotlin/Native distribution.
      *
@@ -15,7 +20,7 @@ object KonanHomeProvider {
      *    Otherwise an IllegalStateException is thrown.
      */
     fun determineKonanHome(): String {
-        val propertyValue = System.getProperty("konan.home")
+        val propertyValue = kotlinNativeHome
         return if (propertyValue != null) {
             File(propertyValue).absolutePath
         } else {

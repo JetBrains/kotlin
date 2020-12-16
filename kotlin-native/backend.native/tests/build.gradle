@@ -4366,7 +4366,7 @@ standaloneTest("jsinterop_math") {
         "$jsinterop -pkg kotlinx.interop.wasm.math -o $buildDir/jsmath -target wasm32".execute().waitFor()
 
     }
-    dependsOn ':wasm32PlatformLibs'
+    dependsOn ':kotlin-native:wasm32PlatformLibs'
     enabled = (project.testTarget == 'wasm32')
     goldValue = "e = 2.718281828459045, pi = 3.141592653589793, sin(pi) = 1.2246467991473532E-16, sin(pi/2) = 1.0, ln(1) = 0.0, ln(e) = 1.0\n"
     source = "jsinterop/math.kt"
@@ -4675,9 +4675,8 @@ if (isAppleTarget(project)) {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
                 artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":kotlin-native:${target.name}CrossDistRuntime", ':kotlin-native:distCompiler'
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
                 }
 
                 extraOpts "-Xshort-module-name=MyLibrary"
@@ -4703,8 +4702,8 @@ if (isAppleTarget(project)) {
                 srcDir "objcexport/library"
                 artifactName "test-library"
 
-                if (!useCustomDist) {
-                    dependsOn ":kotlin-native:${target.name}CrossDistRuntime", ':kotlin-native:distCompiler'
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
                 }
 
                 extraOpts "-Xshort-module-name=MyLibrary"
@@ -5019,7 +5018,7 @@ private void configureStdlibTest(KonanGTest task, boolean inWorker) {
             extraOpts inWorker ? '-trw' : '-tr',
                     '-Xverify-ir',
                     '-Xopt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
-                    "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
+                    "-friend-modules", project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
         }
     }

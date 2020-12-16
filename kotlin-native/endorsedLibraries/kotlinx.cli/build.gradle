@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
+import org.jetbrains.kotlin.*
 
 buildscript {
     repositories {
@@ -82,9 +83,11 @@ targetList.each { target ->
         dependsOn ":kotlin-native:distCompiler"
         dependsOn ":kotlin-native:${target}CrossDistRuntime"
 
+        def kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
+        systemProperties "konan.home": kotlinNativeDist
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         // This task depends on distCompiler, so the compiler jar is already in the dist directory.
-        classpath = fileTree("${rootProject.projectDir}/dist/konan/lib") {
+        classpath = fileTree("$kotlinNativeDist/konan/lib") {
             include "*.jar"
         }
         jvmArgs = konanJvmArgs

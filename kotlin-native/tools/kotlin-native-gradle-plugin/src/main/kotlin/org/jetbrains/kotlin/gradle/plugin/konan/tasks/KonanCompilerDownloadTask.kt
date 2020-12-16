@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.util.DependencySource
 import java.io.IOException
+import org.jetbrains.kotlin.*
 
 open class KonanCompilerDownloadTask : DefaultTask() {
 
@@ -40,7 +41,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
     @TaskAction
     fun downloadAndExtract() {
         if (!project.hasProperty(KonanPlugin.ProjectProperty.DOWNLOAD_COMPILER)) {
-            val konanHome = project.getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)
+            val konanHome = project.kotlinNativeDist
             logger.info("Use a user-defined compiler path: $konanHome")
         } else {
             try {

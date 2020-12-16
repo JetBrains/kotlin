@@ -50,10 +50,15 @@ val Project.testOutputFramework
 val Project.testOutputExternal
     get() = (findProperty("testOutputExternal") as File).toString()
 
+val validPropertiesNames = listOf("kotlin.native.home",
+                                  "org.jetbrains.kotlin.native.home",
+                                  "konan.home")
+
 val Project.kotlinNativeDist
-    get() = this.rootProject.file(findProperty("kotlin.native.home")
-                                      ?: findProperty("org.jetbrains.kotlin.native.home")
-                                      ?: findProperty("konan.home") ?: "dist")
+    get() = rootProject.file(validPropertiesNames.firstOrNull{ hasProperty(it) }?.let{ findProperty(it) } ?: "dist")
+
+val kotlinNativeHome
+    get() = validPropertiesNames.mapNotNull(System::getProperty).first()
 
 val Project.useCustomDist
     get() = hasProperty("kotlin.native.home") ||
@@ -132,15 +137,12 @@ fun Project.dependsOnDist(taskName: String) {
 }
 
 fun Task.dependsOnDist() {
-    // We don't build the compiler if a custom dist path is specified.
-    if (!(project.findProperty("useCustomDist") as Boolean)) {
-        dependsOn(":kotlin-native:dist")
-        val target = project.testTarget
-        if (target != HostManager.host) {
-            // if a test_target property is set then tests should depend on a crossDist
-            // otherwise, runtime components would not be build for a target.
-            dependsOn(":kotlin-native:${target.name}CrossDist")
-        }
+    dependsOn(":kotlin-native:dist")
+    val target = project.testTarget
+    if (target != HostManager.host) {
+        // if a test_target property is set then tests should depend on a crossDist
+        // otherwise, runtime components would not be build for a target.
+        dependsOn(":kotlin-native:${target.name}CrossDist")
     }
 }
 

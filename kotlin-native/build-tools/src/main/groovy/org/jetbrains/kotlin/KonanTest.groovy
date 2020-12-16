@@ -21,6 +21,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.*
 
 import java.nio.file.Paths
 import java.util.function.Function
@@ -83,6 +84,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
                 include '*.jar'
             }
             jvmArgs "-Xmx4G"
+            jvmArgs "-Dkonan.home=${UtilsKt.getKotlinNativeDist(project)}"
             enableAssertions = true
             def sources = File.createTempFile(name,".lst")
             sources.deleteOnExit()

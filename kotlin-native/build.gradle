@@ -65,7 +65,7 @@ if (isMac()) {
 }
 
 ext {
-    distDir = rootProject.file('dist')
+    distDir = UtilsKt.getKotlinNativeDist(project)
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
