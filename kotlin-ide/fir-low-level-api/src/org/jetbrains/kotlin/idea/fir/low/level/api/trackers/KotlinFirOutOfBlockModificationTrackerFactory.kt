@@ -10,12 +10,13 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
 
-class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project) {
-    fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker =
+class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project) : KotlinOutOfBlockModificationTrackerFactory() {
+    override fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker =
         KotlinFirOutOfBlockModificationTracker(project)
 
-    fun createModuleWithoutDependenciesOutOfBlockModificationTracker(module: Module): ModificationTracker =
+    override fun createModuleWithoutDependenciesOutOfBlockModificationTracker(module: Module): ModificationTracker =
         KotlinFirOutOfBlockModuleModificationTracker(module)
 
     @TestOnly
@@ -23,12 +24,6 @@ class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project
         project.service<KotlinFirModificationTrackerService>().increaseModificationCountForAllModules()
     }
 }
-
-fun Project.createProjectWideOutOfBlockModificationTracker() =
-    service<KotlinFirOutOfBlockModificationTrackerFactory>().createProjectWideOutOfBlockModificationTracker()
-
-fun Module.createModuleWithoutDependenciesOutOfBlockModificationTracker() =
-    project.service<KotlinFirOutOfBlockModificationTrackerFactory>().createModuleWithoutDependenciesOutOfBlockModificationTracker(this)
 
 private class KotlinFirOutOfBlockModificationTracker(project: Project) : ModificationTracker {
     private val trackerService = project.service<KotlinFirModificationTrackerService>()
