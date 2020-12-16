@@ -17,12 +17,25 @@ internal interface MultiplatformModelImportingContext {
 
     val targets: Collection<KotlinTarget>
     val compilations: Collection<KotlinCompilation>
-    
+
+    /**
+     * All source sets in a project, including those that are created but not included into any compilations
+     * (so-called "orphan" source sets). Use [isOrphanSourceSet] to get only compiled source sets
+     */
     val sourceSets: Collection<KotlinSourceSetImpl>
     val sourceSetsByNames: Map<String, KotlinSourceSetImpl>
 
     fun sourceSetByName(name: String): KotlinSourceSet?
     fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>?
+
+    /**
+     * "Orphan" is a source set which is not actually compiled by the compiler, i.e. the one
+     * which doesn't belong to any [KotlinCompilation].
+     *
+     * Orphan source sets might appear if one creates a source-set manually and doesn't link
+     * it anywhere (essentially this is a misconfiguration)
+     */
+    fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = compilationsBySourceSet(sourceSet) == null
 }
 
 internal fun MultiplatformModelImportingContext.getProperty(property: GradleImportProperties): Boolean = project.getProperty(property)
@@ -98,6 +111,9 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
         require(!this::targets.isInitialized) { "Attempt to re-initialize targets for $this. Previous value: ${this.targets}" }
         this.targets = targets
     }
+
+    // overload for small optimization
+    override fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in sourceSetToParticipatedCompilations.keys
 
     override fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? =
         sourceSetToParticipatedCompilations[sourceSet]
