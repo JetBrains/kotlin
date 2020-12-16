@@ -1,5 +1,5 @@
 data class A {
-  constructor(runA: @ExtensionFunctionType @ExtensionFunctionType Function2<A, String, Unit> = local fun A.<anonymous>(it: String) {
+  constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> = local fun A.<anonymous>(it: String) {
     return Unit
   }
 ) /* primary */ {
@@ -8,15 +8,15 @@ data class A {
 
   }
 
-  val runA: @ExtensionFunctionType @ExtensionFunctionType Function2<A, String, Unit>
+  val runA: @ExtensionFunctionType Function2<A, String, Unit>
     field = runA
     get
 
-  fun component1(): @ExtensionFunctionType @ExtensionFunctionType Function2<A, String, Unit> {
+  fun component1(): @ExtensionFunctionType Function2<A, String, Unit> {
     return <this>.#runA
   }
 
-  fun copy(runA: @ExtensionFunctionType @ExtensionFunctionType Function2<A, String, Unit> = <this>.#runA): A {
+  fun copy(runA: @ExtensionFunctionType Function2<A, String, Unit> = <this>.#runA): A {
     return A(runA = runA)
   }
 
