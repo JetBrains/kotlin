@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.assertEqualsToFile
 import junit.framework.TestCase
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
@@ -97,11 +98,24 @@ abstract class BasicBoxTest(
     protected open val testChecker get() = if (runTestInNashorn) NashornJsTestChecker else V8JsTestChecker
 
     fun doTest(filePath: String) {
-        doTest(filePath, "OK", MainCallParameters.noCall())
+        doTestWithIgnoringByFailFile(filePath, coroutinesPackage = "")
     }
 
     fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-        doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
+        doTestWithIgnoringByFailFile(filePath, coroutinesPackage)
+    }
+
+    fun doTestWithIgnoringByFailFile(filePath: String, coroutinesPackage: String) {
+        val failFile = File("$filePath.fail")
+        try {
+            doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
+        } catch (e: Throwable) {
+            if (failFile.exists()) {
+                KotlinTestUtils.assertEqualsToFile(failFile, e.message ?: "")
+            } else {
+                throw e
+            }
+        }
     }
 
     open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
