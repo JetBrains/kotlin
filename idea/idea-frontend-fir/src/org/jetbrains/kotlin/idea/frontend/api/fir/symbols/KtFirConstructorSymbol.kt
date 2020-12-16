@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirConstructorSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
@@ -49,8 +48,8 @@ internal class KtFirConstructorSymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
-        convertAnnotation(it)
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
+        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
     }
 
     override val containingClassIdIfNonLocal: ClassId?

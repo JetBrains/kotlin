@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
@@ -45,8 +46,8 @@ internal class KtFirClassOrObjectSymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
-        convertAnnotation(it)
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
+        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
     }
 
     override val isInner: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInner }

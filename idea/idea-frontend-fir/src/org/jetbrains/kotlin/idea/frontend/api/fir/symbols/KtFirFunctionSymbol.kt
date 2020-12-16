@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
@@ -48,20 +47,16 @@ internal class KtFirFunctionSymbol(
         }
     }
 
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
-        convertAnnotation(it)
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
+        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
     }
 
     override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
 
-    override val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+    override val receiverType: KtTypeAndAnnotations? by firRef.withFirAndCache { fir ->
         fir.receiverTypeRef?.let { typeRef ->
-            val type = builder.buildKtType(typeRef)
-            val annotations = typeRef.annotations.mapNotNull {
-                convertAnnotation(it, fir.session)
-            }
-            ReceiverTypeAndAnnotations(type, annotations)
+            KtFirTypeAndAnnotations(fir, typeRef, resolveState, token, builder)
         }
     }
 

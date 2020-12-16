@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSetterParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirSetterParameterSymbol(
@@ -37,8 +36,8 @@ internal class KtFirSetterParameterSymbol(
 
     override val isVararg: Boolean = false
 
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
-        convertAnnotation(it)
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
+        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
     }
 
     override fun createPointer(): KtSymbolPointer<KtSetterParameterSymbol> {

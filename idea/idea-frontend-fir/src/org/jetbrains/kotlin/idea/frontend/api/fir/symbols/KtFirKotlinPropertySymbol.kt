@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
@@ -48,13 +47,9 @@ internal class KtFirKotlinPropertySymbol(
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
 
-    override val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+    override val receiverType: KtTypeAndAnnotations? by firRef.withFirAndCache { fir ->
         fir.receiverTypeRef?.let { typeRef ->
-            val type = builder.buildKtType(typeRef)
-            val annotations = typeRef.annotations.mapNotNull {
-                convertAnnotation(it, fir.session)
-            }
-            ReceiverTypeAndAnnotations(type, annotations)
+            KtFirTypeAndAnnotations(fir, typeRef, resolveState, token, builder)
         }
     }
 
@@ -71,9 +66,8 @@ internal class KtFirKotlinPropertySymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-
-    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
-        convertAnnotation(it)
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache { fir ->
+        fir.annotations.map { KtFirAnnotationCall(fir, it, resolveState, token) }
     }
 
     override val callableIdIfNonLocal: FqName?

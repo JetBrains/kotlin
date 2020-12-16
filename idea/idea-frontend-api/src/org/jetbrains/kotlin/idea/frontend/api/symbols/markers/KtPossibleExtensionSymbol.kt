@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-data class ReceiverTypeAndAnnotations(val type: KtType, val annotations: List<KtAnnotationCall>)
+abstract class KtTypeAndAnnotations : ValidityTokenOwner {
+    abstract val type: KtType
+    abstract val annotations: List<KtAnnotationCall>
+}
 
 interface KtPossibleExtensionSymbol {
-    val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations?
+    val receiverType: KtTypeAndAnnotations?
     val isExtension: Boolean
 }
 
