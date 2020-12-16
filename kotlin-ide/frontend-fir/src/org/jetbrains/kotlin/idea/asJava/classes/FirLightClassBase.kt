@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import javax.swing.Icon
 
 abstract class FirLightClassBase protected constructor(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass,
@@ -59,7 +60,7 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
 
     private val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this@FirLightClassBase,
-        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
+        externalDependencies = listOf(manager.project.createProjectWideOutOfBlockModificationTracker()),
         lazyCreator = FirLightClassesLazyCreator(project)
     )
 
