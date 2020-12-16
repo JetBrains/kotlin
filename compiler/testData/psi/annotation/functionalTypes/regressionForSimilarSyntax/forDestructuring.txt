@@ -72,37 +72,28 @@ KtFile: forDestructuring.kt
                 VALUE_ARGUMENT
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('i')
-                PsiErrorElement:Expecting ')'
+                PsiErrorElement:Unexpected type specification
                   PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+                  PsiWhiteSpace(' ')
+                  PsiElement(ARROW)('->')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('Unit')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(in)('in')
           PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION
-            PsiElement(LPAR)('(')
-            PsiErrorElement:Expecting a name
-              <empty list>
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('y')
         PsiErrorElement:Expecting 'in'
-          PsiElement(ARROW)('->')
-        PsiErrorElement:Expecting ')'
           <empty list>
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         BODY
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('Unit')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('y')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
           BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FOR
         PsiElement(for)('for')

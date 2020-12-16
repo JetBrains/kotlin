@@ -12,5 +12,5 @@ fun test(nothing: Nothing?) {
 
 fun sum(<!UNUSED_PARAMETER!>a<!> : IntArray) : Int {
 for (n
-<!SYNTAX!>return<!><!SYNTAX!><!> "?"
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+<!SYNTAX!>return<!><!OI;SYNTAX!><!> <!NI;SYNTAX!>"?"<!><!NI;SYNTAX!><!>
+<!OI;NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!><!NI;SYNTAX!><!>}<!>

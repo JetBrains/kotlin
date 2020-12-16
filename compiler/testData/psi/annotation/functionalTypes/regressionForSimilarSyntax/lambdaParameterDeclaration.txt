@@ -86,16 +86,18 @@ KtFile: lambdaParameterDeclaration.kt
                       PsiElement(COLON)(':')
                       PsiWhiteSpace(' ')
                       PsiElement(IDENTIFIER)('kotlin')
-                    PsiErrorElement:Expecting ')'
                       PsiElement(DOT)('.')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Any')
+                      PsiElement(IDENTIFIER)('Any')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    VALUE_ARGUMENT
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bar')
+                    PsiElement(RPAR)(')')
+                PsiErrorElement:Expecting an element
+                  <empty list>
+              PsiWhiteSpace(' ')
               PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                PsiElement(COMMA)(',')
-                PsiWhiteSpace(' ')
-                PsiElement(IDENTIFIER)('bar')
-                PsiElement(RPAR)(')')
-                PsiWhiteSpace(' ')
                 PsiElement(ARROW)('->')
             PsiWhiteSpace(' ')
             PsiElement(RBRACE)('}')
