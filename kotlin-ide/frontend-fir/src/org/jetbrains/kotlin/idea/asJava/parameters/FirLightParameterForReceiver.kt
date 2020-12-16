@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.ReceiverTypeAndAnnotations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleExtensionSymbol
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class FirLightParameterForReceiver private constructor(
-    private val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations,
+    private val receiverTypeAndAnnotations: KtTypeAndAnnotations,
     private val context: KtSymbol,
     methodName: String,
     method: FirLightMethod
@@ -36,7 +36,7 @@ internal class FirLightParameterForReceiver private constructor(
             if (callableSymbol !is KtPossibleExtensionSymbol) return null
 
             if (!callableSymbol.isExtension) return null
-            val extensionTypeAndAnnotations = callableSymbol.receiverTypeAndAnnotations ?: return null
+            val extensionTypeAndAnnotations = callableSymbol.receiverType ?: return null
 
             return FirLightParameterForReceiver(
                 receiverTypeAndAnnotations = extensionTypeAndAnnotations,

@@ -56,36 +56,3 @@ internal fun FirExpression.convertConstantExpression(): KtConstantValue =
         is FirConstExpression<*> -> KtSimpleConstantValue(value)
         else -> KtUnsupportedConstantValue
     }
-
-private fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {
-    val firTypeAlias = lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this
-    val expandedType = firTypeAlias.fir.expandedTypeRef.coneType
-    return expandedType.fullyExpandedType(session) as? ConeClassLikeType
-        ?: return this
-}
-
-internal fun convertAnnotation(
-    annotationCall: FirAnnotationCall,
-    session: FirSession
-): KtFirAnnotationCall? {
-
-    val declaredCone = annotationCall.annotationTypeRef.coneType as? ConeClassLikeType ?: return null
-
-    val classId = declaredCone.expandTypeAliasIfNeeded(session).classId ?: return null
-
-    val resultList = mapAnnotationParameters(annotationCall, session).map {
-        KtNamedConstantValue(it.key, it.value.convertConstantExpression())
-    }
-
-    return KtFirAnnotationCall(
-        classId = classId,
-        useSiteTarget = annotationCall.useSiteTarget,
-        psi = annotationCall.psi as? KtCallElement,
-        arguments = resultList
-    )
-}
-
-internal fun convertAnnotation(declaration: FirAnnotatedDeclaration): List<KtFirAnnotationCall> =
-    declaration.annotations.mapNotNull {
-        convertAnnotation(it, declaration.session)
-    }
