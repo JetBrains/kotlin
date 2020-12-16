@@ -11,7 +11,7 @@ sealed class Variant {
 }
 fun test(v: Variant?) = when(v) {
     Variant.Singleton -> "s"
-    is Variant.Something -> TODO()
     Variant.Another -> TODO()
+    is Variant.Something -> TODO()
     null -> TODO()
 }
