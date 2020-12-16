@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
@@ -674,7 +675,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 anonymousFunction.addReturn().compose()
             }
             is ResolutionMode.LambdaResolution -> {
-                transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn().compose()
+                transformAnonymousFunctionWithLambdaResolution(
+                    anonymousFunction.addReturnBeforeLambdaResolution(), data
+                ).addReturn().compose()
             }
             is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
                 val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: buildImplicitTypeRef()
@@ -766,6 +769,51 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    private fun FirAnonymousFunction.addReturnBeforeLambdaResolution(): FirAnonymousFunction {
+        if (returnTypeRef is FirResolvedTypeRef) return this
+        // The return type of this lambda is not resolved yet.
+
+        // The last expression will determine the return type of the lambda.
+        val lastExpression = body?.statements?.lastOrNull() as? FirExpression ?: return this
+        if (lastExpression.typeRef is FirResolvedTypeRef) return this
+        // But that last expression is not resolved either.
+
+        // If we proceed, that last expression will be visited in a dependent resolution mode, which may leave some expressions unresolved.
+        // For example,
+        //
+        //   funTypeReturningLambda {
+        //     fun local(...) { ... }
+        //     ::local // ^funTypeReturningLambda, but as the last expression, won't be resolved properly in a dependent resolution mode.
+        //   }
+        //
+        // Instead of altering the resolution mode for the entire lambda body, an alternative workaround is to add an explicit return, e.g.,
+        //
+        //   funTypeReturningLambda {
+        //     ...
+        //     return@funTypeReturningLambda ::local
+        //   }
+        if (lastExpression !is FirReturnExpression && !lastExpression.mayReturnNothingOrUnit) {
+            body?.transformChildren(
+                generateReturnAdder(this, lastExpression),
+                buildUnitExpression()
+            )
+        }
+        return this
+    }
+
+    private val FirExpression.mayReturnNothingOrUnit: Boolean
+        get() =
+            when (this) {
+                is FirThrowExpression -> true
+                is FirUnitExpression -> true
+
+                is FirCallableReferenceAccess -> false
+                // TODO: Add more expression kinds that surely do not return Nothing/Unit
+
+                // Conservatively assume all other kinds of expressions may return Nothing or Unit.
+                else -> true
+            }
+
     private fun FirAnonymousFunction.addReturn(): FirAnonymousFunction {
         // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
         // During conversion (to backend IR), the last expression will be coerced to Unit if needed.
@@ -773,39 +821,46 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (returnTypeRef.isUnit && body?.typeRef?.isMarkedNullable == false) {
             return this
         }
-        val lastStatement = body?.statements?.lastOrNull()
-        val returnType = (body?.typeRef as? FirResolvedTypeRef) ?: return this
-        val returnNothing = returnType.isNothing || returnType.isUnit
-        if (lastStatement is FirExpression && !returnNothing) {
-            body?.transformChildren(
-                object : FirDefaultTransformer<FirExpression>() {
-                    override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
-                        if (element == lastStatement) {
-                            val returnExpression = buildReturnExpression {
-                                source = element.source?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
-                                result = lastStatement
-                                target = FirFunctionTarget(null, isLambda = this@addReturn.isLambda).also {
-                                    it.bind(this@addReturn)
-                                }
-                            }
-                            @Suppress("UNCHECKED_CAST")
-                            return (returnExpression as E).compose()
-                        }
-                        return element.compose()
-                    }
 
-                    override fun transformReturnExpression(
-                        returnExpression: FirReturnExpression,
-                        data: FirExpression
-                    ): CompositeTransformResult<FirStatement> {
-                        return returnExpression.compose()
-                    }
-                },
+        val returnType = (body?.typeRef as? FirResolvedTypeRef) ?: return this
+        val returnNothingOrUnit = returnType.isNothing || returnType.isUnit
+        val lastExpression = body?.statements?.lastOrNull() as? FirExpression ?: return this
+        if (lastExpression !is FirReturnExpression && !returnNothingOrUnit) {
+            body?.transformChildren(
+                generateReturnAdder(this, lastExpression),
                 buildUnitExpression()
             )
         }
         return this
     }
+
+    private fun generateReturnAdder(
+        anonymousFunction: FirAnonymousFunction,
+        lastExpression: FirExpression
+    ): FirDefaultTransformer<FirExpression> =
+        object : FirDefaultTransformer<FirExpression>() {
+            override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
+                if (element == lastExpression) {
+                    val returnExpression = buildReturnExpression {
+                        source = element.source?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
+                        result = lastExpression
+                        target = FirFunctionTarget(null, isLambda = anonymousFunction.isLambda).also {
+                            it.bind(anonymousFunction)
+                        }
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    return (returnExpression as E).compose()
+                }
+                return element.compose()
+            }
+
+            override fun transformReturnExpression(
+                returnExpression: FirReturnExpression,
+                data: FirExpression
+            ): CompositeTransformResult<FirStatement> {
+                return returnExpression.compose()
+            }
+        }
 
     private inline fun <T> withScopesForClass(
         labelName: Name?,

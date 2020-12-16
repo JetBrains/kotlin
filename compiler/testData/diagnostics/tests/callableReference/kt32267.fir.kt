@@ -4,8 +4,8 @@
 
 fun main() {
     Configuration().commands {
-        Command1 { someService::execute } // Overload resolution ambiguity. All these functions match.
-        Command2 { someService::execute } // Overload resolution ambiguity. All these functions match.
+        Command1 { <!UNRESOLVED_REFERENCE!>someService::execute<!> } // Overload resolution ambiguity. All these functions match.
+        Command2 { <!UNRESOLVED_REFERENCE!>someService::execute<!> } // Overload resolution ambiguity. All these functions match.
         Command1 { { someService.execute(it) } } // fine
         Command2 { { someService.execute(it) } } // fine
     }

@@ -18,13 +18,13 @@ fun main(x: Inv<Int>) {
     x.foo<Int> {
         if (x.hashCode() == 0) return@foo <!UNRESOLVED_REFERENCE!>::bar<!>
 
-        ::bar
+        <!UNRESOLVED_REFERENCE!>::bar<!>
     }
 
     x.foo {
         if (x.hashCode() == 0) return@foo <!UNRESOLVED_REFERENCE!>::bar<!>
 
-        ::bar
+        <!UNRESOLVED_REFERENCE!>::bar<!>
     }
 
     foo1 {
