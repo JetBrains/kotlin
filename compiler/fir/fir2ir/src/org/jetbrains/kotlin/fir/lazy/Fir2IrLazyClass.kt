@@ -45,7 +45,7 @@ class Fir2IrLazyClass(
     override lateinit var parent: IrDeclarationParent
 
     override val source: SourceElement
-        get() = SourceElement.NO_SOURCE
+        get() = fir.sourceElement ?: SourceElement.NO_SOURCE
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
