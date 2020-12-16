@@ -50,7 +50,7 @@ protected constructor(
     private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> =
         storageManager.createMemoizedFunction { doGetProperties(it) }
     private val typeAliasDescriptors: MemoizedFunctionToNotNull<Name, Collection<TypeAliasDescriptor>> =
-        storageManager.createMemoizedFunction { doGetTypeAliases(it) }
+        storageManager.createMemoizedFunction( { doGetTypeAliases(it) }, onRecursiveCall = { _,_ -> emptyList() })
 
     private val declaredFunctionDescriptors: MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> =
         storageManager.createMemoizedFunction { getDeclaredFunctions(it) }

@@ -24558,6 +24558,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/typealias/boundsViolationInTypeAliasRHS.kt");
             }
 
+            @TestMetadata("boundsViolationRecursive.kt")
+            public void testBoundsViolationRecursive() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/boundsViolationRecursive.kt");
+            }
+
             @TestMetadata("capturingTypeParametersFromOuterClass.kt")
             public void testCapturingTypeParametersFromOuterClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/capturingTypeParametersFromOuterClass.kt");
