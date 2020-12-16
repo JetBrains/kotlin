@@ -257,7 +257,7 @@ class ModuleStructureExtractorImpl(
             filesOfCurrentModule.add(
                 TestFile(
                     relativePath = filename,
-                    originalContent = linesOfCurrentFile.joinToString(separator = System.lineSeparator(), postfix = System.lineSeparator()),
+                    originalContent = linesOfCurrentFile.joinToString(separator = "\n", postfix = "\n"),
                     originalFile = currentTestDataFile,
                     startLineNumberInOriginalFile = startLineNumberOfCurrentFile,
                     isAdditional = false
