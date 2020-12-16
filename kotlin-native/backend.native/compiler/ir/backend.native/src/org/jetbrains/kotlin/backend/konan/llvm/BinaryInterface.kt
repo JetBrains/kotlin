@@ -116,11 +116,15 @@ fun IrFunction.computeFunctionName() = with(KonanBinaryInterface) { functionName
 
 fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.identifier(computeFunctionName())).asString()
 
-fun IrFunction.computeSymbolName() = with(KonanBinaryInterface) { symbolName }
+fun IrFunction.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
-fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }
+fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
-fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }
+fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
+
+private fun String.replaceSpecialSymbols() =
+        // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.
+        this.replace("@", "__at__")
 
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 
