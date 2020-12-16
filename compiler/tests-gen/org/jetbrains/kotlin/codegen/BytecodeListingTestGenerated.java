@@ -1046,6 +1046,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/noBridgesForErasedInlineClass.kt");
         }
 
+        @TestMetadata("nullabilityAnnotationsOnInlineClassMembers.kt")
+        public void testNullabilityAnnotationsOnInlineClassMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/nullabilityAnnotationsOnInlineClassMembers.kt");
+        }
+
         @TestMetadata("nullabilityInExpansion.kt")
         public void testNullabilityInExpansion() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/nullabilityInExpansion.kt");
