@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 
 class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
-    private val modificationTracker = KotlinModificationTrackerService.getInstance(project).modificationTracker
+    private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
     @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)

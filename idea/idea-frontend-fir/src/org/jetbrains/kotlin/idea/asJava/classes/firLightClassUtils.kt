@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
@@ -39,7 +40,7 @@ fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
         CachedValueProvider.Result
             .create(
                 createFirLightClassNoCache(classOrObject),
-                KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker
+                classOrObject.project.createProjectWideOutOfBlockModificationTracker()
             )
     }
 
