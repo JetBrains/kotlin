@@ -28558,6 +28558,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("boundsViolationRecursive.kt")
+            public void testBoundsViolationRecursive() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/boundsViolationRecursive.kt");
+            }
+
+            @Test
             @TestMetadata("capturingTypeParametersFromOuterClass.kt")
             public void testCapturingTypeParametersFromOuterClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/capturingTypeParametersFromOuterClass.kt");
