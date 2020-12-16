@@ -214,6 +214,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
     }
 
+    @TestMetadata("strictfpFlag.kt")
+    public void testStrictfpFlag() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/strictfpFlag.kt");
+    }
+
+    @TestMetadata("synchronizedFlag.kt")
+    public void testSynchronizedFlag() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/synchronizedFlag.kt");
+    }
+
     @TestMetadata("varargsBridge.kt")
     public void testVarargsBridge() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/varargsBridge.kt");
