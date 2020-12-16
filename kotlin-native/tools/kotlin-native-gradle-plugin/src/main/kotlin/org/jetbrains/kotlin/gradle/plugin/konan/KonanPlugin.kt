@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.buildDistribution
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.*
 import java.io.File
 import javax.inject.Inject
 
@@ -87,8 +88,7 @@ internal fun Project.setProperty(property: KonanPlugin.ProjectProperty, value: A
 // konanHome extension is set by downloadKonanCompiler task.
 internal val Project.konanHome: String
     get() {
-        assert(hasProperty(KonanPlugin.ProjectProperty.KONAN_HOME))
-        return project.file(getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)).canonicalPath
+        return project.kotlinNativeDist.absolutePath
     }
 
 internal val Project.konanVersion: CompilerVersion
@@ -346,7 +346,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.warnAboutDeprecatedProperty(ProjectProperty.KONAN_HOME)
 
         // Set additional project properties like org.jetbrains.kotlin.native.home, konan.build.targets etc.
-        if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
+        if (!project.useCustomDist) {
             project.setProperty(ProjectProperty.KONAN_HOME, project.konanCompilerDownloadDir())
             project.setProperty(ProjectProperty.DOWNLOAD_COMPILER, true)
         }

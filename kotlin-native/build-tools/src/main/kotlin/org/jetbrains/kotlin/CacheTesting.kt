@@ -35,15 +35,7 @@ fun configureCacheTesting(project: Project): CacheTesting? {
             cacheDir.mkdirs()
         }
 
-        if (!(project.property("useCustomDist") as Boolean)) {
-            val tasks = listOf(
-                    "${target}CrossDist",
-                    "${target}CrossDistRuntime",
-                    "distCompiler"
-            ).map { task -> project.rootProject.tasks.getByName(task) }
-
-            dependsOn(tasks)
-        }
+        dependsOnDist()
 
         commandLine(
                 "$dist/bin/konanc",

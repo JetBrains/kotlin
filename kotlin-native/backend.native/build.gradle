@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.konan.target.HostManager
-
+import org.jetbrains.kotlin.*
 /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
@@ -239,9 +239,10 @@ targetList.each { target ->
     task("${target}Stdlib", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         // This task depends on distCompiler, so the compiler jar is already in the dist directory.
-        classpath = fileTree("${rootProject.projectDir}/dist/konan/lib") {
+        classpath = fileTree("${UtilsKt.getKotlinNativeDist(project)}/konan/lib") {
             include "*.jar"
         }
+        systemProperties "konan.home": UtilsKt.getKotlinNativeDist(project)
         jvmArgs = konanJvmArgs
         def testAnnotationCommon = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
         def testCommon = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files

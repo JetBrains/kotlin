@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.nio.file.Files
+import org.jetbrains.kotlin.*
 
 internal interface KonanToolRunner: Named {
     val mainClass: String
@@ -105,6 +106,7 @@ internal abstract class KonanCliRunner(
                         .escapeQuotesForWindows()
                         .toMap()
                 )
+                exec.systemProperty("konan.home", project.kotlinNativeDist.absolutePath)
                 exec.args(listOf(toolName) + transformArgs(args))
                 this@KonanCliRunner.blacklistEnvironment.forEach { environment.remove(it) }
                 exec.environment(environment)
