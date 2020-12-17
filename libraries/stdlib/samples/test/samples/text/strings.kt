@@ -421,4 +421,12 @@ class Strings {
         assertPrints(emptyString.lastOrNull(), "null")
         assertFails { emptyString.last() }
     }
+
+    @Sample
+    fun regionMatches() {
+        // compare first 4 chars
+        assertTrue("java".regionMatches(0, "javascript", 0, 4))
+        // enable ignoreCase
+        assertTrue("ECMAScript".regionMatches(4, "javascript", 4, 6, true))
+    }
 }

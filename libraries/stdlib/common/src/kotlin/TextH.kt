@@ -283,6 +283,8 @@ expect fun CharSequence.isBlank(): Boolean
  * @param other the string against a substring of which the comparison is performed.
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
+ *
+ * @sample samples.text.Strings.regionMatches
  */
 expect fun CharSequence.regionMatches(
     thisOffset: Int,
