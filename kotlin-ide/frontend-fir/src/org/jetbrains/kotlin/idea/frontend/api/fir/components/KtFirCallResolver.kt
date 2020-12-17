@@ -89,10 +89,11 @@ internal class KtFirCallResolver(
         val target = when (val calleeReference = calleeReference) {
             is FirResolvedNamedReference -> calleeReference.getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
             is FirErrorNamedReference -> calleeReference.createErrorCallTarget()
-            is FirSimpleNamedReference -> error(
-                "Looks like FirFunctionCall was not resolved to BODY_RESOLVE phase, " +
-                        "consider resolving it containing declaration before starting resolve calls"
-            )
+            is FirSimpleNamedReference ->
+                error(
+                    "Looks like FirFunctionCall was not resolved to BODY_RESOLVE phase, " +
+                            "consider resolving it containing declaration before starting resolve calls"
+                )
             else -> error("Unexpected call reference ${calleeReference::class.simpleName}")
         } ?: return null
         return KtFunctionCall(target)

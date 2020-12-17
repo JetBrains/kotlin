@@ -13,21 +13,30 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun isValid(): Boolean {
-        val application = ApplicationManager.getApplication()
-        if (application.isDispatchThread && !allowOnEdt.get()) return false
-        if (!application.isReadAccessAllowed) return false
         return onCreatedTimeStamp == modificationTracker.modificationCount
     }
 
     @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun getInvalidationReason(): String {
+        if (onCreatedTimeStamp != modificationTracker.modificationCount) return "PSI has changed since creation"
+        error("Getting invalidation reason for valid validity token")
+    }
+
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    override fun isAccessible(): Boolean {
+        val application = ApplicationManager.getApplication()
+        if (application.isDispatchThread && !allowOnEdt.get()) return false
+        if (!application.isReadAccessAllowed) return false
+        return true
+    }
+
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    override fun getInaccessibilityReason(): String {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
         if (!application.isReadAccessAllowed) return "Called outside read action"
-        if (onCreatedTimeStamp != modificationTracker.modificationCount) return "PSI has changed since creation"
-        error("Getting invalidation reason for valid validity token")
+        error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
     companion object {

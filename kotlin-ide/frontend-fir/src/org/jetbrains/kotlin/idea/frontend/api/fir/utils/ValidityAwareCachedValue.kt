@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -22,7 +22,7 @@ class ValidityAwareCachedValue<T>(
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
-        token.assertIsValid()
+        token.assertIsValidAndAccessible()
         return lazyValue.value
     }
 }
