@@ -152,7 +152,7 @@ internal class FirLazyDeclarationResolver(
         val designation = mutableListOf<FirDeclaration>(containerFirFile)
 
         if (nonLocalDeclarationToResolve !is FirFile) {
-            val ktDeclaration = firDeclarationToResolve.ktDeclaration
+            val ktDeclaration = nonLocalDeclarationToResolve.ktDeclaration
             designation += ktDeclaration.parentsOfType<KtClassOrObject>()
                 .filter { it !is KtEnumEntry }
                 .map { it.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache, containerFirFile) }
