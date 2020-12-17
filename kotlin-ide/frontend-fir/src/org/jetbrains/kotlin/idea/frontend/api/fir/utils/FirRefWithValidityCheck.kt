@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
@@ -18,6 +19,10 @@ import java.lang.ref.WeakReference
 internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveState: FirModuleResolveState, val token: ValidityToken) {
     private val firWeakRef = WeakReference(fir)
     private val resolveStateWeakRef = WeakReference(resolveState)
+
+    @TestOnly
+    internal fun isCollected(): Boolean =
+        firWeakRef.get() == null && resolveStateWeakRef.get() == null
 
     inline fun <R> withFir(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline action: (fir: D) -> R): R {
         token.assertIsValid()
