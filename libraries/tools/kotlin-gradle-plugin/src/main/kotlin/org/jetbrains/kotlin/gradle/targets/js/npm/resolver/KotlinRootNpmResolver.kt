@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.logging.Logger
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResol
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -33,6 +33,14 @@ internal class KotlinRootNpmResolver internal constructor(
 ) {
     val rootProject: Project
         get() = nodeJs.rootProject
+
+    val rootProjectName by lazy {
+        rootProject.name
+    }
+
+    val rootProjectVersion by lazy {
+        rootProject.version.toString()
+    }
 
     val plugins = mutableListOf<RootResolverPlugin>().also {
         it.add(DukatRootResolverPlugin(this))
@@ -50,6 +58,10 @@ internal class KotlinRootNpmResolver internal constructor(
     val gradleNodeModules = GradleNodeModulesCache(nodeJs)
     val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
     val projectResolvers = mutableMapOf<String, KotlinProjectNpmResolver>()
+
+    val yarn by lazy {
+        YarnPlugin.apply(rootProject)
+    }
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
@@ -95,7 +107,7 @@ internal class KotlinRootNpmResolver internal constructor(
     /**
      * Don't use directly, use [KotlinNpmResolutionManager.installIfNeeded] instead.
      */
-    internal fun prepareInstallation(): Installation {
+    internal fun prepareInstallation(logger: Logger): Installation {
         synchronized(this@KotlinRootNpmResolver) {
             check(state == State.CONFIGURING) {
                 "Projects must be configuring"
@@ -109,14 +121,15 @@ internal class KotlinRootNpmResolver internal constructor(
 
             gradleNodeModules.close()
 
-            val yarn = YarnPlugin.apply(rootProject)
-
             nodeJs.packageManager.prepareRootProject(
                 rootProject,
+                nodeJs,
+                rootProjectName,
+                rootProjectVersion,
+                logger,
                 allNpmPackages,
                 yarn.resolutions
-                    .associate { it.path to it.toVersionString() }
-            )
+                    .associate { it.path to it.toVersionString() })
 
             return Installation(
                 projectResolutions
@@ -130,7 +143,9 @@ internal class KotlinRootNpmResolver internal constructor(
 
         internal fun install(
             forceUpToDate: Boolean,
-            args: List<String>
+            args: List<String>,
+            services: ServiceRegistry,
+            logger: Logger
         ): KotlinRootNpmResolution {
             synchronized(this@KotlinRootNpmResolver) {
                 check(state == State.PROJECTS_CLOSED) {
@@ -147,12 +162,15 @@ internal class KotlinRootNpmResolver internal constructor(
                 // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
                 // because our upToDateChecks saves state for next execution
                 val upToDateChecks = allNpmPackages.map {
-                    PackageJsonUpToDateCheck(it.npmProject)
+                    PackageJsonUpToDateCheck(services, it.npmProject)
                 }
                 val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
                 nodeJs.packageManager.resolveRootProject(
-                    nodeJs.rootProject,
+                    services,
+                    logger,
+                    nodeJs,
+                    yarn.requireConfigured().home,
                     allNpmPackages,
                     upToDate,
                     args

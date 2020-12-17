@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
+import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
@@ -25,29 +28,43 @@ class Yarn : NpmApi {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) =
         getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
 
-    override fun preparedFiles(project: Project): Collection<File> =
-        getDelegate(project).preparedFiles(project)
+    override fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File> =
+        yarnWorkspaces.preparedFiles(nodeJs)
 
     override fun prepareRootProject(
-        rootProject: Project,
+        rootProject: Project?,
+        nodeJs: NodeJsRootExtension,
+        rootProjectName: String,
+        rootProjectVersion: String,
+        logger: Logger,
         subProjects: Collection<KotlinCompilationNpmResolution>,
         resolutions: Map<String, String>
-    ) = getDelegate(rootProject.project)
+    ) = yarnWorkspaces
         .prepareRootProject(
             rootProject,
+            nodeJs,
+            rootProjectName,
+            rootProjectVersion,
+            logger,
             subProjects,
             resolutions
         )
 
     override fun resolveRootProject(
-        rootProject: Project,
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsRootExtension,
+        yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
         cliArgs: List<String>
     ) {
-        getDelegate(rootProject.project)
+        yarnWorkspaces
             .resolveRootProject(
-                rootProject,
+                services,
+                logger,
+                nodeJs,
+                yarnHome,
                 npmProjects,
                 skipExecution,
                 cliArgs

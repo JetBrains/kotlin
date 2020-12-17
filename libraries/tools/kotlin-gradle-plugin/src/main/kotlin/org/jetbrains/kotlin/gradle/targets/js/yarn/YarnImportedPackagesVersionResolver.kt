@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import com.google.gson.Gson
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmR
 import java.io.File
 
 class YarnImportedPackagesVersionResolver(
-    private val rootProject: Project,
+    private val logger: Logger,
     private val npmProjects: Collection<KotlinCompilationNpmResolution>,
     private val nodeJsWorldDir: File
 ) {
@@ -53,7 +54,7 @@ class YarnImportedPackagesVersionResolver(
         modules.groupBy { it.name }.forEach { (name, versions) ->
             val selected: GradleNodeModule = if (versions.size > 1) {
                 val sorted = versions.sortedBy { it.semver }
-                rootProject.logger.warn(
+                logger.warn(
                     "There are multiple versions of \"$name\" used in nodejs build: ${sorted.joinToString(", ") { it.version }}. " +
                             "Only latest version will be used."
                 )

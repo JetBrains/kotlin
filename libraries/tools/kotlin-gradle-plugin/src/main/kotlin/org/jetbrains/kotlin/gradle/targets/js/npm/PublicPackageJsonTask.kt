@@ -27,7 +27,10 @@ constructor(
     private val nodeJs = npmProject.nodeJs
 
     private val compilationResolution
-        get() = nodeJs.npmResolutionManager.requireInstalled()[project.path][npmProject.compilation]
+        get() = nodeJs.npmResolutionManager.requireInstalled(
+            services,
+            logger
+        )[project.path][npmProject.compilation]
 
     init {
         // TODO: temporary workaround for configuration cache enabled builds

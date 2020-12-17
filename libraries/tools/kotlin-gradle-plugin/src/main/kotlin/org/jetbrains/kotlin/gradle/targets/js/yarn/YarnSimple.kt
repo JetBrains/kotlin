@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logger
+import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
@@ -17,28 +22,38 @@ class YarnSimple : YarnBasics() {
 
         val project = resolvedNpmProject.project
 
-        PackageJsonUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
-            yarnExec(
-                project,
-                resolvedNpmProject.npmProject.dir,
-                NpmApi.resolveOperationDescription("yarn for ${project.path}"),
-                emptyList()
-            )
-            yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.externalNpmDependencies)
-        }
+//        PackageJsonUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
+//            yarnExec(
+//                (project as ProjectInternal).services,
+//                project.logger,
+//                NodeJsRootPlugin.apply(project),
+//                YarnPlugin.apply(project).requireConfigured().home,
+//                resolvedNpmProject.npmProject.dir,
+//                NpmApi.resolveOperationDescription("yarn for ${project.path}"),
+//                emptyList()
+//            )
+//            yarnLockReadTransitiveDependencies(resolvedNpmProject.npmProject.dir, resolvedNpmProject.externalNpmDependencies)
+//        }
     }
 
-    override fun preparedFiles(project: Project): Collection<File> =
+    override fun preparedFiles(nodeJs: NodeJsRootExtension): Collection<File> =
         emptyList()
 
     override fun prepareRootProject(
-        rootProject: Project,
+        rootProject: Project?,
+        nodeJs: NodeJsRootExtension,
+        rootProjectName: String,
+        rootProjectVersion: String,
+        logger: Logger,
         subProjects: Collection<KotlinCompilationNpmResolution>,
         resolutions: Map<String, String>
     ) = Unit
 
     override fun resolveRootProject(
-        rootProject: Project,
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsRootExtension,
+        yarnHome: File,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
         skipExecution: Boolean,
         cliArgs: List<String>
