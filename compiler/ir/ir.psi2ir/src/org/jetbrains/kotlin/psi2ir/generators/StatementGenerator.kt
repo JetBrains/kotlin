@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.IntermediateValue
 import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -327,7 +328,8 @@ class StatementGenerator(
     ): IrExpression =
         CallGenerator(this).generateValueReference(
             expression.startOffsetSkippingComments, expression.endOffset,
-            descriptor, resolvedCall, null
+            descriptor, resolvedCall, null,
+            context.bindingContext.get(SMARTCAST, expression)?.defaultType?.toIrType()
         )
 
     override fun visitCallExpression(expression: KtCallExpression, data: Nothing?): IrStatement {

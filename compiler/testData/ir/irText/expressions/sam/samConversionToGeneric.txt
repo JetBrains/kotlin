@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
       CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: @[FlexibleNullability] kotlin.String?
         j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>?
-          TYPE_OP type=kotlin.Function1<@[ParameterName(name = 'x')] @[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[ParameterName(name = 'x')] @[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>
+          TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
   FUN name:test6 visibility:public modality:FINAL <T> (a:kotlin.Function1<T of <root>.test6, T of <root>.test6>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
       CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: @[FlexibleNullability] T of <root>.test7?
         j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] T of <root>.test7?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] T of <root>.test7?>?
-          TYPE_OP type=kotlin.Function1<@[ParameterName(name = 'x')] @[FlexibleNullability] T of <root>.test7?, @[FlexibleNullability] T of <root>.test7?> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[ParameterName(name = 'x')] @[FlexibleNullability] T of <root>.test7?, @[FlexibleNullability] T of <root>.test7?>
+          TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
             GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
   FUN name:test8 visibility:public modality:FINAL <> (efn:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.J<@[FlexibleNullability] kotlin.String?>
     VALUE_PARAMETER name:efn index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>
