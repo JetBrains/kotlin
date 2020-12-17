@@ -2,6 +2,7 @@ callable: kotlin/collections/List.listIterator
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/collections/ListIterator<E>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.List.listIterator
   isExtension: false
@@ -13,14 +14,14 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/collections/ListIterator<E>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.List.listIterator
   isExtension: false
@@ -32,9 +33,8 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/collections/ListIterator<E>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
   visibility: PUBLIC

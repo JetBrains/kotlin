@@ -3,15 +3,16 @@ fun foo(x: Int) {}
 // SYMBOLS:
 /*
 KtFirFunctionValueParameterSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   hasDefaultValue: false
   isVararg: false
   name: x
   origin: SOURCE
   symbolKind: NON_PROPERTY_PARAMETER
-  type: kotlin/Int
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
   annotations: []
   callableIdIfNonLocal: foo
   isExtension: false
@@ -23,9 +24,8 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(x)]
   visibility: PUBLIC

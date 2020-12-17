@@ -3,12 +3,12 @@ class A() {
 
 // SYMBOLS:
 KtFirConstructorSymbol:
+  annotatedType: [] A
   annotations: []
   containingClassIdIfNonLocal: A
   isPrimary: true
   origin: SOURCE
   symbolKind: MEMBER
-  type: A
   valueParameters: []
   visibility: PUBLIC
 
@@ -22,7 +22,7 @@ KtFirClassOrObjectSymbol:
   name: A
   origin: SOURCE
   primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC

@@ -2,6 +2,7 @@ callable: kotlin/collections/List.get
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] E
   annotations: []
   callableIdIfNonLocal: kotlin.collections.List.get
   isExtension: false
@@ -13,9 +14,8 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: E
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
   visibility: PUBLIC

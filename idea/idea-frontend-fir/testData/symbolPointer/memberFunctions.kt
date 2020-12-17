@@ -5,6 +5,7 @@ class A {
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: A.x
   isExtension: false
@@ -16,14 +17,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
   annotations: []
   callableIdIfNonLocal: A.y
   isExtension: false
@@ -35,9 +36,8 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
@@ -52,7 +52,7 @@ KtFirClassOrObjectSymbol:
   name: A
   origin: SOURCE
   primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
