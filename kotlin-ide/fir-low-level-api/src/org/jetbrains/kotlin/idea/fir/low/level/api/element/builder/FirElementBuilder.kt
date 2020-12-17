@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 
 /**
@@ -83,9 +86,9 @@ internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate:
     var container: PsiElement? = this
     while (container != null && container !is KtFile) {
         if (container is KtNamedDeclaration
-            && (container is KtClassOrObject || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
+            && (container.isNonAnonymousClassOrObject() || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
             && container !is KtPrimaryConstructor
-            && !KtPsiUtil.isLocal(container)
+            && container.hasFqName()
             && container !is KtEnumEntry
             && container.containingClassOrObject !is KtEnumEntry
             && predicate(container)
@@ -96,6 +99,14 @@ internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate:
     }
     return null
 }
+
+private fun KtDeclaration.isNonAnonymousClassOrObject() =
+    this is KtClassOrObject
+            && !this.isObjectLiteral()
+
+
+private fun KtDeclaration.hasFqName(): Boolean =
+    parentsOfType<KtDeclaration>(withSelf = false).all { it.isNonAnonymousClassOrObject() }
 
 internal fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtNamedDeclaration? =
     getNonLocalContainingOrThisDeclaration { declaration ->
