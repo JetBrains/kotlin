@@ -4542,12 +4542,13 @@ tasks.register("library_mismatch", KonanDriverTest) {
     compilerMessages = true
     def messages =
         "warning: skipping $dir/1.2/empty.klib. The library versions don't match. Expected '5.6', found '1.2'\n" +
-        "warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
+        //"warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
         "Hello, versioned world!\n"
     goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
     outputChecker = { out ->
+        def outV = out.split("\n").findAll{ !it.startsWith("WARNING: ") }.join("\n")
         goldValue.split("\n")
-                .collect { line -> out.contains(line) }
+                .collect { line -> outV.contains(line) }
                 .every { it == true }
     }
 }
