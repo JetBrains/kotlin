@@ -649,12 +649,11 @@ configure([bundleRegular, bundlePrebuilt]) {
 }
 
 task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
-    dependsOn('distPlatformLibs')
     dependsOn('dist')
     dependsOn('distSources')
     def simpleOsName = HostManager.simpleOsName()
     archiveBaseName.set("kotlin-native-dist-$simpleOsName-$konanVersionFull")
-    from("$project.rootDir/dist") {
+    from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
         into archiveBaseName
@@ -757,7 +756,8 @@ task teamcityCompilerVersion {
 task clean {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doLast {
-        delete distDir
+        if (distDir.exists())
+            delete distDir
         delete bundle.outputs.files
         delete "${projectDir}/compile_commands.json"
     }
