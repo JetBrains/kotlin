@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
@@ -18,26 +17,21 @@ abstract class AbstractForeignAnnotationsCompiledJavaDiagnosticTest : AbstractDi
         files: List<TestFile>
     ) {
         val ktFiles = files.filter { !it.name.endsWith(".java") }
-
-        val dir = createTempDirectory()
         val javaFile = File("${wholeFile.parentFile.path}/${wholeFile.nameWithoutExtension}.java")
 
-        File("$dir/${wholeFile.nameWithoutExtension}.java").apply { createNewFile() }.writeText(javaFile.readText())
-        File(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH).copyRecursively(File("$dir/annotations/"))
+        assertExists(javaFile)
+
+        val javaFilesDir = createTempDirectory().toFile().also {
+            File(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH).copyRecursively(File("$it/annotations/"))
+            javaFile.copyTo(File("$it/${javaFile.name}"))
+        }
 
         super.doMultiFileTest(
             wholeFile,
             ktFiles,
-            compileJavaFilesLibraryToJar(dir.toString(), "foreign-annotations"),
+            compileJavaFilesLibraryToJar(javaFilesDir.path, "java-files"),
             usePsiClassFilesReading = false,
             excludeNonTypeUseJetbrainsAnnotations = true
         )
-    }
-
-    override fun doTest(filePath: String) {
-        val file = File(filePath)
-        val expectedText = KotlinTestUtils.doLoadFile(file)
-
-        doMultiFileTest(file, createTestFilesFromFile(file, expectedText))
     }
 }

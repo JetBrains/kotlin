@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.computeTargetType
-import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.translatePath
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -38,20 +37,14 @@ internal class AnnotationsCollectorFieldVisitor(
         if (descriptor == null) return null
 
         val typeReference = TypeReference(typeRef)
+        val targetType = if (typePath != null) computeTargetType(field.type, typePath) else field.type
 
-        if (typePath != null) {
-            val translatedPath = translatePath(typePath)
-
-            when (typeReference.sort) {
-                TypeReference.FIELD -> {
-                    val targetType = computeTargetType(field.type, translatedPath)
-                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser, true)
-                }
-            }
-        }
+        if (targetType !is MutableJavaAnnotationOwner) return null
 
         return when (typeReference.sort) {
-            TypeReference.FIELD -> BinaryJavaAnnotation.addAnnotation(field.type as JavaPlainType, descriptor, context, signatureParser, true)
+            TypeReference.FIELD -> BinaryJavaAnnotation.addAnnotation(
+                targetType, descriptor, context, signatureParser, isFreshlySupportedAnnotation = true
+            )
             else -> null
         }
     }
@@ -69,7 +62,9 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
     private var visibleAnnotableParameterCount = parametersCountInMethodDesc
     private var invisibleAnnotableParameterCount = parametersCountInMethodDesc
 
-    override fun visitAnnotationDefault(): AnnotationVisitor? =
+    val freshlySupportedPositions = setOf(TypeReference.METHOD_TYPE_PARAMETER, TypeReference.METHOD_TYPE_PARAMETER_BOUND)
+
+    override fun visitAnnotationDefault(): AnnotationVisitor =
         BinaryJavaAnnotationVisitor(context, signatureParser) {
             member.safeAs<BinaryJavaMethod>()?.annotationParameterDefaultValue = it
         }
@@ -91,7 +86,6 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
     override fun visitAnnotation(desc: String, visible: Boolean) =
         BinaryJavaAnnotation.addAnnotation(member, desc, context, signatureParser)
 
-    @Suppress("NOTHING_TO_OVERRIDE")
     override fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {
         if (visible) {
             visibleAnnotableParameterCount = parameterCount
@@ -109,39 +103,30 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
         return BinaryJavaAnnotation.addAnnotation(member.valueParameters[index], desc, context, signatureParser)
     }
 
-    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? {
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean): AnnotationVisitor? {
         val typeReference = TypeReference(typeRef)
 
-        if (typePath != null) {
-            val baseType = when (typeReference.sort) {
-                TypeReference.METHOD_RETURN -> member.safeAs<BinaryJavaMethod>()?.returnType
-                TypeReference.METHOD_FORMAL_PARAMETER -> member.valueParameters[typeReference.formalParameterIndex].type
-                TypeReference.METHOD_TYPE_PARAMETER_BOUND ->
-                    BinaryJavaAnnotation.computeTypeParameterBound(member.typeParameters, typeReference)
-                else -> null
-            } ?: return null
+        fun getTargetType(baseType: JavaType) =
+            if (typePath != null) {
+                computeTargetType(baseType, typePath) to true
+            } else {
+                baseType to (typeReference.sort in freshlySupportedPositions)
+            }
 
-            return BinaryJavaAnnotation.addAnnotation(
-                computeTargetType(baseType, translatePath(typePath)) as JavaPlainType, desc, context, signatureParser, true
+        val (annotationOwner, isFreshlySupportedAnnotation) = when (typeReference.sort) {
+            TypeReference.METHOD_RETURN -> getTargetType(member.safeAs<BinaryJavaMethod>()?.returnType ?: return null)
+            TypeReference.METHOD_TYPE_PARAMETER -> member.typeParameters[typeReference.typeParameterIndex] to true
+            TypeReference.METHOD_FORMAL_PARAMETER -> getTargetType(member.valueParameters[typeReference.formalParameterIndex].type)
+            TypeReference.METHOD_TYPE_PARAMETER_BOUND -> getTargetType(
+                BinaryJavaAnnotation.computeTypeParameterBound(member.typeParameters, typeReference)
             )
-        }
-
-        val (targetType, isFreshlySupportedAnnotation) = when (typeReference.sort) {
-            TypeReference.METHOD_RETURN ->
-                (member as? BinaryJavaMethod)?.returnType as JavaPlainType to false
-            TypeReference.METHOD_TYPE_PARAMETER ->
-                member.typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter to true
-            TypeReference.METHOD_FORMAL_PARAMETER ->
-                member.valueParameters[typeReference.formalParameterIndex].type as JavaPlainType to false
-            TypeReference.METHOD_TYPE_PARAMETER_BOUND ->
-                BinaryJavaAnnotation.computeTypeParameterBound(member.typeParameters, typeReference) as JavaPlainType to true
             else -> return null
         }
 
-        return BinaryJavaAnnotation.addAnnotation(targetType, desc, context, signatureParser, isFreshlySupportedAnnotation)
-    }
+        if (annotationOwner !is MutableJavaAnnotationOwner) return null
 
-    enum class PathElementType { ARRAY_ELEMENT, WILDCARD_BOUND, ENCLOSING_CLASS, TYPE_ARGUMENT }
+        return BinaryJavaAnnotation.addAnnotation(annotationOwner, descriptor, context, signatureParser, isFreshlySupportedAnnotation)
+    }
 }
 
 class BinaryJavaAnnotation private constructor(
@@ -150,9 +135,7 @@ class BinaryJavaAnnotation private constructor(
     override val arguments: Collection<JavaAnnotationArgument>,
     override val isFreshlySupportedTypeUseAnnotation: Boolean
 ) : JavaAnnotation {
-
     companion object {
-
         fun createAnnotationAndVisitor(
             desc: String,
             context: ClassifierResolutionContext,
@@ -178,66 +161,52 @@ class BinaryJavaAnnotation private constructor(
             return annotationVisitor
         }
 
-        internal fun translatePath(path: TypePath): List<Pair<AnnotationsAndParameterCollectorMethodVisitor.PathElementType, Int?>> {
-            val length = path.length
-            val list = mutableListOf<Pair<AnnotationsAndParameterCollectorMethodVisitor.PathElementType, Int?>>()
-            for (i in 0 until length) {
-                when (path.getStep(i)) {
-                    TypePath.INNER_TYPE -> {
-                        continue
-                    }
-                    TypePath.ARRAY_ELEMENT -> {
-                        list.add(AnnotationsAndParameterCollectorMethodVisitor.PathElementType.ARRAY_ELEMENT to null)
+        @OptIn(ExperimentalStdlibApi::class)
+        private fun translatePath(path: TypePath) = buildList {
+            for (i in 0 until path.length) {
+                when (val step = path.getStep(i)) {
+                    // TODO: process inner types and apply an annotation to the corresponding type component
+                    TypePath.INNER_TYPE -> continue
+                    TypePath.ARRAY_ELEMENT, TypePath.WILDCARD_BOUND -> add(step to 0)
+                    TypePath.TYPE_ARGUMENT -> add(step to path.getStepArgument(i))
+                }
+            }
+        }
+
+        internal fun computeTargetType(baseType: JavaType, typePath: TypePath) =
+            translatePath(typePath).fold(baseType) { targetType, (typePathKind, typeArgumentIndex) ->
+                when (typePathKind) {
+                    TypePath.TYPE_ARGUMENT -> {
+                        require(targetType is JavaClassifierType)
+                        targetType.typeArguments[typeArgumentIndex]
+                            ?: throw IllegalArgumentException("There must be no less than ${typeArgumentIndex + 1} type arguments")
                     }
                     TypePath.WILDCARD_BOUND -> {
-                        list.add(AnnotationsAndParameterCollectorMethodVisitor.PathElementType.WILDCARD_BOUND to null)
+                        // TODO: think about processing annotated wildcards themselves
+                        require(targetType is JavaWildcardType)
+                        targetType.bound
+                            ?: throw IllegalArgumentException("Wildcard mast have a bound for annotation of WILDCARD_BOUND position")
                     }
-                    TypePath.TYPE_ARGUMENT -> {
-                        list.add(AnnotationsAndParameterCollectorMethodVisitor.PathElementType.TYPE_ARGUMENT to path.getStepArgument(i))
+                    TypePath.ARRAY_ELEMENT -> {
+                        require(targetType is JavaArrayType)
+                        targetType.componentType
                     }
-                }
-            }
-            return list
-        }
-
-        internal fun computeTargetType(
-            baseType: JavaType,
-            typePath: List<Pair<AnnotationsAndParameterCollectorMethodVisitor.PathElementType, Int?>>
-        ): JavaType {
-            var targetType = baseType
-
-            for (element in typePath) {
-                when (element.first) {
-                    AnnotationsAndParameterCollectorMethodVisitor.PathElementType.TYPE_ARGUMENT -> {
-                        if (targetType is JavaClassifierType) {
-                            targetType = targetType.typeArguments[element.second!!]!!
-                        }
-                    }
-                    AnnotationsAndParameterCollectorMethodVisitor.PathElementType.WILDCARD_BOUND -> {
-                        if (targetType is JavaWildcardType) {
-                            targetType = targetType.bound!!
-                        }
-                    }
-                    AnnotationsAndParameterCollectorMethodVisitor.PathElementType.ARRAY_ELEMENT -> {
-                        if (targetType is JavaArrayType) {
-                            targetType = targetType.componentType
-                        }
-                    }
+                    else -> targetType
                 }
             }
 
-            return targetType
-        }
+        internal fun computeTypeParameterBound(typeParameters: List<JavaTypeParameter>, typeReference: TypeReference): JavaClassifierType {
+            val typeParameter = typeParameters[typeReference.typeParameterIndex]
 
-        internal fun computeTypeParameterBound(
-            typeParameters: List<JavaTypeParameter>,
-            typeReference: TypeReference
-        ): JavaClassifierType {
-            val typeParameter = typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter
-            val boundIndex =
-                if (typeParameter.hasImplicitObjectClassBound) typeReference.typeParameterBoundIndex - 1 else typeReference.typeParameterBoundIndex
+            require(typeParameter is BinaryJavaTypeParameter) { "Type parameter must be a binary type parameter" }
 
-            return typeParameters[typeReference.typeParameterIndex].upperBounds.toList()[boundIndex]
+            val boundIndex = if (typeParameter.hasImplicitObjectClassBound) {
+                typeReference.typeParameterBoundIndex - 1
+            } else {
+                typeReference.typeParameterBoundIndex
+            }
+
+            return typeParameter.upperBounds.elementAt(boundIndex)
         }
     }
 

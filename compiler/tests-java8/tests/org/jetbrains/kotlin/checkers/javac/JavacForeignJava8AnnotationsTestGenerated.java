@@ -25,7 +25,7 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
     }
 
     public void testAllFilesPresentInTests() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests"), Pattern.compile("^(.+)\\.kt$"), null, true, "jspecify");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests"), Pattern.compile("^(.+)\\.kt$"), null, true, "jspecify", "typeEnhancementOnCompiledJava");
     }
 
     @TestMetadata("checkerFramework.kt")
@@ -126,49 +126,6 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/simple.kt");
-        }
-    }
-
-    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeEnhancementOnCompiledJava extends AbstractJavacForeignJava8AnnotationsTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInTypeEnhancementOnCompiledJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("ClassTypeParameterBound.kt")
-        public void testClassTypeParameterBound() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava/ClassTypeParameterBound.kt");
-        }
-
-        @TestMetadata("ClassTypeParameterBoundWithWarnings.kt")
-        public void testClassTypeParameterBoundWithWarnings() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava/ClassTypeParameterBoundWithWarnings.kt");
-        }
-
-        @TestMetadata("ReturnType.kt")
-        public void testReturnType() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava/ReturnType.kt");
-        }
-
-        @TestMetadata("ReturnTypeWithWarnings.kt")
-        public void testReturnTypeWithWarnings() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava/ReturnTypeWithWarnings.kt");
-        }
-
-        @TestMetadata("ValueParameter.kt")
-        public void testValueParameter() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava/ValueParameter.kt");
-        }
-
-        @TestMetadata("ValueParameterWithWarnings.kt")
-        public void testValueParameterWithWarnings() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava/ValueParameterWithWarnings.kt");
         }
     }
 }

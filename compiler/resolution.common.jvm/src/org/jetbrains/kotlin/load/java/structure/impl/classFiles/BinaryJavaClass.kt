@@ -56,7 +56,7 @@ class BinaryJavaClass(
 
     // In accordance with JVMS, super class always comes before the interface list
     private val superclass: JavaClassifierType? get() = supertypes.firstOrNull()
-    private val interfaces: List<JavaClassifierType> get() = supertypes.drop(1)
+    private val implementedInterfaces: List<JavaClassifierType> get() = supertypes.drop(1)
 
     override val annotationsByFqName by buildLazyValueForMap()
 
@@ -86,38 +86,22 @@ class BinaryJavaClass(
         if (descriptor == null)
             return null
 
+        fun getTargetType(baseType: JavaType) =
+            if (typePath != null) BinaryJavaAnnotation.computeTargetType(baseType, typePath) else baseType
+
         val typeReference = TypeReference(typeRef)
 
-        if (typePath != null) {
-            val translatedPath = BinaryJavaAnnotation.translatePath(typePath)
-
-            when (typeReference.sort) {
-                TypeReference.CLASS_EXTENDS -> {
-                    val baseType: JavaType = if (typeReference.superTypeIndex == -1) superclass!! else interfaces[typeReference.superTypeIndex]
-                    val targetType = BinaryJavaAnnotation.computeTargetType(baseType, translatedPath)
-
-                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser, true)
-                }
-                TypeReference.CLASS_TYPE_PARAMETER_BOUND -> {
-                    val baseType = computeTypeParameterBound(typeParameters, typeReference)
-                    val targetType = BinaryJavaAnnotation.computeTargetType(baseType, translatedPath)
-
-                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser, true)
-                }
-            }
+        val annotationOwner = when (typeReference.sort) {
+            TypeReference.CLASS_EXTENDS ->
+                getTargetType(if (typeReference.superTypeIndex == -1) superclass!! else implementedInterfaces[typeReference.superTypeIndex])
+            TypeReference.CLASS_TYPE_PARAMETER -> typeParameters[typeReference.typeParameterIndex]
+            TypeReference.CLASS_TYPE_PARAMETER_BOUND -> getTargetType(computeTypeParameterBound(typeParameters, typeReference))
+            else -> return null
         }
 
-        return when (typeReference.sort) {
-            TypeReference.CLASS_TYPE_PARAMETER ->
-                BinaryJavaAnnotation.addAnnotation(
-                    typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter, descriptor, context, signatureParser, true
-                )
-            TypeReference.CLASS_TYPE_PARAMETER_BOUND ->
-                BinaryJavaAnnotation.addAnnotation(
-                    computeTypeParameterBound(typeParameters, typeReference) as JavaPlainType, descriptor, context, signatureParser, true
-                )
-            else -> null
-        }
+        if (annotationOwner !is MutableJavaAnnotationOwner) return null
+
+        return BinaryJavaAnnotation.addAnnotation(annotationOwner, descriptor, context, signatureParser, isFreshlySupportedAnnotation = true)
     }
 
     override fun visitEnd() {
