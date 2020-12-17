@@ -255,8 +255,6 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
-    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.IdeLightClassInheritanceHelper"/>
 
