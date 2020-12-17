@@ -133,7 +133,7 @@ fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<Str
     val dist = project.file(project.findProperty("kotlin.native.home") ?: "dist")
     val useCache = !project.hasProperty("disableCompilerCaches")
     val cacheOption = "-Xcache-directory=$dist/klib/cache/${HostManager.host.name}-gSTATIC"
-            .takeIf { useCache && PlatformInfo.isMac() } // TODO: remove target condition when we have cache support for other targets.
+            .takeIf { useCache && !PlatformInfo.isWindows() } // TODO: remove target condition when we have cache support for other targets.
     return (project.findProperty("nativeBuildType") as String?)?.let {
         if (it.equals("RELEASE", true))
             listOf("-opt")
