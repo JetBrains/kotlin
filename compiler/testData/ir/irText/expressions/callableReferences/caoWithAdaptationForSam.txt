@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
         VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:<root>.IFoo [val]
           TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-            TYPE_OP type=kotlin.Function1<@[ParameterName(name = 'i')] kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[ParameterName(name = 'i')] kotlin.Int, kotlin.Unit>
+            TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
               GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
         CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=PLUSEQ
           $receiver: GET_VAR 'val tmp_8: <root>.A [val] declared in <root>.test5' type=<root>.A origin=null

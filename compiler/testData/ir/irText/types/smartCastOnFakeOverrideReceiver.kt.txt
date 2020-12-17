@@ -78,8 +78,8 @@ class GB<T : Any?, S : Any?> : GA<T> {
 
   fun testGB1(a: Any) {
     a as GB<Int, String> /*~> Unit */
-    a /*as GB<*, *> */.f() /*~> Unit */
-    a /*as GB<*, *> */.<get-aVal>() /*~> Unit */
+    a /*as GB<Int, String> */.f() /*~> Unit */
+    a /*as GB<Int, String> */.<get-aVal>() /*~> Unit */
   }
 
 }

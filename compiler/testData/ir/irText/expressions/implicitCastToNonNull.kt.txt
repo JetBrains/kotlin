@@ -15,14 +15,14 @@ fun <T : CharSequence?> test2(x: T): Int {
 inline fun <reified T : CharSequence?> test3(x: Any): Int {
   return when {
     x !is T -> 0
-    else -> x /*as CharSequence */.<get-length>()
+    else -> x /*as T */.<get-length>()
   }
 }
 
 inline fun <reified T : CharSequence> test4(x: Any?): Int {
   return when {
     x !is T -> 0
-    else -> x /*as CharSequence */.<get-length>()
+    else -> x /*as T */.<get-length>()
   }
 }
 
