@@ -7,14 +7,24 @@
 
 #include "gtest/gtest.h"
 
-TEST(TODODeathTest, EmptyTODO) {
+TEST(AssertDeathTest, EmptyTODO) {
     EXPECT_DEATH({
         TODO();
     }, "KAssertTest.cpp:12: runtime assert: Unimplemented");
 }
 
-TEST(TODODeathTest, TODOWithMessage) {
+TEST(AssertDeathTest, TODOWithMessage) {
     EXPECT_DEATH({
         TODO("Nope");
     }, "KAssertTest.cpp:18: runtime assert: Nope");
+}
+
+TEST(AssertDeathTest, StackTraceInAssert) {
+    EXPECT_DEATH({
+        RuntimeAssert(false, "Crash with a stacktrace");
+    }, testing::ContainsRegex(
+            "KAssertTest.cpp:24: runtime assert: Crash with a stacktrace\n"
+            ".*RuntimeAssertFailed.*\n"
+            ".*StackTraceInAssert.*"
+    ));
 }
