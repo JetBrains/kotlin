@@ -433,7 +433,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.commonMain") {
-                // ! not (jvm, js, native)
+                // must not be (jvm, js, native)
                 targetPlatform(jvm, js)
             }
 
@@ -455,7 +455,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.commonMain") {
-                targetPlatform(jvm, js) // ! not (jvm, js, native)
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
             }
 
             module("my-app.includedIntoJvm") {
@@ -480,15 +480,15 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.commonMain") {
-                targetPlatform(jvm, js) // ! not (jvm, js, native)
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
             }
 
             module("my-app.intermediateBetweenJsAndCommon") {
-                targetPlatform(jvm, js) // ! not (jvm, js, native)
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
             }
 
             module("my-app.jsMain") {
-                targetPlatform(js) // ! not (jvm, js)
+                targetPlatform(js) // must not be (jvm, js)
             }
 
             module("my-app.jvmMain") {
@@ -508,7 +508,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.jvmMain") {
-                targetPlatform(jvm) // ! not (jvm, js)
+                targetPlatform(jvm) // must not be (jvm, js)
             }
 
             module("my-app.jsMain") {
@@ -529,7 +529,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
 
-            // ! (jvm, js, native) is highly undesirable
+            // (jvm, js, native) is highly undesirable
             module("my-app.danglingOnJvm") {
                 targetPlatform(jvm, js)
             }
