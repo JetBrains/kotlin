@@ -13513,6 +13513,11 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/removeExplicitTypeArguments/insideOtherCall.kt");
         }
 
+        @TestMetadata("kt29735.kt")
+        public void testKt29735() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitTypeArguments/kt29735.kt");
+        }
+
         @TestMetadata("kt31441.kt")
         public void testKt31441() throws Exception {
             runTest("testData/intentions/removeExplicitTypeArguments/kt31441.kt");
