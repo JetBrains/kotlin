@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
@@ -35,7 +35,7 @@ private constructor(
     val context: KtFirAnalysisSessionContext,
 ) : KtAnalysisSession(token) {
     init {
-        assertIsValid()
+        assertIsValidAndAccessible()
     }
 
     internal val towerDataContextProvider: TowerDataContextProvider = TowerDataContextProvider(this)
