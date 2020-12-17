@@ -194,6 +194,7 @@ enum class LanguageFeature(
     // Next features can be enabled regardless of new inference
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
+    JvmInlineValueClasses(sinceVersion = KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
     ;
 
     val presentableName: String

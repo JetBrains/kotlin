@@ -44,6 +44,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Test
+    @TestMetadata("noWarningInLV1_5.kt")
+    public void testNoWarningInLV1_5() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/noWarningInLV1_5.kt");
+    }
+
+    @Test
     @TestMetadata("suspendInlineCycle.kt")
     public void testSuspendInlineCycle() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
