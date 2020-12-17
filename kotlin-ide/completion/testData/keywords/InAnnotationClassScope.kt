@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 annotation class Test {
     <caret>
 }
