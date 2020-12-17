@@ -30,19 +30,22 @@ fun main(args: Array<String>) {
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-java8/tests", "compiler/testData") {
             testClass<AbstractForeignJava8AnnotationsTest> {
-                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
             }
 
             testClass<AbstractJavacForeignJava8AnnotationsTest> {
-                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
             }
 
             testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest> {
-                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
+                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
             }
 
             testClass<AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
-                model("foreignAnnotationsJava8/tests", excludeDirs = listOf("jspecify"))
+                model(
+                    "foreignAnnotationsJava8/tests",
+                    excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava")
+                )
             }
 
             testClass<AbstractJspecifyAnnotationsTest> {

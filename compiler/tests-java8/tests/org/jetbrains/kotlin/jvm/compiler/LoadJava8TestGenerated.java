@@ -55,7 +55,7 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             }
 
             public void testAllFilesPresentInTypeParameterAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("Basic.java")
@@ -78,7 +78,7 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             }
 
             public void testAllFilesPresentInTypeUseAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeUseAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeUseAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("BaseClassTypeArguments.java")
@@ -154,7 +154,7 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             }
 
             public void testAllFilesPresentInTypeParameterAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/sourceJava/typeParameterAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/sourceJava/typeParameterAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("Basic.java")
@@ -177,7 +177,7 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             }
 
             public void testAllFilesPresentInTypeUseAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/sourceJava/typeUseAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/sourceJava/typeUseAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("BaseClassTypeArguments.java")

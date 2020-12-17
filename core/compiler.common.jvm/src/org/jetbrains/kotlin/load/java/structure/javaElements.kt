@@ -48,8 +48,10 @@ interface JavaTypeParameterListOwner : JavaElement {
 interface JavaAnnotation : JavaElement {
     val arguments: Collection<JavaAnnotationArgument>
     val classId: ClassId?
-    val isIdeExternalAnnotation: Boolean get() = false
-    val isFreshlySupportedTypeUseAnnotation: Boolean get() = false
+    val isIdeExternalAnnotation: Boolean
+        get() = false
+    val isFreshlySupportedTypeUseAnnotation: Boolean
+        get() = false
 
     fun resolve(): JavaClass?
 }
