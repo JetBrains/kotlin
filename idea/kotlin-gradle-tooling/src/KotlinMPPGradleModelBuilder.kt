@@ -73,7 +73,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun filterOrphanSourceSets(
-        importingContext: MultiplatformModelImportingContextImpl
+        importingContext: MultiplatformModelImportingContext
     ): Map<String, KotlinSourceSetImpl> {
         if (importingContext.properties.importOrphanSourceSets) return importingContext.sourceSetsByNames
 
