@@ -122,11 +122,13 @@ object KeywordCompletion {
 
     fun complete(position: PsiElement, prefixMatcher: PrefixMatcher, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
+        val sealedInterfacesEnabled = position.languageVersionSettings.supportsFeature(LanguageFeature.SealedInterfaces)
 
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
             val nextKeywords = keywordToken.getNextPossibleKeywords(position) ?: setOf(null)
             nextKeywords.forEach {
+                if (keywordToken == SEALED_KEYWORD && it == INTERFACE_KEYWORD && !sealedInterfacesEnabled) return@forEach
                 handleCompoundKeyword(position, keywordToken, it, isJvmModule, prefixMatcher, parserFilter, consumer)
             }
         }
