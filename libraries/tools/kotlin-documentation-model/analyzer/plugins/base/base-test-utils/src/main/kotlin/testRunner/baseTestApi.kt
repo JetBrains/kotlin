@@ -9,10 +9,7 @@ import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.testApi.logger.TestLogger
-import org.jetbrains.dokka.testApi.testRunner.AbstractTest
-import org.jetbrains.dokka.testApi.testRunner.DokkaTestGenerator
-import org.jetbrains.dokka.testApi.testRunner.TestBuilder
-import org.jetbrains.dokka.testApi.testRunner.TestMethods
+import org.jetbrains.dokka.testApi.testRunner.*
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 
@@ -69,7 +66,7 @@ data class BaseTestMethods(
     override val pagesGenerationStage: (RootPageNode) -> Unit,
     override val pagesTransformationStage: (RootPageNode) -> Unit,
     override val renderingStage: (RootPageNode, DokkaContext) -> Unit
-) : TestMethods(
+) : CoreTestMethods(
     pluginsSetupStage,
     verificationStage,
     documentablesCreationStage,

@@ -26,25 +26,26 @@ class TestDokkaConfigurationBuilder {
             field = value
         }
     var moduleVersion: String = "1.0-SNAPSHOT"
-    var outputDir: String = "out"
+    var outputDir: File = File("out")
     var format: String = "html"
     var offlineMode: Boolean = false
     var cacheRoot: String? = null
     var pluginsClasspath: List<File> = emptyList()
     var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
     var failOnWarning: Boolean = false
+    var modules: List<DokkaModuleDescriptionImpl> = emptyList()
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
     fun build() = DokkaConfigurationImpl(
         moduleName = moduleName,
         moduleVersion = moduleVersion,
-        outputDir = File(outputDir),
+        outputDir = outputDir,
         cacheRoot = cacheRoot?.let(::File),
         offlineMode = offlineMode,
         sourceSets = lazySourceSets.map { it.value }.toList(),
         pluginsClasspath = pluginsClasspath,
         pluginsConfiguration = pluginsConfigurations,
-        modules = emptyList(),
+        modules = modules,
         failOnWarning = failOnWarning,
     )
 
