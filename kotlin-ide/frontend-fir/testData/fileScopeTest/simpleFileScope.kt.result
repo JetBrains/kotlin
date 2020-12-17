@@ -8,6 +8,7 @@ CALLABLE NAMES:
 
 CALLABLE SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: test
   isExtension: false
@@ -19,14 +20,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: test
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: testVal
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -42,10 +43,9 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: testVal
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   visibility: PUBLIC
 
 CLASSIFIER NAMES:
@@ -62,7 +62,7 @@ KtFirClassOrObjectSymbol:
   name: C
   origin: SOURCE
   primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
@@ -77,7 +77,7 @@ KtFirClassOrObjectSymbol:
   name: I
   origin: SOURCE
   primaryConstructor: null
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC

@@ -3,6 +3,7 @@ val Int.y get() = this
 
 // SYMBOLS:
 KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: x
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -18,13 +19,13 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   hasBody: true
   isDefault: false
@@ -33,10 +34,10 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: y
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -52,8 +53,7 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverTypeAndAnnotations: [] kotlin/Int
+  receiverType: [] kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   visibility: PUBLIC

@@ -2,6 +2,7 @@ class: kotlin/Int
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.and
   isExtension: false
@@ -13,14 +14,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: and
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
@@ -32,14 +33,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
@@ -51,14 +52,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
@@ -70,14 +71,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
@@ -89,14 +90,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
@@ -108,14 +109,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
@@ -127,14 +128,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.dec
   isExtension: false
@@ -146,14 +147,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: dec
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
@@ -165,14 +166,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
@@ -184,14 +185,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
@@ -203,14 +204,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
@@ -222,14 +223,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
@@ -241,14 +242,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
@@ -260,14 +261,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.inc
   isExtension: false
@@ -279,14 +280,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: inc
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.inv
   isExtension: false
@@ -298,14 +299,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: inv
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
@@ -317,14 +318,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
@@ -336,14 +337,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
@@ -355,14 +356,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
@@ -374,14 +375,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
@@ -393,14 +394,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
@@ -412,14 +413,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.or
   isExtension: false
@@ -431,14 +432,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: or
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
@@ -450,14 +451,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
@@ -469,14 +470,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
@@ -488,14 +489,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
@@ -507,14 +508,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
@@ -526,14 +527,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
@@ -545,14 +546,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/ranges/IntRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
@@ -564,14 +565,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ranges/IntRange
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/ranges/IntRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
@@ -583,14 +584,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ranges/IntRange
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/ranges/LongRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
@@ -602,14 +603,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ranges/LongRange
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/ranges/IntRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
@@ -621,14 +622,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/ranges/IntRange
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
@@ -640,14 +641,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Double
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
@@ -659,14 +660,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Float
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
@@ -678,14 +679,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
@@ -697,14 +698,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Long
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
@@ -716,14 +717,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
@@ -735,14 +736,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.shl
   isExtension: false
@@ -754,14 +755,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: shl
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.shr
   isExtension: false
@@ -773,14 +774,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: shr
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
@@ -792,14 +793,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
@@ -811,14 +812,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
@@ -830,14 +831,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
@@ -849,14 +850,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
@@ -868,14 +869,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
@@ -887,14 +888,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Byte
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toByte
   isExtension: false
@@ -906,14 +907,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toByte
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Byte
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Char
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toChar
   isExtension: false
@@ -925,14 +926,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toChar
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Char
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toDouble
   isExtension: false
@@ -944,14 +945,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toDouble
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Double
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toFloat
   isExtension: false
@@ -963,14 +964,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toFloat
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Float
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toInt
   isExtension: false
@@ -982,14 +983,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toInt
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toLong
   isExtension: false
@@ -1001,14 +1002,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toLong
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Long
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Short
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toShort
   isExtension: false
@@ -1020,14 +1021,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toShort
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Short
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.unaryMinus
   isExtension: false
@@ -1039,14 +1040,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: unaryMinus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.unaryPlus
   isExtension: false
@@ -1058,14 +1059,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: unaryPlus
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.ushr
   isExtension: false
@@ -1077,14 +1078,14 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: ushr
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.xor
   isExtension: false
@@ -1096,24 +1097,24 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: xor
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirConstructorSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   containingClassIdIfNonLocal: kotlin/Int
   isPrimary: true
   origin: LIBRARY
   symbolKind: MEMBER
-  type: kotlin/Int
   valueParameters: []
   visibility: PRIVATE
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.Int.equals
   isExtension: false
@@ -1125,14 +1126,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Boolean
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.hashCode
   isExtension: false
@@ -1144,14 +1145,14 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/String
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toString
   isExtension: false
@@ -1163,9 +1164,8 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
@@ -1180,7 +1180,7 @@ KtFirClassOrObjectSymbol:
   name: Companion
   origin: LIBRARY
   primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: MEMBER
   typeParameters: []
   visibility: PUBLIC

@@ -8,15 +8,16 @@ KtFirTypeParameterSymbol:
   upperBounds: [kotlin/Any?]
 
 KtFirFunctionValueParameterSymbol:
+  annotatedType: [] X
   annotations: []
   hasDefaultValue: false
   isVararg: false
   name: x
   origin: SOURCE
   symbolKind: NON_PROPERTY_PARAMETER
-  type: X
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
   annotations: []
   callableIdIfNonLocal: foo
   isExtension: false
@@ -28,9 +29,8 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverTypeAndAnnotations: null
+  receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: [KtFirTypeParameterSymbol(X)]
   valueParameters: [KtFirFunctionValueParameterSymbol(x)]
   visibility: PUBLIC
