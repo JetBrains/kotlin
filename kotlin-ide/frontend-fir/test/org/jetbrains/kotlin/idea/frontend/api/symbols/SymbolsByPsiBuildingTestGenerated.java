@@ -75,4 +75,9 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
     public void testLocalDeclarations() throws Exception {
         runTest("testData/symbolsByPsi/localDeclarations.kt");
     }
+
+    @TestMetadata("typeAnnotations.kt")
+    public void testTypeAnnotations() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/typeAnnotations.kt");
+    }
 }
