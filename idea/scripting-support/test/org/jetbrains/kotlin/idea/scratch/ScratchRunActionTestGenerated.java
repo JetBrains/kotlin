@@ -30,6 +30,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), null, false);
         }
 
+        @TestMetadata("destructuringDecls.kts")
+        public void testDestructuringDecls() throws Exception {
+            runTest("idea/scripting-support/testData/scratch/destructuringDecls.kts");
+        }
+
         @TestMetadata("for.kts")
         public void testFor() throws Exception {
             runTest("idea/scripting-support/testData/scratch/for.kts");
@@ -116,6 +121,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
 
         public void testAllFilesPresentInScratchRepl() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), null, false);
+        }
+
+        @TestMetadata("destructuringDecls.kts")
+        public void testDestructuringDecls() throws Exception {
+            runTest("idea/scripting-support/testData/scratch/destructuringDecls.kts");
         }
 
         @TestMetadata("for.kts")
