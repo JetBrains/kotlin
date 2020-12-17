@@ -12,8 +12,9 @@ final class<null>  TKt$sam$Sam$0 {
     public final <null> method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public synthetic final <null> method get(): java.lang.Object
     public final <null> method hashCode(): int
+    enclosing class TKt
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
-    final inner class TKt$sam$Sam$0
+    inner (anonymous) class TKt$sam$Sam$0
 }
 
 @kotlin.Metadata
@@ -21,5 +22,5 @@ public final class<null>  TKt {
     // source: 't.kt'
     public final static @org.jetbrains.annotations.NotNull <(Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;)Ljava/lang/String;> method specializedSam(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.String
     public final static <<T:Ljava/lang/Object;>(LSam<TT;>;)TT;> method expectsSam(@org.jetbrains.annotations.NotNull p0: Sam): java.lang.Object
-    final inner class TKt$sam$Sam$0
+    inner (anonymous) class TKt$sam$Sam$0
 }

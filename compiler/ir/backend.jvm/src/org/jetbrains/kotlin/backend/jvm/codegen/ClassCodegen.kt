@@ -402,7 +402,7 @@ class ClassCodegen private constructor(
                     ?: containerClass.declarations.firstIsInstanceOrNull<IrConstructor>()
                     ?: error("Class in a non-static initializer found, but container has no constructors: ${containerClass.render()}")
             } else parentFunction
-            if (enclosingFunction != null || irClass.isAnonymousObject) {
+            if (enclosingFunction != null || irClass.isAnonymousInnerClass) {
                 val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)
                 visitor.visitOuterClass(parentClassCodegen.type.internalName, method?.name, method?.descriptor)
             }
@@ -411,12 +411,25 @@ class ClassCodegen private constructor(
         for (klass in innerClasses) {
             val innerClass = typeMapper.classInternalName(klass)
             val outerClass =
-                if (klass.attributeOwnerId in context.isEnclosedInConstructor) null
-                else klass.parent.safeAs<IrClass>()?.let(typeMapper::classInternalName)
-            val innerName = klass.name.takeUnless { it.isSpecial }?.asString()
-            visitor.visitInnerClass(innerClass, outerClass, innerName, klass.calculateInnerClassAccessFlags(context))
+                if (klass.isSamWrapper || klass.attributeOwnerId in context.isEnclosedInConstructor)
+                    null
+                else {
+                    when (val parent = klass.parent) {
+                        is IrClass -> typeMapper.classInternalName(parent)
+                        else -> null
+                    }
+                }
+            val innerName = if (klass.isAnonymousInnerClass) null else klass.name.asString()
+            val accessFlags = klass.calculateInnerClassAccessFlags(context)
+            visitor.visitInnerClass(innerClass, outerClass, innerName, accessFlags)
         }
     }
+
+    private val IrClass.isAnonymousInnerClass: Boolean
+        get() = isSamWrapper || name.isSpecial // NB '<Continuation>' is treated as anonymous inner class here
+
+    private val IrClass.isSamWrapper: Boolean
+        get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
 
     override fun addInnerClassInfoFromAnnotation(innerClass: IrClass) {
         // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations

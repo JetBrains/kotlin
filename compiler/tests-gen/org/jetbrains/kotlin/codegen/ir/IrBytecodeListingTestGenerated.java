@@ -1568,6 +1568,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaSpecializedSamInterface.kt");
         }
 
+        @TestMetadata("reusedSamWrapperClasses.kt")
+        public void testReusedSamWrapperClasses() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/reusedSamWrapperClasses.kt");
+        }
+
         @TestMetadata("samAdapterAndInlinedOne.kt")
         public void testSamAdapterAndInlinedOne() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/samAdapterAndInlinedOne.kt");
@@ -1581,6 +1586,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("specializedSamInterface.kt")
         public void testSpecializedSamInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/specializedSamInterface.kt");
+        }
+
+        @TestMetadata("wrapperInlinedFromAnotherClass.kt")
+        public void testWrapperInlinedFromAnotherClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/wrapperInlinedFromAnotherClass.kt");
         }
     }
 
