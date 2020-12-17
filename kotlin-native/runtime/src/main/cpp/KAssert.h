@@ -32,7 +32,7 @@
 #define CURRENT_SOURCE_LOCATION nullptr
 #endif
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
+RUNTIME_NORETURN NO_INLINE void RuntimeAssertFailed(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
 
 namespace internal {
 
