@@ -65,7 +65,6 @@ class MultiplatformModelImportingContextImpl(override val project: Project) : Mu
 
     override val compilations: Collection<KotlinCompilation> by lazy { targets.flatMap { it.compilations } }
 
-    // TODO NOW: is it all source sets or just compiled source-sets?
     override lateinit var sourceSetsByNames: Map<String, KotlinSourceSetImpl>
     override val sourceSets: Collection<KotlinSourceSetImpl>
         get() = sourceSetsByNames.values
