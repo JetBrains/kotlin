@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 fun foo() {
     bar()
 }

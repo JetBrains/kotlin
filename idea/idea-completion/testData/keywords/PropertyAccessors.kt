@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 class Some {
     var a : Int
         <caret>
