@@ -28,3 +28,15 @@ TEST(AssertDeathTest, StackTraceInAssert) {
             ".*StackTraceInAssert.*"
     ));
 }
+
+TEST(AssertDeathTest, AssertWithFormattedMessage) {
+    EXPECT_DEATH({
+        RuntimeAssert(false, "Message: %d, %3.1f, %x, %s", 5, 0.5, 0xFF, "foo");
+    }, "runtime assert: Message: 5, 0.5, ff, foo");
+}
+
+TEST(AssertDeathTest, TODOWithFormattedMessage) {
+    EXPECT_DEATH({
+        TODO("Message: %d, %3.1f, %x, %s", 5, 0.5, 0xFF, "foo");
+    }, "runtime assert: Message: 5, 0.5, ff, foo");
+}

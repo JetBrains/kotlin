@@ -40,9 +40,10 @@ inline RUNTIME_NORETURN void TODOImpl(const char* location) {
     RuntimeAssertFailed(location, "Unimplemented");
 }
 
-// TODO: Support format string when `RuntimeAssertFailed` supports it.
-inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message) {
-    RuntimeAssertFailed(location, "%s", message);
+// TODO: Check format string?
+template <typename ... Args>
+inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message, Args ... args) {
+    RuntimeAssertFailed(location, message, args...);
 }
 
 } // namespace internal

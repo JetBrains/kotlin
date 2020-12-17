@@ -104,7 +104,7 @@ void printStackTrace() { /* No-op */ }
 
 } // namespace
 
-RUNTIME_NORETURN NO_INLINE void RuntimeAssertFailed(const char* location, const char* format, ...) {
+RUNTIME_NORETURN NO_INLINE void RuntimeAssertFailed(const char* location, const char* message, ...) {
     char buf[1024];
     int written = -1;
 
@@ -118,8 +118,8 @@ RUNTIME_NORETURN NO_INLINE void RuntimeAssertFailed(const char* location, const 
     // Write the message.
     if (written >= 0 && static_cast<size_t>(written) < sizeof(buf)) {
         std::va_list args;
-        va_start(args, format);
-        konan::vsnprintf(buf + written, sizeof(buf) - written, format, args);
+        va_start(args, message);
+        konan::vsnprintf(buf + written, sizeof(buf) - written, message, args);
         va_end(args);
     }
 
