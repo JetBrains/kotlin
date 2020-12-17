@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logger
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
@@ -25,19 +28,19 @@ abstract class YarnBasics : NpmApi {
     }
 
     fun yarnExec(
-        project: Project,
+        services: ServiceRegistry,
+        logger: Logger,
+        nodeJs: NodeJsRootExtension,
+        yarnHome: File,
         dir: File,
         description: String,
         args: List<String>
     ) {
-        val nodeJs = NodeJsRootPlugin.apply(project)
-        val yarnPlugin = YarnPlugin.apply(project)
-
-        (project as ProjectInternal).services.execWithProgress(description) { exec ->
+        services.execWithProgress(description) { exec ->
             exec.executable = nodeJs.requireConfigured().nodeExecutable
-            exec.args = listOf(yarnPlugin.requireConfigured().home.resolve("bin/yarn.js").absolutePath) +
+            exec.args = listOf(yarnHome.resolve("bin/yarn.js").absolutePath) +
                     args +
-                    if (project.logger.isDebugEnabled) "--verbose" else ""
+                    if (logger.isDebugEnabled) "--verbose" else ""
             exec.workingDir = dir
         }
 

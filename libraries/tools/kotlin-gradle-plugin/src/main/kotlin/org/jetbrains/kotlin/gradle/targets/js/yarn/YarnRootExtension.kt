@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 
-open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<YarnEnv>() {
+open class YarnRootExtension(
+    @Transient
+    val project: Project
+) : ConfigurationPhaseAware<YarnEnv>() {
     init {
         check(project == project.rootProject)
     }

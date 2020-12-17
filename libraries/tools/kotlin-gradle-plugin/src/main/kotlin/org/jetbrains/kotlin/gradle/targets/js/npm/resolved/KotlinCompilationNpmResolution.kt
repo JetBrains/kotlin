@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.*
 class KotlinCompilationNpmResolution(
     @Transient
     private val _project: Project?,
-    @Transient
-    private val _npmProject: NpmProject?,
+    val npmProject: NpmProject,
     val internalDependencies: Collection<KotlinCompilationNpmResolution>,
     val internalCompositeDependencies: Collection<GradleNodeModule>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
@@ -24,14 +23,12 @@ class KotlinCompilationNpmResolution(
 ) {
     val project
         get() = _project!!
-    val npmProject
-        get() = _npmProject!!
 
     val externalNpmDependencies
         get() = _externalNpmDependencies
             .map {
                 NpmDependency(
-                    project = project,
+                    project = _project,
                     name = it.name,
                     version = it.version,
                     scope = it.scope,

@@ -250,7 +250,6 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        println(services.get(org.gradle.internal.logging.progress.ProgressLoggerFactory::class.java))
 //        nodeJs.npmResolutionManager?.checkRequiredDependencies(this)
 
         val runner = createRunner()

@@ -22,7 +22,7 @@ import java.io.File
 
 data class NpmDependency(
     @Transient
-    internal val project: Project,
+    internal val project: Project?,
     private val name: String,
     private val version: String,
     val scope: Scope = Scope.NORMAL,
@@ -82,7 +82,7 @@ data class NpmDependency(
     // (it can be called since NpmDependency added to configuration that
     // requires resolve to build package.json, in this case we should just skip this call)
     private fun resolveProject(): KotlinCompilationNpmResolution? {
-        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+        val nodeJs = NodeJsRootPlugin.apply(project!!.rootProject)
         return nodeJs.npmResolutionManager.getNpmDependencyResolvedCompilation(this)
     }
 
@@ -90,7 +90,7 @@ data class NpmDependency(
 
     override fun toString() = "$key: $version"
 
-    override fun getFiles(): FileCollection = project.files(resolve(true))
+    override fun getFiles(): FileCollection = project!!.files(resolve(true))
 
     override fun getName() = name
 
@@ -100,7 +100,7 @@ data class NpmDependency(
 
     override fun contentEquals(dependency: Dependency) = this == dependency
 
-    override fun getTargetComponentId() = DefaultLibraryBinaryIdentifier(project.path, key, "npm")
+    override fun getTargetComponentId() = DefaultLibraryBinaryIdentifier(project!!.path, key, "npm")
 
     override fun copy(): Dependency = this.copy(name = name)
 

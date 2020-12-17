@@ -59,7 +59,6 @@ internal class KotlinCompilationNpmResolver(
         resolver.compositeNodeModules
     }
 
-    @Transient
     val npmProject = compilation.npmProject
 
     val compilationName = compilation.name
@@ -463,7 +462,7 @@ internal class KotlinCompilationNpmResolver(
 
             return KotlinCompilationNpmResolution(
                 if (compilation != null) project else null,
-                if (compilation != null) npmProject else null,
+                npmProject,
                 resolvedInternalDependencies,
                 compositeDependencies,
                 importedExternalGradleDependencies,
