@@ -714,7 +714,6 @@ tasks {
     }
 
     register("miscCompilerTest") {
-        dependsOn("wasmCompilerTest")
         dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
