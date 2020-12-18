@@ -659,17 +659,5 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
             }
         }
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractExtendedFirDiagnosticsTest> {
-                model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            }
-        }
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractExtendedFirWithLightTreeDiagnosticsTest> {
-                model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            }
-        }
     }
 }

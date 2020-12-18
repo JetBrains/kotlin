@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
+import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import java.io.File
 
 class FirFrontendFacade(
     testServices: TestServices
@@ -65,7 +65,11 @@ class FirFrontendFacade(
             sourcesScope,
             project,
             languageVersionSettings = languageVersionSettings
-        )
+        ) {
+            if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
+                registerExtendedCommonCheckers()
+            }
+        }
 
         val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles, originalFiles, lightTreeEnabled)
         val firFiles = firAnalyzerFacade.runResolution()

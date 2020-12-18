@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LIGHT_TREE
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -73,6 +74,12 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
         ) {
             defaultDirectives {
                 +WITH_STDLIB
+            }
+        }
+
+        forTestsMatching("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/*") {
+            defaultDirectives {
+                +WITH_EXTENDED_CHECKERS
             }
         }
     }
