@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.walk
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
@@ -32,12 +31,12 @@ open class BaseKotlinLibraryImpl(
     override val componentList: List<File> by lazy {
         mutableListOf<File>().apply {
             access.inPlace {
-                it.libFile.walk { f ->
+                it.libFile.walk_workaround { f ->
                     if (f.isDirectory) {
                         val names = f.listFiles.map { sf -> sf.name }
                         if (KLIB_MANIFEST_FILE_NAME in names) {
                             add(f)
-                            return@walk false
+                            return@walk_workaround false
                         }
                     }
                     true
@@ -46,9 +45,11 @@ open class BaseKotlinLibraryImpl(
         }
     }
 
-    fun walkFiles(onFile: (File) -> Boolean) {
-        access.inPlace {
-            it.libFile.listFiles.forEach { it.walk(onFile) }
+
+    // TODO: once bootstrap in K/N is updated drop it and replace with `walk`
+    private fun File.walk_workaround(_onFile: (File) -> Boolean) {
+        if (_onFile(this)) {
+            if (isDirectory) listFiles.forEach { it.walk_workaround(_onFile) }
         }
     }
 
