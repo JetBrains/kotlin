@@ -155,7 +155,13 @@ internal class FirLazyDeclarationResolver(
             return
         }
 
-        val transformer = phase.createLazyTransformer(designation, containerFirFile, scopeSession, towerDataContextCollector)
+        val transformer = phase.createLazyTransformer(
+            designation,
+            firDeclarationToResolve,
+            containerFirFile,
+            scopeSession,
+            towerDataContextCollector
+        )
 
         firFileBuilder.firPhaseRunner.runPhaseWithCustomResolve(phase) {
             containerFirFile.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
@@ -164,22 +170,26 @@ internal class FirLazyDeclarationResolver(
 
     private fun FirResolvePhase.createLazyTransformer(
         designation: List<FirDeclaration>,
+        targetDeclaration: FirDeclaration,
         containerFirFile: FirFile,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?
     ) = when (this) {
         FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
             designation.iterator(),
+            targetDeclaration,
             containerFirFile.session,
             scopeSession,
         )
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
             designation.iterator(),
+            targetDeclaration,
             containerFirFile.session,
             scopeSession,
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
             designation.iterator(),
+            targetDeclaration,
             containerFirFile.session,
             scopeSession,
             towerDataContextCollector
