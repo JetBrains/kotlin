@@ -35,7 +35,7 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
     }
 
     override fun setUp() {
-        Assume.assumeFalse(AndroidStudioTestUtils.checkIsAndroidStudio())
+        Assume.assumeFalse(AndroidStudioTestUtils.skipIncompatibleTestAgainstAndroidStudio())
         super.setUp()
     }
 
