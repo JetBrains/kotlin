@@ -600,31 +600,31 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirLoadCompiledKotlin> {
                 model("loadJava/compiledKotlin", extension = "kt")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirTypeEnhancementTest> {
                 model("loadJava/compiledJava", extension = "java")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractOwnFirTypeEnhancementTest> {
                 model("enhancement", extension = "java")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirOldFrontendLightClassesTest> {
                 model("lightClasses")
             }
@@ -660,13 +660,13 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractExtendedFirDiagnosticsTest> {
                 model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractExtendedFirWithLightTreeDiagnosticsTest> {
                 model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }

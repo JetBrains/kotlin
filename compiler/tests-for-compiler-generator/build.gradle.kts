@@ -16,7 +16,7 @@ dependencies {
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testImplementation(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testImplementation(projectTests(":compiler:fir:fir2ir"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests"))
+    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testImplementation(projectTests(":compiler:visualizer"))
     testImplementation(projectTests(":generators:test-generator"))
     testCompileOnly(project(":kotlin-reflect-api"))

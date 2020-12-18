@@ -21,8 +21,8 @@ dependencies {
     testApi("org.junit.jupiter:junit-jupiter")
     testApi("org.junit.platform:junit-platform-commons:1.7.0")
     testApi(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
-    testImplementation(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
 
     testImplementation(intellijDep()) {
         // This dependency is needed only for FileComparisonFailure

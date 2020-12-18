@@ -24,8 +24,8 @@ dependencies {
     testApi(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":core:descriptors.runtime"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }

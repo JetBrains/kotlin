@@ -292,7 +292,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:jvm",
     ":compiler:fir:checkers",
     ":compiler:fir:entrypoint",
-    ":compiler:fir:analysis-tests",
+    ":compiler:fir:analysis-tests:legacy-fir-tests",
     ":wasm:wasm.ir"
 )
 
@@ -667,6 +667,7 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
+        dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
     }
 
@@ -676,6 +677,7 @@ tasks {
             ":compiler:fir:raw-fir:psi2fir:test",
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
+            ":compiler:fir:analysis-tests:legacy-fir-tests:test",
             ":compiler:fir:fir2ir:test",
             ":plugins:fir:fir-plugin-prototype:test"
         )
