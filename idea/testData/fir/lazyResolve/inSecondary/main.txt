@@ -3,7 +3,7 @@ FILE: main.kt
         public final [CONTRACTS] val x: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public constructor(): R|Foo| {
+        public [BODY_RESOLVE] constructor(): R|Foo| {
             super<R|kotlin/Any|>()
             this@R|/Foo|.R|/Foo.x| = Int(42)
         }

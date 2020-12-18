@@ -1,6 +1,6 @@
 FILE: main.kt
     public final [BODY_RESOLVE] class Foo : R|kotlin/Any| {
-        public constructor(): R|Foo| {
+        public [BODY_RESOLVE] constructor(): R|Foo| {
             super<R|kotlin/Any|>()
         }
 

@@ -340,9 +340,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
-        if (mode.renderDeclarationResolvePhase) {
-            print("[${declaration.resolvePhase}] ")
-        }
+        declaration.renderPhaseIfNeeded()
         print(
             when (declaration) {
                 is FirRegularClass -> declaration.classKind.name.toLowerCase().replace("_", " ")
@@ -357,6 +355,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
                 else -> "unknown"
             }
         )
+    }
+
+    private fun FirDeclaration.renderPhaseIfNeeded() {
+        if (mode.renderDeclarationResolvePhase) {
+            print("[${resolvePhase}] ")
+        }
     }
 
     private fun List<FirDeclaration>.renderDeclarations() {
@@ -458,6 +462,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (constructor.isActual) {
             print("actual ")
         }
+        constructor.renderPhaseIfNeeded()
         print("constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
