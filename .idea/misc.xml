@@ -94,9 +94,9 @@
     <file url="file://$PROJECT_DIR$/intellij/community/plugins/InspectionGadgets/InspectionGadgetsAnalysis/resources/messages/InspectionGadgetsBundle" separator="\u005f" />
   </component>
   <component name="RoboscopeState">
+    <option name="teamcityAndroidStudioPlatformVersion" value="202.6863838" />
     <option name="teamcityAndroidStudioVersion" value="4.2.0.13" />
-    <option name="teamcityPlatformVersion" value="202.6863838" />
-    <option name="localPlatformVersion" value="202" />
+    <option name="localAndroidStudioPlatformVersion" value="202" />
   </component>
   <component name="TeamCityRootDirectoryHolder">
     <option name="myRelativeRootDirectory" />
