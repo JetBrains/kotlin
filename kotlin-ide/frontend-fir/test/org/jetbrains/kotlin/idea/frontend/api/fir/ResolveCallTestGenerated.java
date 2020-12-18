@@ -56,6 +56,11 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
         runTest("testData/analysisSession/resolveCall/javaFunctionCall.kt");
     }
 
+    @TestMetadata("resolveCallInSuperConstructorParam.kt")
+    public void testResolveCallInSuperConstructorParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/resolveCallInSuperConstructorParam.kt");
+    }
+
     @TestMetadata("simpleCallWithNonMatchingArgs.kt")
     public void testSimpleCallWithNonMatchingArgs() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/simpleCallWithNonMatchingArgs.kt");
