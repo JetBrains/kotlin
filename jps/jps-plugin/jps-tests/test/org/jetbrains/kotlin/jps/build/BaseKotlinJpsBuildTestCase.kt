@@ -40,7 +40,7 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     }
 
     override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !AndroidStudioTestUtils.checkIsAndroidStudio()
+        return super.shouldRunTest() && !AndroidStudioTestUtils.skipIncompatibleTestAgainstAndroidStudio()
     }
 
     override fun tearDown() {
