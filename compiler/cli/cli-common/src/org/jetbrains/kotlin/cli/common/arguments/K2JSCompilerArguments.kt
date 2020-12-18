@@ -36,7 +36,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xrepositories",
         valueDescription = "<path>",
-        description = "Paths to additional places where libriraries could be found"
+        description = "Paths to additional places where libraries could be found"
     )
     var repositries: String? by NullableStringFreezableVar(null)
 

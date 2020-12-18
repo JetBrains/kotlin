@@ -143,30 +143,30 @@ class KotlinLibraryResolverResultImpl(
         private val roots: List<KotlinResolvedLibrary>
 ): KotlinLibraryResolveResult {
 
-    private val all: List<KotlinResolvedLibrary> by lazy {
-        val result = mutableSetOf<KotlinResolvedLibrary>().also { it.addAll(roots) }
+    private val all: List<KotlinResolvedLibrary>
+        by lazy {
+            val result = mutableSetOf<KotlinResolvedLibrary>().also { it.addAll(roots) }
 
-        var newDependencies = result.toList()
-        do {
-            newDependencies = newDependencies
-                    .map { it -> it.resolvedDependencies }.flatten()
+            var newDependencies = result.toList()
+            do {
+                newDependencies = newDependencies
+                    .map { it.resolvedDependencies }.flatten()
                     .filter { it !in result }
-            result.addAll(newDependencies)
-        } while (newDependencies.isNotEmpty())
+                result.addAll(newDependencies)
+            } while (newDependencies.isNotEmpty())
 
-        result.toList()
-    }
+//            return result.toList()
+            result.toList()
+        }
 
     override fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean) =
             KotlinLibraryResolverResultImpl(roots.filter(predicate))
 
-    override fun getFullList(order: LibraryOrder?) = (order?.invoke(all) ?: all).asPlain()
+    override fun getFullResolvedList(order: LibraryOrder?) = (order?.invoke(all) ?: all)
 
     override fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit) {
         all.forEach { action(it.library, it) }
     }
-
-    private fun List<KotlinResolvedLibrary>.asPlain() = map { it.library }
 
     override fun toString() = "roots=$roots, all=$all"
 }

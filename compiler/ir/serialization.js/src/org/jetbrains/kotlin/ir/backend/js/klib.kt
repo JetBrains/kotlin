@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -380,15 +379,10 @@ private class ModulesStructure(
     private val friendDependencies: List<KotlinLibrary>
 ) {
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = run {
-        val result = mutableMapOf<KotlinLibrary, List<KotlinLibrary>>()
-
-        allDependencies.forEach { klib, _ ->
-            val dependencies = allDependencies.filterRoots {
-                it.library == klib
-            }.getFullList(TopologicalLibraryOrder)
-            result.put(klib, dependencies.minus(klib))
-        }
-        result
+        val transitives = allDependencies.getFullResolvedList()
+        transitives.associate { klib ->
+            klib.library to klib.resolvedDependencies.map { d -> d.library }
+        }.toMap()
     }
 
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
