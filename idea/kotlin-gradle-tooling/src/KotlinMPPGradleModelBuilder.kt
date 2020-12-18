@@ -55,8 +55,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val dependencyMapper = KotlinDependencyMapper()
         val importingContext = MultiplatformModelImportingContextImpl(project)
 
-        importingContext.sourceSetsByNames = buildSourceSets(importingContext, dependencyResolver, dependencyMapper) ?: return null
-        importingContext.targets = buildTargets(importingContext, projectTargets, dependencyResolver, dependencyMapper)
+        importingContext.initializeSourceSets(buildSourceSets(importingContext, dependencyResolver, dependencyMapper) ?: return null)
+
+        val targets = buildTargets(importingContext, projectTargets, dependencyResolver, dependencyMapper)
+        importingContext.initializeCompilations(targets.flatMap { it.compilations })
+        importingContext.initializeTargets(targets)
 
         computeSourceSetsDeferredInfo(importingContext)
 

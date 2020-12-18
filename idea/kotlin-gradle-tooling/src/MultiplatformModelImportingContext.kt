@@ -60,16 +60,57 @@ private enum class GradleImportPropeties(val id: String, val defaultValue: Boole
 }
 
 
-class MultiplatformModelImportingContextImpl(override val project: Project) : MultiplatformModelImportingContext {
-    override lateinit var targets: Collection<KotlinTarget>
+internal class MultiplatformModelImportingContextImpl(override val project: Project) : MultiplatformModelImportingContext {
+    override val properties: ImportProperties = ImportProperties(project)
 
-    override val compilations: Collection<KotlinCompilation> by lazy { targets.flatMap { it.compilations } }
-
+    /** see [initializeSourceSets] */
     override lateinit var sourceSetsByNames: Map<String, KotlinSourceSetImpl>
+        private set
     override val sourceSets: Collection<KotlinSourceSetImpl>
         get() = sourceSetsByNames.values
 
-    override val properties: ImportProperties = ImportProperties(project)
+
+    /** see [initializeCompilations] */
+    override lateinit var compilations: Collection<KotlinCompilation>
+        private set
+    private lateinit var sourceSetToParticipatedCompilations: Map<KotlinSourceSet, Set<KotlinCompilation>>
+
+
+    /** see [initializeTargets] */
+    override lateinit var targets: Collection<KotlinTarget>
+        private set
+
+    internal fun initializeSourceSets(sourceSetsByNames: Map<String, KotlinSourceSetImpl>) {
+        require(!this::sourceSetsByNames.isInitialized) {
+            "Attempt to re-initialize source sets for $this. Previous value: ${this.sourceSetsByNames}"
+        }
+        this.sourceSetsByNames = sourceSetsByNames
+    }
+
+    internal fun initializeCompilations(compilations: Collection<KotlinCompilation>) {
+        require(!this::compilations.isInitialized) { "Attempt to re-initialize compilations for $this. Previous value: ${this.compilations}" }
+        this.compilations = compilations
+
+        val sourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
+
+        for (target in targets) {
+            for (compilation in target.compilations) {
+                for (sourceSet in compilation.sourceSets) {
+                    sourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
+                    sourceSet.dependsOnSourceSets.mapNotNull { sourceSetByName(it) }.forEach {
+                        sourceSetToCompilations.getOrPut(it) { LinkedHashSet() } += compilation
+                    }
+                }
+            }
+        }
+
+        this.sourceSetToParticipatedCompilations = sourceSetToCompilations
+    }
+
+    internal fun initializeTargets(targets: Collection<KotlinTarget>) {
+        require(!this::targets.isInitialized) { "Attempt to re-initialize targets for $this. Previous value: ${this.targets}" }
+        this.targets = targets
+    }
 
     // overload for small optimization
     override fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in sourceSetToParticipatedCompilations.keys
@@ -78,23 +119,4 @@ class MultiplatformModelImportingContextImpl(override val project: Project) : Mu
         sourceSetToParticipatedCompilations[sourceSet]
 
     override fun sourceSetByName(name: String): KotlinSourceSet? = sourceSetsByNames[name]
-
-    private val sourceSetToParticipatedCompilations: Map<KotlinSourceSet, Set<KotlinCompilation>> by lazy {
-        // includes compilations where source set is included via dependsOn
-        val allSourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
-
-        for (target in targets) {
-            for (compilation in target.compilations) {
-                for (sourceSet in compilation.sourceSets) {
-                    allSourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
-                    sourceSet.dependsOnSourceSets.mapNotNull { sourceSetByName(it) }.forEach {
-                        allSourceSetToCompilations.getOrPut(it) { LinkedHashSet() } += compilation
-                    }
-                }
-            }
-        }
-
-        allSourceSetToCompilations
-    }
-
 }
