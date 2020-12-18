@@ -26,6 +26,16 @@ internal class DukatCompilationResolverPlugin(
     val nodeJs get() = resolver.nodeJs
     val npmProject get() = resolver.npmProject
     val compilation get() = npmProject.compilation
+    val compilationName by lazy {
+        compilation.name
+    }
+    val legacyTargetReuseIrTask by lazy {
+        val target = compilation.target
+        target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+    }
+    val externalsOutputFormat by lazy {
+        compilation.externalsOutputFormat
+    }
     val integratedTaskName = npmProject.compilation.disambiguateName("generateExternalsIntegrated")
     val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
@@ -86,12 +96,10 @@ internal class DukatCompilationResolverPlugin(
         packageJsonIsUpdated: Boolean,
         resolution: KotlinRootNpmResolution
     ) {
-        val externalNpmDependencies = resolution[project.path][compilation].externalNpmDependencies
+        val externalNpmDependencies = resolution[project.path][compilationName].externalNpmDependencies
 
-        val target = compilation.target
-        val externalsOutputFormat = compilation.externalsOutputFormat
-        val legacyTargetReuseIrTask =
-            target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+
+
         if (legacyTargetReuseIrTask) {
             return
         }

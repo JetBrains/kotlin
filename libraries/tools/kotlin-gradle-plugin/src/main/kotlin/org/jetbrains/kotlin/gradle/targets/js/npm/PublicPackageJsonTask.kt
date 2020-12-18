@@ -26,27 +26,30 @@ constructor(
     private val npmProject = compilation.npmProject
     private val nodeJs = npmProject.nodeJs
 
-    private val compilationResolution
-        get() = nodeJs.npmResolutionManager.requireInstalled(
+    private val compilationName = compilation.name
+
+    private val compilationResolution by lazy {
+        nodeJs.npmResolutionManager.requireInstalled(
             services,
             logger
-        )[project.path][npmProject.compilation]
+        )[project.path][compilationName]
+    }
 
     init {
         // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+//        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
     }
 
-    @get:Input
-    val packageJsonCustomFields: Map<String, Any?>
-        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
-            .apply {
-                compilation.packageJsonHandlers.forEach { it() }
-            }.customFields
+//    @get:Input
+//    val packageJsonCustomFields: Map<String, Any?>
+//        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+//            .apply {
+//                compilation.packageJsonHandlers.forEach { it() }
+//            }.customFields
 
     @get:Nested
-    internal val externalDependencies: Collection<NpmDependencyDeclaration>
-        get() = compilationResolution.externalNpmDependencies
+    internal val externalDependencies: Collection<NpmDependencyDeclaration> by lazy {
+        compilationResolution.externalNpmDependencies
             .map {
                 NpmDependencyDeclaration(
                     scope = it.scope,
@@ -55,6 +58,7 @@ constructor(
                     generateExternals = it.generateExternals
                 )
             }
+    }
 
     private val publicPackageJsonTaskName = npmProject.publicPackageJsonTaskName
 
@@ -68,8 +72,8 @@ constructor(
 
     @TaskAction
     fun resolve() {
-        val compilation = npmProject.compilation
-
+//        val compilation = npmProject.compilation
+//
 //        packageJson(npmProject, realExternalDependencies).let { packageJson ->
 //            packageJson.main = "${npmProject.name}.js"
 //
