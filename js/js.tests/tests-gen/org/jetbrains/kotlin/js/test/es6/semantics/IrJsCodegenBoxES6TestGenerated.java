@@ -9575,6 +9575,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/enum/asReturnExpression.kt");
         }
 
+        @TestMetadata("companionAccessingEnumValue.kt")
+        public void testCompanionAccessingEnumValue() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/companionAccessingEnumValue.kt");
+        }
+
         @TestMetadata("companionObjectInEnum.kt")
         public void testCompanionObjectInEnum() throws Exception {
             runTest("compiler/testData/codegen/box/enum/companionObjectInEnum.kt");

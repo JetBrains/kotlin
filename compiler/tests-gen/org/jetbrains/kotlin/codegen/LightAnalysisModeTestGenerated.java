@@ -12565,6 +12565,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/enum/classForEnumEntry.kt");
         }
 
+        @TestMetadata("companionAccessingEnumValue.kt")
+        public void testCompanionAccessingEnumValue() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/companionAccessingEnumValue.kt");
+        }
+
         @TestMetadata("companionObjectInEnum.kt")
         public void testCompanionObjectInEnum() throws Exception {
             runTest("compiler/testData/codegen/box/enum/companionObjectInEnum.kt");
