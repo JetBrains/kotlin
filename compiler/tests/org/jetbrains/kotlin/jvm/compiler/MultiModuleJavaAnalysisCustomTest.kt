@@ -96,7 +96,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             projectContext,
             modules
         ) {
-            override fun sdkDependency(module: TestModule): TestModule? = null
+            override fun sdkDependency(module: TestModule, ownerModuleDescriptor: ModuleDescriptorImpl?): TestModule? = null
 
             override fun modulesContent(module: TestModule): ModuleContent<TestModule> =
                 ModuleContent(module, module.kotlinFiles, module.javaFilesScope)

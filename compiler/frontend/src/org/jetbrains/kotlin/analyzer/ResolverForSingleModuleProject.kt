@@ -35,7 +35,7 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
     EmptyResolverForProject(),
     PackageOracleFactory.OptimisticFactory
 ) {
-    override fun sdkDependency(module: M): M? = sdkDependency
+    override fun sdkDependency(module: M, ownerModuleDescriptor: ModuleDescriptorImpl?): M? = sdkDependency
 
     init {
         knownDependencyModuleDescriptors.forEach { (module, descriptor) ->

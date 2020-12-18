@@ -59,9 +59,15 @@ class IdeaResolverForProject(
     private val builtInsCache: BuiltInsCache =
         (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
 
-    override fun sdkDependency(module: IdeaModuleInfo): SdkInfo? {
+    override fun sdkDependency(module: IdeaModuleInfo, ownerModuleDescriptor: ModuleDescriptorImpl?): SdkInfo? {
         if (projectContext.project.useCompositeAnalysis) {
             require(constantSdkDependencyIfAny == null) { "Shouldn't pass SDK dependency manually for composite analysis mode" }
+        }
+        // This is needed for case when we find sdk dependency for module descriptor of
+        //   that sdk itself. There was some situations when we create additional module
+        //   descriptor for one SdkInfo
+        if (module is SdkInfo && ownerModuleDescriptor?.getCapability(ModuleInfo.Capability) == module) {
+            return module
         }
         return constantSdkDependencyIfAny ?: module.findSdkAcrossDependencies()
     }
@@ -133,7 +139,7 @@ class IdeaResolverForProject(
         private val cache = mutableMapOf<BuiltInsCacheKey, KotlinBuiltIns>()
 
         fun getOrCreateIfNeeded(module: IdeaModuleInfo): KotlinBuiltIns = projectContextFromSdkResolver.storageManager.compute {
-            val sdk = resolverForSdk.sdkDependency(module)
+            val sdk = resolverForSdk.sdkDependency(module, null)
 
             val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module, sdk)
             val cachedBuiltIns = cache[key]

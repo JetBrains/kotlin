@@ -52,7 +52,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         assert(moduleInfoToResolvableInfo.values.toSet() == modules.toSet())
     }
 
-    abstract fun sdkDependency(module: M): M?
+    abstract fun sdkDependency(module: M, ownerModuleDescriptor: ModuleDescriptorImpl?): M?
     abstract fun modulesContent(module: M): ModuleContent<M>
     abstract fun builtInsForModule(module: M): KotlinBuiltIns
     abstract fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: M): ResolverForModule
@@ -68,7 +68,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             LazyModuleDependencies(
                 projectContext.storageManager,
                 module,
-                sdkDependency(module),
+                sdkDependency(module, moduleDescriptor),
                 this
             )
         )
