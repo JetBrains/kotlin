@@ -44,7 +44,7 @@
       <element id="directory" name="bin">
         <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/mac/LLDBFrontend" />
         <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR-appcode/appcode/bin/libObjCHelper.dylib" />
-        <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/mac/lldb" />
+        <element id="file-copy" path="$PROJECT_DIR$/kotlin-ultimate/kmm-plugin/bin/mac/lldb" />
         <element id="directory" name="Bridge.framework">
           <element id="dir-copy" path="$PROJECT_DIR$/intellij/CIDR-appcode/appcode/bin/Bridge.framework" />
         </element>
@@ -52,7 +52,7 @@
           <element id="dir-copy" path="$PROJECT_DIR$/intellij/CIDR-appcode/appcode/bin/JBDevice.framework" />
         </element>
         <element id="directory" name="LLDB.framework">
-          <element id="dir-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/mac/LLDB.framework" />
+          <element id="dir-copy" path="$PROJECT_DIR$/kotlin-ultimate/kmm-plugin/bin/mac/LLDB.framework" />
         </element>
       </element>
     </root>

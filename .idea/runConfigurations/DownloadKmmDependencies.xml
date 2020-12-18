@@ -2,7 +2,7 @@
   <configuration default="false" name="DownloadKmmDependencies" type="JetRunConfigurationType">
     <module name="intellij.cidr.tools" />
     <option name="VM_PARAMETERS" value="-Xmx512m" />
-    <option name="PROGRAM_PARAMETERS" value="intellij/CIDR-appcode/appcode/bin/libObjCHelper.dylib intellij/CIDR-appcode/appcode/bin/Bridge.framework intellij/CIDR-appcode/appcode/bin/JBDevice.framework intellij/CIDR/cidr-debugger/bin/lldb/LLDBFrontend intellij/CIDR/cidr-debugger/bin/lldb/LLDB" />
+    <option name="PROGRAM_PARAMETERS" value="intellij/CIDR-appcode/appcode/bin/libObjCHelper.dylib intellij/CIDR-appcode/appcode/bin/Bridge.framework intellij/CIDR-appcode/appcode/bin/JBDevice.framework intellij/CIDR/cidr-debugger/bin/lldb/LLDBFrontend kotlin-ultimate/kmm-plugin/bin/LLDB" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <option name="PASS_PARENT_ENVS" value="true" />
