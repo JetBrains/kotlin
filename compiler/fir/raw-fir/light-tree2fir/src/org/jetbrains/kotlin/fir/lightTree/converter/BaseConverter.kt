@@ -126,6 +126,16 @@ abstract class BaseConverter(
         return tree.getParent(this)
     }
 
+    fun LighterASTNode.getParents(): Sequence<LighterASTNode> {
+        var node = this
+        return sequence {
+            while (true) {
+                yield(node)
+                node = node.getParent() ?: break
+            }
+        }
+    }
+
     fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {
         return this?.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
