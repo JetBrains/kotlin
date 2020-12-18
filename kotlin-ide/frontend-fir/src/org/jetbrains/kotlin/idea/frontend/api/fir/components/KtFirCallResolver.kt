@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
@@ -93,6 +94,7 @@ internal class KtFirCallResolver(
         val target = when (val calleeReference = calleeReference) {
             is FirResolvedNamedReference -> calleeReference.getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
             is FirErrorNamedReference -> calleeReference.createErrorCallTarget()
+            is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget()
             is FirSimpleNamedReference ->
                 error(
                     """
@@ -108,6 +110,12 @@ internal class KtFirCallResolver(
     }
 
     private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
+        KtErrorCallTarget(
+            getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
+            KtSimpleDiagnostic(diagnostic.reason)
+        )
+
+    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
             KtSimpleDiagnostic(diagnostic.reason)
