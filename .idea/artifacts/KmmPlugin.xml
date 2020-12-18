@@ -37,6 +37,9 @@
         <element id="archive" name="cidr-execution.jar">
           <element id="module-output" name="intellij.cidr.execution" />
         </element>
+        <element id="archive" name="cidr-debugger-commandInterpreterLang.jar">
+          <element id="module-output" name="intellij.cidr.debugger.commandInterpreterLang" />
+        </element>
       </element>
       <element id="directory" name="bin">
         <element id="file-copy" path="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/bin/lldb/mac/LLDBFrontend" />
