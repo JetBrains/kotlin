@@ -61,7 +61,9 @@ public final class B$runnable2$1 {
 @kotlin.Metadata
 public final class B$sam$i$java_lang_Runnable$0 {
     // source: 'wrapperInlinedFromAnotherClass.kt'
+    enclosing class B
     private synthetic final field function: kotlin.jvm.functions.Function0
+    inner (anonymous) class B$sam$i$java_lang_Runnable$0
     public method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final method run(): void
 }

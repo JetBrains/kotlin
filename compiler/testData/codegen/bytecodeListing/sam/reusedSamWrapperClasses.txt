@@ -13,7 +13,9 @@ final class F1Kt$getWrapped1$f$1 {
 @kotlin.Metadata
 final class F1Kt$sam$java_lang_Runnable$0 {
     // source: 'f1.kt'
+    enclosing class F1Kt
     private synthetic final field function: kotlin.jvm.functions.Function0
+    inner (anonymous) class F1Kt$sam$java_lang_Runnable$0
     method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final method run(): void
 }
@@ -22,6 +24,7 @@ final class F1Kt$sam$java_lang_Runnable$0 {
 public final class F1Kt {
     // source: 'f1.kt'
     inner (anonymous) class F1Kt$getWrapped1$f$1
+    inner (anonymous) class F1Kt$sam$java_lang_Runnable$0
     public final static @org.jetbrains.annotations.NotNull method getWrapped1(): java.lang.Runnable
 }
 
@@ -40,7 +43,9 @@ final class F2Kt$getWrapped2$f$1 {
 @kotlin.Metadata
 final class F2Kt$sam$java_lang_Runnable$0 {
     // source: 'f2.kt'
+    enclosing class F2Kt
     private synthetic final field function: kotlin.jvm.functions.Function0
+    inner (anonymous) class F2Kt$sam$java_lang_Runnable$0
     method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final method run(): void
 }
@@ -49,13 +54,16 @@ final class F2Kt$sam$java_lang_Runnable$0 {
 public final class F2Kt {
     // source: 'f2.kt'
     inner (anonymous) class F2Kt$getWrapped2$f$1
+    inner (anonymous) class F2Kt$sam$java_lang_Runnable$0
     public final static @org.jetbrains.annotations.NotNull method getWrapped2(): java.lang.Runnable
 }
 
 @kotlin.Metadata
 final class TestKt$sam$java_lang_Runnable$0 {
     // source: 'test.kt'
+    enclosing class TestKt
     private synthetic final field function: kotlin.jvm.functions.Function0
+    inner (anonymous) class TestKt$sam$java_lang_Runnable$0
     method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final method run(): void
 }
@@ -75,6 +83,7 @@ final class TestKt$test1$f$1 {
 @kotlin.Metadata
 public final class TestKt {
     // source: 'test.kt'
+    inner (anonymous) class TestKt$sam$java_lang_Runnable$0
     inner (anonymous) class TestKt$test1$f$1
     public final static method test1(): void
     public final static method test2(): void
