@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
 
 internal class FirDesignatedImplicitTypesTransformerForIDE(
-    private val designation: Iterator<FirElement>,
+    private val designation: Iterator<FirDeclaration>,
+    targetDeclaration: FirDeclaration,
     session: FirSession,
     scopeSession: ScopeSession,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
@@ -36,12 +37,15 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
+    private val phaseReplaceOracle = PhaseReplaceOracle(targetDeclaration)
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        if (designation.hasNext()) {
-            designation.next().visitNoTransform(this, data)
+        if (designation.hasNext()) phaseReplaceOracle.transformDeclarationInside(designation.next()) {
+            it.visitNoTransform(this, data)
             return declaration.compose()
         }
         return super.transformDeclarationContent(declaration, data)
     }
+
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = phaseReplaceOracle.needReplacePhase(firDeclaration)
 }

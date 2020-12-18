@@ -1,5 +1,5 @@
 FILE: main.kt
-    public final [BODY_RESOLVE] class WithElvis : R|kotlin/Any| {
+    public final [CONTRACTS] class WithElvis : R|kotlin/Any| {
         public [CONTRACTS] constructor(value: R|kotlin/String?|): R|elvis/WithElvis| {
             super<R|kotlin/Any|>()
         }
