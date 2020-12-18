@@ -44,19 +44,11 @@ fun withVararg(vararg xs: Int): Int {
 }
 
 fun test1() {
-  { // BLOCK
-    val <<array>>: A = A
-    val <<index_0>>: KFunction1<IntArray, Int> = ::withVararg
-    error("") /* ErrorCallExpression */<<index_0>>; error("") /* ErrorCallExpression */<<index_0>>; .plus(other = 1);
-  }
+  error("") /* ErrorCallExpression */
 }
 
 fun test2() {
-  { // BLOCK
-    val <<array>>: B = B
-    val <<index_0>>: KFunction1<IntArray, Int> = ::withVararg
-    error("") /* ErrorCallExpression */<<index_0>>; error("") /* ErrorCallExpression */<<index_0>>; .plus(other = 1);
-  }
+  error("") /* ErrorCallExpression */
 }
 
 fun test3(fn: Function1<Int, Unit>) {

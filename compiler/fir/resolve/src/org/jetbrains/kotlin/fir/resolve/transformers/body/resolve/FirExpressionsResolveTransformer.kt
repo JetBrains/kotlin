@@ -867,8 +867,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         val secondResult = augmentedArraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
 
-        val firstSucceed = firstCalls.all { it.typeRef !is FirErrorTypeRef }
-        val secondSucceed = secondCalls.all { it.typeRef !is FirErrorTypeRef }
+        fun isSuccessful(functionCall: FirFunctionCall): Boolean =
+            functionCall.typeRef !is FirErrorTypeRef && functionCall.calleeReference is FirResolvedNamedReference
+
+        val firstSucceed = firstCalls.all(::isSuccessful)
+        val secondSucceed = secondCalls.all(::isSuccessful)
 
         val result: FirStatement = when {
             firstSucceed && secondSucceed -> {
