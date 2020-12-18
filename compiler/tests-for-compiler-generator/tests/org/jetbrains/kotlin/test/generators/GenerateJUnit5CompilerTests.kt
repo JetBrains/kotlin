@@ -13,7 +13,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("compiler/tests-common-new/tests-gen", "compiler/testData") {
+        testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
@@ -21,11 +21,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractDiagnosticUsingJavacTest> {
                 model("diagnostics/tests/javac", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractFirDiagnosticTest>(suiteTestClassName = "FirOldFrontendDiagnosticsTestGenerated") {
-                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractDiagnosticsTestWithJsStdLib> {
@@ -45,7 +40,16 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/tests-common-new/tests-gen", "compiler/fir/analysis-tests/testData") {
+        // ---------------------------------------------- FIR tests ----------------------------------------------
+
+        testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
+            testClass<AbstractFirDiagnosticTest>(suiteTestClassName = "FirOldFrontendDiagnosticsTestGenerated") {
+                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirDiagnosticTest> {
                 model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
                 model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
