@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.pill.generateAllTests;
 
 import org.jetbrains.kotlin.generators.tests.*;
 import org.jetbrains.kotlin.generators.InconsistencyChecker;
-import org.jetbrains.kotlin.test.generators.GenerateNewCompilerTestsKt;
+import org.jetbrains.kotlin.test.generators.GenerateCompilerTestsKt;
 
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         GenerateCompilerTestsKt.main(args);
-        GenerateNewCompilerTestsKt.main(args);
         GenerateTestsKt.main(args);
         GenerateJsTestsKt.main(args);
         GenerateJava8TestsKt.main(args);

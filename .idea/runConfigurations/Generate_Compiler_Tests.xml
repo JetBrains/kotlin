@@ -10,12 +10,11 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":compiler:generateTests" />
+          <option value=":compiler:tests-for-compiler-generator:generateTests" />
           <option value=":compiler:tests-java8:generateTests" />
           <option value=":compiler:tests-against-klib:generateTests" />
           <option value=":js:js.tests:generateTests" />
           <option value=":core:descriptors.runtime:generateTests" />
-          <option value=":compiler:tests-common-new:generateTests" />
         </list>
       </option>
       <option name="vmOptions" value="" />

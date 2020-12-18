@@ -22,6 +22,8 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
+private const val TEST_GENERATOR_NAME = "GenerateNewCompilerTests.kt"
+
 private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,

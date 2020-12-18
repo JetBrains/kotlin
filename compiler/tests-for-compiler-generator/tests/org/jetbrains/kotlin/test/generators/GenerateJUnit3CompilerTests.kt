@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests
+package org.jetbrains.kotlin.test.generators
 
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
@@ -62,9 +62,7 @@ import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
 import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
-fun main(args: Array<String>) {
-    System.setProperty("java.awt.headless", "true")
-
+fun generateJUnit3CompilerTests(args: Array<String>) {
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation> {

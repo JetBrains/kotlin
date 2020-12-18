@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.test.generators
 
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 
-fun main(args: Array<String>) {
+fun generateJUnit5CompilerTests(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
-    generateNewTestGroupSuite(args) {
+    generateTestGroupSuiteWithJUnit5(args) {
         testGroup("compiler/tests-common-new/tests-gen", "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
@@ -47,15 +47,14 @@ fun main(args: Array<String>) {
 
         testGroup("compiler/tests-common-new/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirDiagnosticTest> {
-                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
-                model("resolveWithStdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
+                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
 
             testClass<AbstractFirDiagnosticsWithLightTreeTest> {
-                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
+                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
     }
-}
 
-const val TEST_GENERATOR_NAME = "GenerateNewCompilerTests.kt"
+}
