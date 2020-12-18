@@ -9,23 +9,24 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.GradleImportPropeties.*
 import kotlin.reflect.KProperty
 
-internal interface MultiplatformModelImportingContext {
-    val project: Project
-
-    val targets: Collection<KotlinTarget>
-    val compilations: Collection<KotlinCompilation>
-
+internal class MultiplatformModelImportingContext(
+    val project: Project,
+    val targets: Collection<KotlinTarget>,
+    val sourceSetsToCompilations: Map<KotlinSourceSet, Collection<KotlinCompilation>>,
+    val sourceSetsByNames: Map<String, KotlinSourceSetImpl>,
+    val properties: ImportProperties,
+) {
     /**
      * All source sets in a project, including those that are created but not included into any compilations
      * (so-called "orphan" source sets). Use [isOrphanSourceSet] to get only compiled source sets
      */
-    val sourceSets: Collection<KotlinSourceSetImpl>
-    val sourceSetsByNames: Map<String, KotlinSourceSetImpl>
+    val sourceSets: Collection<KotlinSourceSetImpl> = sourceSetsByNames.values
 
-    val properties: ImportProperties
+    val compilations: Collection<KotlinCompilation> = sourceSetsToCompilations.values.flatten()
 
-    fun sourceSetByName(name: String): KotlinSourceSet?
-    fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>?
+    fun sourceSetByName(name: String): KotlinSourceSet? = sourceSetsByNames[name]
+
+    fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? = sourceSetsToCompilations[sourceSet]
 
     /**
      * "Orphan" is a source set which is not actually compiled by the compiler, i.e. the one
@@ -60,24 +61,25 @@ private enum class GradleImportPropeties(val id: String, val defaultValue: Boole
 }
 
 
-class MultiplatformModelImportingContextImpl(override val project: Project) : MultiplatformModelImportingContext {
-    override lateinit var targets: Collection<KotlinTarget>
+class MultiplatformModelImportingContextBuilder(val project: Project) {
 
-    override val compilations: Collection<KotlinCompilation> by lazy { targets.flatMap { it.compilations } }
+    lateinit var targets: Collection<KotlinTarget>
 
-    override lateinit var sourceSetsByNames: Map<String, KotlinSourceSetImpl>
-    override val sourceSets: Collection<KotlinSourceSetImpl>
+    val compilations: Collection<KotlinCompilation> by lazy { targets.flatMap { it.compilations } }
+
+    lateinit var sourceSetsByNames: Map<String, KotlinSourceSetImpl>
+    val sourceSets: Collection<KotlinSourceSetImpl>
         get() = sourceSetsByNames.values
 
-    override val properties: ImportProperties = ImportProperties(project)
+    val properties: ImportProperties = ImportProperties(project)
 
     // overload for small optimization
-    override fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in sourceSetToParticipatedCompilations.keys
+    fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in sourceSetToParticipatedCompilations.keys
 
-    override fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? =
+    fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? =
         sourceSetToParticipatedCompilations[sourceSet]
 
-    override fun sourceSetByName(name: String): KotlinSourceSet? = sourceSetsByNames[name]
+    fun sourceSetByName(name: String): KotlinSourceSet? = sourceSetsByNames[name]
 
     private val sourceSetToParticipatedCompilations: Map<KotlinSourceSet, Set<KotlinCompilation>> by lazy {
         // includes compilations where source set is included via dependsOn
@@ -97,4 +99,6 @@ class MultiplatformModelImportingContextImpl(override val project: Project) : Mu
         allSourceSetToCompilations
     }
 
+    internal fun build(): MultiplatformModelImportingContext =
+        MultiplatformModelImportingContext(project, targets, sourceSetToParticipatedCompilations, sourceSetsByNames, properties)
 }

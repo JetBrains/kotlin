@@ -53,20 +53,23 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             SourceSetCachedFinder(project)
         )
         val dependencyMapper = KotlinDependencyMapper()
-        val importingContext = MultiplatformModelImportingContextImpl(project)
+        val importingContext = MultiplatformModelImportingContextBuilder(project)
 
         importingContext.sourceSetsByNames = buildSourceSets(importingContext, dependencyResolver, dependencyMapper) ?: return null
         importingContext.targets = buildTargets(importingContext, projectTargets, dependencyResolver, dependencyMapper)
 
         computeSourceSetsDeferredInfo(importingContext)
+        // the earliest place where we can build the context
+        val builtContext = importingContext.build()
 
         val coroutinesState = getCoroutinesState(project)
         val kotlinNativeHome = KotlinNativeHomeEvaluator.getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
+
         return KotlinMPPGradleModelImpl(
-            filterOrphanSourceSets(importingContext),
-            importingContext.targets,
+            filterOrphanSourceSets(builtContext),
+            builtContext.targets,
             // TODO DISCUSS AT REVIEW: can/should we deduplicate ImportingContext.properties and ExtraFeatures?
-            ExtraFeaturesImpl(coroutinesState, importingContext.properties.isHmppEnabled, importingContext.properties.enableNativeDependencyPropagation),
+            ExtraFeaturesImpl(coroutinesState, builtContext.properties.isHmppEnabled, builtContext.properties.enableNativeDependencyPropagation),
             kotlinNativeHome,
             dependencyMapper.toDependencyMap()
         )
@@ -94,7 +97,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildSourceSets(
-        importingContext: MultiplatformModelImportingContext,
+        importingContext: MultiplatformModelImportingContextBuilder,
         dependencyResolver: DependencyResolver,
         dependencyMapper: KotlinDependencyMapper
     ): Map<String, KotlinSourceSetImpl>? {
@@ -124,7 +127,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
-    private fun buildAndroidDeps(importingContext: MultiplatformModelImportingContext, classLoader: ClassLoader): Map<String, List<Any>>? {
+    private fun buildAndroidDeps(importingContext: MultiplatformModelImportingContextBuilder, classLoader: ClassLoader): Map<String, List<Any>>? {
         if (importingContext.properties.includeAndroidDependencies) {
             try {
                 val resolverClass = classLoader.loadClass("org.jetbrains.kotlin.gradle.targets.android.internal.AndroidDependencyResolver")
@@ -239,7 +242,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildTargets(
-        importingContext: MultiplatformModelImportingContext,
+        importingContext: MultiplatformModelImportingContextBuilder,
         projectTargets: Collection<Named>,
         dependencyResolver: DependencyResolver,
         dependencyMapper: KotlinDependencyMapper
@@ -299,7 +302,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildTarget(
-        importingContext: MultiplatformModelImportingContext,
+        importingContext: MultiplatformModelImportingContextBuilder,
         gradleTarget: Named,
         dependencyResolver: DependencyResolver,
         dependencyMapper: KotlinDependencyMapper
@@ -359,7 +362,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun KotlinCompilationImpl.addDependsOnSourceSetsToCompilation(
-        importingContext: MultiplatformModelImportingContext
+        importingContext: MultiplatformModelImportingContextBuilder
     ): KotlinCompilationImpl {
         val dependsOnSourceSets = this.sourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { importingContext.sourceSetByName(it) }
 
@@ -489,7 +492,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildCompilation(
-        importingContext: MultiplatformModelImportingContext,
+        importingContext: MultiplatformModelImportingContextBuilder,
         gradleCompilation: Named,
         classifier: String?,
         dependencyResolver: DependencyResolver,
@@ -546,7 +549,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildCompilationDependencies(
-        importingContext: MultiplatformModelImportingContext,
+        importingContext: MultiplatformModelImportingContextBuilder,
         gradleCompilation: Named,
         classifier: String?,
         dependencyResolver: DependencyResolver,
@@ -725,7 +728,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return KotlinCompilationOutputImpl(classesDirs.files, destinationDir, resourcesDir)
     }
 
-    private fun computeSourceSetsDeferredInfo(importingContext: MultiplatformModelImportingContext) {
+    private fun computeSourceSetsDeferredInfo(importingContext: MultiplatformModelImportingContextBuilder) {
         for (sourceSet in importingContext.sourceSets) {
             if (!importingContext.properties.isHmppEnabled) {
                 val name = sourceSet.name
