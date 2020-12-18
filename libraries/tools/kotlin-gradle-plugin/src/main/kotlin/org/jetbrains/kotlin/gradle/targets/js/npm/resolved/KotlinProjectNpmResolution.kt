@@ -30,11 +30,11 @@ class KotlinProjectNpmResolution(
         }
     }
 
-    val byCompilation by lazy { npmProjects.associateBy { it.npmProject.compilation.name } }
+    val byCompilation by lazy { npmProjects.associateBy { it.npmProject.compilationName } }
 
-    operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolution {
-        check(compilation.target.project.path == project)
-        return byCompilation.getValue(compilation.name)
+    operator fun get(compilationName: String): KotlinCompilationNpmResolution {
+//        check(compilation.target.project.path == project)
+        return byCompilation.getValue(compilationName)
     }
 
     companion object {
