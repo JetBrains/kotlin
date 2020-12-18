@@ -41,6 +41,7 @@ open class BaseWriterImpl(
     init {
         // TODO: figure out the proper policy here.
         klibFile.deleteRecursively()
+        klibFile.parentFile.run { if (!exists) mkdirs() }
         libraryLayout.resourcesDir.mkdirs()
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
