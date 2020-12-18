@@ -15,7 +15,7 @@ object AndroidStudioTestUtils {
      * This method is supposed to be called from UsefulTestCase.shouldRunTest(). It silently returns 'false' on CI, however
      * it fails with an easily recognizable exception locally, so the developer would understand what's going on.
      */
-    fun checkIsAndroidStudio(): Boolean {
+    fun skipIncompatibleTestAgainstAndroidStudio(): Boolean {
         return when (val value = System.getProperty(KEY, null)) {
             "ci" -> true
             "local" -> throw AssertionError("Test is not expected to be run under Android Studio. It will be ignored on CI.")

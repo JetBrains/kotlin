@@ -30,7 +30,7 @@ import java.io.File
 
 abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinMavenConfigurator>() {
     override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !AndroidStudioTestUtils.checkIsAndroidStudio()
+        return super.shouldRunTest() && !AndroidStudioTestUtils.skipIncompatibleTestAgainstAndroidStudio()
     }
 
     fun doTestWithMaven(path: String) {
