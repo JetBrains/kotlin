@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.sure
@@ -22,12 +21,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             classFileFactory,
             withSignatures = isWithSignatures(wholeFile),
             withAnnotations = isWithAnnotations(wholeFile),
-            filter = object : BytecodeListingTextCollectingVisitor.Filter {
-                override fun shouldWriteClass(access: Int, name: String): Boolean = !name.startsWith("helpers/")
-                override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
-                override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
-                override fun shouldWriteInnerClass(name: String): Boolean = true
-            }
+            filter = BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests
         )
 
         val prefixes = when {
@@ -119,13 +113,20 @@ class BytecodeListingTextCollectingVisitor(
         fun shouldWriteClass(access: Int, name: String): Boolean
         fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean
         fun shouldWriteField(access: Int, name: String, desc: String): Boolean
-        fun shouldWriteInnerClass(name: String): Boolean
+        fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean
 
         object EMPTY : Filter {
             override fun shouldWriteClass(access: Int, name: String) = true
             override fun shouldWriteMethod(access: Int, name: String, desc: String) = true
             override fun shouldWriteField(access: Int, name: String, desc: String) = true
-            override fun shouldWriteInnerClass(name: String) = true
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?) = true
+        }
+
+        object ForCodegenTests : Filter {
+            override fun shouldWriteClass(access: Int, name: String): Boolean = !name.startsWith("helpers/")
+            override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
+            override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean = true
         }
     }
 
@@ -320,7 +321,7 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
-        if (!filter.shouldWriteInnerClass(name)) {
+        if (!filter.shouldWriteInnerClass(name, outerName, innerName)) {
             return
         }
 

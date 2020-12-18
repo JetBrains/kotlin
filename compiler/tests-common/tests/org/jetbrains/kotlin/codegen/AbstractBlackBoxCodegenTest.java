@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.codegen.ir.AbstractFirBlackBoxCodegenTest;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -74,27 +73,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         String text =
                 BytecodeListingTextCollectingVisitor.Companion.getText(
                         classFileFactory,
-                        new BytecodeListingTextCollectingVisitor.Filter() {
-                            @Override
-                            public boolean shouldWriteClass(int access, @NotNull String name) {
-                                return !name.startsWith("helpers/");
-                            }
-
-                            @Override
-                            public boolean shouldWriteMethod(int access, @NotNull String name, @NotNull String desc) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldWriteField(int access, @NotNull String name, @NotNull String desc) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldWriteInnerClass(@NotNull String name) {
-                                return true;
-                            }
-                        }
+                        BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests.INSTANCE
                 );
 
         assertEqualsToFile(expectedFile, text);
