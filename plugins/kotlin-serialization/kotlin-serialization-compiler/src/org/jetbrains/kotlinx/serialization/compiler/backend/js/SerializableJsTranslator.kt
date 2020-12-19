@@ -40,7 +40,6 @@ class SerializableJsTranslator(
 
         val missingExceptionClassRef = serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
             .constructors.single { it.valueParameters.size == 1 }
-            .let { context.getInnerNameForDescriptor(it).makeRef() }
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
@@ -88,7 +87,19 @@ class SerializableJsTranslator(
                     val initExpr = Translation.translateAsExpression(initializer, context)
                     TranslationUtils.assignmentToBackingField(context, prop.descriptor, initExpr).makeStmt()
                 } else {
-                    JsThrow(JsInvocation(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
+                    JsThrow(
+                        if (missingExceptionClassRef.isPrimary) {
+                            JsNew(
+                                context.translateQualifiedReference(missingExceptionClassRef.containingDeclaration),
+                                listOf(JsStringLiteral(prop.name))
+                            )
+                        } else {
+                            JsInvocation(
+                                context.getInnerNameForDescriptor(missingExceptionClassRef).makeRef(),
+                                listOf(JsStringLiteral(prop.name))
+                            )
+                        }
+                    )
                 }
                 // (seen & 1 << i == 0) -- not seen
                 val notSeenTest = propNotSeenTest(seenVars[bitMaskSlotAt(index)], index)
