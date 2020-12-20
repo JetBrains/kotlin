@@ -41,6 +41,11 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         error("Unexpected element of type ${element::class}")
     }
 
+    override fun visitTypeOperator(expression: IrTypeOperatorCall) {
+        require(expression.operator == IrTypeOperator.REINTERPRET_CAST) { "Other types of casts must be lowered" }
+        generateExpression(expression.argument)
+    }
+
     override fun <T> visitConst(expression: IrConst<T>) {
         when (val kind = expression.kind) {
             is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
@@ -116,10 +121,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitConstructorCall(expression: IrConstructorCall) {
         val klass: IrClass = expression.symbol.owner.parentAsClass
 
-        if (backendContext.inlineClassesUtils.isClassInlineLike(klass)) {
-            // Unboxed instance is just a constructor argument.
-            generateExpression(expression.getValueArgument(0)!!)
-            return
+        require(!backendContext.inlineClassesUtils.isClassInlineLike(klass)) {
+            "All inline class constructor calls must be lowered to static function calls"
         }
 
         val wasmStruct: WasmSymbol<WasmStructDeclaration> = context.referenceStructType(klass.symbol)
