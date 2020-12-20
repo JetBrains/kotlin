@@ -370,6 +370,13 @@ private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
     description = "[Optimization] Inline property accessors"
 )
 
+private val copyPropertyAccessorBodiesLoweringPass = makeDeclarationTransformerPhase(
+    ::CopyAccessorBodyLowerings,
+    name = "CopyAccessorBodyLowering",
+    description = "Copy accessor bodies so that ist can be safely read in PropertyAccessorInlineLowering",
+    prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
+)
+
 private val foldConstantLoweringPhase = makeBodyLoweringPhase(
     { FoldConstantLowering(it, true) },
     name = "FoldConstantLowering",
@@ -603,6 +610,12 @@ private val secondaryFactoryInjectorLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
+private val constLoweringPhase = makeBodyLoweringPhase(
+    ::ConstLowering,
+    name = "ConstLowering",
+    description = "Wrap Long and Char constants into constructor invocation"
+)
+
 private val inlineClassDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     { InlineClassLowering(it).inlineClassDeclarationLowering },
     name = "InlineClassDeclarationLowering",
@@ -612,7 +625,12 @@ private val inlineClassDeclarationLoweringPhase = makeDeclarationTransformerPhas
 private val inlineClassUsageLoweringPhase = makeBodyLoweringPhase(
     { InlineClassLowering(it).inlineClassUsageLowering },
     name = "InlineClassUsageLowering",
-    description = "Handle inline class usages"
+    description = "Handle inline class usages",
+    prerequisite = setOf(
+        // Const lowering generates inline class constructors for unsigned integers
+        // which should be lowered by this lowering
+        constLoweringPhase
+    )
 )
 
 private val autoboxingTransformerPhase = makeBodyLoweringPhase(
@@ -638,12 +656,6 @@ private val primitiveCompanionLoweringPhase = makeBodyLoweringPhase(
     ::PrimitiveCompanionLowering,
     name = "PrimitiveCompanionLowering",
     description = "Replace common companion object access with platform one"
-)
-
-private val constLoweringPhase = makeBodyLoweringPhase(
-    ::ConstLowering,
-    name = "ConstLowering",
-    description = "Wrap Long and Char constants into constructor invocation"
 )
 
 private val callsLoweringPhase = makeBodyLoweringPhase(
@@ -743,6 +755,7 @@ val loweringList = listOf<Lowering>(
     propertyLazyInitLoweringPhase,
     removeInitializersForLazyProperties,
     propertyAccessorInlinerLoweringPhase,
+    copyPropertyAccessorBodiesLoweringPass,
     foldConstantLoweringPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
@@ -763,11 +776,11 @@ val loweringList = listOf<Lowering>(
     secondaryConstructorLoweringPhase,
     secondaryFactoryInjectorLoweringPhase,
     classReferenceLoweringPhase,
+    constLoweringPhase,
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,
     blockDecomposerLoweringPhase,
-    constLoweringPhase,
     objectDeclarationLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
