@@ -56,9 +56,39 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeGenericTypes.kt");
         }
 
+        @TestMetadata("ParameterTypeImportedTypeWins.kt")
+        public void testParameterTypeImportedTypeWins() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeImportedTypeWins.kt");
+        }
+
         @TestMetadata("ParameterTypeNestedType.kt")
         public void testParameterTypeNestedType() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeNestedType.kt");
+        }
+
+        @TestMetadata("ParameterTypeStarImportedTypeLoses.kt")
+        public void testParameterTypeStarImportedTypeLoses() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeStarImportedTypeLoses.kt");
+        }
+
+        @TestMetadata("ParameterTypeTopLevelTypeLoses.kt")
+        public void testParameterTypeTopLevelTypeLoses() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeTopLevelTypeLoses.kt");
+        }
+
+        @TestMetadata("ParameterTypeTopLevelTypeWins.kt")
+        public void testParameterTypeTopLevelTypeWins() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeTopLevelTypeWins.kt");
+        }
+
+        @TestMetadata("VariableType.kt")
+        public void testVariableType() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/VariableType.kt");
+        }
+
+        @TestMetadata("VariableTypeConflictWithLocalType.kt")
+        public void testVariableTypeConflictWithLocalType() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/VariableTypeConflictWithLocalType.kt");
         }
     }
 }
