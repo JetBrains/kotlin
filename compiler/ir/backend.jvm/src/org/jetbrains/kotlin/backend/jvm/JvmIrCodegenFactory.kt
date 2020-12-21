@@ -40,7 +40,23 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
+    data class JvmIrBackendInput(
+        val state: GenerationState,
+        val irModuleFragment: IrModuleFragment,
+        val symbolTable: SymbolTable,
+        val sourceManager: PsiSourceManager,
+        val phaseConfig: PhaseConfig,
+        val irProviders: List<IrProvider>,
+        val extensions: JvmGeneratorExtensions,
+        val backendExtension: JvmBackendExtension,
+    )
+
     override fun generateModule(state: GenerationState, files: Collection<KtFile>) {
+        val input = convertToIr(state, files)
+        doGenerateFilesInternal(input)
+    }
+
+    fun convertToIr(state: GenerationState, files: Collection<KtFile>): JvmIrBackendInput {
         val extensions = JvmGeneratorExtensions()
         val mangler = JvmManglerDesc(MainFunctionDetector(state.bindingContext, state.languageVersionSettings))
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, Psi2IrConfiguration())
@@ -116,23 +132,20 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
                 ?: error("BindingContext should be cleanable in JVM IR to avoid leaking memory: ${state.originalFrontendBindingContext}")
             originalBindingContext.clear()
         }
-
-        doGenerateFilesInternal(
-            state, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig,
-            irProviders, extensions, JvmBackendExtension.Default,
+        return JvmIrBackendInput(
+            state,
+            irModuleFragment,
+            symbolTable,
+            psi2irContext.sourceManager,
+            phaseConfig,
+            irProviders,
+            extensions,
+            JvmBackendExtension.Default,
         )
     }
 
-    fun doGenerateFilesInternal(
-        state: GenerationState,
-        irModuleFragment: IrModuleFragment,
-        symbolTable: SymbolTable,
-        sourceManager: PsiSourceManager,
-        phaseConfig: PhaseConfig,
-        irProviders: List<IrProvider>,
-        extensions: JvmGeneratorExtensions,
-        backendExtension: JvmBackendExtension,
-    ) {
+    fun doGenerateFilesInternal(input: JvmIrBackendInput) {
+        val (state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension) = input
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment,
             symbolTable, phaseConfig, extensions, backendExtension
@@ -179,13 +192,20 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
     ) {
-        irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
-        val irProviders = generateTypicalIrProviderList(
-            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
-        )
-
+        val irProviders = configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
         doGenerateFilesInternal(
-            state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension,
+            JvmIrBackendInput(state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension)
+        )
+    }
+
+    fun configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(
+        irModuleFragment: IrModuleFragment,
+        symbolTable: SymbolTable,
+        extensions: JvmGeneratorExtensions
+    ): List<IrProvider> {
+        irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
+        return generateTypicalIrProviderList(
+            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
         )
     }
 }

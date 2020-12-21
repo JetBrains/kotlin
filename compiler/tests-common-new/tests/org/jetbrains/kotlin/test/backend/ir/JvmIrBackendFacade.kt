@@ -16,19 +16,9 @@ class JvmIrBackendFacade(
         module: TestModule,
         inputArtifact: IrBackendInput
     ): BinaryArtifacts.Jvm {
-        val (state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension) = inputArtifact
-
+        val state = inputArtifact.backendInput.state
         val codegenFactory = state.codegenFactory as JvmIrCodegenFactory
-        codegenFactory.doGenerateFilesInternal(
-            state,
-            irModuleFragment,
-            symbolTable,
-            sourceManager,
-            phaseConfig,
-            irProviders,
-            extensions,
-            backendExtension,
-        )
+        codegenFactory.doGenerateFilesInternal(inputArtifact.backendInput)
         state.factory.done()
 
         return BinaryArtifacts.Jvm(state.factory)
