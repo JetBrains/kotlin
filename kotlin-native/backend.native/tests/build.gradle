@@ -57,6 +57,7 @@ externalStdlibTestsDir.mkdirs()
 
 ext.platformManager = project.project(":kotlin-native").platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
+ext.llvmHome = platformManager.platform(target).configurables.absoluteLlvmHome
 
 ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}"
 
@@ -3824,11 +3825,27 @@ createInterop("leakMemoryWithRunningThread") {
 }
 
 createInterop("cppClass") {
+    if (isAppleTarget(project)) {
+        // TODO: For cpp we need a header with `new`.
+        it.extraOpts "-compiler-option", "-I$llvmHome/include/c++/v1"
+    }
     it.defFile 'interop/cpp/cppClass.def'
 }
 
 createInterop("cppTypes") {
+    if (isAppleTarget(project)) {
+        // TODO: For cpp we need a header with `new`.
+        it.extraOpts "-compiler-option", "-I$llvmHome/include/c++/v1"
+    }
     it.defFile 'interop/cpp/types.def'
+}
+
+createInterop("cppSkia") {
+    if (PlatformInfo.isMac()) {
+        // TODO: For cpp we need a header with `new`.
+        it.extraOpts "-compiler-option", "-I$llvmHome/include/c++/v1"
+    }
+    it.defFile 'interop/cpp/skia.def'
 }
 
 if (PlatformInfo.isAppleTarget(project)) {
@@ -4200,6 +4217,13 @@ interopTest("interop_cppTypes") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/cpp/types.kt"
     interop = 'cppTypes'
+}
+
+interopTest("interop_cppSkia") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/cpp/skia.kt"
+    interop = 'cppSkia'
+    goldValue = "17 17\n"
 }
 
 /*

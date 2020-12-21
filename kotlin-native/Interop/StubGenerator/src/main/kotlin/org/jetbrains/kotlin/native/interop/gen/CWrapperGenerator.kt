@@ -4,12 +4,14 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
-import org.jetbrains.kotlin.native.interop.indexer.GlobalDecl
-import org.jetbrains.kotlin.native.interop.indexer.VoidType
-import org.jetbrains.kotlin.native.interop.indexer.unwrapTypedefs
+import org.jetbrains.kotlin.native.interop.indexer.*
 
 internal data class CCalleeWrapper(val lines: List<String>)
+
+open class ManagedTypePassing {
+    open val ManagedType.passValue: String get() = error("ManagedType support requires a plugin")
+    open val ManagedType.returnValue: String get() = error("ManagedType support requires a plugin")
+}
 
 /**
  * Some functions don't have an address (e.g. macros-based or builtins).
@@ -26,10 +28,17 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         return "${packageName}_${functionName}_wrapper${currentFunctionWrapperId++}"
     }
 
-    private fun bindSymbolToFunction(symbol: String, function: String): List<String> = listOf(
-            "const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
-            "const void* $symbol = &$function;"
-    )
+    private fun bindSymbolToFunction(symbol: String, function: String): List<String> {
+        val prefix = if (context.configuration.library.language == Language.CPP)
+            "extern \"C\" "
+        else
+            ""
+
+        return listOf(
+                "${prefix}const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
+                "${prefix}const void* $symbol = (const void*)&$function;"
+        )
+    }
 
     private data class Parameter(val type: String, val name: String)
 
@@ -42,34 +51,122 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
     ): List<String> = listOf(
             "__attribute__((always_inline))",
             "$returnType $wrapperName(${parameters.joinToString { "${it.type} ${it.name}" }}) {",
-            body,
+            "\t$body",
             "}",
             *bindSymbolToFunction(symbolName, wrapperName).toTypedArray()
     )
+
+    private val Type.stringRepresentation get() = this.getStringRepresentation(context.plugin)
+
+    private fun createCCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
+        assert(context.configuration.library.language != Language.CPP)
+
+        val wrapperName = generateFunctionWrapperName(function.name)
+
+        val returnType = function.returnType.stringRepresentation
+
+        val parameters = function.parameters.mapIndexed { index, parameter ->
+            val type = parameter.type.stringRepresentation
+            Parameter(type, "p$index")
+        }
+
+        val callExpression = "${function.name}(${parameters.joinToString { it.name }})"
+
+        val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
+            "$callExpression;"
+        } else {
+            "return (${returnType})($callExpression);"
+        }
+        return createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
+    }
+
+    private fun createCppCalleeWrapper(function: FunctionDecl, symbolName: String): List<String> {
+        assert(context.configuration.library.language == Language.CPP)
+        
+        val wrapperName = generateFunctionWrapperName(function.name)
+
+        val returnType = function.returnType.stringRepresentation
+        val unwrappedReturnType = function.returnType.unwrapTypedefs()
+        val returnTypePrefix =
+                if (unwrappedReturnType is PointerType && unwrappedReturnType.isLVReference) "&" else ""
+        val returnTypePostfix =
+                if (unwrappedReturnType is ManagedType)
+                    with(context.plugin.managedTypePassing) { unwrappedReturnType.returnValue }
+                else ""
+
+        val parameters = function.parameters.mapIndexed { index, parameter ->
+            val type = parameter.type.stringRepresentation
+            Parameter(type, "p$index")
+        }
+        val argumentTypes = function.parameters.map { parameter ->
+            val parameterTypeText = parameter.type.stringRepresentation
+            val type = parameter.type
+            val unwrappedType = type.unwrapTypedefs()
+            
+            val cppRefTypePrefix =
+                        if (unwrappedType is PointerType && unwrappedType.isLVReference) "*" else ""
+            val typeExpression = when {
+                type is Typedef ->
+                    "(${type.def.name})"
+                type is PointerType && type.spelling != null ->
+                    "(${type.spelling})$cppRefTypePrefix"
+                unwrappedType is EnumType ->
+                    "(${unwrappedType.def.spelling})"
+                unwrappedType is RecordType ->
+                    "*(${unwrappedType.decl.spelling}*)"
+                unwrappedType is ManagedType -> {
+                    with(context.plugin.managedTypePassing) { unwrappedType.passValue }
+                }
+                else ->
+                    "$cppRefTypePrefix($parameterTypeText)"
+            }
+
+            typeExpression
+        }
+
+        val callExpression = with (function) {
+            assert(argumentTypes.size == parameters.size)
+            val arguments = argumentTypes.mapIndexed { index, type ->
+                "${type}(${parameters[index].name})"
+            }
+            when {
+                isCxxInstanceMethod -> {
+                    val parametersPart = arguments.drop(1).joinToString()
+                    "(${parameters[0].name})->${name}($parametersPart)"
+                }
+                isCxxConstructor -> {
+                    val parametersPart = arguments.drop(1).joinToString()
+                    "new(${parameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
+                }
+                isCxxDestructor ->
+                    "(${parameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
+                else -> "${fullName}(${arguments.joinToString()})"
+            }
+        }
+
+        val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
+            "$callExpression;"
+        } else {
+            "return (${returnType})$returnTypePrefix($callExpression)$returnTypePostfix;"
+        }
+        return createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
+    }
 
     fun generateCCalleeWrapper(function: FunctionDecl, symbolName: String): CCalleeWrapper =
             if (function.isVararg) {
                 CCalleeWrapper(bindSymbolToFunction(symbolName, function.name))
             } else {
-                val wrapperName = generateFunctionWrapperName(function.name)
-
-                val returnType = function.returnType.getStringRepresentation()
-                val parameters = function.parameters.mapIndexed { index, parameter ->
-                    Parameter(parameter.type.getStringRepresentation(), "p$index")
-                }
-                val callExpression = "${function.name}(${parameters.joinToString { it.name }});"
-                val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
-                    callExpression
+                val wrapper = if (context.configuration.library.language == Language.CPP) {
+                    createCppCalleeWrapper(function, symbolName)
                 } else {
-                    "return $callExpression"
+                    createCCalleeWrapper(function, symbolName)
                 }
-                val wrapper = createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
                 CCalleeWrapper(wrapper)
             }
 
     fun generateCGlobalGetter(globalDecl: GlobalDecl, symbolName: String): CCalleeWrapper {
         val wrapperName = generateFunctionWrapperName("${globalDecl.name}_getter")
-        val returnType = globalDecl.type.getStringRepresentation()
+        val returnType = globalDecl.type.stringRepresentation
         val wrapperBody = "return ${globalDecl.name};"
         val wrapper = createWrapper(symbolName, wrapperName, returnType, emptyList(), wrapperBody)
         return CCalleeWrapper(wrapper)
@@ -85,7 +182,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
 
     fun generateCGlobalSetter(globalDecl: GlobalDecl, symbolName: String): CCalleeWrapper {
         val wrapperName = generateFunctionWrapperName("${globalDecl.name}_setter")
-        val globalType = globalDecl.type.getStringRepresentation()
+        val globalType = globalDecl.type.stringRepresentation
         val parameter = Parameter(globalType, "p1")
         val wrapperBody = "${globalDecl.name} = ${parameter.name};"
         val wrapper = createWrapper(symbolName, wrapperName, "void", listOf(parameter), wrapperBody)
