@@ -1,9 +1,19 @@
 @kotlin.Metadata
-final class F1Kt$getWrapped1$f$1 {
-    // source: 'f1.kt'
-    enclosing method F1Kt.getWrapped1()Ljava/lang/Runnable;
-    public final static field INSTANCE: F1Kt$getWrapped1$f$1
-    inner (anonymous) class F1Kt$getWrapped1$f$1
+final class A$sam$java_lang_Runnable$0 {
+    // source: 'reusedSamWrapperClasses.kt'
+    enclosing class A
+    private synthetic final field function: kotlin.jvm.functions.Function0
+    inner (anonymous) class A$sam$java_lang_Runnable$0
+    method <init>(p0: kotlin.jvm.functions.Function0): void
+    public synthetic final method run(): void
+}
+
+@kotlin.Metadata
+final class A$test1$f$1 {
+    // source: 'reusedSamWrapperClasses.kt'
+    enclosing method A.test1()V
+    public final static field INSTANCE: A$test1$f$1
+    inner (anonymous) class A$test1$f$1
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -11,29 +21,20 @@ final class F1Kt$getWrapped1$f$1 {
 }
 
 @kotlin.Metadata
-final class F1Kt$sam$java_lang_Runnable$0 {
-    // source: 'f1.kt'
-    enclosing class F1Kt
-    private synthetic final field function: kotlin.jvm.functions.Function0
-    inner (anonymous) class F1Kt$sam$java_lang_Runnable$0
-    method <init>(p0: kotlin.jvm.functions.Function0): void
-    public synthetic final method run(): void
+public final class A {
+    // source: 'reusedSamWrapperClasses.kt'
+    inner (anonymous) class A$sam$java_lang_Runnable$0
+    inner (anonymous) class A$test1$f$1
+    public method <init>(): void
+    public final method test1(): void
 }
 
 @kotlin.Metadata
-public final class F1Kt {
-    // source: 'f1.kt'
-    inner (anonymous) class F1Kt$getWrapped1$f$1
-    inner (anonymous) class F1Kt$sam$java_lang_Runnable$0
-    public final static @org.jetbrains.annotations.NotNull method getWrapped1(): java.lang.Runnable
-}
-
-@kotlin.Metadata
-final class F2Kt$getWrapped2$f$1 {
-    // source: 'f2.kt'
-    enclosing method F2Kt.getWrapped2()Ljava/lang/Runnable;
-    public final static field INSTANCE: F2Kt$getWrapped2$f$1
-    inner (anonymous) class F2Kt$getWrapped2$f$1
+final class B$test2$f$1 {
+    // source: 'reusedSamWrapperClasses.kt'
+    enclosing method B.test2()V
+    public final static field INSTANCE: B$test2$f$1
+    inner (anonymous) class B$test2$f$1
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
@@ -41,50 +42,9 @@ final class F2Kt$getWrapped2$f$1 {
 }
 
 @kotlin.Metadata
-final class F2Kt$sam$java_lang_Runnable$0 {
-    // source: 'f2.kt'
-    enclosing class F2Kt
-    private synthetic final field function: kotlin.jvm.functions.Function0
-    inner (anonymous) class F2Kt$sam$java_lang_Runnable$0
-    method <init>(p0: kotlin.jvm.functions.Function0): void
-    public synthetic final method run(): void
-}
-
-@kotlin.Metadata
-public final class F2Kt {
-    // source: 'f2.kt'
-    inner (anonymous) class F2Kt$getWrapped2$f$1
-    inner (anonymous) class F2Kt$sam$java_lang_Runnable$0
-    public final static @org.jetbrains.annotations.NotNull method getWrapped2(): java.lang.Runnable
-}
-
-@kotlin.Metadata
-final class TestKt$sam$java_lang_Runnable$0 {
-    // source: 'test.kt'
-    enclosing class TestKt
-    private synthetic final field function: kotlin.jvm.functions.Function0
-    inner (anonymous) class TestKt$sam$java_lang_Runnable$0
-    method <init>(p0: kotlin.jvm.functions.Function0): void
-    public synthetic final method run(): void
-}
-
-@kotlin.Metadata
-final class TestKt$test1$f$1 {
-    // source: 'test.kt'
-    enclosing method TestKt.test1()V
-    public final static field INSTANCE: TestKt$test1$f$1
-    inner (anonymous) class TestKt$test1$f$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-public final class TestKt {
-    // source: 'test.kt'
-    inner (anonymous) class TestKt$sam$java_lang_Runnable$0
-    inner (anonymous) class TestKt$test1$f$1
-    public final static method test1(): void
-    public final static method test2(): void
+public final class B {
+    // source: 'reusedSamWrapperClasses.kt'
+    inner (anonymous) class B$test2$f$1
+    public method <init>(): void
+    public final method test2(): void
 }

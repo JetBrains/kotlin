@@ -8,7 +8,7 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 final class<null>  TKt$sam$Sam$0 {
     // source: 't.kt'
     public final @org.jetbrains.annotations.NotNull <()Lkotlin/Function<*>;> method getFunctionDelegate(): kotlin.Function
-    <null> method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
+    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public final <null> method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public synthetic final <null> method get(): java.lang.Object
     public final <null> method hashCode(): int
