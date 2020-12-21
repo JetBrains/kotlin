@@ -1,0 +1,41 @@
+language = C++
+compilerOpts = -std=c++17
+plugin = org.jetbrains.kotlin.native.interop.skia
+
+---
+// TODO: this one checks the syntactic aspect for now.
+// To be updated for proper c++ destructor and
+// kotlin garbage collection interaction.
+
+
+template <typename T> class sk_sp {
+public:
+    sk_sp(T* obj) : data(obj) {}
+    T* release() {
+        return data;
+    }
+private:
+    T* data;
+};
+
+template <typename T> sk_sp<T> sk_ref_sp(T* obj) {
+    return sk_sp<T>(obj);
+}
+
+class Value {
+public:
+    int data;
+};
+
+class Foo {
+public:
+    Foo() { }
+
+    virtual sk_sp<Value> foo(Value *obj) {
+        return sk_sp<Value>(obj);
+    }
+
+    virtual Value* bar(sk_sp<Value> obj) {
+        return obj.release();
+    }
+};

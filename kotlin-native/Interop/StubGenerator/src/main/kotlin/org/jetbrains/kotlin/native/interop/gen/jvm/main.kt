@@ -102,6 +102,7 @@ private fun List<String>?.isTrue(): Boolean {
 }
 
 private fun runCmd(command: Array<String>, verbose: Boolean = false) {
+    if (verbose) println("COMMAND: " + command.joinToString(" "))
     Command(*command).getOutputLines(true).let { lines ->
         if (verbose) lines.forEach(::println)
     }
@@ -121,19 +122,22 @@ private fun Properties.putAndRunOnReplace(key: Any, newValue: Any, beforeReplace
     this[key] = newValue
 }
 
-private fun selectNativeLanguage(config: DefFile.DefFileConfig, hintIsCPP: Boolean = false): Language {
+private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
     val languages = mapOf(
             "C" to Language.C,
             "C++" to Language.CPP,
             "Objective-C" to Language.OBJECTIVE_C
     )
 
+    // C++ is not publicly supported.
+    val publicLanguages = languages.keys.minus("C++")
+
     val lang = config.language?.let {
         languages[it]
-                ?: error("Unexpected language '${config.language}'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
+                ?: error("Unexpected language '${config.language}'. Possible values are: ${publicLanguages.joinToString { "'$it'" }}")
     } ?: Language.C
 
-    return if (lang == Language.C && hintIsCPP) Language.CPP else lang
+    return lang
 
 }
 
@@ -267,7 +271,9 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
 
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
-    val (nativeIndex, compilation) = buildNativeIndex(library, verbose)
+    val plugin = Plugins.plugin(def.config.pluginName)
+
+    val (nativeIndex, compilation) = plugin.buildNativeIndex(library, verbose)
 
     // Our current approach to arm64_32 support is to compile armv7k version of bitcode
     // for arm64_32. That's the reason for this substitution.
@@ -304,7 +310,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         {}
     }
 
-    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName)
+    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, plugin)
     val stubIrOutput = run {
         val outKtFileCreator = {
             val outKtFileName = fqParts.last() + ".kt"
@@ -313,7 +319,13 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             file.parentFile.mkdirs()
             file
         }
-        val driverOptions = StubIrDriver.DriverOptions(entryPoint, moduleName, File(outCFile.absolutePath), outKtFileCreator)
+        val driverOptions = StubIrDriver.DriverOptions(
+                entryPoint,
+                moduleName,
+                File(outCFile.absolutePath),
+                outKtFileCreator,
+                cinteropArguments.dumpBridges ?: false
+        )
         val stubIrDriver = StubIrDriver(stubIrContext, driverOptions)
         stubIrDriver.run()
     }
@@ -330,7 +342,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         def.manifestAddendProperties["ir_provider"] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
     }
     stubIrContext.addManifestProperties(def.manifestAddendProperties)
-
     // cinterop command line option overrides def file property
     val foreignExceptionMode = cinteropArguments.foreignExceptionMode?: def.config.foreignExceptionMode
     foreignExceptionMode?.let {
@@ -360,7 +371,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             val outLib = File(nativeLibsDir, "$libName.bc")
             val compilerCmd = arrayOf(compiler, *compilerArgs,
                     "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
-
             runCmd(compilerCmd, verbose)
             outLib.absolutePath
         }
@@ -453,14 +463,6 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
     return tool
 }
 
-private fun isCxxOptions(opts: List<String>) : Boolean {
-    if (opts.size >= 2)  opts.reduce args@{ prev, that ->
-        if (prev == "-x" && that == "c++") return@isCxxOptions true
-        return@args that
-    }
-    return false
-}
-
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
@@ -472,8 +474,7 @@ internal fun buildNativeLibrary(
             arguments.compilerOptions + arguments.compilerOption).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
-    val cppOptions = isCxxOptions(def.config.compilerOpts + additionalCompilerOpts)
-    val language = selectNativeLanguage(def.config, cppOptions)
+    val language = selectNativeLanguage(def.config)
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
@@ -487,7 +488,7 @@ internal fun buildNativeLibrary(
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         addAll(when (language) {
             Language.C -> emptyList()
-            Language.CPP -> if (cppOptions) emptyList() else listOf("-x", "c++")
+            Language.CPP -> emptyList()
             Language.OBJECTIVE_C -> {
                 // "Objective-C" within interop means "Objective-C with ARC":
                 listOf("-fobjc-arc")

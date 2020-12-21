@@ -8,16 +8,13 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.objc.linkObjC
 import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
-import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.*
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -48,7 +45,11 @@ val CompilerOutputKind.isCache: Boolean
 
 internal fun produceCStubs(context: Context) {
     val llvmModule = context.llvmModule!!
-    context.cStubsManager.compile(context.config.clang, context.messageCollector, context.inVerbosePhase)?.let {
+    context.cStubsManager.compile(
+            context.config.clang,
+            context.messageCollector,
+            context.inVerbosePhase
+    ).forEach {
         parseAndLinkBitcodeFile(llvmModule, it.absolutePath)
     }
 }

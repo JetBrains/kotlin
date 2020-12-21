@@ -178,6 +178,7 @@ dependencies {
     distPack project(':kotlin-native:Interop:Runtime')
     distPack project(':kotlin-native:Interop:Indexer')
     distPack project(':kotlin-native:Interop:StubGenerator')
+    distPack project(':kotlin-native:Interop:Skia')
     distPack project(':kotlin-native:backend.native')
     distPack project(':kotlin-native:utilities:cli-runner')
     distPack project(':kotlin-native:utilities:basic-utils')
