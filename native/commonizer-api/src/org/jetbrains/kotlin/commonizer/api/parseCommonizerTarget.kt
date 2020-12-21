@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.api.IdentityStringToken.*
 
 public fun parseCommonizerTarget(identityString: String): CommonizerTarget {
     val tokens = tokenizeIdentityString(identityString)
-    val syntaxTree = parser(tokens) ?: error("Failed tokenizing $identityString")
+    val syntaxTree = parser(tokens) ?: error("Failed building syntax tree. $identityString")
     check(syntaxTree.remaining.isEmpty()) { "Failed building syntax tree. Unexpected remaining tokens ${syntaxTree.remaining}" }
     return buildCommonizerTarget(syntaxTree.value)
 }
