@@ -105,6 +105,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
 
         private fun isOutOfBlockChange(node: ASTNode): Boolean {
             val psi = node.psi ?: return true
+            if (!psi.isValid) {
+                /**
+                 * If PSI is not valid, well something bad happened, OOBM won't hurt
+                 */
+                return true
+            }
             val container = psi.getNonLocalContainingInBodyDeclarationWith() ?: return true
             return !FileElementFactory.isReanalyzableContainer(container)
         }
