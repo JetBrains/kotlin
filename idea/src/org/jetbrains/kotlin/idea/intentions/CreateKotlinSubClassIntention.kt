@@ -126,7 +126,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
             val dlg = chooseSubclassToCreate(baseClass, baseName) ?: return
             val targetName = dlg.className
             val (file, klass) = runWriteAction {
-                val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
+                val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory!!)!!
                 val builder = buildClassHeader(targetName, baseClass, baseClass.fqName!!.asString())
                 file.add(factory.createClass(builder.asString()))
                 val klass = file.getChildOfType<KtClass>()!!
@@ -164,7 +164,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
             CreateClassKind.CLASS, true,
             ModuleUtilCore.findModuleForPsiElement(baseClass)
         ) {
-            override fun getBaseDir(packageName: String) = sourceDir
+            override fun getBaseDir(packageName: String?) = sourceDir
 
             override fun reportBaseInTestSelectionInSource() = true
         }
