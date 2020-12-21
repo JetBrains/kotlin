@@ -18,6 +18,7 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import com.intellij.psi.impl.source.tree.FileElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingInBodyDeclarationWith
@@ -77,6 +78,18 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
             changedElements: Array<out ASTNode>,
             changeSet: TreeChangeEvent
         ) {
+            if (changedElements.isEmpty()) {
+                incrementModificationCountForFileChange(changeSet)
+            } else {
+                incrementModificationCountForSpecificElements(changedElements, changeSet)
+            }
+        }
+
+        private fun incrementModificationCountForSpecificElements(
+            changedElements: Array<out ASTNode>,
+            changeSet: TreeChangeEvent
+        ) {
+            require(changedElements.isNotEmpty())
             var isOutOfBlockChangeInAnyModule = false
 
             changedElements.forEach { element ->
@@ -90,6 +103,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
             if (isOutOfBlockChangeInAnyModule) {
                 projectGlobalOutOfBlockInKotlinFilesModificationCount++
             }
+        }
+
+        private fun incrementModificationCountForFileChange(changeSet: TreeChangeEvent) {
+            val fileElement = changeSet.rootElement as FileElement ?: return
+            incrementModificationTrackerForContainingModule(fileElement)
+            projectGlobalOutOfBlockInKotlinFilesModificationCount++
         }
 
         private fun incrementModificationTrackerForContainingModule(element: ASTNode) {
