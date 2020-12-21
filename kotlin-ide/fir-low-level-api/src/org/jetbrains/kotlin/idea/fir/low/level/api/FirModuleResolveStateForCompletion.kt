@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
@@ -112,4 +112,7 @@ internal class FirModuleResolveStateForCompletion(
     override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
         error("Should not be used in completion")
     }
+
+    override fun getTowerDataContextForElement(element: KtElement): FirTowerDataContext? =
+        originalState.getTowerDataContextForElement(element)
 }
