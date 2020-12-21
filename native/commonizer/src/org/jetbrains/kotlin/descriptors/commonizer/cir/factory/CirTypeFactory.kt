@@ -147,10 +147,10 @@ object CirTypeFactory {
             val declaredTypeParametersCount = classDescriptor.declaredTypeParameters.size
             outerType = createClassTypeWithAllOuterTypes(
                 classDescriptor = classDescriptor.containingDeclaration as ClassDescriptor,
-                arguments = arguments.subList(0, arguments.size - declaredTypeParametersCount),
+                arguments = arguments.subList(declaredTypeParametersCount, arguments.size),
                 isMarkedNullable = false // don't pass nullable flag to outer types
             )
-            remainingArguments = arguments.subList(arguments.size - declaredTypeParametersCount, arguments.size)
+            remainingArguments = arguments.subList(0, declaredTypeParametersCount)
         } else {
             outerType = null
             remainingArguments = arguments

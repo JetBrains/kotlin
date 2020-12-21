@@ -123,22 +123,42 @@ internal fun CirSimpleType.buildType(
     )
 }
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun buildSimpleType(classifier: ClassifierDescriptor, arguments: List<TypeProjection>, isMarkedNullable: Boolean) =
-    simpleType(
+private fun buildSimpleType(classifier: ClassifierDescriptor, arguments: List<TypeProjection>, isMarkedNullable: Boolean): SimpleType {
+    val reorderedArguments = if (arguments.isNotEmpty() && classifier is ClassDescriptor && classifier.isInner) {
+        val totalArguments = arguments.size
+        var remainingArguments = totalArguments
+
+        ArrayList<TypeProjection>(totalArguments).also { reorderedArguments ->
+            var currentClassifier: ClassDescriptor = classifier
+
+            while (true) {
+                val argumentsForCurrentClassifier = currentClassifier.declaredTypeParameters.size
+                for (i in 0 until argumentsForCurrentClassifier) {
+                    reorderedArguments += arguments[remainingArguments - argumentsForCurrentClassifier + i]
+                }
+                remainingArguments -= argumentsForCurrentClassifier
+
+                if (remainingArguments == 0) break
+                currentClassifier = currentClassifier.containingDeclaration as ClassDescriptor
+            }
+        }
+    } else arguments
+
+    return simpleType(
         annotations = Annotations.EMPTY,
         constructor = classifier.typeConstructor,
-        arguments = arguments,
+        arguments = reorderedArguments,
         nullable = isMarkedNullable,
         kotlinTypeRefiner = null
     )
+}
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun buildExpandedType(classifier: TypeAliasDescriptor, arguments: List<TypeProjection>, isMarkedNullable: Boolean) =
-    TypeAliasExpander.NON_REPORTING.expand(
+private fun buildExpandedType(classifier: TypeAliasDescriptor, arguments: List<TypeProjection>, isMarkedNullable: Boolean): SimpleType {
+    return TypeAliasExpander.NON_REPORTING.expand(
         TypeAliasExpansion.create(null, classifier, arguments),
         Annotations.EMPTY
     ).makeNullableAsSpecified(isMarkedNullable)
+}
 
 
 private inline fun <reified T : ClassifierDescriptorWithTypeParameters> ClassifierDescriptorWithTypeParameters.checkClassifierType(): T {

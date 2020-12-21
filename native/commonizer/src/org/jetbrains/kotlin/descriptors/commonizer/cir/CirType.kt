@@ -61,8 +61,10 @@ sealed class CirClassOrTypeAliasType : CirSimpleType() {
     abstract val classifierId: ClassId
     abstract val arguments: List<CirTypeProjection>
 
-    override fun appendDescriptionTo(builder: StringBuilder) {
-        builder.append(classifierId.asString())
+    override fun appendDescriptionTo(builder: StringBuilder) = appendDescriptionTo(builder, shortNameOnly = false)
+
+    protected open fun appendDescriptionTo(builder: StringBuilder, shortNameOnly: Boolean) {
+        builder.append(if (shortNameOnly) classifierId.relativeClassName.shortName().asString() else classifierId.asString())
         if (arguments.isNotEmpty()) arguments.joinTo(builder, prefix = "<", postfix = ">")
         super.appendDescriptionTo(builder)
     }
@@ -71,12 +73,13 @@ sealed class CirClassOrTypeAliasType : CirSimpleType() {
 abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
     abstract val outerType: CirClassType?
 
-    override fun appendDescriptionTo(builder: StringBuilder) {
-        outerType?.let {
-            it.appendDescriptionTo(builder)
+    override fun appendDescriptionTo(builder: StringBuilder, shortNameOnly: Boolean) {
+        val outerType = outerType
+        if (outerType != null) {
+            outerType.appendDescriptionTo(builder)
             builder.append('.')
         }
-        super.appendDescriptionTo(builder)
+        super.appendDescriptionTo(builder, shortNameOnly = outerType != null)
     }
 }
 
