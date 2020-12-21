@@ -59,10 +59,16 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
             if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
             val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
             kotlin.targets.matching {
-                it.platformType == KotlinPlatformType.jvm
+                it.platformType == KotlinPlatformType.jvm || it.platformType == KotlinPlatformType.androidJvm
             }.all { target ->
-                target.compilations.matching { it.name == "main" }.all {
-                    project.configureKotlinCompilation(it)
+                if (target.platformType == KotlinPlatformType.jvm) {
+                    target.compilations.matching { it.name == "main" }.all {
+                        project.configureKotlinCompilation(it)
+                    }
+                } else if (target.platformType == KotlinPlatformType.androidJvm) {
+                    target.compilations.matching { it.name == "release" }.all {
+                        project.configureKotlinCompilation(it, useOutput = true)
+                    }
                 }
             }
         }
