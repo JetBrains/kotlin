@@ -23,6 +23,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
@@ -48,7 +49,8 @@ class Android25ProjectHandler(
     ) {
         val preJavaKotlinOutput = project.files(project.provider {
             mutableListOf<File>().apply {
-                add(kotlinTask.get().destinationDir)
+                val kotlinClassesDirs = (compilation.output as DefaultKotlinCompilationOutput).kotlinClassesDirs
+                addAll(kotlinClassesDirs)
                 if (Kapt3GradleSubplugin.isEnabled(project)) {
                     // Add Kapt3 output as well, since there's no SyncOutputTask with the new API
                     val kaptClasssesDir = Kapt3GradleSubplugin.getKaptGeneratedClassesDir(project, getVariantName(variantData))

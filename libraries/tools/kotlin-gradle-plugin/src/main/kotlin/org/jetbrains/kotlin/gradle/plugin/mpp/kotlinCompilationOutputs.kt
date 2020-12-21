@@ -17,7 +17,11 @@ class DefaultKotlinCompilationOutput(
     override var resourcesDirProvider: Any
 ) : KotlinCompilationOutput, Callable<FileCollection> {
 
-    override val classesDirs: ConfigurableFileCollection = project.files()
+    val kotlinClassesDirs: ConfigurableFileCollection = project.files()
+
+    val otherClassesDirs: ConfigurableFileCollection = project.files()
+
+    override val classesDirs: ConfigurableFileCollection = project.files(kotlinClassesDirs, otherClassesDirs)
 
     override val allOutputs = project.files().apply {
         from(classesDirs)
