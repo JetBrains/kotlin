@@ -45,14 +45,6 @@ static void destroyMetaObject(TypeInfo** location) {
 
 extern "C" {
 
-RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
-    TODO();
-}
-
-OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements) {
-    TODO();
-}
-
 OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
     TODO();
 }

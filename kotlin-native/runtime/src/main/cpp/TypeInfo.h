@@ -157,6 +157,8 @@ struct TypeInfo {
     inline VTableElement* vtable() {
       return reinterpret_cast<VTableElement*>(this + 1);
     }
+
+    inline bool IsArray() const { return instanceSize_ < 0; }
 #endif
 };
 

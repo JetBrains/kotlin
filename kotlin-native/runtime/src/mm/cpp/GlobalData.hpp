@@ -6,6 +6,7 @@
 #ifndef RUNTIME_MM_GLOBAL_DATA_H
 #define RUNTIME_MM_GLOBAL_DATA_H
 
+#include "ObjectFactory.hpp"
 #include "GlobalsRegistry.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
@@ -19,9 +20,10 @@ class GlobalData : private Pinned {
 public:
     static GlobalData& Instance() noexcept { return instance_; }
 
-    ThreadRegistry& threadRegistry() { return threadRegistry_; }
-    GlobalsRegistry& globalsRegistry() { return globalsRegistry_; }
-    StableRefRegistry& stableRefRegistry() { return stableRefRegistry_; }
+    ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
+    GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
+    StableRefRegistry& stableRefRegistry() noexcept { return stableRefRegistry_; }
+    ObjectFactory& objectFactory() noexcept { return objectFactory_; }
 
 private:
     GlobalData();
@@ -32,6 +34,7 @@ private:
     ThreadRegistry threadRegistry_;
     GlobalsRegistry globalsRegistry_;
     StableRefRegistry stableRefRegistry_;
+    ObjectFactory objectFactory_;
 };
 
 } // namespace mm
