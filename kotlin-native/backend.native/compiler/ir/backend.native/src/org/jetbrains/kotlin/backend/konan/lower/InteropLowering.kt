@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
@@ -17,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.companionObject
+import org.jetbrains.kotlin.backend.konan.ir.isFinalClass
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
@@ -45,6 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 internal class InteropLowering(context: Context) : FileLoweringPass {
     // TODO: merge these lowerings.
@@ -83,12 +82,19 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.ir.symbols
 
+            val klib: KonanLibrary? get() {
+                return (element as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary
+            }
+
+            override val language: String
+                get() = klib?.manifestProperties?.getProperty("language") ?: "C"
+
             override fun addKotlin(declaration: IrDeclaration) {
                 addTopLevel(declaration)
             }
 
             override fun addC(lines: List<String>) {
-                context.cStubsManager.addStub(location, lines)
+                context.cStubsManager.addStub(location, lines, language)
             }
 
             override fun getUniqueCName(prefix: String) =
@@ -763,6 +769,10 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         expression.transformChildrenVoid(this)
 
+        if (expression.symbol.owner.hasCCallAnnotation("CppClassConstructor")) {
+            return transformSecondaryCppConstructorCall(expression)
+        }
+
         val callee = expression.symbol.owner
         val inlinedClass = callee.returnType.getInlinedClassNative()
         require(inlinedClass?.descriptor != interop.cPointer) { renderCompilerError(expression) }
@@ -793,6 +803,58 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         }
     }
 
+    private fun transformSecondaryCppConstructorCall(expression: IrConstructorCall): IrExpression {
+        val irConstructor = expression.symbol.owner
+        val irClass = irConstructor.constructedClass
+        val primaryConstructor = irClass.primaryConstructor!!.symbol
+
+        // TODO: don't use it is deprecated.
+        val alloc = symbols.interopAllocType
+        val nativeHeap = symbols.nativeHeap
+        val interopGetPtr = symbols.interopGetPtr
+
+        val correspondingInit = irClass.companionObject()!!
+                .declarations
+                .filterIsInstance<IrSimpleFunction>()
+                .filter { it.name.toString() == "__init__"}
+                .filter { it.valueParameters.size == irConstructor.valueParameters.size + 1}
+                .single {
+                    it.valueParameters.drop(1).mapIndexed() { index, initParameter ->
+                        initParameter.type == irConstructor.valueParameters[index].type
+                    }.all{ it }
+                }
+
+        val irBlock = builder.at(expression)
+                .irBlock {
+                    val call = irCall(primaryConstructor).also {
+                        val nativePointed = irCall(alloc).apply {
+                            extensionReceiver = irGetObject(nativeHeap)
+                            putValueArgument(0, irGetObject(irClass.companionObject()!!.symbol))
+                        }
+                        val nativePtr = irCall(symbols.interopNativePointedGetRawPointer).apply {
+                            extensionReceiver = nativePointed
+                        }
+                        it.putValueArgument(0, nativePtr)
+                    }
+                    val tmp = irTemporary(call)
+                    val initCall = irCall(correspondingInit.symbol).apply {
+                        putValueArgument(0,
+                                irCall(interopGetPtr).apply {
+                                    extensionReceiver = irGet(tmp)
+                                }
+                        )
+                        for (index in 0 until expression.valueArgumentsCount) {
+                            putValueArgument(index+1, expression.getValueArgument(index)!!)
+                        }
+                    }
+                    val initCCall = generateCCall(initCall)
+                    +initCCall
+                    +irGet(tmp)
+                }
+
+        return irBlock
+    }
+
     /**
      * Handle `const val`s that come from interop libraries.
      *
@@ -815,6 +877,16 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
 
         // Avoid node duplication
         return initializer.shallowCopy()
+    }
+
+    private fun generateCCall(expression: IrCall): IrExpression {
+        val function = expression.symbol.owner
+
+        context.llvmImports.add(function.llvmSymbolOrigin)
+        val exceptionMode = ForeignExceptionMode.byValue(
+                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+        )
+        return generateWithStubs(expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -858,11 +930,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         }
 
         if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
-            context.llvmImports.add(function.llvmSymbolOrigin)
-            val exceptionMode = ForeignExceptionMode.byValue(
-                    function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
-            )
-            return generateWithStubs { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
+            return generateCCall(expression)
         }
 
         val failCompilation = { msg: String -> error(irFile, expression, msg) }

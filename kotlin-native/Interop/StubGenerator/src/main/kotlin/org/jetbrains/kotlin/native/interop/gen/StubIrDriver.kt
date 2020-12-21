@@ -8,6 +8,7 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.InteropConfiguration
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
+import org.jetbrains.kotlin.native.interop.gen.jvm.Plugin
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.io.File
 import java.util.*
@@ -19,7 +20,8 @@ class StubIrContext(
         val imports: Imports,
         val platform: KotlinPlatform,
         val generationMode: GenerationMode,
-        val libName: String
+        val libName: String,
+        val plugin: Plugin
 ) {
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<String>().apply {
@@ -109,7 +111,8 @@ class StubIrDriver(
             val entryPoint: String?,
             val moduleName: String,
             val outCFile: File,
-            val outKtFileCreator: () -> File
+            val outKtFileCreator: () -> File,
+            val dumpBridges: Boolean
     )
 
     sealed class Result {
@@ -126,6 +129,13 @@ class StubIrDriver(
 
         outCFile.bufferedWriter().use {
             emitCFile(context, it, entryPoint, bridgeBuilderResult.nativeBridges)
+        }
+
+        if (options.dumpBridges) {
+            context.log("GENERATED KOTLIN: ${bridgeBuilderResult.nativeBridges.kotlinLines.toList().size}")
+            bridgeBuilderResult.nativeBridges.kotlinLines.forEach { context.log(it) }
+            context.log("GENERATED NATIVE: ${bridgeBuilderResult.nativeBridges.nativeLines.toList().size}")
+            bridgeBuilderResult.nativeBridges.nativeLines.forEach { context.log(it) }
         }
 
         return when (context.generationMode) {

@@ -63,6 +63,7 @@ internal class KonanSymbols(
     val nativePointed = symbolTable.referenceClass(context.interopBuiltIns.nativePointed)
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
     val nonNullNativePtr = symbolTable.referenceClass(context.nonNullNativePtr)
+    val nonNullNativePtrType = nonNullNativePtr.typeWith(arguments = emptyList())
 
     val immutableBlobOf = symbolTable.referenceSimpleFunction(context.immutableBlobOf)
 
@@ -204,6 +205,10 @@ internal class KonanSymbols(
     val interopCEnumVar = interopClass("CEnumVar")
 
     val nativeMemUtils = symbolTable.referenceClass(context.interopBuiltIns.nativeMemUtils)
+
+    val nativeHeap = symbolTable.referenceClass(context.interopBuiltIns.nativeHeap)
+
+    val interopGetPtr = symbolTable.referenceSimpleFunction(context.interopBuiltIns.interopGetPtr)
 
     val readBits = interopFunction("readBits")
     val writeBits = interopFunction("writeBits")

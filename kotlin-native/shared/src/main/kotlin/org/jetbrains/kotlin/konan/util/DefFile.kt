@@ -118,6 +118,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getProperty("foreignExceptionMode")
         }
 
+        val pluginName by lazy {
+            properties.getProperty("plugin")
+        }
+
     }
 }
 

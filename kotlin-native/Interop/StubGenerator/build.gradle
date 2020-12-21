@@ -23,8 +23,6 @@ apply plugin: 'application'
 
 mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
 
-
-
 dependencies {
     implementation project(":kotlin-native:Interop:Indexer")
     implementation project(":kotlin-native:utilities:basic-utils")

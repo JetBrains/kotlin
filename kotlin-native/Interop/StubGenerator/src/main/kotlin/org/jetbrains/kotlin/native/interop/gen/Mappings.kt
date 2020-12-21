@@ -25,6 +25,8 @@ interface DeclarationMapper {
     fun getPackageFor(declaration: TypeDeclaration): String
 
     val useUnsignedTypes: Boolean
+
+    fun getKotlinClassForManaged(structDecl: StructDecl): Classifier
 }
 
 fun DeclarationMapper.isMappedToSigned(integerType: IntegerType): Boolean = integerType.isSigned || !useUnsignedTypes
@@ -120,6 +122,18 @@ sealed class TypeMirror(val pointedType: KotlinClassifierType, val info: TypeInf
      */
     class ByRef(pointedType: KotlinClassifierType, info: TypeInfo) : TypeMirror(pointedType, info) {
         override val argType: KotlinType get() = KotlinTypes.cValue.typeWith(pointedType)
+    }
+    /**
+     * Mirror for C++ Managed type.
+     */
+
+    class Managed(
+            pointedType: KotlinClassifierType,
+            info: TypeInfo
+    ) : TypeMirror(pointedType, info) {
+
+        override val argType: KotlinType
+            get() = pointedType
     }
 }
 
@@ -399,10 +413,17 @@ private fun byRefTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByRe
     return TypeMirror.ByRef(pointedType, info)
 }
 
+private fun managedTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.Managed {
+    val info = TypeInfo.ByRef(pointedType) // These are all errors anyways.
+    return TypeMirror.Managed(pointedType, info)
+}
+
 fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when (type) {
     is PrimitiveType -> mirrorPrimitiveType(type, declarationMapper)
 
     is RecordType -> byRefTypeMirror(declarationMapper.getKotlinClassForPointed(type.decl).type)
+
+    is ManagedType -> managedTypeMirror(declarationMapper.getKotlinClassForManaged(type.decl).type)
 
     is EnumType -> {
         val pkg = declarationMapper.getPackageFor(type.def)
@@ -486,6 +507,11 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
             }
 
             is TypeMirror.ByRef -> TypeMirror.ByRef(
+                    Classifier.topLevel(pkg, name).typeAbbreviation(baseType.pointedType),
+                    baseType.info
+            )
+
+            is TypeMirror.Managed -> TypeMirror.Managed(
                     Classifier.topLevel(pkg, name).typeAbbreviation(baseType.pointedType),
                     baseType.info
             )

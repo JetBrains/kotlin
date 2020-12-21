@@ -26,17 +26,17 @@ import java.nio.file.Paths
 import java.security.DigestInputStream
 import java.security.MessageDigest
 
-internal val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
+val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind }
 
-internal val CValue<CXCursor>.kind: CXCursorKind get() = this.useContents { kind }
+val CValue<CXCursor>.kind: CXCursorKind get() = this.useContents { kind }
 
 internal val CValue<CXCursor>.type: CValue<CXType> get() = clang_getCursorType(this)
-internal val CValue<CXCursor>.spelling: String get() = clang_getCursorSpelling(this).convertAndDispose()
+val CValue<CXCursor>.spelling: String get() = clang_getCursorSpelling(this).convertAndDispose()
 internal val CValue<CXType>.name: String get() = clang_getTypeSpelling(this).convertAndDispose()
 internal val CXTypeKind.spelling: String get() = clang_getTypeKindSpelling(this).convertAndDispose()
 internal val CXCursorKind.spelling: String get() = clang_getCursorKindSpelling(this).convertAndDispose()
 
-internal val CValue<CXCursor>.isPublic: Boolean get() {
+internal val CValue<CXCursor>.isCxxPublic: Boolean get() {
     val access = clang_getCXXAccessSpecifier(this)
     return access != CX_CXXAccessSpecifier.CX_CXXProtected && access != CX_CXXAccessSpecifier.CX_CXXPrivate
 }
@@ -54,11 +54,11 @@ internal val CValue<CXCursor>.isPublic: Boolean get() {
  *  BTW Such derived C++ proxy class is the only way to allow Kotlin to override the private virtual C++ methods (which is OK in C++)
  *  Without that C++ style callbacks via overriding would be limited or not supported
  */
-internal fun CValue<CXCursor>.isRecursivelyPublic(): Boolean {
+internal fun CValue<CXCursor>.isRecursivelyCxxPublic(): Boolean {
     when {
         clang_isDeclaration(kind) == 0 ->
             return true  // got the topmost declaration already
-        !isPublic ->
+        !isCxxPublic ->
             return false
         kind == CXCursorKind.CXCursor_Namespace && getCursorSpelling(this).isEmpty() ->
             return false
@@ -71,7 +71,7 @@ internal fun CValue<CXCursor>.isRecursivelyPublic(): Boolean {
             // return false;  // check disabled for a while
 
         else ->
-            return clang_getCursorSemanticParent(this).isRecursivelyPublic()
+            return clang_getCursorSemanticParent(this).isRecursivelyCxxPublic()
     }
 }
 
@@ -194,7 +194,7 @@ internal fun CXTranslationUnit.ensureNoCompileErrors(): CXTranslationUnit {
 
 internal typealias CursorVisitor = (cursor: CValue<CXCursor>, parent: CValue<CXCursor>) -> CXChildVisitResult
 
-internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
+fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     val visitorStableRef = StableRef.create(visitor)
     try {
         val clientData = visitorStableRef.asCPointer()
@@ -335,7 +335,11 @@ internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUni
     val precompiledHeader = Files.createTempFile(null, ".pch").toFile().apply { this.deleteOnExit() }
     clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)
 
-    return CompilationWithPCH(this.compilerArgs, precompiledHeader.absolutePath, this.language)
+    return CompilationWithPCH(
+        this.compilerArgs,
+        precompiledHeader.absolutePath,
+        this.language
+    )
 }
 
 internal fun NativeLibrary.includesDeclaration(cursor: CValue<CXCursor>): Boolean {

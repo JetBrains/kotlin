@@ -62,7 +62,6 @@ data class CompilationWithPCH(
         override val compilerArgs: List<String>,
         override val language: Language
 ) : Compilation {
-
     constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
             : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
 
@@ -256,24 +255,19 @@ class FunctionDecl(val name: String, val parameters: List<Parameter>, val return
     val fullName: String = parentName?.let { "$parentName::$name" } ?: name
 
     // C++ virtual or non-virtual instance member, i.e. has "this" receiver
-    val isCxxInstanceMethod: Boolean = cxxMethod != null  && cxxMethod.kind == CxxMethodKind.InstanceMethod
+    val isCxxInstanceMethod: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.InstanceMethod
 
     /**
      * C++ class or instance member function, i.e. any function in the scope of class/struct: method, static, ctor, dtor, cast operator, etc
      */
-    val isCxxMethod: Boolean = cxxMethod != null
-            && this.cxxMethod.kind != CxxMethodKind.None
+    val isCxxMethod: Boolean get() = this.cxxMethod != null && this.cxxMethod.kind != CxxMethodKind.None
 
-    val isCxxConstructor: Boolean = cxxMethod != null  && this.cxxMethod.kind == CxxMethodKind.Constructor
-    val isCxxDestructor: Boolean = cxxMethod != null  && this.cxxMethod.kind == CxxMethodKind.Destructor
-    val cxxReceiverType: PointerType? = cxxMethod?.receiverType
-    val cxxReceiverClass: StructDecl? = cxxMethod?. let { (this.cxxMethod.receiverType.pointeeType as RecordType).decl }
+    val isCxxConstructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Constructor
+    val isCxxDestructor: Boolean get() = this.cxxMethod?.kind == CxxMethodKind.Destructor
+    val cxxReceiverType: PointerType? get() = cxxMethod?.receiverType
+    val cxxReceiverClass: StructDecl?
+        get() = cxxMethod?. let { (this.cxxMethod.receiverType.pointeeType as RecordType).decl }
 }
-
-class Namespace(val name: String, val parent: String? = null) {
-    val fullName: String = parent?.let { "$parent::$name" } ?: name
-}
-
 
 /**
  * C typedef definition.
@@ -294,7 +288,7 @@ class StringConstantDef(name: String, type: Type, val value: String) : ConstantD
 class WrappedMacroDef(name: String, val type: Type) : MacroDef(name)
 
 class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val parentName: String? = null) {
-    val fullName: String = parentName?.let { "$it::$name" } ?: name
+    val fullName: String get() = parentName?.let { "$it::$name" } ?: name
 }
 
 /**
@@ -323,6 +317,8 @@ data class VectorType(val elementType: Type, val elementCount: Int, val spelling
 object VoidType : Type
 
 data class RecordType(val decl: StructDecl) : Type
+
+data class ManagedType(val decl: StructDecl) : Type
 
 data class EnumType(val def: EnumDef) : Type
 

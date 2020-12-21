@@ -129,14 +129,12 @@ sourceSets {
             srcDirs("prebuilt/nativeInteropStubs/kotlin")
         }
         kotlin{
-
             target {
 
             }
         }
     }
 }
-
 
 dependencies {
     compile(project(":kotlin-stdlib"))

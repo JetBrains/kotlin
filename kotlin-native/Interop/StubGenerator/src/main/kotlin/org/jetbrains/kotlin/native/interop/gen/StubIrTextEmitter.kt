@@ -184,8 +184,7 @@ class StubIrTextEmitter(
             if (element in bridgeBuilderResult.excludedStubs) return
 
             val header = run {
-                val parameters = (if (element.isCxxInstanceMember()) element.parameters.drop(1) else element.parameters).
-                    joinToString(prefix = "(", postfix = ")") { renderFunctionParameter(it) }
+                val parameters = element.parameters.joinToString(prefix = "(", postfix = ")") { renderFunctionParameter(it) }
                 val receiver = element.receiver?.let { renderFunctionReceiver(it) + "." } ?: ""
                 val typeParameters = renderTypeParameters(element.typeParameters)
                 val override = if (element.isOverride) "override " else ""
@@ -485,10 +484,14 @@ class StubIrTextEmitter(
             "@CCall.WCString"
         is AnnotationStub.CCall.Symbol ->
             "@CCall(${annotationStub.symbolName.quoteAsKotlinLiteral()})"
+        AnnotationStub.CCall.CppClassConstructor ->
+            "@CCall.CppClassConstructor"
         is AnnotationStub.CStruct ->
             "@CStruct(${annotationStub.struct.quoteAsKotlinLiteral()})"
         is AnnotationStub.CNaturalStruct ->
             "@CNaturalStruct(${annotationStub.members.joinToString { it.name.quoteAsKotlinLiteral() }})"
+        is AnnotationStub.CStruct.ManagedType ->
+            "@CStruct.ManagedType"
         is AnnotationStub.CLength ->
             "@CLength(${annotationStub.length})"
         is AnnotationStub.Deprecated ->

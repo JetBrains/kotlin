@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.native.interop.gen.jvm.DefaultPlugin
+import org.jetbrains.kotlin.native.interop.gen.jvm.Plugin
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 val EnumDef.isAnonymous: Boolean
@@ -30,10 +32,10 @@ val StructDecl.isAnonymous: Boolean
  *
  * TODO: use libclang to implement?
  */
-fun Type.getStringRepresentation(): String = when (this) {
+fun Type.getStringRepresentation(plugin: Plugin = DefaultPlugin): String = when (this) {
     VoidType -> "void"
     CharType -> "char"
-    CBoolType -> "_Bool"
+    CBoolType -> if (plugin.name == "Skia") "bool" else "_Bool"
     ObjCBoolType -> "BOOL"
     is IntegerType -> this.spelling
     is FloatingType -> this.spelling
@@ -50,7 +52,7 @@ fun Type.getStringRepresentation(): String = when (this) {
         this.def.spelling
     }
 
-    is Typedef -> this.def.aliased.getStringRepresentation()
+    is Typedef -> this.def.aliased.getStringRepresentation(plugin)
 
     is ObjCPointer -> when (this) {
         is ObjCIdType -> "id$protocolQualifier"
@@ -59,6 +61,8 @@ fun Type.getStringRepresentation(): String = when (this) {
         is ObjCInstanceType -> TODO(this.toString()) // Must have already been handled.
         is ObjCBlockPointer -> "id"
     }
+
+    is ManagedType -> with(plugin) { this@getStringRepresentation.stringRepresentation }
 
     else -> throw NotImplementedError()
 }

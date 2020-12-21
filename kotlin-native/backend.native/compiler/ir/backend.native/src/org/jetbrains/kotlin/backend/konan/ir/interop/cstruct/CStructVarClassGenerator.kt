@@ -5,17 +5,15 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
 import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.addMember
+import org.jetbrains.kotlin.ir.builders.irGetObject
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -24,7 +22,8 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
         private val interopBuiltIns: InteropBuiltIns,
-        private val companionGenerator: CStructVarCompanionGenerator
+        private val companionGenerator: CStructVarCompanionGenerator,
+        private val symbols: KonanSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
@@ -48,12 +47,25 @@ internal class CStructVarClassGenerator(
             createClass(descriptor) { irClass ->
                 irClass.addMember(createPrimaryConstructor(irClass))
                 irClass.addMember(companionGenerator.generate(descriptor))
+                descriptor.constructors
+                    .filterNot { it.isPrimary }
+                    .map {
+                        val constructor = createSecondaryConstructor(it)
+                        irClass.addMember(constructor)
+                    }
                 descriptor.unsubstitutedMemberScope
-                        .getContributedDescriptors()
-                        .filterIsInstance<PropertyDescriptor>()
-                        .filter { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-                        .map(this::createProperty)
-                        .forEach(irClass::addMember)
+                    .getContributedDescriptors()
+                    .filterIsInstance<CallableMemberDescriptor>()
+                    .filterNot { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+                    .map {
+                        when (it) {
+                            is PropertyDescriptor -> createProperty(it)
+                            is SimpleFunctionDescriptor -> createFunction(it)
+                            else -> null
+                        }
+                    }
+                    .filterNotNull()
+                    .forEach(irClass::addMember)
             }
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
@@ -70,6 +82,16 @@ internal class CStructVarClassGenerator(
                         it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                     }
                     +irInstanceInitializer(symbolTable.referenceClass(irClass.descriptor))
+                }
+            }
+        }
+    }
+
+    private fun createSecondaryConstructor(descriptor: ClassConstructorDescriptor): IrConstructor {
+        return createConstructor(descriptor).also {
+            postLinkageSteps.add {
+                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    // Empty. The real body is constructed at the call site by the interop lowering phase.
                 }
             }
         }

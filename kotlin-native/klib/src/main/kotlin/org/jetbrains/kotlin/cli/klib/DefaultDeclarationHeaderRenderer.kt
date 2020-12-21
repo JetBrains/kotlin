@@ -59,6 +59,8 @@ object DefaultDeclarationHeaderRenderer : DeclarationHeaderRenderer {
         val DEFAULT = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
             modifiers = DescriptorRendererModifier.ALL
             overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
+            
+            eachAnnotationOnNewLine = true
             annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
             excludedAnnotationClasses += StandardNames.FqNames.suppress
 

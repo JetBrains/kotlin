@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -297,6 +298,10 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             if (declaration.constructedClass.isNativePrimitiveType()) {
                 // Constructors for these types aren't used and actually are malformed (e.g. lack the parameter).
                 // Skipping here for simplicity.
+            } else if (declaration.hasCCallAnnotation("CppClassConstructor") && !declaration.isPrimary) {
+                // At this point secondary cpp constructor calls have already been transformed
+                // by interop lowering. So don't mess with them.
+                // Otherwise we could assert having assumptions on (empty at the moment) body of the constructor.
             } else {
                 buildLoweredConstructor(declaration)
             }
