@@ -28,4 +28,10 @@ open class ApiValidationExtension {
      * Example of such annotation could be `kotlinx.coroutines.InternalCoroutinesApi`.
      */
     public var nonPublicMarkers: MutableSet<String> = HashSet()
+
+    /**
+     * Fully qualified names of classes that are ignored by the API check.
+     * Example of such a class could be `com.package.android.BuildConfig`.
+     */
+    public var ignoredClasses: MutableSet<String> = HashSet()
 }

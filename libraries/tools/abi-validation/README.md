@@ -51,7 +51,8 @@ The plugin provides two tasks:
 
 Binary compatibility validator can be additionally configured with the following DSL:
 
-```kotlin
+Groovy
+```groovy
 apiValidation {
     /**
      * Packages that are excluded from public API dumps even if they
@@ -63,7 +64,13 @@ apiValidation {
      * Sub-projects that are excluded from API validation 
      */
     ignoredProjects += ["benchmarks", "examples"]
-    
+
+    /**
+     * Classes (fully qualified) that are excluded from public API dumps even if they
+     * contain public API.
+     */
+    ignoredClasses += ["com.company.BuildConfig"]
+
     /**
      * Set of annotations that exclude API from being public.
      * Typically, it is all kinds of `@InternalApi` annotations that mark 
@@ -78,6 +85,39 @@ apiValidation {
 }
 ```
 
+Kotlin
+```kotlin
+configure<kotlinx.validation.ApiValidationExtension> {
+    /**
+     * Packages that are excluded from public API dumps even if they
+     * contain public API.
+     */
+    ignoredPackages.add("kotlinx.coroutines.internal")
+
+    /**
+     * Sub-projects that are excluded from API validation
+     */
+    ignoredProjects.addAll(listOf("benchmarks", "examples"))
+
+    /**
+     * Classes (fully qualified) that are excluded from public API dumps even if they
+     * contain public API.
+     */
+    ignoredClasses.add("com.company.BuildConfig")
+    
+    /**
+     * Set of annotations that exclude API from being public.
+     * Typically, it is all kinds of `@InternalApi` annotations that mark
+     * effectively private API that cannot be actually private for technical reasons.
+     */
+    nonPublicMarkers.add("my.package.MyInternalApiAnnotation")
+
+    /**
+     * Flag to programmatically disable compatibility validator
+     */
+    validationDisabled = false
+}
+```
 
 ### Workflow
 

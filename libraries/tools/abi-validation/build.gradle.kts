@@ -21,6 +21,24 @@ sourceSets {
     }
 }
 
+sourceSets {
+    create("functionalTest") {
+        withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+        }
+        resources {
+            srcDir(file("src/functionalTest/resources"))
+        }
+        compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+tasks.register<Test>("functionalTest") {
+    testClassesDirs = sourceSets["functionalTest"].output.classesDirs
+    classpath = sourceSets["functionalTest"].runtimeClasspath
+}
+tasks.check { dependsOn(tasks["functionalTest"]) }
+
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("stdlib-jdk8"))
@@ -31,6 +49,10 @@ dependencies {
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     compileOnly("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:1.3.61")
     testImplementation(kotlin("test-junit"))
+
+    "functionalTestImplementation"("org.assertj:assertj-core:3.18.1")
+    "functionalTestImplementation"(gradleTestKit())
+    "functionalTestImplementation"(kotlin("test-junit"))
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -77,6 +99,8 @@ extensions.getByType(PluginBundleExtension::class).apply {
 }
 
 gradlePlugin {
+    testSourceSets(sourceSets["functionalTest"])
+
     plugins {
         create("binary-compatibility-validator") {
             id = "org.jetbrains.kotlinx.binary-compatibility-validator"
