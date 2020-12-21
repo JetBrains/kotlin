@@ -753,11 +753,10 @@ task teamcityCompilerVersion {
     }
 }
 
-task clean {
+task clean(type: Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doLast {
-        if (distDir.exists())
-            delete distDir
+        delete distDir
         delete bundle.outputs.files
         delete "${projectDir}/compile_commands.json"
     }
