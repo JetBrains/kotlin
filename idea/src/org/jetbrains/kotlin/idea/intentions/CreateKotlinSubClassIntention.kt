@@ -48,8 +48,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
         if (!element.isInterface() && primaryConstructor != null) {
             val constructors = element.secondaryConstructors + primaryConstructor
             if (constructors.none {
-                    !it.isPrivate() &&
-                            it.getValueParameters().all { it.hasDefaultValue() }
+                    !it.isPrivate() && it.valueParameters.all { parameter -> parameter.hasDefaultValue() }
                 }) {
                 // At this moment we require non-private default constructor
                 // TODO: handle non-private constructors with parameters
@@ -103,7 +102,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
     private fun createExternalSubclass(baseClass: KtClass, baseName: String, editor: Editor) {
         var container: KtClassOrObject = baseClass
         var name = baseName
-        var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC)
+        var visibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, DescriptorVisibilities.PUBLIC)
         while (!container.isPrivate() && !container.isProtected() && !(container is KtClass && container.isInner())) {
             val parent = container.containingClassOrObject
             if (parent != null) {
@@ -112,7 +111,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
                     container = parent
                     name = "$parentName.$name"
                     val parentVisibility = ModifiersChecker.resolveVisibilityFromModifiers(parent, visibility)
-                    if (org.jetbrains.kotlin.descriptors.DescriptorVisibilities.compare(parentVisibility, visibility) ?: 0 < 0) {
+                    if (DescriptorVisibilities.compare(parentVisibility, visibility) ?: 0 < 0) {
                         visibility = parentVisibility
                     }
                 }
@@ -176,11 +175,11 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
         targetName: String,
         baseClass: KtClass,
         baseName: String,
-        defaultVisibility: DescriptorVisibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC)
+        defaultVisibility: DescriptorVisibility = ModifiersChecker.resolveVisibilityFromModifiers(baseClass, DescriptorVisibilities.PUBLIC)
     ): ClassHeaderBuilder {
         return ClassHeaderBuilder().apply {
             if (!baseClass.isInterface()) {
-                if (defaultVisibility != org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC) {
+                if (defaultVisibility != DescriptorVisibilities.PUBLIC) {
                     modifier(defaultVisibility.name)
                 }
                 if (baseClass.isInner()) {
