@@ -1,5 +1,4 @@
 headers = include/core/SkString.h include/core/SkTime.h
 headerFilter = include/core/SkTime.h include/core/SkString.h
 package = skia
-compilerOpts = -std=c++14
-compilerOpts = -x c++
+compilerOpts = -x c++ -std=c++14 -I/Users/jetbrains/.konan/dependencies/clang-llvm-apple-8.0.0-darwin-macos//include/c++/v1

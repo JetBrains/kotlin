@@ -155,10 +155,14 @@ internal class ModuleMetadataEmitter(
                                 annotations = listOf(AnnotationStub.Deprecated.unableToImport)
                         )
                     }
-                    KmFunction(function.flags, function.name).also { km ->
+                    KmFunction(function.flags, function.qualifiedName()).also { km ->
                         km.receiverParameterType = function.receiver?.type?.map()
                         function.typeParameters.mapTo(km.typeParameters) { it.map() }
-                        function.parameters.mapTo(km.valueParameters) { it.map() }
+                        val parameters = if (function.isCxxInstanceMember())
+                            function.parameters.drop(1)
+                        else
+                            function.parameters
+                        parameters.mapTo(km.valueParameters) { it.map() }
                         function.annotations.mapTo(km.annotations) { it.map() }
                         km.returnType = function.returnType.map()
                     }
@@ -413,6 +417,11 @@ private class MappingExtensions(
             is AnnotationStub.CCall.Symbol -> mapOfNotNull(
                     ("id" to symbolName).asAnnotationArgument()
             )
+            is AnnotationStub.CCall.SkiaSharedPointerReturn -> emptyMap()
+            is AnnotationStub.CCall.SkiaSharedPointerParameter -> emptyMap()
+            is AnnotationStub.CCall.SkiaStructValueReturn -> emptyMap()
+            is AnnotationStub.CCall.SkiaStructValueParameter -> emptyMap()
+            is AnnotationStub.CCall.SkiaClassConstructor -> emptyMap()
             is AnnotationStub.CStruct -> mapOfNotNull(
                     ("spelling" to struct).asAnnotationArgument()
             )

@@ -206,7 +206,11 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         val definitionCursor = clang_getCursorDefinition(cursor)
         if (clang_Cursor_isNull(definitionCursor) == 0) {
             assert(clang_isCursorDefinition(definitionCursor) != 0)
-            createStructDef(decl, cursor)
+            // TODO: is this a bug or this is a wrong thing to do?
+            // Otherwise c++ class definition is created from its forward declaration
+            // and hence is empty.
+            //createStructDef(decl, cursor)
+            createStructDef(decl, definitionCursor)
         }
     }
 
@@ -217,10 +221,10 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         return StructDeclImpl(typeSpelling, getLocation(cursor))
     }
 
-    private fun visitClass(cursor: CValue<CXCursor>, clazz: StructDefImpl)  {
+    private fun visitClass(classCursor: CValue<CXCursor>, clazz: StructDefImpl)  {
 
         // TODO skip method (function) when encounter UnsupportedType in params or ret value. Otherwise all class methods will be lost due to exception (?)
-        visitChildren(cursor) { cursor, _ ->
+        visitChildren(classCursor) { cursor, _ ->
             if (cursor.isPublic) {
                 // TODO If a kotlin class is _conceptually_ derived from its c++ counterpart, then it shall be able to override virtual private and access protected
                 when (cursor.kind) {
@@ -615,7 +619,18 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         val kind = type.kind
 
         return when (kind) {
-            CXType_Elaborated -> convertType(clang_Type_getNamedType(type))
+            CXType_Elaborated -> {
+                val declCursor = clang_getTypeDeclaration(type)
+                val declSpelling = getCursorSpelling(declCursor)
+                // TODO: Skip std::string for now.
+                // TODO: is there a better way?
+                // At least manage it with Skia plugin!
+                if (library.language == Language.CPP && declSpelling == "string") {
+                    UnsupportedType
+                } else {
+                    convertType(clang_Type_getNamedType(type))
+                }
+            }
 
             CXType_Unexposed -> {
                 if (clang_getResultType(type).kind != CXTypeKind.CXType_Invalid) {
@@ -644,7 +659,13 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
                 }
             }
 
-            CXType_Record -> RecordType(getStructDeclAt(clang_getTypeDeclaration(type)))
+            CXType_Record -> getStructDeclAt(clang_getTypeDeclaration(type)).let {
+                // TODO: extract as a Skia plugin function
+                if ((it as StructDecl).isSkiaSharedPointer)
+                    ManagedType(it)
+                else
+                    RecordType(it)
+            }
             CXType_Enum -> EnumType(getEnumDefAt(clang_getTypeDeclaration(type)))
 
             CXType_Pointer, CXType_LValueReference -> {
@@ -861,12 +882,15 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
             return
         }
 
+        // TODO: do we need it?
+        /*
         val namespace: Namespace? =
         // semantic parent of any namespace member is always namespace itself (no type aliases etc)
             if (info.semanticContainer!!.pointed.cursor.kind == CXCursorKind.CXCursor_Namespace) {
                 val parent = info.semanticContainer!!.pointed.cursor.readValue()
                 Namespace(getCursorSpelling(parent), getParentName(parent))
             } else null
+        */
 
         if (!cursor.isRecursivelyPublic()) {
             // c++ : skip anon namespaces, static functions and variables and private inner classes
@@ -1024,16 +1048,31 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         }
     }
 
+    // TODO: This should be managed by Skia plugin.
+    private val wellKnownSkiaStructs: List<String>
+            = listOf("SkImage", "SkSurface", "SkData", "GrDirectContext", "SkColorSpace", "SkPicture")
+
+    // TODO: This should be managed by Skia plugin.
+    private fun String.isUnknownTemplate() =
+            this.startsWith("sk_sp") &&
+            wellKnownSkiaStructs.none { this == "sk_sp<$it>" }
+
     private fun getFunction(cursor: CValue<CXCursor>, receiver: StructDecl? = null): FunctionDecl? {
         if (!isFuncDeclEligible(cursor)) {
             log("Skip function ${clang_getCursorSpelling(cursor).convertAndDispose()}")
             return null
         }
         var name = clang_getCursorSpelling(cursor).convertAndDispose()
-        var returnType = convertType(clang_getCursorResultType(cursor), clang_getCursorResultTypeAttributes(cursor))
+
+        val cursorReturnType = clang_getCursorResultType(cursor)
+        val cursorReturnTypeSpelling = clang_getTypeSpelling(cursorReturnType).convertAndDispose()
+
+        if (cursorReturnTypeSpelling.isUnknownTemplate()) return null
+
+        var returnType = convertType(cursorReturnType, clang_getCursorResultTypeAttributes(cursor))
 
         val parameters = mutableListOf<Parameter>()
-        parameters += getFunctionParameters(cursor)
+        parameters += getFunctionParameters(cursor) ?: return null
 
         val binaryName = when (library.language) {
             Language.C, Language.CPP, Language.OBJECTIVE_C -> clang_Cursor_getMangling(cursor).convertAndDispose()
@@ -1094,7 +1133,7 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
 
         val encoding = clang_getDeclObjCTypeEncoding(cursor).convertAndDispose()
         val returnType = convertType(clang_getCursorResultType(cursor), clang_getCursorResultTypeAttributes(cursor))
-        val parameters = getFunctionParameters(cursor)
+        val parameters = getFunctionParameters(cursor)!!
 
         if (returnType == UnsupportedType || parameters.any { it.type == UnsupportedType }) {
             return null // TODO: make a more universal fix.
@@ -1131,22 +1170,29 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
     private fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean {
 
         var ret = true
-        visitChildren(cursor) { cursor, _ ->
-            when (cursor.kind) {
-                CXCursorKind.CXCursor_TemplateRef -> {
-                    ret = false
-                    CXChildVisitResult.CXChildVisit_Break
-                }
+        visitChildren(cursor) { childCursor, _ ->
+            when (childCursor.kind) {
+                CXCursorKind.CXCursor_TemplateRef ->
+                    // TODO: this should be managed by Skia plugin
+                    if (childCursor.spelling.startsWith("sk_sp")) {
+                        CXChildVisitResult.CXChildVisit_Recurse
+                    } else {
+                        ret = false
+                        CXChildVisitResult.CXChildVisit_Break
+                    }
                 else -> CXChildVisitResult.CXChildVisit_Recurse
             }
         }
         return ret
     }
 
-    private fun getFunctionParameters(cursor: CValue<CXCursor>): List<Parameter> {
+    private fun getFunctionParameters(cursor: CValue<CXCursor>): List<Parameter>? {
         val argNum = clang_Cursor_getNumArguments(cursor)
         val args = (0..argNum - 1).map {
             val argCursor = clang_Cursor_getArgument(cursor, it)
+            if (clang_getTypeSpelling(clang_getCursorType(argCursor)).convertAndDispose().isUnknownTemplate()) {
+                return null
+            }
             val argName = getCursorSpelling(argCursor)
             val type = convertCursorType(argCursor)
             Parameter(argName, type,

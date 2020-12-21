@@ -33,7 +33,7 @@ val StructDecl.isAnonymous: Boolean
 fun Type.getStringRepresentation(): String = when (this) {
     VoidType -> "void"
     CharType -> "char"
-    CBoolType -> "_Bool"
+    CBoolType -> "bool" // "_Bool"
     ObjCBoolType -> "BOOL"
     is IntegerType -> this.spelling
     is FloatingType -> this.spelling
@@ -58,6 +58,11 @@ fun Type.getStringRepresentation(): String = when (this) {
         is ObjCObjectPointer -> "${def.name}$protocolQualifier*"
         is ObjCInstanceType -> TODO(this.toString()) // Must have already been handled.
         is ObjCBlockPointer -> "id"
+    }
+
+    is ManagedType -> {
+        assert(this.decl.isSkiaSharedPointer)
+        "${this.decl.stripSkiaSharedPointer}*"
     }
 
     else -> throw NotImplementedError()

@@ -54,7 +54,7 @@ internal class IrProviderForCEnumAndCStructStubs(
     private val cStructCompanionGenerator =
             CStructVarCompanionGenerator(context, interopBuiltIns)
     private val cStructClassGenerator =
-            CStructVarClassGenerator(context, interopBuiltIns, cStructCompanionGenerator)
+            CStructVarClassGenerator(context, interopBuiltIns, cStructCompanionGenerator, symbols)
 
     fun isCEnumOrCStruct(declarationDescriptor: DeclarationDescriptor): Boolean =
             declarationDescriptor.run { findCEnumDescriptor(interopBuiltIns) ?: findCStructDescriptor(interopBuiltIns) } != null
@@ -73,6 +73,8 @@ internal class IrProviderForCEnumAndCStructStubs(
         }
         symbol.findCStructDescriptor(interopBuiltIns)?.let { structDescriptor ->
             cStructClassGenerator.findOrGenerateCStruct(structDescriptor, file)
+        }?.also {
+            println(it.render())
         }
     }
 
@@ -92,6 +94,10 @@ internal class IrProviderForCEnumAndCStructStubs(
     fun getDeclaration(descriptor: DeclarationDescriptor, idSignature: IdSignature, file: IrFile, symbolKind: BinarySymbolData.SymbolKind): IrSymbolOwner {
         return symbolTable.run {
             when (symbolKind) {
+                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> declareConstructorFromLinker(descriptor as ClassConstructorDescriptor, idSignature) { s ->
+                    generateIrIfNeeded(s, file)
+                    s.owner
+                }
                 BinarySymbolData.SymbolKind.CLASS_SYMBOL -> declareClassFromLinker(descriptor as ClassDescriptor, idSignature) { s ->
                     generateIrIfNeeded(s, file)
                     s.owner
