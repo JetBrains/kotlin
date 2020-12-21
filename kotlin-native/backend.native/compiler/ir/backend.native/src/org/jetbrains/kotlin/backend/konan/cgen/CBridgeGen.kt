@@ -8,12 +8,9 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
+import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
-import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCMetaClass
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -50,6 +47,7 @@ internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
     val symbols: KonanSymbols
     val target: KonanTarget
+    val language: String
     fun addKotlin(declaration: IrDeclaration)
     fun addC(lines: List<String>)
     fun getUniqueCName(prefix: String): String
@@ -111,10 +109,10 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
                 transformCall
         )
 
+private fun IrType.isManagedType(): Boolean= this.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) ?: false
+
 internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
                                        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default): IrExpression {
-    require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
-
     val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
 
     val callee = expression.symbol.owner
@@ -125,6 +123,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
     val targetFunctionName: String
 
     if (isInvoke) {
+        require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
         targetPtrParameter = callBuilder.passThroughBridge(
                 expression.extensionReceiver!!,
                 symbols.interopCPointer.typeWithStarProjections,
@@ -148,7 +147,14 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         val arguments = (0 until expression.valueArgumentsCount).map {
             expression.getValueArgument(it)
         }
-        callBuilder.addArguments(arguments, callee)
+
+        val receiverParameter = expression.symbol.owner.dispatchReceiverParameter
+        val self: List<IrExpression> = when {
+            receiverParameter == null -> emptyList()
+            receiverParameter.type.classOrNull?.owner?.isCompanion == true -> emptyList()
+            else -> listOf(expression.dispatchReceiver!!)
+        }
+        callBuilder.addArguments(self + arguments, callee)
     }
 
     val returnValuePassing = if (isInvoke) {
@@ -176,7 +182,13 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
     arguments.forEachIndexed { index, argument ->
-        val parameter = callee.valueParameters[index]
+        val parameter = if (callee.dispatchReceiverParameter != null &&
+            (callee.dispatchReceiverParameter?.type?.isManagedType() == true)) {
+
+            if (index == 0) callee.dispatchReceiverParameter!! else callee.valueParameters[index-1]
+        } else {
+            callee.valueParameters[index]
+        }
         if (parameter.isVararg) {
             require(index == arguments.lastIndex) { stubs.renderCompilerError(argument) }
             addVariadicArguments(argument)
@@ -472,7 +484,7 @@ private fun CCallbackBuilder.buildCFunction(): String {
 
     val cLines = mutableListOf<String>()
 
-    cLines += "${cFunctionBuilder.buildSignature(result)} {"
+    cLines += "${cFunctionBuilder.buildSignature(result, stubs.language)} {"
     cLines += cBodyLines
     cLines += "}"
 
@@ -724,12 +736,18 @@ private fun KotlinStubs.mapType(
         val cStructType = getNamedCStructType(kotlinClass)
         require(cStructType != null) { renderCompilerError(location) }
 
-        StructValuePassing(kotlinClass, cStructType)
+        if (type.isManagedType()) {
+            // TODO: this should probably be better abstracted in a plugin.
+            // For Skia plugin we release sk_sp on the C++ side passing just the raw pointer.
+            // So managed by value is handled as voidPtr here for now.
+            TrivialValuePassing(type, CTypes.voidPtr)
+        } else {
+            StructValuePassing(kotlinClass, cStructType)
+        }
     }
 
-    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true -> {
+    type.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true ->
         TrivialValuePassing(type, CTypes.voidPtr)
-    }
 
     type.isFunction() -> {
         require(!variadic) { renderCompilerError(location) }
@@ -738,7 +756,7 @@ private fun KotlinStubs.mapType(
 
     type.isObjCReferenceType(target, irBuiltIns) -> ObjCReferenceValuePassing(symbols, type, retained = retained)
 
-    else -> throwCompilerError(location, "doesn't correspond to any C type")
+    else -> throwCompilerError(location, "doesn't correspond to any C type: ${type.render()}")
 }
 
 private class CExpression(val expression: String, val type: CType)
@@ -883,6 +901,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         bridgeCallBuilder.prepare += kotlinPointed
 
         val cPointer = passThroughBridge(irGet(kotlinPointed), kotlinPointedType, CTypes.pointer(cType))
+
         cBridgeBodyLines += "*${cPointer.name} = $expression;"
 
         buildKotlinBridgeCall {
@@ -1258,7 +1277,7 @@ private class ObjCBlockPointerValuePassing(
 
         val block = buildString {
             append('^')
-            append(callbackBuilder.cFunctionBuilder.buildSignature(""))
+            append(callbackBuilder.cFunctionBuilder.buildSignature("", stubs.language))
             append(" { ")
             callbackBuilder.cBodyLines.forEach {
                 append(it)

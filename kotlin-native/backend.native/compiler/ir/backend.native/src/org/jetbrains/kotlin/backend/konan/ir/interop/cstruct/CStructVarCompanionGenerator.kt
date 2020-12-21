@@ -8,12 +8,16 @@ import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irLong
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -41,6 +45,19 @@ internal class CStructVarCompanionGenerator(
                 val size = annotation.getArgumentValueOrNull<Long>("size")!!
                 val align = annotation.getArgumentValueOrNull<Int>("align")!!
                 companionIrClass.addMember(createCompanionConstructor(companionIrClass.descriptor, size, align))
+
+                companionIrClass.descriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors()
+                    .filterIsInstance<CallableMemberDescriptor>()
+                    .filterNot { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+                    .mapNotNull {
+                        when (it) {
+                            is PropertyDescriptor -> createProperty(it)
+                            is SimpleFunctionDescriptor -> createFunction(it)
+                            else -> null
+                        }
+                    }
+                    .forEach(companionIrClass::addMember)
             }
 
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor, size: Long, align: Int): IrConstructor {

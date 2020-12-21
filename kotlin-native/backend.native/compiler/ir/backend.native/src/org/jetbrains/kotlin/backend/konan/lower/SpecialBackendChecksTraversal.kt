@@ -322,7 +322,8 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
             )
         }
 
-        if (callee.returnType.isNativePointed(symbols))
+        if (callee.returnType.isNativePointed(symbols) &&
+            !callee.hasCCallAnnotation("CppClassConstructor"))
             reportError(expression, "Native interop types constructors must not be called directly")
     }
 

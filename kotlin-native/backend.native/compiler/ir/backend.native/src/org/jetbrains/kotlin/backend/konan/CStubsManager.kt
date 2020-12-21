@@ -6,48 +6,66 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+
+private const val dumpBridges = false
 
 class CStubsManager(private val target: KonanTarget) {
 
     fun getUniqueName(prefix: String) = "$prefix${counter++}"
 
-    fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>) {
+    fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String) {
+        val stubs = languageToStubs.getOrPut(language) { mutableListOf() }
         stubs += Stub(kotlinLocation, lines)
     }
 
-    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): File? {
-        if (stubs.isEmpty()) return null
+    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
+        if (languageToStubs.isEmpty()) return emptyList()
 
-        val compilerOptions = mutableListOf<String>()
-        val sourceFileExtension = when {
-            target.family.isAppleFamily -> {
-                compilerOptions += "-fobjc-arc"
-                ".m" // TODO: consider managing C and Objective-C stubs separately.
+        val bitcodes = languageToStubs.entries.map { (language, stubs) ->
+            val compilerOptions = mutableListOf<String>()
+            val sourceFileExtension = when {
+                language == "C++" -> ".cpp"
+                target.family.isAppleFamily -> {
+                    compilerOptions += "-fobjc-arc"
+                    ".m" // TODO: consider managing C and Objective-C stubs separately.
+                }
+                else -> ".c"
             }
-            else -> ".c"
+            val cSource = createTempFile("cstubs", sourceFileExtension).deleteOnExit()
+            cSource.writeLines(stubs.flatMap { it.lines })
+
+            val bitcode = createTempFile("cstubs", ".bc").deleteOnExit()
+
+            val cSourcePath = cSource.absolutePath
+
+            val clangCommand = clang.clangC(
+                *compilerOptions.toTypedArray(), "-O2",
+                cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath
+            )
+            if (dumpBridges) {
+                println("CSTUBS for ${language}")
+                stubs.flatMap { it.lines }.forEach {
+                    println(it)
+                }
+                println("CSTUBS in ${cSource.absolutePath}")
+                println("CSTUBS CLANG COMMAND:")
+                println(clangCommand.joinToString(" "))
+            }
+
+            val result = Command(clangCommand).getResult(withErrors = true)
+            if (result.exitCode != 0) {
+                reportCompilationErrors(cSourcePath, stubs, result, messageCollector, verbose)
+            }
+            bitcode
         }
-        val cSource = createTempFile("cstubs", sourceFileExtension).deleteOnExit()
-        cSource.writeLines(stubs.flatMap { it.lines })
 
-        val bitcode = createTempFile("cstubs", ".bc").deleteOnExit()
-
-        val cSourcePath = cSource.absolutePath
-
-        val clangCommand = clang.clangC(*compilerOptions.toTypedArray(), "-O2",
-                cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath)
-
-        val result = Command(clangCommand).getResult(withErrors = true)
-        if (result.exitCode != 0) {
-            reportCompilationErrors(cSourcePath, result, messageCollector, verbose)
-        }
-
-        return bitcode
+        return bitcodes
     }
 
     private fun reportCompilationErrors(
             cSourcePath: String,
+            stubs: List<Stub>,
             result: Command.Result,
             messageCollector: MessageCollector,
             verbose: Boolean
@@ -88,7 +106,7 @@ class CStubsManager(private val target: KonanTarget) {
         throw KonanCompilationException()
     }
 
-    private val stubs = mutableListOf<Stub>()
+    private val languageToStubs = mutableMapOf<String, MutableList<Stub>>()
     private class Stub(val kotlinLocation: CompilerMessageLocation?, val lines: List<String>)
     private var counter = 0
 }

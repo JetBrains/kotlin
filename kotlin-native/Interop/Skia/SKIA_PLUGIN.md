@@ -1,12 +1,25 @@
-Current status
-==============
+Skia interop support
+====================
 
-Limited C++ interop provided via plain C wrappers and cinterop mechanism.
+This is a plugin for cinterop that allows to interop with `Skia Graphics Library`.
+
+Primarily targeted to be used by Skiko project.
 
 Usage:
 ------
 
-Add `Language = C++` to .def file or `compilerOpts = -x c++` to command line or def file.
+Add to the .def file the following clauses:
+
+```
+plugin = org.jetbrains.kotlin.native.cinterop.plugin.skia
+language = C++
+```
+
+Implementation details
+======================
+
+Limited C++ interop provided via plain C wrappers and cinterop mechanism.
+WARNING: this is by no means a general support for C++ by cinterop.
 
 C++ features
 ------------
