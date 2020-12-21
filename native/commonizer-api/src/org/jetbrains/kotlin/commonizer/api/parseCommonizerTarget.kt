@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.commonizer.api
 
 import org.jetbrains.kotlin.commonizer.api.IdentityStringSyntaxNode.LeafTargetSyntaxNode
 import org.jetbrains.kotlin.commonizer.api.IdentityStringSyntaxNode.SharedTargetSyntaxNode
-import org.jetbrains.kotlin.commonizer.api.IdentityStringToken.SharedTargetEnd
-import org.jetbrains.kotlin.commonizer.api.IdentityStringToken.SharedTargetStart
-import org.jetbrains.kotlin.konan.target.KonanTarget.Companion.predefinedTargets
+import org.jetbrains.kotlin.commonizer.api.IdentityStringToken.*
 
 public fun parseCommonizerTarget(identityString: String): CommonizerTarget {
     val tokens = tokenizeIdentityString(identityString)
@@ -89,7 +87,7 @@ private val sharedTargetEndTokenizer =
     RegexIdentityStringTokenizer(Regex.fromLiteral("]")) { SharedTargetEnd }
 
 private val separatorTokenizer =
-    RegexIdentityStringTokenizer(Regex("""\s*,\s*""")) { IdentityStringToken.Separator }
+    RegexIdentityStringTokenizer(Regex("""\s*,\s*""")) { Separator }
 
 private val wordTokenizer =
     RegexIdentityStringTokenizer(Regex("\\w*"), IdentityStringToken::Word)
@@ -97,6 +95,8 @@ private val wordTokenizer =
 //endregion
 
 //region Syntax Tree
+
+private val parser = anyOf(SharedTargetParser, LeafTargetParser)
 
 private data class ParserOutput<out T : Any>(val value: T, val remaining: List<IdentityStringToken>)
 
@@ -106,22 +106,20 @@ private interface Parser<out T : Any> {
 
 
 private fun <T : Any> anyOf(vararg parser: Parser<T>): Parser<T> {
-    return FirstOfParser(parser.toList())
+    return AnyOfParser(parser.toList())
 }
 
-private data class FirstOfParser<T : Any>(val parsers: List<Parser<T>>) : Parser<T> {
+private data class AnyOfParser<T : Any>(val parsers: List<Parser<T>>) : Parser<T> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<T>? {
         return parsers.mapNotNull { parser -> parser(tokens) }.firstOrNull()
     }
 }
 
 private fun <T : Any> Parser<T>.oneOrMore(): Parser<List<T>> {
-    return AnyOfParser(this)
+    return OneOrMoreParser(this)
 }
 
-private val parser = anyOf(SharedTargetParser, LeafTargetParser)
-
-private data class AnyOfParser<T : Any>(val parser: Parser<T>) : Parser<List<T>> {
+private data class OneOrMoreParser<T : Any>(val parser: Parser<T>) : Parser<List<T>> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<List<T>>? {
         val outputs = mutableListOf<T>()
         var remainingTokens = tokens
@@ -138,9 +136,21 @@ private data class AnyOfParser<T : Any>(val parser: Parser<T>) : Parser<List<T>>
     }
 }
 
+private fun <T : Any> Parser<T>.ignore(token: IdentityStringToken): Parser<T> {
+    return IgnoreTokensParser(this, token)
+}
+
+private data class IgnoreTokensParser<T : Any>(val parser: Parser<T>, val ignoredToken: IdentityStringToken) : Parser<T> {
+    override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<T>? {
+        return parser(
+            if (tokens.firstOrNull() == ignoredToken) tokens.drop(1) else tokens
+        )
+    }
+}
+
 private object LeafTargetParser : Parser<LeafTargetSyntaxNode> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<LeafTargetSyntaxNode>? {
-        val nextToken = tokens.firstOrNull() as? IdentityStringToken.Word ?: return null
+        val nextToken = tokens.firstOrNull() as? Word ?: return null
         return ParserOutput(LeafTargetSyntaxNode(nextToken), tokens.drop(1))
     }
 }
@@ -149,8 +159,8 @@ private object SharedTargetParser : Parser<SharedTargetSyntaxNode> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<SharedTargetSyntaxNode>? {
         if (tokens.firstOrNull() !is SharedTargetStart) return null
 
-        val innerParser = anyOf(LeafTargetParser, SharedTargetParser).oneOrMore()
-        val innerParserOutput = innerParser(tokens.drop(1).filterNot { it is IdentityStringToken.Separator }) ?: return null
+        val innerParser = anyOf(LeafTargetParser, SharedTargetParser).ignore(Separator).oneOrMore()
+        val innerParserOutput = innerParser(tokens.drop(1)) ?: return null
 
         val closingToken = innerParserOutput.remaining.firstOrNull()
         if (closingToken != SharedTargetEnd) {
@@ -163,7 +173,7 @@ private object SharedTargetParser : Parser<SharedTargetSyntaxNode> {
 }
 
 private sealed class IdentityStringSyntaxNode {
-    data class LeafTargetSyntaxNode(val token: IdentityStringToken.Word) : IdentityStringSyntaxNode()
+    data class LeafTargetSyntaxNode(val token: Word) : IdentityStringSyntaxNode()
     data class SharedTargetSyntaxNode(val children: List<IdentityStringSyntaxNode>) : IdentityStringSyntaxNode()
 }
 
