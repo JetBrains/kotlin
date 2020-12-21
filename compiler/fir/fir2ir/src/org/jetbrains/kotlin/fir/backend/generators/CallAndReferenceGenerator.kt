@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -615,6 +617,17 @@ class CallAndReferenceGenerator(
     }
 
     private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
+        // If the type of the argument is already an explicitly subtype of the type of the parameter, we don't need SAM conversion.
+        if (argument.typeRef !is FirResolvedTypeRef ||
+            AbstractTypeChecker.isSubtypeOf(
+                session.inferenceComponents.ctx,
+                argument.typeRef.coneType,
+                parameter.returnTypeRef.coneType,
+                isFromNullabilityConstraint = true
+            )
+        ) {
+            return false
+        }
         // If the expected type is a built-in functional type, we don't need SAM conversion.
         val expectedType = argument.getExpectedTypeForSAMConversion(parameter)
         if (expectedType is ConeTypeParameterType || expectedType.isBuiltinFunctionalType(session)) {
