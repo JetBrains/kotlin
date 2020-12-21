@@ -34,6 +34,9 @@ open class KotlinApiBuildTask : DefaultTask() {
     @get:Input
     val nonPublicMarkers : Set<String> get() = extension.nonPublicMarkers
 
+    @get:Input
+    val ignoredClasses : Set<String> get() = extension.ignoredClasses
+
     @TaskAction
     fun generate() {
         cleanup(outputApiDir)
@@ -45,7 +48,7 @@ open class KotlinApiBuildTask : DefaultTask() {
             }
             .map { it.inputStream() }
             .loadApiFromJvmClasses()
-            .filterOutNonPublic(ignoredPackages)
+            .filterOutNonPublic(ignoredPackages, ignoredClasses)
             .filterOutAnnotated(nonPublicMarkers.map { it.replace(".", "/") }.toSet())
 
         outputApiDir.resolve("${project.name}.api").bufferedWriter().use { writer ->

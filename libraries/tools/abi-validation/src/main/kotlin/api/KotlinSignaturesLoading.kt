@@ -84,12 +84,19 @@ internal fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Se
 }
 
 @ExternalApi
-public fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList()): List<ClassBinarySignature> {
-    val nonPublicPaths = nonPublicPackages.map { it.replace('.', '/') + '/' }
+public fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Collection<String> = emptyList(), nonPublicClasses: Collection<String> = emptyList()): List<ClassBinarySignature> {
+    val pathMapper: (String) -> String = { it.replace('.', '/') + '/' }
+    val nonPublicPackagePaths = nonPublicPackages.map(pathMapper)
+    val excludedClasses = nonPublicClasses.map(pathMapper)
+
     val classByName = associateBy { it.name }
 
     fun ClassBinarySignature.isInNonPublicPackage() =
-        nonPublicPaths.any { name.startsWith(it) }
+        nonPublicPackagePaths.any { name.startsWith(it) }
+
+    // checks whether class (e.g. com/company/BuildConfig) is in excluded class (e.g. com/company/BuildConfig/)
+    fun ClassBinarySignature.isInExcludedClasses() =
+        excludedClasses.any { it.startsWith(name) }
 
     fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
         isEffectivelyPublic &&
@@ -116,7 +123,7 @@ public fun List<ClassBinarySignature>.filterOutNonPublic(nonPublicPackages: Coll
         )
     }
 
-    return filter { !it.isInNonPublicPackage() && it.isPublicAndAccessible() }
+    return filter { !it.isInNonPublicPackage() && !it.isInExcludedClasses() && it.isPublicAndAccessible() }
         .map { it.flattenNonPublicBases() }
         .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty() }
 }
