@@ -1,0 +1,10 @@
+// FIR_COMPARISON
+package test
+
+class T
+
+fun foo() {
+    class T
+
+    var t: test.T
+}
