@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") apply false
+    `signing`
     `maven-publish`
 }
 
@@ -77,6 +78,8 @@ tasks {
 }
 
 properties["DeployVersion"]?.let { version = it }
+val bintrayUpload = project.getSensitiveProperty("libs.bintray.upload") != null
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -84,8 +87,19 @@ publishing {
             mavenCentralMetadata()
             mavenCentralArtifacts(project, project.sourceSets.main.get().allSource)
         }
+
+        if (bintrayUpload) {
+            bintrayRepositoryPublishing(project, user = "kotlin", repo = "kotlinx", name = "binary-compatibility-validator")
+        } else {
+            mavenRepositoryPublishing(project)
+        }
         mavenCentralMetadata()
-        bintrayRepositoryPublishing(project, user = "kotlin", repo = "kotlinx", name = "binary-compatibility-validator")
+    }
+
+    if (!bintrayUpload) {
+        publications.withType(MavenPublication::class).all {
+            signPublicationIfKeyPresent(this)
+        }
     }
 }
 

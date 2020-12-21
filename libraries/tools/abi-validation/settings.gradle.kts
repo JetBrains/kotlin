@@ -1,10 +1,10 @@
 rootProject.name = "binary-compatibility-validator"
 
-val kotlinVersion: String by settings
-val pluginPublishVersion: String by settings
 
 pluginManagement {
     resolutionStrategy {
+        val kotlinVersion: String by settings
+        val pluginPublishVersion: String by settings
         eachPlugin {
             if (requested.id.namespace?.startsWith("org.jetbrains.kotlin") == true) {
                 useVersion(kotlinVersion)
