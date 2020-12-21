@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
@@ -39,37 +40,7 @@ internal class KtFirReferenceShortener(
         val firFile = file.getOrBuildFirOfType<FirFile>(firResolveState)
 
         val typesToShorten = mutableListOf<KtUserType>()
-
-        firFile.acceptChildren(object : FirVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                element.acceptChildren(this)
-            }
-
-            override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-                resolvedTypeRef.acceptChildren(this)
-
-                val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
-
-                val wholeTypeElement = wholeTypeReference.typeElement as? KtUserType ?: return
-                if (wholeTypeElement.qualifier == null) return
-
-                val wholeClassifierId = resolvedTypeRef.type.classId ?: return
-
-                val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
-                val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
-
-                val positionScopes = findScopesAtPosition(wholeTypeReference) ?: return
-
-                for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
-                    val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
-
-                    if (firstFoundClass == classId) {
-                        typesToShorten.add(typeElement)
-                        break
-                    }
-                }
-            }
-        })
+        firFile.acceptChildren(TypesCollectingVisitor(typesToShorten))
 
         return ShortenCommand(file, emptyList(), typesToShorten.map { it.createSmartPointer() })
     }
@@ -105,10 +76,50 @@ internal class KtFirReferenceShortener(
         return element
     }
 
-    private fun findScopesAtPosition(targetTypeReference: KtTypeReference): List<FirScope>? {
+    private fun findScopesAtPosition(targetTypeReference: KtElement): List<FirScope>? {
         val towerDataContext = firResolveState.getTowerDataContextForElement(targetTypeReference) ?: return null
         val availableScopes = towerDataContext.towerDataElements.mapNotNull { it.scope }
 
         return availableScopes.asReversed()
+    }
+
+    private inner class TypesCollectingVisitor(private val collectedTypes: MutableList<KtUserType>) : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+            processTypeRef(resolvedTypeRef)
+
+            resolvedTypeRef.acceptChildren(this)
+            resolvedTypeRef.delegatedTypeRef?.accept(this)
+        }
+
+        private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+            val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
+
+            val wholeClassifierId = resolvedTypeRef.type.classId ?: return
+            val wholeTypeElement = wholeTypeReference.typeElement as? KtUserType ?: return
+
+            if (wholeTypeElement.qualifier == null) return
+
+            val typeToShorten = findBiggestClassifierToShorten(wholeClassifierId, wholeTypeElement) ?: return
+            collectedTypes.add(typeToShorten)
+        }
+
+        private fun findBiggestClassifierToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): KtUserType? {
+            val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
+            val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
+
+            val positionScopes = findScopesAtPosition(wholeTypeElement) ?: return null
+
+            for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
+                val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
+
+                if (firstFoundClass == classId) return typeElement
+            }
+
+            return null
+        }
     }
 }
