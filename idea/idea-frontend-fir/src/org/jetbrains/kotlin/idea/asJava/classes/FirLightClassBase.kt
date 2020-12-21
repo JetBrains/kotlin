@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
@@ -51,9 +53,10 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
         get() = invalidAccess()
 
     private class FirLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
+        @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
         override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = lazyPub {
             PsiCachedValueImpl(PsiManager.getInstance(project)) {
-                CachedValueProvider.Result.create(initializer(), dependencies)
+                CachedValueProvider.Result.create(hackyAllowRunningOnEdt(initializer) , dependencies)
             }.value ?: error("initializer cannot return null")
         }
     }
