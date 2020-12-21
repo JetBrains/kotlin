@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -78,4 +79,6 @@ abstract class FirModuleResolveState {
     )
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
+
+    abstract fun getTowerDataContextForElement(element: KtElement): FirTowerDataContext?
 }

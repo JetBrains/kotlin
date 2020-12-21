@@ -24,3 +24,11 @@ class FirTowerDataContextCollector {
 
     fun getContext(psi: KtElement): FirTowerDataContext? = state[psi]
 }
+
+fun FirTowerDataContextCollector.getClosestAvailableParentContext(element: KtElement): FirTowerDataContext? {
+    var current: KtElement = element
+    while (true) {
+        getContext(current)?.let { return it }
+        current = current.parent as? KtElement ?: return null
+    }
+}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -24,7 +25,8 @@ internal class FileStructure(
     private val firFile: FirFile,
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
     private val firFileBuilder: FirFileBuilder,
-    private val moduleFileCache: ModuleFileCache
+    private val moduleFileCache: ModuleFileCache,
+    private val collector: FirTowerDataContextCollector
 ) {
     private val firIdeProvider = firFile.session.firIdeProvider
 
@@ -74,7 +76,8 @@ internal class FileStructure(
             firDeclaration,
             moduleFileCache,
             FirResolvePhase.BODY_RESOLVE,
-            checkPCE = true
+            checkPCE = true,
+            towerDataContextCollector = collector
         )
         return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
             FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile)
