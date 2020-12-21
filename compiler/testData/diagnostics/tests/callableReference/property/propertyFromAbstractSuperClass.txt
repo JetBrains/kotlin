@@ -1,0 +1,59 @@
+package
+
+public final class Component : SettingComponent<Module> {
+    public constructor Component(/*0*/ reference: Reference<Module>, /*1*/ context: Context)
+    private final val model: Model
+    public final override /*1*/ /*fake_override*/ val reference: Reference<Module>
+    public final override /*1*/ /*fake_override*/ var value: Module
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Context {
+    public constructor Context()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Model {
+    public constructor Model(/*0*/ value: kotlin.reflect.KMutableProperty0<Module>, /*1*/ context: Context)
+    private final val context: Context
+    private final val value: kotlin.reflect.KMutableProperty0<Module>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Module {
+    public constructor Module()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ModuleReference : Reference<Module> {
+    public constructor ModuleReference(/*0*/ m: Module)
+    public open override /*1*/ var v: Module
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Reference</*0*/ V : kotlin.Any> {
+    public constructor Reference</*0*/ V : kotlin.Any>()
+    public abstract var v: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class SettingComponent</*0*/ V : kotlin.Any> {
+    public constructor SettingComponent</*0*/ V : kotlin.Any>(/*0*/ reference: Reference<V>)
+    public final val reference: Reference<V>
+    public final var value: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
