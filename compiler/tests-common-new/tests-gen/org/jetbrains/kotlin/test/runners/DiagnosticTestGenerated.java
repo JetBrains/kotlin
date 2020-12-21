@@ -3011,6 +3011,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("propertyFromAbstractSuperClass.kt")
+                public void testPropertyFromAbstractSuperClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/property/propertyFromAbstractSuperClass.kt");
+                }
+
+                @Test
                 @TestMetadata("protectedVarFromClass.kt")
                 public void testProtectedVarFromClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/protectedVarFromClass.kt");
