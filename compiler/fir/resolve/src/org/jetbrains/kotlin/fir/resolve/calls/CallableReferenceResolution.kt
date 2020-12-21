@@ -401,6 +401,8 @@ private fun createKPropertyType(
 private fun FirVariable<*>.canBeMutableReference(candidate: Candidate): Boolean {
     if (!isVar) return false
     if (this is FirField) return true
-    return source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
-            (setter is FirMemberDeclaration && candidate.callInfo.session.visibilityChecker.isVisible(setter!!, candidate))
+    val original = this.unwrapFakeOverrides()
+    return original.source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
+            (original.setter is FirMemberDeclaration &&
+                    candidate.callInfo.session.visibilityChecker.isVisible(original.setter!!, candidate))
 }
