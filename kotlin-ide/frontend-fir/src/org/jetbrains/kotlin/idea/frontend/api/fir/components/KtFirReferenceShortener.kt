@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -45,34 +46,45 @@ internal class KtFirReferenceShortener(
             }
 
             override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-                val targetTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
-                val targetType = targetTypeReference.typeElement as? KtUserType ?: return
+                resolvedTypeRef.acceptChildren(this)
 
-                if (targetType.qualifier == null) return
+                val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
 
-                val targetClassId = resolvedTypeRef.type.classId
-                val targetClassName = targetClassId?.shortClassName ?: return
+                val wholeTypeElement = wholeTypeReference.typeElement as? KtUserType ?: return
+                if (wholeTypeElement.qualifier == null) return
 
-                val positionScopes = findScopesAtPosition(targetTypeReference) ?: return
+                val wholeClassifierId = resolvedTypeRef.type.classId ?: return
 
-                val firstFoundClass = positionScopes.asSequence()
-                    .mapNotNull { scope -> scope.findFirstClassifierByName(targetClassName) }
-                    .mapNotNull { classifierSymbol -> classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag }
-                    .map { it.classId }
-                    .firstOrNull()
+                val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
+                val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
 
-                if (firstFoundClass == null) {
-                    // this class should be imported
-                }
+                val positionScopes = findScopesAtPosition(wholeTypeReference) ?: return
 
-                if (firstFoundClass == targetClassId) {
-                    typesToShorten.add(targetType)
+                for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
+                    val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
+
+                    if (firstFoundClass == classId) {
+                        typesToShorten.add(typeElement)
+                        break
+                    }
                 }
             }
         })
 
         return ShortenCommand(file, emptyList(), typesToShorten.map { it.createSmartPointer() })
     }
+
+    private fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): ClassId? {
+        for (scope in positionScopes) {
+            val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: continue
+            val classifierLookupTag = classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag ?: continue
+
+            return classifierLookupTag.classId
+        }
+
+        return null
+    }
+
 
     private fun resolveFileToBodyResolve(file: KtFile) {
         for (declaration in file.declarations) {
@@ -81,8 +93,17 @@ internal class KtFirReferenceShortener(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun FirScope.findFirstClassifierByName(name: Name): FirClassifierSymbol<*>? =
-        buildList { processClassifiersByName(name, this::add) }.firstOrNull()
+    private fun FirScope.findFirstClassifierByName(name: Name): FirClassifierSymbol<*>? {
+        var element: FirClassifierSymbol<*>? = null
+
+        processClassifiersByName(name) {
+            if (element == null) {
+                element = it
+            }
+        }
+
+        return element
+    }
 
     private fun findScopesAtPosition(targetTypeReference: KtTypeReference): List<FirScope>? {
         val towerDataContext = firResolveState.getTowerDataContextForElement(targetTypeReference) ?: return null
