@@ -265,6 +265,11 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 <!--    <classesWithAnnotatedMembersSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinClassesWithAnnotatedMembersSearcher"/>-->
 <!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.DefaultAnnotationMethodKotlinImplicitReferenceSearcher"/>-->
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.FirPluginOracleService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.FirPluginOracleServiceFirImpl"/>
+
+
+
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 
 

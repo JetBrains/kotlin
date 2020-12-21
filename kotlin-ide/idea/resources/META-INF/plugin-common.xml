@@ -291,6 +291,10 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport"
                     serviceImplementation="org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupportImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.FirPluginOracleService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.FirPluginOracleServiceFE10Impl"/>
+
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <registryKey key="kotlin.dispatch.thread.resolve.check"
