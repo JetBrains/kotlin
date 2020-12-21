@@ -20,7 +20,7 @@ final class BooleanParameterKt$box$1 {
 final class BooleanParameterKt$box$lambda$1 {
     // source: 'booleanParameter.kt'
     enclosing method BooleanParameterKt.box()Ljava/lang/String;
-    synthetic field it: boolean
+    synthetic field Z$0: boolean
     field label: int
     inner (anonymous) class BooleanParameterKt$box$lambda$1
     method <init>(p0: kotlin.coroutines.Continuation): void
