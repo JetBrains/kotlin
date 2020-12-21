@@ -615,7 +615,17 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
         val kind = type.kind
 
         return when (kind) {
-            CXType_Elaborated -> convertType(clang_Type_getNamedType(type))
+            CXType_Elaborated -> {
+                val declCursor = clang_getTypeDeclaration(type)
+                val declSpelling = getCursorSpelling(declCursor)
+                // Skip std::string for now.
+                // TODO: is there a better way?
+                if (declSpelling == "string") {
+                    UnsupportedType
+                } else {
+                    convertType(clang_Type_getNamedType(type))
+                }
+            }
 
             CXType_Unexposed -> {
                 if (clang_getResultType(type).kind != CXTypeKind.CXType_Invalid) {
