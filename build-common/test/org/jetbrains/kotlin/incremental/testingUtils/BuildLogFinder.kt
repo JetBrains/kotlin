@@ -22,13 +22,11 @@ data class BuildLogFinder(
     private val isDataContainerBuildLogEnabled: Boolean = false,
     private val isGradleEnabled: Boolean = false,
     private val isJsEnabled: Boolean = false,
-    private val isJsIrEnabled: Boolean = false, // TODO rename as it is used for metadata-only test
     private val isScopeExpansionEnabled: Boolean = false,
     private val isKlibEnabled: Boolean = false
 ) {
     companion object {
         private const val JS_LOG = "js-build.log"
-        private const val JS_IR_LOG = "js-ir-build.log"
         private const val KLIB_LOG = "klib-build.log"
         private const val SCOPE_EXPANDING_LOG = "build-with-scope-expansion.log"
         private const val GRADLE_LOG = "gradle-build.log"
@@ -45,7 +43,6 @@ data class BuildLogFinder(
         val files = names.filter { File(dir, it).isFile }.toSet()
         val matchedName = when {
             isScopeExpansionEnabled && SCOPE_EXPANDING_LOG in files -> SCOPE_EXPANDING_LOG
-            isJsIrEnabled && JS_IR_LOG in files -> JS_IR_LOG
             isKlibEnabled && KLIB_LOG in files -> KLIB_LOG
             isJsEnabled && JS_LOG in files -> JS_LOG
             isGradleEnabled && GRADLE_LOG in files -> GRADLE_LOG
