@@ -11,7 +11,7 @@ KtFirClassOrObjectSymbol:
   name: Iterator
   origin: LIBRARY
   primaryConstructor: null
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T)]
   visibility: PUBLIC

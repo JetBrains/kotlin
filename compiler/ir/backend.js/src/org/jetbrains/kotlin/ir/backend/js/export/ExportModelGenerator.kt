@@ -326,8 +326,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             return Exportability.NotNeeded
         if (function.origin == IrDeclarationOrigin.BRIDGE ||
             function.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
-            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-            function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
+            function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
+            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
         ) {
             return Exportability.NotNeeded
         }

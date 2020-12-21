@@ -12,27 +12,18 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -43,8 +34,8 @@ import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -52,7 +43,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -60,13 +50,13 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.util.StringUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
 import javax.tools.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
@@ -82,7 +72,6 @@ public class KotlinTestUtils {
     public static String TEST_MODULE_NAME = "test-module";
 
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
-    private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
 
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
@@ -95,8 +84,6 @@ public class KotlinTestUtils {
 
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
-
-    private static final List<File> filesToDelete = new ArrayList<>();
 
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
@@ -125,7 +112,7 @@ public class KotlinTestUtils {
             @NotNull TestJdkKind jdkKind
     ) {
         return KotlinCoreEnvironment.createForTests(
-                disposable, newConfiguration(configurationKind, jdkKind, getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
+                disposable, newConfiguration(configurationKind, jdkKind, KtTestUtil.getAnnotationsJar()), EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
     }
 
@@ -135,155 +122,8 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static String getTestDataPathBase() {
-        return getHomeDirectory() + "/compiler/testData";
-    }
-
-    private static String homeDir = computeHomeDirectory();
-
-    @NotNull
-    public static String getHomeDirectory() {
-        return homeDir;
-    }
-
-    @NotNull
-    private static String computeHomeDirectory() {
-        String userDir = System.getProperty("user.dir");
-        File dir = new File(userDir == null ? "." : userDir);
-        return FileUtil.toCanonicalPath(dir.getAbsolutePath());
-    }
-
-    public static File findMockJdkRtJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
-    }
-
-    // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
-    // It's needed to test the way we load additional built-ins members that neither in black nor white lists
-    public static File findMockJdkRtModified() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDKModified/rt.jar");
-    }
-
-    public static File findAndroidApiJar() {
-        String androidJarProp = System.getProperty("android.jar");
-        File androidJarFile = androidJarProp == null ? null : new File(androidJarProp);
-        if (androidJarFile == null || !androidJarFile.isFile()) {
-            throw new RuntimeException(
-                    "Unable to get a valid path from 'android.jar' property (" +
-                    androidJarProp +
-                    "), please point it to the 'android.jar' file location");
-        }
-        return androidJarFile;
-    }
-
-    @NotNull
-    public static File findAndroidSdk() {
-        String androidSdkProp = System.getProperty("android.sdk");
-        File androidSdkDir = androidSdkProp == null ? null : new File(androidSdkProp);
-        if (androidSdkDir == null || !androidSdkDir.isDirectory()) {
-            throw new RuntimeException(
-                    "Unable to get a valid path from 'android.sdk' property (" +
-                    androidSdkProp +
-                    "), please point it to the android SDK location");
-        }
-        return androidSdkDir;
-    }
-
-    public static String getAndroidSdkSystemIndependentPath() {
-        return PathUtil.toSystemIndependentName(findAndroidSdk().getAbsolutePath());
-    }
-
-    public static File getAnnotationsJar() {
-        return new File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
-    }
-
-    public static void mkdirs(@NotNull File file) {
-        if (file.isDirectory()) {
-            return;
-        }
-        if (!file.mkdirs()) {
-            if (file.exists()) {
-                throw new IllegalStateException("Failed to create " + file + ": file exists and not a directory");
-            }
-            throw new IllegalStateException("Failed to create " + file);
-        }
-    }
-
-    @NotNull
-    public static File tmpDirForTest(@NotNull String testClassName, @NotNull String testName) throws IOException {
-        return normalizeFile(FileUtil.createTempDirectory(testClassName, testName, false));
-    }
-
-    @NotNull
     public static File tmpDirForTest(TestCase test) throws IOException {
-        return tmpDirForTest(test.getClass().getSimpleName(), test.getName());
-    }
-
-    @NotNull
-    public static File tmpDir(String name) throws IOException {
-        return normalizeFile(FileUtil.createTempDirectory(name, "", false));
-    }
-
-    @NotNull
-    public static File tmpDirForReusableFolder(String name) throws IOException {
-        return normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "", true));
-    }
-
-    private static File normalizeFile(File file) throws IOException {
-        // Get canonical file to be sure that it's the same as inside the compiler,
-        // for example, on Windows, if a canonical path contains any space from FileUtil.createTempDirectory we will get
-        // a File with short names (8.3) in its path and it will break some normalization passes in tests.
-        return file.getCanonicalFile();
-    }
-
-    private static void deleteOnShutdown(File file) {
-        if (filesToDelete.isEmpty()) {
-            ShutDownTracker.getInstance().registerShutdownTask(() -> {
-                for (File victim : filesToDelete) {
-                    FileUtil.delete(victim);
-                }
-            });
-        }
-
-        filesToDelete.add(file);
-    }
-
-    @NotNull
-    public static KtFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
-        String shortName = name.substring(name.lastIndexOf('/') + 1);
-        shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
-        LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, StringUtilRt.convertLineSeparators(text));
-
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
-        //noinspection ConstantConditions
-        return (KtFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
-    }
-
-    public static String doLoadFile(String myFullDataPath, String name) throws IOException {
-        String fullName = myFullDataPath + File.separatorChar + name;
-        return doLoadFile(new File(fullName));
-    }
-
-    public static String doLoadFile(@NotNull File file) throws IOException {
-        try {
-            return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
-        }
-        catch (FileNotFoundException fileNotFoundException) {
-            /*
-             * Unfortunately, the FileNotFoundException will only show the relative path in it's exception message.
-             * This clarifies the exception by showing the full path.
-             */
-            String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
-            throw new IOException(
-                    "Ensure you have your 'Working Directory' configured correctly as the root " +
-                    "Kotlin project directory in your test configuration\n\t" +
-                    messageWithFullPath,
-                    fileNotFoundException);
-        }
-    }
-
-    public static String getFilePath(File file) {
-        return FileUtil.toSystemIndependentName(file.getPath());
+        return KtTestUtil.tmpDirForTest(test.getClass().getSimpleName(), test.getName());
     }
 
     @NotNull
@@ -346,15 +186,15 @@ public class KotlinTestUtils {
         CompilerConfiguration configuration = newConfiguration();
         JvmContentRootsKt.addJavaSourceRoots(configuration, javaSource);
         if (jdkKind == TestJdkKind.MOCK_JDK) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtJar());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, KtTestUtil.findMockJdkRtJar());
             configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.MODIFIED_MOCK_JDK) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, findMockJdkRtModified());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, KtTestUtil.findMockJdkRtModified());
             configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.ANDROID_API) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, KtTestUtil.findAndroidApiJar());
             configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_6) {
@@ -363,10 +203,10 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk9Home());
+            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk9Home());
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_15) {
-            configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk15Home());
+            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk15Home());
         }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
@@ -388,41 +228,6 @@ public class KotlinTestUtils {
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
 
         return configuration;
-    }
-
-    @NotNull
-    public static File getJdk9Home() {
-        String jdk9 = System.getenv("JDK_9");
-        if (jdk9 == null) {
-            jdk9 = System.getenv("JDK_19");
-            if (jdk9 == null) {
-                throw new AssertionError("Environment variable JDK_9 is not set!");
-            }
-        }
-        return new File(jdk9);
-    }
-
-    @Nullable
-    public static File getJdk11Home() {
-        String jdk11 = System.getenv("JDK_11");
-        if (jdk11 == null) {
-            return null;
-        }
-        return new File(jdk11);
-    }
-
-    @NotNull
-    public static File getJdk15Home() {
-        String jdk15 = System.getenv("JDK_15");
-
-        if (jdk15 == null) {
-            jdk15 = System.getenv("JDK_15_0");
-        }
-
-        if (jdk15 == null) {
-            throw new AssertionError("Environment variable JDK_15 is not set!");
-        }
-        return new File(jdk15);
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
@@ -483,7 +288,7 @@ public class KotlinTestUtils {
 
     public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
-            String actualText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
+            String actualText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
             if (!expectedFile.exists()) {
                 FileUtil.writeToFile(expectedFile, actualText);
@@ -491,7 +296,7 @@ public class KotlinTestUtils {
             }
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            String expectedText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
+            String expectedText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
             if (!Comparing.equal(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
                 throw new FileComparisonFailure(message + ": " + expectedFile.getName(),
@@ -685,7 +490,7 @@ public class KotlinTestUtils {
     }
 
     public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
-        return compileJavaFilesExternally(files, options, getJdk9Home());
+        return compileJavaFilesExternally(files, options, KtTestUtil.getJdk9Home());
     }
 
     public static boolean compileJavaFilesExternally(@NotNull Collection<File> files, @NotNull List<String> options, @NotNull File jdkHome) {
@@ -791,7 +596,7 @@ public class KotlinTestUtils {
                 return;
             }
         }
-        MuteWithFileKt.testWithMuteInFile(test, testCase).invoke(testDataFilePath);
+        test.invoke(testDataFilePath);
     }
 
     private static boolean isRunTestOverridden(TestCase testCase) {
@@ -825,7 +630,7 @@ public class KotlinTestUtils {
             }
             catch (Throwable e) {
                 if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
-                    String text = doLoadFile(testDataFile);
+                    String text = KtTestUtil.doLoadFile(testDataFile);
                     String directive = ignoreDirective + targetBackend.name() + "\n";
 
                     String newText;
@@ -864,7 +669,7 @@ public class KotlinTestUtils {
 
             if (isIgnored) {
                 if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
-                    String text = doLoadFile(testDataFile);
+                    String text = KtTestUtil.doLoadFile(testDataFile);
                     String directive = ignoreDirective + targetBackend.name();
                     String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
                     if (!newText.equals(text)) {
@@ -878,12 +683,6 @@ public class KotlinTestUtils {
         };
     }
 
-    public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
-        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
-        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        return testClassMetadata.value();
-    }
-
     /**
      * @return test data file name specified in the metadata of test method
      */
@@ -891,189 +690,11 @@ public class KotlinTestUtils {
     public static String getTestDataFileName(@NotNull Class<?> testCaseClass, @NotNull String testName) {
         try {
             Method method = testCaseClass.getDeclaredMethod(testName);
-            return getMethodMetadata(method);
+            return KtTestUtil.getMethodMetadata(method);
         }
         catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static void assertAllTestsPresentByMetadataWithExcluded(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @Nullable Pattern excludedPattern,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, excludedPattern, TargetBackend.ANY, recursive, excludeDirs);
-    }
-
-    public static void assertAllTestsPresentByMetadata(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        assertAllTestsPresentByMetadata(
-                testCaseClass,
-                testDataDir,
-                filenamePattern,
-                TargetBackend.ANY,
-                recursive,
-                excludeDirs
-        );
-    }
-
-    public static void assertAllTestsPresentByMetadataWithExcluded(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @Nullable Pattern excludedPattern,
-            @NotNull TargetBackend targetBackend,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        File rootFile = new File(getTestsRoot(testCaseClass));
-
-        Set<String> filePaths = collectPathsMetadata(testCaseClass);
-        Set<String> exclude = SetsKt.setOf(excludeDirs);
-
-        File[] files = testDataDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    if (recursive && containsTestData(file, filenamePattern, excludedPattern) && !exclude.contains(file.getName())) {
-                        assertTestClassPresentByMetadata(testCaseClass, file);
-                    }
-                }
-                else {
-                    boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
-                    if (!excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
-                        assertFilePathPresent(file, rootFile, filePaths);
-                    }
-                }
-            }
-        }
-    }
-
-    public static void assertAllTestsPresentByMetadata(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @NotNull TargetBackend targetBackend,
-            boolean recursive,
-            @NotNull String... excludeDirs
-    ) {
-        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, null, targetBackend, recursive, excludeDirs);
-    }
-
-    public static void assertAllTestsPresentInSingleGeneratedClass(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern
-    ) {
-        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, TargetBackend.ANY);
-    }
-
-    public static void assertAllTestsPresentInSingleGeneratedClassWithExcluded(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @Nullable Pattern excludePattern
-    ) {
-        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, excludePattern, TargetBackend.ANY);
-    }
-
-    public static void assertAllTestsPresentInSingleGeneratedClass(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @NotNull TargetBackend targetBackend
-    ) {
-        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, null, targetBackend);
-    }
-
-    public static void assertAllTestsPresentInSingleGeneratedClass(
-            @NotNull Class<?> testCaseClass,
-            @NotNull File testDataDir,
-            @NotNull Pattern filenamePattern,
-            @Nullable Pattern excludePattern,
-            @NotNull TargetBackend targetBackend
-    ) {
-        File rootFile = new File(getTestsRoot(testCaseClass));
-
-        Set<String> filePaths = collectPathsMetadata(testCaseClass);
-
-        FileUtil.processFilesRecursively(testDataDir, file -> {
-            boolean excluded = excludePattern != null && excludePattern.matcher(file.getName()).matches();
-            if (file.isFile() && !excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
-                assertFilePathPresent(file, rootFile, filePaths);
-            }
-
-            return true;
-        });
-    }
-
-    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths) {
-        String path = FileUtil.getRelativePath(rootFile, file);
-        if (path != null) {
-            String relativePath = nameToCompare(path);
-            if (!filePaths.contains(relativePath)) {
-                Assert.fail("Test data file missing from the generated test class: " + file + "\n" + PLEASE_REGENERATE_TESTS);
-            }
-        }
-    }
-
-    private static Set<String> collectPathsMetadata(Class<?> testCaseClass) {
-        return new HashSet<>(ContainerUtil.map(collectMethodsMetadata(testCaseClass), KotlinTestUtils::nameToCompare));
-    }
-
-    @Nullable
-    private static String getMethodMetadata(Method method) {
-        TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
-        return (testMetadata != null) ? testMetadata.value() : null;
-    }
-
-    private static Set<String> collectMethodsMetadata(Class<?> testCaseClass) {
-        Set<String> filePaths = new HashSet<>();
-        for (Method method : testCaseClass.getDeclaredMethods()) {
-            String path = getMethodMetadata(method);
-            if (path != null) {
-                filePaths.add(path);
-            }
-        }
-        return filePaths;
-    }
-
-    private static boolean containsTestData(File dir, Pattern filenamePattern, @Nullable Pattern excludedPattern) {
-        File[] files = dir.listFiles();
-        assert files != null;
-        for (File file : files) {
-            if (file.isDirectory()) {
-                if (containsTestData(file, filenamePattern, excludedPattern)) {
-                    return true;
-                }
-            }
-            else {
-                boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
-                if (! excluded && filenamePattern.matcher(file.getName()).matches()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static void assertTestClassPresentByMetadata(@NotNull Class<?> outerClass, @NotNull File testDataDir) {
-        for (Class<?> nestedClass : outerClass.getDeclaredClasses()) {
-            TestMetadata testMetadata = nestedClass.getAnnotation(TestMetadata.class);
-            if (testMetadata != null && testMetadata.value().equals(getFilePath(testDataDir))) {
-                return;
-            }
-        }
-        Assert.fail("Test data directory missing from the generated test class: " + testDataDir + "\n" + PLEASE_REGENERATE_TESTS);
     }
 
     @NotNull
@@ -1114,10 +735,6 @@ public class KotlinTestUtils {
     public static boolean isAllFilesPresentTest(String testName) {
         //noinspection SpellCheckingInspection
         return testName.toLowerCase().startsWith("allfilespresentin");
-    }
-
-    public static String nameToCompare(@NotNull String name) {
-        return (SystemInfo.isFileSystemCaseSensitive ? name : name.toLowerCase()).replace('\\', '/');
     }
 
     public static boolean isMultiExtensionName(@NotNull String name) {

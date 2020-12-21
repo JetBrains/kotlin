@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -260,10 +261,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(TESTDATA_DIR, testDataDir)
                 .replace(
                         "$FOREIGN_ANNOTATIONS_DIR$",
-                        new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
+                        new File(AbstractForeignAnnotationsTestKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
                 ).replace(
                         "$JDK_15$",
-                        KotlinTestUtils.getJdk15Home().getPath()
+                        KtTestUtil.getJdk15Home().getPath()
                 );
     }
 

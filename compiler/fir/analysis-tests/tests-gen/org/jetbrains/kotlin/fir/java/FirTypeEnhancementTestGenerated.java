@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
     }
 
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("ArrayInGenericArguments.java")
@@ -267,7 +268,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("AnnotatedAnnotation.java")
@@ -470,7 +471,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/constructor"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/constructor"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ConstructorGenericDeep.java")
@@ -498,7 +499,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInEnum() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("EnumMembers.java")
@@ -526,7 +527,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInJavaBean() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/javaBean"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/javaBean"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("DifferentGetterAndSetter.java")
@@ -574,7 +575,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInKotlinSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ArrayType.java")
@@ -661,7 +662,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
             }
 
             public void testAllFilesPresentInError() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("WrongProjectionKind.java")
@@ -694,7 +695,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
             }
 
             public void testAllFilesPresentInPropagation() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("PropagateTypeArgumentNullable.java")
@@ -711,7 +712,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
                 }
 
                 public void testAllFilesPresentInParameter() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("ChangeProjectionKind1.java")
@@ -864,7 +865,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
                 }
 
                 public void testAllFilesPresentInReturn() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("CantMakeImmutableInSubclass.java")
@@ -1017,7 +1018,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
                 }
 
                 public void testAllFilesPresentInTypeParameter() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("InheritNullability.java")
@@ -1067,7 +1068,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInLibrary() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/library"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/library"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("LoadIterable.java")
@@ -1095,7 +1096,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInModality() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/modality"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/modality"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ModalityOfFakeOverrides.java")
@@ -1113,7 +1114,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInMutability() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/mutability"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/mutability"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("LoadIterable.java")
@@ -1151,7 +1152,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInNotNull() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/notNull"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/notNull"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("NotNullField.java")
@@ -1189,7 +1190,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInProtectedPackage() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedPackage"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedPackage"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ProtectedPackageConstructor.java")
@@ -1217,7 +1218,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInProtectedStatic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedStatic"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedStatic"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ConstructorInProtectedStaticNestedClass.java")
@@ -1235,7 +1236,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInRendering() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/rendering"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/rendering"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("Rendering.java")
@@ -1253,7 +1254,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInSam() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("Comparator.java")
@@ -1345,7 +1346,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
             }
 
             public void testAllFilesPresentInAdapters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), null, true);
             }
 
             @TestMetadata("AmbiguousAdapters.java")
@@ -1432,7 +1433,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
                 }
 
                 public void testAllFilesPresentInInheritance() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), null, true);
                 }
 
                 @TestMetadata("InheritedAdapterAndDeclaration.java")
@@ -1492,7 +1493,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInSignatureAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signatureAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("StableName.java")
@@ -1510,7 +1511,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInSignaturePropagation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signaturePropagation"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signaturePropagation"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ArraysInSubtypes.java")
@@ -1568,7 +1569,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInStatic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("DeeplyInnerClass.java")
@@ -1636,7 +1637,7 @@ public class FirTypeEnhancementTestGenerated extends AbstractFirTypeEnhancementT
         }
 
         public void testAllFilesPresentInVararg() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/vararg"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/vararg"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("VarargInt.java")

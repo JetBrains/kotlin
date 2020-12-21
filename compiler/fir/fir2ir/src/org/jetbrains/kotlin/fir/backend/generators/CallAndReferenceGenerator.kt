@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -720,7 +719,18 @@ class CallAndReferenceGenerator(
                     dispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }
                 if (ownerFunction?.extensionReceiverParameter != null) {
-                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)
+                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
+                        ((qualifiedAccess.calleeReference as FirResolvedNamedReference)
+                            .resolvedSymbol.fir as? FirCallableMemberDeclaration)?.receiverTypeRef?.let { receiverType ->
+                            with(visitor.implicitCastInserter) {
+                                it.cast(
+                                    qualifiedAccess.extensionReceiver,
+                                    qualifiedAccess.extensionReceiver.typeRef,
+                                    receiverType
+                                )
+                            }
+                        } ?: it
+                    }
                 }
                 this
             }

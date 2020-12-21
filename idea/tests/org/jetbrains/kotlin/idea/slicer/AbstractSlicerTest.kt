@@ -10,7 +10,7 @@ import com.intellij.slicer.SliceRootNode
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -25,7 +25,7 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
             name.startsWith("$namePrefix.") && PathUtil.getFileExtension(name).let { it == "kt" || it == "java" }
         }!!
 
-        myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${rootDir.path}"
+        myFixture.testDataPath = "${KtTestUtil.getHomeDirectory()}/${rootDir.path}"
 
         val extraPsiFiles = extraFiles.map { myFixture.configureByFile(it.name) }
         val file = myFixture.configureByFile(mainFile.name) as KtFile

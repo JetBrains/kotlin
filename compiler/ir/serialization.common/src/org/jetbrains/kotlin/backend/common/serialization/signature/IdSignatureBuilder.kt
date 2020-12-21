@@ -14,6 +14,7 @@ abstract class IdSignatureBuilder<D> {
     protected val classFqnSegments = mutableListOf<String>()
     protected var hashId: Long? = null
     protected var hashIdAcc: Long? = null
+    protected var overridden: List<D>? = null
     protected var mask = 0L
 
     protected abstract fun accept(d: D)
@@ -23,19 +24,30 @@ abstract class IdSignatureBuilder<D> {
         this.classFqnSegments.clear()
         this.hashId = null
         this.mask = 0L
+        this.overridden = null
     }
 
     protected fun build(): IdSignature {
         val packageFqName = packageFqn.asString()
         val classFqName = classFqnSegments.joinToString(".")
-        return if (hashIdAcc == null) {
-            IdSignature.PublicSignature(packageFqName, classFqName, hashId, mask)
-        } else {
-            val accessorSignature = IdSignature.PublicSignature(packageFqName, classFqName, hashIdAcc, mask)
-            hashIdAcc = null
-            classFqnSegments.run { removeAt(lastIndex) }
-            val propertySignature = build()
-            IdSignature.AccessorSignature(propertySignature, accessorSignature)
+        return when {
+            overridden != null -> {
+                val preserved = overridden!!
+                overridden = null
+                val memberSignature = build()
+                val overriddenSignatures = preserved.map { buildSignature(it) }
+                return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
+            }
+            hashIdAcc == null -> {
+                IdSignature.PublicSignature(packageFqName, classFqName, hashId, mask)
+            }
+            else -> {
+                val accessorSignature = IdSignature.PublicSignature(packageFqName, classFqName, hashIdAcc, mask)
+                hashIdAcc = null
+                classFqnSegments.run { removeAt(lastIndex) }
+                val propertySignature = build()
+                IdSignature.AccessorSignature(propertySignature, accessorSignature)
+            }
         }
     }
 

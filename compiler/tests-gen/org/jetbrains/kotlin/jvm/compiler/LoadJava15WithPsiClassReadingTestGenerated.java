@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class LoadJava15WithPsiClassReadingTestGenerated extends AbstractLoadJava
     }
 
     public void testAllFilesPresentInLoadJava15() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava15"), Pattern.compile("^(.+)\\.java$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava15"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("GenericRecord.java")

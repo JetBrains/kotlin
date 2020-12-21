@@ -11,15 +11,15 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 @WithMutedInDatabaseRunTest
 abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        VfsRootAccess.allowRootAccess(getTestRootDisposable(), KotlinTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(getTestRootDisposable(), KtTestUtil.getHomeDirectory());
         CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
     }
 

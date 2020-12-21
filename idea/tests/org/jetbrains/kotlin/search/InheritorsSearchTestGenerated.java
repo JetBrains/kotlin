@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.search;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class InheritorsSearchTestGenerated extends AbstractInheritorsSearchTest 
     }
 
     public void testAllFilesPresentInInheritance() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/search/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/search/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotationClass.kt")

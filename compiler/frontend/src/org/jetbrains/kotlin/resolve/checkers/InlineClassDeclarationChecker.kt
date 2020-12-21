@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -32,11 +33,28 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         if (descriptor !is ClassDescriptor || !descriptor.isInline && !descriptor.isValue) return
         if (descriptor.kind != ClassKind.CLASS) return
 
-        val inlineOrValueKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
-            ?: declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD)
+        val trace = context.trace
+
+        val valueKeyword = declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD)
+
+        // The check cannot be done in ModifierCheckerCore, since `value` keyword is enabled by one of two features, not by both of
+        // them simultaneously
+        if (valueKeyword != null) {
+            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineValueClasses) &&
+                !context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClasses)
+            ) {
+                trace.report(
+                    Errors.UNSUPPORTED_FEATURE.on(
+                        valueKeyword, LanguageFeature.JvmInlineValueClasses to context.languageVersionSettings
+                    )
+                )
+                return
+            }
+        }
+
+        val inlineOrValueKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: valueKeyword
         require(inlineOrValueKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
 
-        val trace = context.trace
         if (descriptor.isInner || DescriptorUtils.isLocal(descriptor)) {
             trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(inlineOrValueKeyword))
             return

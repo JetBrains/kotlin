@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.ir.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.isObjCClass
-import org.jetbrains.kotlin.backend.konan.llvm.fullName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -122,7 +122,7 @@ internal class KTypeGenerator(
     }
 
     private val IrTypeParameter.parentUniqueName get() = when (val parent = parent) {
-        is IrFunction -> parent.fullName
+        is IrFunction -> parent.computeFullName()
         else -> parent.fqNameForIrSerialization.asString()
     }
 

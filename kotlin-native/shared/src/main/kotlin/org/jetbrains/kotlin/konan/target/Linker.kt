@@ -337,17 +337,11 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
-        // TODO: Control via properties.
-        val (linker, linkerSpecificFlags) = when {
-            HostManager.hostIsMac -> "$absoluteLlvmHome/bin/ld.lld" to listOf("--no-threads")
-            else -> "$absoluteTargetToolchain/bin/ld.gold" to emptyList()
-        }
-
         val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
         // TODO: Can we extract more to the konan.configurables?
-        return listOf(Command(linker).apply {
+        return listOf(Command(absoluteLinker).apply {
             +"--sysroot=${absoluteTargetSysRoot}"
             +"-export-dynamic"
             +"-z"
@@ -355,8 +349,8 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +"--build-id"
             +"--eh-frame-hdr"
             +"-dynamic-linker"
-            linkerSpecificFlags.forEach { +it }
             +dynamicLinker
+            linkerHostSpecificFlags.forEach { +it }
             +"-o"
             +executable
             if (!dynamic) +"$crtPrefix/crt1.o"
@@ -369,6 +363,9 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +objectFiles
+            +libraries
+            +linkerArgs
+            if (mimallocEnabled) +mimallocLinkerDependencies
             // See explanation about `-u__llvm_profile_runtime` here:
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
             if (needsProfileLibrary) +listOf("-u__llvm_profile_runtime", profileLibrary!!)
@@ -376,9 +373,6 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +linkerGccFlags
             +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
             +"$crtPrefix/crtn.o"
-            +libraries
-            +linkerArgs
-            if (mimallocEnabled) +mimallocLinkerDependencies
         })
     }
 }

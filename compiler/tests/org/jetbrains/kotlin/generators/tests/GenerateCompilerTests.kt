@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
-import org.jetbrains.kotlin.cfg.AbstractDiagnosticsWithModifiedMockJdkTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
@@ -30,9 +29,9 @@ import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
-import org.jetbrains.kotlin.generators.tests.generator.testGroupSuite
-import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
-import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
@@ -66,81 +65,14 @@ import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
-
-    testGroupSuite(args) {
+    generateTestGroupSuite(args) {
         testGroup("compiler/tests-gen", "compiler/testData") {
-            testClass<AbstractDiagnosticsTestWithFirValidation>(suiteTestClassName = "DiagnosticsTestGenerated") {
-                model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
-                model("codegen/box/diagnostics")
-            }
-
-            testClass<AbstractDiagnosticsUsingJavacTest> {
-                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-                model("codegen/box/diagnostics")
-            }
-
-            testClass<AbstractJavacDiagnosticsTest> {
-                model("javac/diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-                model(
-                    "javac/diagnostics/tests",
-                    testClassName = "TestsWithoutJavac",
-                    testMethod = "doTestWithoutJavacWrapper",
-                    excludedPattern = excludedFirTestdataPattern
-                )
-            }
-
-            testClass<AbstractJavacFieldResolutionTest> {
-                model("javac/fieldsResolution/tests")
-                model("javac/fieldsResolution/tests", testClassName = "TestsWithoutJavac", testMethod = "doTestWithoutJavacWrapper")
-            }
-
-            testClass<AbstractDiagnosticsTestWithStdLib> {
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractDiagnosticsTestWithStdLibUsingJavac> {
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractDiagnosticsTestWithJsStdLib> {
-                model("diagnostics/testsWithJsStdLib")
-            }
-
             testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation> {
                 model("diagnostics/testsWithJsStdLibAndBackendCompilation")
             }
 
-            testClass<AbstractDiagnosticsNativeTest> {
-                model("diagnostics/nativeTests")
-            }
-
-            testClass<AbstractDiagnosticsWithModifiedMockJdkTest> {
-                model("diagnostics/testWithModifiedMockJdk")
-            }
-
-            testClass<AbstractDiagnosticsWithJdk9Test> {
-                model("diagnostics/testsWithJava9")
-            }
-
             testClass<AbstractDiagnosticsWithJdk15Test> {
                 model("diagnostics/testsWithJava15")
-            }
-
-            testClass<AbstractDiagnosticsWithUnsignedTypes> {
-                model("diagnostics/testsWithUnsignedTypes")
-            }
-
-            testClass<AbstractDiagnosticsWithExplicitApi> {
-                model("diagnostics/testsWithExplicitApi")
-            }
-
-            testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
-            }
-
-            testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractMultiPlatformIntegrationTest> {
@@ -671,23 +603,8 @@ fun main(args: Array<String>) {
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractFirDiagnosticsTest> {
-                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            }
-
-            testClass<AbstractFirDiagnosticsWithLightTreeTest> {
-                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            }
-
             testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            }
-
-        }
-
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractFirDiagnosticsWithStdlibTest> {
-                model("resolveWithStdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
@@ -706,19 +623,6 @@ fun main(args: Array<String>) {
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractOwnFirTypeEnhancementTest> {
                 model("enhancement", extension = "java")
-            }
-        }
-
-        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
-            testClass<AbstractFirOldFrontendDiagnosticsTest> {
-                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractFirOldFrontendDiagnosticsTestWithStdlib> {
-                model(
-                    "diagnostics/testsWithStdLib",
-                    excludedPattern = excludedFirTestdataPattern
-                )
             }
         }
 

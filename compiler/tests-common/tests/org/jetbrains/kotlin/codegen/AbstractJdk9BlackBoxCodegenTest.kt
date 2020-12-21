@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractJdk9BlackBoxCodegenTest : AbstractCustomJDKBlackBoxCodegenTest() {
     override fun getTestJdkKind(): TestJdkKind = TestJdkKind.FULL_JDK_9
-    override fun getJdkHome(): File = KotlinTestUtils.getJdk9Home()
+    override fun getJdkHome(): File = KtTestUtil.getJdk9Home()
     override fun getPrefix(): String = "java9/box"
 }

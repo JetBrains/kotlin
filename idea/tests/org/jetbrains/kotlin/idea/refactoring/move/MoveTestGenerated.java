@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.move;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class MoveTestGenerated extends AbstractMoveTest {
     }
 
     public void testAllFilesPresentInMove() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/move"), Pattern.compile("^(.+)\\.test$"), null);
+        KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/move"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("java/moveClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test")

@@ -8,5 +8,8 @@
 
 int main(int argc, char** argv) {
     testing::InitGoogleMock(&argc, argv);
+    // Use the `threadsafe` style to mitigate possible issues with multithreaded death tests.
+    // See more about death test styles: https://github.com/google/googletest/blob/master/googletest/docs/advanced.md#how-it-works
+    testing::FLAGS_gtest_death_test_style="threadsafe";
     return RUN_ALL_TESTS();
 }

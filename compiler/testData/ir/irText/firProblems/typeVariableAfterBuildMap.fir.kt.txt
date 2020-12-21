@@ -167,7 +167,7 @@ object Visibilities {
       <this>.put(key = Private, value = 0) /*~> Unit */
       <this>.put(key = Internal, value = 1) /*~> Unit */
       <this>.put(key = Protected, value = 1) /*~> Unit */
-      return <this>.put(key = Public, value = 2) /*~> Unit */
+      <this>.put(key = Public, value = 2) /*~> Unit */
     }
 )
     private get

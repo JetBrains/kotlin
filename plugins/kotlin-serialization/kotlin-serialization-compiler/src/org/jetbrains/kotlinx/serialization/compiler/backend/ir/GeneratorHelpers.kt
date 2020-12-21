@@ -99,7 +99,7 @@ interface IrBuilderExtension {
         typeHint: IrType? = null
     ): IrMemberAccessExpression<*> {
         assert(callee.isBound) { "Symbol $callee expected to be bound" }
-        val returnType = typeHint ?: callee.run { owner.returnType }
+        val returnType = typeHint ?: callee.owner.returnType
         val call = irCall(callee, type = returnType)
         call.dispatchReceiver = dispatchReceiver
         args.forEachIndexed(call::putValueArgument)
@@ -214,17 +214,16 @@ interface IrBuilderExtension {
     // note: this method should be used only for properties from current module. Fields from other modules are private and inaccessible.
     val SerializableProperty.irField: IrField get() = compilerContext.symbolTable.referenceField(this.descriptor).owner
 
-    val SerializableProperty.irProp: IrProperty
-        get() {
-            val desc = this.descriptor
-            // this API is used to reference both current module descriptors and external ones (because serializable class can be in any of them),
-            // so we use descriptor api for current module because it is not possible to obtain FQname for e.g. local classes.
-            return if (desc.module == compilerContext.moduleDescriptor) {
-                compilerContext.symbolTable.referenceProperty(desc).owner
-            } else {
-                compilerContext.referenceProperties(this.descriptor.fqNameSafe).single().owner
-            }
+    fun SerializableProperty.getIrPropertyFrom(thisClass: IrClass): IrProperty {
+        val desc = this.descriptor
+        // this API is used to reference both current module descriptors and external ones (because serializable class can be in any of them),
+        // so we use descriptor api for current module because it is not possible to obtain FQname for e.g. local classes.
+        return thisClass.searchForDeclaration(desc) ?: if (desc.module == compilerContext.moduleDescriptor) {
+            compilerContext.symbolTable.referenceProperty(desc).owner
+        } else {
+            compilerContext.referenceProperties(desc.fqNameSafe).single().owner
         }
+    }
 
     fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty): IrExpression {
         return if (property.getter != null)

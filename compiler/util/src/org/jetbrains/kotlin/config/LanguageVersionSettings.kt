@@ -145,6 +145,20 @@ enum class LanguageFeature(
     AllowSealedInheritorsInDifferentFilesOfSamePackage(KOTLIN_1_5),
     SealedInterfaces(KOTLIN_1_5),
 
+    /*
+     * Improvements include the following:
+     *  - taking into account for type enhancement freshly supported type use annotations: KT-11454
+     *  - use annotations in the type parameter position to enhance corresponding types: KT-11454
+     *  - proper support of the type enhancement of the annotated java arrays: KT-24392
+     *  - proper support of the type enhancement of the annotated java varargs' elements: KT-18768
+     *  - type enhancement based on annotated bounds of type parameters
+     *  - type enhancement within type arguments of the base classes and interfaces
+     *  - support type enhancement based on type use annotations on java fields
+     *  - preference of a type use annotation to annotation of another type: KT-24392
+     *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
+     */
+    ImprovementsAroundTypeEnhancement(KOTLIN_1_6),
+
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
 
@@ -162,6 +176,7 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
     NewInference(sinceVersion = KOTLIN_1_4),
+
     // In the next block, features can be enabled only along with new inference
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_4),
     SamConversionPerArgument(sinceVersion = KOTLIN_1_4),
@@ -179,6 +194,7 @@ enum class LanguageFeature(
     // Next features can be enabled regardless of new inference
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
+    JvmInlineValueClasses(sinceVersion = KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
     ;
 
     val presentableName: String
@@ -263,6 +279,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     KOTLIN_1_3(1, 3),
     KOTLIN_1_4(1, 4),
     KOTLIN_1_5(1, 5),
+    KOTLIN_1_6(1, 6),
     ;
 
     val isStable: Boolean

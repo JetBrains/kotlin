@@ -15,7 +15,7 @@ abstract class JsPlatform : SimplePlatform("JS") {
 
 @Suppress("DEPRECATION_ERROR")
 object JsPlatforms {
-    private object DefaultSimpleJsPlatform : JsPlatform()
+    object DefaultSimpleJsPlatform : JsPlatform()
 
     @Deprecated(
         message = "Should be accessed only by compatibility layer, other clients should use 'defaultJsPlatform'",

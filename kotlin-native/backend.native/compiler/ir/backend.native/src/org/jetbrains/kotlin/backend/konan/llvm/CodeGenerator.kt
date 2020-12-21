@@ -63,7 +63,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     private fun countParams(fn: IrFunction) = LLVMCountParams(fn.llvmFunction)
 
     fun functionEntryPointAddress(function: IrFunction) = function.entryPointAddress.llvm
-    fun functionHash(function: IrFunction): LLVMValueRef = function.functionName.localHash.llvm
+    fun functionHash(function: IrFunction): LLVMValueRef = function.computeFunctionName().localHash.llvm
 
     fun typeInfoForAllocation(constructedClass: IrClass): LLVMValueRef {
         assert(!constructedClass.isObjCClass())

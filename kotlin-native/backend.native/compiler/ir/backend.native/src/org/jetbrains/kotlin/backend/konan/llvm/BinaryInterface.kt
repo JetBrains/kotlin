@@ -112,14 +112,19 @@ internal val IrClass.kotlinObjCClassInfoSymbolName: String
         return "kobjcclassinfo:$fqNameForIrSerialization"
     }
 
-val IrFunction.functionName get() = with(KonanBinaryInterface) { functionName }
-val IrFunction.fullName get() = parent.fqNameForIrSerialization.child(Name.identifier(functionName)).asString()
+fun IrFunction.computeFunctionName() = with(KonanBinaryInterface) { functionName }
 
-val IrFunction.symbolName get() = with(KonanBinaryInterface) { symbolName }
+fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.identifier(computeFunctionName())).asString()
 
-val IrField.symbolName get() = with(KonanBinaryInterface) { symbolName }
+fun IrFunction.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
 
-val IrClass.typeInfoSymbolName get() = with(KonanBinaryInterface) { typeInfoSymbolName }
+fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
+
+fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
+
+private fun String.replaceSpecialSymbols() =
+        // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.
+        this.replace("@", "__at__")
 
 fun IrDeclaration.isExported() = KonanBinaryInterface.isExported(this)
 

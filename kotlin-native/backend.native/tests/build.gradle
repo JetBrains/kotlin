@@ -3872,7 +3872,9 @@ standaloneTest("interop_objc_allocException") {
 interopTest("interop0") {
     disabled = (project.testTarget == 'wasm32') ||         // No interop for wasm yet.
                (project.testTarget == 'linux_mips32') ||   //  st_uid of '/' is not equal to 0 when using qemu
-               (project.testTarget == 'linux_mipsel32')
+               (project.testTarget == 'linux_mipsel32') ||
+               (project.testTarget == 'linux_arm32_hfp') ||
+               (project.testTarget == 'linux_arm64')
     goldValue = "0\n0\n"
     source = "interop/basics/0.kt"
     interop = 'sysstat'

@@ -16,14 +16,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -51,17 +49,18 @@ private fun PsiElement.nonExistentType() = JavaPsiFacade.getElementFactory(proje
     .createTypeFromText("error.NonExistentClass", this)
 
 internal fun KtTypedSymbol.asPsiType(parent: PsiElement, phase: FirResolvePhase): PsiType =
-    type.asPsiType(this, parent, phase)
+    annotatedType.asPsiType(this, parent, phase)
 
-internal fun KtType.asPsiType(
+internal fun KtTypeAndAnnotations.asPsiType(
     context: KtSymbol,
     parent: PsiElement,
     phase: FirResolvePhase
 ): PsiType {
-    require(this is KtFirType)
+    val type = this.type
+    require(type is KtFirType)
     require(context is KtFirSymbol<*>)
     val session = context.firRef.withFir(phase) { it.session }
-    return coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
+    return type.coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
 internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
@@ -120,6 +119,7 @@ private fun ConeKotlinType.asPsiType(
     val correctedType = AnonymousTypesSubstitutor(session, state).substituteOrSelf(this)
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
+
     //TODO Check thread safety
     session.jvmTypeMapper.mapType(correctedType, mode, signatureWriter)
 
@@ -151,12 +151,19 @@ private fun mapSupertype(
         psiContext
     ) as? PsiClassType
 
-internal fun KtClassType.mapSupertype(
+internal fun KtTypeAndAnnotations.mapSupertype(
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false
+): PsiClassType? = type.mapSupertype(psiContext, kotlinCollectionAsIs, emptyList())
+
+internal fun KtType.mapSupertype(
+    psiContext: PsiElement,
+    kotlinCollectionAsIs: Boolean = false,
+    annotations: List<KtAnnotationCall>
 ): PsiClassType? {
+    if (this !is KtClassType) return null
     require(this is KtFirClassType)
-    val contextSymbol = this.classSymbol
+    val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
 
     val session = contextSymbol.firRef.withFir { it.session }
@@ -165,7 +172,7 @@ internal fun KtClassType.mapSupertype(
         psiContext,
         session,
         contextSymbol.firRef.resolveState,
-        this.coneType,
+        coneType,
         kotlinCollectionAsIs,
     )
 }
@@ -225,23 +232,20 @@ internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMeth
     }
 }
 
-internal fun FirMemberDeclaration.computeVisibility(isTopLevel: Boolean): String {
-    return when (this.visibility) {
-        // Top-level private class has PACKAGE_LOCAL visibility in Java
-        // Nested private class has PRIVATE visibility
-        Visibilities.Private -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-        Visibilities.Protected -> PsiModifier.PROTECTED
-        else -> PsiModifier.PUBLIC
-    }
-}
 
-internal fun KtSymbolWithVisibility.computeVisibility(isTopLevel: Boolean): String =
-    visibility.toPsiVisibility(isTopLevel)
+internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel, forClass = false)
 
-internal fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean): String = when (this) {
+internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel, forClass = true)
+
+internal fun KtSymbolVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+    toPsiVisibility(isTopLevel, forClass = false)
+
+private fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
     // Top-level private class has PACKAGE_LOCAL visibility in Java
     // Nested private class has PRIVATE visibility
-    KtSymbolVisibility.PRIVATE -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+    KtSymbolVisibility.PRIVATE -> if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
     KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }

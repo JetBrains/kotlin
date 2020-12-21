@@ -21,14 +21,15 @@ internal class FirLightSimpleMethodForSymbol(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: FirLightClassBase,
     methodIndex: Int,
-    isTopLevel: Boolean,
-    argumentsSkipMask: BitSet? = null
+    private val isTopLevel: Boolean,
+    argumentsSkipMask: BitSet? = null,
+    private val suppressStatic: Boolean = false
 ) : FirLightMethodForSymbol(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    argumentsSkipMask = argumentsSkipMask
+    argumentsSkipMask = argumentsSkipMask,
 ) {
 
     private val _name: String by lazyPub {
@@ -54,35 +55,24 @@ internal class FirLightSimpleMethodForSymbol(
     override fun getTypeParameters(): Array<PsiTypeParameter> =
         _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
-        val needUnknownNullability =
-            isVoidReturnType || (_visibility == PsiModifier.PRIVATE)
-
-        val nullability = if (needUnknownNullability)
+    private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> {
+        val nullability = if (isVoidReturnType || isPrivate)
             NullabilityType.Unknown
-        else functionSymbol.type.getTypeNullability(
+        else functionSymbol.annotatedType.type.getTypeNullability(
             context = functionSymbol,
             phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
         )
 
-        functionSymbol.computeAnnotations(
+        return functionSymbol.computeAnnotations(
             parent = this,
             nullability = nullability,
             annotationUseSiteTarget = null,
         )
     }
 
-    private val _visibility: String by lazyPub {
-        functionSymbol.isOverride.ifTrue {
-            (containingClass as? FirLightClassForSymbol)
-                ?.tryGetEffectiveVisibility(functionSymbol)
-                ?.toPsiVisibility(isTopLevel)
-        } ?: functionSymbol.computeVisibility(isTopLevel = isTopLevel)
-    }
+    private fun computeModifiers(): Set<String> {
 
-    private val _modifiers: Set<String> by lazyPub {
-
-        if (functionSymbol.hasInlineOnlyAnnotation()) return@lazyPub setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
+        if (functionSymbol.hasInlineOnlyAnnotation()) return setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
 
         val finalModifier = kotlinOrigin?.hasModifier(KtTokens.FINAL_KEYWORD) == true
 
@@ -94,9 +84,15 @@ internal class FirLightSimpleMethodForSymbol(
             result = modifiers
         )
 
-        modifiers.add(_visibility)
+        val visibility: String = functionSymbol.isOverride.ifTrue {
+            (containingClass as? FirLightClassForSymbol)
+                ?.tryGetEffectiveVisibility(functionSymbol)
+                ?.toPsiVisibilityForMember(isTopLevel)
+        } ?: functionSymbol.toPsiVisibilityForMember(isTopLevel = isTopLevel)
 
-        if (functionSymbol.hasJvmStaticAnnotation()) {
+        modifiers.add(visibility)
+
+        if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
             modifiers.add(PsiModifier.STATIC)
         }
         if (functionSymbol.hasAnnotation("kotlin/jvm/Strictfp", null)) {
@@ -106,7 +102,7 @@ internal class FirLightSimpleMethodForSymbol(
             modifiers.add(PsiModifier.SYNCHRONIZED)
         }
 
-        modifiers
+        return modifiers
     }
 
     private val _isDeprecated: Boolean by lazyPub {
@@ -116,7 +112,9 @@ internal class FirLightSimpleMethodForSymbol(
     override fun isDeprecated(): Boolean = _isDeprecated
 
     private val _modifierList: PsiModifierList by lazyPub {
-        FirLightClassModifierList(this, _modifiers, _annotations)
+        val modifiers = computeModifiers()
+        val annotations = computeAnnotations(modifiers.contains(PsiModifier.PRIVATE))
+        FirLightClassModifierList(this, modifiers, annotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
@@ -124,7 +122,7 @@ internal class FirLightSimpleMethodForSymbol(
     override fun isConstructor(): Boolean = false
 
     private val isVoidReturnType: Boolean
-        get() = functionSymbol.type.run {
+        get() = functionSymbol.annotatedType.type.run {
             isUnit && nullabilityType != NullabilityType.Nullable
         }
 

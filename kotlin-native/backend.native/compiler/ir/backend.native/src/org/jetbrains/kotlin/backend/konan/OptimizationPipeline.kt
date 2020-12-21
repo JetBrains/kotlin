@@ -6,9 +6,7 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.makeVisibilityHiddenLikeLlvmInternalizePass
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Configurables
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 
 private fun initializeLlvmGlobalPassRegistry() {
     val passRegistry = LLVMGetGlobalPassRegistry()
@@ -90,7 +88,13 @@ private class LlvmPipelineConfiguration(context: Context) {
         else -> LLVMCodeGenOptLevel.LLVMCodeGenLevelDefault
     }
 
-    val relocMode: LLVMRelocMode = LLVMRelocMode.LLVMRelocDefault
+    val relocMode: LLVMRelocMode = configurables.currentRelocationMode(context).translateToLlvmRelocMode()
+
+    private fun RelocationModeFlags.Mode.translateToLlvmRelocMode() = when (this) {
+        RelocationModeFlags.Mode.PIC -> LLVMRelocMode.LLVMRelocPIC
+        RelocationModeFlags.Mode.STATIC -> LLVMRelocMode.LLVMRelocStatic
+        RelocationModeFlags.Mode.DEFAULT -> LLVMRelocMode.LLVMRelocDefault
+    }
 
     val codeModel: LLVMCodeModel = LLVMCodeModel.LLVMCodeModelDefault
 
@@ -176,3 +180,10 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         runLateBitcodePasses(context, llvmModule)
     }
 }
+
+internal fun RelocationModeFlags.currentRelocationMode(context: Context): RelocationModeFlags.Mode =
+        when (determineLinkerOutput(context)) {
+            LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode
+            LinkerOutputKind.STATIC_LIBRARY -> staticLibraryRelocationMode
+            LinkerOutputKind.EXECUTABLE -> executableRelocationMode
+        }

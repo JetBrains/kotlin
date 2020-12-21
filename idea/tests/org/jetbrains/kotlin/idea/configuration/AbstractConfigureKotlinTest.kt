@@ -22,9 +22,9 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -34,12 +34,12 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     @Throws(Exception::class)
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
         PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY)
 
         super.tearDown()

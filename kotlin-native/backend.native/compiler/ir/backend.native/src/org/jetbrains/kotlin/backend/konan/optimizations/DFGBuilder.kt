@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -786,7 +786,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                         }
                                                     }
                                             if (owner.isInterface) {
-                                                val calleeHash = callee.functionName.localHash.value
+                                                val calleeHash = callee.computeFunctionName().localHash.value
                                                 DataFlowIR.Node.ItableCall(
                                                         symbolTable.mapFunction(callee.target),
                                                         receiverType,

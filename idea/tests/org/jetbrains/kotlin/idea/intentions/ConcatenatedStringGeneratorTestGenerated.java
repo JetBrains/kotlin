@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ConcatenatedStringGeneratorTestGenerated extends AbstractConcatenat
     }
 
     public void testAllFilesPresentInConcatenatedStringGenerator() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/concatenatedStringGenerator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("constants.kt")

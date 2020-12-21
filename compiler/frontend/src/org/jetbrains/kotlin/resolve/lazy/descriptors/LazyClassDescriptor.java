@@ -54,6 +54,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static kotlin.collections.CollectionsKt.emptyList;
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC;
@@ -270,7 +271,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         );
 
         boolean freedomForSealedInterfacesSupported = c.getLanguageVersionSettings().supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage);
-        this.sealedSubclasses = storageManager.createLazyValue(() -> c.getSealedClassInheritorsProvider().computeSealedSubclasses(this, freedomForSealedInterfacesSupported));
+        this.sealedSubclasses =
+            storageManager.createLazyValue(() -> {
+                if (getModality() == Modality.SEALED) {
+                    return c.getSealedClassInheritorsProvider().computeSealedSubclasses(this, freedomForSealedInterfacesSupported);
+                } else {
+                    return Collections.emptyList();
+                }
+        });
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {

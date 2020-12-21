@@ -18,8 +18,8 @@ open class B : A() {
         super.foo2("123")
         super.foo2()
 
-        super.<!ABSTRACT_SUPER_CALL!>foo3<!>("123")
-        super.<!ABSTRACT_SUPER_CALL!>foo3<!>()
+        super.foo3("123")
+        super.foo3()
     }
 
     override fun foo3(a: String) {

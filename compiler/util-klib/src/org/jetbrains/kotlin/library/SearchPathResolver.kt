@@ -54,8 +54,10 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         (listOf(currentDirHead) + repoRoots + listOf(localHead, distHead, distPlatformHead)).filterNotNull()
     }
 
+    private val files: Set<String> by lazy { searchRoots.flatMap { it.listFilesOrEmpty }.map { it.absolutePath }.toSet() }
+
     private fun found(candidate: File): File? {
-        fun check(file: File): Boolean = file.exists
+        fun check(file: File): Boolean = files.contains(file.absolutePath) || file.exists
 
         val noSuffix = File(candidate.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT))
         val withSuffix = File(candidate.path.suffixIfNot(KLIB_FILE_EXTENSION_WITH_DOT))

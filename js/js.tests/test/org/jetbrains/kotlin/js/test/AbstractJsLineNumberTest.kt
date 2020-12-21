@@ -30,7 +30,11 @@ import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.KotlinBaseTest
+import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TestFiles
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.DFS
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -134,14 +138,14 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
     }
 
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
-        private val tmpDir = KotlinTestUtils.tmpDir("js-tests")
+        private val tmpDir = KtTestUtil.tmpDir("js-tests")
         private val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList(), emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile? {
             val currentModule = module ?: defaultModule
 
             val temporaryFile = File(tmpDir, "${currentModule.name}/$fileName")
-            KotlinTestUtils.mkdirs(temporaryFile.parentFile)
+            KtTestUtil.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
             return TestFile(temporaryFile.absolutePath, text, currentModule, directives)

@@ -9,12 +9,12 @@ open class A {
 class B : A() {
     override fun foo(): B = this
     fun bar(): B = this // Ambiguity, no override here (really it's just "missing override" and no ambiguity)
-    override fun buz(p: B): B = this //No override as B <!:> A
+    override fun buz(p: B): B = this //No override as B not :> A
 
     fun test() {
         foo()
         bar()
-        <!NONE_APPLICABLE!>buz<!>()
+        <!NONE_APPLICABLE{LT}!><!NONE_APPLICABLE{PSI}!>buz<!>()<!>
     }
 }
 

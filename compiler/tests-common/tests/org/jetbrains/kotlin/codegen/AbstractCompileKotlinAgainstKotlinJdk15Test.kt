@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 
 abstract class AbstractCompileKotlinAgainstKotlinJdk15Test : AbstractCompileKotlinAgainstKotlinTest() {
     override fun invokeBox(className: String) {
         runJvmInstance(
-            KotlinTestUtils.getJdk15Home(),
+            KtTestUtil.getJdk15Home(),
             additionalArgs = listOf("--enable-preview"),
             classPath = listOfNotNull(
                 aDir, bDir, ForTestCompileRuntime.runtimeJarForTests(),

@@ -25,7 +25,20 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message);
+RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message, ...);
+
+namespace internal {
+
+inline RUNTIME_NORETURN void TODOImpl(const char* location) {
+    RuntimeAssertFailed(location, "Unimplemented");
+}
+
+// TODO: Support format string when `RuntimeAssertFailed` supports it.
+inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message) {
+    RuntimeAssertFailed(location, message);
+}
+
+} // namespace internal
 
 // During codegeneration we set this constant to 1 or 0 to allow bitcode optimizer
 // to get rid of code behind condition.
@@ -33,9 +46,9 @@ extern "C" const int KonanNeedDebugInfo;
 
 #if KONAN_ENABLE_ASSERT
 // Use RuntimeAssert() in internal state checks, which could be ignored in production.
-#define RuntimeAssert(condition, message)                           \
-if (KonanNeedDebugInfo && (!(condition))) {                         \
-    RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), message); \
+#define RuntimeAssert(condition, format, ...)                                     \
+if (KonanNeedDebugInfo && (!(condition))) {                                       \
+    RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), format, ##__VA_ARGS__); \
 }
 #else
 #define RuntimeAssert(condition, message)
@@ -43,9 +56,14 @@ if (KonanNeedDebugInfo && (!(condition))) {                         \
 
 // Use RuntimeCheck() in runtime checks that could fail due to external condition and shall lead
 // to program termination. Never compiled out.
-#define RuntimeCheck(condition, message)   \
-  if (!(condition)) {                      \
-    RuntimeAssertFailed(nullptr, message); \
+#define RuntimeCheck(condition, format, ...)             \
+  if (!(condition)) {                                    \
+    RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
   }
+
+#define TODO(...) \
+    do { \
+        ::internal::TODOImpl(__FILE__ ":" TOSTRING(__LINE__), ##__VA_ARGS__); \
+    } while (false)
 
 #endif // RUNTIME_ASSERT_H

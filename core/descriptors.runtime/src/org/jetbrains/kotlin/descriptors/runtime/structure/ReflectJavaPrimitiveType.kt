@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.runtime.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
@@ -26,4 +27,8 @@ class ReflectJavaPrimitiveType(override val reflectType: Class<*>) : ReflectJava
             null
         else
             JvmPrimitiveType.get(reflectType.name).primitiveType
+
+    // TODO: support type use annotations in reflection
+    override val annotations: Collection<JavaAnnotation> = emptyList()
+    override val isDeprecatedInJavaDoc = false
 }

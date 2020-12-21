@@ -8,5 +8,3 @@ package test
 val foo = 42
 
 typealias A = String
-
-// FIR_COMPARISON

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,15 +81,15 @@ public class CodegenTestFiles {
     }
 
     public static CodegenTestFiles create(Project project, String[] names) {
-        return create(project, names, KotlinTestUtils.getTestDataPathBase());
+        return create(project, names, KtTestUtil.getTestDataPathBase());
     }
 
     public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
         List<KtFile> files = new ArrayList<>(names.length);
         for (String name : names) {
             try {
-                String content = KotlinTestUtils.doLoadFile(testDataPath + "/codegen/", name);
-                KtFile file = KotlinTestUtils.createFile(name, content, project);
+                String content = KtTestUtil.doLoadFile(testDataPath + "/codegen/", name);
+                KtFile file = KtTestUtil.createFile(name, content, project);
                 files.add(file);
             }
             catch (IOException e) {
@@ -103,7 +103,7 @@ public class CodegenTestFiles {
     public static CodegenTestFiles create(@NotNull String fileName, @NotNull String contentWithDiagnosticMarkup, @NotNull Project project) {
         // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
         String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<>(), null);
-        KtFile file = KotlinTestUtils.createFile(fileName, content, project);
+        KtFile file = KtTestUtil.createFile(fileName, content, project);
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
         assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;
 

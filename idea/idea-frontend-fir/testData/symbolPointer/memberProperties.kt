@@ -5,6 +5,7 @@ class A {
 
 // SYMBOLS:
 KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: A.x
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -23,10 +24,11 @@ KtFirKotlinPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: MEMBER
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  annotatedType: [] kotlin/Int
+  annotations: []
   hasBody: true
   isDefault: false
   isInline: false
@@ -34,10 +36,10 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: A.y
   getter: KtFirPropertyGetterSymbol(<getter>)
@@ -53,10 +55,9 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverType: [] kotlin/Int
   setter: null
   symbolKind: MEMBER
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
@@ -69,7 +70,7 @@ KtFirClassOrObjectSymbol:
   name: A
   origin: SOURCE
   primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC

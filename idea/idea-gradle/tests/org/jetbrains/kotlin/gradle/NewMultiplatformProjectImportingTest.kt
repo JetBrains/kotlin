@@ -9,14 +9,17 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.After
 import org.junit.Before
@@ -267,7 +270,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         configureByFiles()
         createProjectSubFile(
             "local.properties",
-            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+            "sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}"
         )
         importProject()
 
@@ -631,7 +634,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         configureByFiles()
         createProjectSubFile(
             "local.properties",
-            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+            "sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}"
         )
         importProject(true)
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveDependencyList = false, exhaustiveSourceSourceRootList = false) {

@@ -149,6 +149,15 @@ val compileKotlinJs by tasks.existing(KotlinCompile::class) {
     kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
 }
 
+
+val compileTestKotlinJs by tasks.existing(KotlinCompile::class) {
+    doFirst {
+        // Note: common test sources are copied to the actual source directory by commonMainSources task,
+        // so can't do this at configuration time:
+        kotlinOptions.freeCompilerArgs += "-Xcommon-sources=${kotlin.sourceSets["commonTest"].kotlin.joinToString(",")}"
+    }
+}
+
 val packFullRuntimeKLib by tasks.registering(Jar::class) {
     dependsOn(compileKotlinJs)
     from(buildDir.resolve("classes/kotlin/js/main"))

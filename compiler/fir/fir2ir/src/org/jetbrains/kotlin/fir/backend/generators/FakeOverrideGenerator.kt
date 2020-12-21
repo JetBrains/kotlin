@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -194,11 +192,13 @@ class FakeOverrideGenerator(
     ): List<S> {
         if (symbol.fir.origin != FirDeclarationOrigin.IntersectionOverride) return listOf(basedSymbol)
         return scope.directOverridden(symbol).map {
-            @Suppress("UNCHECKED_CAST")
-            if (it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass)
-                it.originalForSubstitutionOverride!!
-            else
-                it
+            when {
+                it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass ->
+                    it.originalForSubstitutionOverride!!
+                it.fir.origin == FirDeclarationOrigin.Delegated ->
+                    it.fir.delegatedWrapperData?.wrapped?.symbol!! as S
+                else -> it
+            }
         }
     }
 

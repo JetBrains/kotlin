@@ -75,3 +75,6 @@ runtime/googletest/
 
 # Toolchain builder artifacts
 tools/toolchain_builder/artifacts
+
+# ignore the project model created by CLion (for now).
+runtime/.idea

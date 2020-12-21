@@ -43,7 +43,7 @@ internal class FirLightInterfaceClassSymbol(
             val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterNot { it is KtFunctionSymbol && it.visibility == KtSymbolVisibility.PRIVATE }
 
-            createMethods(visibleDeclarations, isTopLevel = false, result)
+            createMethods(visibleDeclarations, result)
         }
 
         result

@@ -223,4 +223,14 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
+
+  <problem>
+    <file>kt29735.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <package>kt29735</package>
+    <entry_point TYPE="file" FQNAME="kt29735.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unnecessary type argument</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
 </problems>

@@ -163,7 +163,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val typeInfoGlobal: StaticData.Global
 
         val typeInfoSymbolName = if (declaration.isExported()) {
-            declaration.typeInfoSymbolName
+            declaration.computeTypeInfoSymbolName()
         } else {
             "ktype:$internalName"
         }
@@ -348,14 +348,14 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     || (declaration.isAccessor && declaration.isFromInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
-            context.llvm.externalFunction(declaration.symbolName, llvmFunctionType,
+            context.llvm.externalFunction(declaration.computeSymbolName(), llvmFunctionType,
                     // Assume that `external fun` is defined in native libs attached to this module:
                     origin = declaration.llvmSymbolOrigin,
                     independent = declaration.hasAnnotation(RuntimeNames.independent)
             )
         } else {
             val symbolName = if (declaration.isExported()) {
-                declaration.symbolName.also {
+                declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
                         assert(LLVMGetNamedFunction(context.llvm.llvmModule, it) == null) { it }
                     } else {

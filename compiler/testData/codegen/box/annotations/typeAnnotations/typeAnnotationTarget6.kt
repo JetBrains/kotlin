@@ -1,6 +1,5 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.EMIT_JVM_TYPE_ANNOTATIONS
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 
 // No virtual method getAnnotatedReturnType()Ljava/lang/reflect/AnnotatedType
 // IGNORE_BACKEND: ANDROID

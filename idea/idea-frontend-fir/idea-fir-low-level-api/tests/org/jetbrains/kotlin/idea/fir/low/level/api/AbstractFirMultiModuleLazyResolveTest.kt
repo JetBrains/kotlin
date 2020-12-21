@@ -17,12 +17,13 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.Paths
 
 abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest() {
     override fun getTestDataPath(): String =
-        "${KotlinTestUtils.getHomeDirectory()}/idea/idea-frontend-fir/idea-fir-low-level-api/testdata/multiModuleLazyResolve/"
+        "${KtTestUtil.getHomeDirectory()}/idea/idea-frontend-fir/idea-fir-low-level-api/testdata/multiModuleLazyResolve/"
 
     fun doTest(path: String) {
         val testStructure = MultiModuleTestProjectStructure.fromTestProjectStructure(TestProjectStructureReader.read(Paths.get(path)))

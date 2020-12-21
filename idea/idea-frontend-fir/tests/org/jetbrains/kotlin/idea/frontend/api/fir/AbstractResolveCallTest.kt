@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
@@ -32,7 +33,7 @@ import kotlin.reflect.jvm.javaGetter
 
 
 abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsightTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + "/"
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory() + "/"
 
     protected fun doTest(path: String) {
         addExternalTestFiles(path)
@@ -95,16 +96,16 @@ private fun KtCall.stringRepresentation(): String {
             append(if (this@stringValue is KtFunctionSymbol) callableIdIfNonLocal ?: name else "<constructor>")
             append("(")
             (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<receiver>: ${receiver.render()}")
+                append("<receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
             valueParameters.joinTo(this) { parameter ->
-                "${parameter.name}: ${parameter.type.render()}"
+                "${parameter.name}: ${parameter.annotatedType.type.render()}"
             }
             append(")")
-            append(": ${type.render()}")
+            append(": ${annotatedType.type.render()}")
         }
-        is KtParameterSymbol -> "$name: ${type.render()}"
+        is KtParameterSymbol -> "$name: ${annotatedType.type.render()}"
         is KtSuccessCallTarget -> symbol.stringValue()
         is KtErrorCallTarget -> "ERR<${this.diagnostic.message}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()

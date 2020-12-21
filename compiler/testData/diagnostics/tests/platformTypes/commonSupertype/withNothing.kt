@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// JAVAC_SKIP
+// SKIP_JAVAC
 // NI_EXPECTED_FILE
 // FILE: p/J.java
 
@@ -23,5 +23,5 @@ fun <T> out(t: T): Out<MutableList<T>> = null!!
 fun test(a: Out<Nothing>, b: Out<MutableList<J>>) {
     val v = f(a, b, out(J.j()))
     v checkType { _<MutableList<J>>() }
-    v checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><MutableList<J?>>() }
+    v checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><MutableList<J?>>() }
 }

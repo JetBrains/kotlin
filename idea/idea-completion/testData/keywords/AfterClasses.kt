@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 class A {
     fun foo() {
         bar()
@@ -31,6 +33,7 @@ class AfterClasses {
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
+// EXIST:  sealed interface
 // EXIST:  data class
 // EXIST:  inline
 // EXIST:  value

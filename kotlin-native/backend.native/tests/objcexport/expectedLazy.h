@@ -1937,6 +1937,17 @@ __attribute__((swift_name("GH3825KotlinImpl")))
 - (BOOL)call2Callback:(void (^)(void))callback doThrow:(BOOL)doThrow error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("call2(callback:doThrow:)")));
 @end;
 
+__attribute__((swift_name("Foo_FakeOverrideInInterface")))
+@protocol KtFoo_FakeOverrideInInterface
+@required
+- (void)fooT:(id _Nullable)t __attribute__((swift_name("foo(t:)")));
+@end;
+
+__attribute__((swift_name("Bar_FakeOverrideInInterface")))
+@protocol KtBar_FakeOverrideInInterface <KtFoo_FakeOverrideInInterface>
+@required
+@end;
+
 @interface KtEnumeration (ValuesKt)
 - (KtEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
@@ -2088,6 +2099,7 @@ __attribute__((swift_name("ValuesKt")))
 + (KtMutableDictionary<KtULong *, KtLong *> *)mutULong2Long __attribute__((swift_name("mutULong2Long()")));
 + (KtMutableDictionary<KtFloat *, KtFloat *> *)mutFloat2Float __attribute__((swift_name("mutFloat2Float()")));
 + (KtMutableDictionary<KtDouble *, NSString *> *)mutDouble2String __attribute__((swift_name("mutDouble2String()")));
++ (void)callFoo_FakeOverrideInInterfaceObj:(id<KtBar_FakeOverrideInInterface>)obj __attribute__((swift_name("callFoo_FakeOverrideInInterface(obj:)")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));

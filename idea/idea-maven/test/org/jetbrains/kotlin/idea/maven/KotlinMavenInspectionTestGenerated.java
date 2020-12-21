@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.maven;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspe
     }
 
     public void testAllFilesPresentInMaven_inspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"), null);
+        KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"), null);
     }
 
     @TestMetadata("bothCompileAndTestCompileInTheSameExecution.xml")

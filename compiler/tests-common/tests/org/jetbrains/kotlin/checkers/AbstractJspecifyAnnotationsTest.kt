@@ -27,7 +27,9 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         super.doMultiFileTest(
             wholeFile,
             files,
-            MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+            MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH, "foreign-annotations"),
+            usePsiClassFilesReading = false,
+            excludeNonTypeUseJetbrainsAnnotations = true
         )
     }
 
@@ -149,7 +151,6 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
     }
 
     companion object {
-        const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/jdk8-annotations"
         const val JSPECIFY_JAVA_SOURCES_PATH = "compiler/testData/foreignAnnotationsJava8/tests/jspecify/java"
         const val MAIN_KT_FILE_DIRECTIVE = "// FILE: main.kt\n"
 

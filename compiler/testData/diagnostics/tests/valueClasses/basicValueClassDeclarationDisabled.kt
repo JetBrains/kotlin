@@ -1,3 +1,4 @@
+// !SKIP_JAVAC
 // !LANGUAGE: -InlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -12,4 +13,4 @@ annotation class JvmInline
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> enum class InlineEnum
 
 @JvmInline
-<!UNSUPPORTED_FEATURE!>value<!> class NotVal(<!INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!>x: Int<!>)
+<!UNSUPPORTED_FEATURE!>value<!> class NotVal(x: Int)

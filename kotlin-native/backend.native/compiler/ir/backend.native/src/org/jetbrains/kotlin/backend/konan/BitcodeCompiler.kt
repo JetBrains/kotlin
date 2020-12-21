@@ -74,9 +74,7 @@ internal class BitcodeCompiler(val context: Context) {
                 else -> configurables.clangNooptFlags
             })
             addNonEmpty(BitcodeEmbedding.getClangOptions(context.config))
-            if (determineLinkerOutput(context) == LinkerOutputKind.DYNAMIC_LIBRARY) {
-                addNonEmpty(configurables.clangDynamicFlags)
-            }
+            addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
             addNonEmpty(profilingFlags)
         }
         if (configurables is AppleConfigurables) {
@@ -85,6 +83,12 @@ internal class BitcodeCompiler(val context: Context) {
             hostLlvmTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
         }
         return objectFile
+    }
+
+    private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
+        RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
+        RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
+        RelocationModeFlags.Mode.DEFAULT -> emptyList()
     }
 
     private fun llvmProfilingFlags(): List<String> {

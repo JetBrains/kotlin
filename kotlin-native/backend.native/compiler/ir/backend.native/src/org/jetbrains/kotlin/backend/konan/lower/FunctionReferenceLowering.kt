@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.llvm.fullName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -374,7 +374,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                         val receiver = if (needReceiver) irGet(valueParameters.single()) else irNull()
                         val arity = unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0
                         putValueArgument(0, irString(name.asString()))
-                        putValueArgument(1, irString(functionReferenceTarget.fullName))
+                        putValueArgument(1, irString(functionReferenceTarget.computeFullName()))
                         putValueArgument(2, receiver)
                         putValueArgument(3, irInt(arity))
                         putValueArgument(4, irInt(getFlags()))

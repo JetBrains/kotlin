@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
@@ -295,7 +295,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return File(testDataPath, "idea/scripting-support/testData/scratch/custom/test_scratch.kts").readText()
     }
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath() = KtTestUtil.getHomeDirectory()
 
 
     override fun getProjectDescriptor(): com.intellij.testFramework.LightProjectDescriptor {
@@ -312,7 +312,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
@@ -327,7 +327,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 //        }
         super.tearDown()
 
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     companion object {

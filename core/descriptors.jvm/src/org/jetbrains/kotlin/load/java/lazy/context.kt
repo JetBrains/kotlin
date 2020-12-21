@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
-import java.util.*
 
 class JavaResolverComponents(
     val storageManager: StorageManager,
@@ -84,6 +81,7 @@ class JavaResolverComponents(
 interface JavaResolverSettings {
     val isReleaseCoroutines: Boolean
     val correctNullabilityForNotNullTypeParameter: Boolean
+    val typeEnhancementImprovements: Boolean
 
     object Default : JavaResolverSettings {
         override val isReleaseCoroutines: Boolean
@@ -91,16 +89,21 @@ interface JavaResolverSettings {
 
         override val correctNullabilityForNotNullTypeParameter: Boolean
             get() = false
+
+        override val typeEnhancementImprovements: Boolean
+            get() = false
     }
 
     companion object {
         fun create(
             isReleaseCoroutines: Boolean,
-            correctNullabilityForNotNullTypeParameter: Boolean
+            correctNullabilityForNotNullTypeParameter: Boolean,
+            typeEnhancementImprovements: Boolean
         ): JavaResolverSettings =
             object : JavaResolverSettings {
                 override val isReleaseCoroutines get() = isReleaseCoroutines
                 override val correctNullabilityForNotNullTypeParameter get() = correctNullabilityForNotNullTypeParameter
+                override val typeEnhancementImprovements get() = typeEnhancementImprovements
             }
     }
 }
@@ -172,12 +175,11 @@ private fun LazyJavaResolverContext.extractDefaultNullabilityQualifier(
         return null
     }
 
+    val areImprovementsEnabled = components.settings.typeEnhancementImprovements
+
     val nullabilityQualifier =
-        components
-            .signatureEnhancement
-            .extractNullability(typeQualifier, onlyForJspecify = false)
-            ?.copy(isForWarningOnly = jsr305State.isWarning)
-            ?: return null
+        components.signatureEnhancement.extractNullability(typeQualifier, areImprovementsEnabled, typeParameterBounds = false)
+            ?.copy(isForWarningOnly = jsr305State.isWarning) ?: return null
 
     return JavaDefaultQualifiers(nullabilityQualifier, applicability)
 }

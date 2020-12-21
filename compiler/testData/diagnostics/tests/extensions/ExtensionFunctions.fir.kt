@@ -1,5 +1,5 @@
 // !WITH_NEW_INFERENCE
-// FILE: b.kt
+// FILE: a.kt
 package outer
 
 fun Int?.optint() : Unit {}

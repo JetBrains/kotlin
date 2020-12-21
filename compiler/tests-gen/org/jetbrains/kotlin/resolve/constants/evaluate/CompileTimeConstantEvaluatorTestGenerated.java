@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.constants.evaluate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
         }
 
         public void testAllFilesPresentInConstant() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObjectProperty.kt")
@@ -145,7 +146,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
         }
 
         public void testAllFilesPresentInIsPure() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("innerToType.kt")
@@ -183,7 +184,7 @@ public class CompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTi
         }
 
         public void testAllFilesPresentInUsesVariableAsConstant() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/evaluate/usesVariableAsConstant"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("binaryTypes.kt")

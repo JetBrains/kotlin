@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -181,7 +180,7 @@ internal interface ContextUtils : RuntimeAware {
         get() {
             assert(this.isReal)
             return if (isExternal(this)) {
-                runtime.addedLLVMExternalFunctions.getOrPut(this) { context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
+                runtime.addedLLVMExternalFunctions.getOrPut(this) { context.llvm.externalFunction(this.computeSymbolName(), getLlvmFunctionType(this),
                         origin = this.llvmSymbolOrigin) }
 
             } else {
@@ -201,7 +200,7 @@ internal interface ContextUtils : RuntimeAware {
     val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
-                constPointer(importGlobal(this.typeInfoSymbolName, runtime.typeInfoType,
+                constPointer(importGlobal(this.computeTypeInfoSymbolName(), runtime.typeInfoType,
                         origin = this.llvmSymbolOrigin))
             } else {
                 context.llvmDeclarations.forClass(this).typeInfo

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
-abstract class KtAnnotationCall {
+abstract class KtAnnotationCall : ValidityTokenOwner {
     abstract val classId: ClassId?
     abstract val useSiteTarget: AnnotationUseSiteTarget?
     abstract val psi: KtCallElement?

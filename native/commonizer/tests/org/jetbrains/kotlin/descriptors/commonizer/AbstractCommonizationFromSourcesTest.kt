@@ -17,14 +17,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassCollector
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.FunctionCollector
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectMembers
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectNonEmptyPackageMemberScopes
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.MockBuiltInsProvider
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -34,8 +35,9 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.fail
@@ -55,7 +57,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         )
         val testDir = testDirectoryName
 
-        return File(getHomeDirectory())
+        return File(KtTestUtil.getHomeDirectory())
             .resolve("native/commonizer/testData")
             .resolve(testCaseDir)
             .resolve(testDir)
@@ -312,7 +314,7 @@ private class AnalyzedModules(
 
             val psiFiles: List<KtFile> = moduleRoot.location.walkTopDown()
                 .filter { it.isFile }
-                .map { psiFactory.createFile(it.name, doLoadFile(it)) }
+                .map { psiFactory.createFile(it.name, KtTestUtil.doLoadFile(it)) }
                 .toList()
 
             val module = CommonResolverForModuleFactory.analyzeFiles(

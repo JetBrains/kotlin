@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class DiagnosticMessageJsTestGenerated extends AbstractDiagnosticMessageJ
     }
 
     public void testAllFilesPresentInJs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, false);
     }
 
     @TestMetadata("jsCodeErrorHtml.kt")

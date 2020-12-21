@@ -7,8 +7,8 @@ fun test() {
     val x = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named1<!>(x: Int): Int { return 1 }
     x checkType { _<Function1<Int, Int>>() }
 
-    foo <!NI;TYPE_MISMATCH!>{ <!EXPECTED_TYPE_MISMATCH("() -> Int")!>fun named2(): Int {return 1}<!> }<!>
-    foo(<!NI;TYPE_MISMATCH!>{ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> }<!>)
+    foo <!TYPE_MISMATCH{NI}!>{ <!EXPECTED_TYPE_MISMATCH("() -> Int")!>fun named2(): Int {return 1}<!> }<!>
+    foo(<!TYPE_MISMATCH{NI}!>{ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> }<!>)
 
     val x1 =
     <!INVALID_IF_AS_EXPRESSION!>if<!> (1 == 1)
@@ -27,15 +27,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named8<!>(): Int {return 1}<!>
-        else -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named9<!>() = 1<!>
+        0 -> <!EXPECTED_TYPE_MISMATCH{OI}!>fun <!ANONYMOUS_FUNCTION_WITH_NAME{NI}!>named8<!>(): Int {return 1}<!>
+        else -> <!EXPECTED_TYPE_MISMATCH{OI}!>fun <!ANONYMOUS_FUNCTION_WITH_NAME{NI}!>named9<!>() = 1<!>
     }
 
     val x31 = when (1) {
         0 -> {
-            <!OI;EXPECTED_TYPE_MISMATCH!>fun named10(): Int {return 1}<!>
+            <!EXPECTED_TYPE_MISMATCH{OI}!>fun named10(): Int {return 1}<!>
         }
-        else -> <!OI;EXPECTED_TYPE_MISMATCH!>fun <!NI;ANONYMOUS_FUNCTION_WITH_NAME!>named11<!>() = 1<!>
+        else -> <!EXPECTED_TYPE_MISMATCH{OI}!>fun <!ANONYMOUS_FUNCTION_WITH_NAME{NI}!>named11<!>() = 1<!>
     }
 
     val x4 = {
@@ -65,11 +65,11 @@ fun success() {
 
     val y = when (1) {
         0 -> {
-            <!OI;EXPECTED_TYPE_MISMATCH!>fun named4(): Int {return 1}<!>
+            <!EXPECTED_TYPE_MISMATCH{OI}!>fun named4(): Int {return 1}<!>
         }
         else -> {
-            <!OI;EXPECTED_TYPE_MISMATCH!>fun named5(): Int {return 1}<!>
+            <!EXPECTED_TYPE_MISMATCH{OI}!>fun named5(): Int {return 1}<!>
         }
     }
-    y checkType { <!OI;TYPE_MISMATCH!>_<!><Unit>() }
+    y checkType { <!TYPE_MISMATCH{OI}!>_<!><Unit>() }
 }

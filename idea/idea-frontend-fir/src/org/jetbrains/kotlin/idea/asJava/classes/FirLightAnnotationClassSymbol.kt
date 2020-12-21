@@ -47,7 +47,7 @@ internal class FirLightAnnotationClassSymbol(
                 .filterNot { it is KtFunctionSymbol && it.visibility == KtSymbolVisibility.PRIVATE }
                 .filterNot { it is KtConstructorSymbol }
 
-            createMethods(visibleDeclarations, isTopLevel = false, result)
+            createMethods(visibleDeclarations, result)
         }
 
         result

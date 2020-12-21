@@ -273,9 +273,13 @@ void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLe
 int snprintf(char* buffer, size_t size, const char* format, ...) {
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, size, format, args);
+  int rv = vsnprintf(buffer, size, format, args);
   va_end(args);
   return rv;
+}
+
+int vsnprintf(char* buffer, size_t size, const char* format, va_list args) {
+  return vsnprintf_impl(buffer, size, format, args);
 }
 
 size_t strnlen(const char* buffer, size_t maxSize) {

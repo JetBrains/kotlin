@@ -13,3 +13,5 @@ class AnnotatedParameterInInnerClassConstructor {
 
     }
 }
+
+// FIR_COMPARISON

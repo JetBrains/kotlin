@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.MuteExtraSuffix;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/decompiler/navigation/userJavaCode")
 @TestDataPath("$PROJECT_ROOT")
-@MuteExtraSuffix(".libsrc")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NavigateJavaToLibrarySourceTestGenerated extends AbstractNavigateJavaToLibrarySourceTest {
     private void runTest(String testDataFilePath) throws Exception {
@@ -27,7 +26,7 @@ public class NavigateJavaToLibrarySourceTestGenerated extends AbstractNavigateJa
     }
 
     public void testAllFilesPresentInUserJavaCode() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/navigation/userJavaCode"), Pattern.compile("^(.+)\\.java$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/navigation/userJavaCode"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
     @TestMetadata("ClassAndConstuctors.java")

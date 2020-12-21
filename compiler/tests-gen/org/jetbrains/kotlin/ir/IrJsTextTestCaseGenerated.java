@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
     }
 
     public void testAllFilesPresentInIrJsText() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
     }
 
     @TestMetadata("compiler/testData/ir/irJsText/dynamic")
@@ -37,7 +38,7 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
         }
 
         public void testAllFilesPresentInDynamic() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
         }
 
         @TestMetadata("dynamicAndMembersOfAny.kt")
@@ -160,7 +161,7 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
         }
 
         public void testAllFilesPresentInExternal() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
         }
 
         @TestMetadata("kt38765.kt")
@@ -178,7 +179,7 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
         }
 
         public void testAllFilesPresentInNative() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
         }
 
         @TestMetadata("nativeNativeKotlin.kt")
@@ -196,7 +197,7 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
         }
 
         public void testAllFilesPresentInScripting() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/scripting"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/scripting"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
         }
 
         @TestMetadata("arrayAssignment.kts")

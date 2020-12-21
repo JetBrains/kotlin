@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.conversion.copy;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
     }
 
     public void testAllFilesPresentInPlainTextLiteral() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/copyPaste/plainTextLiteral"), Pattern.compile("^([^\\.]+)\\.txt$"), null, true);
     }
 
     @TestMetadata("BrokenEntries.txt")

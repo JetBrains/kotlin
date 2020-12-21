@@ -51,6 +51,19 @@ class WasmTypeTransformer(
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()
 
+    fun IrType.toWasmFieldType(): WasmType =
+        when (this) {
+            builtIns.booleanType,
+            builtIns.byteType ->
+                WasmI8
+
+            builtIns.shortType,
+            builtIns.charType ->
+                WasmI16
+
+            else -> toWasmValueType()
+        }
+
     fun IrType.toWasmValueType(): WasmType =
         when (this) {
             builtIns.booleanType,

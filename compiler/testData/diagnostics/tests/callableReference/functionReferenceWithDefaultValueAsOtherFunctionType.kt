@@ -13,6 +13,6 @@ fun bar2(body: (String, Int) -> String): String {
 }
 
 fun test() {
-    bar1(<!OI;TYPE_MISMATCH!>::foo<!>)
+    bar1(<!TYPE_MISMATCH{OI}!>::foo<!>)
     bar2(::foo)
 }

@@ -66,15 +66,30 @@ object KeywordCompletion {
     private val KEYWORDS_TO_IGNORE_PREFIX =
         TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
-    private val COMPOUND_KEYWORDS = mapOf<KtKeywordToken, KtKeywordToken>(
-        COMPANION_KEYWORD to OBJECT_KEYWORD,
-        DATA_KEYWORD to CLASS_KEYWORD,
-        ENUM_KEYWORD to CLASS_KEYWORD,
-        ANNOTATION_KEYWORD to CLASS_KEYWORD,
-        SEALED_KEYWORD to CLASS_KEYWORD,
-        LATEINIT_KEYWORD to VAR_KEYWORD,
-        CONST_KEYWORD to VAL_KEYWORD,
-        SUSPEND_KEYWORD to FUN_KEYWORD
+    private val INCOMPATIBLE_KEYWORDS_AROUND_SEALED = setOf(
+        SEALED_KEYWORD,
+        ANNOTATION_KEYWORD,
+        DATA_KEYWORD,
+        ENUM_KEYWORD,
+        OPEN_KEYWORD,
+        INNER_KEYWORD,
+        ABSTRACT_KEYWORD
+    ).mapTo(HashSet()) { it.value }
+
+    private val COMPOUND_KEYWORDS = mapOf<KtKeywordToken, Set<KtKeywordToken>>(
+        COMPANION_KEYWORD to setOf(OBJECT_KEYWORD),
+        DATA_KEYWORD to setOf(CLASS_KEYWORD),
+        ENUM_KEYWORD to setOf(CLASS_KEYWORD),
+        ANNOTATION_KEYWORD to setOf(CLASS_KEYWORD),
+        SEALED_KEYWORD to setOf(CLASS_KEYWORD, INTERFACE_KEYWORD, FUN_KEYWORD),
+        LATEINIT_KEYWORD to setOf(VAR_KEYWORD),
+        CONST_KEYWORD to setOf(VAL_KEYWORD),
+        SUSPEND_KEYWORD to setOf(FUN_KEYWORD)
+    )
+
+    private val COMPOUND_KEYWORDS_NOT_SUGGEST_TOGETHER = mapOf<KtKeywordToken, Set<KtKeywordToken>>(
+        // 'fun' can follow 'sealed', e.g. "sealed fun interface". But "sealed fun" looks irrelevant differ to "sealed interface/class".
+        SEALED_KEYWORD to setOf(FUN_KEYWORD),
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
@@ -107,52 +122,85 @@ object KeywordCompletion {
 
     fun complete(position: PsiElement, prefixMatcher: PrefixMatcher, isJvmModule: Boolean, consumer: (LookupElement) -> Unit) {
         if (!GENERAL_FILTER.isAcceptable(position, position)) return
+        val sealedInterfacesEnabled = position.languageVersionSettings.supportsFeature(LanguageFeature.SealedInterfaces)
 
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
-            var keyword = keywordToken.value
-
-            val nextKeyword = when {
-                keywordToken == SUSPEND_KEYWORD && position.getStrictParentOfType<KtTypeReference>() != null -> null
-                else -> COMPOUND_KEYWORDS[keywordToken]
+            val nextKeywords = keywordToken.getNextPossibleKeywords(position) ?: setOf(null)
+            nextKeywords.forEach {
+                if (keywordToken == SEALED_KEYWORD && it == INTERFACE_KEYWORD && !sealedInterfacesEnabled) return@forEach
+                handleCompoundKeyword(position, keywordToken, it, isJvmModule, prefixMatcher, parserFilter, consumer)
             }
-            var applicableAsCompound = false
-            if (nextKeyword != null) {
-                fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
+        }
+    }
 
-                var next = position.nextLeaf { !(it.isSpace() || it.text == "$") }?.text
-                if (next != null && next.startsWith("$")) {
-                    next = next.substring(1)
-                }
-                if (next != nextKeyword.value)
-                    keyword += " " + nextKeyword.value
-                else
-                    applicableAsCompound = true
+    private fun KtKeywordToken.getNextPossibleKeywords(position: PsiElement): Set<KtKeywordToken>? {
+        return when {
+            this == SUSPEND_KEYWORD && position.getStrictParentOfType<KtTypeReference>() != null -> null
+            else -> COMPOUND_KEYWORDS[this]
+        }
+    }
+
+    private fun KtKeywordToken.avoidSuggestingWith(keywordToken: KtKeywordToken): Boolean {
+        val nextKeywords = COMPOUND_KEYWORDS_NOT_SUGGEST_TOGETHER[this] ?: return false
+        return keywordToken in nextKeywords
+    }
+
+    private fun handleCompoundKeyword(
+        position: PsiElement,
+        keywordToken: KtKeywordToken,
+        nextKeyword: KtKeywordToken?,
+        isJvmModule: Boolean,
+        prefixMatcher: PrefixMatcher,
+        parserFilter: (KtKeywordToken) -> Boolean,
+        consumer: (LookupElement) -> Unit
+    ) {
+        var keyword = keywordToken.value
+
+        var applicableAsCompound = false
+        if (nextKeyword != null) {
+            fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
+
+            var next = position.nextLeaf { !(it.isSpace() || it.text == "$") }?.text
+            next = next?.removePrefix("$")
+
+            if (keywordToken == SEALED_KEYWORD) {
+                if (next in INCOMPATIBLE_KEYWORDS_AROUND_SEALED) return
+                val prev = position.prevLeaf { !(it.isSpace() || it is PsiErrorElement) }?.text
+                if (prev in INCOMPATIBLE_KEYWORDS_AROUND_SEALED) return
             }
 
-            if (keywordToken == DYNAMIC_KEYWORD && isJvmModule) continue // not supported for JVM
+            val nextIsNotYetPresent = keywordToken.getNextPossibleKeywords(position)?.none { it.value == next } == true
+            if (nextIsNotYetPresent && keywordToken.avoidSuggestingWith(nextKeyword)) return
 
-            if (keywordToken !in KEYWORDS_TO_IGNORE_PREFIX && !prefixMatcher.isStartMatch(keyword)) continue
+            if (nextIsNotYetPresent)
+                keyword += " " + nextKeyword.value
+            else
+                applicableAsCompound = true
+        }
 
-            if (!parserFilter(keywordToken)) continue
+        if (keywordToken == DYNAMIC_KEYWORD && isJvmModule) return // not supported for JVM
 
-            val constructText = KEYWORD_CONSTRUCTS[keywordToken]
-            if (constructText != null && !applicableAsCompound) {
-                val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
-                consumer(element)
-            } else {
-                if (listOf(CLASS_KEYWORD, OBJECT_KEYWORD, INTERFACE_KEYWORD).any { keyword.endsWith(it.value) }) {
-                    val topLevelClassName = getTopLevelClassName(position)
-                    if (topLevelClassName != null) {
-                        if (keyword.startsWith(DATA_KEYWORD.value)) {
-                            consumer(createKeywordConstructLookupElement(position.project, keyword, "$keyword $topLevelClassName(caret)"))
-                        } else {
-                            consumer(createLookupElementBuilder("$keyword $topLevelClassName", position))
-                        }
+        if (keywordToken !in KEYWORDS_TO_IGNORE_PREFIX && !prefixMatcher.isStartMatch(keyword)) return
+
+        if (!parserFilter(keywordToken)) return
+
+        val constructText = KEYWORD_CONSTRUCTS[keywordToken]
+        if (constructText != null && !applicableAsCompound) {
+            val element = createKeywordConstructLookupElement(position.project, keyword, constructText)
+            consumer(element)
+        } else {
+            if (listOf(CLASS_KEYWORD, OBJECT_KEYWORD, INTERFACE_KEYWORD).any { keyword.endsWith(it.value) }) {
+                val topLevelClassName = getTopLevelClassName(position)
+                if (topLevelClassName != null) {
+                    if (keyword.startsWith(DATA_KEYWORD.value)) {
+                        consumer(createKeywordConstructLookupElement(position.project, keyword, "$keyword $topLevelClassName(caret)"))
+                    } else {
+                        consumer(createLookupElementBuilder("$keyword $topLevelClassName", position))
                     }
                 }
-                consumer(createLookupElementBuilder(keyword, position))
             }
+            consumer(createLookupElementBuilder(keyword, position))
         }
     }
 

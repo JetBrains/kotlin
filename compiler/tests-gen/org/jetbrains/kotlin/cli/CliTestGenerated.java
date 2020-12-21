@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("apiAndLanguageVersionsUnsupported.args")
@@ -885,7 +886,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInJs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("createMetadata.args")
@@ -1078,7 +1079,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInJs_dce() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js-dce"), Pattern.compile("^(.+)\\.args$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/js-dce"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("dceExtraHelp.args")
@@ -1151,7 +1152,7 @@ public class CliTestGenerated extends AbstractCliTest {
         }
 
         public void testAllFilesPresentInMetadata() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
         @TestMetadata("kotlinPackage.args")

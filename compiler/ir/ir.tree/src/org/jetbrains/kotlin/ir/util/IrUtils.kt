@@ -279,10 +279,10 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     }
 }
 
+fun IrConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
+
 fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
-    annotations.find {
-        it.symbol.owner.parentAsClass.fqNameWhenAvailable == name
-    }
+    annotations.find { it.isAnnotation(name) }
 
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {

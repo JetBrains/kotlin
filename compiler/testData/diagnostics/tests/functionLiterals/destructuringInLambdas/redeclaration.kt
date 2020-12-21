@@ -8,23 +8,23 @@ fun foo(block: (A, B) -> Unit) { }
 
 fun bar() {
     foo { (<!REDECLARATION, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, <!REDECLARATION!>a<!>), b ->
-        a checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><Int>() }
-        b checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String>() }
+        a checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Int>() }
+        b checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><String>() }
     }
 
     foo { (<!REDECLARATION, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>a<!>, b), <!REDECLARATION!>a<!> ->
-        a checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><Int>() }
+        a checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Int>() }
         b checkType { _<String>() }
     }
 
     foo { <!REDECLARATION!>a<!>, (<!REDECLARATION!>a<!>, b) ->
-        a checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><Int>() }
-        b checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String>() }
+        a checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><Int>() }
+        b checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><String>() }
     }
 
     foo { (a, <!REDECLARATION, UNUSED_DESTRUCTURED_PARAMETER_ENTRY!>b<!>), (c, <!REDECLARATION!>b<!>) ->
         a checkType { _<Int>() }
-        b checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String>() }
-        c checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><B>() }
+        b checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><String>() }
+        c checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><B>() }
     }
 }

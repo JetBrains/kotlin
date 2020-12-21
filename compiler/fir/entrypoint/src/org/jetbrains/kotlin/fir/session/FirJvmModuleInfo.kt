@@ -16,7 +16,10 @@ class FirJvmModuleInfo(override val name: Name, val dependencies: List<ModuleInf
     companion object {
         val LIBRARIES_MODULE_NAME = Name.special("<dependencies>")
 
-        fun createForLibraries(): FirJvmModuleInfo = FirJvmModuleInfo(LIBRARIES_MODULE_NAME, emptyList())
+        fun createForLibraries(mainModuleName: String? = null): FirJvmModuleInfo {
+            val name = mainModuleName?.let { Name.special("<dependencies of $it>") } ?: LIBRARIES_MODULE_NAME
+            return FirJvmModuleInfo(name, emptyList())
+        }
     }
 
     constructor(moduleName: String, dependencies: List<ModuleInfo>) : this(Name.identifier(moduleName), dependencies)

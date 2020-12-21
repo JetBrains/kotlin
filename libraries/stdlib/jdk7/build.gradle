@@ -90,6 +90,7 @@ compileTestKotlin {
             "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
             "-Xopt-in=kotlin.ExperimentalStdlibApi",
             "-Xopt-in=kotlin.io.path.ExperimentalPathApi",
+            "-Xcommon-sources=${fileTree('../test').join(',')}",
     ]
 }
 

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
 import org.junit.Assert
@@ -101,7 +102,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testName = getTestName(false)
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
-        val filePathWithoutExtension = "${KotlinTestUtils.getTestsRoot(this::class.java)}/${getTestName(false)}"
+        val filePathWithoutExtension = "${KtTestUtil.getTestsRoot(this::class.java)}/${getTestName(false)}"
         val testFile =
             File("$filePathWithoutExtension.kt").takeIf { it.exists() } ?: File("$filePathWithoutExtension.kts").takeIf { it.exists() }
 

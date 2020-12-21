@@ -36,9 +36,11 @@ public enum class CpuArchitecture(val bitness: Int) {
 /**
  * Memory model.
  */
+// NOTE: Must match `MemoryModel` in `Memory.h`
 public enum class MemoryModel {
     STRICT,
-    RELAXED
+    RELAXED,
+    EXPERIMENTAL,
 }
 
 /**

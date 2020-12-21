@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirLightDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.math.abs
 
 abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsTest() {
     override fun doTest(filePath: String) {
         val file = createTestFileFromPath(filePath)
-        val expectedText = KotlinTestUtils.doLoadFile(file)
+        val expectedText = KtTestUtil.doLoadFile(file)
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "// IGNORE_LIGHT_TREE")) return
 
         super.doTest(filePath)

@@ -60,7 +60,7 @@ internal class FirLightAnonymousClassForSymbol(
 
         analyzeWithSymbolAsContext(anonymousObjectSymbol) {
             val callableSymbols = anonymousObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-            createMethods(callableSymbols, isTopLevel = false, result)
+            createMethods(callableSymbols, result)
         }
 
         result

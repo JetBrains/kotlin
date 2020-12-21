@@ -9,7 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIndex
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import kotlin.reflect.KMutableProperty0
 
@@ -17,7 +17,7 @@ abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLigh
 
 
     override fun getTestDataPath(): String {
-        return KotlinTestUtils.getHomeDirectory() + "/"
+        return KtTestUtil.getHomeDirectory() + "/"
     }
 
     private lateinit var scope: GlobalSearchScope

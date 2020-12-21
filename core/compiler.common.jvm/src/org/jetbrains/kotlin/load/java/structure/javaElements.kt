@@ -29,9 +29,9 @@ interface JavaNamedElement : JavaElement {
 
 interface JavaAnnotationOwner : JavaElement {
     val annotations: Collection<JavaAnnotation>
-    fun findAnnotation(fqName: FqName): JavaAnnotation?
-
     val isDeprecatedInJavaDoc: Boolean
+
+    fun findAnnotation(fqName: FqName): JavaAnnotation?
 }
 
 interface JavaModifierListOwner : JavaElement {
@@ -50,15 +50,25 @@ interface JavaAnnotation : JavaElement {
     val classId: ClassId?
     val isIdeExternalAnnotation: Boolean
         get() = false
+    val isFreshlySupportedTypeUseAnnotation: Boolean
+        get() = false
 
     fun resolve(): JavaClass?
 }
 
 interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {
     val annotationsByFqName: Map<FqName?, JavaAnnotation>
+
+    override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName) = annotationsByFqName[fqName]
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = false
+}
+
+interface ListBasedJavaAnnotationOwner : JavaAnnotationOwner {
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
+}
+
+interface MutableJavaAnnotationOwner : JavaAnnotationOwner {
+    override val annotations: MutableCollection<JavaAnnotation>
 }
 
 fun JavaAnnotationOwner.buildLazyValueForMap() = lazy {

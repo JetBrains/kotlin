@@ -32,6 +32,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":idea:idea-frontend-independent"))
 
     compile(intellijPluginDep("java"))
 }

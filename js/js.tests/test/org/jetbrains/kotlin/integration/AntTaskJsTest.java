@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.test.NashornJsTestChecker;
 import org.jetbrains.kotlin.js.test.V8JsTestChecker;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
 
     @NotNull
     private String getTestDataDir() {
-        return KotlinTestUtils.getTestDataPathBase() + "/integration/ant/js/" + getTestName(true);
+        return KtTestUtil.getTestDataPathBase() + "/integration/ant/js/" + getTestName(true);
     }
 
     @NotNull

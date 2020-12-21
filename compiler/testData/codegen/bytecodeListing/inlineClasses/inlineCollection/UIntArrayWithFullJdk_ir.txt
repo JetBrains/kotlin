@@ -30,22 +30,22 @@ public final class UIntArray {
     public method clear(): void
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: int[]): int[]
     public synthetic bridge method contains(p0: java.lang.Object): boolean
-    public static method contains-fLmw4x8(@org.jetbrains.annotations.NotNull p0: int[], p1: int): boolean
     public method contains-fLmw4x8(p0: int): boolean
+    public static method contains-fLmw4x8(p0: int[], p1: int): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
-    public static method containsAll-impl(@org.jetbrains.annotations.NotNull p0: int[], @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public static method containsAll-impl(p0: int[], @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int[], p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int[], p1: int[]): boolean
     public method getSize(): int
-    public static method getSize-impl(@org.jetbrains.annotations.NotNull p0: int[]): int
+    public static method getSize-impl(p0: int[]): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int[]): int
     public method isEmpty(): boolean
-    public static method isEmpty-impl(@org.jetbrains.annotations.NotNull p0: int[]): boolean
+    public static method isEmpty-impl(p0: int[]): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.lang.Void
     public synthetic bridge method iterator(): java.util.Iterator
-    public static @org.jetbrains.annotations.NotNull method iterator-impl(@org.jetbrains.annotations.NotNull p0: int[]): java.lang.Void
+    public static @org.jetbrains.annotations.NotNull method iterator-impl(p0: int[]): java.lang.Void
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method removeIf(p0: java.util.function.Predicate): boolean

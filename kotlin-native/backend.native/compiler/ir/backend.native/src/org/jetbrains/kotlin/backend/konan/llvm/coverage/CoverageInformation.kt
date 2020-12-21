@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.llvm.column
 import org.jetbrains.kotlin.backend.konan.llvm.line
-import org.jetbrains.kotlin.backend.konan.llvm.symbolName
+import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -87,7 +87,7 @@ class FunctionRegions(
     val structuralHash: Long = 0
 
     override fun toString(): String = buildString {
-        appendLine("${function.symbolName} regions:")
+        appendLine("${function.computeSymbolName()} regions:")
         regions.forEach { (irElem, region) -> appendLine("${ir2string(irElem)} -> ($region)") }
     }
 }

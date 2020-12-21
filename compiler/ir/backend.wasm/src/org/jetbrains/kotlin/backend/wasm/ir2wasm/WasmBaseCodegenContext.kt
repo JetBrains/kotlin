@@ -34,6 +34,8 @@ interface WasmBaseCodegenContext {
     fun referenceStringLiteral(string: String): WasmSymbol<Int>
 
     fun transformType(irType: IrType): WasmType
+    fun transformFieldType(irType: IrType): WasmType
+
     fun transformBoxedType(irType: IrType): WasmType
     fun transformValueParameterType(irValueParameter: IrValueParameter): WasmType
     fun transformResultType(irType: IrType): WasmType?

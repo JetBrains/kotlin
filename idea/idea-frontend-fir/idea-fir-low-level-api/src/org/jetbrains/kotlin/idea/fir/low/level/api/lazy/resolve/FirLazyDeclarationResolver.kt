@@ -39,7 +39,7 @@ internal class FirLazyDeclarationResolver(
     ) {
         if (declaration.resolvePhase >= toPhase) return
 
-        if (declaration is FirPropertyAccessor || declaration is FirTypeParameter) {
+        if (declaration is FirPropertyAccessor || declaration is FirTypeParameter || declaration is FirValueParameter) {
             val ktContainingResolvableDeclaration = when (val ktDeclaration = declaration.ktDeclaration) {
                 is KtPropertyAccessor -> ktDeclaration.property
                 is KtProperty -> ktDeclaration

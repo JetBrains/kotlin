@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -45,7 +46,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     "kt",
     KotlinParserDefinition()
 ) {
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath() = KtTestUtil.getHomeDirectory()
 
     private fun createFile(filePath: String, fileType: IElementType): PsiFile {
         val psiFactory = KtPsiFactory(myProject)

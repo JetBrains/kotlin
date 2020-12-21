@@ -27,6 +27,15 @@ object IgnoreTests {
         )
     }
 
+    fun runTestWithFixMeSupport(testFile: Path, test: () -> Unit) {
+        runTestIfEnabledByDirective(
+            testFile,
+            EnableOrDisableTestDirective.Disable(DIRECTIVES.FIX_ME),
+            additionalFilesExtensions = emptyList(),
+            test = test
+        )
+    }
+
     fun runTestIfNotDisabledByFileDirective(
         testFile: Path,
         disableTestDirective: String,
@@ -128,5 +137,6 @@ object IgnoreTests {
     object DIRECTIVES {
         const val FIR_COMPARISON = "// FIR_COMPARISON"
         const val IGNORE_FIR = "// IGNORE_FIR"
+        const val FIX_ME = "// FIX_ME: "
     }
 }

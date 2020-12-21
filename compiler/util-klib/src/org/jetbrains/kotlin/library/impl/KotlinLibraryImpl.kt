@@ -28,20 +28,21 @@ open class BaseKotlinLibraryImpl(
     override val libraryFile get() = access.klib
     override val libraryName: String by lazy { access.inPlace { it.libraryName } }
 
-    override val componentList: List<String> by lazy {
-        access.inPlace {
-            it.libDir.listFiles
+    private val componentListAndHasPre14Manifest by lazy {
+        access.inPlace { layout ->
+            val listFiles = layout.libDir.listFiles
+            listFiles
                 .filter { it.isDirectory }
                 .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
-                .map { it.name }
+                .map { it.name } to listFiles.any { it.absolutePath == layout.pre_1_4_manifest.absolutePath }
         }
     }
 
+    override val componentList: List<String> get() = componentListAndHasPre14Manifest.first
+
     override fun toString() = "$libraryName[default=$isDefault]"
 
-    override val has_pre_1_4_manifest: Boolean by lazy {
-        access.inPlace { it.pre_1_4_manifest.exists }
-    }
+    override val has_pre_1_4_manifest: Boolean get() = componentListAndHasPre14Manifest.second
 
     override val manifestProperties: Properties by lazy {
         access.inPlace { it.manifestFile.loadProperties() }

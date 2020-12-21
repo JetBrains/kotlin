@@ -10,6 +10,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.reflect.full.findAnnotation
 
@@ -19,7 +20,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
         runPostStartupActivitiesOnce(project)
-        VfsRootAccess.allowRootAccess(testRootDisposable, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KtTestUtil.getHomeDirectory())
         if (!isFirPlugin()) {
             invalidateLibraryCache(project)
         }

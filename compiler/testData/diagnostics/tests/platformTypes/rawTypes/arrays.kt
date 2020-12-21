@@ -28,15 +28,15 @@ fun main() {
     val raw = Test.rawAField
 
     raw.charSequences = arrayOf<String>()
-    raw.charSequences = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Double>()<!>
+    raw.charSequences = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>arrayOf<Double>()<!>
 
     raw.maps = arrayOf<Map<Int, Int>>()
     raw.maps = arrayOf<MutableMap<Int, Int>>()
-    raw.maps = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
+    raw.maps = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
 
     raw.arraysOfLists = arrayOf<Array<List<*>>>()
-    raw.arraysOfLists = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
-    raw.arraysOfLists = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>arrayOf<Array<Array<String>>>()<!>
+    raw.arraysOfLists = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>arrayOf<List<String>>()<!>
+    raw.arraysOfLists = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>arrayOf<Array<Array<String>>>()<!>
 
     raw.arraysOfAny = arrayOf<Array<Array<String>>>()
 

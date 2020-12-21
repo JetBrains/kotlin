@@ -47,7 +47,9 @@ class DeclarationPrinter(
         }
 
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Unit) {
-            val children = descriptor.getMemberScope().getContributedDescriptors().filter { it.shouldBePrinted }
+            val children = descriptor.getMemberScope().getContributedDescriptors()
+                .filter { it.shouldBePrinted }
+                .sortedBy { it.name }
             if (children.isNotEmpty()) {
                 printer.printWithBody(header = headerRenderer.render(descriptor)) {
                     children.forEach { it.accept(this, data) }

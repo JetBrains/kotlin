@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.cfa.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
@@ -23,7 +24,10 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.coneType
 
 object UnusedChecker : FirControlFlowChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
@@ -34,7 +38,7 @@ object UnusedChecker : FirControlFlowChecker() {
         val properties = LocalPropertyCollector.collect(graph)
         if (properties.isEmpty()) return
 
-        val data = ValueWritesWithoutReading(properties).getData(graph)
+        val data = ValueWritesWithoutReading(checkerContext.session, properties).getData(graph)
         graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter))
     }
 
@@ -151,6 +155,7 @@ object UnusedChecker : FirControlFlowChecker() {
     }
 
     private class ValueWritesWithoutReading(
+        private val session: FirSession,
         private val localProperties: Set<FirPropertySymbol>
     ) : ControlFlowGraphVisitor<PathAwareVariableStatusInfo, Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>>() {
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
@@ -263,6 +268,23 @@ object UnusedChecker : FirControlFlowChecker() {
             status.isRead = true
 
             return update(dataForNode, *symbols) { status }
+        }
+
+        override fun visitFunctionCallNode(
+            node: FunctionCallNode,
+            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+        ): PathAwareVariableStatusInfo {
+            val dataForNode = visitNode(node, data)
+            val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return dataForNode
+            val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
+            val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
+                localProperties.find { it.fir.name == reference.name && it.fir.returnTypeRef.coneType.isFunctionalType(session) }
+            } else null
+            symbol ?: return dataForNode
+
+            val status = VariableStatus.READ
+            status.isRead = true
+            return update(dataForNode, symbol) { status }
         }
 
         private fun update(

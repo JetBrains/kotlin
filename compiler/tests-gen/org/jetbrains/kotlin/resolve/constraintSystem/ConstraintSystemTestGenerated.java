@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.constraintSystem;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     }
 
     public void testAllFilesPresentInConstraintSystem() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem"), Pattern.compile("^(.+)\\.constraints$"), null, true);
     }
 
     @TestMetadata("compiler/testData/constraintSystem/checkStatus")
@@ -37,7 +38,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
         }
 
         public void testAllFilesPresentInCheckStatus() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/checkStatus"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/checkStatus"), Pattern.compile("^(.+)\\.constraints$"), null, true);
         }
 
         @TestMetadata("conflictingConstraints.constraints")
@@ -70,7 +71,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
         }
 
         public void testAllFilesPresentInComputeValues() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/computeValues"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/computeValues"), Pattern.compile("^(.+)\\.constraints$"), null, true);
         }
 
         @TestMetadata("contradiction.constraints")
@@ -103,7 +104,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
         }
 
         public void testAllFilesPresentInIntegerValueTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/integerValueTypes"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/integerValueTypes"), Pattern.compile("^(.+)\\.constraints$"), null, true);
         }
 
         @TestMetadata("byteOverflow.constraints")
@@ -156,7 +157,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
         }
 
         public void testAllFilesPresentInSeveralVariables() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables"), Pattern.compile("^(.+)\\.constraints$"), null, true);
         }
 
         @TestMetadata("simpleDependency.constraints")
@@ -198,7 +199,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
 
             public void testAllFilesPresentInDirect() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct"), Pattern.compile("^(.+)\\.constraints$"), null, true);
             }
 
             @TestMetadata("compiler/testData/constraintSystem/severalVariables/direct/contravariant")
@@ -210,7 +211,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInContravariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct/contravariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct/contravariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -268,7 +269,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInCovariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct/covariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct/covariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -326,7 +327,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInInvariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct/invariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/direct/invariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -385,7 +386,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
 
             public void testAllFilesPresentInInterdependency() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/interdependency"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/interdependency"), Pattern.compile("^(.+)\\.constraints$"), null, true);
             }
 
             @TestMetadata("interdependency1.constraints")
@@ -413,7 +414,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
 
             public void testAllFilesPresentInNullable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable"), Pattern.compile("^(.+)\\.constraints$"), null, true);
             }
 
             @TestMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant")
@@ -425,7 +426,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInContravariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/contravariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/contravariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -483,7 +484,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInCovariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/covariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/covariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -541,7 +542,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInInvariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/invariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/invariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -600,7 +601,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
 
             public void testAllFilesPresentInOther() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/other"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/other"), Pattern.compile("^(.+)\\.constraints$"), null, true);
             }
 
             @TestMetadata("constraintForNullables.constraints")
@@ -673,7 +674,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
 
             public void testAllFilesPresentInRecursive() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/recursive"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/recursive"), Pattern.compile("^(.+)\\.constraints$"), null, true);
             }
 
             @TestMetadata("implicitlyRecursive.constraints")
@@ -706,7 +707,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
 
             public void testAllFilesPresentInReversed() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed"), Pattern.compile("^(.+)\\.constraints$"), null, true);
             }
 
             @TestMetadata("compiler/testData/constraintSystem/severalVariables/reversed/contravariant")
@@ -718,7 +719,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInContravariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed/contravariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed/contravariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -776,7 +777,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInCovariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed/covariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed/covariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -834,7 +835,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 }
 
                 public void testAllFilesPresentInInvariant() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed/invariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/reversed/invariant"), Pattern.compile("^(.+)\\.constraints$"), null, true);
                 }
 
                 @TestMetadata("varEqDepEq.constraints")
@@ -894,7 +895,7 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
         }
 
         public void testAllFilesPresentInVariance() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/variance"), Pattern.compile("^(.+)\\.constraints$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/constraintSystem/variance"), Pattern.compile("^(.+)\\.constraints$"), null, true);
         }
 
         @TestMetadata("consumer.constraints")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.samWithReceiver;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class SamWithReceiverScriptTestGenerated extends AbstractSamWithReceiverS
     }
 
     public void testAllFilesPresentInScript() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/script"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/sam-with-receiver-cli/testData/script"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
     @TestMetadata("samConversionSimple.kts")

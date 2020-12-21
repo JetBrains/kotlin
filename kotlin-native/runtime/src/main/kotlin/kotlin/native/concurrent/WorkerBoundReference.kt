@@ -23,7 +23,7 @@ external private fun describeWorkerBoundReference(ref: NativePtr): String
  * the worker [WorkerBoundReference] was created on, unless the referred object is frozen too.
  *
  * Note: Garbage collector currently cannot free any reference cycles with frozen [WorkerBoundReference] in them.
- * To resolve such cycles consider using [AtomicReference<WorkerBoundReference?>] which can be explicitly
+ * To resolve such cycles consider using [AtomicReference]`<WorkerBoundReference?>` which can be explicitly
  * nulled out.
  */
 @NoReorderFields

@@ -11,3 +11,4 @@ fun test(f: () -> Unit) {
     foo { }
     foo(f)
 }
+

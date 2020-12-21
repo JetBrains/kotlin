@@ -69,6 +69,7 @@ object SerialEntityNames {
     const val SERIAL_DESCRIPTOR_CLASS = "SerialDescriptor"
     const val SERIAL_DESCRIPTOR_CLASS_IMPL = "PluginGeneratedSerialDescriptor"
     const val SERIAL_DESCRIPTOR_FOR_ENUM = "EnumDescriptor"
+    const val SERIAL_DESCRIPTOR_FOR_INLINE = "InlineClassDescriptor"
 
     const val PLUGIN_EXCEPTIONS_FILE = "PluginExceptions"
 
@@ -114,6 +115,8 @@ object CallingConventions {
     const val encode = "encode"
     const val encodeEnum = "encodeEnum"
     const val decodeEnum = "decodeEnum"
+    const val encodeInline = "encodeInline"
+    const val decodeInline = "decodeInline"
     const val decodeElementIndex = "decodeElementIndex"
     const val decodeSequentially = "decodeSequentially"
     const val elementPostfix = "Element"

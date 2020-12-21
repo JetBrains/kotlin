@@ -152,7 +152,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_BRIDGE_METHOD(function),
                 IrSimpleFunctionSymbolImpl(descriptor),
-                "<bridge-$bridgeDirections>${function.functionName}".synthesizedName,
+                "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName,
                 function.visibility,
                 function.modality,
                 isInline = false,

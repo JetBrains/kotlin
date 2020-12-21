@@ -405,6 +405,7 @@ internal class ObjCExportCodeGenerator(
             staticData.cStringLiteral(selector),
             Int64(nameSignature),
             Int32(itablePlace.interfaceId),
+            Int32(itablePlace.itableSize),
             Int32(itablePlace.methodIndex),
             Int32(vtableIndex),
             kotlinImpl
@@ -1341,13 +1342,13 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
             inherited.forEach {
                 presentVtableBridges += vtableIndex(it)
-                presentMethodTableBridges += it.functionName
+                presentMethodTableBridges += it.computeFunctionName()
                 presentItableBridges += itablePlace(it)
             }
 
             uninherited.forEach {
                 val vtableIndex = vtableIndex(it)
-                val functionName = it.functionName
+                val functionName = it.computeFunctionName()
                 val itablePlace = itablePlace(it)
 
                 if (vtableIndex !in presentVtableBridges || functionName !in presentMethodTableBridges

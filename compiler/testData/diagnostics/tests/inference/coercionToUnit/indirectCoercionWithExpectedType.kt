@@ -5,7 +5,7 @@ fun <T> materialize(): T = TODO()
 fun a(): Unit = run {
     run {
         // Ok, block is coerced, because it has (indirectly) Unit-expected type
-        <!NI;UNUSED_EXPRESSION!>"hello"<!>
+        <!UNUSED_EXPRESSION{NI}!>"hello"<!>
     }
 }
 
@@ -19,13 +19,13 @@ fun c(): Unit = run {
         // Attention!
         // In OI expected type 'Unit' isn't applied here because of implementation quirks (note that OI still applies Unit in case 'e')
         // In NI, it is applied and call is correctly inferred, which is consistent with the previous case
-        <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
     }
 }
 
 fun d(): Unit = run outer@{
     run inner@{
-        return@inner <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        return@inner <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
     }
 }
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.net.URL
 import java.util.regex.Pattern
@@ -94,7 +95,7 @@ abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         myFiles = CodegenTestFiles.create(
             myEnvironment!!.project,
             ArrayUtil.toStringArray(files),
-            KotlinTestUtils.getHomeDirectory() + "/plugins/android-extensions/android-extensions-compiler/testData"
+            KtTestUtil.getHomeDirectory() + "/plugins/android-extensions/android-extensions-compiler/testData"
         )
         blackBox(true)
     }

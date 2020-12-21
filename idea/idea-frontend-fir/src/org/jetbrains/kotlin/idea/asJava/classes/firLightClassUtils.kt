@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import java.util.*
@@ -80,6 +81,29 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
     }
 }
 
+fun getOrCreateFirLightFacade(
+    ktFiles: List<KtFile>,
+    facadeClassFqName: FqName,
+): FirLightClassForFacade? {
+    val firstFile = ktFiles.firstOrNull() ?: return null
+    //TODO Make caching keyed by all files
+    return CachedValuesManager.getCachedValue(firstFile) {
+        CachedValueProvider.Result
+            .create(
+                getOrCreateFirLightFacadeNoCache(ktFiles, facadeClassFqName),
+                KotlinModificationTrackerService.getInstance(firstFile.project).outOfBlockModificationTracker
+            )
+    }
+}
+
+fun getOrCreateFirLightFacadeNoCache(
+    ktFiles: List<KtFile>,
+    facadeClassFqName: FqName,
+): FirLightClassForFacade? {
+    val firstFile = ktFiles.firstOrNull() ?: return null
+    return FirLightClassForFacade(firstFile.manager, facadeClassFqName, ktFiles)
+}
+
 
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     if (ktEnumEntry.body == null) return null
@@ -98,27 +122,25 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
 
 internal fun FirLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
-    isTopLevel: Boolean,
-    result: MutableList<KtLightMethod>
+    result: MutableList<KtLightMethod>,
+    isTopLevel: Boolean = false,
+    suppressStaticForMethods: Boolean = false
 ) {
-    var methodIndex = METHOD_INDEX_BASE
     for (declaration in declarations) {
-
-        if (declaration is KtFunctionSymbol && declaration.isInline) continue
-
-        if (declaration is KtAnnotatedSymbol && declaration.hasJvmSyntheticAnnotation(annotationUseSiteTarget = null)) continue
-
-        if (declaration is KtAnnotatedSymbol && declaration.isHiddenByDeprecation(annotationUseSiteTarget = null)) continue
 
         when (declaration) {
             is KtFunctionSymbol -> {
+                if (declaration.isInline || declaration.isHiddenOrSynthetic()) continue
+
+                var methodIndex = METHOD_INDEX_BASE
                 result.add(
                     FirLightSimpleMethodForSymbol(
                         functionSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
                         isTopLevel = isTopLevel,
-                        methodIndex = methodIndex++
+                        methodIndex = methodIndex,
+                        suppressStatic = suppressStaticForMethods
                     )
                 )
 
@@ -145,25 +167,33 @@ internal fun FirLightClassBase.createMethods(
                 }
             }
             is KtConstructorSymbol -> {
+                if (declaration.isHiddenOrSynthetic()) continue
                 result.add(
                     FirLightConstructorForSymbol(
                         constructorSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
-                        methodIndex++
+                        methodIndex = METHOD_INDEX_BASE
                     )
                 )
             }
             is KtPropertySymbol -> {
 
+                if (declaration is KtKotlinPropertySymbol && declaration.isConst) continue
+
+                if (declaration.visibility == KtSymbolVisibility.PRIVATE &&
+                    declaration.getter?.hasBody == false &&
+                    declaration.setter?.hasBody == false
+                ) continue
+
                 if (declaration.hasJvmFieldAnnotation()) continue
-                if (declaration.visibility == KtSymbolVisibility.PRIVATE) continue
 
                 fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
                     if (isInline) return false
                     if (!hasBody && visibility == KtSymbolVisibility.PRIVATE) return false
-                    return !declaration.hasJvmSyntheticAnnotation(siteTarget)
-                            && !declaration.isHiddenByDeprecation(siteTarget)
+                    if (declaration.isHiddenOrSynthetic(siteTarget)) return false
+                    if (isHiddenOrSynthetic()) return false
+                    return true
                 }
 
                 val getter = declaration.getter?.takeIf {
@@ -210,13 +240,15 @@ internal fun FirLightClassBase.createField(
     takePropertyVisibility: Boolean,
     result: MutableList<KtLightField>
 ) {
+
     fun hasBackingField(property: KtPropertySymbol): Boolean = when (property) {
         is KtSyntheticJavaPropertySymbol -> true
         is KtKotlinPropertySymbol -> when {
             property.modality == KtCommonSymbolModality.ABSTRACT -> false
+            property.isHiddenOrSynthetic() -> false
             property.isLateInit -> true
-            //IS PARAMETER -> true
-            !property.hasGetter && !property.hasSetter -> true
+            //TODO Fix it when KtFirConstructorValueParameterSymbol be ready
+            property.psi.let { it == null || it is KtParameter } -> true
             property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD) -> false
             else -> property.hasBackingField
         }
@@ -237,7 +269,7 @@ internal fun FirLightClassBase.createField(
     )
 }
 
-internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
+internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtTypeAndAnnotations>): PsiReferenceList {
 
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
@@ -265,15 +297,14 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
 
     //TODO Add support for kotlin.collections.
     superTypes.asSequence()
-        .filterIsInstance<KtClassType>()
-        .filter { it.needToAddTypeIntoList() }
+        .filter { it.type.needToAddTypeIntoList() }
         .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }
         .forEach { listBuilder.addReference(it) }
 
     return listBuilder
 }
 
-internal fun KtSymbolWithDeclarations.createInnerClasses(manager: PsiManager): List<FirLightClassForSymbol> {
+internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<FirLightClassForSymbol> {
     val result = ArrayList<FirLightClassForSymbol>()
 
     // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927

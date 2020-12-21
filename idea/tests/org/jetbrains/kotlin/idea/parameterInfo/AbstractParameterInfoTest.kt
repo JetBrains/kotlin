@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val root = KotlinTestUtils.getTestsRoot(this::class.java)
+        val root = KtTestUtil.getTestsRoot(this::class.java)
         if (root.contains("Lib")) {
             return SdkAndMockLibraryProjectDescriptor("$root/sharedLib", true, true, false, false)
         }

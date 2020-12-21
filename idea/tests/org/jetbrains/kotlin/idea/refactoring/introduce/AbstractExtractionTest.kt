@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import java.io.File
 import java.util.*
@@ -325,7 +326,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile)
         }
 
-        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
+        fixture.testDataPath = "${KtTestUtil.getHomeDirectory()}/${mainFile.parent}"
 
 
         val mainFileName = mainFile.name

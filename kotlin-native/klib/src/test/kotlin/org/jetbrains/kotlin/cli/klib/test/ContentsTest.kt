@@ -48,6 +48,7 @@ class ContentsTest {
 
         package <root> {
             @A @B fun a()
+            fun Foo.e()
             fun f1(x: Foo)
             fun f2(x: Foo, y: Foo): Int
             inline fun i1(block: () -> Foo)
@@ -62,7 +63,6 @@ class ContentsTest {
             fun <T, F> t3(x: T, y: F)
             inline fun <reified T> t4(x: T)
             fun <T : Number> t5(x: T)
-            fun Foo.e()
         }
         """.trimIndent()
     }
@@ -325,9 +325,9 @@ class ContentsTest {
     fun topLevelPropertiesWithClassesCustomPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesCustomPackage")) {
         """
         package custom.pkg {
-            typealias MyTransformer = (String) -> Int
             object Bar
             class Foo constructor()
+            typealias MyTransformer = (String) -> Int
         }
 
         package custom.pkg {
@@ -343,9 +343,9 @@ class ContentsTest {
     fun topLevelPropertiesWithClassesRootPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesRootPackage")) {
         """
         package <root> {
-            typealias MyTransformer = (String) -> Int
             object Bar
             class Foo constructor()
+            typealias MyTransformer = (String) -> Int
         }
 
         package <root> {

@@ -169,8 +169,8 @@ class FunctionCodegen(
                 isReifiable() ||
                 isDeprecatedHidden()
 
-        val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
-        val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
+        val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME) && origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
+        val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME) && origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
 
         return getVisibilityAccessFlag() or modalityFlag or
                 (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or

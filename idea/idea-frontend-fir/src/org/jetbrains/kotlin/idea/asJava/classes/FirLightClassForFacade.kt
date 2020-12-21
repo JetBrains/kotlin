@@ -12,29 +12,29 @@ import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.classes.*
-import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.classes.createField
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtDeclarationScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 class FirLightClassForFacade(
     manager: PsiManager,
@@ -50,75 +50,85 @@ class FirLightClassForFacade(
 
     override val clsDelegate: PsiClass get() = invalidAccess()
 
+    private val fileSymbols by lazyPub {
+        files.map { ktFile ->
+            analyze(ktFile) {
+                ktFile.getFileSymbol()
+            }
+        }
+    }
+
     private val _modifierList: PsiModifierList by lazyPub {
         if (multiFileClass)
             return@lazyPub LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
 
         val modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL)
 
-        //TODO make annotations for file site
-        val annotations: List<PsiAnnotation> = emptyList()
+        val annotations = fileSymbols.flatMap {
+            it.computeAnnotations(
+                this@FirLightClassForFacade,
+                NullabilityType.Unknown,
+                AnnotationUseSiteTarget.FILE,
+                includeAnnotationsWithoutSite = false
+            )
+        }
 
         FirLightClassModifierList(this@FirLightClassForFacade, modifiers, annotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    override fun getScope(): PsiElement? = parent
-
-    private fun loadMethodsFromFile(
-        file: KtFile,
-        result: MutableList<KtLightMethod>
-    ) {
-        val declarations = file.declarations
-            .filterIsInstance<KtNamedDeclaration>()
-            .filterNot { multiFileClass && it.isPrivate() }
-
-        if (declarations.isEmpty()) return
-
-        val symbols = analyze(file) {
-            declarations.mapNotNull {
-                it.getSymbol() as? KtCallableSymbol
-            }
-        }
-
-        createMethods(symbols.asSequence(), isTopLevel = true, result)
-    }
+    override fun getScope(): PsiElement = parent
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
         val result = mutableListOf<KtLightMethod>()
-        for (file in files) {
-            loadMethodsFromFile(file, result)
+
+
+        val methodsAndProperties = sequence<KtCallableSymbol> {
+            for (fileSymbol in fileSymbols) {
+                analyzeWithSymbolAsContext(fileSymbol) {
+                    for (callableSymbol in fileSymbol.getFileScope().getCallableSymbols()) {
+                        if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtKotlinPropertySymbol) continue
+                        if (callableSymbol !is KtSymbolWithVisibility) continue
+                        val isPrivate = callableSymbol.toPsiVisibilityForMember(isTopLevel = true) == PsiModifier.PRIVATE
+                        if (isPrivate && multiFileClass) continue
+                        yield(callableSymbol)
+                    }
+                }
+            }
         }
+        createMethods(methodsAndProperties, result, isTopLevel = true)
+
         result
     }
 
     private val multiFileClass: Boolean by lazyPub {
-        files.size > 1 || files.any { it.hasJvmMultifileClassAnnotation() }
+        files.size > 1 || fileSymbols.any { it.hasJvmMultifileClassAnnotation() }
     }
 
     private fun loadFieldsFromFile(
-        file: KtFile,
+        fileScope: KtDeclarationScope<KtSymbolWithDeclarations>,
         nameGenerator: FirLightField.FieldNameGenerator,
         result: MutableList<KtLightField>
     ) {
-        val properties = file.declarations
-            .filterIsInstance<KtProperty>()
-            .applyIf(multiFileClass) {
-                filter { it.hasModifier(KtTokens.CONST_KEYWORD) }
-            }
+        for (propertySymbol in fileScope.getCallableSymbols()) {
 
-        if (properties.isEmpty()) return
+            if (propertySymbol !is KtKotlinPropertySymbol) continue
 
-        val propertySymbols = analyze(file) {
-            properties.mapNotNull {
-                it.getSymbol() as? KtPropertySymbol
-            }
-        }
+            if (propertySymbol.isConst && multiFileClass) continue
 
-        for (propertySymbol in propertySymbols) {
-            val forceStaticAndPropertyVisibility = propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst
-                    || propertySymbol.hasJvmFieldAnnotation()
+            val isLateInitWithPublicAccessors = if (propertySymbol.isLateInit) {
+                val getterIsPublic = propertySymbol.getter?.toPsiVisibilityForMember(isTopLevel = true)
+                    ?.let { it == PsiModifier.PUBLIC } ?: true
+                val setterIsPublic = propertySymbol.setter?.toPsiVisibilityForMember(isTopLevel = true)
+                    ?.let { it == PsiModifier.PUBLIC } ?: true
+                getterIsPublic && setterIsPublic
+            } else false
+
+            val forceStaticAndPropertyVisibility = isLateInitWithPublicAccessors ||
+                    (propertySymbol.isConst) ||
+                    propertySymbol.hasJvmFieldAnnotation()
+
             createField(
                 propertySymbol,
                 nameGenerator,
@@ -134,8 +144,10 @@ class FirLightClassForFacade(
     private val _ownFields: List<KtLightField> by lazyPub {
         val result = mutableListOf<KtLightField>()
         val nameGenerator = FirLightField.FieldNameGenerator()
-        for (file in files) {
-            loadFieldsFromFile(file, nameGenerator, result)
+        for (fileSymbol in fileSymbols) {
+            analyzeWithSymbolAsContext(fileSymbol) {
+                loadFieldsFromFile(fileSymbol.getFileScope(), nameGenerator, result)
+            }
         }
         result
     }
@@ -240,6 +252,8 @@ class FirLightClassForFacade(
         if (this.hashCode() != other.hashCode()) return false
         if (manager != other.manager) return false
         if (facadeClassFqName != other.facadeClassFqName) return false
+        if (!fileSymbols.containsAll(other.fileSymbols)) return false
+        if (!other.fileSymbols.containsAll(fileSymbols)) return false
         return true
     }
 

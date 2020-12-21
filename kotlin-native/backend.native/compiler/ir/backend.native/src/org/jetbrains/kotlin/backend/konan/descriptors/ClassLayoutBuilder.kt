@@ -9,7 +9,7 @@ import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassLowering
@@ -363,9 +363,9 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
                 .toList()
     }
 
-    data class InterfaceTablePlace(val interfaceId: Int, val methodIndex: Int) {
+    data class InterfaceTablePlace(val interfaceId: Int, val itableSize: Int, val methodIndex: Int) {
         companion object {
-            val INVALID = InterfaceTablePlace(0, -1)
+            val INVALID = InterfaceTablePlace(0, -1, -1)
         }
     }
 
@@ -374,7 +374,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
         val itable = interfaceTableEntries
         val index = itable.indexOf(function)
         if (index >= 0)
-            return InterfaceTablePlace(hierarchyInfo.interfaceId, index)
+            return InterfaceTablePlace(hierarchyInfo.interfaceId, itable.size, index)
         val superFunction = function.overriddenSymbols.first().owner
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
     }
@@ -462,5 +462,5 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
 
     private val functionIds = mutableMapOf<IrFunction, Long>()
 
-    private val IrFunction.uniqueId get() = functionIds.getOrPut(this) { functionName.localHash.value }
+    private val IrFunction.uniqueId get() = functionIds.getOrPut(this) { computeFunctionName().localHash.value }
 }

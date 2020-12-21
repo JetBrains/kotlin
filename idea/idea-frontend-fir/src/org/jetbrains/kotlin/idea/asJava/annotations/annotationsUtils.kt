@@ -16,12 +16,17 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtFile
 
-internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
+internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
+
+internal fun KtFileSymbol.hasJvmMultifileClassAnnotation(): Boolean =
+    hasAnnotation("kotlin/jvm/JvmMultifileClass", AnnotationUseSiteTarget.FILE)
 
 internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): String? {
     val annotation = annotations.firstOrNull {
@@ -35,15 +40,14 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     }
 }
 
-internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean {
+internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean {
     require(this is KtFirSymbol<*>)
 
     return this.firRef.withFir(FirResolvePhase.TYPES) {
         if (it !is FirAnnotatedDeclaration) return@withFir false
 
         val deprecatedAnnotationCall = it.annotations.firstOrNull { annotationCall ->
-            val siteTarget = annotationCall.useSiteTarget
-            (siteTarget == null || siteTarget == annotationUseSiteTarget) &&
+            annotationCall.useSiteTarget == annotationUseSiteTarget &&
                     annotationCall.classId?.asString() == "kotlin/Deprecated"
         } ?: return@withFir false
 
@@ -56,6 +60,8 @@ internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: An
     }
 }
 
+internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(annotationUseSiteTarget: AnnotationUseSiteTarget? = null) =
+    isHiddenByDeprecation(annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmField", null)
@@ -77,8 +83,7 @@ internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean =
 
 internal fun KtAnnotatedSymbol.hasAnnotation(classIdString: String, annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
     annotations.any {
-        val siteTarget = it.useSiteTarget
-        (siteTarget == null || siteTarget == annotationUseSiteTarget) && it.classId?.asString() == classIdString
+        it.useSiteTarget == annotationUseSiteTarget && it.classId?.asString() == classIdString
     }
 
 internal fun KtAnnotatedSymbol.computeAnnotations(
@@ -120,10 +125,3 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
 
     return result
 }
-
-internal fun KtFile.hasJvmMultifileClassAnnotation(): Boolean = this.annotationEntries
-    .filter {
-        it.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.FILE
-    }.any {
-        it.shortName?.asString() == "JvmMultifileClass"
-    }

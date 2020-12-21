@@ -24,59 +24,19 @@ import org.jetbrains.kotlin.utils.SmartList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
-class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDependencies: List<Any>) {
+class KotlinClassInnerStuffCache(
+    private val myClass: PsiExtensibleClass,
+    externalDependencies: List<Any>,
+    private val lazyCreator: LazyCreator,
+) {
     private val myTracker = SimpleModificationTracker()
     private val dependencies: List<Any> = externalDependencies + myTracker
 
-    fun <T : Any> get(initializer: () -> T) = object : Lazy<T> {
-        private val lock = ReentrantLock()
-        private val holder = lazyPub {
-            PsiCachedValueImpl(PsiManager.getInstance(myClass.project),
-                               CachedValueProvider<T> {
-                                   val v = initializer()
-                                   CachedValueProvider.Result.create(v, dependencies)
-                               })
-        }
-
-        private fun computeValue(): T = holder.value.value ?: error("holder has not null in initializer")
-
-        override val value: T
-            get() {
-                return if (holder.value.hasUpToDateValue()) {
-                    computeValue()
-                } else {
-                    // the idea behind this locking approach:
-                    // Thread T1 starts to calculate value for A it acquires lock for A
-                    //
-                    // Assumption 1: Lets say A calculation requires another value e.g. B to be calculated
-                    // Assumption 2: Thread T2 wants to calculate value for B
-
-                    // to avoid dead-lock
-                    // - we mark thread as doing calculation and acquire lock only once per thread
-                    // as a trade-off to prevent dependent value could be calculated several time
-                    // due to CAS (within putUserDataIfAbsent etc) the same instance of calculated value will be used
-
-                    // TODO: NOTE: acquire lock for a several seconds to avoid dead-lock via resolve is a WORKAROUND
-
-                    if (!initIsRunning.get() && lock.tryLock(5, TimeUnit.SECONDS)) {
-                        try {
-                            initIsRunning.set(true)
-                            try {
-                                computeValue()
-                            } finally {
-                                initIsRunning.set(false)
-                            }
-                        } finally {
-                            lock.unlock()
-                        }
-                    } else {
-                        computeValue()
-                    }
-                }
-            }
-
-        override fun isInitialized() = holder.isInitialized()
+    abstract class LazyCreator {
+        abstract fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T>
     }
+
+    private fun <T : Any> get(initializer: () -> T): Lazy<T> = lazyCreator.get(initializer, dependencies)
 
     private val _getConstructors: Array<PsiMethod> by get { PsiImplUtil.getConstructors(myClass) }
 
@@ -234,9 +194,6 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
     companion object {
         private const val VALUES_METHOD = "values"
         private const val VALUE_OF_METHOD = "valueOf"
-
-        @JvmStatic
-        private val initIsRunning: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
         // Copy of PsiClassImplUtil.processDeclarationsInEnum for own cache class
         @JvmStatic

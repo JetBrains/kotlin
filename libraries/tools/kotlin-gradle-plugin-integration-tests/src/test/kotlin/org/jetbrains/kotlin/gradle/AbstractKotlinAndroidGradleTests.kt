@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
 import org.junit.Test
 import java.io.File
@@ -548,7 +549,7 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion
         )
 

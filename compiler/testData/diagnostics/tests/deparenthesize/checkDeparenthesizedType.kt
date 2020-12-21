@@ -16,7 +16,7 @@ fun test(i: Int?) {
     val a: Int = <!REDUNDANT_LABEL_WARNING!>l4@<!> <!TYPE_MISMATCH!>""<!>
     val b: Int = (<!TYPE_MISMATCH!>""<!>)
     val c: Int = checkSubtype<Int>(<!TYPE_MISMATCH!>""<!>)
-    val d: Int = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, TYPE_MISMATCH!>checkSubtype<Long>(<!TYPE_MISMATCH!>""<!>)<!>
+    val d: Int = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH!>checkSubtype<Long>(<!TYPE_MISMATCH!>""<!>)<!>
 
 
     foo(<!REDUNDANT_LABEL_WARNING!>l4@<!> <!TYPE_MISMATCH!>""<!>)

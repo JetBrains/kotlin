@@ -5,8 +5,8 @@
 
 package generators
 
-import java.io.*
 import templates.*
+import java.io.File
 import kotlin.system.exitProcess
 
 /**
@@ -71,8 +71,6 @@ fun main(args: Array<String>) {
         }
         targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")
     }
-
-    targetBaseDirs[KotlinTarget.WASM]?.let { generateWasmBuiltIns(it) }
 }
 
 fun File.resolveExistingDir(subpath: String) = resolve(subpath).also { it.requireExistingDir() }

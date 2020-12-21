@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.name.FqName
 
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
@@ -327,7 +325,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     fun methodTableRecords(irClass: IrClass): List<MethodTableRecord> {
         val functionNames = mutableMapOf<Long, OverriddenFunctionInfo>()
         return context.getLayoutBuilder(irClass).methodTableEntries.map {
-            val functionName = it.overriddenFunction.functionName
+            val functionName = it.overriddenFunction.computeFunctionName()
             val nameSignature = functionName.localHash
             val previous = functionNames.putIfAbsent(nameSignature.value, it)
             if (previous != null)
@@ -542,7 +540,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val methods = (methodTableRecords(superClass) + methodImpls.map { (method, impl) ->
             assert(method.parent == irClass)
-            MethodTableRecord(method.functionName.localHash, impl.bitcast(int8TypePtr))
+            MethodTableRecord(method.computeFunctionName().localHash, impl.bitcast(int8TypePtr))
         }).sortedBy { it.nameSignature.value }.also {
             assert(it.distinctBy { it.nameSignature.value } == it)
         }

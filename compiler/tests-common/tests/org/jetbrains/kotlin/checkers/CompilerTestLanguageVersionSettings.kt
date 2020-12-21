@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import org.junit.Assert
 import java.io.File
-import java.util.regex.Pattern
 
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
@@ -117,10 +117,8 @@ fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, envir
 private fun <T : Any> analysisFlag(flag: AnalysisFlag<T>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T>, T>? =
     value?.let(flag::to)
 
-private val languagePattern = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")
-
 private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
-    val matcher = languagePattern.matcher(directives)
+    val matcher = LANGUAGE_FEATURE_PATTERN.matcher(directives)
     if (!matcher.find()) {
         Assert.fail(
                 "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +

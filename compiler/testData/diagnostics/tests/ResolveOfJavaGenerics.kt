@@ -5,7 +5,7 @@ fun test(<!UNUSED_PARAMETER!>a<!> : java.lang.annotation.RetentionPolicy) {
 }
 
 fun test() {
-  java.util.Collections.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+  java.util.Collections.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>emptyList<!>()
   val <!UNUSED_VARIABLE!>a<!> : Collection<String>? = java.util.Collections.emptyList()
 }
 

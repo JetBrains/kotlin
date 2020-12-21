@@ -264,6 +264,13 @@ fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceEl
     }
 }
 
+fun FirSourceElement.realElement(): FirSourceElement = when (this) {
+    is FirRealPsiSourceElement<*> -> this
+    is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, FirRealSourceElementKind)
+    is FirPsiSourceElement<*> -> FirRealPsiSourceElement(psi)
+}
+
+
 class FirLightSourceElement(
     override val lighterASTNode: LighterASTNode,
     override val startOffset: Int,

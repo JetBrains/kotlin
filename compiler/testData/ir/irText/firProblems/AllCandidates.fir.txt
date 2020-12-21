@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/AllCandidates.kt
     VALUE_PARAMETER name:allCandidates index:0 type:kotlin.collections.Collection<<root>.MyCandidate>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='private final fun allCandidatesResult <A> (allCandidates: kotlin.collections.Collection<<root>.MyCandidate>): <root>.OverloadResolutionResultsImpl<A of <root>.allCandidatesResult?>? declared in <root>'
-        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply [inline] declared in kotlin' type=<root>.OverloadResolutionResultsImpl<A of <root>.allCandidatesResult?>? origin=null
+        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply [inline] declared in kotlin' type=<root>.OverloadResolutionResultsImpl<A of <root>.allCandidatesResult?>? origin=null
           <T>: <root>.OverloadResolutionResultsImpl<A of <root>.allCandidatesResult?>?
           $receiver: CALL 'public open fun nameNotFound <R> (): <root>.OverloadResolutionResultsImpl<R of <root>.OverloadResolutionResultsImpl.nameNotFound?>? declared in <root>.OverloadResolutionResultsImpl' type=<root>.OverloadResolutionResultsImpl<A of <root>.allCandidatesResult?>? origin=null
             <R>: A of <root>.allCandidatesResult?

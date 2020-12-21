@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.AGPVersion
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
@@ -16,7 +16,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion,
             configurationCache = true,
             configurationCacheProblems = ConfigurationCacheProblems.FAIL

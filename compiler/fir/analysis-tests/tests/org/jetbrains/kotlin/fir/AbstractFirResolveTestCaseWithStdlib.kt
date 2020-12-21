@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractFirDiagnosticsWithStdlibTest : AbstractFirDiagnosticsTest() {
 

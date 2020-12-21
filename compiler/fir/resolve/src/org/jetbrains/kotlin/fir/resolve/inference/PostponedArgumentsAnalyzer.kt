@@ -116,8 +116,7 @@ class PostponedArgumentsAnalyzer(
             c.canBeProper(rawReturnType) -> substitute(rawReturnType)
 
             // For Unit-coercion
-            c.hasUpperOrEqualUnitConstraint(rawReturnType) ->
-                if (rawReturnType.isMarkedNullable) unitType.withNullability(ConeNullability.NULLABLE) else unitType
+            !rawReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(rawReturnType) -> unitType
 
             else -> null
         }
@@ -130,7 +129,7 @@ class PostponedArgumentsAnalyzer(
             rawReturnType,
             stubsForPostponedVariables
         )
-        applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, candidate, results, ::substitute)
+        applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, candidate, results, expectedTypeForReturnArguments, ::substitute)
         return results
     }
 
@@ -139,6 +138,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom,
         candidate: Candidate,
         results: ReturnArgumentsAnalysisResult,
+        expectedReturnType: ConeKotlinType? = null,
         substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis()
     ) {
         val (returnArguments, inferenceSession) = results
@@ -164,21 +164,30 @@ class PostponedArgumentsAnalyzer(
 
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
 
+        val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
         var hasExpressionInReturnArguments = false
+        // No constraint for return expressions of lambda if it has Unit return type.
         val lambdaReturnType = lambda.returnType.let(substitute).takeUnless { it.isUnit }
         returnArguments.forEach {
             if (it !is FirExpression) return@forEach
             hasExpressionInReturnArguments = true
-            candidate.resolveArgumentExpression(
-                c.getBuilder(),
-                it,
-                lambdaReturnType,
-                lambda.atom.returnTypeRef, // TODO: proper ref
-                checkerSink,
-                context = resolutionContext,
-                isReceiver = false,
-                isDispatch = false
-            )
+            // If it is the last expression, and the expected type is Unit, that expression will be coerced to Unit.
+            // If the last expression is of Unit type, of course it's not coercion-to-Unit case.
+            val lastExpressionCoercedToUnit =
+                it == lastExpression && expectedReturnType?.isUnit == true && !it.typeRef.coneType.isUnit
+            // No constraint for the last expression of lambda if it will be coerced to Unit.
+            if (!lastExpressionCoercedToUnit) {
+                candidate.resolveArgumentExpression(
+                    c.getBuilder(),
+                    it,
+                    lambdaReturnType,
+                    lambda.atom.returnTypeRef, // TODO: proper ref
+                    checkerSink,
+                    context = resolutionContext,
+                    isReceiver = false,
+                    isDispatch = false
+                )
+            }
         }
 
         if (!hasExpressionInReturnArguments && lambdaReturnType != null) {

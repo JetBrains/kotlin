@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.lang.reflect.Field
 import java.util.*
@@ -32,7 +32,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     @Throws(java.lang.Exception::class)
     protected open fun doTest(filePath: String) {
         val file = File(filePath)
-        val expectedText = KotlinTestUtils.doLoadFile(file)
+        val expectedText = KtTestUtil.doLoadFile(file)
         doMultiFileTest(file, createTestFilesFromFile(file, expectedText))
     }
 

@@ -15,6 +15,7 @@
           <option value=":compiler:tests-against-klib:generateTests" />
           <option value=":js:js.tests:generateTests" />
           <option value=":core:descriptors.runtime:generateTests" />
+          <option value=":compiler:tests-common-new:generateTests" />
         </list>
       </option>
       <option name="vmOptions" value="" />

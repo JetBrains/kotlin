@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.builder.memberIndex
+import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-internal open class FirLightClassForSymbol(
+internal class FirLightClassForSymbol(
     private val classOrObjectSymbol: KtClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {
@@ -52,7 +54,7 @@ internal open class FirLightClassForSymbol(
 
     private val _modifierList: PsiModifierList? by lazyPub {
 
-        val modifiers = mutableSetOf(classOrObjectSymbol.computeVisibility(isTopLevel))
+        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel))
         classOrObjectSymbol.computeSimpleModality()?.run {
             modifiers.add(this)
         }
@@ -100,7 +102,8 @@ internal open class FirLightClassForSymbol(
                 }
             }
 
-            createMethods(visibleDeclarations, isTopLevel = false, result)
+            val suppressStatic = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
+            createMethods(visibleDeclarations, result, suppressStaticForMethods = suppressStatic)
         }
 
         if (result.none { it.isConstructor }) {
@@ -115,6 +118,8 @@ internal open class FirLightClassForSymbol(
                 )
             }
         }
+
+        addMethodsFromCompanionIfNeeded(result)
 
         result
     }
@@ -136,6 +141,17 @@ internal open class FirLightClassForSymbol(
                             takePropertyVisibility = true
                         )
                     }
+            }
+        }
+    }
+
+    private fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
+        classOrObjectSymbol.companionObject?.run {
+            analyzeWithSymbolAsContext(this) {
+                val methods = getDeclaredMemberScope().getCallableSymbols()
+                    .filterIsInstance<KtFunctionSymbol>()
+                    .filter { it.hasJvmStaticAnnotation() }
+                createMethods(methods, result)
             }
         }
     }
@@ -169,8 +185,9 @@ internal open class FirLightClassForSymbol(
             for (propertySymbol in propertySymbols) {
                 val isJvmField = propertySymbol.hasJvmFieldAnnotation()
                 val isJvmStatic = propertySymbol.hasJvmStaticAnnotation()
+
                 val forceStatic = isObject && (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst || isJvmStatic || isJvmField)
-                val takePropertyVisibility = !isCompanionObject && (isJvmField || (isObject && isJvmStatic))
+                val takePropertyVisibility = !isCompanionObject && (isJvmField || forceStatic)
 
                 createField(
                     declaration = propertySymbol,

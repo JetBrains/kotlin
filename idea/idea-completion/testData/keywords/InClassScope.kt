@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 class TestClass {
     <caret>
 }
@@ -24,6 +26,7 @@ class TestClass {
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
+// EXIST:  sealed interface
 // EXIST:  lateinit var
 // EXIST:  data class
 // EXIST:  inline

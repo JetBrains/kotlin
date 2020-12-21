@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJE
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
 import java.nio.file.FileSystemException
@@ -1053,7 +1053,7 @@ class KotlinGradleIT : BaseGradleIT() {
             ":lib1:compileDebugUnitTestKotlin",
             options = defaultBuildOptions().copy(
                 androidGradlePluginVersion = AGPVersion.v3_2_0,
-                androidHome = KotlinTestUtils.findAndroidSdk(),
+                androidHome = KtTestUtil.findAndroidSdk(),
             ),
         ) {
             assertSuccessful()

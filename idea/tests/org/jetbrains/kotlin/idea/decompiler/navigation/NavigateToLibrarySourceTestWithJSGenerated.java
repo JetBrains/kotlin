@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.MuteExtraSuffix;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/decompiler/navigation/usercode")
 @TestDataPath("$PROJECT_ROOT")
-@MuteExtraSuffix(".libsrcjs")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NavigateToLibrarySourceTestWithJSGenerated extends AbstractNavigateToLibrarySourceTestWithJS {
     private void runTest(String testDataFilePath) throws Exception {
@@ -27,7 +26,7 @@ public class NavigateToLibrarySourceTestWithJSGenerated extends AbstractNavigate
     }
 
     public void testAllFilesPresentInUsercodeWithJSModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("ClassObject.kt")

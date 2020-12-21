@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -131,6 +131,6 @@ public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonA
 
     @Override
     protected String getTestDataPath() {
-        return KotlinTestUtils.getHomeDirectory() + "/";
+        return KtTestUtil.getHomeDirectory() + "/";
     }
 }

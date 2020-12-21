@@ -5,181 +5,145 @@
 
 #include "Memory.h"
 
+#include "KAssert.h"
+
 ALWAYS_INLINE bool isFrozen(const ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 ObjHeader** ObjHeader::GetWeakCounterLocation() {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 #ifdef KONAN_OBJC_INTEROP
 
 void* ObjHeader::GetAssociatedObject() {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 void** ObjHeader::GetAssociatedObjectLocation() {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 void ObjHeader::SetAssociatedObject(void* obj) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 #endif // KONAN_OBJC_INTEROP
 
 static MetaObjHeader* createMetaObject(TypeInfo** location) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 static void destroyMetaObject(TypeInfo** location) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 extern "C" {
 
-void RestoreMemory(MemoryState*) {
-    // TODO: Remove this function when legacy MM is gone.
-}
-
 RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
-extern const bool IsStrictMemoryModel = true;
-
 RUNTIME_NOTHROW void SetStackRef(ObjHeader** location, const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW OBJ_GETTER(
         SwapHeapRefLocked, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock, int32_t* cookie) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock, int32_t* cookie) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 void MutationCheck(ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 void FreezeSubgraph(ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 void EnsureNeverFrozen(ObjHeader* obj) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void GC_RegisterWorker(void* worker) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void GC_UnregisterWorker(void* worker) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-bool Kotlin_Any_isShareable(ObjHeader* thiz) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 bool TryAddHeapRef(const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void ReleaseHeapRef(const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
+    TODO();
 }
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-void CheckGlobalsAccessible() {
-    // Globals are always accessible.
+    TODO();
 }
 
 } // extern "C"

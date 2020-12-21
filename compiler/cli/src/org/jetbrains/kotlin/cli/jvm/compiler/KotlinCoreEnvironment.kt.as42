@@ -456,6 +456,20 @@ class KotlinCoreEnvironment private constructor(
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
 
+        @TestOnly
+        @JvmStatic
+        fun createForTests(
+            projectEnvironment: ProjectEnvironment, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+        ): KotlinCoreEnvironment {
+            return KotlinCoreEnvironment(projectEnvironment, initialConfiguration, extensionConfigs)
+        }
+
+        @TestOnly
+        fun createProjectEnvironmentForTests(parentDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
+            val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+            return ProjectEnvironment(parentDisposable, appEnv)
+        }
+
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
 

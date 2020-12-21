@@ -46,7 +46,7 @@ class BuildDiffsStorageTest {
         val diff = BuildDifference(100, true, DirtyData(lookupSymbols, fqNames))
         val diffs = BuildDiffsStorage(listOf(diff))
         Assert.assertEquals(
-            "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz]))])",
+            "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz], dirtyClassesFqNamesForceRecompile=[]))])",
             diffs.toString()
         )
     }

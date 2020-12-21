@@ -14,7 +14,7 @@ fun test1(s1: String?) {
         return
     }
     finally {
-        <!OI;DEBUG_INFO_SMARTCAST!>s<!><!NI;UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_SMARTCAST{OI}!>s<!><!UNSAFE_CALL{NI}!>.<!>length
     }
     <!DEBUG_INFO_SMARTCAST!>s<!>.length
 }

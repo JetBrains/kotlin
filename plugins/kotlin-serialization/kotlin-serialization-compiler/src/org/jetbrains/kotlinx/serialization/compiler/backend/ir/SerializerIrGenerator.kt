@@ -25,8 +25,11 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializerCodegenImpl
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializerForEnumsCodegen
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -38,6 +41,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ST
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UNKNOWN_FIELD_EXC
 
 object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER", true)
+
+internal typealias FunctionWithArgs = Pair<IrFunctionSymbol, List<IrExpression>>
 
 open class SerializerIrGenerator(
     val irClass: IrClass,
@@ -138,7 +143,7 @@ open class SerializerIrGenerator(
             if (classProp.transient) continue
             +addFieldCall(classProp)
             // add property annotations
-            val property = classProp.irProp
+            val property = classProp.getIrPropertyFrom(serializableIrClass)
             copySerialInfoAnnotationsToDescriptor(
                 property.annotations,
                 localDescriptor,
@@ -268,7 +273,7 @@ open class SerializerIrGenerator(
                 irGet(
                     type = ownerType,
                     variable = objectToSerialize.symbol
-                ), irProp
+                ), getIrPropertyFrom(serializableIrClass)
             )
         }
 
@@ -286,22 +291,7 @@ open class SerializerIrGenerator(
         //  internal serialization via virtual calls?
         for ((index, property) in serializableProperties.filter { !it.transient }.withIndex()) {
             // output.writeXxxElementValue(classDesc, index, value)
-            val sti = getSerialTypeInfo(property)
-            val innerSerial = serializerInstance(
-                this@SerializerIrGenerator,
-                saveFunc.dispatchReceiverParameter!!,
-                sti.serializer,
-                property.module,
-                property.type,
-                genericIndex = property.genericIndex
-            )
-            val (writeFunc, args: List<IrExpression>) = if (innerSerial == null) {
-                val f =
-                    kOutputClass.referenceMethod("${CallingConventions.encode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                val args: MutableList<IrExpression> = mutableListOf(irGet(localSerialDesc), irInt(index))
-                if (sti.elementMethodPrefix != "Unit") args.add(property.irGet())
-                f to args
-            } else {
+            val elementCall = formEncodeDecodePropertyCall(irGet(localOutput), saveFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
                 val f =
                     kOutputClass.referenceMethod("${CallingConventions.encode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
                 f to listOf(
@@ -310,9 +300,13 @@ open class SerializerIrGenerator(
                     innerSerial,
                     property.irGet()
                 )
-            }
-            val typeArgs  = if (writeFunc.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
-            val elementCall = irInvoke(irGet(localOutput), writeFunc, typeArguments = typeArgs, valueArguments = args)
+            }, {
+                val f =
+                    kOutputClass.referenceMethod("${CallingConventions.encode}${it.elementMethodPrefix}${CallingConventions.elementPostfix}")
+                val args: MutableList<IrExpression> = mutableListOf(irGet(localSerialDesc), irInt(index))
+                if (it.elementMethodPrefix != "Unit") args.add(property.irGet())
+                f to args
+            })
 
             // check for call to .shouldEncodeElementDefault
             if (!property.optional || index < ignoreIndexTo) {
@@ -335,6 +329,28 @@ open class SerializerIrGenerator(
         // output.writeEnd(serialClassDesc)
         val wEndFunc = kOutputClass.referenceMethod(CallingConventions.end)
         +irInvoke(irGet(localOutput), wEndFunc, irGet(localSerialDesc))
+    }
+
+    protected inline fun IrBlockBodyBuilder.formEncodeDecodePropertyCall(
+        encoder: IrExpression,
+        dispatchReceiver: IrValueParameter,
+        property: SerializableProperty,
+        whenHaveSerializer: (serializer: IrExpression, sti: SerialTypeInfo) -> FunctionWithArgs,
+        whenDoNot: (sti: SerialTypeInfo) -> FunctionWithArgs,
+        returnTypeHint: IrType? = null
+    ): IrExpression {
+        val sti = getSerialTypeInfo(property)
+        val innerSerial = serializerInstance(
+            this@SerializerIrGenerator,
+            dispatchReceiver,
+            sti.serializer,
+            property.module,
+            property.type,
+            genericIndex = property.genericIndex
+        )
+        val (functionToCall, args: List<IrExpression>) = if (innerSerial != null) whenHaveSerializer(innerSerial, sti) else whenDoNot(sti)
+        val typeArgs = if (functionToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
+        return irInvoke(encoder, functionToCall, typeArguments = typeArgs, valueArguments = args, returnTypeHint = returnTypeHint)
     }
 
     // returns null: Any? for boxed types and 0: <number type> for primitives
@@ -403,33 +419,23 @@ open class SerializerIrGenerator(
         val decoderCalls: List<Pair<Int, IrExpression>> =
             serializableProperties.mapIndexed { index, property ->
                 val body = irBlock {
-                    val sti = getSerialTypeInfo(property)
-                    val innerSerial = serializerInstance(
-                        this@SerializerIrGenerator,
-                        loadFunc.dispatchReceiverParameter!!,
-                        sti.serializer,
-                        property.module,
-                        property.type,
-                        genericIndex = property.genericIndex
-                    )
-                    val isSerializable = innerSerial != null
-                    val decodeFuncToCall =
-                        (if (isSerializable) "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}"
-                        else "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                            .let {
-                                inputClass.referenceMethod(it) { it.valueParameters.size == if (isSerializable) 4 else 2 }
-                            }
-                    val typeArgs =
-                        if (decodeFuncToCall.descriptor.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
-                    val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
-                    if (isSerializable) {
-                        args.add(innerSerial!!)
-                        args.add(localProps[index].get())
-                    }
+                    val decodeFuncToCall = formEncodeDecodePropertyCall(localInput.get(), loadFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
+                        inputClass.referenceMethod(
+                            "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}", {it.valueParameters.size == 4}
+                        ) to listOf(
+                            localSerialDesc.get(), irInt(index), innerSerial, localProps[index].get()
+                        )
+                    }, {
+                        inputClass.referenceMethod(
+                            "${CallingConventions.decode}${it.elementMethodPrefix}${CallingConventions.elementPostfix}", {it.valueParameters.size == 2}
+                        ) to listOf(
+                            localSerialDesc.get(), irInt(index)
+                        )
+                    }, returnTypeHint = property.type.toIrType())
                     // local$i = localInput.decode...(...)
                     +irSet(
                         localProps[index].symbol,
-                        irInvoke(localInput.get(), decodeFuncToCall, typeArgs, args, returnTypeHint = property.type.toIrType())
+                        decodeFuncToCall
                     )
                     // bitMask[i] |= 1 << x
                     val bitPos = 1 shl (index % 32)
@@ -507,11 +513,12 @@ open class SerializerIrGenerator(
             serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
-            if (serializableDesc.isSerializableEnum()) {
-                SerializerForEnumsGenerator(irClass, context, bindingContext, serialInfoJvmGenerator).generate()
-            } else {
-                SerializerIrGenerator(irClass, context, bindingContext, metadataPlugin, serialInfoJvmGenerator).generate()
+            val generator = when {
+                serializableDesc.isSerializableEnum() -> SerializerForEnumsGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
+                serializableDesc.isInline -> SerializerForInlineClassGenerator(irClass, context, bindingContext, serialInfoJvmGenerator)
+                else -> SerializerIrGenerator(irClass, context, bindingContext, metadataPlugin, serialInfoJvmGenerator)
             }
+            generator.generate()
             irClass.patchDeclarationParents(irClass.parent)
         }
     }

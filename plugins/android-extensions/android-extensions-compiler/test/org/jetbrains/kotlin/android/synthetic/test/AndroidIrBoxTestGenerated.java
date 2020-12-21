@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.android.synthetic.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class AndroidIrBoxTestGenerated extends AbstractAndroidIrBoxTest {
         }
 
         public void testAllFilesPresentInAndroid() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("androidEntity")
@@ -91,7 +92,7 @@ public class AndroidIrBoxTestGenerated extends AbstractAndroidIrBoxTest {
         }
 
         public void testAllFilesPresentInInvoke() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("androidEntity")

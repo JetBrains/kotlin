@@ -436,8 +436,8 @@ class DiagnosticReporterByTrackingStrategy(
 
                 if (isSpecialFunction(error.resolvedAtom))
                     return
-
                 val expression = when (val atom = error.resolvedAtom.atom) {
+                    is PSIKotlinCallForInvoke -> (atom.psiCall as? CallTransformer.CallForImplicitInvoke)?.outerCall?.calleeExpression
                     is PSIKotlinCall -> atom.psiCall.calleeExpression
                     is PSIKotlinCallArgument -> atom.valueArgument.getArgumentExpression()
                     else -> call.calleeExpression

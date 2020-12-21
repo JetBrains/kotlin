@@ -6,6 +6,7 @@
 package test.random
 
 import kotlin.math.*
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.random.*
 import kotlin.test.*
 
@@ -566,6 +567,7 @@ class DefaultRandomSmokeTest : RandomSmokeTest() {
     override val subject: Random get() = Random
 }
 
+@ThreadLocal
 private val seededRandomSmokeTestSubject = Random(Random.nextInt().also { println("Seed: $it") })
 
 class SeededRandomSmokeTest : RandomSmokeTest() {

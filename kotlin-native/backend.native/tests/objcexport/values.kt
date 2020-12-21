@@ -1012,3 +1012,12 @@ fun mutULong2Long(): MutableMap<ULong, Long> = mutableMapOf(Pair(0x8000_0000_000
 fun mutFloat2Float(): MutableMap<Float, Float> = mutableMapOf(Pair(3.14f, 100f))
 fun mutDouble2String(): MutableMap<Double, String> = mutableMapOf(Pair(2.718281828459045, "2.718281828459045"))
 
+interface Foo_FakeOverrideInInterface<T> {
+    fun foo(t: T?)
+}
+
+interface Bar_FakeOverrideInInterface : Foo_FakeOverrideInInterface<String>
+
+fun callFoo_FakeOverrideInInterface(obj: Bar_FakeOverrideInInterface) {
+    obj.foo(null)
+}

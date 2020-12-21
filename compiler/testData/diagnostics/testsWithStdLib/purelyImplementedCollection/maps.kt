@@ -15,9 +15,9 @@ fun hashMapTest() {
     x.put(<!TYPE_MISMATCH!>bar()<!>, 1)
     x.put("", 1)
 
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;NULL_FOR_NONNULL_TYPE!>null<!>]<!> = 1
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;TYPE_MISMATCH!>bar()<!>]<!> = 1
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[<!NULL_FOR_NONNULL_TYPE{NI}!>null<!>]<!> = 1
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[<!TYPE_MISMATCH{NI}!>bar()<!>]<!> = 1
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[""]<!> = <!TYPE_MISMATCH{NI}!>nullableInt<!>
     x[""] = 1
 
     val b1: MutableMap<String, Int?> = <!TYPE_MISMATCH!>x<!>
@@ -39,9 +39,9 @@ fun treeMapTest() {
     x.put(<!TYPE_MISMATCH!>bar()<!>, 1)
     x.put("", 1)
 
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;NULL_FOR_NONNULL_TYPE!>null<!>]<!> = 1
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;TYPE_MISMATCH!>bar()<!>]<!> = 1
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[<!NULL_FOR_NONNULL_TYPE{NI}!>null<!>]<!> = 1
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[<!TYPE_MISMATCH{NI}!>bar()<!>]<!> = 1
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[""]<!> = <!TYPE_MISMATCH{NI}!>nullableInt<!>
     x[""] = 1
 
     val b1: MutableMap<String, Int?> = <!TYPE_MISMATCH!>x<!>
@@ -63,9 +63,9 @@ fun concurrentHashMapTest() {
     x.put(<!TYPE_MISMATCH!>bar()<!>, 1)
     x.put("", 1)
 
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;NULL_FOR_NONNULL_TYPE!>null<!>]<!> = 1
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[<!NI;TYPE_MISMATCH!>bar()<!>]<!> = 1
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>x[""]<!> = <!NI;TYPE_MISMATCH!>nullableInt<!>
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[<!NULL_FOR_NONNULL_TYPE{NI}!>null<!>]<!> = 1
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[<!TYPE_MISMATCH{NI}!>bar()<!>]<!> = 1
+    <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>x[""]<!> = <!TYPE_MISMATCH{NI}!>nullableInt<!>
     x[""] = 1
 
     val b1: MutableMap<String, Int?> = <!TYPE_MISMATCH!>x<!>

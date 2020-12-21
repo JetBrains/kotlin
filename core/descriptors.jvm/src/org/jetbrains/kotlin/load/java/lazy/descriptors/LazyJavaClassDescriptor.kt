@@ -208,16 +208,21 @@ class LazyJavaClassDescriptor(
 
             for (javaType in javaTypes) {
                 val kotlinType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                if (kotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
+                val areImprovementsEnabled = c.components.settings.typeEnhancementImprovements
+                val enhancedKotlinType = if (areImprovementsEnabled) {
+                    c.components.signatureEnhancement.enhanceSuperType(kotlinType, c)
+                } else kotlinType
+
+                if (enhancedKotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
                     incomplete.add(javaType)
                 }
 
-                if (kotlinType.constructor == purelyImplementedSupertype?.constructor) {
+                if (enhancedKotlinType.constructor == purelyImplementedSupertype?.constructor) {
                     continue
                 }
 
-                if (!KotlinBuiltIns.isAnyOrNullableAny(kotlinType)) {
-                    result.add(kotlinType)
+                if (!KotlinBuiltIns.isAnyOrNullableAny(enhancedKotlinType)) {
+                    result.add(enhancedKotlinType)
                 }
             }
 

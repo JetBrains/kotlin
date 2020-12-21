@@ -58,11 +58,8 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
 
     private fun KtSymbol.hasNoFirElementLeak(): LeakCheckResult {
         require(this is KtFirSymbol<*>)
-        return try {
-            firRef.withFir { LeakCheckResult.Leak(this::class.simpleName!!) }
-        } catch (_: EntityWasGarbageCollectedException) {
-            LeakCheckResult.NoLeak
-        }
+        return if (firRef.isCollected()) LeakCheckResult.NoLeak
+        else LeakCheckResult.Leak(this::class.simpleName!!)
     }
 
     private sealed class LeakCheckResult {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class PartialRawFirBuilderTestCaseGenerated extends AbstractPartialRawFir
     }
 
     public void testAllFilesPresentInPartialRawBuilder() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("localFunction.kt")

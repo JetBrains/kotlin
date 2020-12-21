@@ -25,7 +25,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates", "linked/exceptions", "linked/operator-call", "linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "linked/overloadable-operators");
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates", "linked/exceptions", "linked/operator-call", "linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "linked/overloadable-operators");
     }
 
     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked")
@@ -37,7 +37,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "operator-call", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overloadable-operators");
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "operator-call", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overloadable-operators");
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")
@@ -49,7 +49,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInExpressions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression")
@@ -61,7 +61,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInAdditive_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2")
@@ -73,7 +73,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos")
@@ -95,7 +95,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -110,7 +110,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInBuilt_in_types_and_their_semantics() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1")
@@ -122,7 +122,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInKotlin_nothing_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1")
@@ -134,7 +134,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos")
@@ -196,7 +196,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -211,7 +211,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInKotlin_unit() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1")
@@ -223,7 +223,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos")
@@ -240,7 +240,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -256,7 +256,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInCast_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1")
@@ -268,7 +268,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1/pos")
@@ -285,7 +285,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/cast-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -300,7 +300,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInComparison_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1")
@@ -312,7 +312,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos")
@@ -344,7 +344,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -359,7 +359,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInConditional_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1")
@@ -371,7 +371,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos")
@@ -423,7 +423,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -437,7 +437,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2/pos")
@@ -454,7 +454,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -468,7 +468,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_6() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6/pos")
@@ -485,7 +485,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/conditional-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -500,7 +500,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInConstant_literals() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals")
@@ -512,7 +512,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInBoolean_literals() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1")
@@ -524,7 +524,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos")
@@ -666,7 +666,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/boolean-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -681,7 +681,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInCharacter_literals() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4")
@@ -693,7 +693,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4/pos")
@@ -710,7 +710,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -725,7 +725,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInInteger_literals() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals")
@@ -737,7 +737,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInBinary_integer_literals() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1")
@@ -749,7 +749,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos")
@@ -771,7 +771,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -786,7 +786,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInDecimal_integer_literals() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1")
@@ -798,7 +798,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos")
@@ -820,7 +820,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -835,7 +835,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInHexadecimal_integer_literals() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1")
@@ -847,7 +847,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos")
@@ -869,7 +869,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -885,7 +885,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInReal_literals() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1")
@@ -897,7 +897,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos")
@@ -919,7 +919,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -933,7 +933,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos")
@@ -955,7 +955,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -969,7 +969,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos")
@@ -1016,7 +1016,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1030,7 +1030,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos")
@@ -1067,7 +1067,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1082,7 +1082,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInThe_types_for_integer_literals() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1")
@@ -1094,7 +1094,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos")
@@ -1121,7 +1121,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1137,7 +1137,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInElvis_operator_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1")
@@ -1149,7 +1149,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1/pos")
@@ -1166,7 +1166,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/elvis-operator-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1181,7 +1181,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInEquality_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions")
@@ -1193,7 +1193,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInReference_equality_expressions() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1")
@@ -1205,7 +1205,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos")
@@ -1247,7 +1247,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1261,7 +1261,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos")
@@ -1288,7 +1288,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1303,7 +1303,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInValue_equality_expressions() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2")
@@ -1315,7 +1315,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos")
@@ -1377,7 +1377,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/value-equality-expressions/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1393,7 +1393,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInIndexing_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3")
@@ -1405,7 +1405,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_3() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos")
@@ -1442,7 +1442,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/indexing-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1457,7 +1457,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInJump_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression")
@@ -1469,7 +1469,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInBreak_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3")
@@ -1481,7 +1481,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos")
@@ -1513,7 +1513,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/break-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1528,7 +1528,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInContinue_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3")
@@ -1540,7 +1540,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos")
@@ -1572,7 +1572,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/continue-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1587,7 +1587,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInReturn_expressions() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1")
@@ -1599,7 +1599,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos")
@@ -1626,7 +1626,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1640,7 +1640,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos")
@@ -1662,7 +1662,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/jump-expressions/return-expressions/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1678,7 +1678,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInLogical_conjunction_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1")
@@ -1690,7 +1690,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos")
@@ -1717,7 +1717,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1732,7 +1732,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInLogical_disjunction_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1")
@@ -1744,7 +1744,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos")
@@ -1771,7 +1771,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/logical-disjunction-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1786,7 +1786,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInMultiplicative_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2")
@@ -1798,7 +1798,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos")
@@ -1825,7 +1825,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/multiplicative-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1840,7 +1840,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInNot_null_assertion_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2")
@@ -1852,7 +1852,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos")
@@ -1879,7 +1879,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1894,7 +1894,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInPostfix_operator_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression")
@@ -1906,7 +1906,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInPostfix_decrement_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1")
@@ -1918,7 +1918,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos")
@@ -1940,7 +1940,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1954,7 +1954,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos")
@@ -1976,7 +1976,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -1990,7 +1990,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5/pos")
@@ -2007,7 +2007,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2021,7 +2021,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_6() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos")
@@ -2043,7 +2043,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2058,7 +2058,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInPostfix_increment_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1")
@@ -2070,7 +2070,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos")
@@ -2092,7 +2092,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2106,7 +2106,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos")
@@ -2128,7 +2128,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2142,7 +2142,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5/pos")
@@ -2159,7 +2159,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2173,7 +2173,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_6() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos")
@@ -2195,7 +2195,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2211,7 +2211,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInPrefix_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression")
@@ -2223,7 +2223,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInLogical_not_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2")
@@ -2235,7 +2235,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2/pos")
@@ -2252,7 +2252,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2267,7 +2267,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInPrefix_decrement_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1")
@@ -2279,7 +2279,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos")
@@ -2301,7 +2301,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2315,7 +2315,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos")
@@ -2337,7 +2337,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2351,7 +2351,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos")
@@ -2368,7 +2368,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2382,7 +2382,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_6() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos")
@@ -2404,7 +2404,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2419,7 +2419,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInPrefix_increment_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1")
@@ -2431,7 +2431,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos")
@@ -2453,7 +2453,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2467,7 +2467,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos")
@@ -2489,7 +2489,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2503,7 +2503,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/pos")
@@ -2520,7 +2520,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2534,7 +2534,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_6() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos")
@@ -2556,7 +2556,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2571,7 +2571,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInUnary_minus_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2")
@@ -2583,7 +2583,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2/pos")
@@ -2600,7 +2600,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2615,7 +2615,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInUnary_plus_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2")
@@ -2627,7 +2627,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos")
@@ -2644,7 +2644,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2660,7 +2660,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInRange_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2")
@@ -2672,7 +2672,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2/pos")
@@ -2689,7 +2689,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -2704,7 +2704,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInTry_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2")
@@ -2716,7 +2716,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/neg")
@@ -2733,7 +2733,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
 
@@ -2771,7 +2771,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -2785,7 +2785,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/neg")
@@ -2802,7 +2802,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
 
@@ -2830,7 +2830,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -2844,7 +2844,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_6() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6/pos")
@@ -2861,7 +2861,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -2875,7 +2875,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_7() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7/pos")
@@ -2892,7 +2892,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/try-expression/p-7/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -2907,7 +2907,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInType_checking_and_containment_checking_expressions() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression")
@@ -2919,7 +2919,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInContainment_checking_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2")
@@ -2931,7 +2931,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos")
@@ -2953,7 +2953,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -2967,7 +2967,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos")
@@ -2989,7 +2989,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3003,7 +3003,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/neg")
@@ -3020,7 +3020,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3035,7 +3035,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInType_checking_expression() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1")
@@ -3047,7 +3047,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/neg")
@@ -3059,7 +3059,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -3082,7 +3082,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3096,7 +3096,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg")
@@ -3113,7 +3113,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3127,7 +3127,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_5() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos")
@@ -3144,7 +3144,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3160,7 +3160,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInWhen_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4")
@@ -3172,7 +3172,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_4() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg")
@@ -3204,7 +3204,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
 
@@ -3237,7 +3237,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -3251,7 +3251,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg")
@@ -3268,7 +3268,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
 
@@ -3286,7 +3286,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/when-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -3302,7 +3302,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInOverload_resolution() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), null, true, "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver");
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), null, true, "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver");
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs")
@@ -3314,7 +3314,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInBuilding_the_overload_candidate_set_ocs() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), null, true, "call-with-an-explicit-receiver");
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs"), Pattern.compile("^(.+)\\.kt$"), null, true, "call-with-an-explicit-receiver");
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call")
@@ -3326,7 +3326,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInInfix_function_call() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2")
@@ -3338,7 +3338,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos")
@@ -3355,7 +3355,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3370,7 +3370,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInOperator_call() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1")
@@ -3382,7 +3382,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg")
@@ -3424,7 +3424,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -3487,7 +3487,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3501,7 +3501,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos")
@@ -3563,7 +3563,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3579,7 +3579,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInCallables_and_invoke_convention() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5")
@@ -3591,7 +3591,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos")
@@ -3648,7 +3648,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/callables-and-invoke-convention/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -3663,7 +3663,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInChoosing_the_most_specific_candidate_from_the_overload_candidate_set() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection")
@@ -3675,7 +3675,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInAlgorithm_of_msc_selection() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3")
@@ -3687,7 +3687,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos")
@@ -3709,7 +3709,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3725,7 +3725,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInReceivers() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6")
@@ -3737,7 +3737,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_6() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos")
@@ -3774,7 +3774,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -3790,7 +3790,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInStatements() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments")
@@ -3802,7 +3802,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInAssignments() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments")
@@ -3814,7 +3814,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInOperator_assignments() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2")
@@ -3826,7 +3826,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg")
@@ -3888,7 +3888,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -3951,7 +3951,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/operator-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -3966,7 +3966,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInSimple_assignments() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2")
@@ -3978,7 +3978,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos")
@@ -4045,7 +4045,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -4059,7 +4059,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_6() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6/pos")
@@ -4076,7 +4076,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/assignments/simple-assignments/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -4092,7 +4092,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInLoop_statements() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement")
@@ -4104,7 +4104,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInDo_while_loop_statement() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1")
@@ -4116,7 +4116,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos")
@@ -4138,7 +4138,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -4153,7 +4153,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInWhile_loop_statement() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1")
@@ -4165,7 +4165,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos")
@@ -4187,7 +4187,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/while-loop-statement/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -4204,7 +4204,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInType_system() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1")
@@ -4216,7 +4216,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInIntroduction_1() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5")
@@ -4228,7 +4228,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInP_5() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5/pos")
@@ -4245,7 +4245,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/introduction-1/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -4260,7 +4260,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInType_kinds() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types")
@@ -4272,7 +4272,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInBuilt_in_types() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing")
@@ -4284,7 +4284,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
 
                         public void testAllFilesPresentInKotlin_nothing() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1")
@@ -4296,7 +4296,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos")
@@ -4318,7 +4318,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -4337,7 +4337,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInNotLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/annotations")
@@ -4349,7 +4349,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInAnnotations() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/annotations/type-annotations")
@@ -4361,7 +4361,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInType_annotations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/annotations/type-annotations/neg")
@@ -4428,7 +4428,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInNeg() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/annotations/type-annotations/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/annotations/type-annotations/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
                 }
             }
@@ -4443,7 +4443,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInFlexibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/flexibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/flexibility"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg")
@@ -4465,7 +4465,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInNeg() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/flexibility/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
             }
         }
@@ -4479,7 +4479,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
 
             public void testAllFilesPresentInObjects() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance")
@@ -4491,7 +4491,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
 
                 public void testAllFilesPresentInInheritance() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg")
@@ -4598,7 +4598,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInNeg() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
                 }
 
@@ -4621,7 +4621,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     }
 
                     public void testAllFilesPresentInPos() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/notLinked/objects/inheritance/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
                 }
             }

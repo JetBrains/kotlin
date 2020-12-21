@@ -11,5 +11,5 @@ open class B1 {
 }
 
 class D1 : B1() {
-    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER("public open fun foo(): Unit defined in D1", "private open fun foo(): Unit defined in B1")!>override<!> fun foo() {}
+    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER("public open fun foo(): Unit defined in D1; private open fun foo(): Unit defined in B1")!>override<!> fun foo() {}
 }

@@ -18,19 +18,37 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.properties.*
 
-interface ClangFlags : TargetableExternalStorage {
+interface RelocationModeFlags : TargetableExternalStorage {
+    val dynamicLibraryRelocationMode get() = targetString("dynamicLibraryRelocationMode").mode()
+    val staticLibraryRelocationMode get()  = targetString("staticLibraryRelocationMode").mode()
+    val executableRelocationMode get() = targetString("executableRelocationMode").mode()
+
+    private fun String?.mode(): Mode = when (this?.toLowerCase()) {
+        null -> Mode.DEFAULT
+        "pic" -> Mode.PIC
+        "static" -> Mode.STATIC
+        else -> error("Unknown relocation mode: $this")
+    }
+
+    enum class Mode {
+        PIC,
+        STATIC,
+        DEFAULT
+    }
+}
+
+interface ClangFlags : TargetableExternalStorage, RelocationModeFlags {
     val clangFlags get()        = targetList("clangFlags")
     val clangNooptFlags get()   = targetList("clangNooptFlags")
     val clangOptFlags get()     = targetList("clangOptFlags")
     val clangDebugFlags get()   = targetList("clangDebugFlags")
-    val clangDynamicFlags get() = targetList("clangDynamicFlags")
 }
 
 interface LldFlags : TargetableExternalStorage {
     val lldFlags get()      = targetList("lld")
 }
 
-interface Configurables : TargetableExternalStorage {
+interface Configurables : TargetableExternalStorage, RelocationModeFlags {
 
     val target: KonanTarget
 
@@ -94,6 +112,11 @@ interface GccConfigurables : TargetableConfigurables, ClangFlags {
     val dynamicLinker get() = targetString("dynamicLinker")!!
     val abiSpecificLibraries get() = targetList("abiSpecificLibraries")
     val crtFilesLocation get() = targetString("crtFilesLocation")!!
+
+    val linker get() = hostTargetString("linker")
+    val linkerHostSpecificFlags get() = hostTargetList("linkerHostSpecificFlags")
+    val absoluteLinker get() = absolute(linker)
+
     val linkerGccFlags get() = targetList("linkerGccFlags")
 }
 

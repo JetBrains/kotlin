@@ -1,5 +1,5 @@
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
+fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
     val collector: FlowCollector<ErrorType> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
@@ -10,7 +10,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType @Exten
 )
 }
 
-fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T> {
+fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T> {
   return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
     val safeCollector: SafeCollector<ErrorType> = SafeCollector<T>(collector = <this>)
     safeCollector.invokeSafely<T>(action = action)
@@ -18,11 +18,11 @@ fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType @ExtensionFun
 )
 }
 
-suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>) {
+suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>) {
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
+inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   return TODO()
 }
 
@@ -84,12 +84,12 @@ class SafeCollector<T : Any?> : FlowCollector<T> {
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-fun <T : Any?> flow(@BuilderInference block: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
+fun <T : Any?> flow(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   return TODO()
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-suspend fun <R : Any?> flowScope(@BuilderInference block: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
+suspend fun <R : Any?> flowScope(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
   return TODO()
 }
 
@@ -127,7 +127,7 @@ interface ReceiveChannel<out E : Any?> {
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-fun <E : Any?> CoroutineScope.produce(@BuilderInference block: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
+fun <E : Any?> CoroutineScope.produce(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
   return TODO()
 }
 

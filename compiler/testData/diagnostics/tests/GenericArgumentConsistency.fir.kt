@@ -1,4 +1,4 @@
-// FILE: b.kt
+// FILE: a.kt
 interface A<in T> {}
 interface B<T> : A<Int> {}
 interface C<T> : B<T>, A<T> {}
@@ -21,21 +21,21 @@ package x
     interface AB3 : AA1<Comparable<Int>> {}
     interface AB2 : AA1<Number>, AB1, AB3 {}
 
-// FILE: b.kt
+// FILE: c.kt
 package x2
     interface AA1<out T> {}
     interface AB1 : AA1<Any> {}
     interface AB3 : AA1<Comparable<Int>> {}
     interface AB2 : AA1<Number>, AB1, AB3 {}
 
-// FILE: b.kt
+// FILE: d.kt
 package x3
     interface AA1<in T> {}
     interface AB1 : AA1<Any> {}
     interface AB3 : AA1<Comparable<Int>> {}
     interface AB2 : AA1<Number>, AB1, AB3 {}
 
-// FILE: b.kt
+// FILE: e.kt
 package sx2
     interface AA1<in T> {}
     interface AB1 : AA1<Int> {}

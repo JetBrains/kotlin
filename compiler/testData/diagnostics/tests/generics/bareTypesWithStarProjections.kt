@@ -1,9 +1,8 @@
+// FIR_IDENTICAL
 // SKIP_TXT
-// IGNORE_FIR
 // !CHECK_TYPE
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !FIR_IGNORE
 
 interface FirMemberDeclaration : FirDeclaration
 interface TypeConstructorMarker

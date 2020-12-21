@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.plugins.groovy.GroovyFileType
 import java.io.File
 
@@ -74,7 +75,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
             }
 
             with(myFixture) {
-                testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
+                testDataPath = "${KtTestUtil.getHomeDirectory()}/$srcDir"
 
                 val afterFiles =
                     srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" }

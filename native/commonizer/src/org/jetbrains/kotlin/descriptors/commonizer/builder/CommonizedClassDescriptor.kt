@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createPrimaryConstructorForObject
-import org.jetbrains.kotlin.resolve.SealedClassInheritorsProviderImpl
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -54,7 +53,11 @@ class CommonizedClassDescriptor(
     private val typeConstructor = CommonizedClassTypeConstructor(targetComponents, cirSupertypes)
     private val sealedSubclasses = targetComponents.storageManager.createLazyValue {
         // TODO: pass proper language version settings
-        SealedClassInheritorsProviderImpl.computeSealedSubclasses(this, freedomForSealedInterfacesSupported = false)
+        if (modality == Modality.SEALED) {
+            CliSealedClassInheritorsProvider.computeSealedSubclasses(this, allowSealedInheritorsInDifferentFilesOfSamePackage = false)
+        } else {
+            emptyList()
+        }
     }
 
     private val declaredTypeParametersAndTypeParameterResolver = targetComponents.storageManager.createLazyValue {

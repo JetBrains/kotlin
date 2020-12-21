@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.ComparisonFailure
 import java.io.File
 
@@ -62,7 +63,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     private var oldValues: OldValuesStorage? = null
 
     override fun runBare() {
-        testAppDirectory = KotlinTestUtils.tmpDir("debuggerTestSources")
+        testAppDirectory = KtTestUtil.tmpDir("debuggerTestSources")
         sourcesOutputDirectory = File(testAppDirectory, "src").apply { mkdirs() }
 
         librarySrcDirectory = File(testAppDirectory, "libSrc").apply { mkdirs() }

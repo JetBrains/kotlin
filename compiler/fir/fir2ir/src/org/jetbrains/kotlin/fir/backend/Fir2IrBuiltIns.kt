@@ -23,13 +23,6 @@ class Fir2IrBuiltIns(
         provider?.initComponents(components)
     }
 
-    private val extensionFunctionTypeAnnotationSymbol by lazy {
-        annotationSymbolById(CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID)
-    }
-
-    internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall =
-        extensionFunctionTypeAnnotationSymbol!!.toConstructorCall()
-
     private val enhancedNullabilityAnnotationSymbol by lazy {
         annotationSymbolById(CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID)
     }

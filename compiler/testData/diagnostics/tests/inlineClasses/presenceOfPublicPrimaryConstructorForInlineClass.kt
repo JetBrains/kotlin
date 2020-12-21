@@ -1,5 +1,5 @@
-// !LANGUAGE: +InlineClasses
 // FIR_IDENTICAL
+// !LANGUAGE: +InlineClasses
 
 inline class ConstructorWithDefaultVisibility(val x: Int)
 inline class PublicConstructor public constructor(val x: Int)

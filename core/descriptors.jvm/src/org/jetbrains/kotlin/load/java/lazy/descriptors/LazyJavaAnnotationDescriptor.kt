@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.types.isError
 
 class LazyJavaAnnotationDescriptor(
     private val c: LazyJavaResolverContext,
-    private val javaAnnotation: JavaAnnotation
+    private val javaAnnotation: JavaAnnotation,
+    isFreshlySupportedAnnotation: Boolean = false
 ) : AnnotationDescriptor, PossiblyExternalAnnotationDescriptor {
     override val fqName by c.storageManager.createNullableLazyValue {
         javaAnnotation.classId?.asSingleFqName()
@@ -115,4 +116,6 @@ class LazyJavaAnnotationDescriptor(
         )
 
     override val isIdeExternalAnnotation: Boolean = javaAnnotation.isIdeExternalAnnotation
+
+    val isFreshlySupportedTypeUseAnnotation: Boolean = javaAnnotation.isFreshlySupportedTypeUseAnnotation || isFreshlySupportedAnnotation
 }

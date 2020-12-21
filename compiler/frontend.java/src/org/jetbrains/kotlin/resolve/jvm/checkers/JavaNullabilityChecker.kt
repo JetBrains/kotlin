@@ -37,8 +37,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class JavaNullabilityChecker : AdditionalTypeChecker {
 
@@ -187,8 +190,7 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
             receiverParameter.type,
             { dataFlowValue },
             c.dataFlowInfo
-        ) { expectedType,
-            actualType ->
+        ) { expectedType, actualType ->
             val receiverExpression = (receiverArgument as? ExpressionReceiver)?.expression
             if (receiverExpression != null) {
                 c.trace.report(ErrorsJvm.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(receiverExpression, actualType))
@@ -202,24 +204,43 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
     private fun doCheckType(
         expressionType: KotlinType,
         expectedType: KotlinType,
-        dataFlowValue: () -> DataFlowValue,
+        expressionTypeDataFlowValue: () -> DataFlowValue,
         dataFlowInfo: DataFlowInfo,
         reportWarning: (expectedType: KotlinType, actualType: KotlinType) -> Unit
     ) {
-        if (TypeUtils.noExpectedType(expectedType)) {
-            return
-        }
+        if (TypeUtils.noExpectedType(expectedType)) return
 
-        val expectedMustNotBeNull = expectedType.mustNotBeNull() ?: return
-        val actualMayBeNull = expressionType.mayBeNull() ?: return
-        if (expectedMustNotBeNull.isFromKotlin && actualMayBeNull.isFromKotlin) {
-            // a type mismatch error will be reported elsewhere
-            return
-        }
+        val doesExpectedTypeContainsEnhancement = expectedType.contains { it is TypeWithEnhancement }
+        val doesExpressionTypeContainsEnhancement = expressionType.contains { it is TypeWithEnhancement }
 
-        if (dataFlowInfo.getStableNullability(dataFlowValue()) != Nullability.NOT_NULL) {
-            reportWarning(expectedMustNotBeNull.enhancedType, actualMayBeNull.enhancedType)
+        if (!doesExpectedTypeContainsEnhancement && !doesExpressionTypeContainsEnhancement) return
+
+        val enhancedExpectedType = if (doesExpectedTypeContainsEnhancement) buildTypeWithEnhancement(expectedType) else expectedType
+        val enhancedExpressionType = enhanceExpressionTypeByDataFlowNullability(
+            if (doesExpressionTypeContainsEnhancement) buildTypeWithEnhancement(expressionType) else expressionType,
+            expressionTypeDataFlowValue,
+            dataFlowInfo
+        )
+
+        val isEnhancedExpectedTypeSubtypeOfExpressionType =
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(enhancedExpressionType, enhancedExpectedType)
+
+        if (isEnhancedExpectedTypeSubtypeOfExpressionType) return
+
+        val isExpectedTypeSubtypeOfExpressionType = KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)
+
+        if (!isEnhancedExpectedTypeSubtypeOfExpressionType && isExpectedTypeSubtypeOfExpressionType) {
+            reportWarning(enhancedExpectedType, enhancedExpressionType)
         }
+    }
+
+    private fun enhanceExpressionTypeByDataFlowNullability(
+        expressionType: KotlinType,
+        expressionTypeDataFlowValue: () -> DataFlowValue,
+        dataFlowInfo: DataFlowInfo,
+    ): KotlinType {
+        val isNotNullByDataFlowInfo = dataFlowInfo.getStableNullability(expressionTypeDataFlowValue()) == Nullability.NOT_NULL
+        return if (expressionType.isNullable() && isNotNullByDataFlowInfo) expressionType.makeNotNullable() else expressionType
     }
 
     private fun <T : Any> doIfNotNull(
@@ -227,18 +248,37 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         dataFlowValue: () -> DataFlowValue,
         c: ResolutionContext<*>,
         body: () -> T
-    ) = if (type.mustNotBeNull()?.isFromJava == true &&
-        c.dataFlowInfo.getStableNullability(dataFlowValue()).canBeNull()
-    )
+    ) = if (type.mustNotBeNull()?.isFromJava == true && c.dataFlowInfo.getStableNullability(dataFlowValue()).canBeNull()) {
         body()
-    else
+    } else {
         null
+    }
 
-    private fun KotlinType.mayBeNull(): EnhancedNullabilityInfo? = when {
-        !isError && !isFlexible() && TypeUtils.acceptsNullable(this) -> enhancementFromKotlin()
-        isFlexible() && TypeUtils.acceptsNullable(asFlexibleType().lowerBound) -> enhancementFromKotlin()
-        this is TypeWithEnhancement && enhancement.mayBeNull() != null -> enhancementFromJava()
-        else -> null
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun enhanceTypeArguments(arguments: List<TypeProjection>) =
+        buildList {
+            for (argument in arguments) {
+                // TODO: think about star projections with enhancement (e.g. came from Java: Foo<@NotNull ?>)
+                if (argument.isStarProjection) continue
+                val argumentType = argument.type
+                val enhancedArgumentType = if (argumentType is TypeWithEnhancement) argumentType.enhancement else argumentType
+                val enhancedDeeplyArgumentType = buildTypeWithEnhancement(enhancedArgumentType)
+                add(argument.replaceType(enhancedDeeplyArgumentType))
+            }
+        }
+
+    fun buildTypeWithEnhancement(type: KotlinType): KotlinType {
+        val newArguments = enhanceTypeArguments(type.arguments)
+        val newArgumentsForUpperBound =
+            if (type is FlexibleType) {
+                enhanceTypeArguments(type.upperBound.arguments)
+            } else newArguments
+        val enhancedType = if (type is TypeWithEnhancement) type.enhancement else type
+
+        return enhancedType.replace(
+            newArguments = newArguments,
+            newArgumentsForUpperBound = newArgumentsForUpperBound
+        )
     }
 }
 

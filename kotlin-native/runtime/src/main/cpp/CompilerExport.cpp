@@ -42,4 +42,6 @@ void EnsureDeclarationsEmitted() {
     ensureUsed(FreezeSubgraph);
     ensureUsed(FreezeSubgraph);
     ensureUsed(CheckGlobalsAccessible);
+    ensureUsed(Kotlin_mm_switchThreadStateNative);
+    ensureUsed(Kotlin_mm_switchThreadStateRunnable);
 }
