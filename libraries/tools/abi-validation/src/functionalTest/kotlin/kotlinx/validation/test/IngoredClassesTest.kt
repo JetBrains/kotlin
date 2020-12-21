@@ -17,7 +17,7 @@ import kotlinx.validation.api.test
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-internal class GradlePluginFuncTest : BaseKotlinGradleTest() {
+internal class IngoredClassesTest : BaseKotlinGradleTest() {
     @Test
     fun `apiCheck should succeed, when no kotlin files are included in SourceSet`() {
         val runner = test {
