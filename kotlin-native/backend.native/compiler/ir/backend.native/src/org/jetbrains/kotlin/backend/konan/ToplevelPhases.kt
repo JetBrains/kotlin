@@ -180,7 +180,7 @@ internal val serializerPhase = konanUnitPhase(
                 this.config.configuration.languageVersionSettings,
                 config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
                 config.project,
-                !expectActualLinker)
+                !expectActualLinker, includeOnlyModuleContent = true)
             serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
         name = "Serializer",
