@@ -45,6 +45,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     protected abstract val callResolver: KtCallResolver
     protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
     protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
+    protected abstract val referenceShortener: KtReferenceShortener
 
     @Suppress("LeakingThis")
 
@@ -177,4 +178,6 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
         expressionHandlingComponent.getReturnExpressionTargetSymbol(this)
+
+    fun collectPossibleReferenceShortenings(file: KtFile, from: Int, to: Int) = referenceShortener.collectShortenings(file, from, to)
 }

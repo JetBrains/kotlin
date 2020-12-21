@@ -49,6 +49,7 @@ private constructor(
     override val completionCandidateChecker: KtCompletionCandidateChecker = KtFirCompletionCandidateChecker(this, token)
     override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider =
         KtFirSymbolDeclarationOverridesProvider(this, token)
+    override val referenceShortener: KtReferenceShortener = KtFirReferenceShortener(this, token, firResolveState)
 
     override val expressionHandlingComponent: KtExpressionHandlingComponent = KtFirExpressionHandlingComponent(this, token)
     override val typeProvider: KtTypeProvider = KtFirTypeProvider(this, token)
