@@ -24,7 +24,7 @@ The tool allows to dump binary API of a Kotlin library that is public in sense o
 Binary compatibility validator is a Gradle plugin that is added to the `build.gradle` in the following way:
 
 ```
-ext.validator_version = "0.2.4"
+ext.validator_version = "0.3.0"
 
 buildscript {
     dependencies {
