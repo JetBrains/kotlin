@@ -8753,6 +8753,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/localClasses/anonymousObjectInParameterInitializer.kt");
         }
 
+        @TestMetadata("capturingInDefaultConstructorParameter.kt")
+        public void testCapturingInDefaultConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/capturingInDefaultConstructorParameter.kt");
+        }
+
         @TestMetadata("closureOfInnerLocalClass.kt")
         public void testClosureOfInnerLocalClass() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/closureOfInnerLocalClass.kt");
@@ -8791,6 +8796,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("innerOfLocalCaptureExtensionReceiver.kt")
         public void testInnerOfLocalCaptureExtensionReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/innerOfLocalCaptureExtensionReceiver.kt");
+        }
+
+        @TestMetadata("kt10835.kt")
+        public void testKt10835() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/kt10835.kt");
+        }
+
+        @TestMetadata("kt10835a.kt")
+        public void testKt10835a() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/kt10835a.kt");
         }
 
         @TestMetadata("kt2700.kt")

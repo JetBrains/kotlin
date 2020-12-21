@@ -2017,6 +2017,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractLightAnalysisModeTest {
+        @TestMetadata("kt21014.kt")
+        public void ignoreKt21014() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt21014.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -16305,6 +16310,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator.kt");
             }
 
+            @TestMetadata("kt18911.kt")
+            public void testKt18911() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt18911.kt");
+            }
+
             @TestMetadata("localEntities.kt")
             public void testLocalEntities() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/localEntities.kt");
@@ -18249,6 +18259,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LocalClasses extends AbstractLightAnalysisModeTest {
+        @TestMetadata("capturingInDefaultConstructorParameter.kt")
+        public void ignoreCapturingInDefaultConstructorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/capturingInDefaultConstructorParameter.kt");
+        }
+
         @TestMetadata("closureOfInnerLocalClass.kt")
         public void ignoreClosureOfInnerLocalClass() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/closureOfInnerLocalClass.kt");
@@ -18257,6 +18272,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("closureWithSelfInstantiation.kt")
         public void ignoreClosureWithSelfInstantiation() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/closureWithSelfInstantiation.kt");
+        }
+
+        @TestMetadata("kt10835.kt")
+        public void ignoreKt10835() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/kt10835.kt");
+        }
+
+        @TestMetadata("kt10835a.kt")
+        public void ignoreKt10835a() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/kt10835a.kt");
         }
 
         @TestMetadata("subclassingExtensionReceiverClass.kt")

@@ -1543,6 +1543,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/sam/genericSamInterface.kt");
         }
 
+        @TestMetadata("kt16650.kt")
+        public void testKt16650() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/kt16650.kt");
+        }
+
         @TestMetadata("lambdaGenericFunInterface.kt")
         public void testLambdaGenericFunInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaGenericFunInterface.kt");
