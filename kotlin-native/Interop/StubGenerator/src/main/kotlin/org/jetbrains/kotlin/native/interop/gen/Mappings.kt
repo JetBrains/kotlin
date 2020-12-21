@@ -25,6 +25,9 @@ interface DeclarationMapper {
     fun getPackageFor(declaration: TypeDeclaration): String
 
     val useUnsignedTypes: Boolean
+
+    // TODO: Skia
+    fun getKotlinClassForManaged(structDecl: StructDecl): Classifier
 }
 
 fun DeclarationMapper.isMappedToSigned(integerType: IntegerType): Boolean = integerType.isSigned || !useUnsignedTypes
@@ -399,10 +402,18 @@ private fun byRefTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByRe
     return TypeMirror.ByRef(pointedType, info)
 }
 
+// This is for C++ Skia plugin.
+private fun managedTypeMirror(pointedType: KotlinClassifierType) : TypeMirror.ByValue {
+    val info = TypeInfo.ByRef(pointedType) // There are all error() anyways.
+    return TypeMirror.ByValue(pointedType, info, pointedType, nullable = true) // 1 vs 3?
+}
+
 fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when (type) {
     is PrimitiveType -> mirrorPrimitiveType(type, declarationMapper)
 
     is RecordType -> byRefTypeMirror(declarationMapper.getKotlinClassForPointed(type.decl).type)
+
+    is ManagedType -> managedTypeMirror(declarationMapper.getKotlinClassForManaged(type.decl).type)
 
     is EnumType -> {
         val pkg = declarationMapper.getPackageFor(type.def)

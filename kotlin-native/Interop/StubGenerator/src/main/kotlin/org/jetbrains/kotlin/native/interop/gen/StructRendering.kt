@@ -1,17 +1,20 @@
 package org.jetbrains.kotlin.native.interop.gen
 
+import clang.CXTypeKind
+import clang.clang_Type_getSizeOf
 import org.jetbrains.kotlin.native.interop.indexer.*
 
 fun tryRenderStructOrUnion(def: StructDef): String? = when (def.kind) {
     StructDef.Kind.STRUCT -> tryRenderStruct(def)
     StructDef.Kind.UNION -> tryRenderUnion(def)
-    StructDef.Kind.CLASS -> tryRenderStruct(def)
+    StructDef.Kind.CLASS -> def.decl.spelling
 }
 
 private fun tryRenderStruct(def: StructDef): String? {
     val isPackedStruct = def.fields.any { !it.isAligned }
 
-    var offset = 0L
+    // Account for C++ vtable size.
+    var offset = if (def.members.isEmpty()) 8L else (def.members.first() as? Field)?.offsetBytes ?: 0L
 
     return buildString {
         append("struct")

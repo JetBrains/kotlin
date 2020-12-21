@@ -124,7 +124,7 @@ interface StubsBuildingContext {
 
     fun getKotlinClassForPointed(structDecl: StructDecl): Classifier
 
-    fun isOverloading(func: FunctionDecl): Boolean
+    fun isOverloading(name: String, types: List<StubType>): Boolean
 }
 
 /**
@@ -149,7 +149,15 @@ class StubsBuildingContextImpl(
     private var theCounter = 0
 
     private val uniqFunctions = mutableSetOf<String>()
-    override fun isOverloading(func: FunctionDecl) = !uniqFunctions.add(func.name) // TODO: params & return type.
+
+    override fun isOverloading(name: String, types: List<StubType>):Boolean  {
+        return if (configuration.library.language == Language.CPP) {
+            val signature = "${name}( ${types.map { it.toString() }.joinToString(", ")}  )"
+            !uniqFunctions.add(signature)
+        } else {
+            !uniqFunctions.add(name)
+        }
+    }
 
     override fun generateNextUniqueId(prefix: String) =
             prefix + pkgName.replace('.', '_') + theCounter++
@@ -208,6 +216,16 @@ class StubsBuildingContextImpl(
                 KotlinPlatform.JVM -> false
                 KotlinPlatform.NATIVE -> true
             }
+
+        // TODO: Skia
+        override fun getKotlinClassForManaged(structDecl: StructDecl): Classifier {
+            assert(structDecl.isSkiaSharedPointer)
+            val struct = structDecl.stripSkiaSharedPointer
+            val structArgument = nativeIndex.structs.singleOrNull {
+                it.spelling == struct && it.def != null
+            } ?: error("Finding template arg struct by name has found multiple candidates")
+            return getKotlinClassForPointed(structArgument)
+        }
     }
 
     override val macroConstantsByName: Map<String, MacroDef> =
@@ -263,6 +281,13 @@ class StubsBuildingContextImpl(
     override fun getKotlinClassForPointed(structDecl: StructDecl): Classifier {
         val classifier = declarationMapper.getKotlinClassForPointed(structDecl)
         return classifier
+    }
+
+    // TODO: what should we really do to be able to get Foo from sk_sp<Foo>?
+    fun tryFindingStructByName(name: String): StructDecl {
+        return nativeIndex.structs.singleOrNull {
+            it.spelling == name && it.def != null
+        } ?: error("Finding template arg struct by name has found multiple candidates")
     }
 }
 

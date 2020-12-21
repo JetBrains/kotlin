@@ -1,0 +1,11 @@
+language = C++
+headers = include/core/SkCanvas.h include/core/SkData.h include/core/SkImage.h include/core/SkStream.h include/core/SkSurface.h include/core/SkPaint.h include/core/SkImageInfo.h include/core/SkColor.h
+headerFilter =  include/core/SkData.h include/core/SkImage.h include/core/SkStream.h include/core/SkSurface.h include/core/SkPaint.h include/core/SkCanvas.h include/core/SkImageInfo.h include/core/SkColor.h
+package = skia.sample
+compilerOpts = -x c++ -std=c++14 -I/Users/jetbrains/.konan/dependencies/clang-llvm-apple-8.0.0-darwin-macos//include/c++/v1 -I /Users/jetbrains/kotlin-native/skiko/skiko/dependencies/skia/skia/
+# const overloads are not supported yet
+excludedFunctions = saveLayer mapRect ptr
+#linkerOpts = /Users/jetbrains/kotlin-native/skiko/skiko/dependencies/skia/skia//out/Release-x64/libskia.a -framework CoreServices -framework CoreText -framework CoreGraphics -framework Metal
+staticLibrary = /Users/jetbrains/kotlin-native/skiko/skiko/dependencies/skia/skia//out/Release-x64/libskia.a 
+linkerOpts = -framework CoreServices -framework CoreText -framework CoreGraphics -framework Metal
+

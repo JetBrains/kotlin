@@ -127,6 +127,7 @@ internal fun parseTranslationUnit(
         options: Int
 ): CXTranslationUnit {
 
+    println("COMPILER: ${sourceFile.absolutePath} ${compilerArgs.joinToString(" ")}" )
     memScoped {
         val resultVar = alloc<CXTranslationUnitVar>()
 
@@ -282,7 +283,7 @@ internal fun Appendable.appendPreamble(compilation: Compilation) = this.apply {
  */
 internal fun Compilation.createTempSource(): File {
     val result = Files.createTempFile(null, ".${language.sourceFileExtension}").toFile()
-    result.deleteOnExit()
+    //result.deleteOnExit()
 
     result.bufferedWriter().use { writer ->
         writer.appendPreamble(this)
@@ -335,7 +336,11 @@ internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUni
     val precompiledHeader = Files.createTempFile(null, ".pch").toFile().apply { this.deleteOnExit() }
     clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)
 
-    return CompilationWithPCH(this.compilerArgs, precompiledHeader.absolutePath, this.language)
+    return CompilationWithPCH(
+        this.compilerArgs,
+        precompiledHeader.absolutePath,
+        this.language
+    )
 }
 
 internal fun NativeLibrary.includesDeclaration(cursor: CValue<CXCursor>): Boolean {
@@ -806,3 +811,13 @@ internal inline fun <T : Disposable, R> T.use(block: (T) -> R): R = try {
 } finally {
     this.dispose()
 }
+
+// TODO: This should be managed by Skia plugin.
+val StructDecl.isSkiaSharedPointer: Boolean
+    get() = spelling.startsWith("sk_sp<") && spelling.endsWith(">")
+
+// TODO: This should be managed by Skia plugin
+val StructDecl.stripSkiaSharedPointer: String
+    get() = this.spelling.drop(6).dropLast(1).let {
+        if (it.startsWith("const ")) it.drop(6) else it
+    }

@@ -10,6 +10,8 @@ fun hello() {
             SkString.__init__(ptr, cString)
         }
         println(s.c_str()?.toKString())
+        println("size = ${s.size()}")
+        println("isEmpty() = ${s.isEmpty()}")
     }
 }
 
