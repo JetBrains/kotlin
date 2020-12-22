@@ -66,6 +66,11 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeGenericTypes.kt");
         }
 
+        @TestMetadata("ParameterTypeImportedNestedClass.kt")
+        public void testParameterTypeImportedNestedClass() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeImportedNestedClass.kt");
+        }
+
         @TestMetadata("ParameterTypeImportedTypeWins.kt")
         public void testParameterTypeImportedTypeWins() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeImportedTypeWins.kt");
@@ -79,6 +84,16 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         @TestMetadata("ParameterTypeNonImportedClass.kt")
         public void testParameterTypeNonImportedClass() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeNonImportedClass.kt");
+        }
+
+        @TestMetadata("ParameterTypeNonImportedClassTwice.kt")
+        public void testParameterTypeNonImportedClassTwice() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeNonImportedClassTwice.kt");
+        }
+
+        @TestMetadata("ParameterTypeNotImportedNestedClass.kt")
+        public void testParameterTypeNotImportedNestedClass() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeNotImportedNestedClass.kt");
         }
 
         @TestMetadata("ParameterTypeStarImportedTypeLoses.kt")
