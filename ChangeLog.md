@@ -13,6 +13,7 @@
 - [`KT-42649`](https://youtrack.jetbrains.com/issue/KT-42649) IndexOutOfBoundsException during InlineClassTransformer lowering
 - [`KT-42942`](https://youtrack.jetbrains.com/issue/KT-42942) Native: optimize peak backend memory by clearing BindingContext after psi2ir
 - [`KT-43198`](https://youtrack.jetbrains.com/issue/KT-43198) init blocks inside inline classes
+- [`KT-31072`](https://youtrack.jetbrains.com/issue/KT-31072) Don't use non-reified arguments to specialize type operations in IR inliner
 
 ### Compiler
 
@@ -230,6 +231,11 @@
 - [`KT-41765`](https://youtrack.jetbrains.com/issue/KT-41765) [Native/IR]  Could not resolveFakeOverride()
 - [`KT-42054`](https://youtrack.jetbrains.com/issue/KT-42054) Psi2ir: "RuntimeException: IrSimpleFunctionSymbolImpl is already bound" when using result of function with overload resolution by lambda return type
 
+### Native
+
+- [`KT-42822`](https://youtrack.jetbrains.com/issue/KT-42822) Kotlin/Native Worker leaks ObjC/Swift autorelease references (and indirectly bridged K/N references) on Darwin targets
+- [`KT-42397`](https://youtrack.jetbrains.com/issue/KT-42397) Reverse C interop usage of companion object reports spurious leaks
+
 ### Native. C and ObjC Import
 
 - [`KT-42412`](https://youtrack.jetbrains.com/issue/KT-42412) [C-interop] Modality of generated property accessors is always FINAL
@@ -237,7 +243,6 @@
 ### Native. ObjC Export
 
 - [`KT-38530`](https://youtrack.jetbrains.com/issue/KT-38530) Native: values() method of enum classes is not exposed to Objective-C/Swift
-- [`KT-43599`](https://youtrack.jetbrains.com/issue/KT-43599) K/N: Unbound symbols not allowed
 
 ### Native. Platform libraries
 
@@ -303,6 +308,8 @@
 - [`KT-42849`](https://youtrack.jetbrains.com/issue/KT-42849) Gradle / Configuration cache: tasks nativeMetadataJar, runReleaseExecutableNative, runDebugExecutableNative are unsupported and fails on reusing configuration cache
 - [`KT-42938`](https://youtrack.jetbrains.com/issue/KT-42938) CocoaPods Gradle plugin: podBuildDependencies doesn't properly report xcodebuild failures
 - [`KT-43151`](https://youtrack.jetbrains.com/issue/KT-43151) Gradle / Configuration cache: UPAE “lateinit property binary has not been initialized” on reusing configuration cache for linkDebugExecutableNative, linkDebugTestNative, linkReleaseExecutableNative tasks
+- [`KT-40999`](https://youtrack.jetbrains.com/issue/KT-40999) CocoaPods Gradle plugin: Support custom cinterop options when declaring a pod dependency.
+
 
 
 ### Tools. Parcelize
