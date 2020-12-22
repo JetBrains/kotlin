@@ -1,6 +1,6 @@
 package sample
 
-actual class A /* Left */ {
-    actual fun foo(): Int = 42
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>A<!> /* Left */ {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>foo<!>(): Int = 42
     fun fromLeft(): String = ""
 }

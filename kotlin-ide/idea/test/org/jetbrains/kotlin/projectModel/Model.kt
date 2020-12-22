@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.projectModel
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
@@ -152,6 +153,20 @@ sealed class KotlinTest(
     object JvmKotlinTest : KotlinTest(
         "kotlin-test-jvm",
         KotlinArtifacts.instance.kotlinTestJunit,
+        JvmPlatforms.defaultJvmPlatform,
+        null
+    )
+
+    object JustKotlinTest : KotlinTest(
+        "kotlin-test",
+        KotlinArtifacts.instance.kotlinTest,
+        JvmPlatforms.defaultJvmPlatform,
+        null
+    )
+
+    object Junit : KotlinTest(
+        "junit",
+        File("${PathManager.getHomePath().replace(File.separatorChar, '/')}/lib/junit-4.12.jar"),
         JvmPlatforms.defaultJvmPlatform,
         null
     )

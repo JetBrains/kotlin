@@ -1,6 +1,6 @@
 // KT-34027
-expect interface A<T> {
-    fun foo(x: T)
+expect interface <!LINE_MARKER("descr='Has actuals in JS'")!>A<!><T> {
+    fun <!LINE_MARKER("descr='Has actuals in JS'")!>foo<!>(x: T)
 }
 
 fun bar(): A<String> = null!!

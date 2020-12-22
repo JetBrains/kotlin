@@ -1,13 +1,13 @@
-actual typealias Expect = String
+actual typealias <!LINE_MARKER("descr='Has declaration in common module'")!>Expect<!> = String
 
 interface Derived : Base {
-    override fun expectInReturnType(): Expect
+    override fun <!LINE_MARKER("descr='Overrides function in 'Base''")!>expectInReturnType<!>(): Expect
 
-    override fun expectInArgument(e: Expect)
+    override fun <!LINE_MARKER("descr='Overrides function in 'Base''")!>expectInArgument<!>(e: Expect)
 
-    override fun Expect.expectInReceiver()
+    override fun Expect.<!LINE_MARKER("descr='Overrides function in 'Base''")!>expectInReceiver<!>()
 
-    override val expectVal: Expect
+    override val <!LINE_MARKER("descr='Overrides property in 'Base''")!>expectVal<!>: Expect
 
-    override var expectVar: Expect
+    override var <!LINE_MARKER("descr='Overrides property in 'Base''")!>expectVar<!>: Expect
 }

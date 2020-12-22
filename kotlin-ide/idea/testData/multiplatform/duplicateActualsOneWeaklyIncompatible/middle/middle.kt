@@ -1,3 +1,3 @@
 package foo
 
-actual class A
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>A<!>

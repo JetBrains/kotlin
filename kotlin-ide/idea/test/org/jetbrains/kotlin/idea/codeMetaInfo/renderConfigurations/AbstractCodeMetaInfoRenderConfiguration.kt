@@ -100,8 +100,9 @@ open class LineMarkerRenderConfiguration(var renderDescription: Boolean = true) 
         if (!renderParams) return ""
         val params = mutableListOf<String>()
 
-        if (renderDescription)
+        if (renderDescription && lineMarkerCodeMetaInfo.lineMarker.lineMarkerTooltip != null) {
             params.add("descr='${sanitizeLineMarkerTooltip(lineMarkerCodeMetaInfo.lineMarker.lineMarkerTooltip)}'")
+        }
 
         params.add(getAdditionalParams(lineMarkerCodeMetaInfo))
 
@@ -127,12 +128,20 @@ open class HighlightingRenderConfiguration(
         if (!renderParams) return ""
 
         val params = mutableListOf<String>()
-        if (renderSeverity)
+        if (renderSeverity) {
             params.add("severity='${highlightingCodeMetaInfo.highlightingInfo.severity}'")
-        if (renderDescription)
-            params.add("descr='${sanitizeLineBreaks(highlightingCodeMetaInfo.highlightingInfo.description)}'")
-        if (renderTextAttributesKey)
+        }
+        if (renderDescription) {
+            val description = highlightingCodeMetaInfo.highlightingInfo.description
+            if (description != null) {
+                params.add("descr='${sanitizeLineBreaks(description)}'")
+            } else {
+                params.add("descr='null'")
+            }
+        }
+        if (renderTextAttributesKey) {
             params.add("textAttributesKey='${highlightingCodeMetaInfo.highlightingInfo.forcedTextAttributesKey}'")
+        }
 
         params.add(getAdditionalParams(highlightingCodeMetaInfo))
         val paramsString = params.filter { it.isNotEmpty() }.joinToString("; ")
