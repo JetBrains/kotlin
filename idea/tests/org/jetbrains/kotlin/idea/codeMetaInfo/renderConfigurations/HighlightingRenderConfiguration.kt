@@ -29,7 +29,9 @@ open class HighlightingRenderConfiguration(
         if (renderSeverity)
             params.add("severity='${highlightingCodeMetaInfo.highlightingInfo.severity}'")
         if (renderDescription)
-            params.add("descr='${sanitizeLineBreaks(highlightingCodeMetaInfo.highlightingInfo.description)}'")
+            params.add("descr='${
+                highlightingCodeMetaInfo.highlightingInfo.description?.let { sanitizeLineBreaks(highlightingCodeMetaInfo.highlightingInfo.description) }
+            }'")
         if (renderTextAttributesKey)
             params.add("textAttributesKey='${highlightingCodeMetaInfo.highlightingInfo.forcedTextAttributesKey}'")
 

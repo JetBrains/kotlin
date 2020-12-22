@@ -1,4 +1,4 @@
-actual class A
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>A<!>
 
 // Error: ACTUAL_WITHOUT_EXPECT, becuase we shouldn't see expects through usual dependencies
 actual class <!ACTUAL_WITHOUT_EXPECT!>B<!>

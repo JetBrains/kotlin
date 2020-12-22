@@ -1,4 +1,4 @@
 package foo
 
 actual class ExpectInCommonActualInJsOnly
-actual class ExpectInMiddleActualInJsOnly
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>ExpectInMiddleActualInJsOnly<!>

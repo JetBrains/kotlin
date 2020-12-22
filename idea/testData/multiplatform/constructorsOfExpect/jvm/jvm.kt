@@ -1,5 +1,5 @@
-actual class A {
-    actual fun commonMember() { }
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>A<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>commonMember<!>() { }
 
     fun platformMember() { }
 }

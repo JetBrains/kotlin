@@ -1,7 +1,7 @@
 package sample
 
-expect interface A<T : A<T>> {
-    fun foo(): T
+expect interface <!LINE_MARKER("descr='Is subclassed by B'"), LINE_MARKER("descr='Has actuals in JVM'")!>A<!><T : A<T>> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>foo<!>(): T
 }
 
 interface B : A<B>
