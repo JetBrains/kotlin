@@ -126,9 +126,7 @@ private fun Project.setupPublication() {
         val softwareComponentFactoryClass = SoftwareComponentFactory::class.java
         val softwareComponentFactory = (project as ProjectInternal).services.get(softwareComponentFactoryClass)
         val component = softwareComponentFactory.adhoc("interopBundle").apply {
-            addVariantsFromConfiguration(interopBundleConfiguration) { details ->
-                println(details)
-            }
+            addVariantsFromConfiguration(interopBundleConfiguration) {}
         }
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
