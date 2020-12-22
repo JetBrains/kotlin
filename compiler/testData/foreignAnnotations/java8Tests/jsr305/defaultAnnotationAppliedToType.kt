@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // SKIP_JAVAC
-// SKIP_COMPILED_JAVA
+// SOURCE_RETENTION_ANNOTATIONS
 
 // FILE: spr/NonNullApi.java
 
@@ -18,7 +18,7 @@ import javax.annotation.meta.TypeQualifierDefault;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Nonnull
-@TypeQualifierDefault({ElementType.TYPE_USE, ElementType.METHOD})
+@TypeQualifierDefault({ElementType.TYPE_USE})
 public @interface NonNullApi {
 }
 

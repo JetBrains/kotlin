@@ -33,4 +33,5 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
     val USE_JAVAC by directive("Enable javac integration")
+    val SKIP_JAVA_SOURCES by directive("Don't add java sources to compile classpath")
 }

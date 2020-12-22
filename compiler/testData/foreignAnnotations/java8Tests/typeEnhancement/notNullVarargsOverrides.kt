@@ -1,4 +1,4 @@
-// SKIP_COMPILED_JAVA
+// SOURCE_RETENTION_ANNOTATIONS
 // FILE: BaseClass.java
 import org.checkerframework.checker.nullness.qual.*;
 

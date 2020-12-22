@@ -38,6 +38,21 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractDiagnosticsNativeTest> {
                 model("diagnostics/nativeTests")
             }
+
+            testClass<AbstractForeignAnnotationsTest> {
+                model("foreignAnnotations/tests")
+                model("foreignAnnotations/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+            }
+
+            testClass<AbstractForeignAnnotationsNoAnnotationInClasspathTest> {
+                model("foreignAnnotations/tests")
+                model("foreignAnnotations/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+            }
+
+            testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
+                model("foreignAnnotations/tests")
+                model("foreignAnnotations/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------

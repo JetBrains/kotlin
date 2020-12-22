@@ -107,9 +107,11 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         val isIr = module.backendKind == BackendKinds.IrBackend
         configuration.put(JVMConfigurationKeys.IR, isIr)
 
-        module.javaFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
-            javaFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
-            configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
+        if (JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives) {
+            module.javaFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
+                javaFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
+                configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
+            }
         }
 
         configuration.registerModuleDependencies(module)

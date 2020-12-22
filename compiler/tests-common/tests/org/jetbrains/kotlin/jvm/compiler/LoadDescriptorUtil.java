@@ -53,7 +53,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.kotlin.checkers.AbstractForeignAnnotationsTestKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH;
+import static org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH;
 
 public class LoadDescriptorUtil {
     @NotNull

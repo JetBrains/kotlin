@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
-import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrLocalVariableTest
@@ -71,22 +70,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
-            }
-
-            testClass<AbstractForeignAnnotationsTest> {
-                model("foreignAnnotations/tests")
-            }
-
-            testClass<AbstractForeignAnnotationsNoAnnotationInClasspathTest> {
-                model("foreignAnnotations/tests")
-            }
-
-            testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
-                model("foreignAnnotations/tests")
-            }
-
-            testClass<AbstractJavacForeignAnnotationsTest> {
-                model("foreignAnnotations/tests")
             }
 
             testClass<AbstractResolveTest> {

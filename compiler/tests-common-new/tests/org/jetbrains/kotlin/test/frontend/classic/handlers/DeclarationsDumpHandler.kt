@@ -66,6 +66,7 @@ class DeclarationsDumpHandler(
         assertions.assertEqualsToFile(expectedFile, resultDump)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
         if (DiagnosticsDirectives.SKIP_TXT in module.directives) return
         val moduleDescriptor = info.analysisResult.moduleDescriptor
@@ -73,7 +74,12 @@ class DeclarationsDumpHandler(
         val comparator = RecursiveDescriptorComparator(
             createdAffectedPackagesConfiguration(module.files, info.ktFiles, moduleDescriptor, checkTypeEnabled)
         )
-        val packages = listOf(FqName.ROOT)
+        val packages = buildList {
+            module.directives[DiagnosticsDirectives.RENDER_PACKAGE].forEach {
+                add(FqName(it))
+            }
+            add(FqName.ROOT)
+        }
         val textByPackage = packages.keysToMap { StringBuilder() }
 
         for ((packageName, packageText) in textByPackage.entries) {

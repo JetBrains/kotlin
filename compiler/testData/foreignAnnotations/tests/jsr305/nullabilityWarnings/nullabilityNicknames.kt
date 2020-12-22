@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// JSR305_GLOBAL_REPORT warn
+// JSR305_GLOBAL_REPORT: warn
 
 // FILE: MyNullable.java
 import javax.annotation.*;

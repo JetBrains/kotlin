@@ -1,4 +1,4 @@
-// SKIP_COMPILED_JAVA
+// SOURCE_RETENTION_ANNOTATIONS
 // FILE: Base.java
 public interface Base<T> {}
 // FILE: A.java

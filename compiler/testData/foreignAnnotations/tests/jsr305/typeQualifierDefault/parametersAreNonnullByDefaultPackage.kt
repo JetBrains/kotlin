@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// RENDER_PACKAGE: test
-// RENDER_PACKAGE: test2
+// RENDER_PACKAGE: test, test2
 
 // FILE: test/package-info.java
 

@@ -16,13 +16,5 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-
-abstract class AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest :
-    AbstractForeignAnnotationsNoAnnotationInClasspathTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
-    }
-}
+const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
+const val FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH = "third-party/jdk8-annotations"

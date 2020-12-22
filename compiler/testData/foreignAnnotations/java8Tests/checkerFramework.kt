@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// SKIP_COMPILED_JAVA
+// SOURCE_RETENTION_ANNOTATIONS
 // FILE: A.java
 
-import org.eclipse.jdt.annotation.*;
+import org.checkerframework.checker.nullness.qual.*;
 
 public class A<T> {
     @Nullable public String field = null;
