@@ -16,6 +16,7 @@ internal class CliLoggerAdapter(indentSize: Int) : Logger {
     override fun error(message: String) = fatal(message)
     override fun fatal(message: String): Nothing {
         printlnIndented("Error: $message\n")
+        // TODO SELLMAIR NOW: Review
         error(message)
     }
 

@@ -73,7 +73,7 @@ public val CommonizerTarget.konanTargets: Set<KonanTarget>
         }
     }
 
-
+// TODO SELLMAIR NOW: Rename to level
 public val CommonizerTarget.order: Int
     get() {
         return when (this) {

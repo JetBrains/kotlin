@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.commonizer.api.identityString
 import java.io.File
 import java.io.Serializable
 
+// TODO SELLMAIR TEST
+
 abstract class InteropBundlePlatformSelectionTransformation : TransformAction<InteropBundlePlatformSelectionTransformation.Parameters> {
     open class Parameters : TransformParameters, Serializable {
         @Input

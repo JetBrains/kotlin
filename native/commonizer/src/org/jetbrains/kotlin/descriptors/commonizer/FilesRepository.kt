@@ -15,6 +15,7 @@ private fun konanTargetOrThrow(value: String): KonanTarget {
     return KonanTarget.predefinedTargets[value] ?: error("Unknown KonanTarget $value")
 }
 
+// TODO SELLMAIR NOW: Test
 internal class FilesRepository(
     private val libraryFiles: Set<File>,
     private val libraryLoader: NativeLibraryLoader

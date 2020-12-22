@@ -41,8 +41,7 @@ internal enum class TaskType(
         ),
         ::NativeDistributionListTargets
     ),
-
-    COMMONIZE(
+    NATIVE_KLIB_COMMONIZE(
         "native-klib-commonize",
         "Commonize any platform-specific libraries",
         listOf(

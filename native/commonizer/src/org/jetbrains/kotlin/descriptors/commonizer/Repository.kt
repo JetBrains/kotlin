@@ -21,6 +21,7 @@ internal operator fun Repository.plus(other: Repository): Repository {
     return CompositeRepository(listOf(this, other))
 }
 
+// TODO SELLMAIR NOW: Test
 internal class KonanDistributionRepository(
     private val konanDistribution: KonanDistribution,
     private val targets: Set<KonanTarget>,
