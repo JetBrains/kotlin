@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
+// TODO SELLMAIR TEST
 
 internal val COMMONIZER_TARGET_ATTRIBUTE = Attribute.of("commonizer-target", String::class.java)
 internal const val INTEROP_BUNDLE_COMMONIZIER_TARGET = "*interob-bundle*"

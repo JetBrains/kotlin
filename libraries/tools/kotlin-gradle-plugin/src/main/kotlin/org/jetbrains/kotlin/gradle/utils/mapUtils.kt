@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+// TODO SELLMAIR DELETE?
 fun <K, V : Any> Map<K, V?>.filterValuesNotNull(): Map<K, V> {
     @Suppress("UNCHECKED_CAST")
     return filterValues { it != null } as Map<K, V>

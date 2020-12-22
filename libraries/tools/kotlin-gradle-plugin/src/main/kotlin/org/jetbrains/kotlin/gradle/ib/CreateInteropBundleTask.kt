@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ib.InteropBundlePlugin.Companion.konanTargets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
+// TODO SELLMAIR TEST
 abstract class CreateInteropBundleTask : DefaultTask() {
 
     internal data class KonanTargetWithConfiguration(
