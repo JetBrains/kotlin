@@ -45,7 +45,9 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
-open class JvmBuiltInsSettings(
+// This class is worth splitting into two implementations of AdditionalClassPartsProvider and PlatformDependentDeclarationFilter
+// But currently, they shares a piece of code and probably it's better to postpone it
+class JvmBuiltInsCustomizer(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager,
     deferredOwnerModuleDescriptor: () -> ModuleDescriptor,
