@@ -69,10 +69,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("diagnostics/testsWithJsStdLibAndBackendCompilation")
             }
 
-            testClass<AbstractDiagnosticsWithJdk15Test> {
-                model("diagnostics/testsWithJava15")
-            }
-
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
             }

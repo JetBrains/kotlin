@@ -67,6 +67,8 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Enables corresponding analysis flag (JvmAnalysisFlags.sanitizeParentheses)"
     )
 
+    val ENABLE_JVM_PREVIEW by directive("Enable JVM preview features")
+
     // --------------------- Utils ---------------------
 
     fun parseApiVersion(versionString: String): ApiVersion = when (versionString) {

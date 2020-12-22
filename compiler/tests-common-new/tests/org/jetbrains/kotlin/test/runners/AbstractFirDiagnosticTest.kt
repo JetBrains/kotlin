@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LIGHT_TREE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -80,6 +79,14 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/*") {
             defaultDirectives {
                 +WITH_EXTENDED_CHECKERS
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava15/*") {
+            defaultDirectives {
+                JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK_15
+                +WITH_STDLIB
+                +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
             }
         }
     }
