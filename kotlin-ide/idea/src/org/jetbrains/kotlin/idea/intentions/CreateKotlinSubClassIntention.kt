@@ -14,12 +14,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.refactoring.rename.PsiElementRenameHandler
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.ui.CreateKotlinClassDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -73,8 +75,8 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
         val name = element.name ?: throw IllegalStateException("This intention should not be applied to anonymous classes")
-        if (element.isSealed()) {
-            createSealedSubclass(element, name, editor)
+        if (element.isSealed() && !element.languageVersionSettings.supportsFeature(LanguageFeature.SealedInterfaces)) {
+            createNestedSubclass(element, name, editor)
         } else {
             createExternalSubclass(element, name, editor)
         }
@@ -87,7 +89,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
     private fun targetNameWithoutConflicts(baseName: String, container: KtClassOrObject?) =
         KotlinNameSuggester.suggestNameByName(defaultTargetName(baseName)) { container?.hasSameDeclaration(it) != true }
 
-    private fun createSealedSubclass(sealedClass: KtClass, sealedName: String, editor: Editor) {
+    private fun createNestedSubclass(sealedClass: KtClass, sealedName: String, editor: Editor) {
         val project = sealedClass.project
         val klass = runWriteAction {
             val builder = buildClassHeader(targetNameWithoutConflicts(sealedName, sealedClass), sealedClass, sealedName)
@@ -162,7 +164,8 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
             targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
             aPackage?.qualifiedName ?: "",
             CreateClassKind.CLASS, true,
-            ModuleUtilCore.findModuleForPsiElement(baseClass)
+            ModuleUtilCore.findModuleForPsiElement(baseClass),
+            baseClass.isSealed()
         ) {
             override fun getBaseDir(packageName: String?) = sourceDir
 

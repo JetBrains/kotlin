@@ -99,7 +99,7 @@ fun getKotlinAwareDestinationSourceRoots(project: Project): List<VirtualFile> {
 private val KOTLIN_AWARE_SOURCE_ROOT_TYPES: Set<JpsModuleSourceRootType<JavaSourceRootProperties>> =
     JavaModuleSourceRootTypes.SOURCES + ALL_KOTLIN_SOURCE_ROOT_TYPES
 
-private fun Module.collectKotlinAwareDestinationSourceRoots(): List<VirtualFile> {
+fun Module.collectKotlinAwareDestinationSourceRoots(): List<VirtualFile> {
     return rootManager
         .contentEntries
         .asSequence()
