@@ -23,6 +23,7 @@ dependencies {
     testCompile(project(":compiler:cli-js"))
     testCompile(project(":compiler:serialization"))
     testCompile(projectTests(":compiler:test-infrastructure-utils"))
+    testCompile(project(":kotlin-preloader"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(intellijDep()) {

@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.util.StringUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -464,70 +465,15 @@ public class KotlinTestUtils {
     }
 
     private static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-        DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
-        try (StandardJavaFileManager fileManager =
-                     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"))) {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files);
-
-            JavaCompiler.CompilationTask task = javaCompiler.getTask(
-                    new StringWriter(), // do not write to System.err
-                    fileManager,
-                    diagnosticCollector,
-                    options,
-                    null,
-                    javaFileObjectsFromFiles);
-
-            Boolean success = task.call(); // do NOT inline this variable, call() should complete before errorsToString()
-            if (javaErrorFile == null || !javaErrorFile.exists()) {
-                Assert.assertTrue(errorsToString(diagnosticCollector, true), success);
-            }
-            else {
-                assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false));
-            }
-            return success;
-        }
+        return JvmCompilationUtils.compileJavaFiles(files, options, javaErrorFile, JUnit4Assertions.INSTANCE);
     }
 
     public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
-        return compileJavaFilesExternally(files, options, KtTestUtil.getJdk9Home());
+        return JvmCompilationUtils.compileJavaFilesExternally(files, options, KtTestUtil.getJdk9Home());
     }
 
     public static boolean compileJavaFilesExternally(@NotNull Collection<File> files, @NotNull List<String> options, @NotNull File jdkHome) {
-        List<String> command = new ArrayList<>();
-        command.add(new File(jdkHome, "bin/javac").getPath());
-        command.addAll(options);
-        for (File file : files) {
-            command.add(file.getPath());
-        }
-
-        try {
-            Process process = new ProcessBuilder().command(command).inheritIO().start();
-            process.waitFor();
-            return process.exitValue() == 0;
-        }
-        catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
-    @NotNull
-    private static String errorsToString(@NotNull DiagnosticCollector<JavaFileObject> diagnosticCollector, boolean humanReadable) {
-        StringBuilder builder = new StringBuilder();
-        for (javax.tools.Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
-            if (diagnostic.getKind() != javax.tools.Diagnostic.Kind.ERROR) continue;
-
-            if (humanReadable) {
-                builder.append(diagnostic).append("\n");
-            }
-            else {
-                builder.append(new File(diagnostic.getSource().toUri()).getName()).append(":")
-                        .append(diagnostic.getLineNumber()).append(":")
-                        .append(diagnostic.getColumnNumber()).append(":")
-                        .append(diagnostic.getCode()).append("\n");
-            }
-        }
-        return builder.toString();
+        return JvmCompilationUtils.compileJavaFilesExternally(files, options, jdkHome);
     }
 
     public static String navigationMetadata(@TestDataFile String testFile) {

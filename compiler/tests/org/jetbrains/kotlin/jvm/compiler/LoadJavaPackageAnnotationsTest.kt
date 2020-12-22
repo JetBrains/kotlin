@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
@@ -108,5 +105,5 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     }
 
     private fun prepareJar() =
-            MockLibraryUtil.compileJavaFilesLibraryToJar(TEST_DATA_PATH, "result.jar")
+        MockLibraryUtilExt.compileJavaFilesLibraryToJar(TEST_DATA_PATH, "result.jar")
 }

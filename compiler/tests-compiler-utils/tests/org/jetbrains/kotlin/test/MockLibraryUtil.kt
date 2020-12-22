@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test
@@ -27,8 +16,6 @@ import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.Assert
-import org.junit.Assert.assertEquals
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -42,7 +29,6 @@ object MockLibraryUtil {
     private var compilerClassLoader = SoftReference<ClassLoader>(null)
 
     @JvmStatic
-    @JvmOverloads
     fun compileJvmLibraryToJar(
         sourcesPath: String,
         jarName: String,
@@ -50,38 +36,40 @@ object MockLibraryUtil {
         allowKotlinSources: Boolean = true,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
-        useJava9: Boolean = false
+        useJava9: Boolean = false,
+        assertions: Assertions
     ): File {
         return compileLibraryToJar(
             sourcesPath,
-            KtTestUtil.tmpDirForReusableFolder("testLibrary-" + jarName),
+            KtTestUtil.tmpDirForReusableFolder("testLibrary-$jarName"),
             jarName,
             addSources,
             allowKotlinSources,
             extraOptions,
             extraClasspath,
-            useJava9
+            useJava9,
+            assertions
         )
     }
 
     @JvmStatic
-    @JvmOverloads
     fun compileJavaFilesLibraryToJar(
         sourcesPath: String,
         jarName: String,
         addSources: Boolean = false,
         extraOptions: List<String> = emptyList(),
-        extraClasspath: List<String> = emptyList()
+        extraClasspath: List<String> = emptyList(),
+        assertions: Assertions
     ): File {
         return compileJvmLibraryToJar(
             sourcesPath, jarName, addSources,
             allowKotlinSources = false,
-            extraClasspath = extraClasspath, extraOptions = extraOptions
+            extraClasspath = extraClasspath, extraOptions = extraOptions,
+            assertions = assertions
         )
     }
 
     @JvmStatic
-    @JvmOverloads
     fun compileLibraryToJar(
         sourcesPath: String,
         contentDir: File,
@@ -90,14 +78,15 @@ object MockLibraryUtil {
         allowKotlinSources: Boolean = true,
         extraOptions: List<String> = emptyList(),
         extraClasspath: List<String> = emptyList(),
-        useJava9: Boolean = false
+        useJava9: Boolean = false,
+        assertions: Assertions
     ): File {
         val classesDir = File(contentDir, "classes")
 
         val srcFile = File(sourcesPath)
         val kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile)
         if (srcFile.isFile || kotlinFiles.isNotEmpty()) {
-            Assert.assertTrue("Only java files are expected", allowKotlinSources)
+            KtAssert.assertTrue("Only java files are expected", allowKotlinSources)
             compileKotlin(sourcesPath, classesDir, extraOptions, *extraClasspath.toTypedArray())
         }
 
@@ -121,8 +110,8 @@ object MockLibraryUtil {
             )
 
             val compile =
-                if (useJava9) KotlinTestUtils::compileJavaFilesExternallyWithJava9
-                else KotlinTestUtils::compileJavaFiles
+                if (useJava9) ::compileJavaFilesExternallyWithJava9
+                else { files, opts -> compileJavaFiles(files, opts, assertions = assertions) }
 
             val success = compile(javaFiles, options)
             if (!success) {
@@ -135,17 +124,18 @@ object MockLibraryUtil {
 
     @JvmStatic
     fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean, extraOptions: List<String> = emptyList()): File {
-        val contentDir = KtTestUtil.tmpDirForReusableFolder("testLibrary-" + jarName)
+        val contentDir = KtTestUtil.tmpDirForReusableFolder("testLibrary-$jarName")
 
         val outDir = File(contentDir, "out")
-        val outputFile = File(outDir, jarName + ".js")
+        val outputFile = File(outDir, "$jarName.js")
         compileKotlin2JS(sourcesPath, outputFile, extraOptions)
 
         return createJarFile(contentDir, outDir, jarName, sourcesPath.takeIf { addSources })
     }
 
+    @JvmStatic
     fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
-        val jarFile = File(contentDir, jarName + ".jar")
+        val jarFile = File(contentDir, "$jarName.jar")
 
         ZipOutputStream(FileOutputStream(jarFile)).use { zip ->
             ZipUtil.addDirToZipRecursively(zip, jarFile, dirToAdd, "", null, null)
@@ -171,7 +161,7 @@ object MockLibraryUtil {
         val compiler = compilerClass.newInstance()
         val execMethod = compilerClass.getMethod("exec", PrintStream::class.java, Array<String>::class.java)
         val invocationResult = execMethod.invoke(compiler, PrintStream(outStream), args.toTypedArray()) as Enum<*>
-        assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
+        KtAssert.assertEquals(String(outStream.toByteArray()), ExitCode.OK.name, invocationResult.name)
     }
 
     @JvmStatic

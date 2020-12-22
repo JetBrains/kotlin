@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -27,9 +27,9 @@ class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTest
     override fun getProjectDescriptor() = object : KotlinLightProjectDescriptor() {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             val compiledJar1 =
-                MockLibraryUtil.compileJvmLibraryToJar("$TEST_DATA_PATH/lib1", "lib1")
+                MockLibraryUtilExt.compileJvmLibraryToJar("$TEST_DATA_PATH/lib1", "lib1")
             val compiledJar2 =
-                MockLibraryUtil.compileJvmLibraryToJar("$TEST_DATA_PATH/lib2", "lib2", extraClasspath = listOf(compiledJar1.canonicalPath))
+                MockLibraryUtilExt.compileJvmLibraryToJar("$TEST_DATA_PATH/lib2", "lib2", extraClasspath = listOf(compiledJar1.canonicalPath))
 
             model.addLibraryEntry(createLibrary(module.project, compiledJar1, "baseLibrary"))
             model.addLibraryEntry(createLibrary(module.project, compiledJar2, "dependentLibrary"))

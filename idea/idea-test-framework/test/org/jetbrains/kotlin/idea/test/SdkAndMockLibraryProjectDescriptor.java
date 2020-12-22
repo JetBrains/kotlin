@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind;
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
+import org.jetbrains.kotlin.test.MockLibraryUtilExt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         File libraryJar =
                 isJsLibrary
                 ? MockLibraryUtil.compileJsLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, Collections.emptyList())
-                : MockLibraryUtil.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, true, extraOptions, classpath);
+                : MockLibraryUtilExt.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, true, extraOptions, classpath);
         String jarUrl = getJarUrl(libraryJar);
 
         Library.ModifiableModel libraryModel =

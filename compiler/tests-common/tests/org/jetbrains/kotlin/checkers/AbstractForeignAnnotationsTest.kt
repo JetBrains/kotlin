@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.checkers
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 import java.io.File
@@ -35,7 +35,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     }
 
     protected fun compileTestAnnotations(extraClassPath: List<File>): List<File> =
-        listOf(MockLibraryUtil.compileJavaFilesLibraryToJar(
+        listOf(MockLibraryUtilExt.compileJavaFilesLibraryToJar(
             TEST_ANNOTATIONS_SOURCE_PATH,
             "test-foreign-annotations",
             extraOptions = listOf("-Xallow-kotlin-package"),
@@ -43,7 +43,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
         ))
 
     protected fun createJarWithForeignAnnotations(): List<File> = listOf(
-        MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
+        MockLibraryUtilExt.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
         ForTestCompileRuntime.jvmAnnotationsForTests()
     )
 

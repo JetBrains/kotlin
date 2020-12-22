@@ -61,7 +61,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
     }
 
     private fun createJarWithForeignAnnotations(): File =
-        MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+        MockLibraryUtilExt.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
 
     private fun createEnvironment(content: String): KotlinCoreEnvironment {
         val classpath = mutableListOf(getAnnotationsJar(), ForTestCompileRuntime.runtimeJarForTests())
