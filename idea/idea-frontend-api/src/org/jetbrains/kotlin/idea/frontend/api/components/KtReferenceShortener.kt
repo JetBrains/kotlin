@@ -5,27 +5,12 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.SmartPsiElementPointer
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtUserType
 
 abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
     abstract fun collectShortenings(file: KtFile, from: Int, to: Int): ShortenCommand
 }
 
-class ShortenCommand(
-    val targetFile: KtFile,
-    val importsToAdd: List<FqName>,
-    val typesToShorten: List<SmartPsiElementPointer<KtUserType>>
-) {
-    fun invokeShortening() {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
-        for (typePointer in typesToShorten) {
-            val type = typePointer.element ?: continue
-            type.deleteQualifier()
-        }
-    }
+interface ShortenCommand {
+    fun invokeShortening()
 }

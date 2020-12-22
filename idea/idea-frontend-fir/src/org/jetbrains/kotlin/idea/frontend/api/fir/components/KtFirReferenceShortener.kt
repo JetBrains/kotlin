@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
@@ -19,15 +22,14 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
+import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 
 internal class KtFirReferenceShortener(
@@ -39,10 +41,12 @@ internal class KtFirReferenceShortener(
         resolveFileToBodyResolve(file)
         val firFile = file.getOrBuildFirOfType<FirFile>(firResolveState)
 
+        val typesToImport = mutableListOf<FqName>()
         val typesToShorten = mutableListOf<KtUserType>()
-        firFile.acceptChildren(TypesCollectingVisitor(typesToShorten))
 
-        return ShortenCommand(file, emptyList(), typesToShorten.map { it.createSmartPointer() })
+        firFile.acceptChildren(TypesCollectingVisitor(typesToImport, typesToShorten))
+
+        return ShortenCommandImpl(file, typesToImport, typesToShorten.map { it.createSmartPointer() })
     }
 
     private fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): ClassId? {
@@ -56,14 +60,12 @@ internal class KtFirReferenceShortener(
         return null
     }
 
-
     private fun resolveFileToBodyResolve(file: KtFile) {
         for (declaration in file.declarations) {
             declaration.getOrBuildFir(firResolveState) // temporary hack, resolves declaration to BODY_RESOLVE stage
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirScope.findFirstClassifierByName(name: Name): FirClassifierSymbol<*>? {
         var element: FirClassifierSymbol<*>? = null
 
@@ -83,7 +85,10 @@ internal class KtFirReferenceShortener(
         return availableScopes.asReversed()
     }
 
-    private inner class TypesCollectingVisitor(private val collectedTypes: MutableList<KtUserType>) : FirVisitorVoid() {
+    private inner class TypesCollectingVisitor(
+        private val typesToImport: MutableList<FqName>,
+        private val typesToShorten: MutableList<KtUserType>,
+    ) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             element.acceptChildren(this)
         }
@@ -103,23 +108,62 @@ internal class KtFirReferenceShortener(
 
             if (wholeTypeElement.qualifier == null) return
 
-            val typeToShorten = findBiggestClassifierToShorten(wholeClassifierId, wholeTypeElement) ?: return
-            collectedTypes.add(typeToShorten)
+            collectTypeIfNeedsToBeShortened(wholeClassifierId, wholeTypeElement)
         }
 
-        private fun findBiggestClassifierToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): KtUserType? {
+        private fun collectTypeIfNeedsToBeShortened(wholeClassifierId: ClassId, wholeTypeElement: KtUserType) {
             val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
             val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
 
-            val positionScopes = findScopesAtPosition(wholeTypeElement) ?: return null
+            val positionScopes = findScopesAtPosition(wholeTypeElement) ?: return
 
             for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
                 val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
 
-                if (firstFoundClass == classId) return typeElement
+                if (firstFoundClass == classId) {
+                    addTypeToShorten(typeElement)
+                    return
+                }
             }
 
-            return null
+            // none class matched
+            val (mostTopLevelClassId, mostTopLevelTypeElement) = allClassIds.zip(allTypeElements).last()
+            val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
+
+            check(firstFoundClass != mostTopLevelClassId) { "This should not be true" }
+
+            if (firstFoundClass == null) {
+                addTypeToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelTypeElement)
+            }
+        }
+
+        private fun addTypeToShorten(typeElement: KtUserType) {
+            typesToShorten.add(typeElement)
+        }
+
+        private fun addTypeToImportAndShorten(classFqName: FqName, mostTopLevelTypeElement: KtUserType) {
+            typesToImport.add(classFqName)
+            typesToShorten.add(mostTopLevelTypeElement)
+        }
+    }
+}
+
+private class ShortenCommandImpl(
+    val targetFile: KtFile,
+    val importsToAdd: List<FqName>,
+    val typesToShorten: List<SmartPsiElementPointer<KtUserType>>
+) : ShortenCommand {
+
+    override fun invokeShortening() {
+        ApplicationManager.getApplication().assertWriteAccessAllowed()
+
+        for (nameToImport in importsToAdd) {
+            addImportToFile(targetFile.project, targetFile, nameToImport)
+        }
+
+        for (typePointer in typesToShorten) {
+            val type = typePointer.element ?: continue
+            type.deleteQualifier()
         }
     }
 }
