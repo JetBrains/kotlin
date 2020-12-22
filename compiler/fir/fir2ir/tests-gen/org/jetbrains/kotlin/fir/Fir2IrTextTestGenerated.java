@@ -1873,6 +1873,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
         }
 
+        @TestMetadata("typeParameterFromJavaClass.kt")
+        public void testTypeParameterFromJavaClass() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/typeParameterFromJavaClass.kt");
+        }
+
         @TestMetadata("typeVariableAfterBuildMap.kt")
         public void testTypeVariableAfterBuildMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
