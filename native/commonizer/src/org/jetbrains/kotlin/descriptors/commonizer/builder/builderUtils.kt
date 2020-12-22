@@ -122,9 +122,14 @@ internal fun CirSimpleType.buildType(
          - checkout https://github.com/sellmair/mpp-issue-bootstrap/tree/ddol/kt-40975/
          - Debug ./gradlew clean compileNativeMainKotlinMetadata -Dorg.gradle.debug=true
          Exception: java.lang.IllegalStateException: Classifier platform/posix/size_t not found for [linux_x64, macos_x64]
+
+          Also: Why would the following line even work?!
+          return this.underlyingType.buildType(targetComponents, typeParameterResolver, expandTypeAliases)
          */
         println("Failed to build type for CirTypeAliasType(${this.classifierId.asString()}): ${it.message}")
         throw it
+
+
     }
     is CirTypeParameterType -> buildSimpleType(
         classifier = typeParameterResolver.resolve(index)
