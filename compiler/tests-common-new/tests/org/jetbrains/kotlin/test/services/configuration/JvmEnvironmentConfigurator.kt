@@ -38,7 +38,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
-        val registeredDirectives = module.allRegisteredDirectives
+        val registeredDirectives = module.directives
         val targets = registeredDirectives[JvmEnvironmentConfigurationDirectives.JVM_TARGET]
         when (targets.size) {
             0 -> {}

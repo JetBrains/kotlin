@@ -22,8 +22,5 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
     protected val moduleStructure: TestModuleStructure
         get() = testServices.moduleStructure
 
-    protected val TestModule.allRegisteredDirectives: RegisteredDirectives
-        get() = ComposedRegisteredDirectives(directives, testServices.defaultDirectives)
-
     open fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {}
 }
