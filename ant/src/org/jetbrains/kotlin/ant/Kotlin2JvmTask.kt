@@ -71,6 +71,6 @@ class Kotlin2JvmTask : KotlinCompilerBaseTask() {
 
         if (noStdlib) args.add("-no-stdlib")
         if (noReflect) args.add("-no-reflect")
-        if (includeRuntime) args.add("-include-runtime")
+        if (includeRuntime && output?.extension != "jar") args.add("-include-runtime")
     }
 }

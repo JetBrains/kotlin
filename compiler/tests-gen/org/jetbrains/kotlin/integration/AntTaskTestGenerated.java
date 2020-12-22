@@ -63,6 +63,11 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         runTest("compiler/testData/integration/ant/jvm/kt11995/");
     }
 
+    @TestMetadata("kt16227")
+    public void testKt16227() throws Exception {
+        runTest("compiler/testData/integration/ant/jvm/kt16227/");
+    }
+
     @TestMetadata("languageVersion")
     public void testLanguageVersion() throws Exception {
         runTest("compiler/testData/integration/ant/jvm/languageVersion/");
