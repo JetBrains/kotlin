@@ -41,6 +41,18 @@ internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveSt
         }
     }
 
+    /**
+     * Runs [action] with fir element *without* any lock hold
+     * Consider using this only when you are completely sure
+     * that fir or one of it's container already holds the lock (i.e, corresponding withFir call was made)
+     */
+    inline fun <R> withFirUnsafe(action: (fir: D) -> R): R {
+        token.assertIsValidAndAccessible()
+        val fir = firWeakRef.get()
+            ?: throw EntityWasGarbageCollectedException("FirElement")
+        return action(fir)
+    }
+
     val resolveState
         get() = resolveStateWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
 
