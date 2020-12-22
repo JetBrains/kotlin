@@ -451,7 +451,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
 
             val kaptClasspathConfiguration =
-                project.configurations.create("_kaptClasspath_" + kaptTask.name).setExtendsFrom(kaptClasspathConfigurations).also {
+                project.configurations.create("kaptClasspath_" + kaptTask.name).setExtendsFrom(kaptClasspathConfigurations).also {
                     it.isVisible = false
                     it.isCanBeConsumed = false
                 }
