@@ -37,12 +37,12 @@ abstract class CreateInteropBundleTask : DefaultTask() {
     @TaskAction
     internal fun createInteropBundle() {
         outputDirectory.get().mkdirs()
+        val interopBundle = InteropBundle(outputDirectory.get())
         konanTargetConfigurations.forEach { (konanTarget, configuration) ->
             val libraryFiles = configuration.resolve()
             if (libraryFiles.isEmpty()) return@forEach
-            val konanTargetDirectory = outputDirectory.get().resolve(konanTarget.name)
             libraryFiles.forEach { libraryFile ->
-                val targetFile = konanTargetDirectory.resolve(libraryFile.name)
+                val targetFile = interopBundle.resolve(konanTarget, libraryFile.name)
                 libraryFile.copyTo(targetFile, true)
             }
         }
