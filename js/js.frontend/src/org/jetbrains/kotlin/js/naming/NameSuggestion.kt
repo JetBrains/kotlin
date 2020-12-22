@@ -399,7 +399,6 @@ fun Char.isES5IdentifierPart(): Boolean {
                 Character.CONNECTOR_PUNCTUATION -> true
                 else -> false
             } ||
-            // Nl which is missing in Character.isLetter, but present in UnicodeLetter in spec
             this == '\u200C' ||   // Zero-width non-joiner
             this == '\u200D'      // Zero-width joiner
 }

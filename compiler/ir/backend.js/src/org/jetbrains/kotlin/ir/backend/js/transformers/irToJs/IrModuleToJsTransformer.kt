@@ -127,16 +127,18 @@ class IrModuleToJsTransformer(
     ): String {
 
         val nameGenerator = refInfo.withReferenceTracking(
-            IrNamerImpl(newNameTables = namer),
+            IrNamerImpl(newNameTables = namer, backendContext),
             modules
         )
         val staticContext = JsStaticContext(
             backendContext = backendContext,
-            irNamer = nameGenerator
+            irNamer = nameGenerator,
+            globalNameScope = namer.globalNames
         )
         val rootContext = JsGenerationContext(
             currentFunction = null,
-            staticContext = staticContext
+            staticContext = staticContext,
+            localNames = LocalNameGenerator(NameScope.EmptyScope)
         )
 
         val (importStatements, importedJsModules) =
