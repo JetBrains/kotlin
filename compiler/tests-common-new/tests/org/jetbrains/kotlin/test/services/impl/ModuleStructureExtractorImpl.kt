@@ -24,7 +24,8 @@ import java.io.File
 
 class ModuleStructureExtractorImpl(
     testServices: TestServices,
-    additionalSourceProviders: List<AdditionalSourceProvider>
+    additionalSourceProviders: List<AdditionalSourceProvider>,
+    private val environmentConfigurators: List<EnvironmentConfigurator>
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
@@ -210,7 +211,7 @@ class ModuleStructureExtractorImpl(
         private fun finishModule() {
             finishFile()
             val moduleDirectives = directivesBuilder.build() + testServices.defaultDirectives + globalDirectives
-            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives)
+            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators)
             val moduleName = currentModuleName ?: defaultModuleName
             val testModule = TestModule(
                 name = moduleName,

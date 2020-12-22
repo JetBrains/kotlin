@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.DefaultsDsl
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -48,7 +49,7 @@ class LanguageVersionSettingsBuilder {
         analysisFlags[flag] = value
     }
 
-    fun configureUsingDirectives(directives: RegisteredDirectives) {
+    fun configureUsingDirectives(directives: RegisteredDirectives, environmentConfigurators: List<EnvironmentConfigurator>) {
         val apiVersion = directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
         if (apiVersion != null) {
             this.apiVersion = apiVersion
@@ -73,6 +74,12 @@ class LanguageVersionSettingsBuilder {
         )
 
         analysisFlags.forEach { withFlag(it.first, it.second) }
+
+        environmentConfigurators.forEach {
+            it.provideAdditionalAnalysisFlags(directives).entries.forEach { (flag, value) ->
+                withFlag(flag, value)
+            }
+        }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
     }
