@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
-import org.jetbrains.kotlin.descriptors.commonizer.Result
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
 
 
 internal interface CommonizerResultSerializer {
     operator fun invoke(
         originalLibraries: AllNativeLibraries,
-        commonizerResult: Result
+        commonizerResult: CommonizerResult
     )
 }
 
@@ -24,7 +24,7 @@ internal operator fun CommonizerResultSerializer.plus(other: CommonizerResultSer
 private class CompositeCommonizerResultSerializer(
     val serializers: List<CommonizerResultSerializer>
 ) : CommonizerResultSerializer {
-    override fun invoke(originalLibraries: AllNativeLibraries, commonizerResult: Result) {
+    override fun invoke(originalLibraries: AllNativeLibraries, commonizerResult: CommonizerResult) {
         serializers.forEach { serializer -> serializer(originalLibraries, commonizerResult) }
     }
 }

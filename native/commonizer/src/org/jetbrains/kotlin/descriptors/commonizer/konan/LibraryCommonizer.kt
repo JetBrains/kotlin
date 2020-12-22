@@ -57,9 +57,9 @@ internal class LibraryCommonizer internal constructor(
         return AllNativeLibraries(stdlib, librariesByTargets)
     }
 
-    private fun commonize(allLibraries: AllNativeLibraries): Result {
+    private fun commonize(allLibraries: AllNativeLibraries): CommonizerResult {
         statsCollector.use {
-            val parameters = Parameters(statsCollector, ::logProgress).apply {
+            val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
                 val storageManager = LockBasedStorageManager("Commonized modules")
 
                 val stdlibProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)

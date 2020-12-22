@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.descriptors.commonizer.KonanDistribution
-import org.jetbrains.kotlin.descriptors.commonizer.Result
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
 import org.jetbrains.kotlin.descriptors.commonizer.klibDir
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
@@ -49,7 +49,7 @@ private class CopyLibraryFromKonanDistributionSerializer(
     private val logger: Logger,
     private val copyFileIf: (File) -> Boolean = { true }
 ) : CommonizerResultSerializer {
-    override fun invoke(originalLibraries: AllNativeLibraries, commonizerResult: Result) {
+    override fun invoke(originalLibraries: AllNativeLibraries, commonizerResult: CommonizerResult) {
         konanDistribution.klibDir
             .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
             .listFiles().orEmpty()

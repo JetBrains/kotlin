@@ -53,7 +53,7 @@ class CirTreeMerger(
 ) {
     class CirTreeMergeResult(
         val root: CirRootNode,
-        val absentModuleInfos: Map<LeafCommonizerTarget, Collection<ModuleInfo>>
+        val missingModuleInfos: Map<LeafCommonizerTarget, Collection<ModuleInfo>>
     )
 
     private val size = parameters.targetProviders.size
