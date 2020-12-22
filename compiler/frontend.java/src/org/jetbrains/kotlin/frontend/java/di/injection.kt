@@ -126,7 +126,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
     useInstance(languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState))
 
     if (useBuiltInsProvider) {
-        useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)
+        useInstance((moduleContext.module.builtIns as JvmBuiltIns).customizer)
         useImpl<JvmBuiltInsPackageFragmentProvider>()
     }
     useImpl<OptionalAnnotationPackageFragmentProvider>()
