@@ -52,7 +52,7 @@ internal class FirModuleResolveStateImpl(
         sessionProvider.getSession(moduleInfo)!!
 
     override fun getOrBuildFirFor(element: KtElement): FirElement =
-        elementBuilder.getOrBuildFirFor(element, rootModuleSession.cache, fileStructureCache)
+        elementBuilder.getOrBuildFirFor(element, firFileBuilder, rootModuleSession.cache, fileStructureCache)
 
     override fun getFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)

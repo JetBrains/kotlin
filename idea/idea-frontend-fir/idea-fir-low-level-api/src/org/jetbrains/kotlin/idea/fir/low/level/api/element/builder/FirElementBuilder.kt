@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
@@ -45,12 +47,31 @@ internal class FirElementBuilder {
 
     fun getOrBuildFirFor(
         element: KtElement,
+        firFileBuilder: FirFileBuilder,
         moduleFileCache: ModuleFileCache,
         fileStructureCache: FileStructureCache,
-    ): FirElement {
-        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
-        val mappings = fileStructure.getStructureElementFor(element).mappings
+    ): FirElement = when (element) {
+        is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache)
+        else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache)
+    }
 
+    private fun getOrBuildFirForKtFile(ktFile: KtFile, firFileBuilder: FirFileBuilder, moduleFileCache: ModuleFileCache): FirFile =
+        firFileBuilder.getFirFileResolvedToPhaseWithCaching(
+            ktFile,
+            moduleFileCache,
+            FirResolvePhase.BODY_RESOLVE,
+            checkPCE = true
+        )
+
+    private fun getOrBuildFirForNonKtFileElement(
+        element: KtElement,
+        fileStructureCache: FileStructureCache,
+        moduleFileCache: ModuleFileCache
+    ): FirElement {
+        require(element !is KtFile)
+        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
+
+        val mappings = fileStructure.getStructureElementFor(element).mappings
         val psi = getPsiAsFirElementSource(element)
         mappings[psi]?.let { return it }
         return psi.getFirOfClosestParent(mappings)?.second

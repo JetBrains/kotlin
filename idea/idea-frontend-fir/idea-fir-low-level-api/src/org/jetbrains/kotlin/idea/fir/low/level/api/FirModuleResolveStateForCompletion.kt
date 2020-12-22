@@ -47,6 +47,7 @@ internal class FirModuleResolveStateForCompletion(
         synchronized(completionMapping) { completionMapping[psi] }?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
+            originalState.firFileBuilder,
             originalState.rootModuleSession.cache,
             fileStructureCache,
         )
