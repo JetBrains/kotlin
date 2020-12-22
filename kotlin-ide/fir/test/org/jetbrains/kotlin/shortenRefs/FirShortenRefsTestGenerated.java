@@ -46,6 +46,16 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/types/ParameterType.kt");
         }
 
+        @TestMetadata("ParameterTypeConflictingTopLevelClassNotUsed.kt")
+        public void testParameterTypeConflictingTopLevelClassNotUsed() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeConflictingTopLevelClassNotUsed.kt");
+        }
+
+        @TestMetadata("ParameterTypeConflictingTopLevelClassUsed.kt")
+        public void testParameterTypeConflictingTopLevelClassUsed() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeConflictingTopLevelClassUsed.kt");
+        }
+
         @TestMetadata("ParameterTypeFunctionalType.kt")
         public void testParameterTypeFunctionalType() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeFunctionalType.kt");
@@ -66,6 +76,11 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeNestedType.kt");
         }
 
+        @TestMetadata("ParameterTypeNonImportedClass.kt")
+        public void testParameterTypeNonImportedClass() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeNonImportedClass.kt");
+        }
+
         @TestMetadata("ParameterTypeStarImportedTypeLoses.kt")
         public void testParameterTypeStarImportedTypeLoses() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeStarImportedTypeLoses.kt");
@@ -79,6 +94,11 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         @TestMetadata("ParameterTypeTopLevelTypeWins.kt")
         public void testParameterTypeTopLevelTypeWins() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeTopLevelTypeWins.kt");
+        }
+
+        @TestMetadata("ParameterTypeTwoNonImportedClassesConflict.kt")
+        public void testParameterTypeTwoNonImportedClassesConflict() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeTwoNonImportedClassesConflict.kt");
         }
 
         @TestMetadata("VariableType.kt")
