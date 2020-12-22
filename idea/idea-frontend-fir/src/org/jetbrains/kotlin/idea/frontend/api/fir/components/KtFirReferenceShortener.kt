@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -21,9 +25,10 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
+import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.name.ClassId
@@ -31,6 +36,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.resolve.ImportPath
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -78,11 +85,34 @@ internal class KtFirReferenceShortener(
         return element
     }
 
-    private fun findScopesAtPosition(targetTypeReference: KtElement): List<FirScope>? {
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun findScopesAtPosition(targetTypeReference: KtElement, newImports: List<FqName>): List<FirScope>? {
         val towerDataContext = firResolveState.getTowerDataContextForElement(targetTypeReference) ?: return null
-        val availableScopes = towerDataContext.towerDataElements.mapNotNull { it.scope }
 
-        return availableScopes.asReversed()
+        val result = buildList<FirScope> {
+            addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
+            addIfNotNull(createFakeImportingScope(targetTypeReference.project, newImports))
+            addAll(towerDataContext.localScopes)
+        }
+
+        return result.asReversed()
+    }
+
+    private fun createFakeImportingScope(
+        project: Project,
+        newImports: List<FqName>
+    ): FirScope? {
+        if (newImports.isEmpty()) return null
+
+        val psiFactory = KtPsiFactory(project)
+
+        val resolvedNewImports = newImports
+            .map { psiFactory.createImportDirective(ImportPath(it, isAllUnder = false)) }
+            .mapNotNull { it.getOrBuildFirSafe<FirResolvedImport>(firResolveState) }
+
+        if (resolvedNewImports.isEmpty()) return null
+
+        return FirExplicitSimpleImportingScope(resolvedNewImports, firResolveState.rootModuleSession, ScopeSession())
     }
 
     private inner class TypesCollectingVisitor(
@@ -115,7 +145,7 @@ internal class KtFirReferenceShortener(
             val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
             val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
 
-            val positionScopes = findScopesAtPosition(wholeTypeElement) ?: return
+            val positionScopes = findScopesAtPosition(wholeTypeElement, typesToImport) ?: return
 
             for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
                 val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
