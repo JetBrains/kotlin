@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.commonizer.api.SharedCommonizerTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.ModuleResult
-import org.jetbrains.kotlin.descriptors.commonizer.Result
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult.Done
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult.NothingToDo
 import org.jetbrains.kotlin.descriptors.konan.NATIVE_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
@@ -33,19 +35,18 @@ internal class DefaultCommonizerResultSerializer(
 
     override fun invoke(
         originalLibraries: AllNativeLibraries,
-        commonizerResult: Result
+        commonizerResult: CommonizerResult
     ) {
         when (commonizerResult) {
-            is Result.NothingToCommonize -> {
+            is NothingToDo ->
                 // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
                 // In such case commonizer will do nothing and return a special commonizerResult value 'NothingToCommonize'.
                 // So, let's just copy platform libraries from the target where they are to the new destination.
                 originalLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
                     copyTargetAsIs(target, librariesToCommonize.libraries)
                 }
-            }
 
-            is Result.Commonized -> {
+            is Done -> {
                 val serializer = KlibMetadataMonolithicSerializer(
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -68,7 +69,7 @@ internal class DefaultCommonizerResultSerializer(
                     val moduleResults: Collection<ModuleResult> = commonizerResult.modulesByTargets.getValue(target)
                     val newModules: Collection<ModuleDescriptor> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.module }
                     val absentModuleLocations: List<File> =
-                        moduleResults.mapNotNull { (it as? ModuleResult.Absent)?.originalLocation }
+                        moduleResults.mapNotNull { (it as? ModuleResult.Missing)?.originalLocation }
 
                     val manifestProvider: NativeManifestDataProvider
                     val starredTarget: String?

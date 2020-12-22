@@ -17,8 +17,8 @@ sealed class CommonizerResult {
     class Done(
         val modulesByTargets: Map<CommonizerTarget, Collection<ModuleResult>>
     ) : CommonizerResult() {
-        val sharedTarget: SharedCommonizerTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedTarget>().single() }
-        val leafTargets: Set<LeafCommonizerTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafTarget>().toSet() }
+        val sharedTarget: SharedCommonizerTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedCommonizerTarget>().single() }
+        val leafTargets: Set<LeafCommonizerTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafCommonizerTarget>().toSet() }
     }
 }
 
