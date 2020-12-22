@@ -68,7 +68,7 @@ import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.Printer
@@ -614,7 +614,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject(JVM_MOCK_RUNTIME)
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
+        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
         AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
@@ -625,7 +625,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     fun testDependencyToOldKotlinLib() {
         initProject()
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
+        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
 
         AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
 
