@@ -1848,6 +1848,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
         }
 
+        @TestMetadata("readWriteProperty.kt")
+        public void testReadWriteProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");
+        }
+
         @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
         public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
