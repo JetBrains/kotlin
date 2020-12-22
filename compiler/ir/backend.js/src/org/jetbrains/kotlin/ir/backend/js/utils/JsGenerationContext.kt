@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.js.backend.ast.JsName
@@ -23,12 +23,14 @@ val emptyScope: JsScope
 
 class JsGenerationContext(
     val currentFunction: IrFunction?,
-    val staticContext: JsStaticContext
+    val staticContext: JsStaticContext,
+    val localNames: LocalNameGenerator? = null
 ): IrNamer by staticContext {
-    fun newDeclaration(func: IrFunction? = null): JsGenerationContext {
+    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(
             currentFunction = func,
-            staticContext = staticContext
+            staticContext = staticContext,
+            localNames = localNames,
         )
     }
 
@@ -39,9 +41,24 @@ class JsGenerationContext(
             if (currentFunction!!.isSuspend) {
                 JsNameRef(Namer.CONTINUATION)
             } else {
-                getNameForValueDeclaration(currentFunction.valueParameters.last()).makeRef()
+                JsNameRef(this.getNameForValueDeclaration(currentFunction.valueParameters.last()))
             }
         }
+
+    fun getNameForValueDeclaration(declaration: IrDeclarationWithName): JsName {
+        val name = localNames!!.variableNames.names[declaration]
+            ?: error("Variable name is not found ${declaration.name}")
+        return JsName(name)
+    }
+
+    fun getNameForLocalDeclaration(declaration: IrDeclarationWithName): JsName =
+        getNameForValueDeclaration(declaration)
+
+
+    fun getNameForLoop(loop: IrLoop): JsName? {
+        val name = localNames!!.localLoopNames.names[loop] ?: return null
+        return JsName(name)
+    }
 
     private fun isCoroutineDoResume(): Boolean {
         val overriddenSymbols = (currentFunction as? IrSimpleFunction)?.overriddenSymbols ?: return false
