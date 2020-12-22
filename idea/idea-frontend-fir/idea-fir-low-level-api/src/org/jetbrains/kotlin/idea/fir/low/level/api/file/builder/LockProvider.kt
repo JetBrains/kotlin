@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import com.google.common.collect.MapMaker
-import com.intellij.openapi.diagnostic.logger
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.locks.ReadWriteLock
@@ -17,22 +16,51 @@ import kotlin.concurrent.withLock
 internal class LockProvider<KEY> {
     private val locks: ConcurrentMap<KEY, ReadWriteLock> = MapMaker().weakKeys().makeMap()
 
+    @OptIn(PrivateForInline::class)
+    private val deadLockGuard = DeadLockGuard()
+
     @Suppress("NOTHING_TO_INLINE")
     private inline fun getLockFor(key: KEY) = locks.getOrPut(key) { ReentrantReadWriteLock() }
 
+    @OptIn(PrivateForInline::class)
     inline fun <R> withReadLock(key: KEY, action: () -> R): R {
         val readLock = getLockFor(key).readLock()
-        return readLock.withLock { action() }
+        return deadLockGuard.guardReadLock { readLock.withLock { action() } }
     }
 
-
+    @OptIn(PrivateForInline::class)
     inline fun <R> withWriteLock(key: KEY, action: () -> R): R {
         val writeLock = getLockFor(key).writeLock()
-        return writeLock.withLock { action() }
+        return deadLockGuard.guardWriteLock { writeLock.withLock { action() } }
     }
 
+    @OptIn(PrivateForInline::class)
     inline fun <R> withWriteLockPCECheck(key: KEY, lockingIntervalMs: Long, action: () -> R): R {
         val writeLock = getLockFor(key).writeLock()
-        return writeLock.lockWithPCECheck(lockingIntervalMs, action)
+        return deadLockGuard.guardWriteLock { writeLock.lockWithPCECheck(lockingIntervalMs, action) }
     }
 }
+
+@PrivateForInline
+internal class DeadLockGuard {
+    private val readLocksCount = ThreadLocal.withInitial { 0 }
+
+    inline fun <R> guardReadLock(action: () -> R): R {
+        readLocksCount.set(readLocksCount.get() + 1)
+        return try {
+            action()
+        } finally {
+            readLocksCount.set(readLocksCount.get() - 1)
+        }
+    }
+
+    inline fun <R> guardWriteLock(action: () -> R): R {
+
+        if (readLocksCount.get() > 0) {
+            throw ReadWriteDeadLockException()
+        }
+        return action()
+    }
+}
+
+class ReadWriteDeadLockException : IllegalStateException("Acquiring write lock when read lock hold")
