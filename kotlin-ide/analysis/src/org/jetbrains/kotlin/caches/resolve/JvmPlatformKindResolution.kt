@@ -13,13 +13,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
+import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
+import org.jetbrains.kotlin.idea.caches.resolve.supportsAdditionalBuiltInsMembers
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -52,9 +55,23 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
         return if (sdkInfo != null) CacheKeyBySdk(sdkInfo.sdk) else BuiltInsCacheKey.DefaultBuiltInsKey
     }
 
-    override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?): KotlinBuiltIns {
+    override fun createBuiltIns(
+        moduleInfo: IdeaModuleInfo,
+        projectContext: ProjectContext,
+        resolverForProject: ResolverForProject<IdeaModuleInfo>,
+        sdkDependency: SdkInfo?
+    ): KotlinBuiltIns {
         return if (sdkDependency != null)
-            JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
+            JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER).apply {
+                setPostponedSettingsComputation {
+                    // SDK should be present, otherwise we wouldn't have created JvmBuiltIns in createBuiltIns
+                    val sdkDescriptor = resolverForProject.descriptorForModule(sdkDependency)
+
+                    val isAdditionalBuiltInsFeaturesSupported =
+                        moduleInfo.supportsAdditionalBuiltInsMembers(projectContext.project)
+                    JvmBuiltIns.Settings(sdkDescriptor, isAdditionalBuiltInsFeaturesSupported)
+                }
+            }
         else
             DefaultBuiltIns.Instance
     }
