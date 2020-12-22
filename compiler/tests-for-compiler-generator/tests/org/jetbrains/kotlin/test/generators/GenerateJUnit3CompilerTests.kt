@@ -153,6 +153,10 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/java9/box")
             }
 
+            testClass<AbstractJdk9IrBlackBoxCodegenTest> {
+                model("codegen/java9/box", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts")
             }
