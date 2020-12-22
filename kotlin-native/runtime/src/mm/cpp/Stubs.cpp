@@ -15,34 +15,6 @@ ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
     TODO();
 }
 
-ObjHeader** ObjHeader::GetWeakCounterLocation() {
-    TODO();
-}
-
-#ifdef KONAN_OBJC_INTEROP
-
-void* ObjHeader::GetAssociatedObject() {
-    TODO();
-}
-
-void** ObjHeader::GetAssociatedObjectLocation() {
-    TODO();
-}
-
-void ObjHeader::SetAssociatedObject(void* obj) {
-    TODO();
-}
-
-#endif // KONAN_OBJC_INTEROP
-
-static MetaObjHeader* createMetaObject(TypeInfo** location) {
-    TODO();
-}
-
-static void destroyMetaObject(TypeInfo** location) {
-    TODO();
-}
-
 extern "C" {
 
 OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {

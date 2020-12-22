@@ -38,19 +38,29 @@ struct MetaObjHeader;
 struct ObjHeader {
   TypeInfo* typeInfoOrMeta_;
 
+  // Returns `nullptr` if it's not a meta object.
+  static MetaObjHeader* AsMetaObject(TypeInfo* typeInfo) noexcept {
+      auto* typeInfoOrMeta = clearPointerBits(typeInfo, OBJECT_TAG_MASK);
+      if (typeInfoOrMeta != typeInfoOrMeta->typeInfo_) {
+          return reinterpret_cast<MetaObjHeader*>(typeInfoOrMeta);
+      } else {
+          return nullptr;
+      }
+  }
+
   const TypeInfo* type_info() const {
     return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
   }
 
   bool has_meta_object() const {
-    auto* typeInfoOrMeta = clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK);
-    return (typeInfoOrMeta != typeInfoOrMeta->typeInfo_);
+      return AsMetaObject(typeInfoOrMeta_) != nullptr;
   }
 
   MetaObjHeader* meta_object() {
-     return has_meta_object() ?
-        reinterpret_cast<MetaObjHeader*>(clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)) :
-        createMetaObject(&typeInfoOrMeta_);
+      if (auto* metaObject = AsMetaObject(typeInfoOrMeta_)) {
+          return metaObject;
+      }
+      return createMetaObject(this);
   }
 
   ALWAYS_INLINE ObjHeader** GetWeakCounterLocation();
@@ -75,8 +85,8 @@ struct ObjHeader {
     return hasPointerBits(typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
   }
 
-  static MetaObjHeader* createMetaObject(TypeInfo** location);
-  static void destroyMetaObject(TypeInfo** location);
+  static MetaObjHeader* createMetaObject(ObjHeader* object);
+  static void destroyMetaObject(ObjHeader* object);
 };
 
 // Header of value type array objects. Keep layout in sync with that of object header.

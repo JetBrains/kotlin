@@ -6,6 +6,7 @@
 #include "Memory.h"
 
 #include "Exceptions.h"
+#include "ExtraObjectData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "KAssert.h"
 #include "Porting.h"
@@ -57,6 +58,39 @@ ALWAYS_INLINE mm::ThreadData* GetThreadData(MemoryState* state) {
 }
 
 } // namespace
+
+ObjHeader** ObjHeader::GetWeakCounterLocation() {
+    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakCounterLocation();
+}
+
+#ifdef KONAN_OBJC_INTEROP
+
+void* ObjHeader::GetAssociatedObject() {
+    if (!has_meta_object()) {
+        return nullptr;
+    }
+    return *GetAssociatedObjectLocation();
+}
+
+void** ObjHeader::GetAssociatedObjectLocation() {
+    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetAssociatedObjectLocation();
+}
+
+void ObjHeader::SetAssociatedObject(void* obj) {
+    *GetAssociatedObjectLocation() = obj;
+}
+
+#endif // KONAN_OBJC_INTEROP
+
+// static
+MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
+    return mm::ExtraObjectData::Install(object).AsMetaObjHeader();
+}
+
+// static
+void ObjHeader::destroyMetaObject(ObjHeader* object) {
+    mm::ExtraObjectData::Uninstall(object);
+}
 
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
     // TODO: Remove when legacy MM is gone.
