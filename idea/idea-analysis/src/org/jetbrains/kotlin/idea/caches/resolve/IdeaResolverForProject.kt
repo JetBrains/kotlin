@@ -10,7 +10,6 @@ import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.caches.resolve.CompositeAnalyzerServices
 import org.jetbrains.kotlin.caches.resolve.CompositeResolverForModuleFactory
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
@@ -145,21 +144,12 @@ class IdeaResolverForProject(
             val cachedBuiltIns = cache[key]
             if (cachedBuiltIns != null) return@compute cachedBuiltIns
 
-            // Note #1: we can't use .getOrPut, because we have to put builtIns into map *before* initialization
-            // Note #2: it's OK to put not-initialized built-ins into public map, because access to [cache] is guarded by storageManager.lock
-            val newBuiltIns = module.platform.idePlatformKind.resolution.createBuiltIns(module, projectContextFromSdkResolver, sdk)
-            cache[key] = newBuiltIns
-
-            if (newBuiltIns is JvmBuiltIns) {
-                // SDK should be present, otherwise we wouldn't have created JvmBuiltIns in createBuiltIns
-                val sdkDescriptor = resolverForSdk.descriptorForModule(sdk!!)
-
-                val isAdditionalBuiltInsFeaturesSupported = module.supportsAdditionalBuiltInsMembers(projectContextFromSdkResolver.project)
-
-                newBuiltIns.initialize(sdkDescriptor, isAdditionalBuiltInsFeaturesSupported)
-            }
-
-            return@compute newBuiltIns
+            module.platform.idePlatformKind.resolution
+                .createBuiltIns(module, projectContextFromSdkResolver, resolverForSdk, sdk)
+                .also {
+                    // TODO: MemoizedFunction should be used here instead, but for proper we also need a module (for LV settings) that is not contained in the key
+                    cache[key] = it
+                }
         }
     }
 

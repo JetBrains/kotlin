@@ -53,25 +53,35 @@ class JvmBuiltIns(storageManager: StorageManager, kind: Kind) : KotlinBuiltIns(s
         FALLBACK,
     }
 
-    // Module containing JDK classes or having them among dependencies
-    private var ownerModuleDescriptor: ModuleDescriptor? = null
-    private var isAdditionalBuiltInsFeatureSupported: Boolean = true
+    class Settings(
+        // Module containing JDK classes or having them among dependencies
+        val ownerModuleDescriptor: ModuleDescriptor,
+        val isAdditionalBuiltInsFeatureSupported: Boolean,
+    )
+
+    private var settingsComputation: (() -> Settings)? = null
+
+    fun setPostponedSettingsComputation(computation: () -> Settings) {
+        assert(settingsComputation == null) { "JvmBuiltins repeated initialization" }
+        settingsComputation = computation
+    }
 
     fun initialize(moduleDescriptor: ModuleDescriptor, isAdditionalBuiltInsFeatureSupported: Boolean) {
-        assert(ownerModuleDescriptor == null) { "JvmBuiltins repeated initialization" }
-        this.ownerModuleDescriptor = moduleDescriptor
-        this.isAdditionalBuiltInsFeatureSupported = isAdditionalBuiltInsFeatureSupported
+        setPostponedSettingsComputation {
+            Settings(moduleDescriptor, isAdditionalBuiltInsFeatureSupported)
+        }
     }
 
     val customizer: JvmBuiltInsCustomizer by storageManager.createLazyValue {
         JvmBuiltInsCustomizer(
-            builtInsModule, storageManager,
-            { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } },
-            {
-                ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" }
-                isAdditionalBuiltInsFeatureSupported
-            }
-        )
+            builtInsModule, storageManager
+        ) {
+            settingsComputation
+                .sure { "JvmBuiltins instance has not been initialized properly" }
+                .invoke().also {
+                    settingsComputation = null
+                }
+        }
     }
 
     init {

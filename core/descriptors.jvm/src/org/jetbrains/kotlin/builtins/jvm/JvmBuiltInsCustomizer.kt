@@ -50,19 +50,17 @@ import java.util.*
 class JvmBuiltInsCustomizer(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager,
-    deferredOwnerModuleDescriptor: () -> ModuleDescriptor,
-    isAdditionalBuiltInsFeatureSupported: () -> Boolean
+    settingsComputation: () -> JvmBuiltIns.Settings,
 ) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
     private val j2kClassMapper = JavaToKotlinClassMapper
 
-    private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
-    private val isAdditionalBuiltInsFeatureSupported: Boolean by lazy(isAdditionalBuiltInsFeatureSupported)
+    private val settings by storageManager.createLazyValue(settingsComputation)
 
     private val mockSerializableType = storageManager.createMockJavaIoSerializableType()
     private val cloneableType by storageManager.createLazyValue {
-        ownerModuleDescriptor.findNonGenericClassAcrossDependencies(
+        settings.ownerModuleDescriptor.findNonGenericClassAcrossDependencies(
             JvmBuiltInClassDescriptorFactory.CLONEABLE_CLASS_ID,
-            NotFoundClasses(storageManager, ownerModuleDescriptor)
+            NotFoundClasses(storageManager, settings.ownerModuleDescriptor)
         ).defaultType
     }
 
@@ -119,7 +117,7 @@ class JvmBuiltInsCustomizer(
             )
         }
 
-        if (!isAdditionalBuiltInsFeatureSupported) return emptyList()
+        if (!settings.isAdditionalBuiltInsFeatureSupported) return emptyList()
 
         return getAdditionalFunctions(classDescriptor) {
             it.getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS)
@@ -158,7 +156,7 @@ class JvmBuiltInsCustomizer(
     }
 
     override fun getFunctionsNames(classDescriptor: ClassDescriptor): Set<Name> {
-        if (!isAdditionalBuiltInsFeatureSupported) return emptySet()
+        if (!settings.isAdditionalBuiltInsFeatureSupported) return emptySet()
         // NB: It's just an approximation that could be calculated relatively fast
         // More precise computation would look like `getAdditionalFunctions` (and the measurements show that it would be rather slow)
         return classDescriptor.getJavaAnalogue()?.unsubstitutedMemberScope?.getFunctionNames() ?: emptySet()
@@ -270,11 +268,11 @@ class JvmBuiltInsCustomizer(
         if (!fqName.isSafe) return null
         val javaAnalogueFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName)?.asSingleFqName() ?: return null
 
-        return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
+        return settings.ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
     }
 
     override fun getConstructors(classDescriptor: ClassDescriptor): Collection<ClassConstructorDescriptor> {
-        if (classDescriptor.kind != ClassKind.CLASS || !isAdditionalBuiltInsFeatureSupported) return emptyList()
+        if (classDescriptor.kind != ClassKind.CLASS || !settings.isAdditionalBuiltInsFeatureSupported) return emptyList()
 
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
@@ -317,7 +315,7 @@ class JvmBuiltInsCustomizer(
         val javaAnalogueClassDescriptor = classDescriptor.getJavaAnalogue() ?: return true
 
         if (!functionDescriptor.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)) return true
-        if (!isAdditionalBuiltInsFeatureSupported) return false
+        if (!settings.isAdditionalBuiltInsFeatureSupported) return false
 
         val jvmDescriptor = functionDescriptor.computeJvmDescriptor()
         return javaAnalogueClassDescriptor
