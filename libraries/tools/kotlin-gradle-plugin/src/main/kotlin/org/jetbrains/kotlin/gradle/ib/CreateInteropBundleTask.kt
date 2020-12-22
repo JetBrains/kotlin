@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.gradle.ib
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.ib.InteropBundlePlugin.Companion.konanTargets
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-// TODO SELLMAIR TEST
 abstract class CreateInteropBundleTask : DefaultTask() {
 
     internal data class KonanTargetWithConfiguration(
@@ -22,7 +22,7 @@ abstract class CreateInteropBundleTask : DefaultTask() {
     )
 
     private val konanTargetConfigurations =
-        konanTargets.associateWith { konanTarget -> project.configurations.getByName(konanTarget.name) }
+        konanTargets.associateWith { konanTarget -> project.configurations.maybeCreate(konanTarget.name) }
 
     @OutputDirectory
     val outputDirectory: Property<File> = project.objects.property(File::class.java)
