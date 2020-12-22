@@ -20,19 +20,18 @@ import org.jetbrains.kotlin.gradle.ib.InteropBundleCommonizerTransformation.Para
 import java.io.File
 import java.io.Serializable
 
-// TODO SELLMAIR TEST
 
 abstract class InteropBundleCommonizerTransformation : TransformAction<Parameters> {
     open class Parameters : TransformParameters, Serializable {
 
         @InputFile
-        var konanHome: File? = null
+        open var konanHome: File? = null
 
         @Input
-        var outputHierarchy: SharedCommonizerTarget? = null
+        open var outputHierarchy: SharedCommonizerTarget? = null
 
         @Classpath
-        var commonizerClasspath: Set<File>? = null
+        open var commonizerClasspath: Set<File>? = null
     }
 
     @get:Classpath

@@ -22,7 +22,7 @@ import java.io.Serializable
 abstract class CommonizerOutputSelectionTransformation : TransformAction<CommonizerOutputSelectionTransformation.Parameters> {
     open class Parameters : TransformParameters, Serializable {
         @Input
-        var target: CommonizerTarget? = null
+        open var target: CommonizerTarget? = null
     }
 
     @get:InputArtifact

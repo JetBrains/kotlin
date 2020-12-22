@@ -159,7 +159,7 @@ private fun Configuration.setCommonizerTargetAttributeIfAbsent(value: String) {
 }
 
 private fun Project.getCommonizerOutputHierarchy(): SharedCommonizerTarget? {
-    return getAllSharedCommonizerTargets().maxBy { it.order }?.also { target ->
-        require(target.order <= 1) { "Commonizer only supports one level of hierarchy at the moment" }
+    return getAllSharedCommonizerTargets().maxBy { it.level }?.also { target ->
+        require(target.level <= 1) { "Commonizer only supports one level of hierarchy at the moment" }
     }
 }

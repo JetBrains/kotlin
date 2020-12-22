@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.commonizer.api
 
 import java.io.File
+import java.io.Serializable
 import kotlin.jvm.Throws
 
-public interface Commonizer {
+public interface Commonizer: Serializable {
     @Throws(Throwable::class)
     public operator fun invoke(
         konanHome: File,

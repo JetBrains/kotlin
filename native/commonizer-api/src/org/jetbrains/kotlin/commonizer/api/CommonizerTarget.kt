@@ -73,11 +73,10 @@ public val CommonizerTarget.konanTargets: Set<KonanTarget>
         }
     }
 
-// TODO SELLMAIR NOW: Rename to level
-public val CommonizerTarget.order: Int
+public val CommonizerTarget.level: Int
     get() {
         return when (this) {
             is LeafCommonizerTarget -> return 0
-            is SharedCommonizerTarget -> targets.maxOf { it.order } + 1
+            is SharedCommonizerTarget -> targets.maxOf { it.level } + 1
         }
     }
