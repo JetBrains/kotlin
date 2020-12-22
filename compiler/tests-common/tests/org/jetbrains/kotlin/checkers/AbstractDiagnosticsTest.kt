@@ -80,6 +80,7 @@ import java.util.*
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
+@Deprecated("Please use new test infrastructure from :compiler:tests-common:new. Check org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest")
 abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         try {
