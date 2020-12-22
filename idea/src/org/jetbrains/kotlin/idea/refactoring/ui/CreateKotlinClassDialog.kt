@@ -53,7 +53,8 @@ open class CreateKotlinClassDialog(
     targetPackageName: String,
     kind: ClassKind,
     private val myClassNameEditable: Boolean,
-    private val myModule: Module?
+    private val myModule: Module?,
+    val isSealed: Boolean = false
 ) : DialogWrapper(myProject, true) {
 
     private val myInformationLabel = JLabel("#")
@@ -63,7 +64,9 @@ open class CreateKotlinClassDialog(
         myProject,
         RECENTS_KEY,
         CodeInsightBundle.message("dialog.create.class.package.chooser.title")
-    )
+    ).also {
+        if (isSealed) it.isEnabled = false
+    }
     private val myTfClassName: JTextField = MyTextField()
     var targetDirectory: PsiDirectory? = null
         private set
@@ -239,6 +242,6 @@ open class CreateKotlinClassDialog(
             override fun pass(s: String?) {
                 setErrorText(s, myDestinationCB)
             }
-        }, myPackageComponent.getChildComponent())
+        }, myPackageComponent.childComponent, isSealed)
     }
 }
