@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
 import com.intellij.ide.util.DirectoryChooser;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel;
 import com.intellij.refactoring.classMembers.MemberInfoBase;
@@ -30,6 +33,7 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.util.PhysicalFileSystemUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
@@ -74,12 +78,15 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JCheckBox cbApplyMPPDeclarationsMove;
     private KotlinMemberSelectionTable memberTable;
 
+    private final boolean freezeTargets;
+
     public MoveKotlinTopLevelDeclarationsDialog(
             @NotNull Project project,
             @NotNull Set<KtNamedDeclaration> elementsToMove,
             @Nullable String targetPackageName,
             @Nullable PsiDirectory targetDirectory,
             @Nullable KtFile targetFile,
+            boolean freezeTargets,
             boolean moveToPackage,
             @Nullable MoveCallback moveCallback
     ) {
@@ -88,6 +95,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
              targetPackageName,
              targetDirectory,
              targetFile,
+             freezeTargets,
              moveToPackage,
              KotlinRefactoringSettings.getInstance().MOVE_SEARCH_IN_COMMENTS,
              KotlinRefactoringSettings.getInstance().MOVE_SEARCH_FOR_TEXT,
@@ -102,6 +110,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @Nullable String targetPackageName,
             @Nullable PsiDirectory targetDirectory,
             @Nullable KtFile targetFile,
+            boolean freezeTargets,
             boolean moveToPackage,
             boolean searchInComments,
             boolean searchForTextOccurrences,
@@ -110,6 +119,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @Nullable MoveCallback moveCallback
     ) {
         super(project, true);
+        this.freezeTargets = freezeTargets;
 
         init();
 
@@ -127,7 +137,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         initPackageChooser(targetPackageName, targetDirectory, sourceFiles);
 
-        initFileChooser(targetFile, elementsToMove, sourceFiles);
+        initFileChooser(targetFile, freezeTargets ? targetDirectory : null, elementsToMove, sourceFiles);
 
         initMoveToButtons(moveToPackage);
 
@@ -214,6 +224,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     ) {
         if (targetPackageName != null) {
             classPackageChooser.prependItem(targetPackageName);
+            classPackageChooser.setEnabled(freezeTargets);
         }
 
         ((KotlinDestinationFolderComboBox) destinationFolderCB).setData(
@@ -225,7 +236,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         setErrorText(s);
                     }
                 },
-                classPackageChooser.getChildComponent()
+                classPackageChooser.getChildComponent(),
+                !freezeTargets
         );
     }
 
@@ -268,6 +280,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     private void initFileChooser(
             @Nullable KtFile targetFile,
+            @Nullable PsiDirectory targetDirectory,
             @NotNull Set<KtNamedDeclaration> elementsToMove,
             @NotNull List<KtFile> sourceFiles
     ) {
@@ -276,11 +289,15 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             throw new AssertionError("File chooser initialization failed");
         }
 
+        Module targetModule = (targetDirectory != null)? ModuleUtilCore.findModuleForPsiElement(targetDirectory) : null;
+        GlobalSearchScope targetModuleScope = targetModule == null ? null
+                : GlobalSearchScope.getScopeRestrictedByFileTypes(targetModule.getModuleScope(), KotlinFileType.INSTANCE);
+
         fileChooser.addActionListener(e -> {
                     KotlinFileChooserDialog dialog = new KotlinFileChooserDialog(
                             KotlinBundle.message("text.choose.containing.file"),
-                            myProject
-                    );
+                            myProject,
+                            targetModuleScope, getTargetPackage());
 
                     File targetFile1 = new File(fileChooser.getText());
                     PsiFile targetPsiFile = PhysicalFileSystemUtilsKt.toPsiFile(targetFile1, myProject);
@@ -364,7 +381,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         UIUtil.setEnabled(rbMoveToFile, !needToMoveMPPDeclarations, true);
 
         boolean moveToPackage = rbMoveToPackage.isSelected();
-        classPackageChooser.setEnabled(moveToPackage);
+        classPackageChooser.setEnabled(moveToPackage && freezeTargets);
         updateFileNameInPackageField();
         fileChooser.setEnabled(!moveToPackage);
         UIUtil.setEnabled(targetPanel, moveToPackage && !needToMoveMPPDeclarations && hasAnySourceRoots(), true);
