@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.descriptors.commonizer.cli
 
 import org.jetbrains.kotlin.commonizer.api.*
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.EmptyRepository
 import org.jetbrains.kotlin.descriptors.commonizer.KonanDistribution
-import org.jetbrains.kotlin.descriptors.commonizer.KonanDistributionRepository
-import org.jetbrains.kotlin.descriptors.commonizer.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.konan.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.CopyStdlibCommonizerResultSerializer
 import org.jetbrains.kotlin.descriptors.commonizer.konan.DefaultCommonizerResultSerializer
 import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer
+import org.jetbrains.kotlin.descriptors.commonizer.repository.*
+import org.jetbrains.kotlin.descriptors.commonizer.repository.EmptyRepository
+import org.jetbrains.kotlin.descriptors.commonizer.repository.FilesRepository
+import org.jetbrains.kotlin.descriptors.commonizer.repository.KonanDistributionRepository
+import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsType
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
