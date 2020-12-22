@@ -115,9 +115,16 @@ internal fun CirSimpleType.buildType(
         else
             buildSimpleType(typeAliasDescriptor, arguments, isMarkedNullable)
     }.getOrElse {
-        // TODO SELLMAIR NOW
+        /*
+        TODO DDOL: Why is this not failing already during commonization?
+         Steps to reproduce:
+         - Install kotlin snapshot
+         - checkout https://github.com/sellmair/mpp-issue-bootstrap/tree/ddol/kt-40975/
+         - Debug ./gradlew clean compileNativeMainKotlinMetadata -Dorg.gradle.debug=true
+         Exception: java.lang.IllegalStateException: Classifier platform/posix/size_t not found for [linux_x64, macos_x64]
+         */
         println("Failed to build type for CirTypeAliasType(${this.classifierId.asString()}): ${it.message}")
-        return this.underlyingType.buildType(targetComponents, typeParameterResolver, expandTypeAliases)
+        throw it
     }
     is CirTypeParameterType -> buildSimpleType(
         classifier = typeParameterResolver.resolve(index)
