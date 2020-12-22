@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 fun box(): String {
     val uia = uintArrayOf()

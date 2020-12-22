@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
@@ -513,7 +514,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
 
     companion object {
-
         internal fun createInlineMethodNode(
             functionDescriptor: FunctionDescriptor,
             methodOwner: Type,
@@ -529,10 +529,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
             }
 
-            val asmMethod = if (callDefault)
-                state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompilerForInline.contextKind)
-            else
-                mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
+            var asmMethod = mapMethod(state, functionDescriptor, sourceCompilerForInline, jvmSignature, callDefault)
+            if (asmMethod.name.contains("-") &&
+                !state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) &&
+                classFileContainsMethod(functionDescriptor, state, asmMethod) == false
+            ) {
+                state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = true
+                asmMethod = mapMethod(state, functionDescriptor, sourceCompilerForInline, jvmSignature, callDefault)
+                state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = false
+            }
 
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
             if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DescriptorWithContainerSource) {
@@ -543,6 +548,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)
         }
+
+        private fun mapMethod(
+            state: GenerationState,
+            functionDescriptor: FunctionDescriptor,
+            sourceCompiler: SourceCompilerForInline,
+            jvmSignature: JvmMethodSignature,
+            callDefault: Boolean
+        ): Method =
+            if (callDefault) state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompiler.contextKind)
+            else mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
 
         internal fun createSpecialInlineMethodNodeFromBinaries(functionDescriptor: FunctionDescriptor, state: GenerationState): MethodNode {
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
