@@ -10,10 +10,14 @@ import org.jetbrains.kotlin.commonizer.api.IdentityStringSyntaxNode.SharedTarget
 import org.jetbrains.kotlin.commonizer.api.IdentityStringToken.*
 
 public fun parseCommonizerTarget(identityString: String): CommonizerTarget {
-    val tokens = tokenizeIdentityString(identityString)
-    val syntaxTree = parser(tokens) ?: error("Failed building syntax tree. $identityString")
-    check(syntaxTree.remaining.isEmpty()) { "Failed building syntax tree. Unexpected remaining tokens ${syntaxTree.remaining}" }
-    return buildCommonizerTarget(syntaxTree.value)
+    try {
+        val tokens = tokenizeIdentityString(identityString)
+        val syntaxTree = parser(tokens) ?: error("Failed building syntax tree. $identityString")
+        check(syntaxTree.remaining.isEmpty()) { "Failed building syntax tree. Unexpected remaining tokens ${syntaxTree.remaining}" }
+        return buildCommonizerTarget(syntaxTree.value)
+    } catch (e: Throwable) {
+        throw IllegalArgumentException("Failed parsing CommonizerTarget from \"$identityString\"", e)
+    }
 }
 
 
@@ -90,7 +94,7 @@ private val separatorTokenizer =
     RegexIdentityStringTokenizer(Regex("""\s*,\s*""")) { Separator }
 
 private val wordTokenizer =
-    RegexIdentityStringTokenizer(Regex("\\w*"), IdentityStringToken::Word)
+    RegexIdentityStringTokenizer(Regex("\\w+"), IdentityStringToken::Word)
 
 //endregion
 
@@ -164,7 +168,7 @@ private object SharedTargetParser : Parser<SharedTargetSyntaxNode> {
 
         val closingToken = innerParserOutput.remaining.firstOrNull()
         if (closingToken != SharedTargetEnd) {
-            error("Missing ']' at $tokens")
+            error("Missing ']' at ${tokens.joinToString("")}")
         }
 
         return ParserOutput(SharedTargetSyntaxNode(innerParserOutput.value), innerParserOutput.remaining.drop(1))
