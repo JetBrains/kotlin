@@ -454,7 +454,7 @@ public class PropertyCodegen {
             }
 
             if (propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor && JvmAnnotationUtilKt.isJvmRecord((ClassDescriptor) propertyDescriptor.getContainingDeclaration())) {
-                builder.newRecordComponent(name, type.getDescriptor(), signature);
+                ClassBuilderRecordKt.addRecordComponent(builder, name, type.getDescriptor(), signature);
             }
         }
     }
