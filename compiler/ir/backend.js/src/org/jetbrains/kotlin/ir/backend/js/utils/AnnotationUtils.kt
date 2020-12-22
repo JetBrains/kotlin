@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,6 +27,9 @@ object JsAnnotations {
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
 }
 
+fun IrAnnotationContainer.getAnnotation(symbol: IrConstructorSymbol) =
+    annotations.find { it.symbol == symbol }
+
 @Suppress("UNCHECKED_CAST")
 fun IrConstructorCall.getSingleConstStringArgument() =
     (getValueArgument(0) as IrConst<String>).value
@@ -39,6 +43,9 @@ fun IrAnnotationContainer.isJsNonModule(): Boolean =
 fun IrAnnotationContainer.getJsQualifier(): String? =
     getAnnotation(JsAnnotations.jsQualifierFqn)?.getSingleConstStringArgument()
 
+fun IrAnnotationContainer.getJsName(context: JsIrBackendContext): String? =
+    getAnnotation(context.intrinsics.jsName)?.getSingleConstStringArgument()
+
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
 
@@ -50,6 +57,12 @@ fun IrAnnotationContainer.isJsNativeGetter(): Boolean = hasAnnotation(JsAnnotati
 fun IrAnnotationContainer.isJsNativeSetter(): Boolean = hasAnnotation(JsAnnotations.jsNativeSetter)
 
 fun IrAnnotationContainer.isJsNativeInvoke(): Boolean = hasAnnotation(JsAnnotations.jsNativeInvoke)
+
+fun IrDeclarationWithName.getJsNameOrKotlinName(context: JsIrBackendContext): Name =
+    when (val jsName = getJsName(context)) {
+        null -> name
+        else -> Name.identifier(jsName)
+    }
 
 fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
     when (val jsName = getJsName()) {

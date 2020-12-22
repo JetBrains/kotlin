@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -310,6 +313,16 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsUndefined = defineJsUndefinedIntrinsic()
 
+    val jsNameClass = getInternalClassWithoutPackage(JsAnnotations.jsNameFqn)
+    val jsModuleClass = getInternalClassWithoutPackage(JsAnnotations.jsModuleFqn)
+    val jsNonModuleClass = getInternalClassWithoutPackage(JsAnnotations.jsNonModuleFqn)
+    val jsQualifierClass = getInternalClassWithoutPackage(JsAnnotations.jsQualifierFqn)
+
+    val jsName by lazy2 { jsNameClass.constructors.single() }
+    val jsModule by lazy2 { jsModuleClass.constructors.single() }
+    val jsNonModule by lazy2 { jsNonModuleClass.constructors.single() }
+    val jsQualifier by lazy2 { jsQualifierClass.constructors.single() }
+
     // Helpers:
 
     private fun getInternalFunction(name: String) =
@@ -327,7 +340,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         context.symbolTable.referenceSimpleFunction(context.getFunctions(kotlinPackageFqn.child(Name.identifier(name))).single())
 
     private fun getInternalClassWithoutPackage(fqName: String) =
-        context.symbolTable.referenceClass(context.getClass(FqName(fqName)))
+        getInternalClassWithoutPackage(FqName(fqName))
+
+    private fun getInternalClassWithoutPackage(fqName: FqName) =
+        context.symbolTable.referenceClass(context.getClass(fqName))
 
     private val irFactory: IrFactory get() = context.irFactory
 

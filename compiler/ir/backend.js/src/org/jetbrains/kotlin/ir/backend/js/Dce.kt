@@ -383,14 +383,14 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                     }
                 }
 
-                if (declaration is IrSimpleFunction && declaration.getJsNameOrKotlinName().asString() == "valueOf") {
+                if (declaration is IrSimpleFunction && declaration.getJsNameOrKotlinName(context).asString() == "valueOf") {
                     declaration.enqueue(klass, "valueOf")
                 }
 
                 // A hack to support `toJson` and other js-specific members
-                if (declaration.getJsName() != null ||
-                    declaration is IrField && declaration.correspondingPropertySymbol?.owner?.getJsName() != null ||
-                    declaration is IrSimpleFunction && declaration.correspondingPropertySymbol?.owner?.getJsName() != null
+                if (declaration.getJsName(context) != null ||
+                    declaration is IrField && declaration.correspondingPropertySymbol?.owner?.getJsName(context) != null ||
+                    declaration is IrSimpleFunction && declaration.correspondingPropertySymbol?.owner?.getJsName(context) != null
                 ) {
                     declaration.enqueue(klass, "annotated by @JsName")
                 }

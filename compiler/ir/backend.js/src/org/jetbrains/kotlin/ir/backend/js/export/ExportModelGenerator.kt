@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.ir.backend.js.export
 import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
@@ -311,7 +313,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
     }
 
     private fun IrDeclarationWithName.getExportedIdentifier(): String =
-        with(getJsNameOrKotlinName()) {
+        with(getJsNameOrKotlinName(context)) {
             if (isSpecial)
                 error("Cannot export special name: ${name.asString()} for declaration $fqNameWhenAvailable")
             else identifier
