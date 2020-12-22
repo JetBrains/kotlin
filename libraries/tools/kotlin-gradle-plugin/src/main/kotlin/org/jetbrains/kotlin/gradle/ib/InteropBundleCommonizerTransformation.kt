@@ -25,13 +25,13 @@ abstract class InteropBundleCommonizerTransformation : TransformAction<Parameter
     open class Parameters : TransformParameters, Serializable {
 
         @InputFile
-        open var konanHome: File? = null
+        var konanHome: File? = null
 
         @Input
-        open var outputHierarchy: SharedCommonizerTarget? = null
+        var outputHierarchy: SharedCommonizerTarget? = null
 
         @Classpath
-        open var commonizerClasspath: Set<File>? = null
+        var commonizerClasspath: Set<File>? = null
     }
 
     @get:Classpath
