@@ -40,6 +40,7 @@ abstract class InteropBundleCommonizerTransformation : TransformAction<Parameter
     abstract val interopBundle: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
+        val interopBundle = InteropBundle(interopBundle.get().asFile)
         val konanHome = parameters.konanHome ?: error("Missing konanHome")
         val outputHierarchy = parameters.outputHierarchy ?: error("Missing outputHierarchy")
         val commonizerClasspath = parameters.commonizerClasspath ?: error("Missing commonizerClasspath")
@@ -47,17 +48,11 @@ abstract class InteropBundleCommonizerTransformation : TransformAction<Parameter
         val commonizer = CliCommonizer(commonizerClasspath)
         commonizer(
             konanHome = konanHome,
-            targetLibraries = klibs(),
+            targetLibraries = interopBundle.listLibraries(),
             dependencyLibraries = emptySet(),
             outputHierarchy = outputHierarchy,
             outputDirectory = outputs.dir("commonized")
         )
-    }
-
-    private fun klibs(): Set<File> {
-        return interopBundle.get().asFile.walkTopDown().maxDepth(2)
-            .filter { file -> file.isFile && file.extension == "klib" }
-            .toSet()
     }
 }
 
