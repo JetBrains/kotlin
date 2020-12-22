@@ -1168,8 +1168,12 @@ class Fir2IrDeclarationStorage(
 
     fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrSymbol {
         val fir = firFieldSymbol.fir
-        val irProperty = fieldCache[fir] ?: createIrField(fir).apply {
-            setAndModifyParent(findIrParent(fir))
+        val irProperty = fieldCache[fir] ?: run {
+            // In case of type parameters from the parent as the field's return type, find the parent ahead to cache type parameters.
+            val irParent = findIrParent(fir)
+            createIrField(fir).apply {
+                setAndModifyParent(irParent)
+            }
         }
         return irProperty.symbol
     }
