@@ -28,9 +28,6 @@ object JvmAnalysisFlags {
     val suppressMissingBuiltinsError by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val irCheckLocalNames by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val disableUltraLightClasses by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

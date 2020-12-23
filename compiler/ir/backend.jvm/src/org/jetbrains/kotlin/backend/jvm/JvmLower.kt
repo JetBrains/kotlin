@@ -374,8 +374,6 @@ private val jvmFilePhases = listOf(
     replaceKFunctionInvokeWithFunctionInvokePhase,
     kotlinNothingValueExceptionPhase,
 
-    checkLocalNamesWithOldBackendPhase,
-
     renameFieldsPhase,
     fakeInliningLocalVariablesLowering,
 

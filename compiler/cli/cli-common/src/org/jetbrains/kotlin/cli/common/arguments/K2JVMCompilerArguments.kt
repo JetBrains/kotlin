@@ -89,12 +89,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noUseIR: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xir-check-local-names",
-        description = "Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend"
-    )
-    var irCheckLocalNames: Boolean by FreezableVar(false)
-
-    @Argument(
         value = "-Xallow-unstable-dependencies",
         description = "Do not report errors on classes in dependencies, which were compiled by an unstable version of the Kotlin compiler"
     )
@@ -446,7 +440,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
-        result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies || useFir
         result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
