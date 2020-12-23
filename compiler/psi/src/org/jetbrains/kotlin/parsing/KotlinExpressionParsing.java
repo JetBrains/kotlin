@@ -459,17 +459,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 if (!firstExpressionParsed) {
                     expression.drop();
                     expression = mark();
+                    firstExpressionParsed = parseAtomicExpression();
+                    continue;
                 }
 
                 parseSelectorCallExpression();
 
-                if (firstExpressionParsed) {
-                    expression.done(expressionType);
-                }
-                else {
-                    firstExpressionParsed = true;
-                    continue;
-                }
+                expression.done(expressionType);
             }
             else if (atSet(Precedence.POSTFIX.getOperations())) {
                 parseOperationReference();

@@ -7899,6 +7899,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/exceptions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Exceptions extends AbstractDiagnosticsTestWithFirValidation {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExceptions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/exceptions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("kt24158.kt")
+            public void testKt24158() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exceptions/kt24158.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/exposed")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -39,7 +39,7 @@ interface KtQualifiedExpression : KtExpression {
     val operationSign: KtSingleValueToken
         get() = operationTokenNode.elementType as KtSingleValueToken
 
-    private fun KtQualifiedExpression.getExpression(afterOperation: Boolean): KtExpression? {
+    private fun getExpression(afterOperation: Boolean): KtExpression? {
         return operationTokenNode.psi?.siblings(afterOperation, false)?.firstIsInstanceOrNull<KtExpression>()
     }
 }
