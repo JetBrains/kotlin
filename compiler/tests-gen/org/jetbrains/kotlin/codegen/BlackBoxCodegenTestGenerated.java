@@ -17703,6 +17703,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmName/functionWithDefault.kt");
         }
 
+        @TestMetadata("kt23974.kt")
+        public void testKt23974() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmName/kt23974.kt");
+        }
+
         @TestMetadata("loadJvmName.kt")
         public void testLoadJvmName() throws Exception {
             runTest("compiler/testData/codegen/box/jvmName/loadJvmName.kt");
