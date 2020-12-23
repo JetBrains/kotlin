@@ -823,10 +823,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DiagnosticFactory0<PsiElement> diagnosticFactory =
                     isFunctionLiteral ? NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION : NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE;
             context.trace.report(diagnosticFactory.on(operationSign));
-            if (baseTypeInfo == null) {
-                return TypeInfoFactoryKt.createTypeInfo(ErrorUtils.createErrorType("Unresolved lambda expression"), context);
-            }
-            return baseTypeInfo;
+            return baseTypeInfo != null ? baseTypeInfo : components.expressionTypingServices.getTypeInfo(baseExpression, context);
         }
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;
         KotlinType baseType = baseTypeInfo.getType();
