@@ -53,7 +53,11 @@ internal class KtFirReferenceShortener(
 
         firFile.acceptChildren(TypesCollectingVisitor(typesToImport, typesToShorten))
 
-        return ShortenCommandImpl(file, typesToImport, typesToShorten.map { it.createSmartPointer() })
+        return ShortenCommandImpl(
+            file,
+            typesToImport.distinct(),
+            typesToShorten.distinct().map { it.createSmartPointer() }
+        )
     }
 
     private fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): ClassId? {
@@ -134,7 +138,7 @@ internal class KtFirReferenceShortener(
             val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
 
             val wholeClassifierId = resolvedTypeRef.type.classId ?: return
-            val wholeTypeElement = wholeTypeReference.typeElement as? KtUserType ?: return
+            val wholeTypeElement = wholeTypeReference.typeElement.unwrapNullable() as? KtUserType ?: return
 
             if (wholeTypeElement.qualifier == null) return
 
@@ -197,3 +201,6 @@ private class ShortenCommandImpl(
         }
     }
 }
+
+private tailrec fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
+    if (this is KtNullableType) this.innerType.unwrapNullable() else this
