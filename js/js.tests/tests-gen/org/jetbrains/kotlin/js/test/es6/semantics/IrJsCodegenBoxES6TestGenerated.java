@@ -1470,9 +1470,19 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/callableReference/genericLocalClassConstructorReference.kt");
         }
 
+        @TestMetadata("kt16752.kt")
+        public void testKt16752() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt16752.kt");
+        }
+
         @TestMetadata("kt21014.kt")
         public void testKt21014() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt21014.kt");
+        }
+
+        @TestMetadata("kt21092a.kt")
+        public void testKt21092a() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt21092a.kt");
         }
 
         @TestMetadata("kt37604.kt")

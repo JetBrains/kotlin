@@ -2017,9 +2017,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractLightAnalysisModeTest {
+        @TestMetadata("kt16752.kt")
+        public void ignoreKt16752() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt16752.kt");
+        }
+
         @TestMetadata("kt21014.kt")
         public void ignoreKt21014() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt21014.kt");
+        }
+
+        @TestMetadata("kt21092a.kt")
+        public void ignoreKt21092a() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt21092a.kt");
+        }
+
+        @TestMetadata("kt21092b.kt")
+        public void ignoreKt21092b() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt21092b.kt");
         }
 
         private void runTest(String testDataFilePath) throws Exception {

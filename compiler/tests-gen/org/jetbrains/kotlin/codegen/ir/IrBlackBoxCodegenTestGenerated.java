@@ -2050,9 +2050,24 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/callableReference/javaField.kt");
         }
 
+        @TestMetadata("kt16752.kt")
+        public void testKt16752() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt16752.kt");
+        }
+
         @TestMetadata("kt21014.kt")
         public void testKt21014() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt21014.kt");
+        }
+
+        @TestMetadata("kt21092a.kt")
+        public void testKt21092a() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt21092a.kt");
+        }
+
+        @TestMetadata("kt21092b.kt")
+        public void testKt21092b() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt21092b.kt");
         }
 
         @TestMetadata("kt37604.kt")
