@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.incremental;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.MuteExtraSuffix;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -20,7 +19,6 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
     @TestMetadata("jps-plugin/testData/incremental/pureKotlin")
-    @MuteExtraSuffix(".jsklib")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PureKotlin extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
