@@ -276,11 +276,10 @@ open class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSu
         val relativeFqName = getClassRelativeName(decompiledClassOrObject) ?: return null
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
-        assert(rootLightClassForDecompiledFile.name == base.asString()) {
-            "Light class for file:\n" + decompiledClassOrObject.containingKtFile.virtualFile.canonicalPath +
-                    "\nwas expected to have name: " + base.asString() +
-                    "\n Actual: " + rootLightClassForDecompiledFile.name
-        }
+
+        // In case class files have been obfuscated (i.e., SomeClass belongs to a.class file), just ignore them
+        if (rootLightClassForDecompiledFile.name != base.asString()) return null
+
         var current: KtLightClassForDecompiledDeclaration = rootLightClassForDecompiledFile
         while (iterator.hasNext()) {
             val name = iterator.next()
