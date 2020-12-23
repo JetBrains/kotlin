@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
@@ -35,8 +36,24 @@ class JavaOverrideChecker internal constructor(
         if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor, mayBeSpecialBuiltIn)
         if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor, mayBeSpecialBuiltIn)
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
-            return candidateType.lookupTag.classId.let { it.readOnlyToMutable() ?: it } ==
-                    baseType.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+            if (candidateTypeClassId != baseTypeClassId) return false
+            if (!candidateTypeClassId.shortClassName.isSpecial && candidateTypeClassId.shortClassName.identifier == "Array") {
+                assert(candidateType.typeArguments.size == 1) {
+                    "Array type with unexpected number of type arguments: $candidateType"
+                }
+                assert(baseType.typeArguments.size == 1) {
+                    "Array type with unexpected number of type arguments: $baseType"
+                }
+                return isEqualArrayElementTypeProjections(
+                    candidateType.typeArguments.single(),
+                    baseType.typeArguments.single(),
+                    substitutor,
+                    mayBeSpecialBuiltIn
+                )
+            }
+            return true
         }
         // TODO: handle the situation in more proper way
         // Typical case: class EnumMap<K extends Enum, V> implements Map<K, V>
@@ -67,6 +84,20 @@ class JavaOverrideChecker internal constructor(
         substitutor,
         mayBeSpecialBuiltIn
     )
+
+    private fun isEqualArrayElementTypeProjections(
+        candidateTypeProjection: ConeTypeProjection,
+        baseTypeProjection: ConeTypeProjection,
+        substitutor: ConeSubstitutor,
+        mayBeSpecialBuiltIn: Boolean
+    ): Boolean =
+        when {
+            candidateTypeProjection is ConeKotlinTypeProjection && baseTypeProjection is ConeKotlinTypeProjection ->
+                candidateTypeProjection.kind == baseTypeProjection.kind &&
+                        isEqualTypes(candidateTypeProjection.type, baseTypeProjection.type, substitutor, mayBeSpecialBuiltIn)
+            candidateTypeProjection is ConeStarProjection && baseTypeProjection is ConeStarProjection -> true
+            else -> false
+        }
 
     private fun Collection<FirTypeParameterRef>.buildErasure() = associate {
         val symbol = it.symbol
