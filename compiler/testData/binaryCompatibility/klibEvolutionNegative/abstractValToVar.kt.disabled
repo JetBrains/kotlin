@@ -1,0 +1,53 @@
+// MODULE: lib
+// FILE: A.kt
+// VERSION: 1
+
+interface X {
+    val x: String
+}
+
+// FILE: B.kt
+// VERSION: 2
+
+interface X {
+    var x: String
+}
+
+// MODULE: mainLib(lib)
+// FILE: mainLib.kt
+
+open class Y: X {
+    override val x: String
+        get() = "overridden concrete val property"
+}
+
+class Z: Y() {
+    override var x: String
+        get() = "overridden concrete var property"
+        set(value) {
+            field = value
+        }
+
+    fun foo(): String {
+        x = "new value"
+        return x
+    }
+}
+
+val y = Y()
+val z = Z()
+z.x = "some value"
+
+fun lib(): String = when {
+    y.x != "overridden concrete val property" -> "fail 1"
+    z.x != "overridden concrete var property" -> "fail 2"
+    z.x != "some value" -> "fail 3"
+    z.foo() != "new value" -> "fail 4"
+
+    else -> "OK"
+}
+
+// MODULE: main(mainLib)
+// FILE: main.kt
+fun box(): String = lib()
+
