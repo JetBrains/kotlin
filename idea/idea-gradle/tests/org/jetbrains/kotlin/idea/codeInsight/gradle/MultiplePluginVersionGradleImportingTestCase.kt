@@ -64,7 +64,7 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
                 ?.firstOrNull { it.contains("-original.jar") }?.replace(
                     "kotlin-gradle-plugin-",
                     ""
-                )?.replace("-original.jar", "") ?: "1.4.255-SNAPSHOT"
+                )?.replace("-original.jar", "") ?: "1.5.255-SNAPSHOT"
 
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")

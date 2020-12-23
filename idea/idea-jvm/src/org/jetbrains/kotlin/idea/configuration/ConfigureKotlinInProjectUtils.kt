@@ -49,7 +49,7 @@ private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.configuration.C
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
-const val LAST_SNAPSHOT_VERSION = "1.4.255-SNAPSHOT"
+const val LAST_SNAPSHOT_VERSION = "1.5.255-SNAPSHOT"
 
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
     "sonatype.oss.snapshots",
