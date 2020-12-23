@@ -1,0 +1,6 @@
+package
+
+public val bar: [ERROR : Type from delegate]
+public val foo: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+public fun </*0*/ T> baz(/*0*/ t: T): T
+
