@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -59,8 +58,6 @@ class Fir2IrDeclarationStorage(
     private val visitor: Fir2IrVisitor,
     private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
-
-    private val firSymbolProvider = session.firSymbolProvider
 
     private val firProvider = session.firProvider
 
@@ -200,11 +197,11 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun findIrClass(classId: ClassId): IrClass? =
-        if (classId.isLocal) {
-            classifierStorage.getCachedLocalClass(classId)
+    private fun findIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? =
+        if (lookupTag.classId.isLocal) {
+            classifierStorage.getCachedLocalClass(lookupTag)
         } else {
-            val firSymbol = firSymbolProvider.getClassLikeSymbolByFqName(classId)
+            val firSymbol = lookupTag.toSymbol(session)
             if (firSymbol is FirClassSymbol) {
                 classifierStorage.getIrClassSymbol(firSymbol).owner
             } else {
@@ -212,9 +209,13 @@ class Fir2IrDeclarationStorage(
             }
         }
 
-    internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {
-        return if (parentClassId != null) {
-            findIrClass(parentClassId)
+    internal fun findIrParent(
+        packageFqName: FqName,
+        parentLookupTag: ConeClassLikeLookupTag?,
+        firBasedSymbol: FirBasedSymbol<*>
+    ): IrDeclarationParent? {
+        return if (parentLookupTag != null) {
+            findIrClass(parentLookupTag)
         } else {
             val containerFile = when (firBasedSymbol) {
                 is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
@@ -235,7 +236,7 @@ class Fir2IrDeclarationStorage(
     internal fun findIrParent(callableDeclaration: FirCallableDeclaration<*>): IrDeclarationParent? {
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
-        return findIrParent(callableId.packageName, callableDeclaration.containingClass()?.classId, firBasedSymbol)
+        return findIrParent(callableId.packageName, callableDeclaration.containingClass(), firBasedSymbol)
     }
 
     private fun IrDeclaration.setAndModifyParent(irParent: IrDeclarationParent?) {
@@ -359,9 +360,7 @@ class Fir2IrDeclarationStorage(
         isStatic: Boolean,
         parentPropertyReceiverType: FirTypeRef? = null
     ): T {
-        if (irParent != null) {
-            parent = irParent
-        }
+        setAndModifyParent(irParent)
         declareParameters(function, thisReceiverOwner, isStatic, parentPropertyReceiverType)
         return this
     }
@@ -1049,9 +1048,7 @@ class Fir2IrDeclarationStorage(
                 val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin, irParent)
-                createIrFunction(fir, irParent, origin = declarationOrigin).apply {
-                    setAndModifyParent(irParent)
-                }.symbol
+                createIrFunction(fir, irParent, origin = declarationOrigin).symbol
             }
             is FirSimpleFunction -> {
                 return getIrCallableSymbol(
@@ -1207,7 +1204,7 @@ class Fir2IrDeclarationStorage(
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
-                val irParentClass = firDeclaration.containingClass()?.classId?.let { findIrClass(it) }
+                val irParentClass = firDeclaration.containingClass()?.let { findIrClass(it) }
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
@@ -1228,7 +1225,7 @@ class Fir2IrDeclarationStorage(
 
     private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {
         if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true) {
-            annotationGenerator?.generate(this, firAnnotationContainer)
+            annotationGenerator.generate(this, firAnnotationContainer)
         }
     }
 

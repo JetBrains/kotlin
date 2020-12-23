@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrClassifierStorage(
@@ -143,11 +140,8 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    internal fun getCachedLocalClass(classId: ClassId): IrClass? {
-        require(classId.isLocal) {
-            "As the function name implies, it ought to be used to look up _local_ classes."
-        }
-        return localStorage.getLocalClass(classId)
+    internal fun getCachedLocalClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
+        return localStorage.getLocalClass(lookupTag.toSymbol(session)!!.fir as FirClass<*>)
     }
 
     private fun FirRegularClass.enumClassModality(): Modality {
@@ -452,7 +446,8 @@ class Fir2IrClassifierStorage(
         firClass as FirRegularClass
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
-        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentId, firClassSymbol)!!
+        val parentClass = parentId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
+        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol)!!
         val symbol = Fir2IrClassSymbol(signature)
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareClass(signature, { symbol }) {

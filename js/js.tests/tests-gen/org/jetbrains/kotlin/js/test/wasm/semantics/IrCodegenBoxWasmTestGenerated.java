@@ -9980,6 +9980,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/objects/useAnonymousObjectAsIterator.kt");
         }
 
+        @TestMetadata("useAnonymousObjectFunction.kt")
+        public void testUseAnonymousObjectFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/useAnonymousObjectFunction.kt");
+        }
+
         @TestMetadata("useImportedMember.kt")
         public void testUseImportedMember() throws Exception {
             runTest("compiler/testData/codegen/box/objects/useImportedMember.kt");
