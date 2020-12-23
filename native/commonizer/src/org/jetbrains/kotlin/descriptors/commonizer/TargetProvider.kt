@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
-class TargetProvider(
+data class TargetProvider(
     val target: LeafCommonizerTarget,
     val builtInsClass: Class<out KotlinBuiltIns>,
     val builtInsProvider: BuiltInsProvider,
@@ -43,4 +43,10 @@ interface ModulesProvider {
 
     fun loadModuleInfos(): Map<String, ModuleInfo>
     fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor>
+}
+
+
+object EmptyModulesProvider : ModulesProvider {
+    override fun loadModuleInfos(): Map<String, ModulesProvider.ModuleInfo> = emptyMap()
+    override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> = emptyMap()
 }

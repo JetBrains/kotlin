@@ -78,8 +78,8 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
         dependeeLibraries = leafTargetDependencies + sharedTargetDependencies
     )
 
-    val dependenciesMergeResult = CirDependencyTreeMerger(storageManager, classifiers, parameters).merge()
-    val mergeResult = CirTreeMerger(storageManager, classifiers, parameters).merge()
+    val dependenciesMergeResult = mergeDependencyTree(storageManager, classifiers, parameters)
+    val mergeResult = mergeTree(storageManager, classifiers, parameters)
 
     // commonize:
     val dependencyMergedTree = dependenciesMergeResult.root
@@ -92,3 +92,4 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
 
     return MergeAndCommonizeResult(mergeResult, dependenciesMergeResult)
 }
+
