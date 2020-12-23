@@ -98,16 +98,6 @@ fun NameTable<IrDeclaration>.dump(): String =
 
 sealed class Signature
 data class StableNameSignature(val name: String) : Signature()
-data class BackingFieldSignature(val field: IrField) : Signature()
-
-
-fun fieldSignature(field: IrField): Signature {
-    if (field.isEffectivelyExternal()) {
-        return StableNameSignature(field.name.identifier)
-    }
-
-    return BackingFieldSignature(field)
-}
 
 fun jsFunctionSignature(declaration: IrSimpleFunction): Signature {
     require(!declaration.isStaticMethodOfClass)
@@ -182,6 +172,7 @@ class NameTables(
         for (p in packages) {
             for (declaration in p.declarations) {
                 processTopLevelLocalDecl(declaration)
+                processNonTopLevelLocalDecl(declaration)
                 declaration.acceptChildrenVoid(object : IrElementVisitorVoid {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
@@ -282,7 +273,7 @@ class NameTables(
     private fun generateNameForMemberField(field: IrField) {
         require(!field.isTopLevel)
         require(!field.isStatic)
-        val signature = fieldSignature(field)
+
 
         if (field.isEffectivelyExternal()) {
             memberNames.declareStableName(field, field.name.identifier)
@@ -309,8 +300,7 @@ class NameTables(
     }
 
     fun getNameForMemberField(field: IrField): String {
-        val signature = fieldSignature(field)
-        val name = memberNames.names[signature] ?: mappedNames[mapToKey(signature)]
+        val name = memberNames.names[field] ?: mappedNames[mapToKey(field)]
 
         // TODO investigate
         if (name == null) {
