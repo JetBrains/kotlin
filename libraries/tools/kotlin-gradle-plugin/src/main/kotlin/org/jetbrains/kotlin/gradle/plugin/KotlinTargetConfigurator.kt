@@ -274,6 +274,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
                 setupAsLocalTargetSpecificConfigurationIfSupported(target)
                 isVisible = false
+                isCanBeConsumed = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Dependencies for $compilation (deprecated, use '${compilation.implementationConfigurationName} ' instead)."
             }
@@ -297,6 +298,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val compileOnlyConfiguration = configurations.maybeCreate(compilation.compileOnlyConfigurationName).apply {
                 setupAsLocalTargetSpecificConfigurationIfSupported(target)
                 isVisible = false
+                isCanBeConsumed = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Compile only dependencies for $compilation."
             }
@@ -315,6 +317,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     setupAsLocalTargetSpecificConfigurationIfSupported(target)
                     extendsFrom(compileConfiguration)
                     isVisible = false
+                    isCanBeConsumed = false
                     isCanBeResolved = true // Needed for IDE import
                     description =
                         "Runtime dependencies for $compilation (deprecated, use '${compilation.runtimeOnlyConfigurationName} ' instead)."
