@@ -1158,7 +1158,7 @@ class Fir2IrDeclarationStorage(
         parentOrigin: IrDeclarationOrigin,
         irParent: IrDeclarationParent?
     ): IrDeclarationOrigin {
-        return if (irParent.isSourceClass() && symbol.fir.isIntersectionOverride)
+        return if (irParent.isSourceClass() && (symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride))
             IrDeclarationOrigin.FAKE_OVERRIDE
         else
             parentOrigin
