@@ -16287,6 +16287,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NotNullAssertions extends AbstractLightAnalysisModeTest {
+            @TestMetadata("kt24258.kt")
+            public void ignoreKt24258() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt24258.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -16333,6 +16338,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("kt18911.kt")
             public void testKt18911() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt18911.kt");
+            }
+
+            @TestMetadata("kt24258nn.kt")
+            public void testKt24258nn() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt24258nn.kt");
             }
 
             @TestMetadata("localEntities.kt")

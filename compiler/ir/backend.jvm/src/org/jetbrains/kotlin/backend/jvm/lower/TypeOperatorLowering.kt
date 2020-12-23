@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.render
@@ -148,7 +147,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
                 val owner = scope.scopeOwnerSymbol.owner
-                val source = if (owner is IrFunction && owner.origin == IrDeclarationOrigin.DELEGATED_MEMBER) {
+                val source = if (owner is IrFunction && owner.isDelegated()) {
                     "${owner.name.asString()}(...)"
                 } else {
                     val (startOffset, endOffset) = expression.extents()
@@ -172,6 +171,10 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             }
         }
     }
+
+    private fun IrFunction.isDelegated() =
+        origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
+                origin == IrDeclarationOrigin.DELEGATED_MEMBER
 
     private fun IrElement.extents(): Pair<Int, Int> {
         var startOffset = UNDEFINED_OFFSET

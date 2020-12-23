@@ -16335,6 +16335,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt18911.kt");
             }
 
+            @TestMetadata("kt24258.kt")
+            public void testKt24258() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt24258.kt");
+            }
+
+            @TestMetadata("kt24258nn.kt")
+            public void testKt24258nn() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/kt24258nn.kt");
+            }
+
             @TestMetadata("localEntities.kt")
             public void testLocalEntities() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/localEntities.kt");
