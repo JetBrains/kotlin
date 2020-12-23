@@ -10648,6 +10648,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 public void testSpecialCallsWithCallableReferencesErrorType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorType.kt");
                 }
+
+                @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
+                public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes")

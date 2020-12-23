@@ -566,6 +566,8 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
 
     private var nonTrivialUpdatedResultInfo: DataFlowInfo? = null
 
+    abstract fun containsOnlyOnlyInputTypesErrors(): Boolean
+
     override fun getCall(): Call = kotlinCall.psiKotlinCall.psiCall
 
     override fun getValueArguments(): Map<ValueParameterDescriptor, ResolvedValueArgument> {
@@ -709,6 +711,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         val typeParameters = candidateDescriptor.typeParameters.takeIf { it.isNotEmpty() } ?: return emptyMap()
         return typeParameters.zip(typeArguments).toMap()
     }
+
+    override fun containsOnlyOnlyInputTypesErrors() =
+        diagnostics.all { it is KotlinConstraintSystemDiagnostic && it.error is OnlyInputTypesDiagnostic }
 
     override fun getSmartCastDispatchReceiverType(): KotlinType? = smartCastDispatchReceiverType
 
