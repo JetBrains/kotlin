@@ -814,7 +814,6 @@ tasks {
 
     if (Ide.IJ()) {
         register("idea-new-project-wizard-tests") {
-            dependsOn("dist")
             dependsOn(
                 ":libraries:tools:new-project-wizard:test",
                 ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
@@ -887,7 +886,17 @@ tasks {
             ":generators:test"
         )
         if (Ide.IJ()) {
-            dependsOn("idea-new-project-wizard-tests")
+            dependsOn(
+                ":libraries:tools:new-project-wizard:test",
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
+                ":idea:idea-new-project-wizard:test" // Temporary here. Remove after enabling builds for ideaIntegrationsTests
+            )
+        }
+    }
+
+    register("ideaIntegrationsTests") {
+        if (Ide.IJ()) {
+            dependsOn(":idea:idea-new-project-wizard:test")
         }
     }
 
