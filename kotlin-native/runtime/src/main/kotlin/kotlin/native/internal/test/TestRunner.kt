@@ -257,10 +257,11 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         val iterationTime = measureTimeMillis {
             suitesFiltered.forEach {
                 if (it.ignored) {
-                    if (reportExcludedTestSuites) {
-                        sendToListeners { ignoreSuite(it) }
-                    }
+                    sendToListeners { ignoreSuite(it) }
                 } else {
+                    if (!reportExcludedTestSuites && it.size == 0) {
+                        return@forEach
+                    }
                     sendToListeners { startSuite(it) }
                     val time = measureTimeMillis { it.run() }
                     sendToListeners { finishSuite(it, time) }
