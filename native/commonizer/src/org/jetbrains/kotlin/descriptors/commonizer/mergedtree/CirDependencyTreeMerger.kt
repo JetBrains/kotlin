@@ -69,7 +69,6 @@ class CirDependencyTreeMerger(
         )
     }
 
-
     private fun processTarget(
         rootNode: CirRootNode,
         targetIndex: Int,
@@ -126,18 +125,10 @@ class CirDependencyTreeMerger(
         }
         packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageFqName)
 
-        val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = packageNode.properties
-        val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = packageNode.functions
         val classes: MutableMap<Name, CirClassNode> = packageNode.classes
         val typeAliases: MutableMap<Name, CirTypeAliasNode> = packageNode.typeAliases
 
-        packageMemberScope.collectMembers(
-            PropertyCollector { propertyDescriptor ->
-                processProperty(properties, targetIndex, propertyDescriptor, null)
-            },
-            FunctionCollector { functionDescriptor ->
-                processFunction(functions, targetIndex, functionDescriptor, null)
-            },
+        packageMemberScope.collectMembersUnchecked(
             ClassCollector { classDescriptor ->
                 processClass(classes, targetIndex, classDescriptor, null) { className ->
                     internedClassId(packageFqName, className)
@@ -149,29 +140,6 @@ class CirDependencyTreeMerger(
         )
     }
 
-    private fun processProperty(
-        properties: MutableMap<PropertyApproximationKey, CirPropertyNode>,
-        targetIndex: Int,
-        propertyDescriptor: PropertyDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
-    ) {
-        val propertyNode: CirPropertyNode = properties.getOrPut(PropertyApproximationKey(propertyDescriptor)) {
-            buildPropertyNode(storageManager, size, classifiers, parentCommonDeclaration)
-        }
-        propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(propertyDescriptor)
-    }
-
-    private fun processFunction(
-        functions: MutableMap<FunctionApproximationKey, CirFunctionNode>,
-        targetIndex: Int,
-        functionDescriptor: SimpleFunctionDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
-    ) {
-        val functionNode: CirFunctionNode = functions.getOrPut(FunctionApproximationKey(functionDescriptor)) {
-            buildFunctionNode(storageManager, size, classifiers, parentCommonDeclaration)
-        }
-        functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(functionDescriptor)
-    }
 
     private fun processClass(
         classes: MutableMap<Name, CirClassNode>,
@@ -190,38 +158,15 @@ class CirDependencyTreeMerger(
 
         val parentCommonDeclarationForMembers: NullableLazyValue<CirClass> = classNode.commonDeclaration
 
-        val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = classNode.constructors
-        val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = classNode.properties
-        val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = classNode.functions
         val nestedClasses: MutableMap<Name, CirClassNode> = classNode.classes
 
-        classDescriptor.constructors.forEach { processClassConstructor(constructors, targetIndex, it, parentCommonDeclarationForMembers) }
-
-        classDescriptor.unsubstitutedMemberScope.collectMembers(
-            PropertyCollector { propertyDescriptor ->
-                processProperty(properties, targetIndex, propertyDescriptor, parentCommonDeclarationForMembers)
-            },
-            FunctionCollector { functionDescriptor ->
-                processFunction(functions, targetIndex, functionDescriptor, parentCommonDeclarationForMembers)
-            },
+        classDescriptor.unsubstitutedMemberScope.collectMembersUnchecked(
             ClassCollector { nestedClassDescriptor ->
                 processClass(nestedClasses, targetIndex, nestedClassDescriptor, parentCommonDeclarationForMembers) { nestedClassName ->
                     internedClassId(classId, nestedClassName)
                 }
             }
         )
-    }
-
-    private fun processClassConstructor(
-        constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode>,
-        targetIndex: Int,
-        constructorDescriptor: ClassConstructorDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
-    ) {
-        val constructorNode: CirClassConstructorNode = constructors.getOrPut(ConstructorApproximationKey(constructorDescriptor)) {
-            buildClassConstructorNode(storageManager, size, classifiers, parentCommonDeclaration)
-        }
-        constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(constructorDescriptor)
     }
 
     private fun processTypeAlias(
