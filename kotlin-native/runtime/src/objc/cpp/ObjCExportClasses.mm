@@ -232,10 +232,13 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 @end;
 
 static void injectToRuntime() {
-  RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector == nullptr, "runtime injected twice");
+  // If the code below fails, then it is most likely caused by KT-42254.
+  const char* errorMessage = "runtime injected twice; https://youtrack.jetbrains.com/issue/KT-42254 might be related";
+
+  RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector == nullptr, errorMessage);
   Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin:);
 
-  RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr, "runtime injected twice");
+  RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr, errorMessage);
   Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject);
 }
 
