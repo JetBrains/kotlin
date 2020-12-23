@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import java.io.File
 
 abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenTest() {
@@ -35,6 +36,7 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
                     jvmTargets.firstOrNull(),
                     enablePreview,
                 ),
+                JUnit4Assertions
             )
         }
 

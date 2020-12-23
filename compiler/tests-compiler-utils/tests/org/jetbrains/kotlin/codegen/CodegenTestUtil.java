@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -24,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.Assertions;
+import org.jetbrains.kotlin.test.JvmCompilationUtils;
+import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
@@ -36,8 +27,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 public class CodegenTestUtil {
     private CodegenTestUtil() {
@@ -58,7 +47,7 @@ public class CodegenTestUtil {
         catch (InvocationTargetException ex) {
             caught = exceptionClass.isInstance(ex.getTargetException());
         }
-        assertTrue(caught);
+        KtAssert.assertTrue(String.format("Exception of class %s must be thrown", exceptionClass.getName()), caught);
     }
 
     @NotNull
@@ -83,11 +72,12 @@ public class CodegenTestUtil {
     public static File compileJava(
             @NotNull List<String> fileNames,
             @NotNull List<String> additionalClasspath,
-            @NotNull List<String> additionalOptions
+            @NotNull List<String> additionalOptions,
+            @NotNull Assertions assertions
     ) {
         try {
             File directory = KtTestUtil.tmpDir("java-classes");
-            compileJava(fileNames, additionalClasspath, additionalOptions, directory);
+            compileJava(fileNames, additionalClasspath, additionalOptions, directory, assertions);
             return directory;
         }
         catch (IOException e) {
@@ -99,11 +89,12 @@ public class CodegenTestUtil {
             @NotNull List<String> fileNames,
             @NotNull List<String> additionalClasspath,
             @NotNull List<String> additionalOptions,
-            @NotNull File outDirectory
+            @NotNull File outDirectory,
+            @NotNull Assertions assertions
     ) {
         try {
             List<String> options = prepareJavacOptions(additionalClasspath, additionalOptions, outDirectory);
-            KotlinTestUtils.compileJavaFiles(CollectionsKt.map(fileNames, File::new), options);
+            JvmCompilationUtils.compileJavaFiles(CollectionsKt.map(fileNames, File::new), options, assertions);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -34,9 +35,10 @@ abstract class AbstractForeignAnnotationsNoAnnotationInClasspathTest : AbstractF
 
         val additionalClasspath = (foreignAnnotations + testAnnotations).map { it.path }
         CodegenTestUtil.compileJava(
-                CodegenTestUtil.findJavaSourcesInDirectory(javaFilesDir),
-                additionalClasspath, emptyList(),
-                compiledJavaPath
+            CodegenTestUtil.findJavaSourcesInDirectory(javaFilesDir),
+            additionalClasspath, emptyList(),
+            compiledJavaPath,
+            JUnit4Assertions
         )
 
         return listOf(compiledJavaPath) + testAnnotations
