@@ -35,7 +35,7 @@ fun requiresFunctionNameManglingForParameterTypes(descriptor: CallableMemberDesc
 fun requiresFunctionNameManglingForReturnType(descriptor: CallableMemberDescriptor): Boolean {
     if (descriptor.containingDeclaration !is ClassDescriptor) return false
     val returnType = descriptor.returnType ?: return false
-    return returnType.isInlineClassType()
+    return returnType.isInlineClassType() || returnType.isTypeParameterWithUpperBoundThatRequiresMangling()
 }
 
 fun DeclarationDescriptor.isInlineClassThatRequiresMangling(): Boolean =

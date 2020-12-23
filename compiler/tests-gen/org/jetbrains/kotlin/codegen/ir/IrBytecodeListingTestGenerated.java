@@ -1007,6 +1007,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMethodsInInlineClass.kt");
         }
 
+        @TestMetadata("genericChild.kt")
+        public void testGenericChild() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/genericChild.kt");
+        }
+
         @TestMetadata("inlineCharSequence.kt")
         public void testInlineCharSequence() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCharSequence.kt");
