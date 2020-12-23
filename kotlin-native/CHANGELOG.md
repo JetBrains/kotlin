@@ -1,3 +1,28 @@
+# 1.4.30-M1 (Dec 2020)
+  * [KT-43597](https://youtrack.jetbrains.com/issue/KT-43597) Xcode 12.2 support
+  * [KT-43276](https://youtrack.jetbrains.com/issue/KT-43276) Add watchos_x64 target
+  * [KT-43198](https://youtrack.jetbrains.com/issue/KT-43198) Init blocks inside of inline classes
+  * [KT-42649](https://youtrack.jetbrains.com/issue/KT-42649) Fix secondary constructors of generic inline classes
+  * [KT-38772](https://youtrack.jetbrains.com/issue/KT-38772) Support non-reified type parameters in typeOf
+  * Compiler customization
+    * [KT-40584](https://youtrack.jetbrains.com/issue/KT-40584) Untie Kotlin/Native from the fixed LLVM distribution
+    * [KT-42234](https://youtrack.jetbrains.com/issue/KT-42234) Move LLVM optimization parameters into konan.properties
+    * [KT-40670](https://youtrack.jetbrains.com/issue/KT-40670) Allow to override konan.properties via CLI
+  * Runtime
+    * [KT-42822](https://youtrack.jetbrains.com/issue/KT-42822) Kotlin/Native Worker leaks ObjC/Swift autorelease references (and indirectly bridged K/N references) on Darwin targets
+    * [KT-42397](https://youtrack.jetbrains.com/issue/KT-42397) Reverse-C interop usage of companion object reports spurious leaks
+    * [GH-4482](https://github.com/JetBrains/kotlin-native/pull/4482) Add a switch to destroy runtime only on shutdown
+    * [GH-4575](https://github.com/JetBrains/kotlin-native/pull/4575) Fix unchecked runtime shutdown
+    * [GH-4194](https://github.com/JetBrains/kotlin-native/pull/4194) Fix possible race in terminate handler
+  * C-interop
+    * [KT-42412](https://youtrack.jetbrains.com/issue/KT-42412) Modality of generated property accessors is always FINAL
+    * [KT-38530](https://youtrack.jetbrains.com/issue/KT-38530) values() method of enum classes is not exposed to Objective-C/Swift
+    * [GH-4572](https://github.com/JetBrains/kotlin-native/pull/4572) Fix for interop enum and struct generation
+  * Optimizations
+    * [KT-42294](https://youtrack.jetbrains.com/issue/KT-42294) Significantly improved compilation time
+    * [KT-42942](https://youtrack.jetbrains.com/issue/KT-42942) Optimize peak backend memory by clearing BindingContext after psi2ir
+    * [KT-31072](https://youtrack.jetbrains.com/issue/KT-31072) Don't use non-reified arguments to specialize type operations in IR inliner
+
 # 1.4.21 (Dec 2020)
   * Fixed [KT-43517](https://youtrack.jetbrains.com/issue/KT-43517)
   * Fixed [KT-43530](https://youtrack.jetbrains.com/issue/KT-43530)
@@ -12,7 +37,7 @@
   * equals/hashCode support for fun interfaces ([KT-39798](https://youtrack.jetbrains.com/issue/KT-39798))
   * IR-level optimizations
     * Constant folding
-    * String concatenation flattenning
+    * String concatenation flattening
   * Various fixes/improvements to compiler caches
   * Some fixes to samples (calculator, tensorflow)
   * Bug fixes
