@@ -55,7 +55,15 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 
         val version by property(
             // todo do not hardcode kind & repository
-            WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_MAVEN_CENTRAL)
+            WizardKotlinVersion(
+                Versions.KOTLIN,
+                KotlinVersionKind.M,
+                Repositories.KOTLIN_EAP_MAVEN_CENTRAL,
+                KotlinVersionProviderService.getBuildSystemPluginRepository(
+                    KotlinVersionKind.M,
+                    devRepository = Repositories.JETBRAINS_KOTLIN_DEV
+                )
+            )
         )
 
         val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
@@ -127,10 +135,10 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             withAction {
                 val version = version.propertyValue
                 if (version.kind.isStable) return@withAction UNIT_SUCCESS
-                val pluginRepository = version.repository
+                val pluginRepository = version.buildSystemPluginRepository(buildSystemType) ?: return@withAction UNIT_SUCCESS
                 BuildSystemPlugin.pluginRepositoreis.addValues(pluginRepository) andThen
                         updateBuildFiles { buildFile ->
-                            buildFile.withIrs(RepositoryIR(pluginRepository)).asSuccess()
+                            buildFile.withIrs(RepositoryIR(version.repository)).asSuccess()
                         }
             }
         }

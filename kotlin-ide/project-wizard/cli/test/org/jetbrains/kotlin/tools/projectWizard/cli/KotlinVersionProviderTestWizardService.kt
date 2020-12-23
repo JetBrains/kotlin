@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.BintrayRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 
 class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(), TestWizardService {
     private val useCacheRedirector
@@ -28,23 +26,14 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
             }
         )
 
-    override fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = if (useCacheRedirector) {
-        getKotlinVersionRepositoryWithCacheRedirector(versionKind)
-    } else {
-        super.getKotlinVersionRepository(versionKind)
-    }
-
-    private fun getKotlinVersionRepositoryWithCacheRedirector(versionKind: KotlinVersionKind): Repository = when (versionKind) {
-        KotlinVersionKind.STABLE -> DefaultRepository.MAVEN_CENTRAL
-        KotlinVersionKind.EAP -> DefaultRepository.MAVEN_CENTRAL
-        KotlinVersionKind.DEV -> KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR
-        KotlinVersionKind.M -> DefaultRepository.MAVEN_CENTRAL
-    }
+    override fun getDevVersionRepository(): Repository =
+        if (useCacheRedirector) KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR
+        else super.getDevVersionRepository()
 
     companion object {
-        private const val CACHE_REDIRECTOR_BINTRAY_URL = "https://cache-redirector.jetbrains.com/dl.bintray.com"
+        private const val CACHE_REDIRECTOR_JETBRAINS_SPACE_URL = "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space"
 
-        val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-dev", CACHE_REDIRECTOR_BINTRAY_URL)
+        val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/p/kotlin/dev", CACHE_REDIRECTOR_JETBRAINS_SPACE_URL)
 
 
         val TEST_KOTLIN_VERSION by lazy {

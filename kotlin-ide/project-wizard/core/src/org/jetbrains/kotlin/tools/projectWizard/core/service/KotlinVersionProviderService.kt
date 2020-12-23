@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.asNullable
 import org.jetbrains.kotlin.tools.projectWizard.core.compute
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
@@ -23,7 +24,12 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.stream.Collectors
 
-data class WizardKotlinVersion(val version: Version, val kind: KotlinVersionKind, val repository: Repository)
+data class WizardKotlinVersion(
+    val version: Version,
+    val kind: KotlinVersionKind,
+    val repository: Repository,
+    val buildSystemPluginRepository: (BuildSystemType) -> Repository?,
+)
 
 abstract class KotlinVersionProviderService : WizardService {
     abstract fun getKotlinVersion(projectKind: ProjectKind): WizardKotlinVersion
@@ -31,16 +37,21 @@ abstract class KotlinVersionProviderService : WizardService {
     protected fun kotlinVersionWithDefaultValues(version: Version) = WizardKotlinVersion(
         version,
         getKotlinVersionKind(version),
-        getKotlinVersionRepository(version)
+        getKotlinVersionRepository(version),
+        getBuildSystemPluginRepository(getKotlinVersionKind(version), getDevVersionRepository()),
     )
 
-    protected open fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = when (versionKind) {
+
+    private fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = when (versionKind) {
         KotlinVersionKind.STABLE, KotlinVersionKind.EAP, KotlinVersionKind.M -> DefaultRepository.MAVEN_CENTRAL
-        KotlinVersionKind.DEV -> Repositories.KOTLIN_DEV_BINTRAY
+        KotlinVersionKind.DEV -> getDevVersionRepository()
     }
+
+    protected open fun getDevVersionRepository(): Repository = Repositories.JETBRAINS_KOTLIN_DEV
 
     private fun getKotlinVersionRepository(version: Version) =
         getKotlinVersionRepository(getKotlinVersionKind(version))
+
 
     private fun getKotlinVersionKind(version: Version) = when {
         "eap" in version.toString().toLowerCase() -> KotlinVersionKind.EAP
@@ -48,6 +59,25 @@ abstract class KotlinVersionProviderService : WizardService {
         "dev" in version.toString().toLowerCase() -> KotlinVersionKind.DEV
         "m" in version.toString().toLowerCase() -> KotlinVersionKind.M
         else -> KotlinVersionKind.STABLE
+
+
+    }
+
+    companion object {
+        fun getBuildSystemPluginRepository(
+            versionKind: KotlinVersionKind,
+            devRepository: Repository
+        ): (BuildSystemType) -> Repository? =
+            when (versionKind) {
+                KotlinVersionKind.STABLE, KotlinVersionKind.EAP, KotlinVersionKind.M -> { buildSystem ->
+                    when (buildSystem) {
+                        BuildSystemType.GradleKotlinDsl, BuildSystemType.GradleGroovyDsl -> DefaultRepository.GRADLE_PLUGIN_PORTAL
+                        BuildSystemType.Maven -> DefaultRepository.MAVEN_CENTRAL
+                        BuildSystemType.Jps -> null
+                    }
+                }
+                KotlinVersionKind.DEV -> { _ -> devRepository }
+            }
     }
 }
 

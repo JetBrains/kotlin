@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.printBuildFile
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
@@ -161,13 +158,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
             withAction {
                 val (createBuildFile, buildFileName) = settingsGradleBuildFileData ?: return@withAction UNIT_SUCCESS
 
-                val repositories = buildList<RepositoryIR> {
-                    +pluginRepositoreis.propertyValue.map(::RepositoryIR)
-                    if (isNotEmpty()) {
-                        +RepositoryIR(DefaultRepository.MAVEN_CENTRAL)
-                        +RepositoryIR(DefaultRepository.GRADLE_PLUGIN_PORTAL)
-                    }
-                }.map(::PluginManagementRepositoryIR)
+                val repositories = getPluginRepositoriesWithDefaultOnes().map { PluginManagementRepositoryIR(RepositoryIR(it)) }
 
                 val settingsGradleIR = SettingsGradleFileIR(
                     StructurePlugin.name.settingValue,
