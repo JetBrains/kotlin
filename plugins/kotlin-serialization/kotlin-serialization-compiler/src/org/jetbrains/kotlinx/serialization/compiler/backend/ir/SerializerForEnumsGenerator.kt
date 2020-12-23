@@ -36,7 +36,7 @@ class SerializerForEnumsGenerator(
 
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val descriptorGetterSymbol = irAnySerialDescProperty?.owner?.getter!!.symbol
-        val encodeEnum = encoderClass.referenceMethod(CallingConventions.encodeEnum)
+        val encodeEnum = encoderClass.referenceFunctionSymbol(CallingConventions.encodeEnum)
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         val serializableIrClass = requireNotNull(serializableIrClass) { "Enums do not support external serialization" }
@@ -52,7 +52,7 @@ class SerializerForEnumsGenerator(
 
         val decoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.DECODER_CLASS)
         val descriptorGetterSymbol = irAnySerialDescProperty?.owner?.getter!!.symbol
-        val decode = decoderClass.referenceMethod(CallingConventions.decodeEnum)
+        val decode = decoderClass.referenceFunctionSymbol(CallingConventions.decodeEnum)
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         val serializableIrClass = requireNotNull(serializableIrClass) { "Enums do not support external serialization" }
@@ -109,7 +109,7 @@ class SerializerForEnumsGenerator(
             copySerialInfoAnnotationsToDescriptor(
                 entry.annotations.mapNotNull(compilerContext.typeTranslator.constantValueGenerator::generateAnnotationConstructorCall),
                 localDescriptor,
-                serialDescImplClass.referenceMethod(CallingConventions.addAnnotation)
+                serialDescImplClass.referenceFunctionSymbol(CallingConventions.addAnnotation)
             )
         }
     }
