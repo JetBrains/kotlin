@@ -119,7 +119,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 CallableId(name, pathFqName)
             }
             context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
-            context.className.shortName() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
+            context.className.shortName() == ANONYMOUS_OBJECT_NAME -> CallableId(createAnonymousClassId(), name)
             else -> CallableId(context.packageFqName, context.className, name)
         }
 

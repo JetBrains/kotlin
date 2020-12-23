@@ -359,9 +359,7 @@ class Fir2IrDeclarationStorage(
         isStatic: Boolean,
         parentPropertyReceiverType: FirTypeRef? = null
     ): T {
-        if (irParent != null) {
-            parent = irParent
-        }
+        setAndModifyParent(irParent)
         declareParameters(function, thisReceiverOwner, isStatic, parentPropertyReceiverType)
         return this
     }
@@ -1049,9 +1047,7 @@ class Fir2IrDeclarationStorage(
                 val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin, irParent)
-                createIrFunction(fir, irParent, origin = declarationOrigin).apply {
-                    setAndModifyParent(irParent)
-                }.symbol
+                createIrFunction(fir, irParent, origin = declarationOrigin).symbol
             }
             is FirSimpleFunction -> {
                 return getIrCallableSymbol(

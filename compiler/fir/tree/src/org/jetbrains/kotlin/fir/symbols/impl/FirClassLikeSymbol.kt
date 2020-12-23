@@ -28,9 +28,9 @@ sealed class FirClassSymbol<C : FirClass<C>>(classId: ClassId) : FirClassLikeSym
 
 class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId)
 
-val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(Name.special("<anonymous>")), true)
+fun createAnonymousClassId(): ClassId = ClassId(FqName.ROOT, FqName.topLevel(Name.special("<anonymous>")), true)
 
-class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CLASS_ID)
+class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(createAnonymousClassId())
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId) {
     override fun toLookupTag() = ConeClassLikeLookupTagImpl(classId)
