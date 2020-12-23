@@ -106,7 +106,7 @@ internal fun CirSimpleType.buildType(
         arguments = collectArguments(targetComponents, typeParameterResolver, expandTypeAliases),
         isMarkedNullable = isMarkedNullable
     )
-    is CirTypeAliasType -> runCatching {
+    is CirTypeAliasType -> {
         val typeAliasDescriptor = targetComponents.findClassOrTypeAlias(classifierId).checkClassifierType<TypeAliasDescriptor>()
         val arguments = this.arguments.compactMap { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
 
@@ -114,10 +114,6 @@ internal fun CirSimpleType.buildType(
             buildExpandedType(typeAliasDescriptor, arguments, isMarkedNullable)
         else
             buildSimpleType(typeAliasDescriptor, arguments, isMarkedNullable)
-    }.getOrElse {
-        // TODO SELLMAIR NOW
-        println("Failed to build type for CirTypeAliasType(${this.classifierId.asString()}): ${it.message}")
-        return this.underlyingType.buildType(targetComponents, typeParameterResolver, expandTypeAliases)
     }
     is CirTypeParameterType -> buildSimpleType(
         classifier = typeParameterResolver.resolve(index)

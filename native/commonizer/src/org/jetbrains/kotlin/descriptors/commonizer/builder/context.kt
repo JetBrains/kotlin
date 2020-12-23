@@ -122,7 +122,7 @@ class GlobalDeclarationsBuilderComponents(
     val storageManager: StorageManager,
     val targetComponents: List<TargetDeclarationsBuilderComponents>,
     val cache: DeclarationsBuilderCache,
-    val statsCollector: StatsCollector?
+    val statsCollector: StatsCollector?,
 ) {
     init {
         check(targetComponents.size > 1)
@@ -136,7 +136,8 @@ class TargetDeclarationsBuilderComponents(
     val builtIns: KotlinBuiltIns,
     val lazyClassifierLookupTable: NotNullLazyValue<LazyClassifierLookupTable>,
     val index: Int,
-    private val cache: DeclarationsBuilderCache
+    private val cache: DeclarationsBuilderCache,
+    private val dependenciesDeclarationsBuilderComponents: TargetDeclarationsBuilderComponents?
 ) {
     // N.B. this function may create new classifiers for types from Kotlin/Native forward declarations packages
     fun findClassOrTypeAlias(classifierId: ClassId): ClassifierDescriptorWithTypeParameters {
@@ -150,10 +151,12 @@ class TargetDeclarationsBuilderComponents(
                     builtIns = builtIns
                 )
             }.resolveClassOrTypeAlias(classifierId)
+                ?: dependenciesDeclarationsBuilderComponents?.findClassOrTypeAlias(classifierId)
                 ?: error("Classifier ${classifierId.asString()} not found for $target")
         } else {
             cache.getCachedClassifier(classifierId, index) // first, look up in created descriptors cache
                 ?: lazyClassifierLookupTable().resolveClassOrTypeAlias(classifierId) // then, attempt to load the original classifier
+                ?: dependenciesDeclarationsBuilderComponents?.findClassOrTypeAlias(classifierId)
                 ?: error("Classifier ${classifierId.asString()} not found for $target")
         }
     }
@@ -217,7 +220,8 @@ class LazyClassifierLookupTable(lazyModules: Map<String, List<ModuleDescriptor>>
 
 fun CirRootNode.createGlobalBuilderComponents(
     storageManager: StorageManager,
-    parameters: CommonizerParameters
+    parameters: CommonizerParameters,
+    dependencyBuilderComponents: GlobalDeclarationsBuilderComponents? = null
 ): GlobalDeclarationsBuilderComponents {
     val cache = DeclarationsBuilderCache(dimension)
 
@@ -267,7 +271,9 @@ fun CirRootNode.createGlobalBuilderComponents(
             builtIns = builtIns,
             lazyClassifierLookupTable = lazyModulesLookupTable,
             index = index,
-            cache = cache
+            cache = cache,
+            // TODO SELLMAIR NOW: index correct?
+            dependenciesDeclarationsBuilderComponents = dependencyBuilderComponents?.targetComponents?.get(index)
         )
     }
 

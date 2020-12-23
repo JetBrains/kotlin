@@ -22,11 +22,16 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
 
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
-    val mergeResult = mergeAndCommonize(storageManager, parameters)
+    val (mergeResult, dependencyMergeResult) = mergeAndCommonize(storageManager, parameters)
     val mergedTree = mergeResult.root
+    val dependencyMergedTree = dependencyMergeResult.root
 
     // build resulting descriptors:
-    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters)
+    val dependencyComponents = dependencyMergedTree.createGlobalBuilderComponents(storageManager, parameters)
+    dependencyMergedTree.accept(DeclarationsBuilderVisitor1(dependencyComponents), emptyList())
+
+    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters, dependencyComponents)
+
     mergedTree.accept(DeclarationsBuilderVisitor1(components), emptyList())
     mergedTree.accept(DeclarationsBuilderVisitor2(components), emptyList())
 
@@ -50,7 +55,12 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
     return CommonizerResult.Done(modulesByTargets)
 }
 
-private fun mergeAndCommonize(storageManager: StorageManager, parameters: CommonizerParameters): CirTreeMergeResult {
+data class MergeAndCommonizeResult(
+    val mergeResult: CirTreeMergeResult,
+    val dependenciesMergeResult: CirTreeMergeResult
+)
+
+private fun mergeAndCommonize(storageManager: StorageManager, parameters: CommonizerParameters): MergeAndCommonizeResult {
     val sharedTargetDependencies = parameters.sharedTarget to CirProvidedClassifiers.fromModules(storageManager) {
         parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
     }
@@ -68,12 +78,17 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
         dependeeLibraries = leafTargetDependencies + sharedTargetDependencies
     )
 
+    val dependenciesMergeResult = CirDependencyTreeMerger(storageManager, classifiers, parameters).merge()
     val mergeResult = CirTreeMerger(storageManager, classifiers, parameters).merge()
 
     // commonize:
+    val dependencyMergedTree = dependenciesMergeResult.root
+    dependencyMergedTree.accept(CommonizationVisitor(classifiers, dependencyMergedTree), Unit)
+    parameters.progressLogger?.invoke("Commonized dependency declarations")
+
     val mergedTree = mergeResult.root
     mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
     parameters.progressLogger?.invoke("Commonized declarations")
 
-    return mergeResult
+    return MergeAndCommonizeResult(mergeResult, dependenciesMergeResult)
 }
