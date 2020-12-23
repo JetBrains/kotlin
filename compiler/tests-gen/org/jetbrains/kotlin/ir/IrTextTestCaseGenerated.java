@@ -196,6 +196,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/innerClassWithDelegatingConstructor.kt");
         }
 
+        @TestMetadata("kt19306.kt")
+        public void testKt19306() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/kt19306.kt");
+        }
+
         @TestMetadata("kt31649.kt")
         public void testKt31649() throws Exception {
             runTest("compiler/testData/ir/irText/classes/kt31649.kt");
