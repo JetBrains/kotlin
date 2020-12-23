@@ -10567,16 +10567,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/inference/returningLambdaInSuspendContext.kt");
             }
 
-            @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
-            public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
-            }
-
-            @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
-            public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
-            }
-
             @TestMetadata("starApproximation.kt")
             public void testStarApproximation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/starApproximation.kt");
@@ -10630,6 +10620,29 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class BuilderInference extends AbstractDiagnosticsTestWithFirValidation {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInBuilderInference() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
+                public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+                }
+
+                @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
+                public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes")

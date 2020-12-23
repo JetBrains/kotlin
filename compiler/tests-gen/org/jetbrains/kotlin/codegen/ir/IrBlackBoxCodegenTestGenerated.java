@@ -1731,49 +1731,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/box/builderInference")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class BuilderInference extends AbstractIrBlackBoxCodegenTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInBuilderInference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @TestMetadata("callableReferenceAndCoercionToUnit.kt")
-        public void testCallableReferenceAndCoercionToUnit() throws Exception {
-            runTest("compiler/testData/codegen/box/builderInference/callableReferenceAndCoercionToUnit.kt");
-        }
-
-        @TestMetadata("kt41164.kt")
-        public void testKt41164() throws Exception {
-            runTest("compiler/testData/codegen/box/builderInference/kt41164.kt");
-        }
-
-        @TestMetadata("lackOfNullCheckOnNullableInsideBuild.kt")
-        public void testLackOfNullCheckOnNullableInsideBuild() throws Exception {
-            runTest("compiler/testData/codegen/box/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
-        }
-
-        @TestMetadata("substituteStubTypeIntoCR.kt")
-        public void testSubstituteStubTypeIntoCR() throws Exception {
-            runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntoCR.kt");
-        }
-
-        @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
-        public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
-            runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
-        }
-
-        @TestMetadata("substituteTypeVariableIntolambdaParameterDescriptor.kt")
-        public void testSubstituteTypeVariableIntolambdaParameterDescriptor() throws Exception {
-            runTest("compiler/testData/codegen/box/builderInference/substituteTypeVariableIntolambdaParameterDescriptor.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -13517,6 +13474,49 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("unsafeVarianceCodegen.kt")
         public void testUnsafeVarianceCodegen() throws Exception {
             runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inference/builderInference")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BuilderInference extends AbstractIrBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBuilderInference() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("callableReferenceAndCoercionToUnit.kt")
+            public void testCallableReferenceAndCoercionToUnit() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/callableReferenceAndCoercionToUnit.kt");
+            }
+
+            @TestMetadata("kt41164.kt")
+            public void testKt41164() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/kt41164.kt");
+            }
+
+            @TestMetadata("lackOfNullCheckOnNullableInsideBuild.kt")
+            public void testLackOfNullCheckOnNullableInsideBuild() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
+            }
+
+            @TestMetadata("substituteStubTypeIntoCR.kt")
+            public void testSubstituteStubTypeIntoCR() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/substituteStubTypeIntoCR.kt");
+            }
+
+            @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
+            public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
+            }
+
+            @TestMetadata("substituteTypeVariableIntolambdaParameterDescriptor.kt")
+            public void testSubstituteTypeVariableIntolambdaParameterDescriptor() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/substituteTypeVariableIntolambdaParameterDescriptor.kt");
+            }
         }
     }
 
