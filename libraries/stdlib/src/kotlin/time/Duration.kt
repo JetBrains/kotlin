@@ -27,13 +27,10 @@ private inline val storageUnit get() = DurationUnit.NANOSECONDS
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 public inline class Duration internal constructor(internal val value: Double) : Comparable<Duration> {
-// TODO: backend fails on init block, wait for KT-28055
-
-//    init {
-//        require(_value.isNaN().not())
-//    }
+    init {
+        require(!value.isNaN()) { "Duration value cannot be NaN." }
+    }
 
     companion object {
         /** The duration equal to exactly 0 seconds. */
@@ -52,22 +49,46 @@ public inline class Duration internal constructor(internal val value: Double) : 
     /** Returns the negative of this value. */
     public operator fun unaryMinus(): Duration = Duration(-value)
 
-    /** Returns a duration whose value is the sum of this and [other] duration values. */
+    /**
+     * Returns a duration whose value is the sum of this and [other] duration values.
+     *
+     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     */
     public operator fun plus(other: Duration): Duration = Duration(value + other.value)
 
-    /** Returns a duration whose value is the difference between this and [other] duration values. */
+    /**
+     * Returns a duration whose value is the difference between this and [other] duration values.
+     *
+     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     */
     public operator fun minus(other: Duration): Duration = Duration(value - other.value)
 
-    /** Returns a duration whose value is this duration value multiplied by the given [scale] number. */
+    /**
+     * Returns a duration whose value is this duration value multiplied by the given [scale] number.
+     *
+     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     */
     public operator fun times(scale: Int): Duration = Duration(value * scale)
 
-    /** Returns a duration whose value is this duration value multiplied by the given [scale] number. */
+    /**
+     * Returns a duration whose value is this duration value multiplied by the given [scale] number.
+     *
+     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     */
     public operator fun times(scale: Double): Duration = Duration(value * scale)
 
-    /** Returns a duration whose value is this duration value divided by the given [scale] number. */
+    /**
+     * Returns a duration whose value is this duration value divided by the given [scale] number.
+     *
+     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     */
     public operator fun div(scale: Int): Duration = Duration(value / scale)
 
-    /** Returns a duration whose value is this duration value divided by the given [scale] number. */
+    /**
+     * Returns a duration whose value is this duration value divided by the given [scale] number.
+     *
+     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     */
     public operator fun div(scale: Double): Duration = Duration(value / scale)
 
     /** Returns a number that is the ratio of this and [other] duration values. */
@@ -356,7 +377,11 @@ public fun Int.toDuration(unit: DurationUnit): Duration = toDouble().toDuration(
 @ExperimentalTime
 public fun Long.toDuration(unit: DurationUnit): Duration = toDouble().toDuration(unit)
 
-/** Returns a [Duration] equal to this [Double] number of the specified [unit]. */
+/**
+ * Returns a [Duration] equal to this [Double] number of the specified [unit].
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public fun Double.toDuration(unit: DurationUnit): Duration = Duration(convertDurationUnit(this, unit, storageUnit))
@@ -374,7 +399,11 @@ public val Int.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 @ExperimentalTime
 public val Long.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
 
-/** Returns a [Duration] equal to this [Double] number of nanoseconds. */
+/**
+ * Returns a [Duration] equal to this [Double] number of nanoseconds.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.nanoseconds get() = toDuration(DurationUnit.NANOSECONDS)
@@ -389,7 +418,11 @@ public val Int.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 @ExperimentalTime
 public val Long.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
 
-/** Returns a [Duration] equal to this [Double] number of microseconds. */
+/**
+ * Returns a [Duration] equal to this [Double] number of microseconds.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.microseconds get() = toDuration(DurationUnit.MICROSECONDS)
@@ -404,7 +437,11 @@ public val Int.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 @ExperimentalTime
 public val Long.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
 
-/** Returns a [Duration] equal to this [Double] number of milliseconds. */
+/**
+ * Returns a [Duration] equal to this [Double] number of milliseconds.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.milliseconds get() = toDuration(DurationUnit.MILLISECONDS)
@@ -419,7 +456,11 @@ public val Int.seconds get() = toDuration(DurationUnit.SECONDS)
 @ExperimentalTime
 public val Long.seconds get() = toDuration(DurationUnit.SECONDS)
 
-/** Returns a [Duration] equal to this [Double] number of seconds. */
+/**
+ * Returns a [Duration] equal to this [Double] number of seconds.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.seconds get() = toDuration(DurationUnit.SECONDS)
@@ -434,7 +475,11 @@ public val Int.minutes get() = toDuration(DurationUnit.MINUTES)
 @ExperimentalTime
 public val Long.minutes get() = toDuration(DurationUnit.MINUTES)
 
-/** Returns a [Duration] equal to this [Double] number of minutes. */
+/**
+ * Returns a [Duration] equal to this [Double] number of minutes.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.minutes get() = toDuration(DurationUnit.MINUTES)
@@ -449,7 +494,11 @@ public val Int.hours get() = toDuration(DurationUnit.HOURS)
 @ExperimentalTime
 public val Long.hours get() = toDuration(DurationUnit.HOURS)
 
-/** Returns a [Duration] equal to this [Double] number of hours. */
+/**
+ * Returns a [Duration] equal to this [Double] number of hours.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.hours get() = toDuration(DurationUnit.HOURS)
@@ -464,7 +513,11 @@ public val Int.days get() = toDuration(DurationUnit.DAYS)
 @ExperimentalTime
 public val Long.days get() = toDuration(DurationUnit.DAYS)
 
-/** Returns a [Duration] equal to this [Double] number of days. */
+/**
+ * Returns a [Duration] equal to this [Double] number of days.
+ *
+ * @throws IllegalArgumentException if this `Double` value is `NaN`.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public val Double.days get() = toDuration(DurationUnit.DAYS)
@@ -476,7 +529,11 @@ public val Double.days get() = toDuration(DurationUnit.DAYS)
 @kotlin.internal.InlineOnly
 public inline operator fun Int.times(duration: Duration): Duration = duration * this
 
-/** Returns a duration whose value is the specified [duration] value multiplied by this number. */
+/**
+ * Returns a duration whose value is the specified [duration] value multiplied by this number.
+ *
+ * @throws IllegalArgumentException if the operation results in a `NaN` value.
+ */
 @SinceKotlin("1.3")
 @ExperimentalTime
 @kotlin.internal.InlineOnly
