@@ -461,7 +461,11 @@ class DiagnosticReporterByTrackingStrategy(
                         is TypeVariableForLambdaReturnType -> "return type of lambda"
                         else -> error("Unsupported type variable: $typeVariable")
                     }
-                    trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
+                    val unwrappedExpression = if (expression is KtBlockExpression) {
+                        expression.statements.lastOrNull() ?: expression
+                    } else expression
+
+                    trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(unwrappedExpression, typeVariableName))
                 }
             }
 
