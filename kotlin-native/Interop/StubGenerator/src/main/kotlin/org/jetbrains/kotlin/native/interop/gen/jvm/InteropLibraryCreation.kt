@@ -5,15 +5,17 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import kotlinx.metadata.*
+import kotlinx.metadata.KmModuleFragment
+import kotlinx.metadata.klib.fqName
+import kotlinx.metadata.klib.className
 import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlinx.metadata.klib.className
-import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.impl.KonanLibraryLayoutForWriter
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryWriterImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.util.*
 
 fun createInteropLibrary(
@@ -43,16 +44,18 @@ fun createInteropLibrary(
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
             irVersion = KlibIrVersion.INSTANCE.toString()
     )
-    val outputPathWithoutExtension = outputPath.removeSuffixIfPresent(".klib")
+    val libFile = File(outputPath)
+    val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
+    val layout = KonanLibraryLayoutForWriter(libFile, unzippedDir, target)
     KonanLibraryWriterImpl(
-            File(outputPathWithoutExtension),
             moduleName,
             version,
             target,
 
             BuiltInsPlatform.NATIVE,
             nopack = nopack,
-            shortName = shortName
+            shortName = shortName,
+            layout = layout
     ).apply {
         val serializedMetadata = metadata.write(ChunkingWriteStrategy())
         addMetadata(SerializedMetadata(serializedMetadata.header, serializedMetadata.fragments, serializedMetadata.fragmentNames))
