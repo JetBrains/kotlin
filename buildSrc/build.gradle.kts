@@ -39,6 +39,7 @@ logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 apply {
     plugin("kotlin")
     plugin("kotlin-sam-with-receiver")
+    plugin("groovy")
 
     from("../gradle/checkCacheability.gradle.kts")
 }
