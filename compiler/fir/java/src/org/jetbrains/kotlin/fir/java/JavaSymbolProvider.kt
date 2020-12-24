@@ -134,9 +134,9 @@ class JavaSymbolProvider(
             classId,
             {
                 val foundClass = findClass(classId, content)
-                if (foundClass == null || foundClass.annotations.any {
-                        it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME
-                    }
+                if (foundClass == null ||
+                    foundClass.hasDifferentRelativeClassName(classId) ||
+                    foundClass.hasMetadataAnnotation()
                 ) {
                     null to null
                 } else {
@@ -147,6 +147,16 @@ class JavaSymbolProvider(
             convertJavaClassToFir(firSymbol, foundClass)
         }
     }
+
+    /**
+     * We do not check the package because we can look for the class in the same package by class name without package specified.
+     * In this case, found [JavaClass] may have different `packageFqName`, but not `relativeClassName`.
+     */
+    private fun JavaClass.hasDifferentRelativeClassName(lookupClassId: ClassId): Boolean =
+        classId?.relativeClassName != lookupClassId.relativeClassName
+
+    private fun JavaClass.hasMetadataAnnotation(): Boolean =
+        annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
 
     private class ValueParametersForAnnotationConstructor {
         val valueParameters: MutableList<FirJavaValueParameter> = mutableListOf()
