@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
@@ -26,8 +25,8 @@ import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -485,7 +484,6 @@ fun IrClass.addFakeOverrides(irBuiltIns: IrBuiltIns, implementedMembers: List<Ir
         .forEach { addChild(it) }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFactory.createStaticFunctionWithReceivers(
         irParent: IrDeclarationParent,
         name: Name,
