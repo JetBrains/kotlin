@@ -34,7 +34,6 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            backend = BackendKind.NoBackend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source
         }

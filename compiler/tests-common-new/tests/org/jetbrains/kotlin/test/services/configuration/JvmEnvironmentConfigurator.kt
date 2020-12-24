@@ -104,7 +104,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, true)
         }
 
-        val isIr = module.backendKind == BackendKinds.IrBackend
+        val isIr = module.targetBackend?.isIR == true
         configuration.put(JVMConfigurationKeys.IR, isIr)
 
         if (JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives) {

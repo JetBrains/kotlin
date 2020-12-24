@@ -55,7 +55,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         var failedException: Throwable? = null
         try {
             for (module in modules) {
-                processModule(module, dependencyProvider, moduleStructure)
+                processModule(services, module, dependencyProvider, moduleStructure)
             }
         } catch (e: Throwable) {
             failedException = e
@@ -87,6 +87,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     }
 
     private fun processModule(
+        services: TestServices,
         module: TestModule,
         dependencyProvider: DependencyProviderImpl,
         moduleStructure: TestModuleStructure
@@ -105,7 +106,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         }
 
-        val backendKind = module.backendKind
+        val backendKind = services.backendKindExtractor.backendKind(module.targetBackend)
         if (!backendKind.shouldRunAnalysis) return
 
         val backendInputInfo = testConfiguration.getFacade(frontendKind, backendKind)

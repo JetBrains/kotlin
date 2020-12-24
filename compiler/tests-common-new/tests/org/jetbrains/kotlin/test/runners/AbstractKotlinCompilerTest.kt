@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.test.services.BackendKindExtractor
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
+import org.jetbrains.kotlin.test.services.impl.BackendKindExtractorImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import org.junit.jupiter.api.BeforeEach
@@ -37,6 +39,7 @@ abstract class AbstractKotlinCompilerTest {
     private val configuration: TestConfigurationBuilder.() -> Unit = {
         assertions = JUnit5Assertions
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+        useAdditionalService<BackendKindExtractor>(::BackendKindExtractorImpl)
         useSourcePreprocessor(*defaultPreprocessors.toTypedArray())
         useDirectives(*defaultDirectiveContainers.toTypedArray())
         configureDebugFlags()

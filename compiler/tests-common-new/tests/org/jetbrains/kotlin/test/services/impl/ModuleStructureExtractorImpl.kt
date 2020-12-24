@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
@@ -62,7 +63,7 @@ class ModuleStructureExtractorImpl(
         private var currentModuleName: String? = null
         private var currentModuleTargetPlatform: TargetPlatform? = null
         private var currentModuleFrontendKind: FrontendKind<*>? = null
-        private var currentModuleBackendKind: BackendKind<*>? = null
+        private var currentModuleTargetBackend: TargetBackend? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
@@ -172,12 +173,7 @@ class ModuleStructureExtractorImpl(
                     }
                 }
                 ModuleStructureDirectives.TARGET_BACKEND_KIND -> {
-                    val name = values.singleOrNull() as? String ?: assertions.fail {
-                        "Target backend specified incorrectly\nUsage: ${directive.description}"
-                    }
-                    currentModuleBackendKind = BackendKinds.fromString(name) ?: assertions.fail {
-                        "Unknown backend: $name"
-                    }
+                    currentModuleTargetBackend = values.single() as TargetBackend
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
@@ -216,8 +212,8 @@ class ModuleStructureExtractorImpl(
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform,
+                targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend,
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
-                backendKind = currentModuleBackendKind ?: defaultsProvider.defaultBackend,
                 files = filesOfCurrentModule,
                 dependencies = dependenciesOfCurrentModule,
                 directives = moduleDirectives,
@@ -272,8 +268,8 @@ class ModuleStructureExtractorImpl(
             firstFileInModule = true
             currentModuleName = null
             currentModuleTargetPlatform = null
+            currentModuleTargetBackend = null
             currentModuleFrontendKind = null
-            currentModuleBackendKind = null
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()

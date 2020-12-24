@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.COMPARE_WIT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LIGHT_TREE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
-import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.AdditionalDiagnosticsSourceFilesProvider
@@ -29,7 +29,6 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
-            backend = BackendKind.NoBackend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source
         }
@@ -84,9 +83,9 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
 
         forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava15/*") {
             defaultDirectives {
-                JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK_15
+                JDK_KIND with TestJdkKind.FULL_JDK_15
                 +WITH_STDLIB
-                +JvmEnvironmentConfigurationDirectives.WITH_REFLECT
+                +WITH_REFLECT
             }
         }
     }

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
-import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
 
@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.test.model.FrontendKind
  *   - default libraries
  */
 class DefaultsProvider(
-    val defaultBackend: BackendKind<*>,
     val defaultFrontend: FrontendKind<*>,
     val defaultLanguageSettings: LanguageVersionSettings,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,
+    val defaultTargetBackend: TargetBackend?,
     val defaultDependencyKind: DependencyKind
 ) : TestService {
     fun newLanguageSettingsBuilder(): LanguageVersionSettingsBuilder {
