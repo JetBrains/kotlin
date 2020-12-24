@@ -10550,6 +10550,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");
         }
 
+        @TestMetadata("reportNotEnoughTypeInformationErrorsOnBlockExpressions.kt")
+        public void testReportNotEnoughTypeInformationErrorsOnBlockExpressions() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/reportNotEnoughTypeInformationErrorsOnBlockExpressions.kt");
+        }
+
         @TestMetadata("resolveWithUnknownLambdaParameterType.kt")
         public void testResolveWithUnknownLambdaParameterType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/resolveWithUnknownLambdaParameterType.kt");
