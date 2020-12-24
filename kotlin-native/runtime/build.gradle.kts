@@ -140,8 +140,8 @@ targetList.forEach { targetName ->
 
     createTestTask(
             project,
-            "ExperimentalMM",
-            "${targetName}ExperimentalMMRuntimeTests",
+            "ExperimentalMMMimalloc",
+            "${targetName}ExperimentalMMMimallocRuntimeTests",
             listOf(
                 "${targetName}Runtime",
                 "${targetName}ExperimentalMemoryManager",
@@ -153,10 +153,25 @@ targetList.forEach { targetName ->
         includeRuntime()
     }
 
+    createTestTask(
+            project,
+            "ExperimentalMMStdAlloc",
+            "${targetName}ExperimentalMMStdAllocRuntimeTests",
+            listOf(
+                "${targetName}Runtime",
+                "${targetName}ExperimentalMemoryManager",
+                "${targetName}Release",
+                "${targetName}StdAlloc"
+            )
+    ) {
+        includeRuntime()
+    }
+
     tasks.register("${targetName}RuntimeTests") {
         dependsOn("${targetName}StdAllocRuntimeTests")
         dependsOn("${targetName}MimallocRuntimeTests")
-        dependsOn("${targetName}ExperimentalMMRuntimeTests")
+        dependsOn("${targetName}ExperimentalMMStdAllocRuntimeTests")
+        dependsOn("${targetName}ExperimentalMMMimallocRuntimeTests")
     }
 }
 
@@ -176,8 +191,12 @@ val hostMimallocRuntimeTests by tasks.registering {
     dependsOn("${hostName}MimallocRuntimeTests")
 }
 
-val hostExperimentalMMRuntimeTests by tasks.registering {
-    dependsOn("${hostName}ExperimentalMMRuntimeTests")
+val hostExperimentalMMStdAllocRuntimeTests by tasks.registering {
+    dependsOn("${hostName}ExperimentalMMStdAllocRuntimeTests")
+}
+
+val hostExperimentalMMMimallocRuntimeTests by tasks.registering {
+    dependsOn("${hostName}ExperimentalMMMimallocRuntimeTests")
 }
 
 val assemble by tasks.registering {
