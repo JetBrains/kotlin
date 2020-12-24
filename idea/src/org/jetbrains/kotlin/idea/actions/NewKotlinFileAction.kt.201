@@ -91,11 +91,20 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
                 KotlinIcons.INTERFACE,
                 "Kotlin Interface"
             )
-            .addKind(
-                KotlinBundle.message("action.new.file.dialog.data.class.title"),
-                KotlinIcons.CLASS,
-                "Kotlin Data Class"
+
+        if (project.getLanguageVersionSettings().supportsFeature(LanguageFeature.SealedInterfaces)) {
+            builder.addKind(
+                KotlinBundle.message("action.new.file.dialog.sealed.interface.title"),
+                KotlinIcons.INTERFACE,
+                "Kotlin Sealed Interface"
             )
+        }
+
+        builder.addKind(
+            KotlinBundle.message("action.new.file.dialog.data.class.title"),
+            KotlinIcons.CLASS,
+            "Kotlin Data Class"
+        )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.enum.title"),
                 KotlinIcons.ENUM,
