@@ -160,4 +160,76 @@ class Chars {
         assertTrue('a'.equals('A', true))
     }
 
+    @Sample
+    fun charFromCode() {
+        val codes = listOf(48, 65, 122, 946)
+        assertPrints(codes.map { Char(it) }, "[0, A, z, β]")
+
+        assertFails { Char(-1) }
+        assertFails { Char(1_000_000) }
+    }
+
+    @Sample
+    fun code() {
+        val string = "0Azβ"
+        assertPrints(string.map { it.code }, "[48, 65, 122, 946]")
+    }
+
+    @Sample
+    fun digitToInt() {
+        assertPrints('5'.digitToInt(), "5")
+        assertPrints('3'.digitToInt(radix = 8), "3")
+        assertPrints('A'.digitToInt(radix = 16), "10")
+        assertPrints('k'.digitToInt(radix = 36), "20")
+
+        // radix argument should be in 2..36
+        assertFails { '0'.digitToInt(radix = 1) }
+        assertFails { '1'.digitToInt(radix = 100) }
+        // only 0 and 1 digits are valid for binary numbers
+        assertFails { '5'.digitToInt(radix = 2) }
+        // radix = 10 is used by default
+        assertFails { 'A'.digitToInt() }
+        // symbol '+' is not a digit in any radix
+        assertFails { '+'.digitToInt() }
+        // Only Latin letters are valid for digits greater than 9.
+        assertFails { 'β'.digitToInt(radix = 36) }
+    }
+
+    @Sample
+    fun digitToIntOrNull() {
+        assertPrints('5'.digitToIntOrNull(), "5")
+        assertPrints('3'.digitToIntOrNull(radix = 8), "3")
+        assertPrints('A'.digitToIntOrNull(radix = 16), "10")
+        assertPrints('K'.digitToIntOrNull(radix = 36), "20")
+
+        // radix argument should be in 2..36
+        assertFails { '0'.digitToIntOrNull(radix = 1) }
+        assertFails { '1'.digitToIntOrNull(radix = 100) }
+        // only 0 and 1 digits are valid for binary numbers
+        assertPrints('5'.digitToIntOrNull(radix = 2), "null")
+        // radix = 10 is used by default
+        assertPrints('A'.digitToIntOrNull(), "null")
+        // symbol '+' is not a digit in any radix
+        assertPrints('+'.digitToIntOrNull(), "null")
+        // Only Latin letters are valid for digits greater than 9.
+        assertPrints('β'.digitToIntOrNull(radix = 36), "null")
+    }
+
+    @Sample
+    fun digitToChar() {
+        assertPrints(5.digitToChar(), "5")
+        assertPrints(3.digitToChar(radix = 8), "3")
+        assertPrints(10.digitToChar(radix = 16), "A")
+        assertPrints(20.digitToChar(radix = 36), "K")
+
+        // radix argument should be in 2..36
+        assertFails { 0.digitToChar(radix = 1) }
+        assertFails { 1.digitToChar(radix = 100) }
+        // only 0 and 1 digits are valid for binary numbers
+        assertFails { 5.digitToChar(radix = 2) }
+        // radix = 10 is used by default
+        assertFails { 10.digitToChar() }
+        // a negative integer is not a digit in any radix
+        assertFails { (-1).digitToChar() }
+    }
 }

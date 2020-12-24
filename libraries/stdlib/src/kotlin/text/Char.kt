@@ -11,6 +11,8 @@ package kotlin.text
 
 /**
  * Creates a Char with the specified [code], or throws an exception if the [code] is out of `Char.MIN_VALUE.code..Char.MAX_VALUE.code`.
+ *
+ * @sample samples.text.Chars.charFromCode
  */
 @kotlin.internal.LowPriorityInOverloadResolution // to not clash with Char constructor in js-ir
 public fun Char(code: Int): Char {
@@ -24,6 +26,8 @@ public fun Char(code: Int): Char {
  * Returns the code of this Char.
  *
  * Code of a Char is the value it was constructed with, and the UTF-16 code unit corresponding to this Char.
+ *
+ * @sample samples.text.Chars.code
  */
 public inline val Char.code: Int get() = this.toInt()
 
@@ -35,6 +39,8 @@ public inline val Char.code: Int get() = this.toInt()
  *  - [isDigit] is `true` for the Char and the Unicode decimal digit value of the character is less than the specified [radix]. In this case the decimal digit value is returned.
  *  - The Char is one of the uppercase Latin letters 'A' through 'Z' and its [code] is less than `radix + 'A'.code - 10`. In this case, `this.code - 'A'.code + 10` is returned.
  *  - The Char is one of the lowercase Latin letters 'a' through 'z' and its [code] is less than `radix + 'a'.code - 10`. In this case, `this.code - 'a'.code + 10` is returned.
+ *
+ * @sample samples.text.Chars.digitToInt
  */
 public fun Char.digitToInt(radix: Int = 10): Int {
     return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
@@ -48,6 +54,8 @@ public fun Char.digitToInt(radix: Int = 10): Int {
  *  - [isDigit] is `true` for the Char and the Unicode decimal digit value of the character is less than the specified [radix]. In this case the decimal digit value is returned.
  *  - The Char is one of the uppercase Latin letters 'A' through 'Z' and its [code] is less than `radix + 'A'.code - 10`. In this case, `this.code - 'A'.code + 10` is returned.
  *  - The Char is one of the lowercase Latin letters 'a' through 'z' and its [code] is less than `radix + 'a'.code - 10`. In this case, `this.code - 'a'.code + 10` is returned.
+ *
+ * @sample samples.text.Chars.digitToIntOrNull
  */
 public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
     if (radix !in 2..36) {
@@ -74,6 +82,8 @@ public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
  *
  * If this value is less than `10`, the decimal digit Char with code `'0'.code + this` is returned.
  * Otherwise, the uppercase Latin letter with code `'A'.code + this - 10` is returned.
+ *
+ * @sample samples.text.Chars.digitToChar
  */
 public fun Int.digitToChar(radix: Int = 10): Char {
     if (radix !in 2..36) {
