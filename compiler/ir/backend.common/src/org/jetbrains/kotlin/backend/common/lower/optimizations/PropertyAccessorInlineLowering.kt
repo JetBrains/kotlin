@@ -16,18 +16,17 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isPure
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 
 class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
     private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
 
     // TODO: implement general function inlining optimization and replace it with
-    private inner class AccessorInliner : IrElementTransformerVoid() {
+    private inner class AccessorInliner(val container: IrDeclarationParent) : IrElementTransformerVoid() {
 
         private val unitType = context.irBuiltIns.unitType
 
@@ -111,7 +110,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
             if (!isSimpleSetter(callee, backingField)) return null
 
             return call.run {
-                val value = getValueArgument(0) ?: error("Setter should have a value argument")
+                val value = getValueArgument(0)?.deepCopyWithSymbols(container) ?: error("Setter should have a value argument")
                 IrSetFieldImpl(startOffset, endOffset, backingField.symbol, call.dispatchReceiver, value, unitType, origin)
             }
         }
@@ -142,6 +141,6 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(AccessorInliner())
+        irBody.transformChildrenVoid(AccessorInliner(container as? IrDeclarationParent ?: container.parent))
     }
 }

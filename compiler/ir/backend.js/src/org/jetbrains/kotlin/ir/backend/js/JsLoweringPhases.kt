@@ -370,6 +370,13 @@ private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
     description = "[Optimization] Inline property accessors"
 )
 
+private val copyPropertyAccessorBodiesLoweringPass = makeDeclarationTransformerPhase(
+    ::CopyAccessorBodyLowerings,
+    name = "CopyAccessorBodyLowering",
+    description = "Copy accessor bodies so that ist can be safely read in PropertyAccessorInlineLowering",
+    prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
+)
+
 private val foldConstantLoweringPhase = makeBodyLoweringPhase(
     { FoldConstantLowering(it, true) },
     name = "FoldConstantLowering",
@@ -747,6 +754,7 @@ val loweringList = listOf<Lowering>(
     propertyLazyInitLoweringPhase,
     removeInitializersForLazyProperties,
     propertyAccessorInlinerLoweringPhase,
+    copyPropertyAccessorBodiesLoweringPass,
     foldConstantLoweringPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
