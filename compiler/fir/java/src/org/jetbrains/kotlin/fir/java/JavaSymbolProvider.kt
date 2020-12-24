@@ -421,6 +421,7 @@ class JavaSymbolProvider(
                     defaultValue = buildExpressionStub()
                 }
                 isVararg = returnType is JavaArrayType && methodName == VALUE_METHOD_NAME
+                annotationBuilder = { emptyList() }
             }
             if (methodName == VALUE_METHOD_NAME) {
                 valueParametersForAnnotationConstructor.valueParameterForValue = parameterForAnnotationConstructor

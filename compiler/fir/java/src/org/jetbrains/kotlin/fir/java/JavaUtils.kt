@@ -581,7 +581,7 @@ internal fun JavaValueParameter.toFirValueParameter(
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
         isVararg = this@toFirValueParameter.isVararg
-        addAnnotationsFrom(session, this@toFirValueParameter, javaTypeParameterStack)
+        annotationBuilder = { annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }}
     }
 }
 
