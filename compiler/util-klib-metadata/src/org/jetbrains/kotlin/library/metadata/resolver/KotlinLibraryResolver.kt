@@ -23,7 +23,8 @@ interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult
 
-    fun getFullList(order: LibraryOrder? = null): List<KotlinLibrary>
+    fun getFullList(order: LibraryOrder? = null): List<KotlinLibrary> = getFullResolvedList(order).map { it.library }
+    fun getFullResolvedList(order: LibraryOrder? = null): List<KotlinResolvedLibrary>
 
     fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit)
 }
