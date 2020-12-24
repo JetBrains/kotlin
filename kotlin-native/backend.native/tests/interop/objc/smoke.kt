@@ -67,11 +67,12 @@ fun run() {
 
     // hashCode (directly):
     // hash() returns value of NSUInteger type.
-    val hash = when (Platform.osFamily) {
+    val hash = if (Platform.osFamily == OsFamily.WATCHOS && Platform.cpuArchitecture.bitness == 32) {
         // `typedef unsigned int NSInteger` on watchOS.
-        OsFamily.WATCHOS -> foo.hash().toInt()
+        foo.hash().toInt()
+    } else {
         // `typedef unsigned long NSUInteger` on iOS, macOS, tvOS.
-        else -> foo.hash().let { it.toInt() xor (it shr 32).toInt() }
+        foo.hash().let { it.toInt() xor (it shr 32).toInt() }
     }
     if (foo.hashCode() == hash) {
         // toString (virtually):
