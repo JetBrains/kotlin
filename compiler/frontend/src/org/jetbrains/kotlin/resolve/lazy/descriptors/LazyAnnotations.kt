@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredByPredicateAnnotations
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AnnotationResolver
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.types.AbbreviatedType
+import org.jetbrains.kotlin.types.ErrorUtils
 
 abstract class LazyAnnotationsContext(
     val annotationResolver: AnnotationResolver,
@@ -77,9 +81,24 @@ class LazyAnnotationDescriptor(
         c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
     }
 
-    override val type by c.storageManager.createLazyValue {
-        c.annotationResolver.resolveAnnotationType(scope, annotationEntry, c.trace)
-    }
+    override val type by c.storageManager.createLazyValue(
+        computable = lazy@{
+            val annotationType = c.annotationResolver.resolveAnnotationType(scope, annotationEntry, c.trace)
+            if (annotationType is AbbreviatedType) {
+                // This is needed to prevent recursion in cases like this: typealias S = @S Ann
+                if (annotationType.annotations.any { it == this }) {
+                    annotationType.abbreviation.constructor.declarationDescriptor?.let { typeAliasDescriptor ->
+                        c.trace.report(Errors.RECURSIVE_TYPEALIAS_EXPANSION.on(annotationEntry, typeAliasDescriptor))
+                    }
+                    return@lazy annotationType.replaceAnnotations(FilteredByPredicateAnnotations(annotationType.annotations) { it != this })
+                }
+            }
+            annotationType
+        },
+        onRecursiveCall = {
+            ErrorUtils.createErrorType("Recursion in type of annotation detected")
+        }
+    )
 
     override val source = annotationEntry.toSourceElement()
 
