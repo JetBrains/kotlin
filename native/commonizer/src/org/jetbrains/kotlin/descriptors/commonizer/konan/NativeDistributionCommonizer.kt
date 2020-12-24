@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
 import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
@@ -304,14 +304,16 @@ class NativeDistributionCommonizer(
         manifestData: NativeSensitiveManifestData,
         destination: File
     ) {
+        val kDestination = KFile(destination.path)
+        val layout = KotlinLibraryLayoutForWriter(kDestination, kDestination)
         val library = KotlinLibraryWriterImpl(
-            libDir = KFile(destination.path),
             moduleName = manifestData.uniqueName,
             versions = manifestData.versions,
             builtInsPlatform = BuiltInsPlatform.NATIVE,
             nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
             nopack = true,
-            shortName = manifestData.shortName
+            shortName = manifestData.shortName,
+            layout = layout
         )
         library.addMetadata(metadata)
         manifestData.applyTo(library.base as BaseWriterImpl)
