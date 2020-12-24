@@ -37,7 +37,7 @@ public inline val Char.code: Int get() = this.toInt()
  *  - The Char is one of the lowercase Latin letters 'a' through 'z' and its [code] is less than `radix + 'a'.code - 10`. In this case, `this.code - 'a'.code + 10` is returned.
  */
 public fun Char.digitToInt(radix: Int = 10): Int {
-    TODO("Implement using digits table from CharCategory PR")
+    return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
 }
 
 /**
@@ -50,7 +50,22 @@ public fun Char.digitToInt(radix: Int = 10): Int {
  *  - The Char is one of the lowercase Latin letters 'a' through 'z' and its [code] is less than `radix + 'a'.code - 10`. In this case, `this.code - 'a'.code + 10` is returned.
  */
 public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
-    TODO("Implement using digits table from CharCategory PR")
+    if (radix !in 2..36) {
+        throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
+    }
+    if (this !in '0'..'9' && this !in 'A'..'Z' && this !in 'a'..'z') {
+        return null
+    }
+    if (radix <= 10) {
+        val int = this - '0'
+        return if (int < radix) int else null
+    }
+    if (this <= '9') {
+        return this - '0'
+    }
+    val a = if (this <= 'Z') 'A' else 'a'
+    val int = 10 + (this - a)
+    return if (int < radix) int else null
 }
 
 /**
