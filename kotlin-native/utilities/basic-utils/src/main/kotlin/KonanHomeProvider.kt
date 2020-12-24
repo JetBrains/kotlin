@@ -10,7 +10,7 @@ object KonanHomeProvider {
                                                "org.jetbrains.kotlin.native.home",
                                                "konan.home")
     internal val kotlinNativeHome
-        get() = validPropertiesNames.mapNotNull(System::getProperty).first()
+        get() = validPropertiesNames.mapNotNull(System::getProperty).firstOrNull()
     /**
      * Determines a path to the current Kotlin/Native distribution.
      *
