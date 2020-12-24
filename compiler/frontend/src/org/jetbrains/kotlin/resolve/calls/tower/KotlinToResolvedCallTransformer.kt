@@ -519,6 +519,7 @@ class KotlinToResolvedCallTransformer(
             context.dataFlowValueFactory,
             allDiagnostics,
             smartCastManager,
+            typeSystemContext
         )
 
         for (diagnostic in allDiagnostics) {
