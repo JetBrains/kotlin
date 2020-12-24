@@ -10,12 +10,8 @@ fun <K> K.foo3(): K = null as K
 fun bar2(): Int = 1
 fun foo2(): Float = 1f
 
-val bar4: Int
-    get() = 1
-
-var foo4: Float
-    get() = 1f
-    set(value) {}
+fun <K> bar4(): K = null as K
+fun <K> foo4(): K = null as K
 
 class Foo6
 
@@ -44,7 +40,7 @@ fun poll13(flag: Boolean) {
 
 fun poll14(flag: Boolean) {
     val inv = if (flag) { ::bar4 } else { ::foo4 }
-    inv()
+    <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 fun poll15(flag: Boolean) {
@@ -79,7 +75,7 @@ fun poll22(flag: Boolean) {
 
 fun poll23(flag: Boolean) {
     val inv = when (flag) { true -> ::bar4 else -> ::foo4 }
-    inv()
+    <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 fun poll24(flag: Boolean) {
@@ -114,7 +110,7 @@ fun poll32(flag: Boolean) {
 
 fun poll33(flag: Boolean) {
     val inv = when (flag) { true -> ::bar4 false -> ::foo4 }
-    inv()
+    <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 fun poll34(flag: Boolean) {
@@ -149,7 +145,7 @@ fun poll42() {
 
 fun poll43() {
     val inv = try { ::bar4 } finally { ::foo4 }
-    inv()
+    <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 fun poll44() {
@@ -184,7 +180,7 @@ fun poll52() {
 
 fun poll53() {
     val inv = try { ::bar4 } catch (e: Exception) { ::foo4 } finally { ::foo4 }
-    inv()
+    <!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 fun poll54() {

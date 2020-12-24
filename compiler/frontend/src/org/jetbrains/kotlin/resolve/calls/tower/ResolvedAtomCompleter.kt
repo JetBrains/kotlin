@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.shouldBeSubstituted
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -421,6 +424,13 @@ class ResolvedAtomCompleter(
             is FunctionDescriptor -> topLevelCallContext.trace.get(BindingContext.FUNCTION, callableReferenceExpression)
             is PropertyDescriptor -> topLevelCallContext.trace.get(BindingContext.VARIABLE, callableReferenceExpression)
             else -> null
+        }
+
+        val rawExtensionReceiver = callableCandidate.extensionReceiver
+
+        if (rawExtensionReceiver != null && rawExtensionReceiver.receiver.receiverValue.type.contains { it is StubType }) {
+            topLevelTrace.reportDiagnosticOnce(Errors.TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE.on(callableReferenceExpression))
+            return
         }
 
         // For some callable references we can already have recorder descriptor (see `DoubleColonExpressionResolver.getCallableReferenceType`)

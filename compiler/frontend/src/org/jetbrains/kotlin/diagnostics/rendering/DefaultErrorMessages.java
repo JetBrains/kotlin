@@ -899,6 +899,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_UPPER_BOUND_VIOLATED, "{0}", TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER);
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, "Type inference failed. Expected type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG, "Please use spread operator to pass an array as vararg. It will be an error in 1.5.");
+        MAP.put(TYPE_INFERENCE_POSTPONED_VARIABLE_IN_RECEIVER_TYPE, "Postponed type variable (type variable of the builder inference) can't be used in the receiver type. Use a member function instead of extension one or specify type arguments of a function which uses the builder inference, explicitly.");
 
         MAP.put(TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT, "Type inference for control flow expression failed. Please specify its type explicitly.");
 
