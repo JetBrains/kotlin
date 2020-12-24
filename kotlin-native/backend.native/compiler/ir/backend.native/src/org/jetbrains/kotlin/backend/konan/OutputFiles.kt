@@ -24,6 +24,9 @@ class OutputFiles(outputPath: String?, target: KonanTarget, val produce: Compile
 
     val outputName = outputPath?.removeSuffixIfPresent(suffix) ?: produce.visibleName
 
+    fun klibOutputFileName(isPacked: Boolean): String =
+            if (isPacked) "$outputName$suffix" else outputName
+
     /**
      * Header file for dynamic library.
      */
