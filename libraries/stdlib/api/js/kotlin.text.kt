@@ -1,12 +1,17 @@
 @kotlin.SinceKotlin(version = "1.2")
 public val kotlin.String.Companion.CASE_INSENSITIVE_ORDER: kotlin.Comparator<kotlin.String> { get; }
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.internal.InlineOnly
 public val kotlin.Char.code: kotlin.Int { get; }
 
 public val kotlin.CharSequence.indices: kotlin.ranges.IntRange { get; }
 
 public val kotlin.CharSequence.lastIndex: kotlin.Int { get; }
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun Char(code: kotlin.Int): kotlin.Char
 
@@ -188,10 +193,16 @@ public inline fun kotlin.text.StringBuilder.deleteAt(index: kotlin.Int): kotlin.
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.text.StringBuilder.deleteRange(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.Int.digitToChar(radix: kotlin.Int = ...): kotlin.Char
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.Char.digitToInt(radix: kotlin.Int = ...): kotlin.Int
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.Char.digitToIntOrNull(radix: kotlin.Int = ...): kotlin.Int?
 
 public fun kotlin.CharSequence.drop(n: kotlin.Int): kotlin.CharSequence

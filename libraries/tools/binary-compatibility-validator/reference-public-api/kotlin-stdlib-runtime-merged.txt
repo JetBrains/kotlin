@@ -5117,7 +5117,6 @@ public final class kotlin/text/CharsKt {
 	public static final fun equals (CCZ)Z
 	public static synthetic fun equals$default (CCZILjava/lang/Object;)Z
 	public static final fun getCategory (C)Lkotlin/text/CharCategory;
-	public static final fun getCode (C)I
 	public static final fun getDirectionality (C)Lkotlin/text/CharDirectionality;
 	public static final fun isSurrogate (C)Z
 	public static final fun isWhitespace (C)Z

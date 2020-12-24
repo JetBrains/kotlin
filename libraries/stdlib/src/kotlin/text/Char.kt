@@ -14,6 +14,8 @@ package kotlin.text
  *
  * @sample samples.text.Chars.charFromCode
  */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 @kotlin.internal.LowPriorityInOverloadResolution // to not clash with Char constructor in js-ir
 public fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
@@ -29,6 +31,9 @@ public fun Char(code: Int): Char {
  *
  * @sample samples.text.Chars.code
  */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
 public inline val Char.code: Int get() = this.toInt()
 
 /**
@@ -42,6 +47,8 @@ public inline val Char.code: Int get() = this.toInt()
  *
  * @sample samples.text.Chars.digitToInt
  */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 public fun Char.digitToInt(radix: Int = 10): Int {
     return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
 }
@@ -57,6 +64,8 @@ public fun Char.digitToInt(radix: Int = 10): Int {
  *
  * @sample samples.text.Chars.digitToIntOrNull
  */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
@@ -85,6 +94,8 @@ public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
  *
  * @sample samples.text.Chars.digitToChar
  */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
 public fun Int.digitToChar(radix: Int = 10): Char {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
