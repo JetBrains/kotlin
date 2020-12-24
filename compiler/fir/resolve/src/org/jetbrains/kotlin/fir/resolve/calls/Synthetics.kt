@@ -80,28 +80,22 @@ class FirSyntheticPropertiesScope(
                     val parameter = setter.valueParameters.singleOrNull() ?: return
                     if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                     val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                    if (getter.symbol.dispatchReceiverClassOrNull() == setter.symbol.dispatchReceiverClassOrNull()) {
-                        if (getterReturnType.withNullability(NOT_NULL) != parameterType.withNullability(NOT_NULL)) {
-                            return
-                        }
-                    } else {
-                        // TODO: at this moment it works for cases like
-                        // class Base {
-                        //     void setSomething(Object value) {}
-                        // }
-                        // class Derived extends Base {
-                        //     String getSomething() { return ""; }
-                        // }
-                        // In FE 1.0, we should have also Object getSomething() in class Base for this to work
-                        // I think details here are worth designing
-                        if (!AbstractTypeChecker.isSubtypeOf(
-                                session.typeContext,
-                                getterReturnType.withNullability(NOT_NULL),
-                                parameterType.withNullability(NOT_NULL)
-                            )
-                        ) {
-                            return
-                        }
+                    // TODO: at this moment it works for cases like
+                    // class Base {
+                    //     void setSomething(Object value) {}
+                    // }
+                    // class Derived extends Base {
+                    //     String getSomething() { return ""; }
+                    // }
+                    // In FE 1.0, we should have also Object getSomething() in class Base for this to work
+                    // I think details here are worth designing
+                    if (!AbstractTypeChecker.isSubtypeOf(
+                            session.typeContext,
+                            getterReturnType.withNullability(NOT_NULL),
+                            parameterType.withNullability(NOT_NULL)
+                        )
+                    ) {
+                        return
                     }
                     matchingSetter = setter
                 })

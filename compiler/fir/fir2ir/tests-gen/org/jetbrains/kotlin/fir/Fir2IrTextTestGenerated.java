@@ -1873,6 +1873,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
         }
 
+        @TestMetadata("SyntheticSetterType.kt")
+        public void testSyntheticSetterType() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SyntheticSetterType.kt");
+        }
+
         @TestMetadata("throwableStackTrace.kt")
         public void testThrowableStackTrace() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
