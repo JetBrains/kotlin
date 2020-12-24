@@ -37,6 +37,15 @@ class TestConfigurationBuilder {
     val defaultRegisteredDirectivesBuilder: RegisteredDirectivesBuilder = RegisteredDirectivesBuilder()
 
     private val configurationsByTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
+    private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
+
+    inline fun <reified T : TestService> useAdditionalService(noinline serviceConstructor: (TestServices) -> T) {
+        useAdditionalService(service(serviceConstructor))
+    }
+
+    fun useAdditionalService(serviceRegistrationData: ServiceRegistrationData) {
+        additionalServices += serviceRegistrationData
+    }
 
     fun forTestsMatching(pattern: String, configuration: TestConfigurationBuilder.() -> Unit) {
         val regex = pattern.toMatchingRegexString().toRegex()
@@ -140,7 +149,8 @@ class TestConfigurationBuilder {
             afterAnalysisCheckers,
             metaInfoHandlerEnabled,
             directives,
-            defaultRegisteredDirectivesBuilder.build()
+            defaultRegisteredDirectivesBuilder.build(),
+            additionalServices
         )
     }
 }

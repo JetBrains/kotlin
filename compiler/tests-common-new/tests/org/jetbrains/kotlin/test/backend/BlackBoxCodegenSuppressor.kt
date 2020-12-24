@@ -25,7 +25,7 @@ class BlackBoxCodegenSuppressor(testServices: TestServices) : AfterAnalysisCheck
         val moduleStructure = testServices.moduleStructure
         val ignoredBackends = moduleStructure.modules.flatMap { it.directives[CodegenTestDirectives.IGNORE_BACKEND] }
         if (ignoredBackends.isEmpty()) return failedAssertions
-        val targetBackends = moduleStructure.modules.flatMap { it.targetBackends }
+        val targetBackends = moduleStructure.modules.map { it.targetBackend }
         val matchedBackend = ignoredBackends.intersect(targetBackends)
         if (ignoredBackends.contains(TargetBackend.ANY)) {
             return processAssertions(failedAssertions)
@@ -50,19 +50,4 @@ class BlackBoxCodegenSuppressor(testServices: TestServices) : AfterAnalysisCheck
             listOf(AssertionError(message))
         }
     }
-
-    private val TestModule.targetBackends: List<TargetBackend>
-        get() = when (backendKind) {
-            BackendKinds.ClassicBackend -> when {
-                targetPlatform.isJvm() -> listOf(TargetBackend.JVM, TargetBackend.JVM_OLD)
-                targetPlatform.isJs() -> listOf(TargetBackend.JS)
-                else -> emptyList()
-            }
-            BackendKinds.IrBackend -> when {
-                targetPlatform.isJvm() -> listOf(TargetBackend.JVM_IR)
-                targetPlatform.isJs() -> listOf(TargetBackend.JS_IR)
-                else -> emptyList()
-            }
-            else -> emptyList()
-        }
 }

@@ -35,10 +35,15 @@ class TestConfigurationImpl(
     override val metaInfoHandlerEnabled: Boolean,
 
     directives: List<DirectivesContainer>,
-    override val defaultRegisteredDirectives: RegisteredDirectives
+    override val defaultRegisteredDirectives: RegisteredDirectives,
+    additionalServices: List<ServiceRegistrationData>
 ) : TestConfiguration() {
     override val rootDisposable: Disposable = TestDisposable()
     override val testServices: TestServices = TestServices()
+
+    init {
+        additionalServices.forEach { testServices.register(it) }
+    }
 
     private val allDirectives = directives.toMutableSet()
     override val directives: DirectivesContainer by lazy {
