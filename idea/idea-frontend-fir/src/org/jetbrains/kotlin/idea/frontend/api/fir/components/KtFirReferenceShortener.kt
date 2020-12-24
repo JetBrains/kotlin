@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
@@ -60,12 +63,17 @@ internal class KtFirReferenceShortener(
         )
     }
 
-    private fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): ClassId? {
+    private data class AvailableClassifier(val classId: ClassId, val isFromStarOrPackageImport: Boolean)
+
+    private fun findFirstClassifierInScopesByName(positionScopes: List<FirScope>, targetClassName: Name): AvailableClassifier? {
         for (scope in positionScopes) {
             val classifierSymbol = scope.findFirstClassifierByName(targetClassName) ?: continue
             val classifierLookupTag = classifierSymbol.toLookupTag() as? ConeClassLikeLookupTag ?: continue
 
-            return classifierLookupTag.classId
+            return AvailableClassifier(
+                classifierLookupTag.classId,
+                isFromStarOrPackageImport = scope is FirAbstractStarImportingScope || scope is FirPackageMemberScope
+            )
         }
 
         return null
@@ -137,7 +145,7 @@ internal class KtFirReferenceShortener(
         private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
             val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
 
-            val wholeClassifierId = resolvedTypeRef.type.classId ?: return
+            val wholeClassifierId = resolvedTypeRef.type.lowerBoundIfFlexible().classId ?: return
             val wholeTypeElement = wholeTypeReference.typeElement.unwrapNullable() as? KtUserType ?: return
 
             if (wholeTypeElement.qualifier == null) return
@@ -152,7 +160,7 @@ internal class KtFirReferenceShortener(
             val positionScopes = findScopesAtPosition(wholeTypeElement, typesToImport) ?: return
 
             for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
-                val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)
+                val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
 
                 if (firstFoundClass == classId) {
                     addTypeToShorten(typeElement)
@@ -162,11 +170,11 @@ internal class KtFirReferenceShortener(
 
             // none class matched
             val (mostTopLevelClassId, mostTopLevelTypeElement) = allClassIds.zip(allTypeElements).last()
-            val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
+            val availableClassifier = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
 
-            check(firstFoundClass != mostTopLevelClassId) { "This should not be true" }
+            check(availableClassifier?.classId != mostTopLevelClassId) { "This should not be true" }
 
-            if (firstFoundClass == null) {
+            if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
                 addTypeToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelTypeElement)
             }
         }
