@@ -167,7 +167,7 @@ inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
     type: KotlinTypeMarker,
     isProper: (KotlinTypeMarker) -> Boolean
 ): Boolean {
-    if (!isProper(type)) return false
+    if (!isProper(type) || type.contains { it.isUninferredParameter() }) return false
     if (type.isCapturedType()) {
         val projection = (type as? SimpleTypeMarker)?.asCapturedType()?.typeConstructorProjection() ?: return true
         if (projection.isStarProjection()) return true

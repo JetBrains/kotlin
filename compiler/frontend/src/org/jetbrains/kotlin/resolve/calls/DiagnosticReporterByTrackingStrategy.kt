@@ -31,13 +31,21 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class DiagnosticReporterByTrackingStrategy(
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -45,7 +53,8 @@ class DiagnosticReporterByTrackingStrategy(
     val psiKotlinCall: PSIKotlinCall,
     val dataFlowValueFactory: DataFlowValueFactory,
     val allDiagnostics: List<KotlinCallDiagnostic>,
-    private val smartCastManager: SmartCastManager
+    private val smartCastManager: SmartCastManager,
+    private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -421,21 +430,21 @@ class DiagnosticReporterByTrackingStrategy(
 
             NotEnoughInformationForTypeParameterImpl::class.java -> {
                 error as NotEnoughInformationForTypeParameterImpl
-                if (allDiagnostics.any {
-                        when (it) {
-                            is WrongCountOfTypeArguments -> true
-                            is KotlinConstraintSystemDiagnostic -> {
-                                val otherError = it.error
-                                (otherError is ConstrainingTypeIsError && otherError.typeVariable == error.typeVariable)
-                                        || otherError is NewConstraintError
-                            }
-                            else -> false
-                        }
-                    }
-                ) return
 
-                if (isSpecialFunction(error.resolvedAtom))
-                    return
+                val resolvedAtom = error.resolvedAtom
+                val isDiagnosticRedundant = !isSpecialFunction(resolvedAtom) && allDiagnostics.any {
+                    when (it) {
+                        is WrongCountOfTypeArguments -> true
+                        is KotlinConstraintSystemDiagnostic -> {
+                            val otherError = it.error
+                            (otherError is ConstrainingTypeIsError && otherError.typeVariable == error.typeVariable)
+                                    || otherError is NewConstraintError
+                        }
+                        else -> false
+                    }
+                }
+
+                if (isDiagnosticRedundant) return
                 val expression = when (val atom = error.resolvedAtom.atom) {
                     is PSIKotlinCallForInvoke -> (atom.psiCall as? CallTransformer.CallForImplicitInvoke)?.outerCall?.calleeExpression
                     is PSIKotlinCall -> atom.psiCall.calleeExpression
@@ -443,12 +452,17 @@ class DiagnosticReporterByTrackingStrategy(
                     else -> call.calleeExpression
                 } ?: return
 
-                val typeVariableName = when (val typeVariable = error.typeVariable) {
-                    is TypeVariableFromCallableDescriptor -> typeVariable.originalTypeParameter.name.asString()
-                    is TypeVariableForLambdaReturnType -> "return type of lambda"
-                    else -> error("Unsupported type variable: $typeVariable")
+                if (isSpecialFunction(resolvedAtom)) {
+                    // We locally report errors on some arguments of special calls, on which the error may not be reported directly
+                    reportNotEnoughInformationForTypeParameterForSpecialCall(resolvedAtom, error)
+                } else {
+                    val typeVariableName = when (val typeVariable = error.typeVariable) {
+                        is TypeVariableFromCallableDescriptor -> typeVariable.originalTypeParameter.name.asString()
+                        is TypeVariableForLambdaReturnType -> "return type of lambda"
+                        else -> error("Unsupported type variable: $typeVariable")
+                    }
+                    trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
                 }
-                trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
             }
 
             OnlyInputTypesDiagnostic::class.java -> {
@@ -463,7 +477,77 @@ class DiagnosticReporterByTrackingStrategy(
         }
     }
 
+    private fun reportNotEnoughInformationForTypeParameterForSpecialCall(
+        resolvedAtom: ResolvedCallAtom,
+        error: NotEnoughInformationForTypeParameterImpl
+    ) {
+        val subResolvedAtomsToReportError =
+            getSubResolvedAtomsOfSpecialCallToReportUninferredTypeParameter(resolvedAtom, error.typeVariable)
+
+        if (subResolvedAtomsToReportError.isEmpty()) return
+
+        for (subResolvedAtom in subResolvedAtomsToReportError) {
+            val atom = subResolvedAtom.atom as? PSIKotlinCallArgument ?: continue
+            val argumentsExpression = getArgumentsExpressionOrLastExpressionInBlock(atom)
+
+            if (argumentsExpression != null) {
+                val specialFunctionName = requireNotNull(
+                    ControlStructureTypingUtils.ResolveConstruct.values().find { specialFunction ->
+                        specialFunction.specialFunctionName == resolvedAtom.candidateDescriptor.name
+                    }
+                ) { "Unsupported special construct: ${resolvedAtom.candidateDescriptor.name} not found in special construct names" }
+
+                trace.reportDiagnosticOnce(
+                    NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(
+                        argumentsExpression, " for subcalls of ${specialFunctionName.getName()} expression"
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getArgumentsExpressionOrLastExpressionInBlock(atom: PSIKotlinCallArgument): KtExpression? {
+        val valueArgumentExpression = atom.valueArgument.getArgumentExpression()
+
+        return if (valueArgumentExpression is KtBlockExpression) valueArgumentExpression.statements.lastOrNull() else valueArgumentExpression
+    }
+
+    private fun KotlinType.containsUninferredTypeParameter(uninferredTypeVariable: TypeVariableMarker) = contains {
+        ErrorUtils.isUninferredParameter(it) || it == TypeUtils.DONT_CARE
+                || it.constructor == uninferredTypeVariable.freshTypeConstructor(typeSystemContext)
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun getSubResolvedAtomsOfSpecialCallToReportUninferredTypeParameter(
+        resolvedAtom: ResolvedAtom,
+        uninferredTypeVariable: TypeVariableMarker
+    ): Set<ResolvedAtom> =
+        buildSet {
+            for (subResolvedAtom in resolvedAtom.subResolvedAtoms ?: return@buildSet) {
+                val atom = subResolvedAtom.atom
+                val typeToCheck = when {
+                    subResolvedAtom is PostponedResolvedAtom -> subResolvedAtom.expectedType ?: return@buildSet
+                    atom is SimpleKotlinCallArgument -> atom.receiver.receiverValue.type
+                    else -> return@buildSet
+                }
+
+                if (typeToCheck.containsUninferredTypeParameter(uninferredTypeVariable)) {
+                    add(subResolvedAtom)
+                }
+
+                if (!subResolvedAtom.subResolvedAtoms.isNullOrEmpty()) {
+                    addAll(
+                        getSubResolvedAtomsOfSpecialCallToReportUninferredTypeParameter(subResolvedAtom, uninferredTypeVariable)
+                    )
+                }
+            }
+        }
+
+    @OptIn(ExperimentalContracts::class)
     private fun isSpecialFunction(atom: ResolvedAtom): Boolean {
+        contract {
+            returns(true) implies (atom is ResolvedCallAtom)
+        }
         if (atom !is ResolvedCallAtom) return false
 
         return ControlStructureTypingUtils.ResolveConstruct.values().any { specialFunction ->
