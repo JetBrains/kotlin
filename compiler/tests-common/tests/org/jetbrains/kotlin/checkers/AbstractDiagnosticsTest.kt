@@ -248,55 +248,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         performAdditionalChecksAfterDiagnostics(
             testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
         )
-        if (shouldValidateFirTestData(testDataFile)) {
-            checkFirTestdata(testDataFile, files)
-        }
     }
 
     protected open fun checkDiagnostics(actualText: String, testDataFile: File) {
         KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
-    }
-
-    private fun checkFirTestdata(testDataFile: File, files: List<TestFile>) {
-        val firTestDataFile = File(testDataFile.absolutePath.replace(".kt", ".fir.kt"))
-        val firFailFile = File(testDataFile.absolutePath.replace(".kt", ".fir.fail"))
-        when {
-            firFailFile.exists() -> return
-            firTestDataFile.exists() -> checkOriginalAndFirTestdataIdentity(testDataFile, firTestDataFile)
-            else -> runFirTestAndGenerateTestData(testDataFile, firTestDataFile, files)
-        }
-    }
-
-    private fun checkOriginalAndFirTestdataIdentity(testDataFile: File, firTestDataFile: File) {
-        val originalTestData = loadTestDataWithoutDiagnostics(testDataFile)
-        val firTestData = loadTestDataWithoutDiagnostics(firTestDataFile)
-        val message = "Original and fir test data aren't identical. " +
-                "Please, add changes from ${testDataFile.name} to ${firTestDataFile.name}"
-        TestCase.assertEquals(message, originalTestData, firTestData)
-    }
-
-    private fun runFirTestAndGenerateTestData(testDataFile: File, firTestDataFile: File, files: List<TestFile>) {
-        val testRunner = object : AbstractFirOldFrontendDiagnosticsTest() {
-            init {
-                environment = this@AbstractDiagnosticsTest.environment
-            }
-        }
-        if (testDataFile.readText().contains("// FIR_IDENTICAL")) {
-            try {
-                PsiElementFinder.EP.getPoint(environment.project).unregisterExtension(JavaElementFinder::class.java)
-                testRunner.analyzeAndCheckUnhandled(testDataFile, files)
-            } catch (e: FileComparisonFailure) {
-                println("Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually")
-                throw FileComparisonFailure(
-                    "Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually\n" +
-                            e.message,
-                    e.expected, e.actual, e.filePath, e.actualFilePath
-                )
-            }
-        } else {
-            FileUtil.copy(testDataFile, firTestDataFile)
-            testRunner.analyzeAndCheckUnhandled(firTestDataFile, files)
-        }
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
