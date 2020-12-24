@@ -9,8 +9,8 @@ class Foo7<T>
 fun foo7() = null as Foo7<Int>
 
 fun poll17(flag: Boolean): Any? {
-    val inv = if (flag) { <!IMPLICIT_CAST_TO_ANY!>foo7()<!> } else { <!IMPLICIT_CAST_TO_ANY!>::Foo7<!> }
-    return inv
+    val inv = if (flag) { foo7() } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
+    return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
 }
 
 fun poll26(flag: Boolean): Any? {
@@ -24,6 +24,6 @@ fun poll36(flag: Boolean): Any? {
 }
 
 fun poll56(): Any? {
-    val inv = try { ::Foo7 } catch (e: Exception) { foo7() } finally { foo7() }
-    return inv
+    val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
+    return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
 }

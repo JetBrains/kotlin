@@ -54,8 +54,8 @@ fun poll16(flag: Boolean) {
 }
 
 fun poll17(flag: Boolean) {
-    val inv = if (flag) { <!IMPLICIT_CAST_TO_ANY!>foo7()<!> } else { <!IMPLICIT_CAST_TO_ANY!>::Foo7<!> }
-    inv
+    val inv = if (flag) { foo7() } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
+    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
 }
 
 fun poll2(flag: Boolean) {
@@ -89,7 +89,7 @@ fun poll25(flag: Boolean) {
 }
 
 fun poll26(flag: Boolean) {
-    val inv = when (flag) { true -> <!IMPLICIT_CAST_TO_ANY!>::Foo7<!> false -> <!IMPLICIT_CAST_TO_ANY!>foo7()<!> <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> <!IMPLICIT_CAST_TO_ANY!>::Foo7<!> }
+    val inv = when (flag) { true -> <!IMPLICIT_CAST_TO_ANY, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> false -> <!IMPLICIT_CAST_TO_ANY!>foo7()<!> <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> <!IMPLICIT_CAST_TO_ANY, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
     inv
 }
 
@@ -124,7 +124,7 @@ fun poll35(flag: Boolean) {
 }
 
 fun poll36(flag: Boolean) {
-    val inv = when (flag) { true -> <!IMPLICIT_CAST_TO_ANY!>::Foo7<!> false -> <!IMPLICIT_CAST_TO_ANY!>foo7()<!> }
+    val inv = when (flag) { true -> <!IMPLICIT_CAST_TO_ANY, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> false -> <!IMPLICIT_CAST_TO_ANY!>foo7()<!> }
     inv
 }
 
@@ -194,8 +194,8 @@ fun poll55() {
 }
 
 fun poll56() {
-    val inv = try { ::Foo7 } catch (e: Exception) { foo7() } finally { foo7() }
-    inv
+    val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
+    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
 }
 
 fun poll6() {
