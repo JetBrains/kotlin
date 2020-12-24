@@ -47,7 +47,7 @@ public inline class Duration internal constructor(internal val value: Double) : 
     // arithmetic operators
 
     /** Returns the negative of this value. */
-    public operator fun unaryMinus(): Duration = Duration(-value)
+    public operator fun unaryMinus(): Duration = Duration((-value).normalizeZero())
 
     /**
      * Returns a duration whose value is the sum of this and [other] duration values.
@@ -68,28 +68,28 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *
      * @throws IllegalArgumentException if the operation results in a `NaN` value.
      */
-    public operator fun times(scale: Int): Duration = Duration(value * scale)
+    public operator fun times(scale: Int): Duration = Duration((value * scale).normalizeZero())
 
     /**
      * Returns a duration whose value is this duration value multiplied by the given [scale] number.
      *
      * @throws IllegalArgumentException if the operation results in a `NaN` value.
      */
-    public operator fun times(scale: Double): Duration = Duration(value * scale)
+    public operator fun times(scale: Double): Duration = Duration((value * scale).normalizeZero())
 
     /**
      * Returns a duration whose value is this duration value divided by the given [scale] number.
      *
      * @throws IllegalArgumentException if the operation results in a `NaN` value.
      */
-    public operator fun div(scale: Int): Duration = Duration(value / scale)
+    public operator fun div(scale: Int): Duration = Duration((value / scale).normalizeZero())
 
     /**
      * Returns a duration whose value is this duration value divided by the given [scale] number.
      *
      * @throws IllegalArgumentException if the operation results in a `NaN` value.
      */
-    public operator fun div(scale: Double): Duration = Duration(value / scale)
+    public operator fun div(scale: Double): Duration = Duration((value / scale).normalizeZero())
 
     /** Returns a number that is the ratio of this and [other] duration values. */
     public operator fun div(other: Duration): Double = this.value / other.value
@@ -384,7 +384,7 @@ public fun Long.toDuration(unit: DurationUnit): Duration = toDouble().toDuration
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-public fun Double.toDuration(unit: DurationUnit): Duration = Duration(convertDurationUnit(this, unit, storageUnit))
+public fun Double.toDuration(unit: DurationUnit): Duration = Duration(convertDurationUnit(this, unit, storageUnit).normalizeZero())
 
 // constructing from number of units
 // extension properties
@@ -539,6 +539,9 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 @kotlin.internal.InlineOnly
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
+
+@kotlin.internal.InlineOnly
+private inline fun Double.normalizeZero(): Double = this + 0.0
 
 internal expect fun formatToExactDecimals(value: Double, decimals: Int): String
 internal expect fun formatUpToDecimals(value: Double, decimals: Int): String

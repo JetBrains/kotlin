@@ -7,7 +7,6 @@
 package test.time
 
 import test.numbers.assertAlmostEquals
-import test.*
 import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 import kotlin.time.*
@@ -216,6 +215,30 @@ class DurationTest {
         assertEquals(positive, negative.absoluteValue)
         assertEquals(positive, positive.absoluteValue)
         assertEquals(zero, zero.absoluteValue)
+    }
+
+    @Test
+    fun negativeZero() {
+        fun equivalentToZero(value: Duration) {
+            assertEquals(Duration.ZERO, value)
+            assertEquals(Duration.ZERO, value.absoluteValue)
+            assertEquals(value, value.absoluteValue)
+            assertEquals(value, value.absoluteValue)
+            assertFalse(value.isNegative())
+            assertFalse(value.isPositive())
+            assertEquals(Duration.ZERO.toString(), value.toString())
+            assertEquals(Duration.ZERO.toIsoString(), value.toIsoString())
+            assertEquals(Duration.ZERO.inSeconds, value.inSeconds)
+            assertEquals(0, Duration.ZERO.compareTo(value))
+            assertEquals(0, Duration.ZERO.inNanoseconds.compareTo(value.inNanoseconds))
+        }
+        equivalentToZero((-0.0).seconds)
+        equivalentToZero((-0.0).toDuration(DurationUnit.DAYS))
+        equivalentToZero(-Duration.ZERO)
+        equivalentToZero((-1).seconds / Double.POSITIVE_INFINITY)
+        equivalentToZero(0.seconds / -1)
+        equivalentToZero((-1).seconds * 0.0)
+        equivalentToZero(0.seconds * -1)
     }
 
 
