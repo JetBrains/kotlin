@@ -29,6 +29,9 @@ buildscript {
 import org.jetbrains.kotlin.konan.target.ClangArgs
 
 model {
+  tasks.compileDebugInfoStaticLibraryDebugInfoCpp {
+    dependsOn ":kotlin-native:dependencies:update"
+  }
   components {
     debugInfo(NativeLibrarySpec) {
       sources.cpp.source.srcDirs "src/main/cpp"

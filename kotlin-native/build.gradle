@@ -359,6 +359,7 @@ task shadowJar(type: ShadowJar) {
 }
 
 task distCompiler(type: Copy) {
+    dependsOn ":kotlin-native:dependencies:update"
     dependsOn ':kotlin-native:shadowJar'
 
     destinationDir distDir

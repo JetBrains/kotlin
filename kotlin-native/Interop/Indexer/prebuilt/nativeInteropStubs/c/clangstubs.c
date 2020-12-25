@@ -3,6 +3,7 @@
 #include <jni.h>
 #include <clang-c/Index.h>
 #include <clang-c/ext.h>
+#include <clang-c/ExtVector.h>
 
 // NOTE THIS FILE IS AUTO-GENERATED
 

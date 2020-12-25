@@ -29,6 +29,9 @@ buildscript {
 import org.jetbrains.kotlin.konan.target.ClangArgs
 
 model {
+  tasks.compileCoverageMappingStaticLibraryCoverageMappingCpp {
+    dependsOn ":kotlin-native:dependencies:update"
+  }
   components {
     coverageMapping(NativeLibrarySpec) {
       sources.cpp.source.srcDirs "src/main/cpp"
