@@ -25104,6 +25104,16 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/strings/interpolation.kt");
         }
 
+        @TestMetadata("kt13213.kt")
+        public void testKt13213() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt13213.kt");
+        }
+
+        @TestMetadata("kt13213a.kt")
+        public void testKt13213a() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt13213a.kt");
+        }
+
         @TestMetadata("kt2592.kt")
         public void testKt2592() throws Exception {
             runTest("compiler/testData/codegen/box/strings/kt2592.kt");

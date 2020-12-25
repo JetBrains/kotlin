@@ -13530,6 +13530,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/strings/interpolation.kt");
         }
 
+        @TestMetadata("kt13213.kt")
+        public void testKt13213() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt13213.kt");
+        }
+
+        @TestMetadata("kt13213a.kt")
+        public void testKt13213a() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/kt13213a.kt");
+        }
+
         @TestMetadata("kt3571.kt")
         public void testKt3571() throws Exception {
             runTest("compiler/testData/codegen/box/strings/kt3571.kt");
