@@ -70,19 +70,13 @@ public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
     }
-    if (this !in '0'..'9' && this !in 'A'..'Z' && this !in 'a'..'z') {
-        return null
-    }
-    if (radix <= 10) {
-        val int = this - '0'
-        return if (int < radix) int else null
-    }
-    if (this <= '9') {
-        return this - '0'
+    if (this in '0'..'9') {
+        val digit = this - '0'
+        return if (digit < radix) digit else null
     }
     val a = if (this <= 'Z') 'A' else 'a'
-    val int = 10 + (this - a)
-    return if (int < radix) int else null
+    val digit = 10 + (this - a)
+    return if (digit in 10 until radix) digit else null
 }
 
 /**
