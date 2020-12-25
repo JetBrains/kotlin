@@ -20,7 +20,7 @@ fun generateTestGroupSuiteWithJUnit5(
     dryRun: Boolean = false,
     init: TestGroupSuite.() -> Unit
 ) {
-    val suite = testGroupSuite(init)
+    val suite = TestGroupSuite(ReflectionBasedTargetBackendComputer).apply(init)
     for (testGroup in suite.testGroups) {
         for (testClass in testGroup.testClasses) {
             val (changed, testSourceFilePath) = NewTestGeneratorImpl.generateAndSave(testClass, dryRun)

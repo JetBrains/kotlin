@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.reflect.KClass
 
 fun testGroupSuite(
     init: TestGroupSuite.() -> Unit
 ): TestGroupSuite {
-    return TestGroupSuite().apply(init)
+    return TestGroupSuite(DefaultTargetBackendComputer).apply(init)
 }
 
-class TestGroupSuite {
+class TestGroupSuite(val targetBackendComputer: TargetBackendComputer) {
     private val _testGroups = mutableListOf<TestGroup>()
     val testGroups: List<TestGroup>
         get() = _testGroups
@@ -35,6 +36,7 @@ class TestGroupSuite {
             testDataRoot,
             testRunnerMethodName,
             additionalRunnerArguments,
+            targetBackendComputer = targetBackendComputer
         ).apply(init)
     }
 }
@@ -45,6 +47,7 @@ class TestGroup(
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
     val annotations: List<AnnotationModel> = emptyList(),
+    val targetBackendComputer: TargetBackendComputer
 ) {
     private val _testClasses: MutableList<TestClass> = mutableListOf()
     val testClasses: List<TestClass>
@@ -56,24 +59,28 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         noinline init: TestClass.() -> Unit
     ) {
-        testClass(T::class.java.name, suiteTestClassName, useJunit4, annotations, init)
+        val testKClass = T::class
+        testClass(testKClass, testKClass.java.name, suiteTestClassName, useJunit4, annotations, init)
     }
 
     fun testClass(
+        testKClass: KClass<*>,
         baseTestClassName: String,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
         useJunit4: Boolean,
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        _testClasses += TestClass(baseTestClassName, suiteTestClassName, useJunit4, annotations).apply(init)
+        _testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, useJunit4, annotations, targetBackendComputer).apply(init)
     }
 
     inner class TestClass(
+        val testKClass: KClass<*>,
         val baseTestClassName: String,
         val suiteTestClassName: String,
         val useJunit4: Boolean,
-        val annotations: List<AnnotationModel>
+        val annotations: List<AnnotationModel>,
+        val targetBackendComputer: TargetBackendComputer
     ) {
         val baseDir: String
             get() = this@TestGroup.testsRoot
@@ -92,7 +99,7 @@ class TestGroup(
             testClassName: String? = null, // specific name for generated test class
             // which backend will be used in test. Specifying value may affect some test with
             // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated
-            targetBackend: TargetBackend = TargetBackend.ANY,
+            targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
             filenameStartsLowerCase: Boolean? = null, // assert that file is properly named
             skipIgnored: Boolean = false, // pretty meaningless flag, affects only few test names in one test runner
@@ -102,18 +109,20 @@ class TestGroup(
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
+            val realTargetBackend = targetBackendComputer.compute(targetBackend, testKClass)
             testModels.add(
                 if (singleClass) {
                     if (excludeDirs.isNotEmpty()) error("excludeDirs is unsupported for SingleClassTestModel yet")
+
                     SingleClassTestModel(
                         rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        targetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
+                        realTargetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        targetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations
+                        realTargetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations
                     )
                 }
             )
