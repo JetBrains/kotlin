@@ -22123,6 +22123,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Lateinit extends AbstractLightAnalysisModeTest {
+            @TestMetadata("kt30548.kt")
+            public void ignoreKt30548() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/lateinit/kt30548.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -22154,11 +22159,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("exceptionGetter.kt")
             public void testExceptionGetter() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/lateinit/exceptionGetter.kt");
-            }
-
-            @TestMetadata("kt30548.kt")
-            public void testKt30548() throws Exception {
-                runTest("compiler/testData/codegen/box/properties/lateinit/kt30548.kt");
             }
 
             @TestMetadata("localClass.kt")
