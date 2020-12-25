@@ -221,6 +221,7 @@ class ResolvedAtomCompleter(
         } else {
             resultSubstitutor.safeSubstitute(lambda.returnType)
         }
+        val receiverType = lambda.receiver
 
         val approximatedValueParameterTypes = lambda.parameters.map { parameterType ->
             if (parameterType.shouldBeSubstituted()) {
@@ -238,7 +239,16 @@ class ResolvedAtomCompleter(
                 local = true,
                 languageVersionSettings = topLevelCallContext.languageVersionSettings
             )
-        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType, approximatedValueParameterTypes)
+
+        val approximatedReceiverType = if (receiverType != null) {
+            typeApproximator.approximateDeclarationType(
+                resultSubstitutor.safeSubstitute(receiverType),
+                local = true,
+                languageVersionSettings = topLevelCallContext.languageVersionSettings
+            )
+        } else null
+
+        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType, approximatedValueParameterTypes, approximatedReceiverType)
 
         for (lambdaResult in resultArgumentsInfo.nonErrorArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
@@ -262,7 +272,8 @@ class ResolvedAtomCompleter(
         lambda: ResolvedLambdaAtom,
         trace: BindingTrace,
         returnType: UnwrappedType,
-        valueParameters: List<UnwrappedType>
+        valueParameters: List<UnwrappedType>,
+        receiverType: UnwrappedType?
     ) {
         val psiCallArgument = lambda.atom.psiCallArgument
 
@@ -284,6 +295,12 @@ class ResolvedAtomCompleter(
             ?: throw AssertionError("No function descriptor for resolved lambda argument")
 
         functionDescriptor.setReturnType(returnType)
+
+        val extensionReceiverParameter = functionDescriptor.extensionReceiverParameter
+
+        if (receiverType != null && extensionReceiverParameter is ReceiverParameterDescriptorImpl && extensionReceiverParameter.type.shouldBeSubstituted()) {
+            extensionReceiverParameter.setOutType(receiverType)
+        }
 
         for ((i, valueParameter) in functionDescriptor.valueParameters.withIndex()) {
             if (valueParameter !is ValueParameterDescriptorImpl || !valueParameter.type.shouldBeSubstituted()) continue
