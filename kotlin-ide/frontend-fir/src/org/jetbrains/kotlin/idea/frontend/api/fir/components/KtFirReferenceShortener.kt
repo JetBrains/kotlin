@@ -12,7 +12,9 @@ import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
@@ -20,7 +22,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -51,15 +56,19 @@ internal class KtFirReferenceShortener(
         resolveFileToBodyResolve(file)
         val firFile = file.getOrBuildFirOfType<FirFile>(firResolveState)
 
-        val typesToImport = mutableListOf<FqName>()
-        val typesToShorten = mutableListOf<KtUserType>()
+        val namesToImport = mutableListOf<FqName>()
 
-        firFile.acceptChildren(TypesCollectingVisitor(typesToImport, typesToShorten))
+        val typesToShorten = mutableListOf<KtUserType>()
+        val callsToShorten = mutableListOf<KtDotQualifiedExpression>()
+
+        firFile.acceptChildren(TypesCollectingVisitor(namesToImport, typesToShorten))
+        firFile.acceptChildren(CallsCollectingVisitor(namesToImport, callsToShorten))
 
         return ShortenCommandImpl(
             file,
-            typesToImport.distinct(),
-            typesToShorten.distinct().map { it.createSmartPointer() }
+            namesToImport.distinct(),
+            typesToShorten.distinct().map { it.createSmartPointer() },
+            callsToShorten.distinct().map { it.createSmartPointer() }
         )
     }
 
@@ -77,6 +86,14 @@ internal class KtFirReferenceShortener(
         }
 
         return null
+    }
+
+    private fun findSingleFunctionInScopesByName(scopes: List<FirScope>, name: Name): FirNamedFunctionSymbol? {
+        return scopes.asSequence().mapNotNull { it.getSingleFunctionByName(name) }.singleOrNull()
+    }
+
+    private fun findSinglePropertyInScopesByName(scopes: List<FirScope>, name: Name): FirVariableSymbol<*>? {
+        return scopes.asSequence().mapNotNull { it.getSinglePropertyByName(name) }.singleOrNull()
     }
 
     private fun resolveFileToBodyResolve(file: KtFile) {
@@ -98,12 +115,20 @@ internal class KtFirReferenceShortener(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun findScopesAtPosition(targetTypeReference: KtElement, newImports: List<FqName>): List<FirScope>? {
-        val towerDataContext = firResolveState.getTowerDataContextForElement(targetTypeReference) ?: return null
+    private fun FirScope.getSingleFunctionByName(name: Name): FirNamedFunctionSymbol? =
+        buildList { processFunctionsByName(name, this::add) }.singleOrNull()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun FirScope.getSinglePropertyByName(name: Name): FirVariableSymbol<*>? =
+        buildList { processPropertiesByName(name, this::add) }.singleOrNull()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun findScopesAtPosition(position: KtElement, newImports: List<FqName>): List<FirScope>? {
+        val towerDataContext = firResolveState.getTowerDataContextForElement(position) ?: return null
 
         val result = buildList<FirScope> {
             addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
-            addIfNotNull(createFakeImportingScope(targetTypeReference.project, newImports))
+            addIfNotNull(createFakeImportingScope(position.project, newImports))
             addAll(towerDataContext.localScopes)
         }
 
@@ -128,7 +153,7 @@ internal class KtFirReferenceShortener(
     }
 
     private inner class TypesCollectingVisitor(
-        private val typesToImport: MutableList<FqName>,
+        private val namesToImport: MutableList<FqName>,
         private val typesToShorten: MutableList<KtUserType>,
     ) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
@@ -157,7 +182,7 @@ internal class KtFirReferenceShortener(
             val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
             val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
 
-            val positionScopes = findScopesAtPosition(wholeTypeElement, typesToImport) ?: return
+            val positionScopes = findScopesAtPosition(wholeTypeElement, namesToImport) ?: return
 
             for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
                 val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
@@ -184,8 +209,50 @@ internal class KtFirReferenceShortener(
         }
 
         private fun addTypeToImportAndShorten(classFqName: FqName, mostTopLevelTypeElement: KtUserType) {
-            typesToImport.add(classFqName)
+            namesToImport.add(classFqName)
             typesToShorten.add(mostTopLevelTypeElement)
+        }
+    }
+
+    private inner class CallsCollectingVisitor(
+        private val namesToImport: List<FqName>,
+        private val callsToShorten: MutableList<KtDotQualifiedExpression>
+    ) : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            element.acceptChildren(this)
+        }
+
+        override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
+            super.visitResolvedNamedReference(resolvedNamedReference)
+
+            val referenceExpression = resolvedNamedReference.psi as? KtNameReferenceExpression
+            val qualifiedProperty = referenceExpression?.parent as? KtDotQualifiedExpression ?: return
+
+            val propertyId = (resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId ?: return
+
+            val scopes = findScopesAtPosition(qualifiedProperty, namesToImport) ?: return
+            val singleAvailableProperty = findSinglePropertyInScopesByName(scopes, propertyId.callableName)
+
+            if (singleAvailableProperty?.callableId == propertyId) {
+                callsToShorten.add(qualifiedProperty)
+            }
+        }
+
+        override fun visitFunctionCall(functionCall: FirFunctionCall) {
+            super.visitFunctionCall(functionCall)
+
+            val callExpression = functionCall.psi as? KtCallExpression ?: return
+            val qualifiedCallExpression = callExpression.parent as? KtDotQualifiedExpression ?: return
+
+            val resolvedNamedReference = functionCall.calleeReference as? FirResolvedNamedReference ?: return
+            val callableId = (resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId ?: return
+
+            val scopes = findScopesAtPosition(callExpression, namesToImport) ?: return
+            val singleAvailableCallable = findSingleFunctionInScopesByName(scopes, callableId.callableName)
+
+            if (singleAvailableCallable?.callableId == callableId) {
+                callsToShorten.add(qualifiedCallExpression)
+            }
         }
     }
 }
@@ -193,7 +260,8 @@ internal class KtFirReferenceShortener(
 private class ShortenCommandImpl(
     val targetFile: KtFile,
     val importsToAdd: List<FqName>,
-    val typesToShorten: List<SmartPsiElementPointer<KtUserType>>
+    val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
+    val callsToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
 ) : ShortenCommand {
 
     override fun invokeShortening() {
@@ -207,8 +275,18 @@ private class ShortenCommandImpl(
             val type = typePointer.element ?: continue
             type.deleteQualifier()
         }
+
+        for (callPointer in callsToShorten) {
+            val call = callPointer.element ?: continue
+            call.deleteQualifier()
+        }
     }
 }
 
 private tailrec fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
     if (this is KtNullableType) this.innerType.unwrapNullable() else this
+
+private fun KtDotQualifiedExpression.deleteQualifier(): KtExpression? {
+    val selectorExpression = selectorExpression ?: return null
+    return this.replace(selectorExpression) as KtExpression
+}

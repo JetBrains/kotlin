@@ -1,0 +1,10 @@
+// FIR_COMPARISON
+package test
+
+fun test() {}
+
+fun usage() {
+    fun test() {}
+
+    test.test()
+}
