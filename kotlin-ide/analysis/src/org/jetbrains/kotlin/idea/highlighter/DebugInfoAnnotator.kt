@@ -62,7 +62,8 @@ class DebugInfoAnnotator : Annotator {
 
     companion object {
         val isDebugInfoEnabled: Boolean
-            get() = ApplicationManager.getApplication()
-                .isInternal && (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isDevVersion())
+            get() = ApplicationManager.getApplication().isUnitTestMode ||
+                    (ApplicationManager.getApplication().isInternal &&
+                            (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isDevVersion()))
     }
 }
