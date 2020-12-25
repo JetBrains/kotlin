@@ -35,7 +35,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override val valueParameters: MutableList<FirValueParameter>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    override val annotations: MutableList<FirAnnotationCall>,
+    annotationBuilder: () -> List<FirAnnotationCall>,
     override var status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,
     override val dispatchReceiverType: ConeKotlinType?,
@@ -58,6 +58,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
+
+    override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
+
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
@@ -101,7 +104,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
-        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -143,6 +145,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     lateinit var visibility: Visibility
     var isInner: Boolean by Delegates.notNull()
     var isPrimary: Boolean by Delegates.notNull()
+    lateinit var annotationBuilder: () -> List<FirAnnotationCall>
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaConstructor {
@@ -154,7 +157,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             returnTypeRef,
             valueParameters,
             typeParameters,
-            annotations,
+            annotationBuilder,
             status,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             dispatchReceiverType
