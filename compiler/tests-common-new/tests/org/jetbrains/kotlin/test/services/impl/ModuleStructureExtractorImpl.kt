@@ -278,9 +278,14 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun finishFile() {
-            val filename = currentFileName ?: defaultFileName
+            val actualDefaultFileName = if (currentModuleName == null) {
+                defaultFileName
+            } else {
+                "module_${currentModuleName}_$defaultFileName"
+            }
+            val filename = currentFileName ?: actualDefaultFileName
             if (filesOfCurrentModule.any { it.name == filename }) {
-                error("File with name \"$filename\" already defined in module ${currentModuleName ?: defaultModuleName}")
+                error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
             filesOfCurrentModule.add(
                 TestFile(

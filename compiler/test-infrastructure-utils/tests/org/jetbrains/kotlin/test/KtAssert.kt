@@ -30,6 +30,17 @@ object KtAssert {
     }
 
     @JvmStatic
+    @OptIn(ExperimentalContracts::class)
+    fun assertNull(message: String, value: Any?) {
+        contract {
+            returns() implies (value == null)
+        }
+        if (value != null) {
+            fail(message)
+        }
+    }
+
+    @JvmStatic
     fun assertTrue(message: String, value: Boolean) {
         if (!value) {
             fail(message)

@@ -14,6 +14,7 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(androidDxJar())
 
     testImplementation(projectTests(":generators:test-generator"))
 

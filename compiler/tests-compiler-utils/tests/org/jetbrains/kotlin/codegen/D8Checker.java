@@ -9,7 +9,7 @@ import com.android.tools.r8.*;
 import com.android.tools.r8.origin.PathOrigin;
 import kotlin.Pair;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.junit.Assert;
+import org.jetbrains.kotlin.test.KtAssert;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -44,17 +44,17 @@ public class D8Checker {
     static class TestDiagnosticsHandler implements DiagnosticsHandler {
         @Override
         public void error(Diagnostic diagnostic) {
-            Assert.fail("D8 dexing error: " + diagnostic.getDiagnosticMessage());
+            KtAssert.fail("D8 dexing error: " + diagnostic.getDiagnosticMessage());
         }
 
         @Override
         public void warning(Diagnostic diagnostic) {
-            Assert.fail("D8 dexing warning: " + diagnostic.getDiagnosticMessage());
+            KtAssert.fail("D8 dexing warning: " + diagnostic.getDiagnosticMessage());
         }
 
         @Override
         public void info(Diagnostic diagnostic) {
-            Assert.fail("D8 dexing info: " + diagnostic.getDiagnosticMessage());
+            KtAssert.fail("D8 dexing info: " + diagnostic.getDiagnosticMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class D8Checker {
             D8.run(builder.build(), Executors.newSingleThreadExecutor());
         }
         catch (CompilationFailedException e) {
-            Assert.fail(generateExceptionMessage(e));
+            KtAssert.fail(generateExceptionMessage(e));
         }
     }
 

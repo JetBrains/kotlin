@@ -76,7 +76,7 @@ abstract class AbstractKotlinCompilerTest {
         builder.configuration()
     }
 
-    fun runTest(@TestDataFile filePath: String) {
+    open fun runTest(@TestDataFile filePath: String) {
         testRunner(filePath, configuration).runTest(filePath)
     }
 }

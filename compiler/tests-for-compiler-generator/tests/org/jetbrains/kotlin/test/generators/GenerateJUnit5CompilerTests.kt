@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.generators
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
+import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
 
 fun generateJUnit5CompilerTests(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
@@ -52,6 +53,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
                 model("foreignAnnotations/tests")
                 model("foreignAnnotations/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
+            }
+
+            testClass<AbstractBlackBoxCodegenTest> {
+                model("codegen/box")
             }
         }
 

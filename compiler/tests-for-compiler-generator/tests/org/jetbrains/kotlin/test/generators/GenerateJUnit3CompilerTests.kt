@@ -94,10 +94,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
             }
 
-            testClass<AbstractBlackBoxCodegenTest> {
-                model("codegen/box", targetBackend = TargetBackend.JVM)
-            }
-
             testClass<AbstractLightAnalysisModeTest> {
                 // "ranges/stepped" is excluded because it contains hundreds of generated tests and only have a box() method.
                 // There isn't much to be gained from running light analysis tests on them.

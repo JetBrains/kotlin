@@ -71,7 +71,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
     private static final String DEFAULT_JVM_TARGET = System.getProperty("kotlin.test.default.jvm.target");
     public static final String BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port");
-    private static final String JAVA_COMPILATION_TARGET = System.getProperty("kotlin.test.java.compilation.target");
 
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
@@ -203,7 +202,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         initializedClassLoader = createClassLoader();
 
-        if (!verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -388,50 +387,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         return true;
     }
 
-    private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {
-        boolean noErrors = true;
-        for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
-            noErrors &= verifyWithAsm(file, loader, reportProblems);
-        }
-        return noErrors;
-    }
-
-    private static boolean verifyWithAsm(@NotNull OutputFile file, ClassLoader loader, boolean reportProblems) {
-        ClassNode classNode = new ClassNode();
-        new ClassReader(file.asByteArray()).accept(classNode, 0);
-
-        SimpleVerifier verifier = new SimpleVerifier();
-        verifier.setClassLoader(loader);
-        Analyzer<BasicValue> analyzer = new Analyzer<>(verifier);
-
-        boolean noErrors = true;
-        for (MethodNode method : classNode.methods) {
-            try {
-                analyzer.analyze(classNode.name, method);
-            }
-            catch (Throwable e) {
-                if (reportProblems) {
-                    System.err.println(file.asText());
-                    System.err.println(classNode.name + "::" + method.name + method.desc);
-
-                    //noinspection InstanceofCatchParameter
-                    if (e instanceof AnalyzerException) {
-                        // Print the erroneous instruction
-                        TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
-                        ((AnalyzerException) e).node.accept(tmv);
-                        PrintWriter pw = new PrintWriter(System.err);
-                        tmv.p.print(pw);
-                        pw.flush();
-                    }
-
-                    e.printStackTrace();
-                }
-                noErrors = false;
-            }
-        }
-        return noErrors;
-    }
-
     @NotNull
     protected Method generateFunction() {
         Class<?> aClass = generateFacadeClass();
@@ -575,7 +530,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             return javacOptions;
         }
 
-        String javaTarget = computeJavaTarget(javacOptions, kotlinTarget);
+        String javaTarget = CodegenTestUtil.computeJavaTarget(javacOptions, kotlinTarget);
         if (javaTarget != null) {
             javacOptions.add("-source");
             javacOptions.add(javaTarget);
@@ -583,20 +538,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             javacOptions.add(javaTarget);
         }
         return javacOptions;
-    }
-
-    private static final boolean IS_SOURCE_6_STILL_SUPPORTED =
-            // JDKs up to 11 do support -source/target 1.6, but later -- don't.
-            Arrays.asList("1.6", "1.7", "1.8", "9", "10", "11").contains(System.getProperty("java.specification.version"));
-
-    private static String computeJavaTarget(@NotNull List<String> javacOptions, @Nullable JvmTarget kotlinTarget) {
-        if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
-            return JAVA_COMPILATION_TARGET;
-        if (kotlinTarget != null && kotlinTarget.compareTo(JvmTarget.JVM_1_6) > 0)
-            return kotlinTarget.getDescription();
-        if (IS_SOURCE_6_STILL_SUPPORTED)
-            return "1.6";
-        return null;
     }
 
     @NotNull

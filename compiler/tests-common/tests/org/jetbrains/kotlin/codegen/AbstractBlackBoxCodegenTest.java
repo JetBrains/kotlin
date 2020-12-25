@@ -26,6 +26,8 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
+// Prefer using new test runner: org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
+@Deprecated
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void doMultiFileTest(
             @NotNull File wholeFile,
