@@ -144,6 +144,11 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeNestedType.kt");
         }
 
+        @TestMetadata("ParameterTypeNestedTypeWithoutPackageNotShorten.kt")
+        public void testParameterTypeNestedTypeWithoutPackageNotShorten() throws Exception {
+            runTest("idea/testData/shortenRefsFir/types/ParameterTypeNestedTypeWithoutPackageNotShorten.kt");
+        }
+
         @TestMetadata("ParameterTypeNonImportedClass.kt")
         public void testParameterTypeNonImportedClass() throws Exception {
             runTest("idea/testData/shortenRefsFir/types/ParameterTypeNonImportedClass.kt");
