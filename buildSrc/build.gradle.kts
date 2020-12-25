@@ -249,5 +249,15 @@ gradlePlugin {
             id = "org.jetbrains.kotlin.konan"
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
         }
+
+        create("native") {
+            id = "native"
+            implementationClass = "org.jetbrains.gradle.plugins.tools.NativePlugin"
+        }
+
+        create("native-interop-plugin") {
+            id = "native-interop-plugin"
+            implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
+        }
     }
 }
