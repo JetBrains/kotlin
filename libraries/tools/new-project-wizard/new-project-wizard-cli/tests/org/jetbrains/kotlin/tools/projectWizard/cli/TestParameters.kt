@@ -40,7 +40,7 @@ interface TestParameters {
         }
 
         private fun KParameter.parseValue(text: String): Any? = when (type.classifier as? KClass<*>) {
-            Boolean::class -> InTextDirectivesUtils.getPrefixedBoolean(text, name) ?: false
+            Boolean::class -> name?.let { InTextDirectivesUtils.getPrefixedBoolean(text, it) } ?: false
             else -> error("Invalid test parameter $name with type $type")
         }
 
