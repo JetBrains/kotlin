@@ -40,7 +40,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
-    override val annotations: MutableList<FirAnnotationCall>,
+    annotationBuilder: () -> List<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
     override var initializer: FirExpression?,
     override val dispatchReceiverType: ConeKotlinType?,
@@ -57,6 +57,9 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Java
+
+    override val annotations: List<FirAnnotationCall> by lazy { annotationBuilder() }
+
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
@@ -109,7 +112,6 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
-        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -147,6 +149,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     lateinit var visibility: Visibility
     var isStatic: Boolean by Delegates.notNull()
     var initializer: FirExpression? = null
+    lateinit var annotationBuilder: () -> List<FirAnnotationCall>
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -161,7 +164,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             returnTypeRef,
             status,
             isVar,
-            annotations,
+            annotationBuilder,
             typeParameters,
             initializer,
             dispatchReceiverType,

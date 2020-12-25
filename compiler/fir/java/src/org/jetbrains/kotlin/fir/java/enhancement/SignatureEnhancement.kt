@@ -102,7 +102,7 @@ class FirSignatureEnhancement(
                     modality = firElement.modality
                     isVar = firElement.isVar
                     isStatic = firElement.isStatic
-                    annotations += firElement.annotations
+                    annotationBuilder = { firElement.annotations }
                     status = firElement.status
                     initializer = firElement.initializer
                     dispatchReceiverType = firElement.dispatchReceiverType
