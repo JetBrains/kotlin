@@ -12180,6 +12180,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("reportNotEnoughTypeInformationErrorsOnBlockExpressions.kt")
+            public void testReportNotEnoughTypeInformationErrorsOnBlockExpressions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/reportNotEnoughTypeInformationErrorsOnBlockExpressions.kt");
+            }
+
+            @Test
             @TestMetadata("resolveWithUnknownLambdaParameterType.kt")
             public void testResolveWithUnknownLambdaParameterType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/resolveWithUnknownLambdaParameterType.kt");
@@ -12192,15 +12198,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
-            public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
-            }
-
-            @Test
-            @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
-            public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
+            @TestMetadata("specialCallsWithCallableReferences.kt")
+            public void testSpecialCallsWithCallableReferences() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/specialCallsWithCallableReferences.kt");
             }
 
             @Test
@@ -12267,6 +12267,64 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
+            @TestDataPath("$PROJECT_ROOT")
+            public class BuilderInference extends AbstractDiagnosticTest {
+                @Test
+                public void testAllFilesPresentInBuilderInference() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
+                public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+                }
+
+                @Test
+                @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
+                public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithCallableReferences.kt")
+                public void testSpecialCallsWithCallableReferences() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferences.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
+                public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
+                public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
+                public void testSpecialCallsWithCallableReferencesErrorType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorType.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
+                public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("specialCallsWithLambdas.kt")
+                public void testSpecialCallsWithLambdas() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithLambdas.kt");
+                }
             }
 
             @Nested
