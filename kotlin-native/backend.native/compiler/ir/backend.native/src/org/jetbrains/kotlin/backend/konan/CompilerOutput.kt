@@ -129,7 +129,8 @@ internal fun produceOutput(context: Context) {
             LLVMWriteBitcodeToFile(context.llvmModule!!, output)
         }
         CompilerOutputKind.LIBRARY -> {
-            val output = context.config.outputFiles.outputName
+            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
+            val output = context.config.outputFiles.klibOutputFileName(!nopack)
             val libraryName = context.config.moduleId
             val shortLibraryName = context.config.shortModuleName
             val neededLibraries = context.librariesWithDependencies
@@ -146,8 +147,14 @@ internal fun produceOutput(context: Context) {
                 irVersion = irVersion
             )
             val target = context.config.target
-            val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
             val manifestProperties = context.config.manifestProperties
+
+            if (!nopack) {
+                val suffix = context.config.outputFiles.produce.suffix(target)
+                if (!output.endsWith(suffix)) {
+                    error("please specify correct output: packed: ${!nopack}, $output$suffix")
+                }
+            }
 
             val library = buildLibrary(
                     context.config.nativeLibraries,
