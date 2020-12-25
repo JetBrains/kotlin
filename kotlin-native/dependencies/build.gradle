@@ -40,8 +40,10 @@ class NativeDep extends DefaultTask {
 
     @TaskAction
     void downloadAndExtract() {
-        def downloader = new DependencyProcessor(baseOutDir, konanPropertiesLoader, baseUrl, false, ArchiveType.systemDefault)
-        downloader.showInfo = false
+        def downloader = new DependencyProcessor(baseOutDir, konanPropertiesLoader, baseUrl, false, ArchiveType.systemDefault, { url, currentBytes, totalBytes ->
+            print("\n$name Downloading dependency: $url (${currentBytes}/${totalBytes}). ")
+    })
+        downloader.showInfo = project.logger.isEnabled(LogLevel.INFO)
         downloader.run()
     }
 }
@@ -77,7 +79,6 @@ enum DependencyKind {
 
 def platformManager = rootProject.project(":kotlin-native").ext.platformManager
 
-
 platformManager.enabled.each { target ->
     def loader = platformManager.loader(target)
 
@@ -92,8 +93,10 @@ platformManager.enabled.each { target ->
             loader.dependencies,
             NativeDep.baseUrl,
             false,
-            ArchiveType.systemDefault
-    )
+            ArchiveType.systemDefault,
+    { url, currentBytes, totalBytes ->
+            print("\n(no-task) Downloading dependency: $url (${currentBytes}/${totalBytes}). ")
+    })
 
     DependencyKind.values().each { kind ->
         def dir = kind.getDirectory(loader)
@@ -104,9 +107,11 @@ platformManager.enabled.each { target ->
     }
 }
 
-task update(type: Copy) {
+task update {
     dependsOn tasks.withType(NativeDep)
+    mustRunAfter(tasks.withType(NativeDep))
 }
+rootProject.project(":kotlin-native").ext.nativeDependencies = tasks.withType(NativeDep)
 
 task rmDotKonan(type: Delete) {
     def dir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"

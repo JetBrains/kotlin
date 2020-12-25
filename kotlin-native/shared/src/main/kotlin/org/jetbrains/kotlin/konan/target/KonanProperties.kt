@@ -80,7 +80,9 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget,
                     dependenciesRoot = File(baseDir),
                     properties = this,
                     archiveType = defaultArchiveTypeByHost(host)
-            )
+            ){ url, currentBytes, totalBytes ->
+                print("\n(KonanProperies) Downloading dependency: $url (${currentBytes}/${totalBytes}). ")
+            }
         }
     }
 }
