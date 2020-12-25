@@ -74,6 +74,12 @@ if (libclangextIsEnabled) {
 
 
 model {
+    tasks.compileClangstubsSharedLibraryClangstubsC{
+        dependsOn ":kotlin-native:dependencies:update"
+    }
+    tasks.compileClangstubsSharedLibraryClangstubsCpp {
+        dependsOn ":kotlin-native:dependencies:update"
+    }
     components {
         clangstubs(NativeLibrarySpec) {
             sources {
@@ -84,6 +90,7 @@ model {
             binaries.all {
                 cCompiler.args hostPlatform.clang.hostCompilerArgsForJni
                 cCompiler.args.addAll(cflags)
+                cppCompiler.args.add("-std=c++11")
             }
 
             binaries.withType(SharedLibraryBinarySpec) {

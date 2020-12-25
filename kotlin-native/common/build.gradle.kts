@@ -8,8 +8,12 @@ plugins {
 }
 
 bitcode {
-    create("hash")
-    create("files")
+    create("hash") {
+        dependsOn(":kotlin-native:dependencies:update")
+    }
+    create("files"){
+        dependsOn(":kotlin-native:dependencies:update")
+    }
 }
 
 val hostName: String by project

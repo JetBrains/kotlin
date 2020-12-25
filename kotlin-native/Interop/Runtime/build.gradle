@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.konan.target.ClangArgs
 
 
 model {
+    tasks.compileCallbacksSharedLibraryCallbacksC {
+        dependsOn ":kotlin-native:dependencies:update"
+    }
     components {
         callbacks(NativeLibrarySpec) {
             sources.c.source {

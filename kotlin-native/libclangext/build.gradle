@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.PlatformInfo
 ext.isEnabled = PlatformInfo.isMac()
 
 model {
+    tasks.compileClangextStaticLibraryClangextCpp {
+        dependsOn ":kotlin-native:dependencies:update"
+    }
     components {
         clangext(NativeLibrarySpec) {
             sources {

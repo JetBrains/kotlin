@@ -65,6 +65,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                         SanitizerKind.THREAD -> " with TSAN"
                     }
                     description = "Compiles '$name' to bitcode for $targetName$sanitizerDescription"
+                    dependsOn(":kotlin-native:dependencies:update")
                     configurationBlock()
                 }
             }

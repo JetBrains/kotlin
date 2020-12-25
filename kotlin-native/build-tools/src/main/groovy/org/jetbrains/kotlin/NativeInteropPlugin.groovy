@@ -197,6 +197,7 @@ class NamedNativeInteropConfig implements Named {
         }
 
         genTask.configure {
+            dependsOn ":kotlin-native:dependencies:update"
             classpath = project.configurations.interopStubGenerator
             main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             jvmArgs '-ea'
