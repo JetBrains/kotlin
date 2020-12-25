@@ -29,6 +29,64 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefsFir"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("idea/testData/shortenRefsFir/calls")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Calls extends AbstractFirShortenRefsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithMuting, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCalls() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefsFir/calls"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("classInSameFile.kt")
+        public void testClassInSameFile() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/classInSameFile.kt");
+        }
+
+        @TestMetadata("functionInSameFile.kt")
+        public void testFunctionInSameFile() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/functionInSameFile.kt");
+        }
+
+        @TestMetadata("functionInSameFile2.kt")
+        public void testFunctionInSameFile2() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/functionInSameFile2.kt");
+        }
+
+        @TestMetadata("propertyChainCall.kt")
+        public void testPropertyChainCall() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/propertyChainCall.kt");
+        }
+
+        @TestMetadata("propertyInSameFile.kt")
+        public void testPropertyInSameFile() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/propertyInSameFile.kt");
+        }
+
+        @TestMetadata("propertyInSameFile2.kt")
+        public void testPropertyInSameFile2() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/propertyInSameFile2.kt");
+        }
+
+        @TestMetadata("rootPackage.kt")
+        public void testRootPackage() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/rootPackage.kt");
+        }
+
+        @TestMetadata("rootPackageShortenFakeRootPackage.kt")
+        public void testRootPackageShortenFakeRootPackage() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/rootPackageShortenFakeRootPackage.kt");
+        }
+
+        @TestMetadata("selfReferencingFunction.kt")
+        public void testSelfReferencingFunction() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/selfReferencingFunction.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/shortenRefsFir/types")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
