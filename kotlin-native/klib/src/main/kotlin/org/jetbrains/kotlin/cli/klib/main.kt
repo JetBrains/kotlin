@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
@@ -27,8 +26,10 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import kotlin.system.exitProcess
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer, PlatformDependentTypeTransformer.None)
@@ -106,11 +107,11 @@ open class ModuleDeserializer(val library: ByteArray) {
 
 }
 
-class Library(val name: String, val requestedRepository: String?, val target: String) {
+class Library(val libraryNameOrPath: String, val requestedRepository: String?, val target: String) {
 
     val repository = requestedRepository?.File() ?: defaultRepository
     fun info() {
-        val library = libraryInRepoOrCurrentDir(repository, name)
+        val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
         val headerAbiVersion = library.versions.abiVersion
         val headerCompilerVersion = library.versions.compilerVersion
         val headerLibraryVersion = library.versions.libraryVersion
@@ -139,20 +140,22 @@ class Library(val name: String, val requestedRepository: String?, val target: St
             repository.mkdirs()
         }
 
-        Library(File(name).name.removeSuffix(KLIB_FILE_EXTENSION_WITH_DOT), requestedRepository, target).remove(true)
+        val libraryTrueName = File(libraryNameOrPath).name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
+        val library = libraryInCurrentDir(libraryNameOrPath)
 
-        val library = libraryInCurrentDir(name)
-        val newLibDir = File(repository, library.libraryFile.name.removeSuffix(KLIB_FILE_EXTENSION_WITH_DOT))
+        val installLibDir = File(repository, libraryTrueName)
 
-        library.libraryFile.unpackZippedKonanLibraryTo(newLibDir)
+        if (installLibDir.exists) installLibDir.deleteRecursively()
+
+        library.libraryFile.unpackZippedKonanLibraryTo(installLibDir)
     }
 
     fun remove(blind: Boolean = false) {
         if (!repository.exists) error("Repository does not exist: $repository")
 
         val library = try {
-            val library = libraryInRepo(repository, name)
-            if (blind) warn("Removing The previously installed $name from $repository.")
+            val library = libraryInRepo(repository, libraryNameOrPath)
+            if (blind) warn("Removing The previously installed $libraryNameOrPath from $repository.")
             library
 
         } catch (e: Throwable) {
@@ -180,7 +183,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
 
     private fun loadModule(): ModuleDescriptor {
         val storageManager = LockBasedStorageManager("klib")
-        val library = libraryInRepoOrCurrentDir(repository, name)
+        val library = libraryInRepoOrCurrentDir(repository, libraryNameOrPath)
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
         val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager, null)
 
