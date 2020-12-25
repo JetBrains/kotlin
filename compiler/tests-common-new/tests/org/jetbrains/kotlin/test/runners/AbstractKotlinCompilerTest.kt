@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.runners
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.test.builders.Constructor
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives

@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.test.builders
 
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-
-typealias Constructor<T> = (TestServices) -> T
 
 @DefaultsDsl
 class TestConfigurationBuilder {
