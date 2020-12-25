@@ -185,6 +185,9 @@ internal class KtFirReferenceShortener(
             val positionScopes = findScopesAtPosition(wholeTypeElement, namesToImport) ?: return
 
             for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
+                // if qualifier is null, then this type have no package and thus cannot be shortened
+                if (typeElement.qualifier == null) return
+
                 val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
 
                 if (firstFoundClass == classId) {
@@ -234,7 +237,7 @@ internal class KtFirReferenceShortener(
             val singleAvailableProperty = findSinglePropertyInScopesByName(scopes, propertyId.callableName)
 
             if (singleAvailableProperty?.callableId == propertyId) {
-                callsToShorten.add(qualifiedProperty)
+                addElementToShorten(qualifiedProperty)
             }
         }
 
@@ -251,8 +254,12 @@ internal class KtFirReferenceShortener(
             val singleAvailableCallable = findSingleFunctionInScopesByName(scopes, callableId.callableName)
 
             if (singleAvailableCallable?.callableId == callableId) {
-                callsToShorten.add(qualifiedCallExpression)
+                addElementToShorten(qualifiedCallExpression)
             }
+        }
+
+        private fun addElementToShorten(element: KtDotQualifiedExpression) {
+            callsToShorten.add(element)
         }
     }
 }
