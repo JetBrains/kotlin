@@ -23,7 +23,8 @@ class Context private constructor(
     val servicesManager: ServicesManager,
     private val isUnitTestMode: Boolean,
     private val settingContext: SettingContext,
-    private val propertyContext: PropertyContext
+    private val propertyContext: PropertyContext,
+    val contextComponents: ContextComponents
 ) {
 
     private lateinit var plugins: List<Plugin>
@@ -47,12 +48,14 @@ class Context private constructor(
     constructor(
         pluginsCreator: PluginsCreator,
         servicesManager: ServicesManager,
-        isUnitTestMode: Boolean
+        isUnitTestMode: Boolean,
+        contextComponents: ContextComponents,
     ) : this(
         servicesManager,
         isUnitTestMode,
         SettingContext(),
-        PropertyContext()
+        PropertyContext(),
+        contextComponents,
     ) {
         plugins = pluginsCreator(this).onEach(::initPlugin)
     }
@@ -62,7 +65,8 @@ class Context private constructor(
             servicesManager.withAdditionalServices(services),
             isUnitTestMode,
             settingContext,
-            propertyContext
+            propertyContext,
+            contextComponents
         ).also {
             it.plugins = plugins
         }
@@ -231,6 +235,14 @@ class Context private constructor(
 
         @JvmName("writeSettings")
         inline operator fun <T> invoke(writer: SettingsWriter.() -> T): T = writer()
+    }
+}
+
+class ContextComponents(val components: Map<KClass<*>, Any>) {
+    constructor(vararg components: Pair<KClass<*>, Any>) : this(components.toMap())
+
+    inline fun <reified T : Any> get(): T {
+        return components[T::class] as T
     }
 }
 

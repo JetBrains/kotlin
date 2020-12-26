@@ -128,7 +128,7 @@ private class ModuleTemplateComponent(
         labelText = null,
     ) { value, isByUser ->
         if (isByUser) {
-            OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser("module.template", value)
+            OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(context.contextComponents.get(), "module.template", value)
         }
         module.template = value.takeIf { it != NoneTemplate }
         uiEditorUsagesStats.moduleTemplateChanged++

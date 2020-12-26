@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import kotlin.math.abs
 import kotlin.random.Random
+import kotlin.random.nextUInt
 
 interface WizardStats {
     fun toPairs(): ArrayList<EventPair<*>>
@@ -200,6 +201,7 @@ class WizardStatsService : CounterUsagesCollector() {
         val moduleTemplateChangedField = EventFields.Int("module_template_changed")
 
         val moduleTemplateField = EventFields.String("module_template", allowedModuleTemplates)
+        val sessionIdField = EventFields.Int("session_id")
 
         private val pluginInfoField = EventFields.PluginInfo.with(getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID))
 
@@ -212,12 +214,14 @@ class WizardStatsService : CounterUsagesCollector() {
             modulesCreatedField,
             modulesRemovedField,
             moduleTemplateChangedField,
+            sessionIdField,
             EventFields.PluginInfo
         )
 
         private val projectOpenedByHyperlinkEvent = GROUP.registerVarargEvent(
             "wizard_opened_by_hyperlink",
             projectTemplateField,
+            sessionIdField,
             EventFields.PluginInfo
         )
 
@@ -225,6 +229,7 @@ class WizardStatsService : CounterUsagesCollector() {
             "module_template_created",
             projectTemplateField,
             moduleTemplateField,
+            sessionIdField,
             EventFields.PluginInfo
         )
 
@@ -232,20 +237,22 @@ class WizardStatsService : CounterUsagesCollector() {
             "setting_value_changed",
             settingIdField,
             settingValueField,
+            sessionIdField,
             EventFields.PluginInfo,
         )
 
         // Log functions
-        fun logDataOnProjectGenerated(project: Project?, projectCreationStats: ProjectCreationStats) {
+        fun logDataOnProjectGenerated(session: WizardLoggingSession?, project: Project?, projectCreationStats: ProjectCreationStats) {
             projectCreatedEvent.log(
                 project,
                 *projectCreationStats.toPairs().toTypedArray(),
+                *session?.let { arrayOf(sessionIdField with it.id) }.orEmpty(),
                 pluginInfoField
             )
-
         }
 
         fun logDataOnSettingValueChanged(
+            session: WizardLoggingSession,
             settingId: String,
             settingValue: String
         ) {
@@ -253,12 +260,14 @@ class WizardStatsService : CounterUsagesCollector() {
             settingValueChangedEvent.log(
                 settingIdField with idToLog,
                 settingValueField with settingValue,
+                sessionIdField with session.id,
                 pluginInfoField,
             )
         }
 
 
         fun logDataOnProjectGenerated(
+            session: WizardLoggingSession?,
             project: Project?,
             projectCreationStats: ProjectCreationStats,
             uiEditorUsageStats: UiEditorUsageStats
@@ -267,29 +276,42 @@ class WizardStatsService : CounterUsagesCollector() {
                 project,
                 *projectCreationStats.toPairs().toTypedArray(),
                 *uiEditorUsageStats.toPairs().toTypedArray(),
+                *session?.let { arrayOf(sessionIdField with it.id) }.orEmpty(),
                 pluginInfoField
             )
         }
 
-        fun logUsedModuleTemplatesOnNewWizardProjectCreated(project: Project?, projectTemplateId: String, moduleTemplates: List<String>) {
+        fun logUsedModuleTemplatesOnNewWizardProjectCreated(
+            session: WizardLoggingSession,
+            project: Project?,
+            projectTemplateId: String,
+            moduleTemplates: List<String>
+        ) {
             moduleTemplates.forEach { moduleTemplateId ->
-                logModuleTemplateCreation(project, projectTemplateId, moduleTemplateId)
+                logModuleTemplateCreation(session, project, projectTemplateId, moduleTemplateId)
             }
         }
 
-        fun logWizardOpenByHyperlink(project: Project?, templateId: String?) {
+        fun logWizardOpenByHyperlink(session: WizardLoggingSession, project: Project?, templateId: String?) {
             projectOpenedByHyperlinkEvent.log(
                 project,
                 projectTemplateField.with(templateId ?: "none"),
+                sessionIdField with session.id,
                 pluginInfoField
             )
         }
 
-        private fun logModuleTemplateCreation(project: Project?, projectTemplateId: String, moduleTemplateId: String) {
+        private fun logModuleTemplateCreation(
+            session: WizardLoggingSession,
+            project: Project?,
+            projectTemplateId: String,
+            moduleTemplateId: String
+        ) {
             moduleTemplateCreatedEvent.log(
                 project,
                 projectTemplateField.with(projectTemplateId),
                 moduleTemplateField.with(moduleTemplateId),
+                sessionIdField with session.id,
                 pluginInfoField
             )
         }
@@ -348,4 +370,11 @@ private class Settings(settingIdWithPossibleValues: List<SettingIdWithPossibleVa
     private val id2IdToLog = settingIdWithPossibleValues.associate { it.id to it.idToLog }
 
     fun getIdToLog(id: String): String? = id2IdToLog.get(id)
+}
+
+class WizardLoggingSession private constructor(val id: Int) {
+    companion object {
+        fun createWithRandomId(): WizardLoggingSession =
+            WizardLoggingSession(id = abs(Random.nextInt()))
+    }
 }

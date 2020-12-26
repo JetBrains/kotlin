@@ -7,6 +7,8 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainer
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
+import org.jetbrains.kotlin.idea.projectWizard.WizardLoggingSession
+import org.jetbrains.kotlin.tools.projectWizard.core.ContextComponents
 import org.jetbrains.kotlin.tools.projectWizard.core.PluginsCreator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
@@ -35,6 +37,10 @@ class IdeWizard(
     init {
         initPluginSettingsDefaultValues()
     }
+
+    override fun createComponents(): ContextComponents = ContextComponents(
+        WizardLoggingSession::class to WizardLoggingSession.createWithRandomId(),
+    )
 
     val jpsData = JpsData(
         JavaRuntimeLibraryDescription(null),

@@ -97,7 +97,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
         }
 
         val projectCreationStats = WizardStatsService.ProjectCreationStats("Gradle", this.presentableName, "gradleKotlin")
-        WizardStatsService.logDataOnProjectGenerated(module.project, projectCreationStats)
+        WizardStatsService.logDataOnProjectGenerated(session = null, module.project, projectCreationStats)
     }
 
     protected abstract fun getOldSyntaxPluginDefinition(): String

@@ -4,6 +4,7 @@ import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.projectWizard.WizardLoggingSession
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
@@ -46,7 +47,11 @@ class ProjectTemplateSettingComponent(
         },
         onValueSelected = { newValue ->
             newValue?.let {
-                OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(ProjectTemplatesPlugin.template.path, it)
+                OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(
+                    context.contextComponents.get(),
+                    ProjectTemplatesPlugin.template.path,
+                    it
+                )
             }
             value = newValue
         }

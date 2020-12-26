@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 
 abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesManager, isUnitTestMode: Boolean) {
-    val context = Context(createPlugins, servicesManager, isUnitTestMode)
+    open fun createComponents(): ContextComponents = ContextComponents()
+
+    val context = Context(createPlugins, servicesManager, isUnitTestMode, createComponents())
 
     private fun checkAllRequiredSettingPresent(phases: Set<GenerationPhase>): TaskResult<Unit> = context.read {
         getUnspecifiedSettings(phases).let { unspecifiedSettings ->

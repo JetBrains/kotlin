@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 
 abstract class SettingComponent<V : Any, T : SettingType<V>>(
     val reference: SettingReference<V, T>,
-    context: Context
+    val context: Context
 ) : TitledComponent(context), FocusableComponent {
     var value: V?
         get() = reference.value
@@ -45,6 +45,6 @@ abstract class SettingComponent<V : Any, T : SettingType<V>>(
 fun <T : Any> SettingComponent<T, *>.handleValueUpdate() = { newValue: T, isUpdatedByUser: Boolean ->
     value = newValue
     if (isUpdatedByUser) {
-        OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(reference, newValue)
+        OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(context.contextComponents.get(), reference, newValue)
     }
 }

@@ -68,7 +68,11 @@ class BuildSystemTypeSettingComponent(
         override fun setSelected(e: AnActionEvent, state: Boolean) {
             if (state) {
                 value = buildSystemType
-                OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(BuildSystemPlugin.type.path, buildSystemType)
+                OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(
+                    context.contextComponents.get(),
+                    BuildSystemPlugin.type.path,
+                    buildSystemType
+                )
             }
         }
 

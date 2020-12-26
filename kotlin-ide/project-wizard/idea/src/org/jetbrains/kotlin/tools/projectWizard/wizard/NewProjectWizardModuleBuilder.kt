@@ -51,7 +51,7 @@ Have to override EmptyModuleBuilder here instead of just ModuleBuilder
 As EmptyModuleBuilder has not expert panel option which are redundant
  */
 class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
-    private val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT, isUnitTestMode = false)
+    val wizard = IdeWizard(Plugins.allPlugins, IdeaServices.PROJECT_INDEPENDENT, isUnitTestMode = false)
     private val uiEditorUsagesStats = UiEditorUsageStats()
 
     override fun isOpenProjectSettingsAfter(): Boolean = false
@@ -122,6 +122,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             wizard.buildSystemType!!.id,
         )
         WizardStatsService.logDataOnProjectGenerated(
+            wizard.context.contextComponents.get(),
             project,
             projectCreationStats,
             uiEditorUsagesStats
@@ -133,6 +134,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             }
         }
         WizardStatsService.logUsedModuleTemplatesOnNewWizardProjectCreated(
+            wizard.context.contextComponents.get(),
             project,
             wizard.projectTemplate!!.id,
             moduleTemplates,
