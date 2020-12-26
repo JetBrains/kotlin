@@ -16,7 +16,7 @@ class TextFieldComponent(
     description: String? = null,
     initialValue: String? = null,
     validator: SettingValidator<String>? = null,
-    onValueUpdate: (String) -> Unit = {}
+    onValueUpdate: (String, isByUser: Boolean) -> Unit = { _, _ -> }
 ) : UIComponent<String>(
     context,
     labelText,

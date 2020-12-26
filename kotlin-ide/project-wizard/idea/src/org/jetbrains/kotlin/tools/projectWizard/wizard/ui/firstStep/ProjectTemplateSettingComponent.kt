@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
-import com.intellij.ui.SeparatorWithText
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.KotlinIcons
@@ -13,11 +11,11 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.OnUserSettingChangeStatisticsLogger
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.Dimension
-import javax.swing.BorderFactory
 import javax.swing.Icon
 import javax.swing.JComponent
 
@@ -46,7 +44,12 @@ class ProjectTemplateSettingComponent(
                 append(message, SimpleTextAttributes.GRAYED_ATTRIBUTES)
             }
         },
-        onValueSelected = { value = it }
+        onValueSelected = { newValue ->
+            newValue?.let {
+                OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(ProjectTemplatesPlugin.template.path, it)
+            }
+            value = newValue
+        }
     )
 
     override val alignment: TitleComponentAlignment

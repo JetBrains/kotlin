@@ -13,7 +13,7 @@ class CheckboxComponent(
     description: String? = null,
     initialValue: Boolean? = null,
     validator: SettingValidator<Boolean>? = null,
-    onValueUpdate: (Boolean) -> Unit = {}
+    onValueUpdate: (Boolean, isByUser: Boolean) -> Unit = { _, _ -> }
 ) : UIComponent<Boolean>(
     context,
     labelText = null,
@@ -22,7 +22,7 @@ class CheckboxComponent(
 ) {
     private val checkbox = JBCheckBox(labelText, initialValue ?: false).apply {
         font = UIUtil.getButtonFont()
-        addChangeListener {
+        addItemListener {
             fireValueUpdated(this@apply.isSelected)
         }
     }

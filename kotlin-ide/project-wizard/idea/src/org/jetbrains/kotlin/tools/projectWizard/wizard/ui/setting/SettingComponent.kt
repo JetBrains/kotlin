@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.Setting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.OnUserSettingChangeStatisticsLogger
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 
@@ -38,5 +39,12 @@ abstract class SettingComponent<V : Any, T : SettingType<V>>(
         if (validationIndicator != null && value != null) read {
             validationIndicator!!.updateValidationState(setting.validator.validate(this, value))
         }
+    }
+}
+
+fun <T : Any> SettingComponent<T, *>.handleValueUpdate() = { newValue: T, isUpdatedByUser: Boolean ->
+    value = newValue
+    if (isUpdatedByUser) {
+        OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(reference, newValue)
     }
 }

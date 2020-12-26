@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSet
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.OnUserSettingChangeStatisticsLogger
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitleComponentAlignment
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.IdeaBasedComponentValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
@@ -67,6 +68,7 @@ class BuildSystemTypeSettingComponent(
         override fun setSelected(e: AnActionEvent, state: Boolean) {
             if (state) {
                 value = buildSystemType
+                OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser(BuildSystemPlugin.type.path, buildSystemType)
             }
         }
 

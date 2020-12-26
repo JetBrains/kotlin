@@ -27,7 +27,7 @@ class DropDownComponent<T : DisplayableSettingItem>(
     private val filter: (T) -> Boolean = { true },
     private val validator: SettingValidator<T> = settingValidator { ValidationResult.OK },
     private val iconProvider: (T) -> Icon? = { null },
-    onValueUpdate: (T) -> Unit = {}
+    onValueUpdate: (T, isByUser: Boolean) -> Unit = { _, _ -> }
 ) : UIComponent<T>(
     context,
     labelText,

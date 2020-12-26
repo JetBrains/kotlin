@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 import java.nio.file.Path
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
@@ -120,7 +118,7 @@ class DropdownSettingComponent(
             context.read { setting.type.filter(this, reference, value) }
         },
         labelText = setting.title.takeIf { needLabel },
-        onValueUpdate = { newValue -> value = newValue }
+        onValueUpdate = handleValueUpdate()
     ).asSubComponent()
 
     override fun shouldBeShow(): Boolean =
@@ -142,7 +140,7 @@ class BooleanSettingComponent(
         description = setting.description,
         initialValue = null,
         validator = setting.validator,
-        onValueUpdate = { newValue -> value = newValue }
+        onValueUpdate = handleValueUpdate()
     ).asSubComponent()
 }
 
@@ -160,7 +158,7 @@ class StringSettingComponent(
         description = setting.description,
         labelText = setting.title.takeIf { needLabel },
         validator = setting.validator,
-        onValueUpdate = { newValue -> value = newValue }
+        onValueUpdate = handleValueUpdate()
     ).asSubComponent()
 
     fun onUserType(action: () -> Unit) {
@@ -181,7 +179,7 @@ class PathSettingComponent(
         description = setting.description,
         labelText = setting.title.takeIf { needLabel },
         validator = settingValidator { path -> setting.validator.validate(this, path) },
-        onValueUpdate = { newValue -> value = newValue }
+        onValueUpdate = handleValueUpdate()
     ).asSubComponent()
 
     fun onUserType(action: () -> Unit) {

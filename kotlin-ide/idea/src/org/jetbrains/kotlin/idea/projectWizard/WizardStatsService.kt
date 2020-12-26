@@ -15,6 +15,8 @@ import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesColle
 import com.intellij.internal.statistic.utils.getPluginInfoById
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import kotlin.math.abs
+import kotlin.random.Random
 
 interface WizardStats {
     fun toPairs(): ArrayList<EventPair<*>>
@@ -78,6 +80,116 @@ class WizardStatsService : CounterUsagesCollector() {
             "maven"
         )
 
+        private val settings = Settings(
+            SettingIdWithPossibleValues.Enum(
+                id = "buildSystem.type",
+                values = listOf(
+                    "GradleKotlinDsl",
+                    "GradleGroovyDsl",
+                    "Jps",
+                    "Maven",
+                )
+            ),
+
+            SettingIdWithPossibleValues.Enum(
+                id = "testFramework",
+                values = listOf(
+                    "NONE",
+                    "JUNIT4",
+                    "JUNIT5",
+                    "TEST_NG",
+                    "JS",
+                    "COMMON",
+                )
+            ),
+
+            SettingIdWithPossibleValues.Enum(
+                id = "targetJvmVersion",
+                values = listOf(
+                    "JVM_1_6",
+                    "JVM_1_8",
+                    "JVM_9",
+                    "JVM_10",
+                    "JVM_11",
+                    "JVM_12",
+                    "JVM_13",
+                )
+            ),
+
+            SettingIdWithPossibleValues.Enum(
+                id = "androidPlugin",
+                values = listOf(
+                    "APPLICATION",
+                    "LIBRARY",
+                )
+            ),
+
+            SettingIdWithPossibleValues.Enum(
+                id = "serverEngine",
+                values = listOf(
+                    "Netty",
+                    "Tomcat",
+                    "Jetty",
+                )
+            ),
+
+            SettingIdWithPossibleValues.Enum(
+                id = "kind",
+                idToLog = "js.project.kind",
+                values = listOf(
+                    "LIBRARY",
+                    "APPLICATION",
+                )
+            ),
+
+            SettingIdWithPossibleValues.Enum(
+                id = "compiler",
+                idToLog = "js.compiler",
+                values = listOf(
+                    "IR",
+                    "LEGACY",
+                    "BOTH",
+                )
+            ),
+            SettingIdWithPossibleValues.Enum(
+                id = "projectTemplates.template",
+                values = allowedProjectTemplates
+            ),
+            SettingIdWithPossibleValues.Enum(
+                id = "module.template",
+                values = allowedModuleTemplates
+            ),
+            SettingIdWithPossibleValues.Enum(
+                id = "buildSystem.type",
+                values = allowedBuildSystems
+            ),
+
+            SettingIdWithPossibleValues.Boolean(
+                id = "javaSupport",
+                idToLog = "jvm.javaSupport"
+            ),
+            SettingIdWithPossibleValues.Boolean(
+                id = "cssSupport",
+                idToLog = "js.cssSupport"
+            ),
+            SettingIdWithPossibleValues.Boolean(
+                id = "useStyledComponents",
+                idToLog = "js.useStyledComponents"
+            ),
+            SettingIdWithPossibleValues.Boolean(
+                id = "useReactRouterDom",
+                idToLog = "js.useReactRouterDom"
+            ),
+            SettingIdWithPossibleValues.Boolean(
+                id = "useReactRedux",
+                idToLog = "js.useReactRedux"
+            ),
+        )
+
+
+        val settingIdField = EventFields.String("settingId", settings.allowedIds)
+        val settingValueField = EventFields.String("settingValue", settings.possibleValues)
+
         // Event fields
         val groupField = EventFields.String("group", allowedWizardsGroups)
         val projectTemplateField = EventFields.String("project_template", allowedProjectTemplates)
@@ -116,6 +228,13 @@ class WizardStatsService : CounterUsagesCollector() {
             EventFields.PluginInfo
         )
 
+        private val settingValueChangedEvent = GROUP.registerVarargEvent(
+            "setting_value_changed",
+            settingIdField,
+            settingValueField,
+            EventFields.PluginInfo,
+        )
+
         // Log functions
         fun logDataOnProjectGenerated(project: Project?, projectCreationStats: ProjectCreationStats) {
             projectCreatedEvent.log(
@@ -126,7 +245,24 @@ class WizardStatsService : CounterUsagesCollector() {
 
         }
 
-        fun logDataOnProjectGenerated(project: Project?, projectCreationStats: ProjectCreationStats, uiEditorUsageStats: UiEditorUsageStats) {
+        fun logDataOnSettingValueChanged(
+            settingId: String,
+            settingValue: String
+        ) {
+            val idToLog = settings.getIdToLog(settingId) ?: return
+            settingValueChangedEvent.log(
+                settingIdField with idToLog,
+                settingValueField with settingValue,
+                pluginInfoField,
+            )
+        }
+
+
+        fun logDataOnProjectGenerated(
+            project: Project?,
+            projectCreationStats: ProjectCreationStats,
+            uiEditorUsageStats: UiEditorUsageStats
+        ) {
             projectCreatedEvent.log(
                 project,
                 *projectCreationStats.toPairs().toTypedArray(),
@@ -184,3 +320,32 @@ class WizardStatsService : CounterUsagesCollector() {
     }
 }
 
+
+private sealed class SettingIdWithPossibleValues {
+    abstract val id: String
+    abstract val idToLog: String
+    abstract val values: List<String>
+
+    data class Enum(
+        override val id: String,
+        override val idToLog: String = id,
+        override val values: List<String>
+    ) : SettingIdWithPossibleValues()
+
+    data class Boolean(
+        override val id: String,
+        override val idToLog: String = id,
+    ) : SettingIdWithPossibleValues() {
+        override val values: List<String> get() = listOf(true.toString(), false.toString())
+    }
+}
+
+private class Settings(settingIdWithPossibleValues: List<SettingIdWithPossibleValues>) {
+    constructor(vararg settingIdWithPossibleValues: SettingIdWithPossibleValues) : this(settingIdWithPossibleValues.toList())
+
+    val allowedIds = settingIdWithPossibleValues.map { it.idToLog }
+    val possibleValues = settingIdWithPossibleValues.flatMap { it.values }.distinct()
+    private val id2IdToLog = settingIdWithPossibleValues.associate { it.id to it.idToLog }
+
+    fun getIdToLog(id: String): String? = id2IdToLog.get(id)
+}

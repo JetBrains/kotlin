@@ -25,7 +25,7 @@ abstract class UIComponent<V : Any>(
     context: Context,
     labelText: String? = null,
     private val validator: SettingValidator<V>? = null,
-    private val onValueUpdate: (V) -> Unit = {}
+    private val onValueUpdate: (V, isByUser: Boolean) -> Unit = { _, _ -> }
 ) : DynamicComponent(context), FocusableComponent, Disposable {
     open val alignTarget: JComponent? = null
     private val validationIndicator by lazy(LazyThreadSafetyMode.NONE) {
@@ -47,13 +47,13 @@ abstract class UIComponent<V : Any>(
 
     protected fun fireValueUpdated(value: V) {
         if (allowEventFiring) {
-            onValueUpdate(value)
+            onValueUpdate(value, allowEventFiring)
         }
         validate(value)
     }
 
     protected fun forceValueUpdate(newValue: V) {
-        onValueUpdate(newValue)
+        onValueUpdate(newValue, false)
     }
 
     override fun onInit() {

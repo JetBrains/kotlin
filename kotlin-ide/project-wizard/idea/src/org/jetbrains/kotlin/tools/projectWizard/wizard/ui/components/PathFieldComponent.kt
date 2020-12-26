@@ -20,7 +20,7 @@ class PathFieldComponent(
     description: String? = null,
     initialValue: Path? = null,
     validator: SettingValidator<Path>? = null,
-    onValueUpdate: (Path) -> Unit = {}
+    onValueUpdate: (Path, isByUser: Boolean) -> Unit = { _, _ -> }
 ) : UIComponent<Path>(
     context,
     labelText,

@@ -1,17 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.CommonTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
@@ -22,6 +18,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.isRootModul
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
 import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
+import org.jetbrains.kotlin.tools.projectWizard.wizard.OnUserSettingChangeStatisticsLogger
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
@@ -82,7 +79,7 @@ private class ModuleNameComponent(context: Context, private val module: Module) 
         labelText = null,
         initialValue = module.name,
         validator = validateModuleName
-    ) { value ->
+    ) { value, _ ->
         module.name = value
         context.write { eventManager.fireListeners(null) }
     }.asSubComponent()
@@ -129,7 +126,10 @@ private class ModuleTemplateComponent(
         initiallySelectedValue = module.template ?: NoneTemplate,
         filter = { template: Template -> read { template.isApplicableTo(this, module) } },
         labelText = null,
-    ) { value ->
+    ) { value, isByUser ->
+        if (isByUser) {
+            OnUserSettingChangeStatisticsLogger.logSettingValueChangedByUser("module.template", value)
+        }
         module.template = value.takeIf { it != NoneTemplate }
         uiEditorUsagesStats.moduleTemplateChanged++
         changeTemplateDescription(module.template)
