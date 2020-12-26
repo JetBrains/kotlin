@@ -53,7 +53,7 @@ internal class XorWowRandom internal constructor(
     override fun nextBits(bitCount: Int): Int =
         nextInt().takeUpperBits(bitCount)
 
-    companion object {
+    private companion object {
         private const val serialVersionUID: Long = 0L
     }
 }
