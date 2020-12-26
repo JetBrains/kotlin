@@ -90,6 +90,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/extension.kt");
     }
 
+    @TestMetadata("fileClassWithPrivateDeclarationsOnly_after.kt")
+    public void testFileClassWithPrivateDeclarationsOnly_after() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/fileClassWithPrivateDeclarationsOnly_after.kt");
+    }
+
+    @TestMetadata("fileClassWithPrivateDeclarationsOnly_before.kt")
+    public void testFileClassWithPrivateDeclarationsOnly_before() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/fileClassWithPrivateDeclarationsOnly_before.kt");
+    }
+
     @TestMetadata("immutableCollection.kt")
     public void testImmutableCollection() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");
