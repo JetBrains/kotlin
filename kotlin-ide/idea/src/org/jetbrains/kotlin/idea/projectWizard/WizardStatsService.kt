@@ -241,6 +241,13 @@ class WizardStatsService : CounterUsagesCollector() {
             EventFields.PluginInfo,
         )
 
+        private val jdkChangedEvent = GROUP.registerVarargEvent(
+            "jdk_changed",
+            settingIdField,
+            sessionIdField,
+            EventFields.PluginInfo,
+        )
+
         // Log functions
         fun logDataOnProjectGenerated(session: WizardLoggingSession?, project: Project?, projectCreationStats: ProjectCreationStats) {
             projectCreatedEvent.log(
@@ -260,6 +267,15 @@ class WizardStatsService : CounterUsagesCollector() {
             settingValueChangedEvent.log(
                 settingIdField with idToLog,
                 settingValueField with settingValue,
+                sessionIdField with session.id,
+                pluginInfoField,
+            )
+        }
+
+        fun logDataOnJdkChanged(
+            session: WizardLoggingSession,
+        ) {
+            jdkChangedEvent.log(
                 sessionIdField with session.id,
                 pluginInfoField,
             )

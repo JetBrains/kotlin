@@ -11,6 +11,7 @@ import com.intellij.ui.TitledSeparator
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
@@ -196,6 +197,7 @@ private class JdkComponent(ideWizard: IdeWizard) : TitledComponent(ideWizard.con
         ideWizard.jdk = selectedJdk
         addActionListener {
             ideWizard.jdk = selectedJdk
+            WizardStatsService.logDataOnJdkChanged(ideWizard.context.contextComponents.get())
         }
     }
 
