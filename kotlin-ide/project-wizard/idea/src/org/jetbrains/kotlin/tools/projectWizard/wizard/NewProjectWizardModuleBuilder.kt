@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.actions.NewProjectAction
 import com.intellij.ide.impl.NewProjectUtil
+import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
@@ -272,6 +273,13 @@ class ModuleNewWizardSecondStep(
         WizardStatsService.logDataOnNextClicked(wizard.context.contextComponents.get())
     }
 
+    override fun onStepLeaving() {
+        if (isNavigatingBack()) {
+            WizardStatsService.logDataOnPrevClicked(wizard.context.contextComponents.get())
+        }
+        super.onStepLeaving()
+    }
+
     override fun getPreferredFocusedComponent(): JComponent? {
         wizardContext.getNextButton()?.text = "Finish"
         return super.getPreferredFocusedComponent()
@@ -284,6 +292,10 @@ class ModuleNewWizardSecondStep(
 
 private fun isCreatingNewProject() = Thread.currentThread().stackTrace.any { element ->
     element.className == NewProjectAction::class.java.name
+}
+
+private fun isNavigatingBack() = Thread.currentThread().stackTrace.any { element ->
+    element.methodName == "doPreviousAction"
 }
 
 private fun WizardContext.getNextButton() = try {
