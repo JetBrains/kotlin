@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -63,7 +64,9 @@ class TargetsModel(
     }
 
     fun add(module: Module) {
+        WizardStatsService.logOnModuleCreated(context.contextComponents.get(), module.configurator.id)
         uiEditorUsagesStats?.let { it.modulesCreated++ }
+
         addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
         context.writeSettings {
             module.apply { initDefaultValuesForSettings() }
@@ -80,6 +83,10 @@ class TargetsModel(
 
     fun removeSelected() {
         val selectedNode = tree.selectedNode?.takeIf { it.userObject is Module } ?: return
+
+        val module = selectedNode.userObject as Module
+        WizardStatsService.logOnModuleRemoved(context.contextComponents.get(), module.configurator.id)
+
         uiEditorUsagesStats?.let { it.modulesRemoved++ }
         when (val parent = selectedNode.parent.safeAs<DefaultMutableTreeNode>()?.userObject) {
             ModulesEditorTree.PROJECT_USER_OBJECT -> {
