@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
+import org.jetbrains.kotlin.idea.projectWizard.WizardLoggingSession
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.ProjectCreationStats
@@ -268,6 +269,7 @@ class ModuleNewWizardSecondStep(
 
     override fun _init() {
         component.onInit()
+        WizardStatsService.logDataOnNextClicked(wizard.context.contextComponents.get())
     }
 
     override fun getPreferredFocusedComponent(): JComponent? {
