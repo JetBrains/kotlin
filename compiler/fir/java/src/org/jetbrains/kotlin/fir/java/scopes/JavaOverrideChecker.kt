@@ -39,7 +39,7 @@ class JavaOverrideChecker internal constructor(
             val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
             val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
             if (candidateTypeClassId != baseTypeClassId) return false
-            if (!candidateTypeClassId.shortClassName.isSpecial && candidateTypeClassId.shortClassName.identifier == "Array") {
+            if (candidateTypeClassId == StandardClassIds.Array) {
                 assert(candidateType.typeArguments.size == 1) {
                     "Array type with unexpected number of type arguments: $candidateType"
                 }

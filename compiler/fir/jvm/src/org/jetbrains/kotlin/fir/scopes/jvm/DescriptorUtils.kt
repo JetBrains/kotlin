@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
@@ -101,8 +102,7 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
 
     fun appendClassLikeType(type: ConeClassLikeType) {
         val classId = type.lookupTag.classId
-        if (classId.shortClassName.isSpecial) return
-        if (classId.shortClassName.identifier == "Array") {
+        if (classId == StandardClassIds.Array) {
             append("[")
             type.typeArguments.forEach { typeArg ->
                 when (typeArg) {
