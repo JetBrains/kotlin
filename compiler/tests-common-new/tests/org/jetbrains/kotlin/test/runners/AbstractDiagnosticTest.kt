@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistenc
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -44,6 +45,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         enableMetaInfoHandler()
 
         useConfigurators(
+            ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
             ::ScriptingEnvironmentConfigurator
         )

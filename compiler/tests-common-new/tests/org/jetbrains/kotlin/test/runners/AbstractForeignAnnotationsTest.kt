@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.services.configuration.JdkForeignAnnotationType
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsAgainstCompiledJavaConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
+import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.jvm.ForeignAnnotationAgainstCompiledJavaTestSuppressor
 
 abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest() {
@@ -45,6 +42,7 @@ abstract class AbstractForeignAnnotationsTestBase : AbstractKotlinCompilerTest()
         enableMetaInfoHandler()
 
         useConfigurators(
+            ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
             foreignAnnotationsConfigurator
         )

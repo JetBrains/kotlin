@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -35,7 +36,11 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
 
         enableMetaInfoHandler()
 
-        useConfigurators(::JvmEnvironmentConfigurator)
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator,
+        )
+
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
