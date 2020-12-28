@@ -30,7 +30,12 @@ class ModuleStructureExtractorImpl(
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
-        private val moduleDirectiveRegex = """([\w-]+)(\((.*)\))?""".toRegex()
+        /*
+         * ([\w-]+) module name
+         * \((.*?)\) module dependencies
+         * (\((.*?)\))? module friends
+         */
+        private val moduleDirectiveRegex = """([\w-]+)(\((.*?)\)(\((.*?)\))?)?""".toRegex()
     }
 
     override fun splitTestDataByModules(
@@ -66,6 +71,7 @@ class ModuleStructureExtractorImpl(
         private var currentModuleTargetBackend: TargetBackend? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
+        private var friendsOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
 
         private var currentFileName: String? = null
@@ -146,9 +152,13 @@ class ModuleStructureExtractorImpl(
                     } else {
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
+                    val (moduleName, dependencies, friends) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
                     currentModuleName = moduleName
                     dependencies.mapTo(dependenciesOfCurrentModule) { name ->
+                        val kind = defaultsProvider.defaultDependencyKind
+                        DependencyDescription(name, kind, DependencyRelation.Dependency)
+                    }
+                    friends.mapTo(friendsOfCurrentModule) { name ->
                         val kind = defaultsProvider.defaultDependencyKind
                         DependencyDescription(name, kind, DependencyRelation.Dependency)
                     }
@@ -190,12 +200,15 @@ class ModuleStructureExtractorImpl(
             return true
         }
 
-        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): Pair<String, List<String>> {
+        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependeciens {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
-            val (name, _, dependencies) = matchResult.destructured
-            if (dependencies.isBlank()) return name to emptyList()
-            return name to dependencies.split(" ")
+            val (name, _, dependencies, _, friends) = matchResult.destructured
+            return ModuleNameAndDependeciens(
+                name,
+                dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+                friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+            )
         }
 
         private fun finishGlobalDirectives() {
@@ -216,6 +229,7 @@ class ModuleStructureExtractorImpl(
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
                 files = filesOfCurrentModule,
                 dependencies = dependenciesOfCurrentModule,
+                friends = friendsOfCurrentModule,
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
@@ -273,6 +287,7 @@ class ModuleStructureExtractorImpl(
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()
+            friendsOfCurrentModule = mutableListOf()
             directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         }
 
@@ -302,6 +317,12 @@ class ModuleStructureExtractorImpl(
             return defaultsProvider.newLanguageSettingsBuilder()
         }
     }
+
+    private data class ModuleNameAndDependeciens(
+        val name: String,
+        val dependencies: List<String>,
+        val friends: List<String>
+    )
 }
 
 private operator fun RegisteredDirectives.plus(other: RegisteredDirectives?): RegisteredDirectives {

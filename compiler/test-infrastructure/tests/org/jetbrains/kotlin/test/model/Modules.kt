@@ -18,6 +18,7 @@ data class TestModule(
     val frontendKind: FrontendKind<*>,
     val files: List<TestFile>,
     val dependencies: List<DependencyDescription>,
+    val friends: List<DependencyDescription>,
     val directives: RegisteredDirectives,
     val languageVersionSettings: LanguageVersionSettings
 ) {

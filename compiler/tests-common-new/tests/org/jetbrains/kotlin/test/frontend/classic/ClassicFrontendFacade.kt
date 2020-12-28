@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.platform.isCommon
@@ -81,6 +82,10 @@ class ClassicFrontendFacade(
             moduleDescriptorProvider.getModuleDescriptor(testModule)
         }
 
+        val friendDescriptors = module.friends.filter { it.kind == DependencyKind.Source }.map {
+            moduleDescriptorProvider.getModuleDescriptor(dependencyProvider.getTestModule(it.moduleName))
+        }
+
         var hasCommonModules = false
         sourceDependencies.forEach {
             val dependencyModule = dependencyProvider.getTestModule(it.moduleName)
@@ -104,6 +109,7 @@ class ClassicFrontendFacade(
             packagePartProviderFactory,
             ktFiles,
             dependentDescriptors,
+            friendDescriptors,
             hasCommonModules
         )
         moduleDescriptorProvider.replaceModuleDescriptorForModule(module, analysisResult.moduleDescriptor)
@@ -135,6 +141,7 @@ class ClassicFrontendFacade(
         packagePartProviderFactory: (GlobalSearchScope) -> JvmPackagePartProvider,
         files: List<KtFile>,
         dependentDescriptors: List<ModuleDescriptorImpl>,
+        friendsDescriptors: List<ModuleDescriptorImpl>,
         hasCommonModules: Boolean
     ): AnalysisResult {
         val targetPlatform = module.targetPlatform
@@ -146,6 +153,7 @@ class ClassicFrontendFacade(
                 packagePartProviderFactory,
                 files,
                 dependentDescriptors,
+                friendsDescriptors,
                 hasCommonModules
             )
             targetPlatform.isJs() -> performJsModuleResolve(project, configuration, files, dependentDescriptors)
@@ -163,8 +171,12 @@ class ClassicFrontendFacade(
         packagePartProviderFactory: (GlobalSearchScope) -> JvmPackagePartProvider,
         files: List<KtFile>,
         dependentDescriptors: List<ModuleDescriptorImpl>,
+        friendsDescriptors: List<ModuleDescriptorImpl>,
         hasCommonModules: Boolean
     ): AnalysisResult {
+        val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
+        configuration.getList(JVMConfigurationKeys.FRIEND_PATHS).forEach { moduleVisibilityManager.addFriendPath(it) }
+
         val moduleTrace = NoScopeRecordCliBindingTrace()
         if (!hasCommonModules) {
             return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
@@ -173,13 +185,14 @@ class ClassicFrontendFacade(
                 moduleTrace,
                 configuration.copy(),
                 packagePartProviderFactory,
-                explicitModuleDependencyList = dependentDescriptors
+                explicitModuleDependencyList = dependentDescriptors,
+                explicitModuleFriendsList = friendsDescriptors
             )
         }
 
         val moduleContentScope = GlobalSearchScope.allScope(project)
         val moduleClassResolver = SingleModuleClassResolver()
-        val moduleContext = createModuleContext(module, project, dependentDescriptors) {
+        val moduleContext = createModuleContext(module, project, dependentDescriptors, friendsDescriptors) {
             JvmBuiltIns(it, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         }
         val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
@@ -242,7 +255,7 @@ class ClassicFrontendFacade(
         files: List<KtFile>,
     ): AnalysisResult {
         val moduleTrace = NoScopeRecordCliBindingTrace()
-        val moduleContext = createModuleContext(module, project, dependentDescriptors = emptyList()) {
+        val moduleContext = createModuleContext(module, project, dependentDescriptors = emptyList(), friendsDescriptors = emptyList()) {
             DefaultBuiltIns()
         }
         return FakeTopDownAnalyzerFacadeForNative.analyzeFilesWithGivenTrace(
@@ -275,6 +288,7 @@ class ClassicFrontendFacade(
         module: TestModule,
         project: Project,
         dependentDescriptors: List<ModuleDescriptorImpl>,
+        friendsDescriptors: List<ModuleDescriptorImpl>,
         builtInsFactory: (StorageManager) -> KotlinBuiltIns,
     ): ModuleContext {
         val projectContext = ProjectContext(project, "test project context")
@@ -287,7 +301,7 @@ class ClassicFrontendFacade(
             add(moduleDescriptor.builtIns.builtInsModule)
             addAll(dependentDescriptors)
         }
-        moduleDescriptor.setDependencies(dependencies)
+        moduleDescriptor.setDependencies(dependencies, friendsDescriptors.toSet())
 
         return projectContext.withModule(moduleDescriptor)
     }
