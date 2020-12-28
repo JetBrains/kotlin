@@ -254,17 +254,17 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         null
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun enhanceTypeArguments(arguments: List<TypeProjection>) =
-        buildList {
-            for (argument in arguments) {
-                // TODO: think about star projections with enhancement (e.g. came from Java: Foo<@NotNull ?>)
-                if (argument.isStarProjection) continue
-                val argumentType = argument.type
-                val enhancedArgumentType = if (argumentType is TypeWithEnhancement) argumentType.enhancement else argumentType
-                val enhancedDeeplyArgumentType = buildTypeWithEnhancement(enhancedArgumentType)
-                add(argument.replaceType(enhancedDeeplyArgumentType))
+        arguments.map { argument ->
+            // TODO: think about star projections with enhancement (e.g. came from Java: Foo<@NotNull ?>)
+            if (argument.isStarProjection) {
+                return@map argument
             }
+            val argumentType = argument.type
+            val enhancedArgumentType = if (argumentType is TypeWithEnhancement) argumentType.enhancement else argumentType
+            val enhancedDeeplyArgumentType = buildTypeWithEnhancement(enhancedArgumentType)
+
+            argument.replaceType(enhancedDeeplyArgumentType)
         }
 
     fun buildTypeWithEnhancement(type: KotlinType): KotlinType {
