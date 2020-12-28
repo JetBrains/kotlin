@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -20,24 +17,26 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 /**
  * This is a copy of an old version of JS lowering, because JS did platform-specific optimization incompatible with Wasm.
  * TODO: Revisit
  */
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtIns: IrBuiltIns, val implicitDeclarationsFile: IrPackageFragment) : SharedVariablesManager {
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val initializer = originalDeclaration.initializer ?: IrConstImpl.constNull(
@@ -49,10 +48,17 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
         val constructorSymbol = closureBoxConstructorDeclaration.symbol
 
         val irCall =
-            IrConstructorCallImpl.fromSymbolDescriptor(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol)
-                .apply {
-                    putValueArgument(0, initializer)
-                }
+            IrConstructorCallImpl(
+                initializer.startOffset,
+                initializer.endOffset,
+                closureBoxType,
+                constructorSymbol,
+                closureBoxConstructorDeclaration.parentAsClass.typeParameters.size,
+                closureBoxConstructorDeclaration.typeParameters.size,
+                closureBoxConstructorDeclaration.valueParameters.size
+            ).apply {
+                putValueArgument(0, initializer)
+            }
 
         return IrVariableImpl(
             originalDeclaration.startOffset,
