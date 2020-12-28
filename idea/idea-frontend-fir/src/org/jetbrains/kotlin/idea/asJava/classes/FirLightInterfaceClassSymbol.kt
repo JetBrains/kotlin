@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.asJava.FirLightClassForClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
@@ -66,4 +67,6 @@ internal class FirLightInterfaceClassSymbol(
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
+
+    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 }

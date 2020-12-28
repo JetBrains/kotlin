@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.asJava.FirLightClassForClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
@@ -61,6 +62,9 @@ internal class FirLightAnnotationClassSymbol(
         other is FirLightAnnotationClassSymbol && classOrObjectSymbol == other.classOrObjectSymbol
 
     override fun hashCode(): Int = classOrObjectSymbol.hashCode()
+
+
+    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 
     override fun copy(): FirLightClassForClassOrObjectSymbol = FirLightAnnotationClassSymbol(classOrObjectSymbol, manager)
 }

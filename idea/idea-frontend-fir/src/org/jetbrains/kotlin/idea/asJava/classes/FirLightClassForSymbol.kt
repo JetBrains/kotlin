@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.asJava.classes.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
@@ -218,4 +219,6 @@ internal class FirLightClassForSymbol(
 
     override fun copy(): FirLightClassForSymbol =
         FirLightClassForSymbol(classOrObjectSymbol, manager)
+
+    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 }
