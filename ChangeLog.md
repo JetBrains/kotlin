@@ -15,6 +15,12 @@
 - [`KT-43198`](https://youtrack.jetbrains.com/issue/KT-43198) init blocks inside inline classes
 - [`KT-31072`](https://youtrack.jetbrains.com/issue/KT-31072) Don't use non-reified arguments to specialize type operations in IR inliner
 
+### Backend. JS
+- [`KT-41227`](https://youtrack.jetbrains.com/issue/KT-41227) KJS IR: don't copy to child's prototype references to the function from parent
+
+### Backend. IR
+- [`KT-41227`](https://youtrack.jetbrains.com/issue/KT-41227) KJS IR: don't copy to child's prototype references to the function from parent
+
 ### Compiler
 
 #### New Features
