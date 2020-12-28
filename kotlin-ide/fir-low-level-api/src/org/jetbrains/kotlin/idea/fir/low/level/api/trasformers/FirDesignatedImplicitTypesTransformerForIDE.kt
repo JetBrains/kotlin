@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.trasformers
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
@@ -17,12 +17,14 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTy
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 
 internal class FirDesignatedImplicitTypesTransformerForIDE(
     private val designation: Iterator<FirDeclaration>,
     targetDeclaration: FirDeclaration,
     session: FirSession,
     scopeSession: ScopeSession,
+    private val towerDataContextCollector: FirTowerDataContextCollector?,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
 ) : FirImplicitAwareBodyResolveTransformer(
     session,
@@ -48,4 +50,12 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
     }
 
     override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = phaseReplaceOracle.needReplacePhase(firDeclaration)
+
+    override fun onBeforeStatementResolution(statement: FirStatement) {
+        towerDataContextCollector?.addStatementContext(statement, context.towerDataContext)
+    }
+
+    override fun onBeforeDeclarationContentResolve(declaration: FirDeclaration) {
+        towerDataContextCollector?.addDeclarationContext(declaration, context.towerDataContext)
+    }
 }
