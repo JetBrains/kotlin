@@ -87,6 +87,44 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         }
     }
 
+    @TestMetadata("idea/testData/shortenRefsFir/quailfiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Quailfiers extends AbstractFirShortenRefsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithMuting, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInQuailfiers() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefsFir/quailfiers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("AlreadyImportedNestedType.kt")
+        public void testAlreadyImportedNestedType() throws Exception {
+            runTest("idea/testData/shortenRefsFir/quailfiers/AlreadyImportedNestedType.kt");
+        }
+
+        @TestMetadata("NestedTypeInSameFile.kt")
+        public void testNestedTypeInSameFile() throws Exception {
+            runTest("idea/testData/shortenRefsFir/quailfiers/NestedTypeInSameFile.kt");
+        }
+
+        @TestMetadata("NotImportedNestedType.kt")
+        public void testNotImportedNestedType() throws Exception {
+            runTest("idea/testData/shortenRefsFir/quailfiers/NotImportedNestedType.kt");
+        }
+
+        @TestMetadata("NotImportedTopLevelType.kt")
+        public void testNotImportedTopLevelType() throws Exception {
+            runTest("idea/testData/shortenRefsFir/quailfiers/NotImportedTopLevelType.kt");
+        }
+
+        @TestMetadata("TopLevelTypeInSameFile.kt")
+        public void testTopLevelTypeInSameFile() throws Exception {
+            runTest("idea/testData/shortenRefsFir/quailfiers/TopLevelTypeInSameFile.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/shortenRefsFir/types")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,10 @@
+// FIR_COMPARISON
+package test
+
+class A {
+    class AA
+}
+
+fun usage() {
+    A.AA
+}

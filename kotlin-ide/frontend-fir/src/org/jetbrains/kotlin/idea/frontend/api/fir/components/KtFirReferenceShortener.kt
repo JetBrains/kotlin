@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -179,8 +180,8 @@ internal class KtFirReferenceShortener(
         }
 
         private fun collectTypeIfNeedsToBeShortened(wholeClassifierId: ClassId, wholeTypeElement: KtUserType) {
-            val allClassIds = generateSequence(wholeClassifierId) { it.outerClassId }
-            val allTypeElements = generateSequence(wholeTypeElement) { it.qualifier }
+            val allClassIds = wholeClassifierId.outerClassesWithSelf
+            val allTypeElements = wholeTypeElement.qualifiersWithSelf
 
             val positionScopes = findScopesAtPosition(wholeTypeElement, namesToImport) ?: return
 
@@ -218,7 +219,7 @@ internal class KtFirReferenceShortener(
     }
 
     private inner class CallsCollectingVisitor(
-        private val namesToImport: List<FqName>,
+        private val namesToImport: MutableList<FqName>,
         private val callsToShorten: MutableList<KtDotQualifiedExpression>
     ) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
@@ -258,10 +259,63 @@ internal class KtFirReferenceShortener(
             }
         }
 
+
+        override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
+            super.visitResolvedQualifier(resolvedQualifier)
+
+            val wholeClassQualifier = resolvedQualifier.classId ?: return
+            val wholeQualifierElement = when (val qualifierPsi = resolvedQualifier.psi) {
+                is KtDotQualifiedExpression -> qualifierPsi
+                is KtNameReferenceExpression -> qualifierPsi.parent as? KtDotQualifiedExpression ?: return
+                else -> return
+            }
+
+            collectQualifierIfNeedsToBeShortened(wholeClassQualifier, wholeQualifierElement)
+        }
+
+        private fun collectQualifierIfNeedsToBeShortened(wholeClassQualifier: ClassId, wholeQualifierElement: KtDotQualifiedExpression) {
+            val positionScopes = findScopesAtPosition(wholeQualifierElement, namesToImport) ?: return
+
+            val allClassIds = wholeClassQualifier.outerClassesWithSelf
+            val allQualifiers = wholeQualifierElement.qualifiersWithSelf
+
+            for ((classId, qualifier) in allClassIds.zip(allQualifiers)) {
+                val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
+
+                if (firstFoundClass == classId) {
+                    addElementToShorten(qualifier)
+                    return
+                }
+            }
+
+            val (mostTopLevelClassId, mostTopLevelQualifier) = allClassIds.zip(allQualifiers).last()
+            val availableClassifier = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
+
+            check(availableClassifier?.classId != mostTopLevelClassId) { "This should not be true" }
+
+            if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
+                addElementToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelQualifier)
+            }
+        }
+
         private fun addElementToShorten(element: KtDotQualifiedExpression) {
             callsToShorten.add(element)
         }
+
+        private fun addElementToImportAndShorten(nameToImport: FqName, element: KtDotQualifiedExpression) {
+            namesToImport.add(nameToImport)
+            callsToShorten.add(element)
+        }
     }
+
+    private val ClassId.outerClassesWithSelf: Sequence<ClassId>
+        get() = generateSequence(this) { it.outerClassId }
+
+    private val KtUserType.qualifiersWithSelf: Sequence<KtUserType>
+        get() = generateSequence(this) { it.qualifier }
+
+    private val KtDotQualifiedExpression.qualifiersWithSelf: Sequence<KtDotQualifiedExpression>
+        get() = generateSequence(this) { it.receiverExpression as? KtDotQualifiedExpression }
 }
 
 private class ShortenCommandImpl(

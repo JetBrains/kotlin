@@ -1,0 +1,12 @@
+// FIR_COMPARISON
+package test
+
+import dependency.T
+import dependency.T.TT
+
+fun usage() {
+
+    TT
+    TT
+
+}
