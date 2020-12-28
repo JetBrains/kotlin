@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.projectWizard
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.eventLog.events.EventPair
+import com.intellij.internal.statistic.eventLog.events.StringListEventField
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext
 import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule
@@ -231,6 +232,8 @@ class WizardStatsService : CounterUsagesCollector() {
         val moduleTemplateField = EventFields.String("module_template", allowedModuleTemplates)
         val sessionIdField = EventFields.Int("session_id")
 
+        val modulesListField = StringListEventField.ValidatedByAllowedValues("project_modules_list", allowedModuleTypes)
+
         val moduleTypeField = EventFields.String("module_type", allowedModuleTypes)
 
         private val pluginInfoField = EventFields.PluginInfo.with(getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID))
@@ -244,6 +247,7 @@ class WizardStatsService : CounterUsagesCollector() {
             modulesCreatedField,
             modulesRemovedField,
             moduleTemplateChangedField,
+            modulesListField,
             sessionIdField,
             EventFields.PluginInfo
         )
@@ -433,11 +437,13 @@ class WizardStatsService : CounterUsagesCollector() {
         val group: String,
         val projectTemplateId: String,
         val buildSystemType: String,
+        val moduleTypes: List<String> = emptyList(),
     ) : WizardStats {
         override fun toPairs(): ArrayList<EventPair<*>> = arrayListOf(
             groupField.with(group),
             projectTemplateField.with(projectTemplateId),
-            buildSystemField.with(buildSystemType)
+            buildSystemField.with(buildSystemType),
+            modulesListField with moduleTypes,
         )
     }
 
