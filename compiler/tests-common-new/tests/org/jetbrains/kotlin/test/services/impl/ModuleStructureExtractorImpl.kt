@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -204,9 +205,20 @@ class ModuleStructureExtractorImpl(
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
             val (name, _, dependencies, _, friends) = matchResult.destructured
+            var dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+            globalDirectives?.let { directives ->
+                /*
+                 * In old tests coroutine helpers was added as separate module named `support`
+                 *   instead of additional files for current module. So to safe compatibility with
+                 *   old testdata we need to filter this dependency
+                 */
+                if (AdditionalFilesDirectives.WITH_COROUTINES in directives) {
+                    dependenciesNames = dependenciesNames.filter { it != "support" }
+                }
+            }
             return ModuleNameAndDependeciens(
                 name,
-                dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+                dependenciesNames,
                 friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
             )
         }

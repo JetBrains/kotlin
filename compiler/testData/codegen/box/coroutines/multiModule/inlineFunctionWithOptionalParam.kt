@@ -1,3 +1,5 @@
+// WITH_COROUTINES
+// WITH_RUNTIME
 // MODULE: lib
 // FILE: lib.kt
 inline fun foo(x: String = "OK"): String {
