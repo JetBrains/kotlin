@@ -5,7 +5,7 @@ fun <M> materialize(): M = TODO()
 
 fun test(b: Boolean) {
     <!INAPPLICABLE_CANDIDATE!>id<!>(if (b) {
-        <!INAPPLICABLE_CANDIDATE!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
+        id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
     } else {
         id(
             materialize()

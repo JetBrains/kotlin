@@ -4890,6 +4890,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("SpecialCallsWithLambdas.kt")
+            public void testSpecialCallsWithLambdas() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/SpecialCallsWithLambdas.kt");
+            }
+
+            @Test
             @TestMetadata("TypesEligibleForSimpleVisit.kt")
             public void testTypesEligibleForSimpleVisit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/TypesEligibleForSimpleVisit.kt");
