@@ -35,4 +35,8 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             For enabling light tree mode use $USE_LIGHT_TREE directive
         """.trimIndent()
     )
+
+    val WITH_EXTENDED_CHECKERS by directive(
+        description = "Enable extended checkers"
+    )
 }

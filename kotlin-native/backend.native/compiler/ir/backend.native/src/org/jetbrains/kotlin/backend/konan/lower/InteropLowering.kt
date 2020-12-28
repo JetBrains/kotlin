@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -225,11 +223,10 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
         // Generate `override fun init...(...) = this.initBy(...)`:
 
-        val resultDescriptor = WrappedSimpleFunctionDescriptor()
         return IrFunctionImpl(
                 constructor.startOffset, constructor.endOffset,
                 OVERRIDING_INITIALIZER_BY_CONSTRUCTOR,
-                IrSimpleFunctionSymbolImpl(resultDescriptor),
+                IrSimpleFunctionSymbolImpl(),
                 initMethod.name,
                 DescriptorVisibilities.PUBLIC,
                 Modality.OPEN,
@@ -243,7 +240,6 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                 isOperator = false,
                 isInfix = false
         ).also { result ->
-            resultDescriptor.bind(result)
             result.parent = irClass
             result.createDispatchReceiverParameter()
             result.valueParameters += constructor.valueParameters.map { it.copyTo(result) }
@@ -323,11 +319,11 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
         function.valueParameters.mapTo(parameterTypes) { nativePtrType }
 
-        val newFunction = WrappedSimpleFunctionDescriptor().let {
+        val newFunction =
             IrFunctionImpl(
                     function.startOffset, function.endOffset,
                     IrDeclarationOrigin.DEFINED,
-                    IrSimpleFunctionSymbolImpl(it),
+                    IrSimpleFunctionSymbolImpl(),
                     ("imp:$selector").synthesizedName,
                     DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
@@ -340,29 +336,23 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     isFakeOverride = false,
                     isOperator = false,
                     isInfix = false
-            ).apply {
-                it.bind(this)
-            }
-        }
+            )
 
         newFunction.valueParameters += parameterTypes.mapIndexed { index, type ->
-            WrappedValueParameterDescriptor().let {
-                IrValueParameterImpl(
-                        function.startOffset, function.endOffset,
-                        IrDeclarationOrigin.DEFINED,
-                        IrValueParameterSymbolImpl(it),
-                        Name.identifier("p$index"),
-                        index,
-                        type,
-                        varargElementType = null,
-                        isCrossinline = false,
-                        isNoinline = false,
-                        isHidden = false,
-                        isAssignable = false
-                ).apply {
-                    it.bind(this)
-                    parent = newFunction
-                }
+            IrValueParameterImpl(
+                    function.startOffset, function.endOffset,
+                    IrDeclarationOrigin.DEFINED,
+                    IrValueParameterSymbolImpl(),
+                    Name.identifier("p$index"),
+                    index,
+                    type,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
+                    isAssignable = false
+            ).apply {
+                parent = newFunction
             }
         }
 

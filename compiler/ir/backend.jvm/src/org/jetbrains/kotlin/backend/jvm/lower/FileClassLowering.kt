@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
@@ -82,17 +80,14 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
     private fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
         val fileEntry = irFile.fileEntry
         val fileClassInfo: JvmFileClassInfo?
-        val descriptor: ClassDescriptor
         when (fileEntry) {
             is PsiSourceManager.PsiFileEntry -> {
                 val ktFile = context.psiSourceManager.getKtFile(fileEntry)
                     ?: throw AssertionError("Unexpected file entry: $fileEntry")
                 fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-                descriptor = WrappedClassDescriptor()
             }
             is NaiveSourceBasedFileEntryImpl -> {
                 fileClassInfo = JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(irFile.fqName, fileEntry.name), false)
-                descriptor = WrappedClassDescriptor()
             }
             else -> error("unknown kind of file entry: $fileEntry")
         }
@@ -101,13 +96,12 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             0, fileEntry.maxOffset,
             if (!isMultifilePart || context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts))
                 IrDeclarationOrigin.FILE_CLASS else IrDeclarationOrigin.SYNTHETIC_FILE_CLASS,
-            symbol = IrClassSymbolImpl(descriptor),
+            symbol = IrClassSymbolImpl(),
             name = fileClassInfo.fileClassFqName.shortName(),
             kind = ClassKind.CLASS,
             visibility = if (!isMultifilePart) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             modality = Modality.FINAL
         ).apply {
-            descriptor.bind(this)
             superTypes = listOf(context.irBuiltIns.anyType)
             parent = irFile
             declarations.addAll(fileClassMembers)

@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
@@ -26,9 +29,11 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtElement
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -89,16 +94,28 @@ internal class KtFirCallResolver(
         val target = when (val calleeReference = calleeReference) {
             is FirResolvedNamedReference -> calleeReference.getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
             is FirErrorNamedReference -> calleeReference.createErrorCallTarget()
-            is FirSimpleNamedReference -> error(
-                "Looks like FirFunctionCall was not resolved to BODY_RESOLVE phase, " +
-                        "consider resolving it containing declaration before starting resolve calls"
-            )
+            is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget()
+            is FirSimpleNamedReference ->
+                error(
+                    """
+                      Looks like FirFunctionCall was not resolved to BODY_RESOLVE phase,
+                      consider resolving it containing declaration before starting resolve calls
+                      ${this.render()}
+                      ${(this.psi as? KtElement)?.getElementTextInContext()}
+                      """.trimIndent()
+                )
             else -> error("Unexpected call reference ${calleeReference::class.simpleName}")
         } ?: return null
         return KtFunctionCall(target)
     }
 
     private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
+        KtErrorCallTarget(
+            getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
+            KtSimpleDiagnostic(diagnostic.reason)
+        )
+
+    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
             KtSimpleDiagnostic(diagnostic.reason)

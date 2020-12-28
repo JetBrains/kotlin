@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
@@ -108,7 +108,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 
         Assert.assertNotNull("Test file not found!", testFile)
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
+        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(
             testFile!!.canonicalPath, libName(),
             extraClasspath = listOf(ForTestCompileRuntime.jetbrainsAnnotationsForTests().path)
         )

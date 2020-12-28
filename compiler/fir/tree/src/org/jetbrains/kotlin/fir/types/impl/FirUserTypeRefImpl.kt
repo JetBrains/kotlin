@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
-open class FirUserTypeRefImpl(
+class FirUserTypeRefImpl(
     override val source: FirSourceElement?,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,

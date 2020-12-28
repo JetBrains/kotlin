@@ -29,6 +29,10 @@ inline void* konanAllocMemory(size_t size) {
   return konan::calloc(1, size);
 }
 
+inline void* konanAllocAlignedMemory(size_t size, size_t alignment) {
+    return konan::calloc_aligned(1, size, alignment);
+}
+
 inline void konanFreeMemory(void* memory) {
   konan::free(memory);
 }

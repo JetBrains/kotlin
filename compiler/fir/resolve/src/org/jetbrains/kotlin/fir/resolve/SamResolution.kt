@@ -45,7 +45,7 @@ val SAM_PARAMETER_NAME = Name.identifier("block")
 class FirSamResolverImpl(
     private val firSession: FirSession,
     private val scopeSession: ScopeSession,
-    private val outerClassManager: FirOuterClassManager,
+    private val outerClassManager: FirOuterClassManager? = null,
 ) : FirSamResolver() {
 
     private val resolvedFunctionType: MutableMap<FirRegularClass, Any> = mutableMapOf()
@@ -70,11 +70,7 @@ class FirSamResolverImpl(
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        val firRegularClass =
-            firSession.firSymbolProvider
-                .getSymbolByLookupTag(type.lookupTag)
-                ?.fir as? FirRegularClass
-                ?: return null
+        val firRegularClass = type.lookupTag.toFirRegularClass(firSession) ?: return null
 
         val unsubstitutedFunctionType = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
@@ -210,7 +206,7 @@ class FirSamResolverImpl(
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
-            containingClassAttr = outerClassManager.outerClass(firRegularClass.symbol)?.toLookupTag()
+            containingClassAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
         }
     }
 

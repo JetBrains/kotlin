@@ -1515,6 +1515,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/simple.kt");
             }
 
+            @TestMetadata("twoRefs.kt")
+            public void testTwoRefs() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/twoRefs.kt");
+            }
+
+            @TestMetadata("unusedParamNotSpill.kt")
+            public void testUnusedParamNotSpill() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/unusedParamNotSpill.kt");
+            }
+
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/when.kt");

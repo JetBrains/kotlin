@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// JSR305_GLOBAL_REPORT ignore
+// JSR305_GLOBAL_REPORT: ignore
 
 // FILE: MyErrorNonnull.java
 import javax.annotation.*;

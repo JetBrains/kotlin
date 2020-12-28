@@ -35,13 +35,15 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal fun MethodNode.acceptWithStateMachine(
     irFunction: IrFunction,
     classCodegen: ClassCodegen,
     methodVisitor: MethodVisitor,
-    obtainContinuationClassBuilder: () -> ClassBuilder
+    varsCountByType: Map<Type, Int>,
+    obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
     val state = classCodegen.context.state
     val languageVersionSettings = state.languageVersionSettings
@@ -82,7 +84,8 @@ internal fun MethodNode.acceptWithStateMachine(
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
         },
-        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
+        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS),
+        initialVarsCountByType = varsCountByType,
     )
     accept(visitor)
 }

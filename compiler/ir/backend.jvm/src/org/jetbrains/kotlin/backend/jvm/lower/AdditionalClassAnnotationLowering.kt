@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -84,13 +83,11 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     }
 
     private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
-        val descriptor = WrappedEnumEntryDescriptor()
         return IrEnumEntryImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-            IrEnumEntrySymbolImpl(descriptor),
+            IrEnumEntrySymbolImpl(),
             Name.identifier(entryName)
         ).apply {
-            descriptor.bind(this)
             parent = enumClass
             enumClass.addChild(this)
         }

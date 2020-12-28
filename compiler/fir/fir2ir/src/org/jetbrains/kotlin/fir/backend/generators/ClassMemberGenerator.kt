@@ -49,7 +49,6 @@ internal class ClassMemberGenerator(
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
                     enterScope(irPrimaryConstructor)
-                    irPrimaryConstructor.valueParameters.forEach { symbolTable.introduceValueParameter(it) }
                     irPrimaryConstructor.putParametersInScope(primaryConstructor)
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
                 }
@@ -86,7 +85,6 @@ internal class ClassMemberGenerator(
                     // Scope for primary constructor should be entered before class declaration processing
                     with(declarationStorage) {
                         enterScope(irFunction)
-                        irFunction.valueParameters.forEach { symbolTable.introduceValueParameter(it) }
                         irFunction.putParametersInScope(firFunction)
                     }
                 }

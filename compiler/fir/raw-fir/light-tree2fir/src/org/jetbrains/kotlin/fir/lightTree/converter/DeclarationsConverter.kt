@@ -1410,7 +1410,7 @@ class DeclarationsConverter(
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
             return DeclarationsConverter(
-                baseSession, baseScopeProvider, stubMode, blockTree, offset = tree.getStartOffset(block), context
+                baseSession, baseScopeProvider, stubMode, blockTree, offset = offset + tree.getStartOffset(block), context
             ).convertBlockExpression(blockTree.root)
         } else {
             val firExpression = buildExpressionStub()

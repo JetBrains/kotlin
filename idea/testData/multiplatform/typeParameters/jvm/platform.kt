@@ -2,17 +2,17 @@
 
 package foo
 
-interface B
+interface <!LINE_MARKER("descr='Is implemented by A [jvm] AImpl'")!>B<!>
 
-actual interface A : B {
-    actual fun commonFun()
+actual interface <!LINE_MARKER("descr='Is implemented by AImpl'"), LINE_MARKER("descr='Has declaration in common module'")!>A<!> : B {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'"), LINE_MARKER("descr='Is implemented in foo.AImpl'")!>commonFun<!>()
 
-    fun platformFun()
+    fun <!LINE_MARKER("descr='Is implemented in foo.AImpl'")!>platformFun<!>()
 }
 
 class AImpl : A {
-    override fun commonFun() {}
-    override fun platformFun() {}
+    override fun <!LINE_MARKER("descr='Implements function in 'A''")!>commonFun<!>() {}
+    override fun <!LINE_MARKER("descr='Implements function in 'A''")!>platformFun<!>() {}
 }
 
 @Suppress("UNUSED_PARAMETER")

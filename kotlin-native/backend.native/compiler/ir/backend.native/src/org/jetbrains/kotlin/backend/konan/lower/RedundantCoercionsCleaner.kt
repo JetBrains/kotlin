@@ -150,7 +150,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
                             expression
                         else {
                             val oldSymbol = expression.symbol
-                            val newSymbol = IrReturnableBlockSymbolImpl(expression.descriptor)
+                            val newSymbol = IrReturnableBlockSymbolImpl()
                             val transformedReturnableBlock = with(expression) {
                                 IrReturnableBlockImpl(
                                         startOffset = startOffset,

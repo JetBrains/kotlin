@@ -23,7 +23,9 @@ open class ProjectStructureParser(private val projectRoot: File) {
         "FULL_JDK" to ResolveLibrary.Builder(FullJdk),
         "MOCK_JDK" to ResolveLibrary.Builder(MockJdk),
         "KOTLIN_TEST_JS" to ResolveLibrary.Builder(KotlinTest.JsKotlinTest),
-        "KOTLIN_TEST_JVM" to ResolveLibrary.Builder(KotlinTest.JvmKotlinTest)
+        "KOTLIN_TEST_JVM" to ResolveLibrary.Builder(KotlinTest.JvmKotlinTest),
+        "KOTLIN_TEST" to ResolveLibrary.Builder(KotlinTest.JustKotlinTest),
+        "JUNIT" to ResolveLibrary.Builder(KotlinTest.Junit)
     )
 
     fun parse(text: String): ProjectResolveModel {

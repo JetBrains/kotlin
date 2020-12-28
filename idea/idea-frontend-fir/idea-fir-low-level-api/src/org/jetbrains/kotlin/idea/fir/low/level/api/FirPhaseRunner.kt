@@ -7,28 +7,30 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProcessorByPhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
+internal class FirPhaseRunner {
     private val superTypesBodyResolveLock = ReentrantLock()
     private val statusResolveLock = ReentrantLock()
     private val implicitTypesResolveLock = ReentrantLock()
 
-    fun runPhase(firFile: FirFile, phase: FirResolvePhase) = when (phase) {
+    fun runPhase(firFile: FirFile, phase: FirResolvePhase, scopeSession: ScopeSession) = when (phase) {
         FirResolvePhase.SUPER_TYPES -> superTypesBodyResolveLock.withLock {
-            runPhaseWithoutLock(firFile, phase)
+            runPhaseWithoutLock(firFile, phase, scopeSession)
         }
         FirResolvePhase.STATUS -> statusResolveLock.withLock {
-            runPhaseWithoutLock(firFile, phase)
+            runPhaseWithoutLock(firFile, phase, scopeSession)
         }
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
-            runPhaseWithoutLock(firFile, phase)
+            runPhaseWithoutLock(firFile, phase, scopeSession)
         }
         else -> {
-            runPhaseWithoutLock(firFile, phase)
+            runPhaseWithoutLock(firFile, phase, scopeSession)
         }
     }
 
@@ -54,8 +56,8 @@ internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
     }
 
 
-    private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase) {
-        val phaseProcessor = transformerProvider.getTransformerForPhase(firFile.session, phase)
+    private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase, scopeSession: ScopeSession) {
+        val phaseProcessor = phase.createTransformerBasedProcessorByPhase(firFile.session, scopeSession)
         executeWithoutPCE {
             FirLazyBodiesCalculator.calculateLazyBodiesIfPhaseRequires(firFile, phase)
             phaseProcessor.processFile(firFile)

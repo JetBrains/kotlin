@@ -64,6 +64,11 @@ public class Jdk9BlackBoxCodegenTestGenerated extends AbstractJdk9BlackBoxCodege
         runTest("compiler/testData/codegen/java9/box/concatDynamicWithInline.kt");
     }
 
+    @TestMetadata("kt36984.kt")
+    public void testKt36984() throws Exception {
+        runTest("compiler/testData/codegen/java9/box/kt36984.kt");
+    }
+
     @TestMetadata("varHandle.kt")
     public void testVarHandle() throws Exception {
         runTest("compiler/testData/codegen/java9/box/varHandle.kt");

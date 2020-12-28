@@ -72,6 +72,11 @@ public class IrJsCodegenBoxErrorTestGenerated extends AbstractIrJsCodegenBoxErro
             runTest("compiler/testData/codegen/boxError/semantic/reifiedNonInline.kt");
         }
 
+        @TestMetadata("reifiedWithWrongArguments.kt")
+        public void testReifiedWithWrongArguments() throws Exception {
+            runTest("compiler/testData/codegen/boxError/semantic/reifiedWithWrongArguments.kt");
+        }
+
         @TestMetadata("typeMismatch.kt")
         public void testTypeMismatch() throws Exception {
             runTest("compiler/testData/codegen/boxError/semantic/typeMismatch.kt");

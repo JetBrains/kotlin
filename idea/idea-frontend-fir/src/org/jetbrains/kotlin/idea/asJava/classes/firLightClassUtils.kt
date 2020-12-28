@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
+import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
@@ -39,11 +42,12 @@ fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
         CachedValueProvider.Result
             .create(
                 createFirLightClassNoCache(classOrObject),
-                KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker
+                classOrObject.project.createProjectWideOutOfBlockModificationTracker()
             )
     }
 
-fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
+@OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = hackyAllowRunningOnEdt {
 
     val containingFile = classOrObject.containingFile
     if (containingFile is KtCodeFragment) {

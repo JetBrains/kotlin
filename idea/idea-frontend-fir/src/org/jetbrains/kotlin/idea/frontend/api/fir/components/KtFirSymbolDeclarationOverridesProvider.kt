@@ -43,12 +43,10 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         check(callableSymbol is KtFirSymbol<*>)
         check(containingDeclaration is KtFirClassOrObjectSymbol)
 
-        return callableSymbol.firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { firCallableElement ->
-
-            containingDeclaration.firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { containingDeclaration ->
-
-                val firTypeScope = containingDeclaration.unsubstitutedScope(
-                    containingDeclaration.session,
+        return containingDeclaration.firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { firContainer ->
+            callableSymbol.firRef.withFirUnsafe { firCallableElement ->
+                val firTypeScope = firContainer.unsubstitutedScope(
+                    firContainer.session,
                     ScopeSession(),
                     withForcedTypeCalculator = false
                 )

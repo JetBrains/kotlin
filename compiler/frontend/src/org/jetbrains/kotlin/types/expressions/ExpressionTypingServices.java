@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
@@ -423,7 +424,8 @@ public class ExpressionTypingServices {
             @NotNull KtExpression statementExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null;
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) || context.inferenceSession instanceof CoroutineInferenceSession)
+            return null;
         KtFunctionLiteral functionLiteral = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
         if (functionLiteral != null) {
             KotlinResolutionCallbacksImpl.LambdaInfo info =

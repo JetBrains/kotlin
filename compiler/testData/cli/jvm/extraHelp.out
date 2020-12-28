@@ -1,9 +1,14 @@
 Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
+  -Xabi-stability={stable|unstable}
+                             When using unstable compiler features such as FIR, use 'stable' to mark generated class files as stable
+                             to prevent diagnostics from stable compilers at the call site.
+                             When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable
+                             to force diagnostics to be reported.
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
-  -Xallow-jvm-ir-dependencies When not using the IR backend, do not report errors on those classes in dependencies, which were compiled by the IR backend
   -Xallow-no-source-files    Allow no source files
+  -Xallow-unstable-dependencies Do not report errors on classes in dependencies, which were compiled by an unstable version of the Kotlin compiler
   -Xassertions={always-enable|always-disable|jvm|legacy}
                              Assert calls behaviour
                              -Xassertions=always-enable:  enable, ignore jvm assertion settings;
@@ -27,8 +32,6 @@ where advanced options include:
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xir-check-local-names     Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend
-  -Xir-binary-with-stable-abi When using the IR backend, produce binaries which can be read by non-IR backend.
-                             The author is responsible for verifying that the resulting binaries do indeed have the correct ABI
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjava-package-prefix      Package prefix for Java files
   -Xjava-source-roots=<path> Paths to directories with Java source files

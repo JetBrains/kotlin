@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -414,13 +412,12 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     private fun buildBoxField(declaration: IrClass) {
         val startOffset = declaration.startOffset
         val endOffset = declaration.endOffset
-        val descriptor = WrappedPropertyDescriptor()
 
         val irField = IrFieldImpl(
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                IrFieldSymbolImpl(descriptor),
+                IrFieldSymbolImpl(),
                 Name.identifier("value"),
                 declaration.defaultType,
                 DescriptorVisibilities.PRIVATE,
@@ -434,7 +431,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                IrPropertySymbolImpl(descriptor),
+                IrPropertySymbolImpl(),
                 irField.name,
                 irField.visibility,
                 Modality.FINAL,
@@ -444,7 +441,6 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 isDelegated = false,
                 isExternal = false
         )
-        descriptor.bind(irProperty)
         irProperty.backingField = irField
 
         declaration.addChild(irProperty)
@@ -553,11 +549,10 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
         irConstructor.returnType
     }
 
-    val descriptor = WrappedSimpleFunctionDescriptor()
     IrFunctionImpl(
             irConstructor.startOffset, irConstructor.endOffset,
             IrDeclarationOrigin.DEFINED,
-            IrSimpleFunctionSymbolImpl(descriptor),
+            IrSimpleFunctionSymbolImpl(),
             Name.special("<constructor>"),
             irConstructor.visibility,
             Modality.FINAL,
@@ -571,7 +566,6 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
             isOperator = false,
             isInfix = false
     ).apply {
-        descriptor.bind(this)
         parent = irConstructor.parent
 
         // Note: technically speaking, this function doesn't have access to class type parameters (since it is "static").

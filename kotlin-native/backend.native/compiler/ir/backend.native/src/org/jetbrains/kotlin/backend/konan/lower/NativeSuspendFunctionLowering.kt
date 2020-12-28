@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
@@ -478,11 +476,11 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
     }
 
     // These are marker functions to split up the lowering on two parts.
-    private val saveState = WrappedSimpleFunctionDescriptor().let {
+    private val saveState =
         IrFunctionImpl(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.DEFINED,
-                IrSimpleFunctionSymbolImpl(it),
+                IrSimpleFunctionSymbolImpl(),
                 "saveState".synthesizedName,
                 DescriptorVisibilities.PRIVATE,
                 Modality.ABSTRACT,
@@ -495,16 +493,13 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                 isFakeOverride = false,
                 isOperator = false,
                 isInfix = false
-        ).apply {
-            it.bind(this)
-        }
-    }
+        )
 
-    private val restoreState = WrappedSimpleFunctionDescriptor().let {
+    private val restoreState =
         IrFunctionImpl(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.DEFINED,
-                IrSimpleFunctionSymbolImpl(it),
+                IrSimpleFunctionSymbolImpl(),
                 "restoreState".synthesizedName,
                 DescriptorVisibilities.PRIVATE,
                 Modality.ABSTRACT,
@@ -517,29 +512,24 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                 isFakeOverride = false,
                 isOperator = false,
                 isInfix = false
-        ).apply {
-            it.bind(this)
-        }
-    }
+        )
 
     private fun IrBuilderWithScope.irVar(name: Name, type: IrType,
                                          isMutable: Boolean = false,
-                                         initializer: IrExpression? = null) = WrappedVariableDescriptor().let {
+                                         initializer: IrExpression? = null) =
         IrVariableImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_COROUTINE_IMPL,
-                IrVariableSymbolImpl(it),
+                IrVariableSymbolImpl(),
                 name,
                 type,
                 isMutable,
                 isConst = false,
                 isLateinit = false
         ).apply {
-            it.bind(this)
             this.initializer = initializer
             this.parent = this@irVar.parent
         }
-    }
 
     private fun IrBuilderWithScope.irGetOrThrow(result: IrExpression): IrExpression =
             irCall(symbols.kotlinResultGetOrThrow.owner).apply {

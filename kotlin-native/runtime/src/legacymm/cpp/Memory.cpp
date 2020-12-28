@@ -1218,7 +1218,7 @@ ALWAYS_INLINE void runDeallocationHooks(ContainerHeader* container) {
     CycleDetector::removeCandidateIfNeeded(obj);
 #endif  // USE_CYCLE_DETECTOR
     if (obj->has_meta_object()) {
-      ObjHeader::destroyMetaObject(&obj->typeInfoOrMeta_);
+      ObjHeader::destroyMetaObject(obj);
     }
     obj = reinterpret_cast<ObjHeader*>(reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
   }
@@ -3102,7 +3102,8 @@ OBJ_GETTER(findCycle, KRef root) {
 
 }  // namespace
 
-MetaObjHeader* ObjHeader::createMetaObject(TypeInfo** location) {
+MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
+  TypeInfo** location = &object->typeInfoOrMeta_;
   TypeInfo* typeInfo = *location;
   RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
@@ -3128,7 +3129,8 @@ MetaObjHeader* ObjHeader::createMetaObject(TypeInfo** location) {
   return meta;
 }
 
-void ObjHeader::destroyMetaObject(TypeInfo** location) {
+void ObjHeader::destroyMetaObject(ObjHeader* object) {
+  TypeInfo** location = &object->typeInfoOrMeta_;
   MetaObjHeader* meta = clearPointerBits(*(reinterpret_cast<MetaObjHeader**>(location)), OBJECT_TAG_MASK);
   *const_cast<const TypeInfo**>(location) = meta->typeInfo_;
   if (meta->WeakReference.counter_ != nullptr) {

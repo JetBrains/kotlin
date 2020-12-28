@@ -52,10 +52,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
@@ -389,10 +389,8 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, sourceManager, extensions
-            ) { context, irClass, _, serializationBindings, parent ->
-                FirMetadataSerializer(session, context, irClass, serializationBindings, components, parent)
-            }
+                generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components)
+            )
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
 
@@ -572,8 +570,6 @@ object KotlinToJVMBytecodeCompiler {
         sourceFiles: List<KtFile>,
         module: Module?
     ): GenerationState {
-        val isIR = (configuration.getBoolean(JVMConfigurationKeys.IR) ||
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
         val generationState = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
@@ -583,13 +579,12 @@ object KotlinToJVMBytecodeCompiler {
             configuration
         )
             .codegenFactory(
-                if (isIR) JvmIrCodegenFactory(
+                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory(
                     configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
                 ) else DefaultCodegenFactory
             )
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
-            .isIrBackend(isIR)
             .build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

@@ -223,7 +223,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (JvmAnnotationUtilKt.isJvmRecord(descriptor)) {
-            access |= ACC_RECORD;
+            access |= VersionIndependentOpcodes.ACC_RECORD;
         }
 
         v.defineClass(

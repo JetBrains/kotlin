@@ -76,6 +76,16 @@ class ScriptTest : TestCase() {
         })
     }
 
+    fun testKt42530() {
+        val aClass = compileScript("kt42530.kts", StandardScriptDefinition)
+        Assert.assertNotNull(aClass)
+        val out = captureOut {
+            val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
+            Assert.assertNotNull(anObj)
+        }
+        assertEqualsTrimmed("[(1, a)]", out)
+    }
+
     private fun compileScript(
         scriptPath: String,
         scriptDefinition: KotlinScriptDefinition,

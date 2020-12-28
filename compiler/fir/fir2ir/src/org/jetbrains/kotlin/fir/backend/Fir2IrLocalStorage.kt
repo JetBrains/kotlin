@@ -39,10 +39,6 @@ class Fir2IrLocalStorage {
         return localClassCache[localClass]
     }
 
-    fun getLocalClass(classId: ClassId): IrClass? {
-        return localClassCache.entries.find { (firClass, _) -> firClass.classId == classId }?.value
-    }
-
     fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? =
         last { getLocalFunction(localFunction) }
 

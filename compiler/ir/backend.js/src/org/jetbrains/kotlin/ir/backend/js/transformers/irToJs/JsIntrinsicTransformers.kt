@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
@@ -89,15 +91,18 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsClass) { call, context ->
-                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
-                val owner = classifier.owner
+                val typeArgument = call.getTypeArgument(0)
+                val classSymbol = typeArgument?.classOrNull
+                    ?: error("Type argument of jsClass must be statically known class, but " + typeArgument?.render())
+
+                val klass = classSymbol.owner
 
                 when {
-                    owner is IrClass && owner.isEffectivelyExternal() ->
-                        context.getRefForExternalClass(owner)
+                    klass.isEffectivelyExternal() ->
+                        context.getRefForExternalClass(klass)
 
                     else ->
-                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
+                        context.getNameForStaticDeclaration(klass as IrDeclarationWithName).makeRef()
                 }
             }
 

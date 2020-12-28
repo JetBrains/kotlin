@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
+import org.jetbrains.kotlin.test.MockLibraryUtilExt.compileJavaFilesLibraryToJar
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory

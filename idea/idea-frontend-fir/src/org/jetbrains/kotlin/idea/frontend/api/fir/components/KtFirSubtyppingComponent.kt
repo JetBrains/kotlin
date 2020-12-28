@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSubtypingComponent
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
@@ -20,7 +20,7 @@ internal class KtFirSubtypingComponent(
     override val token: ValidityToken,
 ) : KtSubtypingComponent(), KtFirAnalysisSessionComponent {
     override fun isEqualTo(first: KtType, second: KtType): Boolean = withValidityAssertion {
-        second.assertIsValid()
+        second.assertIsValidAndAccessible()
         check(first is KtFirType)
         check(second is KtFirType)
         return AbstractTypeChecker.equalTypes(
@@ -31,7 +31,7 @@ internal class KtFirSubtypingComponent(
     }
 
     override fun isSubTypeOf(subType: KtType, superType: KtType): Boolean = withValidityAssertion {
-        superType.assertIsValid()
+        superType.assertIsValidAndAccessible()
         check(subType is KtFirType)
         check(superType is KtFirType)
         return AbstractTypeChecker.isSubtypeOf(

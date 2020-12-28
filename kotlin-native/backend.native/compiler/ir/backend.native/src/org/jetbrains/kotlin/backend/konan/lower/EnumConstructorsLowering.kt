@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -109,11 +107,11 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
         private fun lowerEnumConstructor(constructor: IrConstructor): IrConstructor {
             val startOffset = constructor.startOffset
             val endOffset = constructor.endOffset
-            val loweredConstructor = WrappedClassConstructorDescriptor().let {
+            val loweredConstructor =
                 IrConstructorImpl(
                         startOffset, endOffset,
                         constructor.origin,
-                        IrConstructorSymbolImpl(it),
+                        IrConstructorSymbolImpl(),
                         constructor.name,
                         DescriptorVisibilities.PROTECTED,
                         constructor.returnType,
@@ -122,32 +120,27 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         isPrimary = constructor.isPrimary,
                         isExpect = false
                 ).apply {
-                    it.bind(this)
                     parent = constructor.parent
                     val body = constructor.body!!
                     this.body = body // Will be transformed later.
                     body.setDeclarationsParent(this)
                 }
-            }
 
             fun createSynthesizedValueParameter(index: Int, name: String, type: IrType): IrValueParameter =
-                    WrappedValueParameterDescriptor().let {
-                        IrValueParameterImpl(
-                                startOffset, endOffset,
-                                DECLARATION_ORIGIN_ENUM,
-                                IrValueParameterSymbolImpl(it),
-                                Name.identifier(name),
-                                index,
-                                type,
-                                varargElementType = null,
-                                isCrossinline = false,
-                                isNoinline = false,
-                                isHidden = false,
-                                isAssignable = false
-                        ).apply {
-                            it.bind(this)
-                            parent = loweredConstructor
-                        }
+                    IrValueParameterImpl(
+                            startOffset, endOffset,
+                            DECLARATION_ORIGIN_ENUM,
+                            IrValueParameterSymbolImpl(),
+                            Name.identifier(name),
+                            index,
+                            type,
+                            varargElementType = null,
+                            isCrossinline = false,
+                            isNoinline = false,
+                            isHidden = false,
+                            isAssignable = false
+                    ).apply {
+                        parent = loweredConstructor
                     }
 
             loweredConstructor.valueParameters += createSynthesizedValueParameter(0, "name", context.irBuiltIns.stringType)

@@ -17,12 +17,12 @@ dependencies {
 
     testImplementation(projectTests(":generators:test-generator"))
 
-    testImplementation(platform("org.junit:junit-bom:5.7.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.junit.platform:junit-platform-commons:1.7.0")
+    testApi(platform("org.junit:junit-bom:5.7.0"))
+    testApi("org.junit.jupiter:junit-jupiter")
+    testApi("org.junit.platform:junit-platform-commons:1.7.0")
     testApi(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
-    testImplementation(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
 
     testImplementation(intellijDep()) {
         // This dependency is needed only for FileComparisonFailure
@@ -88,5 +88,3 @@ projectTest(parallel = true, jUnit5Enabled = true) {
 }
 
 testsJar()
-
-val generateTests by generator("org.jetbrains.kotlin.test.generators.GenerateNewCompilerTestsKt")

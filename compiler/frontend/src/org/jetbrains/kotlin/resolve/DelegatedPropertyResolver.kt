@@ -545,7 +545,12 @@ class DelegatedPropertyResolver(
             traceToResolveDelegatedProperty, false, delegateExpression, ContextDependency.DEPENDENT
         )
 
-        var delegateType = delegateTypeInfo.type ?: return null
+        if (delegateTypeInfo.type == null) {
+            traceToResolveDelegatedProperty.commit()
+            return null
+        }
+
+        var delegateType = delegateTypeInfo.type
         var delegateDataFlow = delegateTypeInfo.dataFlowInfo
 
         val delegateTypeConstructor = delegateType.constructor

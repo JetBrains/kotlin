@@ -44,6 +44,11 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
     }
 
+    @TestMetadata("kt24258.kt")
+    public void testKt24258() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/kt24258.kt");
+    }
+
     @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

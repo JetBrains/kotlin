@@ -24,9 +24,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrValueParameter : IrValueDeclaration(), IrSymbolDeclaration<IrValueParameterSymbol> {
+abstract class IrValueParameter : IrValueDeclaration() {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ParameterDescriptor
+    abstract override val symbol: IrValueParameterSymbol
 
     abstract val index: Int
     abstract var varargElementType: IrType?

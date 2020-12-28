@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
@@ -109,7 +110,7 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
         -> {
             val cache = session.cache
             val file = resolveState.getFirFile(this, cache)
-                ?: error("Fir file was not found for\n${render()}\n${ktDeclaration.getElementTextInContext()}")
+                ?: error("Fir file was not found for\n${render()}\n${(psi as? KtElement)?.getElementTextInContext()}")
             cache.firFileLockProvider.withReadLock(file) { action(this) }
         }
         else -> action(this)

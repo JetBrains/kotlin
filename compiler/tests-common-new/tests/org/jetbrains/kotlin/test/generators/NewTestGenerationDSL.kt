@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.generators.InconsistencyChecker
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.testGroupSuite
 
-fun generateNewTestGroupSuite(
+fun generateTestGroupSuiteWithJUnit5(
     args: Array<String>,
     init: TestGroupSuite.() -> Unit
 ) {
-    generateNewTestGroupSuite(InconsistencyChecker.hasDryRunArg(args), init)
+    generateTestGroupSuiteWithJUnit5(InconsistencyChecker.hasDryRunArg(args), init)
 }
 
-fun generateNewTestGroupSuite(
+fun generateTestGroupSuiteWithJUnit5(
     dryRun: Boolean = false,
     init: TestGroupSuite.() -> Unit
 ) {

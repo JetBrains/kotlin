@@ -9,6 +9,7 @@
 #include <atomic>
 #include <pthread.h>
 
+#include "ObjectFactory.hpp"
 #include "GlobalsRegistry.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
@@ -26,7 +27,8 @@ public:
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         stableRefThreadQueue_(StableRefRegistry::Instance()),
-        state_(ThreadState::kRunnable) {}
+        state_(ThreadState::kRunnable),
+        objectFactoryThreadQueue_(ObjectFactory::Instance()) {}
 
     ~ThreadData() = default;
 
@@ -42,12 +44,15 @@ public:
 
     ThreadState setState(ThreadState state) noexcept { return state_.exchange(state); }
 
+    ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
+
 private:
     const pthread_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;
     std::atomic<ThreadState> state_;
+    ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
 };
 
 } // namespace mm

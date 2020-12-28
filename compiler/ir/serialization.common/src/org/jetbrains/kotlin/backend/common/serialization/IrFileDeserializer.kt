@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
@@ -1009,20 +1010,16 @@ abstract class IrFileDeserializer(
         val result = symbolTable.run {
             if (isGlobal) {
                 val p = deserializeIrSymbolToDeclare(proto.base.symbol)
-                val symbol = p.first
+                val symbol = p.first as IrTypeParameterSymbol
                 sig = p.second
-                val descriptor = (symbol as IrTypeParameterSymbol).descriptor
-                declareGlobalTypeParameterFromLinker(descriptor, sig, factory)
+                declareGlobalTypeParameter(sig, { symbol }, factory)
             } else {
                 val symbolData = BinarySymbolData
                     .decode(proto.base.symbol)
                 sig = deserializeIdSignature(symbolData.signatureId)
-                val descriptor = WrappedTypeParameterDescriptor()
-                declareScopedTypeParameterFromLinker(descriptor, sig, factory)
+                declareScopedTypeParameter(sig, { IrTypeParameterSymbolImpl() }, factory)
             }
         }
-
-        (result.descriptor as? WrappedTypeParameterDescriptor)?.bind(result)
 
         // make sure this symbol is known to linker
         referenceIrSymbol(result.symbol, sig)
@@ -1049,9 +1046,6 @@ abstract class IrFileDeserializer(
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
-
-                (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
-                (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
             }
         }
 
@@ -1059,7 +1053,7 @@ abstract class IrFileDeserializer(
         withDeserializedIrDeclarationBase(proto.base) { symbol, signature, startOffset, endOffset, origin, fcode ->
             val flags = ClassFlags.decode(fcode)
 
-            symbolTable.declareClassFromLinker((symbol as IrClassSymbol).descriptor, signature) {
+            symbolTable.declareClass(signature, { symbol as IrClassSymbol }) {
                 irFactory.createClass(
                     startOffset, endOffset, origin,
                     it,
@@ -1086,15 +1080,14 @@ abstract class IrFileDeserializer(
 
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
-                (descriptor as? WrappedClassDescriptor)?.bind(this)
-
                 fakeOverrideBuilder.enqueueClass(this, signature)
             }
         }
 
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias): IrTypeAlias =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
-            symbolTable.declareTypeAliasFromLinker((symbol as IrTypeAliasSymbol).descriptor, uniqId) {
+            require(symbol is IrTypeAliasSymbol)
+            symbolTable.declareTypeAlias(uniqId, { symbol }) {
                 val flags = TypeAliasFlags.decode(fcode)
                 val nameType = BinaryNameAndType.decode(proto.nameType)
                 irFactory.createTypeAlias(
@@ -1108,17 +1101,13 @@ abstract class IrFileDeserializer(
                 )
             }.usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true)
-
-                (descriptor as? WrappedTypeAliasDescriptor)?.bind(this)
             }
         }
 
     private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration): IrErrorDeclaration {
         require(allowErrorNodes) { "IrErrorDeclaration found but error code is not allowed" }
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        val descriptor = WrappedErrorDescriptor()
-        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset, descriptor).also {
-            descriptor.bind(it)
+        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset).also {
             it.parent = parentsStack.peek()!!
         }
     }
@@ -1204,7 +1193,7 @@ abstract class IrFileDeserializer(
         proto: ProtoFunctionBase,
         block: (IrFunctionSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
     ): T = withDeserializedIrDeclarationBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
-        symbolTable.withScope(symbol.descriptor) {
+        symbolTable.withScope(symbol) {
             block(symbol as IrFunctionSymbol, idSig, startOffset, endOffset, origin, fcode).usingParent {
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, false)
                 val nameType = BinaryNameAndType.decode(proto.nameType)
@@ -1227,7 +1216,7 @@ abstract class IrFileDeserializer(
     private fun deserializeIrFunction(proto: ProtoFunction): IrSimpleFunction {
         return withDeserializedIrFunctionBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
             val flags = FunctionFlags.decode(fcode)
-            symbolTable.declareSimpleFunctionFromLinker(symbol.descriptor, idSig) {
+            symbolTable.declareSimpleFunction(idSig, { symbol as IrSimpleFunctionSymbol }) {
                 val nameType = BinaryNameAndType.decode(proto.base.nameType)
                 irFactory.createFunction(
                     startOffset, endOffset, origin,
@@ -1247,8 +1236,6 @@ abstract class IrFileDeserializer(
                 )
             }.apply {
                 overriddenSymbols = proto.overriddenList.map { deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
-
-                (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }
         }
     }
@@ -1268,22 +1255,18 @@ abstract class IrFileDeserializer(
             ).apply {
                 if (proto.hasInitializer())
                     initializer = deserializeExpression(proto.initializer)
-
-                (descriptor as? WrappedVariableDescriptor)?.bind(this)
             }
         }
 
     private fun deserializeIrEnumEntry(proto: ProtoEnumEntry): IrEnumEntry =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, _ ->
-            symbolTable.declareEnumEntryFromLinker((symbol as IrEnumEntrySymbol).descriptor, uniqId) {
+            symbolTable.declareEnumEntry(uniqId, { symbol as IrEnumEntrySymbol }) {
                 irFactory.createEnumEntry(startOffset, endOffset, origin, it, deserializeName(proto.name))
             }.apply {
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
                 if (proto.hasInitializer())
                     initializerExpression = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
-
-                (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
             }
         }
 
@@ -1292,16 +1275,15 @@ abstract class IrFileDeserializer(
             irFactory.createAnonymousInitializer(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
 //                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
                 body = deserializeStatementBody(proto.body) as IrBlockBody
-
-                (descriptor as? WrappedClassDescriptor)?.bind(parentsStack.peek() as IrClass)
             }
         }
 
     private fun deserializeIrConstructor(proto: ProtoConstructor): IrConstructor =
         withDeserializedIrFunctionBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
+            require(symbol is IrConstructorSymbol)
             val flags = FunctionFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.base.nameType)
-            symbolTable.declareConstructorFromLinker((symbol as IrConstructorSymbol).descriptor, idSig) {
+            symbolTable.declareConstructor(idSig, { symbol }) {
                 irFactory.createConstructor(
                     startOffset, endOffset, origin,
                     it,
@@ -1313,8 +1295,6 @@ abstract class IrFileDeserializer(
                     flags.isPrimary,
                     flags.isExpect
                 )
-            }.apply {
-                (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
             }
         }
 
@@ -1322,10 +1302,11 @@ abstract class IrFileDeserializer(
 
     private fun deserializeIrField(proto: ProtoField): IrField =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
+            require(symbol is IrFieldSymbol)
             val nameType = BinaryNameAndType.decode(proto.nameType)
             val type = deserializeIrType(nameType.typeIndex)
             val flags = FieldFlags.decode(fcode)
-            symbolTable.declareFieldFromLinker((symbol as IrFieldSymbol).descriptor, uniqId) {
+            symbolTable.declareField(uniqId, { symbol }) {
                 irFactory.createField(
                     startOffset, endOffset, origin,
                     it,
@@ -1342,8 +1323,6 @@ abstract class IrFileDeserializer(
                         initializer = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
                     }
                 }
-
-                (descriptor as? WrappedFieldDescriptor)?.bind(this)
             }
         }
 
@@ -1362,15 +1341,14 @@ abstract class IrFileDeserializer(
                 getter = deserializeIrFunction(proto.getter)
                 if (proto.hasSetter())
                     setter = deserializeIrFunction(proto.setter)
-
-                (descriptor as? WrappedVariableDescriptorWithAccessor)?.bind(this)
             }
         }
 
     private fun deserializeIrProperty(proto: ProtoProperty): IrProperty =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
+            require(symbol is IrPropertySymbol)
             val flags = PropertyFlags.decode(fcode)
-            symbolTable.declarePropertyFromLinker((symbol as IrPropertySymbol).descriptor, uniqId) {
+            symbolTable.declareProperty(uniqId, { symbol }) {
                 irFactory.createProperty(
                     startOffset, endOffset, origin,
                     it,
@@ -1398,17 +1376,9 @@ abstract class IrFileDeserializer(
                 }
                 if (proto.hasBackingField()) {
                     backingField = deserializeIrField(proto.backingField).also {
-                        // A property symbol and its field symbol share the same descriptor.
-                        // Unfortunately symbol deserialization doesn't know anything about that.
-                        // So we can end up with two wrapped property descriptors for property and its field.
-                        // In that case we need to bind the field's one here.
-                        if (descriptor != it.descriptor)
-                            (it.descriptor as? WrappedPropertyDescriptor)?.bind(this)
                         it.correspondingPropertySymbol = symbol
                     }
                 }
-
-                (descriptor as? WrappedPropertyDescriptor)?.bind(this)
             }
         }
 

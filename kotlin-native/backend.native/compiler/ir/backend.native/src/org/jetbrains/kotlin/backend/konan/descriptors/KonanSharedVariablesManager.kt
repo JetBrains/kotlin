@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -44,17 +43,14 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
         }
 
         return with(originalDeclaration) {
-            WrappedVariableDescriptor().let {
-                IrVariableImpl(
-                        startOffset, endOffset, origin,
-                        IrVariableSymbolImpl(it), name, refConstructorCall.type,
-                        isVar = false,
-                        isConst = false,
-                        isLateinit = false
-                ).apply {
-                    it.bind(this)
-                    initializer = refConstructorCall
-                }
+            IrVariableImpl(
+                    startOffset, endOffset, origin,
+                    IrVariableSymbolImpl(), name, refConstructorCall.type,
+                    isVar = false,
+                    isConst = false,
+                    isLateinit = false
+            ).apply {
+                initializer = refConstructorCall
             }
         }
     }

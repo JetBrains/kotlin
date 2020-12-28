@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.DefaultsDsl
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -48,7 +49,7 @@ class LanguageVersionSettingsBuilder {
         analysisFlags[flag] = value
     }
 
-    fun configureUsingDirectives(directives: RegisteredDirectives) {
+    fun configureUsingDirectives(directives: RegisteredDirectives, environmentConfigurators: List<EnvironmentConfigurator>) {
         val apiVersion = directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)
         if (apiVersion != null) {
             this.apiVersion = apiVersion
@@ -67,11 +68,18 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)),
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
             analysisFlag(JvmAnalysisFlags.sanitizeParentheses, trueOrNull(LanguageSettingsDirectives.SANITIZE_PARENTHESES in directives)),
+            analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),
 
             analysisFlag(AnalysisFlags.explicitApiVersion, trueOrNull(apiVersion != null)),
         )
 
         analysisFlags.forEach { withFlag(it.first, it.second) }
+
+        environmentConfigurators.forEach {
+            it.provideAdditionalAnalysisFlags(directives).entries.forEach { (flag, value) ->
+                withFlag(flag, value)
+            }
+        }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
     }

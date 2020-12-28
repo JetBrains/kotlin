@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
@@ -126,10 +127,13 @@ fun AnnotationDescriptor.getStringValue(name: String): String = this.getStringVa
 
 private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
     val result = mutableSetOf<FqName>()
+    val packageFragmentProvider = (module as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
 
     fun getSubPackages(fqName: FqName) {
         result.add(fqName)
-        module.getSubPackagesOf(fqName) { true }.forEach { getSubPackages(it) }
+        val subPackages = packageFragmentProvider?.getSubPackagesOf(fqName) { true }
+                ?: module.getSubPackagesOf(fqName) { true }
+        subPackages.forEach { getSubPackages(it) }
     }
 
     getSubPackages(FqName.ROOT)

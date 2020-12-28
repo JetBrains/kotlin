@@ -95,18 +95,20 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var irCheckLocalNames: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xallow-jvm-ir-dependencies",
-        description = "When not using the IR backend, do not report errors on those classes in dependencies, " +
-                "which were compiled by the IR backend"
+        value = "-Xallow-unstable-dependencies",
+        description = "Do not report errors on classes in dependencies, which were compiled by an unstable version of the Kotlin compiler"
     )
-    var allowJvmIrDependencies: Boolean by FreezableVar(false)
+    var allowUnstableDependencies: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xir-binary-with-stable-abi",
-        description = "When using the IR backend, produce binaries which can be read by non-IR backend.\n" +
-                "The author is responsible for verifying that the resulting binaries do indeed have the correct ABI"
+        value = "-Xabi-stability",
+        valueDescription = "{stable|unstable}",
+        description = "When using unstable compiler features such as FIR, use 'stable' to mark generated class files as stable\n" +
+                "to prevent diagnostics from stable compilers at the call site.\n" +
+                "When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable\n" +
+                "to force diagnostics to be reported."
     )
-    var isIrWithStableAbi: Boolean by FreezableVar(false)
+    var abiStability: String? by FreezableVar(null)
 
     @Argument(
         value = "-Xir-do-not-clear-binding-context",
@@ -446,7 +448,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
-        result[AnalysisFlags.reportErrorsOnIrDependencies] = !useIR && !useFir && !allowJvmIrDependencies
+        result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies || useFir
         result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
         return result
     }

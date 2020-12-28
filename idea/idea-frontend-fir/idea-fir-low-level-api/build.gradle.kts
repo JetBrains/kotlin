@@ -31,7 +31,7 @@ dependencies {
     testCompile(projectTests(":idea"))
     testCompile(project(":idea:idea-fir"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:analysis-tests"))
+    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))

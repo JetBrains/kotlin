@@ -16,7 +16,7 @@ dependencies {
 
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:analysis-tests"))
+    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

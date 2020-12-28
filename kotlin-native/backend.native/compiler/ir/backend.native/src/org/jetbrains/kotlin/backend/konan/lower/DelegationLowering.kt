@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
@@ -84,11 +83,11 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
         val kPropertiesFieldType: IrType = context.ir.symbols.array.typeWith(kPropertyImplType)
 
-        val kPropertiesField = WrappedFieldDescriptor().let {
+        val kPropertiesField =
             IrFieldImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                    IrFieldSymbolImpl(it),
+                    IrFieldSymbolImpl(),
                     "KPROPERTIES".synthesizedName,
                     kPropertiesFieldType,
                     DescriptorVisibilities.PRIVATE,
@@ -96,11 +95,9 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     isExternal = false,
                     isStatic = true,
             ).apply {
-                it.bind(this)
                 parent = irFile
                 annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.sharedImmutable.owner)
             }
-        }
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 

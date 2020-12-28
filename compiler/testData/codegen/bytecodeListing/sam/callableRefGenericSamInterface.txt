@@ -14,7 +14,9 @@ final class<null>  TKt$sam$Sam$0 {
     // source: 't.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method get(): java.lang.Object
+    enclosing class TKt
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
+    inner (anonymous) class TKt$sam$Sam$0
 }
 
 @kotlin.Metadata
@@ -23,4 +25,5 @@ public final class<null>  TKt {
     public final static <<T:Ljava/lang/Object;>()TT;> method foo(): java.lang.Object
     public final static <<T:Ljava/lang/Object;>()TT;> method genericSam(): java.lang.Object
     inner (anonymous) class TKt$genericSam$1
+    inner (anonymous) class TKt$sam$Sam$0
 }

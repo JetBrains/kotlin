@@ -49,11 +49,20 @@ class TestConfigurationImpl(
         }
     }
 
+    private val environmentConfigurators: List<EnvironmentConfigurator> =
+        environmentConfigurators.map { it.invoke(testServices) }.also { configurators ->
+            configurators.flatMapTo(allDirectives) { it.directivesContainers }
+            for (configurator in configurators) {
+                configurator.additionalServices.forEach { testServices.register(it) }
+            }
+        }
+
     override val moduleStructureExtractor: ModuleStructureExtractor = ModuleStructureExtractorImpl(
         testServices,
         additionalSourceProviders.map { it.invoke(testServices) }.also {
             it.flatMapTo(allDirectives) { provider -> provider.directives }
-        }
+        },
+        this.environmentConfigurators
     )
 
     override val metaTestConfigurators: List<MetaTestConfigurator> = metaTestConfigurators.map {
@@ -75,15 +84,7 @@ class TestConfigurationImpl(
             val sourceFileProvider = SourceFileProviderImpl(sourceFilePreprocessors)
             register(SourceFileProvider::class, sourceFileProvider)
 
-            val configurators = environmentConfigurators.map { it.invoke(this) }
-            configurators.flatMapTo(allDirectives) { it.directivesContainers }
-            for (configurator in configurators) {
-                configurator.additionalServices.forEach { register(it) }
-            }
-            val environmentProvider = CompilerConfigurationProviderImpl(
-                rootDisposable,
-                configurators
-            )
+            val environmentProvider = CompilerConfigurationProviderImpl(rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)

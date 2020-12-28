@@ -16,26 +16,16 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
-import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 @Suppress("UNCHECKED_CAST")
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun <T : IrElement> T.deepCopyWithVariables(): T {
-    val descriptorsRemapper = object : DescriptorsRemapper {
-        override fun remapDeclaredVariable(descriptor: VariableDescriptor) = WrappedVariableDescriptor()
-    }
-
-    val symbolsRemapper = DeepCopySymbolRemapper(descriptorsRemapper)
+    val symbolsRemapper = DeepCopySymbolRemapper(NullDescriptorsRemapper)
     acceptVoid(symbolsRemapper)
 
     val typesRemapper = DeepCopyTypeRemapper(symbolsRemapper)
@@ -44,12 +34,6 @@ fun <T : IrElement> T.deepCopyWithVariables(): T {
             object : DeepCopyIrTreeWithSymbols(symbolsRemapper, typesRemapper) {
                 override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop {
                     return irLoop
-                }
-
-                override fun visitVariable(declaration: IrVariable): IrVariable {
-                    val variable = super.visitVariable(declaration)
-                    variable.descriptor.let { if (it is WrappedVariableDescriptor) it.bind(variable) }
-                    return variable
                 }
             },
             null

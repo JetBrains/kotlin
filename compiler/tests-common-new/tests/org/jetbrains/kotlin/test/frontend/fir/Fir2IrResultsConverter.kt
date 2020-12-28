@@ -16,10 +16,9 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -77,20 +76,23 @@ class Fir2IrResultsConverter(
         ).build()
 
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
-        val irProviders = generateTypicalIrProviderList(
-            irModuleFragment.descriptor, irModuleFragment.irBuiltins, symbolTable, extensions = extensions
+        val irProviders = codegenFactory.configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(
+            irModuleFragment,
+            symbolTable,
+            extensions
         )
 
         return IrBackendInput(
-            generationState,
-            irModuleFragment,
-            symbolTable,
-            sourceManager,
-            phaseConfig,
-            irProviders,
-            extensions,
-        ) { context, irClass, _, serializationBindings, parent ->
-            FirMetadataSerializer(inputArtifact.session, context, irClass, serializationBindings, components, parent)
-        }
+            JvmIrCodegenFactory.JvmIrBackendInput(
+                generationState,
+                irModuleFragment,
+                symbolTable,
+                sourceManager,
+                phaseConfig,
+                irProviders,
+                extensions,
+                FirJvmBackendExtension(inputArtifact.session, components)
+            )
+        )
     }
 }

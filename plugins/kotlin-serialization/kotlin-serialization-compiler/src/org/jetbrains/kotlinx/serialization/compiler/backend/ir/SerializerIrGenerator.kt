@@ -66,7 +66,7 @@ open class SerializerIrGenerator(
         lateinit var prop: IrProperty
 
         // how to (auto)create backing field and getter/setter?
-        compilerContext.symbolTable.withReferenceScope(irClass.descriptor) {
+        compilerContext.symbolTable.withReferenceScope(irClass) {
             prop = generateSimplePropertyWithBackingField(desc, irClass)
 
             // TODO: Do not use descriptors here
@@ -84,7 +84,7 @@ open class SerializerIrGenerator(
         }
 
         anonymousInit.buildWithScope { initIrBody ->
-            compilerContext.symbolTable.withReferenceScope(initIrBody.descriptor) {
+            compilerContext.symbolTable.withReferenceScope(initIrBody) {
                 initIrBody.body =
                     DeclarationIrBuilder(compilerContext, initIrBody.symbol, initIrBody.startOffset, initIrBody.endOffset).irBlockBody {
                         val localDesc = irTemporary(

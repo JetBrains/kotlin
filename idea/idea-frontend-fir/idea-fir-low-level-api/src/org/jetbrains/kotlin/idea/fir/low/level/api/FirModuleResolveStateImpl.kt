@@ -44,7 +44,6 @@ internal class FirModuleResolveStateImpl(
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
 ) : FirModuleResolveState() {
     override val rootModuleSession: FirIdeSourcesSession get() = sessionProvider.rootModuleSession
-    override val firTransformerProvider: FirTransformerProvider get() = firFileBuilder.firPhaseRunner.transformerProvider
     val fileStructureCache = FileStructureCache(firFileBuilder, firLazyDeclarationResolver)
     val elementBuilder = FirElementBuilder()
     private val diagnosticsCollector = DiagnosticsCollector(fileStructureCache, rootModuleSession.cache)
@@ -53,7 +52,7 @@ internal class FirModuleResolveStateImpl(
         sessionProvider.getSession(moduleInfo)!!
 
     override fun getOrBuildFirFor(element: KtElement): FirElement =
-        elementBuilder.getOrBuildFirFor(element, rootModuleSession.cache, fileStructureCache)
+        elementBuilder.getOrBuildFirFor(element, firFileBuilder, rootModuleSession.cache, fileStructureCache)
 
     override fun getFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)

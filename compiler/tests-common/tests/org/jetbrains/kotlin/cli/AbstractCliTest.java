@@ -24,7 +24,7 @@ import kotlin.io.FilesKt;
 import kotlin.io.path.PathsKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.checkers.AbstractForeignAnnotationsTestKt;
+import org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.Usage;
@@ -261,7 +261,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(TESTDATA_DIR, testDataDir)
                 .replace(
                         "$FOREIGN_ANNOTATIONS_DIR$",
-                        new File(AbstractForeignAnnotationsTestKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
+                        new File(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
                 ).replace(
                         "$JDK_15$",
                         KtTestUtil.getJdk15Home().getPath()

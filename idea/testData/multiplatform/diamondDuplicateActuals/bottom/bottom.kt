@@ -5,7 +5,7 @@ actual class A {
     fun fromBottom(): Int = 0
 }
 
-fun main() {
+fun <!LINE_MARKER!>main<!>() {
     A().foo()
 
     // Any behaviour is acceptable, as the code is erroneous.

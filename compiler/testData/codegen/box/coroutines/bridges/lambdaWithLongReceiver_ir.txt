@@ -3,8 +3,8 @@
 final class LambdaWithLongReceiverKt$box$1$1 {
     // source: 'lambdaWithLongReceiver.kt'
     enclosing method LambdaWithLongReceiverKt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    private synthetic field J$0: long
     field label: int
-    private synthetic field p$: long
     inner (anonymous) class LambdaWithLongReceiverKt$box$1
     inner (anonymous) class LambdaWithLongReceiverKt$box$1$1
     method <init>(p0: kotlin.coroutines.Continuation): void

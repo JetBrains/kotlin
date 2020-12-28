@@ -197,6 +197,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/innerClassWithDelegatingConstructor.kt");
         }
 
+        @TestMetadata("kt19306.kt")
+        public void testKt19306() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/kt19306.kt");
+        }
+
         @TestMetadata("kt31649.kt")
         public void testKt31649() throws Exception {
             runTest("compiler/testData/ir/irText/classes/kt31649.kt");
@@ -1848,6 +1853,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
         }
 
+        @TestMetadata("readWriteProperty.kt")
+        public void testReadWriteProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");
+        }
+
         @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
         public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
@@ -1863,9 +1873,19 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
         }
 
+        @TestMetadata("SyntheticSetterType.kt")
+        public void testSyntheticSetterType() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SyntheticSetterType.kt");
+        }
+
         @TestMetadata("throwableStackTrace.kt")
         public void testThrowableStackTrace() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
+        }
+
+        @TestMetadata("typeParameterFromJavaClass.kt")
+        public void testTypeParameterFromJavaClass() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/typeParameterFromJavaClass.kt");
         }
 
         @TestMetadata("typeVariableAfterBuildMap.kt")

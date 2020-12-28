@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
@@ -28,7 +29,8 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
             CachedValueProvider.Result(
                 ConcurrentHashMap<ModuleInfo, KtAnalysisSession>(),
                 PsiModificationTracker.MODIFICATION_COUNT,
-                ProjectRootModificationTracker.getInstance(project)
+                ProjectRootModificationTracker.getInstance(project),
+                project.createProjectWideOutOfBlockModificationTracker()
             )
         }
 
@@ -37,7 +39,7 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
             @Suppress("DEPRECATION")
             KtFirAnalysisSession.createForElement(contextElement)
         }.apply {
-            assertIsValid()
+            assertIsValidAndAccessible()
         }
     }
 

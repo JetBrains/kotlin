@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -113,7 +111,7 @@ class FakeOverrideBuilder(
         // But to create and link that symbol we should already have the signature computed.
         // To break this loop we use temp symbol in correspondingProperty.
 
-        val tempSymbol = IrPropertySymbolImpl(WrappedPropertyDescriptor()).also {
+        val tempSymbol = IrPropertySymbolImpl().also {
             it.bind(declaration as IrProperty)
         }
         declaration.getter?.let {
@@ -142,9 +140,9 @@ class FakeOverrideBuilder(
     private fun declareFunctionFakeOverride(declaration: IrFakeOverrideFunction, signature: IdSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
-        val descriptor = symbol?.descriptor ?: WrappedSimpleFunctionDescriptor()
-        symbolTable.declareSimpleFunctionFromLinker(descriptor, signature) {
-            assert(it === symbol || symbol == null)
+            ?: symbolTable.referenceSimpleFunctionFromLinker(signature)
+        symbolTable.declareSimpleFunction(signature, { symbol }) {
+            assert(it === symbol)
             declaration.acquireSymbol(it)
         }
     }
@@ -152,9 +150,9 @@ class FakeOverrideBuilder(
     private fun declarePropertyFakeOverride(declaration: IrFakeOverrideProperty, signature: IdSignature) {
         val parent = declaration.parentAsClass
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
-        val descriptor = symbol?.descriptor ?: WrappedPropertyDescriptor()
-        symbolTable.declarePropertyFromLinker(descriptor, signature) {
-            assert(it === symbol || symbol == null)
+            ?: symbolTable.referencePropertyFromLinker(signature)
+        symbolTable.declareProperty(signature, { symbol }) {
+            assert(it === symbol)
             declaration.acquireSymbol(it)
         }
     }

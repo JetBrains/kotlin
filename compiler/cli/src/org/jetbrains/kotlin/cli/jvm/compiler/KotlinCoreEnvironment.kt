@@ -253,7 +253,7 @@ class KotlinCoreEnvironment private constructor(
             updateClasspath(roots.map { JavaSourceRoot(it, null) })
         })
 
-        LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_15_PREVIEW
+        project.setupHighestLanguageLevel()
     }
 
     private fun collectAdditionalSources(project: MockProject) {

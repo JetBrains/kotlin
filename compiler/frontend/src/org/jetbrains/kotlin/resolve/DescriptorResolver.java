@@ -328,7 +328,8 @@ public class DescriptorResolver {
             }
 
             destructuringVariables = () -> {
-                assert owner.getDispatchReceiverParameter() == null
+                ReceiverParameterDescriptor dispatchReceiver = owner.getDispatchReceiverParameter();
+                assert dispatchReceiver == null || dispatchReceiver.getContainingDeclaration() instanceof ScriptDescriptor
                         : "Destructuring declarations are only be parsed for lambdas, and they must not have a dispatch receiver";
                 LexicalScope scopeForDestructuring =
                         ScopeUtilsKt.createScopeForDestructuring(scope, owner.getExtensionReceiverParameter());

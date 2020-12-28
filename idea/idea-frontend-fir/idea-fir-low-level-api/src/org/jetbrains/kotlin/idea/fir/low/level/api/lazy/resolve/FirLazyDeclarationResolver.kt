@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
@@ -119,6 +120,8 @@ internal class FirLazyDeclarationResolver(
         }
 
         var currentPhase = nonLazyPhase
+        val scopeSession = ScopeSession()
+
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
             if (currentPhase.pluginPhase) continue
@@ -129,6 +132,7 @@ internal class FirLazyDeclarationResolver(
                 moduleFileCache,
                 provider,
                 currentPhase,
+                scopeSession,
                 towerDataContextCollector
             )
         }
@@ -140,49 +144,76 @@ internal class FirLazyDeclarationResolver(
         moduleFileCache: ModuleFileCache,
         provider: FirProvider,
         phase: FirResolvePhase,
+        scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
 
-        val designation = mutableListOf<FirDeclaration>(containerFirFile)
+        val designation = nonLocalDeclarationToResolve.getDesignation(containerFirFile, provider, moduleFileCache)
 
-        if (nonLocalDeclarationToResolve !is FirFile) {
-            val ktDeclaration = firDeclarationToResolve.ktDeclaration
-            designation += ktDeclaration.parentsOfType<KtClassOrObject>()
+        if (designation.all { it.resolvePhase >= phase }) {
+            return
+        }
+
+        val transformer = phase.createLazyTransformer(
+            designation,
+            firDeclarationToResolve,
+            containerFirFile,
+            scopeSession,
+            towerDataContextCollector
+        )
+
+        firFileBuilder.firPhaseRunner.runPhaseWithCustomResolve(phase) {
+            containerFirFile.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
+        }
+    }
+
+    private fun FirResolvePhase.createLazyTransformer(
+        designation: List<FirDeclaration>,
+        targetDeclaration: FirDeclaration,
+        containerFirFile: FirFile,
+        scopeSession: ScopeSession,
+        towerDataContextCollector: FirTowerDataContextCollector?
+    ) = when (this) {
+        FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
+            designation.iterator(),
+            targetDeclaration,
+            containerFirFile.session,
+            scopeSession,
+        )
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
+            designation.iterator(),
+            targetDeclaration,
+            containerFirFile.session,
+            scopeSession,
+        )
+        FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
+            designation.iterator(),
+            targetDeclaration,
+            containerFirFile.session,
+            scopeSession,
+            towerDataContextCollector
+        )
+        else -> error("Non-lazy phase $this")
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun FirDeclaration.getDesignation(
+        containerFirFile: FirFile,
+        provider: FirProvider,
+        moduleFileCache: ModuleFileCache
+    ): List<FirDeclaration> = buildList {
+        if (this !is FirFile) {
+            val ktDeclaration = ktDeclaration
+            ktDeclaration.parentsOfType<KtClassOrObject>(withSelf = true)
                 .filter { it !is KtEnumEntry }
                 .map { it.findSourceNonLocalFirDeclaration(firFileBuilder, provider.symbolProvider, moduleFileCache, containerFirFile) }
                 .toList()
                 .asReversed()
-            if (nonLocalDeclarationToResolve is FirCallableDeclaration<*>) {
-                designation += nonLocalDeclarationToResolve
+                .let(::addAll)
+            if (this@getDesignation is FirCallableDeclaration<*>) {
+                add(this@getDesignation)
             }
-        }
-        if (designation.all { it.resolvePhase >= phase }) {
-            return
-        }
-        val scopeSession = firFileBuilder.firPhaseRunner.transformerProvider.getScopeSession(containerFirFile.session)
-        val transformer = when (phase) {
-            FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
-                designation.iterator(),
-                containerFirFile.session,
-                scopeSession,
-            )
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
-                designation.iterator(),
-                containerFirFile.session,
-                scopeSession,
-            )
-            FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
-                designation.iterator(),
-                containerFirFile.session,
-                scopeSession,
-                towerDataContextCollector
-            )
-            else -> error("Non-lazy phase $phase")
-        }
-
-        firFileBuilder.firPhaseRunner.runPhaseWithCustomResolve(phase) {
-            containerFirFile.transform<FirFile, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
         }
     }
 

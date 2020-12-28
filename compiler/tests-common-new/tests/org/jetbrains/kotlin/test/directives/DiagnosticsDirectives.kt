@@ -55,4 +55,11 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
               is enabled in test 
         """.trimIndent()
     )
+
+    val RENDER_PACKAGE by stringDirective(
+        description = """
+            Dump declaration from packages listed in directive
+              (additional to root package)
+        """.trimIndent()
+    )
 }

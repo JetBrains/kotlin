@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -13,4 +14,9 @@ abstract class AbstractJdk9BlackBoxCodegenTest : AbstractCustomJDKBlackBoxCodege
     override fun getTestJdkKind(): TestJdkKind = TestJdkKind.FULL_JDK_9
     override fun getJdkHome(): File = KtTestUtil.getJdk9Home()
     override fun getPrefix(): String = "java9/box"
+}
+
+abstract class AbstractJdk9IrBlackBoxCodegenTest : AbstractJdk9BlackBoxCodegenTest() {
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 }

@@ -92,9 +92,12 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     }
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
-    val annotations = (this as? JavaClassifierType)?.annotations.orEmpty()
     return buildJavaTypeRef {
-        annotations.mapTo(this.annotations) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+        annotationBuilder = {
+            (this@toFirJavaTypeRef as? JavaClassifierType)?.annotations.orEmpty().map {
+                it.toFirAnnotationCall(session, javaTypeParameterStack)
+            }
+        }
         type = this@toFirJavaTypeRef
     }
 }
@@ -578,7 +581,7 @@ internal fun JavaValueParameter.toFirValueParameter(
         name = this@toFirValueParameter.name ?: Name.identifier("p$index")
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
         isVararg = this@toFirValueParameter.isVararg
-        addAnnotationsFrom(session, this@toFirValueParameter, javaTypeParameterStack)
+        annotationBuilder = { annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }}
     }
 }
 

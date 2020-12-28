@@ -70,7 +70,7 @@ interface IrFactory {
     fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
-        descriptor: DeclarationDescriptor,
+        descriptor: DeclarationDescriptor? = null,
     ): IrErrorDeclaration
 
     fun createField(

@@ -157,6 +157,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
 
     // Part of desugared x?.y
     object CheckedSafeCallSubject : FirFakeSourceElementKind()
+
+    // { it + 1} --> { it -> it + 1 }
+    // where `it` parameter declaration has fake source
+    object ItLambdaParameter : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

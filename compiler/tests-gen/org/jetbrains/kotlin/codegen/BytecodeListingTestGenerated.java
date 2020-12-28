@@ -1007,6 +1007,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMethodsInInlineClass.kt");
         }
 
+        @TestMetadata("genericChild.kt")
+        public void testGenericChild() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/genericChild.kt");
+        }
+
         @TestMetadata("inlineCharSequence.kt")
         public void testInlineCharSequence() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCharSequence.kt");
@@ -1543,6 +1548,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/sam/genericSamInterface.kt");
         }
 
+        @TestMetadata("kt16650.kt")
+        public void testKt16650() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/kt16650.kt");
+        }
+
         @TestMetadata("lambdaGenericFunInterface.kt")
         public void testLambdaGenericFunInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaGenericFunInterface.kt");
@@ -1563,6 +1573,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaSpecializedSamInterface.kt");
         }
 
+        @TestMetadata("reusedSamWrapperClasses.kt")
+        public void testReusedSamWrapperClasses() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/reusedSamWrapperClasses.kt");
+        }
+
         @TestMetadata("samAdapterAndInlinedOne.kt")
         public void testSamAdapterAndInlinedOne() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/samAdapterAndInlinedOne.kt");
@@ -1576,6 +1591,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("specializedSamInterface.kt")
         public void testSpecializedSamInterface() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/specializedSamInterface.kt");
+        }
+
+        @TestMetadata("wrapperInlinedFromAnotherClass.kt")
+        public void testWrapperInlinedFromAnotherClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/wrapperInlinedFromAnotherClass.kt");
         }
     }
 

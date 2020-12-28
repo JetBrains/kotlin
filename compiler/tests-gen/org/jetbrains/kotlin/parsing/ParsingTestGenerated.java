@@ -2273,6 +2273,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 runTest("compiler/testData/psi/recovery/kt2172.kt");
             }
 
+            @TestMetadata("kt24158.kt")
+            public void testKt24158() throws Exception {
+                runTest("compiler/testData/psi/recovery/kt24158.kt");
+            }
+
             @TestMetadata("kt5102.kt")
             public void testKt5102() throws Exception {
                 runTest("compiler/testData/psi/recovery/kt5102.kt");

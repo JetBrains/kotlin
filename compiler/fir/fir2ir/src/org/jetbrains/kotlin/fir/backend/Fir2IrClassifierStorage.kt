@@ -12,31 +12,28 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedTypeAliasDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeAliasSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrClassifierStorage(
@@ -143,11 +140,8 @@ class Fir2IrClassifierStorage(
         }
     }
 
-    internal fun getCachedLocalClass(classId: ClassId): IrClass? {
-        require(classId.isLocal) {
-            "As the function name implies, it ought to be used to look up _local_ classes."
-        }
-        return localStorage.getLocalClass(classId)
+    internal fun getCachedLocalClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
+        return localStorage.getLocalClass(lookupTag.toSymbol(session)!!.fir as FirClass<*>)
     }
 
     private fun FirRegularClass.enumClassModality(): Modality {
@@ -183,13 +177,11 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
-    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias {
-        if (signature == null) {
-            val descriptor = WrappedTypeAliasDescriptor()
-            return symbolTable.declareTypeAlias(descriptor, factory).apply { descriptor.bind(this) }
-        }
-        return symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }, factory)
-    }
+    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias =
+        if (signature == null)
+            factory(IrTypeAliasSymbolImpl())
+        else
+            symbolTable.declareTypeAlias(signature, { Fir2IrTypeAliasSymbol(signature) }, factory)
 
     fun registerTypeAlias(
         typeAlias: FirTypeAlias,
@@ -217,13 +209,11 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? = typeAliasCache[firTypeAlias]
 
-    private fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass {
-        if (signature == null) {
-            val descriptor = WrappedClassDescriptor()
-            return symbolTable.declareClass(descriptor, factory).apply { descriptor.bind(this) }
-        }
-        return symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }, factory)
-    }
+    private fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass =
+        if (signature == null)
+            factory(IrClassSymbolImpl())
+        else
+            symbolTable.declareClass(signature, { Fir2IrClassSymbol(signature) }, factory)
 
     fun registerIrClass(
         regularClass: FirRegularClass,
@@ -311,20 +301,15 @@ class Fir2IrClassifierStorage(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ): IrTypeParameter {
         require(index >= 0)
-        val descriptor = WrappedTypeParameterDescriptor()
         val origin = IrDeclarationOrigin.DEFINED
         val irTypeParameter = with(typeParameter) {
             convertWithOffsets { startOffset, endOffset ->
-                symbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
-                    irFactory.createTypeParameter(
-                        startOffset, endOffset, origin, symbol,
-                        name, if (index < 0) 0 else index,
-                        isReified,
-                        variance
-                    ).apply {
-                        descriptor.bind(this)
-                    }
-                }
+                irFactory.createTypeParameter(
+                    startOffset, endOffset, origin, IrTypeParameterSymbolImpl(),
+                    name, if (index < 0) 0 else index,
+                    isReified,
+                    variance
+                )
             }
         }
 
@@ -381,13 +366,11 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedIrEnumEntry(enumEntry: FirEnumEntry): IrEnumEntry? = enumEntryCache[enumEntry]
 
-    private fun declareIrEnumEntry(signature: IdSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
-        if (signature == null) {
-            val descriptor = WrappedEnumEntryDescriptor()
-            return symbolTable.declareEnumEntry(0, 0, IrDeclarationOrigin.DEFINED, descriptor, factory).apply { descriptor.bind(this) }
-        }
-        return symbolTable.declareEnumEntry(signature, { Fir2IrEnumEntrySymbol(signature) }, factory)
-    }
+    private fun declareIrEnumEntry(signature: IdSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry =
+        if (signature == null)
+            factory(IrEnumEntrySymbolImpl())
+        else
+            symbolTable.declareEnumEntry(signature, { Fir2IrEnumEntrySymbol(signature) }, factory)
 
     fun createIrEnumEntry(
         enumEntry: FirEnumEntry,
@@ -452,7 +435,8 @@ class Fir2IrClassifierStorage(
         firClass as FirRegularClass
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
-        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentId, firClassSymbol)!!
+        val parentClass = parentId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
+        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol)!!
         val symbol = Fir2IrClassSymbol(signature)
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareClass(signature, { symbol }) {

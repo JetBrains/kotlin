@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -59,11 +57,10 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
     val startOffset = inlinedClass.startOffset
     val endOffset = inlinedClass.endOffset
 
-    val descriptor = WrappedSimpleFunctionDescriptor()
     IrFunctionImpl(
             startOffset, endOffset,
             DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
-            IrSimpleFunctionSymbolImpl(descriptor),
+            IrSimpleFunctionSymbolImpl(),
             Name.special("<${inlinedClass.name}-box>"),
             DescriptorVisibilities.PUBLIC,
             Modality.FINAL,
@@ -77,11 +74,11 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
             isOperator = false,
             isInfix = false
     ).also { function ->
-        function.valueParameters = listOf(WrappedValueParameterDescriptor().let {
+        function.valueParameters = listOf(
             IrValueParameterImpl(
                     startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(it),
+                    IrValueParameterSymbolImpl(),
                     Name.identifier("value"),
                     index = 0,
                     varargElementType = null,
@@ -91,11 +88,8 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
                     isHidden = false,
                     isAssignable = false
             ).apply {
-                it.bind(this)
                 parent = function
-            }
-        })
-        descriptor.bind(function)
+            })
         function.parent = inlinedClass.getContainingFile()!!
     }
 }
@@ -116,11 +110,10 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
     val startOffset = inlinedClass.startOffset
     val endOffset = inlinedClass.endOffset
 
-    val descriptor = WrappedSimpleFunctionDescriptor()
     IrFunctionImpl(
             startOffset, endOffset,
             DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
-            IrSimpleFunctionSymbolImpl(descriptor),
+            IrSimpleFunctionSymbolImpl(),
             Name.special("<${inlinedClass.name}-unbox>"),
             DescriptorVisibilities.PUBLIC,
             Modality.FINAL,
@@ -134,11 +127,11 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
             isOperator = false,
             isInfix = false
     ).also { function ->
-        function.valueParameters = listOf(WrappedValueParameterDescriptor().let {
+        function.valueParameters = listOf(
             IrValueParameterImpl(
                     startOffset, endOffset,
                     IrDeclarationOrigin.DEFINED,
-                    IrValueParameterSymbolImpl(it),
+                    IrValueParameterSymbolImpl(),
                     Name.identifier("value"),
                     index = 0,
                     varargElementType = null,
@@ -148,11 +141,8 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
                     isHidden = false,
                     isAssignable = false
             ).apply {
-                it.bind(this)
                 parent = function
-            }
-        })
-        descriptor.bind(function)
+            })
         function.parent = inlinedClass.getContainingFile()!!
     }
 }

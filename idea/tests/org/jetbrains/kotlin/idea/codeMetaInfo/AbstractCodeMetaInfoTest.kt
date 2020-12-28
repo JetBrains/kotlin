@@ -218,7 +218,8 @@ class CodeMetaInfoTestCase(
 
 abstract class AbstractDiagnosticCodeMetaInfoTest : AbstractCodeMetaInfoTest() {
     override fun getConfigurations() = listOf(
-        DiagnosticCodeMetaInfoRenderConfiguration()
+        DiagnosticCodeMetaInfoRenderConfiguration(),
+        LineMarkerRenderConfiguration()
     )
 }
 

@@ -549,12 +549,11 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
         cFunctionName: String,
         isObjCMethod: Boolean
 ): IrSimpleFunction {
-    val bridgeDescriptor = WrappedSimpleFunctionDescriptor()
     val bridge = IrFunctionImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             IrDeclarationOrigin.DEFINED,
-            IrSimpleFunctionSymbolImpl(bridgeDescriptor),
+            IrSimpleFunctionSymbolImpl(),
             Name.identifier(cFunctionName),
             DescriptorVisibilities.PRIVATE,
             Modality.FINAL,
@@ -568,7 +567,6 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
             isOperator = false,
             isInfix = false
     )
-    bridgeDescriptor.bind(bridge)
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             symbols.symbolName.owner, cFunctionName)
@@ -1098,16 +1096,14 @@ private class ObjCBlockPointerValuePassing(
     private fun IrBuilderWithScope.generateKotlinFunctionClass(): IrConstructor {
         val symbols = stubs.symbols
 
-        val classDescriptor = WrappedClassDescriptor()
         val irClass = IrClassImpl(
                 startOffset, endOffset,
-                OBJC_BLOCK_FUNCTION_IMPL, IrClassSymbolImpl(classDescriptor),
+                OBJC_BLOCK_FUNCTION_IMPL, IrClassSymbolImpl(),
                 Name.identifier(stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
                 ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL,
                 isCompanion = false, isInner = false, isData = false, isExternal = false,
                 isInline = false, isExpect = false, isFun = false
         )
-        classDescriptor.bind(irClass)
         irClass.createParameterDeclarations()
 
         irClass.superTypes += stubs.irBuiltIns.anyType
@@ -1121,24 +1117,21 @@ private class ObjCBlockPointerValuePassing(
                 isMutable = false, owner = irClass
         )
 
-        val constructorDescriptor = WrappedClassConstructorDescriptor()
         val constructor = IrConstructorImpl(
                 startOffset, endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                IrConstructorSymbolImpl(constructorDescriptor),
+                IrConstructorSymbolImpl(),
                 Name.special("<init>"),
                 DescriptorVisibilities.PUBLIC,
                 irClass.defaultType,
                 isInline = false, isExternal = false, isPrimary = true, isExpect = false
         )
-        constructorDescriptor.bind(constructor)
         irClass.addChild(constructor)
 
-        val constructorParameterDescriptor = WrappedValueParameterDescriptor()
         val constructorParameter = IrValueParameterImpl(
                 startOffset, endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                IrValueParameterSymbolImpl(constructorParameterDescriptor),
+                IrValueParameterSymbolImpl(),
                 Name.identifier("blockPointer"),
                 0,
                 symbols.nativePtrType,
@@ -1148,7 +1141,6 @@ private class ObjCBlockPointerValuePassing(
                 isHidden = false,
                 isAssignable = false
         )
-        constructorParameterDescriptor.bind(constructorParameter)
         constructor.valueParameters += constructorParameter
         constructorParameter.parent = constructor
 
@@ -1166,28 +1158,25 @@ private class ObjCBlockPointerValuePassing(
         val overriddenInvokeMethod = (functionType.classifier.owner as IrClass).simpleFunctions()
                 .single { it.name == OperatorNameConventions.INVOKE }
 
-        val invokeMethodDescriptor = WrappedSimpleFunctionDescriptor()
         val invokeMethod = IrFunctionImpl(
                 startOffset, endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                IrSimpleFunctionSymbolImpl(invokeMethodDescriptor),
+                IrSimpleFunctionSymbolImpl(),
                 overriddenInvokeMethod.name,
                 DescriptorVisibilities.PUBLIC, Modality.FINAL,
                 returnType = functionType.arguments.last().typeOrNull!!,
                 isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
                 isFakeOverride = false, isOperator = false, isInfix = false
         )
-        invokeMethodDescriptor.bind(invokeMethod)
         invokeMethod.overriddenSymbols += overriddenInvokeMethod.symbol
         irClass.addChild(invokeMethod)
         invokeMethod.createDispatchReceiverParameter()
 
         invokeMethod.valueParameters += (0 until parameterCount).map { index ->
-            val parameterDescriptor = WrappedValueParameterDescriptor()
             val parameter = IrValueParameterImpl(
                     startOffset, endOffset,
                     OBJC_BLOCK_FUNCTION_IMPL,
-                    IrValueParameterSymbolImpl(parameterDescriptor),
+                    IrValueParameterSymbolImpl(),
                     Name.identifier("p$index"),
                     index,
                     functionType.arguments[index].typeOrNull!!,
@@ -1197,7 +1186,6 @@ private class ObjCBlockPointerValuePassing(
                     isHidden = false,
                     isAssignable = false
             )
-            parameterDescriptor.bind(parameter)
             parameter.parent = invokeMethod
             parameter
         }

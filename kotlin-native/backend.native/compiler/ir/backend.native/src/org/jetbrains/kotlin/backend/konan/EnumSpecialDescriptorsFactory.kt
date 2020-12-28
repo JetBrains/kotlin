@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -135,11 +132,11 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         val startOffset = enumClass.startOffset
         val endOffset = enumClass.endOffset
 
-        val implObject = WrappedClassDescriptor().let {
+        val implObject =
             IrClassImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_ENUM,
-                    IrClassSymbolImpl(it),
+                    IrClassSymbolImpl(),
                     "OBJECT".synthesizedName,
                     ClassKind.OBJECT,
                     DescriptorVisibilities.PUBLIC,
@@ -152,18 +149,16 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isExpect = false,
                     isFun = false
             ).apply {
-                it.bind(this)
                 parent = enumClass
                 createParameterDeclarations()
             }
-        }
 
         val valuesType = valuesArrayType(enumClass)
-        val valuesField = WrappedFieldDescriptor().let {
+        val valuesField =
             IrFieldImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_ENUM,
-                    IrFieldSymbolImpl(it),
+                    IrFieldSymbolImpl(),
                     "VALUES".synthesizedName,
                     valuesType,
                     DescriptorVisibilities.PRIVATE,
@@ -171,16 +166,14 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isExternal = false,
                     isStatic = false,
             ).apply {
-                it.bind(this)
                 parent = implObject
             }
-        }
 
-        val valuesGetter = WrappedSimpleFunctionDescriptor().let {
+        val valuesGetter =
             IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_ENUM,
-                    IrSimpleFunctionSymbolImpl(it),
+                    IrSimpleFunctionSymbolImpl(),
                     "get-VALUES".synthesizedName,
                     DescriptorVisibilities.PUBLIC,
                     Modality.FINAL,
@@ -194,10 +187,8 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isOperator = false,
                     isInfix = false
             ).apply {
-                it.bind(this)
                 parent = implObject
             }
-        }
 
         val constructorOfAny = context.irBuiltIns.anyClass.owner.constructors.first()
         implObject.addSimpleDelegatingConstructor(

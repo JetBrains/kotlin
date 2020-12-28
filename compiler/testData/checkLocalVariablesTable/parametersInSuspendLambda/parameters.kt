@@ -28,8 +28,8 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
 // JVM_IR_TEMPLATES
 // VARIABLE : NAME=$dstr$x$_u24__u24$z TYPE=LData; INDEX=*
 // VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=*
+// VARIABLE : NAME=$this$foo TYPE=J INDEX=*
 // VARIABLE : NAME=i TYPE=I INDEX=*
-// VARIABLE : NAME=p$ TYPE=J INDEX=*
 // VARIABLE : NAME=str TYPE=Ljava/lang/String; INDEX=*
 // VARIABLE : NAME=this TYPE=LParametersKt$test$2; INDEX=*
 // VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=*

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.FqName
@@ -138,7 +137,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         return bridges.getOrPut(key) { createBridge(key) }
     }
 
-    private fun createBridge(key: BridgeKey): IrSimpleFunction = WrappedSimpleFunctionDescriptor().let { descriptor ->
+    private fun createBridge(key: BridgeKey): IrSimpleFunction {
         val (function, bridgeDirections) = key
         val startOffset = function.startOffset
         val endOffset = function.endOffset
@@ -148,10 +147,10 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                     null
                 else this.irClass?.defaultType ?: context.irBuiltIns.anyNType
 
-        IrFunctionImpl(
+        return IrFunctionImpl(
                 startOffset, endOffset,
                 DECLARATION_ORIGIN_BRIDGE_METHOD(function),
-                IrSimpleFunctionSymbolImpl(descriptor),
+                IrSimpleFunctionSymbolImpl(),
                 "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName,
                 function.visibility,
                 function.modality,
@@ -166,7 +165,6 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 isInfix = false
         ).apply {
             val bridge = this
-            descriptor.bind(bridge)
             parent = function.parent
 
             dispatchReceiverParameter = function.dispatchReceiverParameter?.let {

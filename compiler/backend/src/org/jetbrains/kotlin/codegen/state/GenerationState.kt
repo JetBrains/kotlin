@@ -298,7 +298,7 @@ class GenerationState private constructor(
             ?: if (languageVersionSettings.languageVersion >= LanguageVersion.LATEST_STABLE) JvmMetadataVersion.INSTANCE
             else JvmMetadataVersion(1, 1, 18)
 
-    val isIrWithStableAbi = configuration.getBoolean(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI)
+    val abiStability = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
     val globalSerializationBindings = JvmSerializationBindings()
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }

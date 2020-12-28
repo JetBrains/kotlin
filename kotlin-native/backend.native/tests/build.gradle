@@ -448,6 +448,7 @@ task run_external () {
     // Set up dependencies.
     dependsOn(tasksOf(RunExternalTestGroup))
     dependsOn("stdlibTest")
+    dependsOn("stdlibTestInWorker")
 }
 
 task daily() {
@@ -4922,10 +4923,22 @@ task override_konan_properties0(type: KonanDriverTest) {
     }
 }
 
+createStdlibTest('stdlibTest', /* inWorker = */ false)
+createStdlibTest('stdlibTestInWorker', /*inWorker = */ true)
+
 /**
  * Creates tasks to build and execute stdlib tests.
  */
-KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
+private void createStdlibTest(String name, boolean inWorker) {
+    KotlinNativeTestKt.createTest(project, name, KonanGTest) { task ->
+        configureStdlibTest(task, inWorker)
+    }
+}
+
+/**
+ * Configures tasks to build and execute stdlib tests.
+ */
+private void configureStdlibTest(KonanGTest task, boolean inWorker) {
     def sources = UtilsKt.getFilesToCompile(project,
             [ 'build/stdlib_external/stdlib', 'stdlib_external/utils.kt',
                                  'stdlib_external/collections',
@@ -4934,11 +4947,11 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             [ 'build/stdlib_external/stdlib/test/internalAnnotations.kt' ])
 
     konanArtifacts {
-        program('stdlibTest', targets: [target.name]) {
+        program(task.name, targets: [target.name]) {
             srcFiles sources
-            baseDir "$testOutputStdlib/stdlibTest"
+            baseDir "$testOutputStdlib/$task.name"
             enableMultiplatform true
-            extraOpts '-tr',
+            extraOpts inWorker ? '-trw' : '-tr',
                     '-Xverify-ir',
                     '-Xopt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
                     "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath

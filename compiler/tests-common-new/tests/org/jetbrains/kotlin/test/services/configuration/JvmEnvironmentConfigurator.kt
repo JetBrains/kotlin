@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -38,7 +39,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
-        val registeredDirectives = module.allRegisteredDirectives
+        val registeredDirectives = module.directives
         val targets = registeredDirectives[JvmEnvironmentConfigurationDirectives.JVM_TARGET]
         when (targets.size) {
             0 -> {}
@@ -61,6 +62,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             }
             TestJdkKind.FULL_JDK_9 -> {
                 configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk9Home())
+            }
+            TestJdkKind.FULL_JDK_15 -> {
+                configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk15Home())
             }
             TestJdkKind.FULL_JDK -> {
                 if (SystemInfo.IS_AT_LEAST_JAVA9) {
@@ -96,12 +100,18 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.androidAnnotationsForTests())
         }
 
+        if (LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in module.directives) {
+            configuration.put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, true)
+        }
+
         val isIr = module.backendKind == BackendKinds.IrBackend
         configuration.put(JVMConfigurationKeys.IR, isIr)
 
-        module.javaFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
-            javaFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
-            configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
+        if (JvmEnvironmentConfigurationDirectives.SKIP_JAVA_SOURCES !in module.directives) {
+            module.javaFiles.takeIf { it.isNotEmpty() }?.let { javaFiles ->
+                javaFiles.forEach { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
+                configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
+            }
         }
 
         configuration.registerModuleDependencies(module)

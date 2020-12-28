@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
@@ -823,10 +824,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DiagnosticFactory0<PsiElement> diagnosticFactory =
                     isFunctionLiteral ? NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION : NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE;
             context.trace.report(diagnosticFactory.on(operationSign));
-            if (baseTypeInfo == null) {
-                return TypeInfoFactoryKt.createTypeInfo(ErrorUtils.createErrorType("Unresolved lambda expression"), context);
-            }
-            return baseTypeInfo;
+            return baseTypeInfo != null ? baseTypeInfo : components.expressionTypingServices.getTypeInfo(baseExpression, context);
         }
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;
         KotlinType baseType = baseTypeInfo.getType();
@@ -1397,14 +1395,26 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             rightTypeInfo = rightTypeInfo.replaceDataFlowInfo(dataFlowInfo);
         }
 
-        if (resolutionResult.isSuccess()) {
+        if (resolutionResult.isSuccess() || isResolutionSuccessfulWithOnlyInputTypesWarnings(resolutionResult.getResultingCalls(), context)) {
             return rightTypeInfo.replaceType(components.builtIns.getBooleanType());
-        }
-        else {
+        } else {
             return rightTypeInfo.clearType();
         }
     }
 
+    private static boolean isResolutionSuccessfulWithOnlyInputTypesWarnings(
+            @Nullable Collection<? extends ResolvedCall<FunctionDescriptor>> allCandidates,
+            @NotNull ExpressionTypingContext context
+    ) {
+        if (allCandidates == null || allCandidates.isEmpty()) return false;
+
+        boolean areAllCandidatesFailedWithOnlyInputTypesError = allCandidates.stream().allMatch((resolvedCall) ->
+            resolvedCall instanceof NewAbstractResolvedCall<?> && ((NewAbstractResolvedCall<?>) resolvedCall).containsOnlyOnlyInputTypesErrors()
+        );
+        boolean isNonStrictOnlyInputTypesCheckEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks);
+
+        return areAllCandidatesFailedWithOnlyInputTypesError && isNonStrictOnlyInputTypesCheckEnabled;
+    }
 
     private boolean ensureBooleanResult(KtExpression operationSign, Name name, KotlinType resultType, ExpressionTypingContext context) {
         return ensureBooleanResultWithCustomSubject(operationSign, resultType, "'" + name + "'", context);

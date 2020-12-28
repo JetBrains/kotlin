@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -23,7 +22,7 @@ class KotlinNothingValueExceptionLowering(
 ) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!skip(container)) {
-            irBody.transformChildrenVoid(Transformer((container as IrSymbolDeclaration<*>).symbol))
+            irBody.transformChildrenVoid(Transformer(container.symbol))
         }
     }
 

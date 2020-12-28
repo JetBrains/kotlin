@@ -124,11 +124,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             MemoryModel.STRICT -> MemoryModel.STRICT
             MemoryModel.RELAXED -> MemoryModel.RELAXED
             MemoryModel.EXPERIMENTAL -> {
-                if (!target.supportsMimallocAllocator()) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model requires mimalloc allocator. Used strict memory model.")
-                    MemoryModel.STRICT
-                } else if (!target.supportsThreads()) {
+                if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                             "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
                     MemoryModel.STRICT
@@ -141,9 +137,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 }
             }
         }
-        val useMimalloc = if (effectiveMemoryModel == MemoryModel.EXPERIMENTAL) {
-            true // we already checked that target supports mimalloc.
-        } else if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
+        val useMimalloc = if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
             if (target.supportsMimallocAllocator()) {
                 true
             } else {

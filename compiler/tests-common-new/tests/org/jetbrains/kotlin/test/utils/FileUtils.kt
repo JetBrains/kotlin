@@ -32,3 +32,11 @@ fun File.withExtension(extension: String): File {
     val extension = extension.removePrefix(".")
     return parentFile.resolve("$nameWithoutExtension.$extension")
 }
+
+/*
+ * Please use this method only in places where `TestModule` is not accessible
+ * In other cases use testModule.directives
+ */
+fun File.isDirectiveDefined(directive: String): Boolean = this.useLines { line ->
+    line.any { it == directive }
+}

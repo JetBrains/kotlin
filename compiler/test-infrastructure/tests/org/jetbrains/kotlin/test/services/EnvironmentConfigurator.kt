@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
@@ -22,8 +22,9 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
     protected val moduleStructure: TestModuleStructure
         get() = testServices.moduleStructure
 
-    protected val TestModule.allRegisteredDirectives: RegisteredDirectives
-        get() = ComposedRegisteredDirectives(directives, testServices.defaultDirectives)
-
     open fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {}
+
+    open fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
+        return emptyMap()
+    }
 }

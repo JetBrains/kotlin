@@ -132,7 +132,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isInline = getClass()?.isInline == true,
+            isInline = erasedUpperBound.isInline,
             isNullable = isNullable()
         )
 

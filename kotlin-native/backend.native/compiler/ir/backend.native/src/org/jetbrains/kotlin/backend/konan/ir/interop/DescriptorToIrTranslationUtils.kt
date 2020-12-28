@@ -60,7 +60,7 @@ internal interface DescriptorToIrTranslationMixin {
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, descriptor
                 )
             }.also { irClass ->
-                symbolTable.withScope(descriptor) {
+                symbolTable.withScope(irClass) {
                     irClass.superTypes += descriptor.typeConstructor.supertypes.map {
                         it.toIrType()
                     }
@@ -133,7 +133,7 @@ internal interface DescriptorToIrTranslationMixin {
             origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
     ): IrSimpleFunction {
         val irFunction = symbolTable.declareSimpleFunctionWithOverrides(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, functionDescriptor)
-        symbolTable.withScope(functionDescriptor) {
+        symbolTable.withScope(irFunction) {
             irFunction.returnType = functionDescriptor.returnType!!.toIrType()
             irFunction.valueParameters +=  functionDescriptor.valueParameters.map {
                 symbolTable.declareValueParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.DEFINED, it, it.type.toIrType())

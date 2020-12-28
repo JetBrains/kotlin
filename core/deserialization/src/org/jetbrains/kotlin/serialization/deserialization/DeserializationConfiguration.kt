@@ -15,7 +15,7 @@ interface DeserializationConfiguration {
     val reportErrorsOnPreReleaseDependencies: Boolean
         get() = false
 
-    val reportErrorsOnIrDependencies: Boolean
+    val allowUnstableDependencies: Boolean
         get() = false
 
     val typeAliasesAllowed: Boolean
