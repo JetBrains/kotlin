@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -60,24 +59,16 @@ abstract class FirAbstractImportingScope(
         token: TowerScopeLevel.Token<T>,
         processor: (FirCallableSymbol<*>) -> Unit
     ) {
-        val callableId = CallableId(import.packageFqName, import.relativeClassName, name)
-
         val classId = import.resolvedClassId
         if (classId != null) {
             val scope = getStaticsScope(classId) ?: return
 
             when (token) {
-                TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(
-                    callableId.callableName,
-                    processor
-                )
-                TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(
-                    callableId.callableName,
-                    processor
-                )
+                TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(name, processor)
+                TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name, processor)
             }
         } else if (name.isSpecial || name.identifier.isNotEmpty()) {
-            val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
+            val symbols = provider.getTopLevelCallableSymbols(import.packageFqName, name)
             if (symbols.isEmpty()) {
                 return
             }
