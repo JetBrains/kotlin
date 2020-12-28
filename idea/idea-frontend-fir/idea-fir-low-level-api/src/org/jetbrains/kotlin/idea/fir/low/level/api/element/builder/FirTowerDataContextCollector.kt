@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.*
 
 @ThreadSafeMutableState
 class FirTowerDataContextCollector {
     private val state: MutableMap<KtElement, FirTowerDataContext> = hashMapOf()
 
     fun addStatementContext(statement: FirStatement, context: FirTowerDataContext) {
-        (statement.psi as? KtElement)?.let { state[it] = context }
+        val closestStatementInBlock = statement.psi?.closestBlockLevelOrInitializerExpression() ?: return
+        state[closestStatementInBlock] = context
     }
 
     fun addDeclarationContext(declaration: FirDeclaration, context: FirTowerDataContext) {
@@ -34,3 +36,9 @@ fun FirTowerDataContextCollector.getClosestAvailableParentContext(element: KtEle
         current = current.parent as? KtElement ?: return null
     }
 }
+
+private tailrec fun PsiElement.closestBlockLevelOrInitializerExpression(): KtExpression? =
+    when {
+        this is KtExpression && (parent is KtBlockExpression || parent is KtDeclarationWithInitializer) -> this
+        else -> parent?.closestBlockLevelOrInitializerExpression()
+    }
