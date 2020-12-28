@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.basicIsEquivalentTo
 import org.jetbrains.kotlin.idea.asJava.invalidAccess
 import org.jetbrains.kotlin.idea.asJava.mapSupertype
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -162,4 +163,6 @@ internal class FirLightTypeParameter(
     override fun getContainingFile(): PsiFile = parent.containingFile
     override fun getTextOffset(): Int = kotlinOrigin?.startOffset ?: super.getTextOffset()
     override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: super.getStartOffsetInParent()
+
+    override fun isValid(): Boolean = super.isValid() && typeParameterSymbol.isValid()
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.asJava.FirLightClassForSymbol
 import org.jetbrains.kotlin.idea.asJava.FirLightField
 import org.jetbrains.kotlin.idea.asJava.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtAnonymousObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -138,6 +139,8 @@ internal class FirLightAnonymousClassForSymbol(
 
     override fun copy() =
         FirLightAnonymousClassForSymbol(anonymousObjectSymbol, manager)
+
+    override fun isValid(): Boolean = super.isValid() && anonymousObjectSymbol.isValid()
 
     override fun toString() =
         "${this::class.java.simpleName}:${kotlinOrigin?.getDebugText()}"

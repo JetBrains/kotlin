@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.asJava.FirLightClassModifierList
 import org.jetbrains.kotlin.idea.asJava.FirLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -134,4 +135,6 @@ internal class FirLightClassForEnumEntry(
     }
 
     override fun getOwnInnerClasses(): MutableList<PsiClass> = mutableListOf()
+
+    override fun isValid(): Boolean = super.isValid() && enumEntrySymbol.isValid()
 }

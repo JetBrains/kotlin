@@ -10,6 +10,7 @@ import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.asJava.*
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 
@@ -48,4 +49,6 @@ internal class FirLightSetterParameterForSymbol(
                 (other is FirLightSetterParameterForSymbol && parameterSymbol == other.parameterSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    override fun isValid(): Boolean = super.isValid() && parameterSymbol.isValid()
 }

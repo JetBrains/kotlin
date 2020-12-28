@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.isUnit
 import org.jetbrains.kotlin.idea.util.ifTrue
@@ -137,4 +138,6 @@ internal class FirLightSimpleMethodForSymbol(
         this === other || (other is FirLightSimpleMethodForSymbol && functionSymbol == other.functionSymbol)
 
     override fun hashCode(): Int = functionSymbol.hashCode()
+
+    override fun isValid(): Boolean = super.isValid() && functionSymbol.isValid()
 }
