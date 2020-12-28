@@ -20,21 +20,27 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 internal class FirModuleWithDependenciesSymbolProvider(
     session: FirSession,
     private val providers: List<FirSymbolProvider>,
-    private val dependentProviders: List<FirSymbolProvider>,
+    dependentProviders: List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
+    private val dependentProviders = DependentModuleProviders(session, dependentProviders)
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? =
+        getClassLikeSymbolByFqNameWithoutDependencies(classId)
+            ?: dependentProviders.getClassLikeSymbolByFqName(classId)
+
+
+    fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
-            ?: withDependent(default = null) {
-                dependentProviders.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
-            }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        providers.flatMapTo(destination) { it.getTopLevelCallableSymbols(packageFqName, name) }
-        withDependent {
-            dependentProviders.flatMapTo(destination) { it.getTopLevelCallableSymbols(packageFqName, name) }
-        }
+        getTopLevelCallableSymbolsToWithoutDependencies(destination, packageFqName, name)
+        dependentProviders.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
+    }
+
+    @FirSymbolProviderInternals
+    fun getTopLevelCallableSymbolsToWithoutDependencies(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+        providers.forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
     }
 
     @FirSymbolProviderInternals
@@ -54,28 +60,40 @@ internal class FirModuleWithDependenciesSymbolProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? =
+        getPackageWithoutDependencies(fqName)
+            ?: dependentProviders.getPackage(fqName)
+
+
+    fun getPackageWithoutDependencies(fqName: FqName): FqName? =
         providers.firstNotNullResult { it.getPackage(fqName) }
-            ?: withDependent(default = null) {
-                dependentProviders.firstNotNullResult { it.getPackage(fqName) }
-            }
+}
 
-    companion object {
-        private val canUseDependent = ThreadLocal.withInitial { true }
-
-        private inline fun <R> withDependent(default: R, action: () -> R): R {
-            if (canUseDependent.get()) {
-                canUseDependent.set(false)
-                try {
-                    return action()
-                } finally {
-                    canUseDependent.set(true)
-                }
+private class DependentModuleProviders(session: FirSession, private val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? =
+        providers.firstNotNullResult { provider ->
+            when (provider) {
+                is FirModuleWithDependenciesSymbolProvider -> provider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
+                else -> provider.getClassLikeSymbolByFqName(classId)
             }
-            return default
         }
 
-        private inline fun withDependent(action: () -> Unit) {
-            withDependent(Unit, action)
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+        providers.forEach { provider ->
+            when (provider) {
+                is FirModuleWithDependenciesSymbolProvider ->
+                    provider.getTopLevelCallableSymbolsToWithoutDependencies(destination, packageFqName, name)
+                else -> provider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
+            }
         }
     }
+
+    override fun getPackage(fqName: FqName): FqName? =
+        providers.firstNotNullResult { provider ->
+            when (provider) {
+                is FirModuleWithDependenciesSymbolProvider -> provider.getPackageWithoutDependencies(fqName)
+                else -> provider.getPackage(fqName)
+            }
+        }
 }
