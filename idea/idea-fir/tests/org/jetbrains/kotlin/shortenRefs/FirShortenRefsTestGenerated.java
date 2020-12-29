@@ -85,6 +85,11 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         public void testSelfReferencingFunction() throws Exception {
             runTest("idea/testData/shortenRefsFir/calls/selfReferencingFunction.kt");
         }
+
+        @TestMetadata("variableNotShortened.kt")
+        public void testVariableNotShortened() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/variableNotShortened.kt");
+        }
     }
 
     @TestMetadata("idea/testData/shortenRefsFir/quailfiers")
