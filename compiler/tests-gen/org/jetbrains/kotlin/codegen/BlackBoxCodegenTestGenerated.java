@@ -13987,6 +13987,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt");
         }
 
+        @TestMetadata("kclassInAnnotation.kt")
+        public void testKclassInAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kclassInAnnotation.kt");
+        }
+
         @TestMetadata("kt25246.kt")
         public void testKt25246() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt25246.kt");

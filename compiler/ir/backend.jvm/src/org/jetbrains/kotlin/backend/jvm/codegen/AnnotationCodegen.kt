@@ -272,8 +272,11 @@ abstract class AnnotationCodegen(
                 visitor.visitEnd()
             }
             is IrClassReference -> {
-                val classType = value.classType
+                var classType = value.classType
                 classType.classOrNull?.owner?.let(innerClassConsumer::addInnerClassInfoFromAnnotation)
+                if (classType.isInlined()) {
+                    classType = classType.makeNullable()
+                }
                 annotationVisitor.visit(name, typeMapper.mapType(classType))
             }
             is IrErrorExpression -> error("Don't know how to compile annotation value ${ir2string(value)}")
