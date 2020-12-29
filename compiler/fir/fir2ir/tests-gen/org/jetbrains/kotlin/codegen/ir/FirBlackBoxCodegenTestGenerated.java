@@ -19477,21 +19477,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testAllFilesPresentInMultiModule() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
-
-            @TestMetadata("expectActualLink.kt")
-            public void testExpectActualLink() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt");
-            }
-
-            @TestMetadata("expectActualMemberLink.kt")
-            public void testExpectActualMemberLink() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt");
-            }
-
-            @TestMetadata("expectActualTypealiasLink.kt")
-            public void testExpectActualTypealiasLink() throws Exception {
-                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt");
-            }
         }
     }
 
