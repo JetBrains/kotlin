@@ -21,7 +21,7 @@ inline fun test(crossinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE!>startCoroutine<!>(EmptyContinuation)
+    c.startCoroutine(EmptyContinuation)
 }
 
 suspend fun calculate() = "OK"

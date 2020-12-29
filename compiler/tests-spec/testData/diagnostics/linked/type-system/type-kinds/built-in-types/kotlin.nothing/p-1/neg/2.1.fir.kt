@@ -6,7 +6,7 @@
 class Case1(val nothing: Nothing)
 
 fun case1() {
-    val res = <!INAPPLICABLE_CANDIDATE!>Case1<!>(<!INAPPLICABLE_CANDIDATE!>Nothing<!>())
+    val res = Case1(<!HIDDEN!>Nothing<!>())
 }
 
 

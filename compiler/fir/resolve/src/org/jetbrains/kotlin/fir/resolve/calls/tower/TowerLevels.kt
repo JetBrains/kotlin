@@ -15,12 +15,18 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class TowerScopeLevel {
@@ -178,12 +184,6 @@ class ScopeTowerLevel(
     private val extensionsOnly: Boolean,
     private val includeInnerConstructors: Boolean
 ) : SessionBasedTowerLevel(session) {
-    private fun FirCallableSymbol<*>.hasConsistentReceivers(extensionReceiver: Receiver?): Boolean =
-        when {
-            extensionsOnly && !hasExtensionReceiver() -> false
-            !hasConsistentExtensionReceiver(extensionReceiver) -> false
-            else -> true
-        }
 
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
         candidate.fir.importedFromObjectData?.let { data ->
@@ -215,20 +215,48 @@ class ScopeTowerLevel(
         }
     }
 
+    private fun shouldSkipCandidateWithInconsistentExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean {
+        // Pre-check explicit extension receiver for default package top-level members
+        if (scope is FirDefaultStarImportingScope && extensionReceiver != null) {
+            val extensionReceiverType = extensionReceiver.type
+            if (extensionReceiverType is ConeClassLikeType) {
+                val declarationReceiverType = candidate.fir.receiverTypeRef?.coneType
+                if (declarationReceiverType is ConeClassLikeType) {
+                    if (!AbstractTypeChecker.isSubtypeOf(
+                            session.typeContext,
+                            extensionReceiverType,
+                            declarationReceiverType.lookupTag.constructClassType(
+                                declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
+                                isNullable = true
+                            )
+                        )
+                    ) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     private fun <T : AbstractFirBasedSymbol<*>> consumeCallableCandidate(
         candidate: FirCallableSymbol<*>,
         processor: TowerScopeLevelProcessor<T>
     ) {
-        if (candidate.hasConsistentReceivers(extensionReceiver)) {
-            val dispatchReceiverValue = dispatchReceiverValue(candidate)
-            val unwrappedCandidate = candidate.fir.importedFromObjectData?.original?.symbol ?: candidate
-            @Suppress("UNCHECKED_CAST")
-            processor.consumeCandidate(
-                unwrappedCandidate as T, dispatchReceiverValue,
-                extensionReceiverValue = extensionReceiver,
-                scope
-            )
+        val candidateReceiverTypeRef = candidate.fir.receiverTypeRef
+        val receiverExpected = extensionsOnly || extensionReceiver != null
+        if (candidateReceiverTypeRef == null == receiverExpected) return
+        val dispatchReceiverValue = dispatchReceiverValue(candidate)
+        if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
+            return
         }
+        val unwrappedCandidate = candidate.fir.importedFromObjectData?.original?.symbol ?: candidate
+        @Suppress("UNCHECKED_CAST")
+        processor.consumeCandidate(
+            unwrappedCandidate as T, dispatchReceiverValue,
+            extensionReceiverValue = extensionReceiver,
+            scope
+        )
     }
 
     override fun processFunctionsByName(
