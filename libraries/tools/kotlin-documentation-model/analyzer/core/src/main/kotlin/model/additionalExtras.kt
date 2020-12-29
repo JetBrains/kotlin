@@ -21,21 +21,47 @@ class AdditionalModifiers(val content: SourceSetDependent<Set<ExtraModifiers>>) 
 
 fun SourceSetDependent<Set<ExtraModifiers>>.toAdditionalModifiers() = AdditionalModifiers(this)
 
-class Annotations(val content: SourceSetDependent<List<Annotation>>) : ExtraProperty<Documentable> {
+data class Annotations(
+    private val myContent: SourceSetDependent<List<Annotation>>
+) : ExtraProperty<Documentable> {
     companion object : ExtraProperty.Key<Documentable, Annotations> {
         override fun mergeStrategyFor(left: Annotations, right: Annotations): MergeStrategy<Documentable> =
-            MergeStrategy.Replace(Annotations(left.content + right.content))
+            MergeStrategy.Replace(Annotations(left.myContent + right.myContent))
     }
 
     override val key: ExtraProperty.Key<Documentable, *> = Annotations
 
-    data class Annotation(val dri: DRI, val params: Map<String, AnnotationParameterValue>, val mustBeDocumented: Boolean = false) {
+    data class Annotation(
+        val dri: DRI,
+        val params: Map<String, AnnotationParameterValue>,
+        val mustBeDocumented: Boolean = false,
+        val scope: AnnotationScope = AnnotationScope.DIRECT
+    ) {
         override fun equals(other: Any?): Boolean = when (other) {
             is Annotation -> dri == other.dri
             else -> false
         }
 
         override fun hashCode(): Int = dri.hashCode()
+    }
+
+    @Deprecated("Use directAnnotations or fileLevelAnnotations")
+    val content: SourceSetDependent<List<Annotation>>
+        get() = myContent
+
+    val directAnnotations: SourceSetDependent<List<Annotation>> = annotationsByScope(AnnotationScope.DIRECT)
+
+    val fileLevelAnnotations: SourceSetDependent<List<Annotation>> = annotationsByScope(AnnotationScope.FILE)
+
+    private fun annotationsByScope(scope: AnnotationScope): SourceSetDependent<List<Annotation>> =
+        myContent.entries.mapNotNull { (key, value) ->
+            val withoutFileLevel = value.filter { it.scope == scope }
+            if (withoutFileLevel.isEmpty()) null
+            else Pair(key, withoutFileLevel)
+        }.toMap()
+
+    enum class AnnotationScope {
+        DIRECT, FILE
     }
 }
 
@@ -65,7 +91,7 @@ data class ActualTypealias(val underlyingType: SourceSetDependent<Bound>) : Extr
     override val key: ExtraProperty.Key<DClasslike, ActualTypealias> = ActualTypealias
 }
 
-data class ConstructorValues(val values: SourceSetDependent<List<String>>) : ExtraProperty<DEnumEntry>{
+data class ConstructorValues(val values: SourceSetDependent<List<String>>) : ExtraProperty<DEnumEntry> {
     companion object : ExtraProperty.Key<DEnumEntry, ConstructorValues> {
         override fun mergeStrategyFor(left: ConstructorValues, right: ConstructorValues) =
             MergeStrategy.Replace(ConstructorValues(left.values + right.values))
