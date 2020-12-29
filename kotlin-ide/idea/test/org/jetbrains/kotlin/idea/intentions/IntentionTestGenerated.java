@@ -13515,7 +13515,7 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("kt29735.kt")
         public void testKt29735() throws Exception {
-            runTest("idea/testData/intentions/removeExplicitTypeArguments/kt29735.kt");
+            runTest("testData/intentions/removeExplicitTypeArguments/kt29735.kt");
         }
 
         @TestMetadata("kt31441.kt")

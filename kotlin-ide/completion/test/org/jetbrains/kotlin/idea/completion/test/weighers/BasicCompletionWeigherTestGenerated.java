@@ -485,6 +485,39 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/weighers/basic/expectedType")
+    public static class ExpectedType extends AbstractBasicCompletionWeigherTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("ifConditionQualified.kt")
+        public void testIfConditionQualified() throws Exception {
+            runTest("testData/weighers/basic/expectedType/ifConditionQualified.kt");
+        }
+
+        @TestMetadata("returnFromFunction.kt")
+        public void testReturnFromFunction() throws Exception {
+            runTest("testData/weighers/basic/expectedType/returnFromFunction.kt");
+        }
+
+        @TestMetadata("returnFromFunctionQualifiedSelector.kt")
+        public void testReturnFromFunctionQualifiedSelector() throws Exception {
+            runTest("testData/weighers/basic/expectedType/returnFromFunctionQualifiedSelector.kt");
+        }
+
+        @TestMetadata("returnFromLambda.kt")
+        public void testReturnFromLambda() throws Exception {
+            runTest("testData/weighers/basic/expectedType/returnFromLambda.kt");
+        }
+
+        @TestMetadata("whileConditionQualified.kt")
+        public void testWhileConditionQualified() throws Exception {
+            runTest("testData/weighers/basic/expectedType/whileConditionQualified.kt");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/weighers/basic/parameterNameAndType")
     public static class ParameterNameAndType extends AbstractBasicCompletionWeigherTest {
         private void runTest(String testDataFilePath) throws Exception {

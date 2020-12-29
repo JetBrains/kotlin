@@ -2800,7 +2800,7 @@ public class HighLevelJvmBasicCompletionTestGenerated extends AbstractHighLevelJ
 
         @TestMetadata("JavaSyntheticProperty.kt")
         public void testJavaSyntheticProperty() throws Exception {
-            runTest("idea/idea-completion/testData/basic/java/JavaSyntheticProperty.kt");
+            runTest("../completion/testData/basic/java/JavaSyntheticProperty.kt");
         }
 
         @TestMetadata("KProperty.kt")

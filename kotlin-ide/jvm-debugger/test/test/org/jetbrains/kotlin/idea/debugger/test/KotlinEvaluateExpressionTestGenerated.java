@@ -595,7 +595,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
 
             @TestMetadata("capturedReceiverName.kt")
             public void testCapturedReceiverName() throws Exception {
-                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines/capturedReceiverName.kt");
+                runTest("testData/evaluation/singleBreakpoint/coroutines/capturedReceiverName.kt");
             }
 
             @TestMetadata("primitivesCoertion.kt")

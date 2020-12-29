@@ -296,14 +296,14 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("testData/refactoring/move/kotlin/moveFile/moveLastFileInPackageWithPackageRename/moveLastFileInPackageWithPackageRename.test");
     }
 
-    @TestMetadata("kotlin/moveFile/moveMultipleFilesWithImplicitPrefix/moveMultipleFilesWithImplicitPrefix.test")
-    public void testKotlin_moveFile_moveMultipleFilesWithImplicitPrefix_MoveMultipleFilesWithImplicitPrefix() throws Exception {
-        runTest("testData/refactoring/move/kotlin/moveFile/moveMultipleFilesWithImplicitPrefix/moveMultipleFilesWithImplicitPrefix.test");
+    @TestMetadata("kotlin/moveFile/moveMultipleFIlesWithImplicitPrefix/moveMultipleFilesWithImplicitPrefix.test")
+    public void testKotlin_moveFile_moveMultipleFIlesWithImplicitPrefix_MoveMultipleFilesWithImplicitPrefix() throws Exception {
+        runTest("testData/refactoring/move/kotlin/moveFile/moveMultipleFIlesWithImplicitPrefix/moveMultipleFilesWithImplicitPrefix.test");
     }
 
-    @TestMetadata("kotlin/moveFile/moveMultipleFiles/moveMultipleFiles.test")
-    public void testKotlin_moveFile_moveMultipleFiles_MoveMultipleFiles() throws Exception {
-        runTest("testData/refactoring/move/kotlin/moveFile/moveMultipleFiles/moveMultipleFiles.test");
+    @TestMetadata("kotlin/moveFile/moveMultipleFIles/moveMultipleFiles.test")
+    public void testKotlin_moveFile_moveMultipleFIles_MoveMultipleFiles() throws Exception {
+        runTest("testData/refactoring/move/kotlin/moveFile/moveMultipleFIles/moveMultipleFiles.test");
     }
 
     @TestMetadata("kotlin/moveFile/packageWithQuotation/packageWithQuotation.test")
