@@ -182,12 +182,12 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 """
         ) {
             with((this / "classes" / "Foo").cast<DClass>()) {
-                with(extra[Annotations]!!.content.entries.single().value.assertNotNull("Annotations")) {
+                with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
                         dri.classNames equals "Deprecated"
                         params.entries counts 1
-                        (params["message"].assertNotNull("message") as StringValue).value equals "\"should no longer be used\""
+                        (params["message"].assertNotNull("message") as StringValue).value equals "should no longer be used"
                     }
                 }
             }
@@ -361,12 +361,12 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 """
         ) {
             with((this / "classes" / "C").cast<DClass>()) {
-                with(extra[Annotations]!!.content.entries.single().value.assertNotNull("Annotations")) {
+                with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
                         dri.classNames equals "SinceKotlin"
                         params.entries counts 1
-                        (params["version"].assertNotNull("version") as StringValue).value equals "\"1.1\""
+                        (params["version"].assertNotNull("version") as StringValue).value equals "1.1"
                     }
                 }
             }
@@ -426,9 +426,9 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """@Suppress("abc") class Foo() {}"""
         ) {
             with((this / "classes" / "Foo").cast<DClass>()) {
-                with(extra[Annotations]?.content?.values?.firstOrNull()?.firstOrNull().assertNotNull("annotations")) {
+                with(extra[Annotations]?.directAnnotations?.values?.firstOrNull()?.firstOrNull().assertNotNull("annotations")) {
                     dri.toString() equals "kotlin/Suppress///PointingToDeclaration/"
-                    (params["names"].assertNotNull("param") as ArrayValue).value equals listOf(StringValue("\"abc\""))
+                    (params["names"].assertNotNull("param") as ArrayValue).value equals listOf(StringValue("abc"))
                 }
             }
         }
@@ -446,7 +446,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """
         ) {
             with((this / "classes" / "throws").cast<DAnnotation>()) {
-                with(extra[Annotations]!!.content.entries.single().value.assertNotNull("Annotations")) {
+                with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     this counts 1
                     with(first()) {
                         dri.classNames equals "Retention"

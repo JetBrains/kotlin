@@ -274,7 +274,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             """
         ) {
             with((this / "java" / "Attribute").cast<DAnnotation>()) {
-                with(extra[Annotations]!!.content.entries.single().value.assertNotNull("Annotations")) {
+                with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
                     with(single()) {
                         dri.classNames equals "Target"
                         (params["value"].assertNotNull("value") as ArrayValue).value equals listOf(
