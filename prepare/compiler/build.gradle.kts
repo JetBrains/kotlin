@@ -154,7 +154,7 @@ dependencies {
 
     libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
     libraries(kotlinStdlib("jdk8"))
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && false) {
         libraries(kotlinStdlib("js", "distLibrary"))
         libraries(project(":kotlin-test:kotlin-test-js", configuration = "distLibrary"))
     }
