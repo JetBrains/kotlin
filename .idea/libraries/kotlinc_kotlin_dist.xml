@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="kotlinc.kotlin-dist">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-dist-for-ide/build/libs/kotlin-dist-for-ide-1.4.255-SNAPSHOT.jar!/" />   
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
