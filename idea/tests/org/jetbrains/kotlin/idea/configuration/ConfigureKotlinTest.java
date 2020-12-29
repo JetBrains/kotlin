@@ -274,6 +274,20 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
     }
 
+    @SuppressWarnings("ConstantConditions")
+    public void testJvmProjectWithV4FacetConfig() {
+        KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
+        K2JVMCompilerArguments arguments = (K2JVMCompilerArguments) settings.getCompilerArguments();
+        assertFalse(settings.getUseProjectSettings());
+        assertEquals(LanguageVersion.KOTLIN_1_4, settings.getLanguageLevel());
+        assertEquals(LanguageVersion.KOTLIN_1_2, settings.getApiLevel());
+        assertEquals(JvmPlatforms.INSTANCE.getJvm18(), settings.getTargetPlatform());
+        assertEquals("1.4", arguments.getLanguageVersion());
+        assertEquals("1.2", arguments.getApiVersion());
+        assertEquals("1.8", arguments.getJvmTarget());
+        assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.getCompilerSettings().getAdditionalArguments());
+    }
+
     public void testJvmProjectWithJvmTarget11() {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(myProject).getInitializedSettings(getModule());
         assertEquals(JvmPlatforms.INSTANCE.jvmPlatformByTargetVersion(JvmTarget.JVM_11), settings.getTargetPlatform());

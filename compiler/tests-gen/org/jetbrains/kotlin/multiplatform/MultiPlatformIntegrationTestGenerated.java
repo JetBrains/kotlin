@@ -34,11 +34,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/compatibleProperties/");
     }
 
-    @TestMetadata("compilerArguments")
-    public void testCompilerArguments() throws Exception {
-        runTest("compiler/testData/multiplatform/compilerArguments/");
-    }
-
     @TestMetadata("contracts")
     public void testContracts() throws Exception {
         runTest("compiler/testData/multiplatform/contracts/");

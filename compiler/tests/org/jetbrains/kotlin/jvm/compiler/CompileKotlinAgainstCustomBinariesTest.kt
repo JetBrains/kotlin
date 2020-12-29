@@ -526,43 +526,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
-    fun testObsoleteInlineSuspend() {
-        val version = intArrayOf(1, 0, 1) // legacy coroutines metadata
-        val options = listOf("-language-version", "1.2", "-Xcoroutines=enable")
-        val library = transformJar(
-            compileLibrary(
-                "library",
-                additionalOptions = options,
-                extraClassPath = listOf(ForTestCompileRuntime.coroutinesCompatForTests()),
-                checkKotlinOutput = { actual ->
-                    KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "library.output.txt"), actual)
-                }
-            ),
-            { _, bytes ->
-                val (resultBytes, removedCounter) = stripSuspensionMarksToImitateLegacyCompiler(
-                    WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { name, _ ->
-                        if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
-                    })
-                // we expect 4 instructions to be removed in this test library
-                assertEquals(4, removedCounter)
-                resultBytes
-            })
-        compileKotlin(
-            "source.kt", tmpdir, listOf(library, ForTestCompileRuntime.coroutinesCompatForTests()), K2JVMCompiler(),
-            additionalOptions = options
-        )
-        val classLoader = URLClassLoader(
-            arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL(), ForTestCompileRuntime.coroutinesCompatForTests().toURI().toURL()),
-            ForTestCompileRuntime.runtimeJarClassLoader()
-        )
-        @Suppress("UNCHECKED_CAST")
-        val result = classLoader
-            .loadClass("SourceKt")
-            .getDeclaredMethod("run")
-            .invoke(null) as Array<String>
-        assertEquals(result[0], result[1])
-    }
-
     fun testInlineFunctionsWithMatchingJvmSignatures() {
         val library = compileLibrary(
             "library",
