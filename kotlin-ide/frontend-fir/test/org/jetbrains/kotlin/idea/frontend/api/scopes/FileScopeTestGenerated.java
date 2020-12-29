@@ -24,10 +24,6 @@ public class FileScopeTestGenerated extends AbstractFileScopeTest {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInFileScopeTest() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/fileScopeTest"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
     @TestMetadata("simpleFileScope.kt")
     public void testSimpleFileScope() throws Exception {
         runTest("idea/idea-frontend-fir/testData/fileScopeTest/simpleFileScope.kt");

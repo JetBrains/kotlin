@@ -24,10 +24,6 @@ public class FirHighlightingPerformanceTestGenerated extends AbstractFirHighligh
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
     @TestMetadata("Annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("idea/testData/highlighter/Annotations.kt");
@@ -174,10 +170,6 @@ public class FirHighlightingPerformanceTestGenerated extends AbstractFirHighligh
     public static class Deprecated extends AbstractFirHighlightingPerformanceTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInDeprecated() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Class.kt")

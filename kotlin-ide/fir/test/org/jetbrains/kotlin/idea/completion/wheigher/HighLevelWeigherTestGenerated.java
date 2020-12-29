@@ -29,10 +29,6 @@ public class HighLevelWeigherTestGenerated extends AbstractHighLevelWeigherTest 
         runTest("idea/idea-completion/testData/weighers/basic/AfterNullable.kt");
     }
 
-    public void testAllFilesPresentInBasic() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
-    }
-
     @TestMetadata("CallableReference_NothingLast.kt")
     public void testCallableReference_NothingLast() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/CallableReference_NothingLast.kt");
@@ -226,20 +222,12 @@ public class HighLevelWeigherTestGenerated extends AbstractHighLevelWeigherTest 
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInContextualReturn() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/contextualReturn"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
-        }
-
         @TestMetadata("idea/idea-completion/testData/weighers/basic/contextualReturn/noReturnType")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NoReturnType extends AbstractHighLevelWeigherTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInNoReturnType() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/contextualReturn/noReturnType"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
             }
 
             @TestMetadata("BeginOfNestedBlock.kt")
@@ -304,10 +292,6 @@ public class HighLevelWeigherTestGenerated extends AbstractHighLevelWeigherTest 
         public static class WithReturnType extends AbstractHighLevelWeigherTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInWithReturnType() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/contextualReturn/withReturnType"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
             }
 
             @TestMetadata("BeginOfNestedBlock.kt")
@@ -410,10 +394,6 @@ public class HighLevelWeigherTestGenerated extends AbstractHighLevelWeigherTest 
             runTest("idea/idea-completion/testData/weighers/basic/expectedInfo/AfterAs.kt");
         }
 
-        public void testAllFilesPresentInExpectedInfo() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
-        }
-
         @TestMetadata("CompanionObjectMethod.kt")
         public void testCompanionObjectMethod() throws Exception {
             runTest("idea/idea-completion/testData/weighers/basic/expectedInfo/CompanionObjectMethod.kt");
@@ -493,10 +473,6 @@ public class HighLevelWeigherTestGenerated extends AbstractHighLevelWeigherTest 
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInExpectedType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedType"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
-        }
-
         @TestMetadata("ifConditionQualified.kt")
         public void testIfConditionQualified() throws Exception {
             runTest("idea/idea-completion/testData/weighers/basic/expectedType/ifConditionQualified.kt");
@@ -529,10 +505,6 @@ public class HighLevelWeigherTestGenerated extends AbstractHighLevelWeigherTest 
     public static class ParameterNameAndType extends AbstractHighLevelWeigherTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInParameterNameAndType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/parameterNameAndType"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
         }
 
         @TestMetadata("Deprecated.kt")

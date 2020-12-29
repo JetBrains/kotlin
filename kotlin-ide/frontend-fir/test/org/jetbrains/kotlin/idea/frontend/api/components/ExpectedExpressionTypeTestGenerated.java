@@ -24,10 +24,6 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInExpectedExpressionType() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/components/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
     @TestMetadata("functionLambdaParam.kt")
     public void testFunctionLambdaParam() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionLambdaParam.kt");

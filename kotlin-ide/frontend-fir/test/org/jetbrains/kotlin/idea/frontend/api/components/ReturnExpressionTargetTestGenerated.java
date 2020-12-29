@@ -24,10 +24,6 @@ public class ReturnExpressionTargetTestGenerated extends AbstractReturnExpressio
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    public void testAllFilesPresentInReturnExpressionTarget() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/components/returnExpressionTarget"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
     @TestMetadata("returnFromFunctionViaLambdaWithoutLabel.kt")
     public void testReturnFromFunctionViaLambdaWithoutLabel() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/returnExpressionTarget/returnFromFunctionViaLambdaWithoutLabel.kt");
