@@ -6076,6 +6076,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
         }
 
+        @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
+        public void testCapturedTypesSubstitutionIntoAbbreviation() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/capturedTypesSubstitutionIntoAbbreviation.kt");
+        }
+
         @TestMetadata("earlyReturnInsideCrossinlineLambda.kt")
         public void testEarlyReturnInsideCrossinlineLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inference/earlyReturnInsideCrossinlineLambda.kt");
@@ -6126,11 +6131,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inference/recursiveConstraintInsideTypeArgumentWithStarProjection.kt");
         }
 
-        @TestMetadata("specialCallsWithCallableReferences.kt")
-        public void testSpecialCallsWithCallableReferences() throws Exception {
-            runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
-        }
-
         @TestMetadata("unsafeVarianceCodegen.kt")
         public void testUnsafeVarianceCodegen() throws Exception {
             runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
@@ -6156,31 +6156,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             @TestMetadata("lackOfNullCheckOnNullableInsideBuild.kt")
             public void testLackOfNullCheckOnNullableInsideBuild() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
-            }
-
-            @TestMetadata("specialCallsWithCallableReferences.kt")
-            public void testSpecialCallsWithCallableReferences() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferences.kt");
-            }
-
-            @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt")
-            public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExpression() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExpression.kt");
-            }
-
-            @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
-            public void testSpecialCallsWithCallableReferencesErrorType() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesErrorType.kt");
-            }
-
-            @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
-            public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
-            }
-
-            @TestMetadata("specialCallsWithLambdas.kt")
-            public void testSpecialCallsWithLambdas() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithLambdas.kt");
             }
 
             @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
@@ -6665,11 +6640,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("mangledSuperCalls.kt")
         public void testMangledSuperCalls() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt");
-        }
-
-        @TestMetadata("multifileClass.kt")
-        public void testMultifileClass() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/multifileClass.kt");
         }
 
         @TestMetadata("nestedInlineClass.kt")

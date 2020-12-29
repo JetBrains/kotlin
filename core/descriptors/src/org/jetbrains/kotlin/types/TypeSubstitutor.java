@@ -55,6 +55,19 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
     }
 
     @NotNull
+    public TypeSubstitutor replaceWithNonApproximatingSubstitution() {
+        if (!(substitution instanceof IndexedParametersSubstitution) || !substitution.approximateContravariantCapturedTypes()) return this;
+
+        return new TypeSubstitutor(
+                new IndexedParametersSubstitution(
+                        ((IndexedParametersSubstitution) substitution).getParameters(),
+                        ((IndexedParametersSubstitution) substitution).getArguments(),
+                        false
+                )
+        );
+    }
+
+    @NotNull
     public static TypeSubstitutor createChainedSubstitutor(@NotNull TypeSubstitution first, @NotNull TypeSubstitution second) {
         return create(DisjointKeysUnionTypeSubstitution.create(first, second));
     }
@@ -302,7 +315,9 @@ public class TypeSubstitutor implements TypeSubstitutorMarker {
         KotlinType substitutedAbbreviation = null;
         SimpleType abbreviation = SpecialTypesKt.getAbbreviation(type);
         if (abbreviation != null) {
-            substitutedAbbreviation = substitute(abbreviation, Variance.INVARIANT);
+            // We shouldn't approximate abbreviation at the top-level as they can't be projected: below we substitute this always as invariant
+            TypeSubstitutor substitutorForAbbreviation = replaceWithNonApproximatingSubstitution();
+            substitutedAbbreviation = substitutorForAbbreviation.substitute(abbreviation, Variance.INVARIANT);
         }
 
         List<TypeProjection> substitutedArguments = substituteTypeArguments(

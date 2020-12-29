@@ -11451,6 +11451,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
         }
 
+        @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
+        public void testCapturedTypesSubstitutionIntoAbbreviation() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/capturedTypesSubstitutionIntoAbbreviation.kt");
+        }
+
         @TestMetadata("coercionToUnitWithLastLambdaExpression.kt")
         public void testCoercionToUnitWithLastLambdaExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inference/coercionToUnitWithLastLambdaExpression.kt");

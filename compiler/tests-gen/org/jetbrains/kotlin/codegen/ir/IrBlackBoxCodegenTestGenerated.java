@@ -13341,6 +13341,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
         }
 
+        @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
+        public void testCapturedTypesSubstitutionIntoAbbreviation() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/capturedTypesSubstitutionIntoAbbreviation.kt");
+        }
+
         @TestMetadata("coercionToUnitForLambdaReturnTypeWithFlexibleConstraint.kt")
         public void testCoercionToUnitForLambdaReturnTypeWithFlexibleConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/coercionToUnitForLambdaReturnTypeWithFlexibleConstraint.kt");

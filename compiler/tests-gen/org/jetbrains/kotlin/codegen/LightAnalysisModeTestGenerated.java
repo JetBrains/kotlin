@@ -14741,6 +14741,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
         }
 
+        @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
+        public void testCapturedTypesSubstitutionIntoAbbreviation() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/capturedTypesSubstitutionIntoAbbreviation.kt");
+        }
+
         @TestMetadata("coercionToUnitForLambdaReturnTypeWithFlexibleConstraint.kt")
         public void testCoercionToUnitForLambdaReturnTypeWithFlexibleConstraint() throws Exception {
             runTest("compiler/testData/codegen/box/inference/coercionToUnitForLambdaReturnTypeWithFlexibleConstraint.kt");
@@ -14962,11 +14967,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("inlineClassWithCustomEquals.kt")
         public void ignoreInlineClassWithCustomEquals() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
-        }
-
-        @TestMetadata("multifileClass.kt")
-        public void ignoreMultifileClass() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/multifileClass.kt");
         }
 
         @TestMetadata("simpleSecondaryConstructor.kt")
@@ -15615,6 +15615,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("mappingOfBoxedFlexibleInlineClassType.kt")
         public void testMappingOfBoxedFlexibleInlineClassType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mappingOfBoxedFlexibleInlineClassType.kt");
+        }
+
+        @TestMetadata("multifileClass.kt")
+        public void testMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/multifileClass.kt");
         }
 
         @TestMetadata("nestedInlineClass.kt")

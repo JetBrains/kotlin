@@ -10772,6 +10772,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeWithTypeVariableSubtyping.kt");
                 }
 
+                @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
+                public void testCapturedTypesSubstitutionIntoAbbreviation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypesSubstitutionIntoAbbreviation.kt");
+                }
+
                 @TestMetadata("capturingFromArgumentOfFlexibleType.kt")
                 public void testCapturingFromArgumentOfFlexibleType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingFromArgumentOfFlexibleType.kt");
