@@ -266,43 +266,6 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInProject()
     }
 
-    fun testCoroutineMixedReleaseStatus() {
-        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { skipMetadataVersionCheck = true }
-        KotlinCompilerSettings.getInstance(project).update { additionalArguments = "-Xskip-metadata-version-check" }
-
-        val libOld = KotlinCompilerStandalone(
-            listOf(File(testDataPath, getTestName(true) + "/libOld")),
-            options = listOf("-language-version", "1.2", "-api-version", "1.2")
-        ).compile()
-
-        val libNew = KotlinCompilerStandalone(
-            listOf(File(testDataPath, getTestName(true) + "/libNew")),
-            options = listOf("-language-version", "1.3", "-api-version", "1.3")
-        ).compile()
-
-        val moduleNew = module("moduleNew").setupKotlinFacet {
-            settings.languageLevel = LanguageVersion.KOTLIN_1_3
-            settings.apiLevel = LanguageVersion.KOTLIN_1_3
-        }
-
-        val moduleOld = module("moduleOld").setupKotlinFacet {
-            settings.languageLevel = LanguageVersion.KOTLIN_1_2
-            settings.apiLevel = LanguageVersion.KOTLIN_1_2
-        }
-
-        moduleNew.addLibrary(libOld)
-        moduleNew.addLibrary(libNew)
-        moduleNew.addLibrary(KotlinArtifacts.instance.kotlinStdlib)
-
-        moduleOld.addLibrary(libNew)
-        moduleOld.addLibrary(libOld)
-        moduleOld.addLibrary(KotlinArtifacts.instance.kotlinStdlib)
-
-        moduleNew.addDependency(moduleOld)
-
-        checkHighlightingInProject()
-    }
-
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {
         runWriteAction {
             val facet = FacetManager.getInstance(this).addFacet(KotlinFacetType.INSTANCE, KotlinFacetType.NAME, null)

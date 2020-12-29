@@ -193,6 +193,10 @@ private fun readElementsList(element: Element, rootElementName: String, elementN
     return null
 }
 
+private fun readV3Config(element: Element): KotlinFacetSettings {
+    return readV2AndLaterConfig(element)
+}
+
 private fun readV2Config(element: Element): KotlinFacetSettings {
     return readV2AndLaterConfig(element)
 }
@@ -210,6 +214,7 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
     return when (version) {
         1 -> readV1Config(element)
         2 -> readV2Config(element)
+        3 -> readV3Config(element)
         KotlinFacetSettings.CURRENT_VERSION -> readLatestConfig(element)
         else -> return KotlinFacetSettings() // Reset facet configuration if versions don't match
     }.apply { this.version = version }
@@ -396,7 +401,10 @@ fun Element.dropVersionsIfNecessary(settings: CommonCompilerArguments) {
 }
 
 fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
-    val versionToWrite = if (version == 2) version else KotlinFacetSettings.CURRENT_VERSION
+    val versionToWrite = when (version) {
+        2, 3 -> version
+        else -> KotlinFacetSettings.CURRENT_VERSION
+    }
     element.setAttribute("version", versionToWrite.toString())
     writeLatestConfig(element)
 }

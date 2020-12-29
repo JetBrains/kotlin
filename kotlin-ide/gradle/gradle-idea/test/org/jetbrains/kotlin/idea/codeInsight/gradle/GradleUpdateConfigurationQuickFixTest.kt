@@ -82,13 +82,6 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     @Test
     @Ignore // Import failed: Could not initialize class org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImplKt
     @TargetVersions("4.7 <=> 6.0")
-    fun testEnableCoroutines() {
-        doTest("Enable coroutine support in the current module")
-    }
-
-    @Test
-    @Ignore // Import failed: Could not initialize class org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImplKt
-    @TargetVersions("4.7 <=> 6.0")
     fun testAddKotlinReflect() {
         doTest("Add 'kotlin-reflect.jar' to the classpath")
     }

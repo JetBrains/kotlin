@@ -160,7 +160,7 @@ data class ExternalSystemNativeMainRunTask(
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
-        val CURRENT_VERSION = 3
+        val CURRENT_VERSION = 4
         val DEFAULT_VERSION = 0
     }
 
