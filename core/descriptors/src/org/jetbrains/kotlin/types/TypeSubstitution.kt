@@ -88,7 +88,7 @@ abstract class TypeConstructorSubstitution : TypeSubstitution() {
 class IndexedParametersSubstitution(
     val parameters: Array<TypeParameterDescriptor>,
     val arguments: Array<TypeProjection>,
-    private val approximateCapturedTypes: Boolean = false
+    private val approximateContravariantCapturedTypes: Boolean = false
 ) : TypeSubstitution() {
     init {
         assert(parameters.size <= arguments.size) {
@@ -103,7 +103,7 @@ class IndexedParametersSubstitution(
 
     override fun isEmpty(): Boolean = arguments.isEmpty()
 
-    override fun approximateContravariantCapturedTypes() = approximateCapturedTypes
+    override fun approximateContravariantCapturedTypes() = approximateContravariantCapturedTypes
 
     override fun get(key: KotlinType): TypeProjection? {
         val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
