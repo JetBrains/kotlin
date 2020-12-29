@@ -64,10 +64,62 @@ actual enum class RegexOption {
 // From char.kt
 
 actual fun Char.isWhitespace(): Boolean = TODO("Wasm stdlib: Text")
-actual fun Char.toLowerCase(): Char = TODO("Wasm stdlib: Text")
-actual fun Char.toUpperCase(): Char = TODO("Wasm stdlib: Text")
 actual fun Char.isHighSurrogate(): Boolean = TODO("Wasm stdlib: Text")
 actual fun Char.isLowSurrogate(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [lowercase] function.
+ * If this character has no mapping equivalent, the character itself is returned.
+ *
+ * @sample samples.text.Chars.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.lowercaseChar(): Char = TODO("Wasm stdlib: Text")
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\u0130'.lowercase()` returns `"\u0069\u0307"`,
+ * where `'\u0130'` is the LATIN CAPITAL LETTER I WITH DOT ABOVE character (`İ`).
+ * If this character has no lower case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.lowercase(): String = TODO("Wasm stdlib: Text")
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [uppercase] function.
+ * If this character has no mapping equivalent, the character itself is returned.
+ *
+ * @sample samples.text.Chars.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.uppercaseChar(): Char = TODO("Wasm stdlib: Text")
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.uppercase()` returns `"\u0046\u0046"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no upper case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.uppercase(): String = TODO("Wasm stdlib: Text")
 
 // From string.kt
 
@@ -193,17 +245,38 @@ public actual fun String.substring(startIndex: Int, endIndex: Int): String = TOD
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toUpperCase
  */
 public actual fun String.toUpperCase(): String = TODO("Wasm stdlib: Text")
 
 /**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
+ * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
  *
- * @sample samples.text.Strings.toLowerCase
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun String.uppercase(): String = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 public actual fun String.toLowerCase(): String = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun String.lowercase(): String = TODO("Wasm stdlib: Text")
+
 public actual fun String.capitalize(): String = TODO("Wasm stdlib: Text")
 public actual fun String.decapitalize(): String = TODO("Wasm stdlib: Text")
 public actual fun CharSequence.repeat(n: Int): String = TODO("Wasm stdlib: Text")
