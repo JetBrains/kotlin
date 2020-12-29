@@ -377,10 +377,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/composeLikeBytecodeText", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
                 model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }

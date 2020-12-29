@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 
 fun generateJUnit5CompilerTests(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
@@ -57,6 +58,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractBlackBoxCodegenTest> {
                 model("codegen/box")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTest> {
+                model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
             }
         }
 
