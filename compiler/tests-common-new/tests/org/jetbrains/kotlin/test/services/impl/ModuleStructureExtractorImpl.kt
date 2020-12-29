@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -156,6 +157,10 @@ class ModuleStructureExtractorImpl(
                     val (moduleName, dependencies, friends) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
                     currentModuleName = moduleName
                     dependencies.mapTo(dependenciesOfCurrentModule) { name ->
+                        val dependentModule = modules.firstOrNull { it.name == name }
+                        if (dependentModule?.targetPlatform.isCommon()) {
+                            return@mapTo DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOn)
+                        }
                         val kind = defaultsProvider.defaultDependencyKind
                         DependencyDescription(name, kind, DependencyRelation.Dependency)
                     }
