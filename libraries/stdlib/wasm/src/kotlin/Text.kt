@@ -69,6 +69,11 @@ actual fun Char.isLowSurrogate(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ */
+public actual fun Char.toLowerCase(): Char = TODO("Wasm stdlib: Text")
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  *
  * This function performs one-to-one character mapping.
  * To support one-to-many character mapping use the [lowercase] function.
@@ -93,6 +98,11 @@ public actual fun Char.lowercaseChar(): Char = TODO("Wasm stdlib: Text")
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public actual fun Char.lowercase(): String = TODO("Wasm stdlib: Text")
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ */
+public actual fun Char.toUpperCase(): Char = TODO("Wasm stdlib: Text")
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.

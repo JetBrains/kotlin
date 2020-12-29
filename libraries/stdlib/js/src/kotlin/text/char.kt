@@ -10,6 +10,13 @@ public actual fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]"
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  *
  * This function performs one-to-one character mapping.
  * To support one-to-many character mapping use the [lowercase] function.
@@ -36,6 +43,13 @@ public actual inline fun Char.lowercaseChar(): Char = toString().asDynamic().toL
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 public actual inline fun Char.lowercase(): String = toString().asDynamic().toLowerCase() as String
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.

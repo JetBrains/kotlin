@@ -11,9 +11,7 @@ package kotlin.text
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
-@OptIn(ExperimentalStdlibApi::class)
-@kotlin.internal.InlineOnly
-public inline fun Char.toLowerCase(): Char = lowercaseChar()
+public expect fun Char.toLowerCase(): Char
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
@@ -45,9 +43,7 @@ public expect fun Char.lowercase(): String
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
-@OptIn(ExperimentalStdlibApi::class)
-@kotlin.internal.InlineOnly
-public inline fun Char.toUpperCase(): Char = uppercaseChar()
+public expect fun Char.toUpperCase(): Char
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.

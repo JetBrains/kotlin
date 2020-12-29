@@ -88,6 +88,13 @@ public inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
 public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
 
 /**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
+
+/**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  *
  * This function performs one-to-one character mapping.
@@ -129,6 +136,13 @@ public actual inline fun Char.uppercase(): String = toString().uppercase()
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public fun Char.uppercase(locale: Locale): String = toString().uppercase(locale)
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
