@@ -11,7 +11,7 @@ fun <T> T.isDeprecated() where T : WithExtraProperties<out Documentable> =
 
 val <T> T.deprecatedAnnotation where T : WithExtraProperties<out Documentable>
     get() = extra[Annotations]?.let { annotations ->
-        annotations.content.values.flatten().firstOrNull {
+        annotations.directAnnotations.values.flatten().firstOrNull {
             it.dri.toString() == "kotlin/Deprecated///PointingToDeclaration/" ||
                     it.dri.toString() == "java.lang/Deprecated///PointingToDeclaration/"
         }
