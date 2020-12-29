@@ -69,7 +69,7 @@ class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransforme
 
     private fun Documentable.appendSinceKotlin() =
         sourceSets.fold(documentation) { acc, sourceSet ->
-            safeAs<WithExtraProperties<Documentable>>()?.extra?.get(Annotations)?.content?.get(sourceSet)?.find {
+            safeAs<WithExtraProperties<Documentable>>()?.extra?.get(Annotations)?.directAnnotations?.get(sourceSet)?.find {
                 it.dri == DRI("kotlin", "SinceKotlin")
             }?.params?.get("version").safeAs<StringValue>()?.value?.let { version ->
                 acc.mapValues {

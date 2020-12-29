@@ -21,7 +21,7 @@ interface JvmSignatureUtils {
         joinToString("") { it.name.toLowerCase() + " " }
 
     fun <T : Documentable> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
-        extra[Annotations]?.content ?: emptyMap()
+        extra[Annotations]?.directAnnotations ?: emptyMap()
 
     private fun PageContentBuilder.DocumentableContentBuilder.annotations(
         d: Documentable,
@@ -131,7 +131,7 @@ interface JvmSignatureUtils {
     }
 
     fun <T : Documentable> WithExtraProperties<T>.stylesIfDeprecated(sourceSetData: DokkaSourceSet): Set<TextStyle> =
-        if (extra[Annotations]?.content?.get(sourceSetData)?.any {
+        if (extra[Annotations]?.directAnnotations?.get(sourceSetData)?.any {
                 it.dri == DRI("kotlin", "Deprecated")
                         || it.dri == DRI("java.lang", "Deprecated")
             } == true) setOf(TextStyle.Strikethrough) else emptySet()
