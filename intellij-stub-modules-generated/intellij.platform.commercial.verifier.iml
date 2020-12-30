@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/android/lib/android-ultimate.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/android/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/PerforceIntegration/lib/PerforceIntegration.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/PerforceIntegration/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/zkm/lib/zkm.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/zkm/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/dsm/lib/dsm.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/dsm/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/htmltools/lib/htmltools.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/htmltools/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/tasks-time-tracking/lib/tasks-time-tracking.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/tasks-time-tracking/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/restClient/lib/restClient.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/restClient/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/FreeMarker/lib/core.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/FreeMarker/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/RefactorX/lib/RefactorX.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/RefactorX/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/Spring/lib/spring.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/reactivestreams-core/lib/reactivestreams-core.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/reactivestreams-core/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/restWebServices/lib/rs.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/WebServices/lib/ws.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/JavaEE/lib/javaee-platform.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/JavaEE/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/jsp/lib/jsp-impl.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/jsp/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/gradle-ext/lib/gradle-ext.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/gradle-ext/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/Velocity/lib/core.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/Velocity/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/webDeployment/lib/webDeployment.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/webDeployment/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/DatabaseTools/lib/database-impl.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/DatabaseTools/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/w3validators/lib/w3validators.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/w3validators/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/CSS/lib/css.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/CSS/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/Grails/lib/grails_integration.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/aspectj/lib/aspectj.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/aspectj/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/aop-common/lib/aop-common.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/aop-common/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/uml/lib/uml-support.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/JavaScriptLanguage/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/micronaut/lib/micronaut.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/micronaut/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/frameworks-starters/lib/frameworks-starters.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/frameworks-starters/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/quarkus/lib/quarkus.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/quarkus/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/helidon/lib/helidon.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/helidon/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/swagger/lib/swagger.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/swagger/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/javaHttpClients/lib/javaHttpClients.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/javaHttpClients/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/javaSqlApis/lib/javaSqlApis.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/javaSqlApis/lib/resources_en.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/microservices-config/lib/microservices-config.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/microservices-config/lib/resources_en.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

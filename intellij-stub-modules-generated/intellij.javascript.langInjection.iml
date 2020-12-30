@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/kotlin-build-dependencies/repo/kotlin.build/ideaIC/202.7660.26/artifacts/plugins/JavaScriptLanguage/lib/resources_en.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

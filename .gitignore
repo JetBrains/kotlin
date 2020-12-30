@@ -25,6 +25,7 @@ build/
 !**/src/**/build
 !**/test/**/build
 *.iml
+!intellij-stub-modules-generated/*.iml
 !**/testData/**/*.iml
 .idea/libraries/Gradle_*.xml
 .idea/libraries/Maven*.xml
