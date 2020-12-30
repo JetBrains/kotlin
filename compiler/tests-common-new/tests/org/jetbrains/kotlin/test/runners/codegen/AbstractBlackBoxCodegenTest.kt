@@ -9,12 +9,18 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
-import org.jetbrains.kotlin.test.model.BackendFacade
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.model.*
 
-open class AbstractBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(TargetBackend.JVM) {
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<*, *>>
+open class AbstractBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact>(
+    FrontendKinds.ClassicFrontend,
+    TargetBackend.JVM
+) {
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, *>>
         get() = ::ClassicFrontend2ClassicBackendConverter
 
     override val backendFacade: Constructor<BackendFacade<*, BinaryArtifacts.Jvm>>

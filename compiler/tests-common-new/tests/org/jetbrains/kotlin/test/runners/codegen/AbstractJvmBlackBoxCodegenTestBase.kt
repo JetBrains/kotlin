@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -23,22 +21,23 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractJvmBlackBoxCodegenTestBase(
+abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>>(
+    val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<*, *>>
+    abstract val frontendFacade: Constructor<FrontendFacade<R>>
+    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, *>>
     abstract val backendFacade: Constructor<BackendFacade<*, BinaryArtifacts.Jvm>>
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = FrontendKinds.ClassicFrontend
+            frontend = targetFrontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
 
         defaultDirectives {
             +USE_PSI_CLASS_FILES_READING
-            +REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
             +RUN_DEX_CHECKER
         }
 
@@ -53,11 +52,15 @@ abstract class AbstractJvmBlackBoxCodegenTestBase(
             ::CodegenHelpersSourceFilesProvider,
         )
 
-        useFrontendFacades(::ClassicFrontendFacade)
+        useFrontendFacades(frontendFacade)
         useFrontend2BackendConverters(frontendToBackendConverter)
         useBackendFacades(backendFacade)
 
-        useFrontendHandlers(::NoCompilationErrorsHandler)
+        useFrontendHandlers(
+            ::NoCompilationErrorsHandler,
+            ::NoFirCompilationErrorsHandler,
+        )
+
         useArtifactsHandlers(
             ::JvmBoxRunner,
             ::NoJvmSpecificCompilationErrorsHandler,

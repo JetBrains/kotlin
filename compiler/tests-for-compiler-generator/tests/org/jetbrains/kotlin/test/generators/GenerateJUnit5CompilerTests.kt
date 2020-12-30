@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 
 fun generateJUnit5CompilerTests(args: Array<String>) {
@@ -71,6 +72,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirDiagnosticTest>(suiteTestClassName = "FirOldFrontendDiagnosticsTestGenerated") {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTest> {
+                model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
             }
         }
 

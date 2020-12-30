@@ -506,10 +506,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             testRunnerMethodName = "runTestWithCustomIgnoreDirective",
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
         ) {
-            testClass<AbstractFirBlackBoxCodegenTest> {
-                model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractFirBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }

@@ -20,6 +20,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:fir:checkers"))
+    testApi(project(":compiler:fir:fir-serialization"))
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
 
@@ -30,6 +31,8 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(androidDxJar())
+    testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
     testImplementation(intellijDep()) {

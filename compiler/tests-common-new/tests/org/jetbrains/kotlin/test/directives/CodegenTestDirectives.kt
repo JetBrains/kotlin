@@ -13,6 +13,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Ignore failures of test on target backend"
     )
 
+    val IGNORE_BACKEND_FIR by enumDirective<TargetBackend>(
+        description = "Ignore specific backend if test uses FIR"
+    )
+
     val JAVAC_OPTIONS by stringDirective(
         description = "Specify javac options to compile java files"
     )
@@ -34,5 +38,9 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_DEXING by directive(
         description = "Ignore dex checkers"
+    )
+
+    val IGNORE_FIR_DIAGNOSTICS by directive(
+        description = "Run backend even FIR reported some diagnostics with ERROR severity"
     )
 }
