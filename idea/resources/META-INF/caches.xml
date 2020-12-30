@@ -12,9 +12,6 @@
     <projectService serviceInterface="org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinIDEModificationTrackerService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.caches.resolve.KotlinCacheService"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheServiceImpl"/>
-
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService"/>
