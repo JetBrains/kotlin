@@ -51,7 +51,8 @@ tasks {
                 "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xcoroutines=enable",
                 "-XXLanguage:-ReleaseCoroutines",
-                "-Xno-use-ir"
+                "-Xno-use-ir",
+                "-Xuse-old-backend"
             )
             moduleName = "kotlin-coroutines-experimental-compat"
         }
@@ -62,7 +63,8 @@ tasks {
             apiVersion = "1.2"
             freeCompilerArgs = listOf(
                 "-Xcoroutines=enable",
-                "-Xno-use-ir"
+                "-Xno-use-ir",
+                "-Xuse-old-backend"
             )
         }
     }
@@ -71,7 +73,8 @@ tasks {
             languageVersion = "1.3"
             apiVersion = "1.3"
             freeCompilerArgs = listOf(
-                "-Xno-use-ir"
+                "-Xno-use-ir",
+                "-Xuse-old-backend"
             )
         }
     }
