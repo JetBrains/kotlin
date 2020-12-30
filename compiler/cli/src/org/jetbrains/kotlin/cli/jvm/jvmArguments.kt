@@ -165,7 +165,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    val useIR = (arguments.useIR && !arguments.noUseIR) || arguments.useFir
+    val useIR = (arguments.useIR && !arguments.useOldBackend) || arguments.useFir
     put(JVMConfigurationKeys.IR, useIR)
 
     val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
@@ -242,11 +242,9 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 }
 
 fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
-    assert(arguments.useIR || arguments.klibLibraries == null) { "Klib libraries can only be used with IR backend" }
-    arguments.klibLibraries?.split(File.pathSeparator.toRegex())
-        ?.toTypedArray()
-        ?.filterNot { it.isEmpty() }
-        ?.let { put(JVMConfigurationKeys.KLIB_PATHS, it) }
+    val libraries = arguments.klibLibraries ?: return
+    assert(arguments.useIR && !arguments.useOldBackend) { "Klib libraries can only be used with IR backend" }
+    put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
 
 private val CompilerConfiguration.messageCollector: MessageCollector

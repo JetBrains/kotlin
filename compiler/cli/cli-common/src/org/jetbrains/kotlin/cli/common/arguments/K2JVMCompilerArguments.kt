@@ -85,8 +85,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xuse-ir", description = "Use the IR backend")
     var useIR: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xno-use-ir", description = "Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default")
-    var noUseIR: Boolean by FreezableVar(false)
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @Argument(value = "-Xuse-old-backend", description = "Use the old JVM backend")
+    var useOldBackend: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xir-check-local-names",
@@ -462,7 +463,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     }
 
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (!useIR) return
+        if (!useIR || useOldBackend) return
 
         if (languageVersionSettings.languageVersion < LanguageVersion.KOTLIN_1_3
             || languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
