@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="kotlinc.kotlin-reflect">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-reflect-for-ide/build/libs/kotlin-reflect-for-ide-1.4.255-SNAPSHOT.jar!/" />   
+      <root url="jar://$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-reflect-for-ide/build/libs/kotlin-reflect-for-ide-1.4.255-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
