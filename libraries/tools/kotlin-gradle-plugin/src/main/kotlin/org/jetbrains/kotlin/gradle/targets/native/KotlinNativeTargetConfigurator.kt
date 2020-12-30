@@ -165,6 +165,16 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                         KotlinNativeTarget.konanBuildTypeAttribute,
                         binary.buildType.name
                     )
+                    // capture type parameter T
+                    fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+                        to.attribute(key, from.getAttribute(key)!!)
+                    }
+                    binary.target.getAttributes().keySet().forEach {
+                        copyAttribute(it, binary.target.getAttributes(), this.attributes)
+                    }
+                    binary.attributes.keySet().forEach {
+                        copyAttribute(it, binary.attributes, this.attributes)
+                    }
                 }
             }
         }

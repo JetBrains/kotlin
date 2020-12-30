@@ -11,6 +11,9 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
@@ -229,7 +232,11 @@ class Framework(
     baseName: String,
     buildType: NativeBuildType,
     compilation: KotlinNativeCompilation
-) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+) : AbstractNativeLibrary(name, baseName, buildType, compilation), HasAttributes {
+
+    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+
+    override fun getAttributes() = attributeContainer
 
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.FRAMEWORK
