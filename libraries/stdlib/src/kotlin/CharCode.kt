@@ -15,13 +15,14 @@ package kotlin
  *
  * @sample samples.text.Chars.charFromCode
  */
+@OptIn(ExperimentalUnsignedTypes::class)
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
 public fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
         throw IllegalArgumentException("Invalid Char code: $code")
     }
-    return code.toChar()
+    return Char(code.toUShort())
 }
 
 /**
@@ -32,6 +33,7 @@ public fun Char(code: Int): Char {
 @OptIn(ExperimentalUnsignedTypes::class)
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun Char(code: UShort): Char
 
 /**

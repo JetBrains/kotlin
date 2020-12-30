@@ -12,9 +12,8 @@ package kotlin
 // TODO: KT-35100
 //@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 //public inline class Char internal constructor (val value: Int) : Comparable<Char> {
-@Suppress("ACTUAL_WITHOUT_EXPECT", "CONFLICTING_OVERLOADS")
 @OptIn(ExperimentalUnsignedTypes::class)
-public class Char actual constructor(code: UShort) : Comparable<Char> {
+public class Char(code: UShort) : Comparable<Char> {
     private val value: Int = code.toInt()
 
     /**
