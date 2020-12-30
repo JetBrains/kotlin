@@ -10,7 +10,7 @@ package kotlin
  * Creates a Char with the specified [code], or throws an exception if the [code] is out of `Char.MIN_VALUE.code..Char.MAX_VALUE.code`.
  *
  * If the program that calls this function is written in a way that only valid [code] is passed as the argument,
- * using the overload of this function that takes a [UShort] argument is preferable (`Char(intValue.toUShort())`).
+ * using the overload that takes a [UShort] argument is preferable (`Char(intValue.toUShort())`).
  * That overload doesn't check validity of the argument, and may improve program performance when the function is called routinely inside a loop.
  *
  * @sample samples.text.Chars.charFromCode
