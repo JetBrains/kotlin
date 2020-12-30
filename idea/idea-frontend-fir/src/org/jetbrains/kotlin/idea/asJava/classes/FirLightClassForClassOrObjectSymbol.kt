@@ -120,7 +120,7 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     abstract override fun hashCode(): Int
 
-    override fun getName(): String? = classOrObjectSymbol.name.asString()
+    override fun getName(): String? = allowLightClassesOnEdt { classOrObjectSymbol.name.asString() }
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
