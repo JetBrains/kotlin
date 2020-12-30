@@ -18,7 +18,8 @@ package kotlin
 @OptIn(ExperimentalUnsignedTypes::class)
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
-public fun Char(code: Int): Char {
+@kotlin.internal.InlineOnly
+public inline fun Char(code: Int): Char {
     if (code < Char.MIN_VALUE.code || code > Char.MAX_VALUE.code) {
         throw IllegalArgumentException("Invalid Char code: $code")
     }

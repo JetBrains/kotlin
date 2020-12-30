@@ -13,6 +13,7 @@ package kotlin
 @OptIn(ExperimentalUnsignedTypes::class)
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
-public actual fun Char(code: UShort): Char {
+@kotlin.internal.InlineOnly
+public actual inline fun Char(code: UShort): Char {
     return code.toInt().toChar()
 }

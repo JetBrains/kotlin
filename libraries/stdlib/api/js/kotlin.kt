@@ -12,7 +12,8 @@ public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin
 
 @kotlin.ExperimentalStdlibApi
 @kotlin.SinceKotlin(version = "1.4")
-public fun Char(code: kotlin.Int): kotlin.Char
+@kotlin.internal.InlineOnly
+public inline fun Char(code: kotlin.Int): kotlin.Char
 
 @kotlin.internal.InlineOnly
 public inline fun TODO(): kotlin.Nothing
