@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
@@ -21,6 +22,7 @@ const val JSPECIFY_NULLNESS_MISMATCH_MARK = "jspecify_nullness_mismatch"
 const val JSPECIFY_NULLABLE_ANNOTATION = "@Nullable"
 const val JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION = "@NullnessUnspecified"
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
     override fun doMultiFileTest(
         wholeFile: File,

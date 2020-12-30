@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.noarg
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
@@ -40,6 +41,7 @@ abstract class AbstractIrBytecodeListingTestForNoArg : AbstractBytecodeListingTe
     override val backend: TargetBackend get() = TargetBackend.JVM_IR
 }
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractDiagnosticsTestForNoArg : AbstractDiagnosticsTest() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         NoArgComponentRegistrar.registerNoArgComponents(environment.project, NOARG_ANNOTATIONS, backend.isIR, false)

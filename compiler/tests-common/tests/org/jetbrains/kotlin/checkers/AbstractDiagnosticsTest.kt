@@ -13,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.AssertionFailedError
 import junit.framework.TestCase
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
@@ -80,7 +81,7 @@ import java.util.*
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
-@Deprecated("Please use new test infrastructure from :compiler:tests-common:new. Check org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest")
+@ObsoleteTestInfrastructure("org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest")
 abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         try {

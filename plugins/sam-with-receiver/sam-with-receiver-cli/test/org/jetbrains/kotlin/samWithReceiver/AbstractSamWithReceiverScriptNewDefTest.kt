@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.samWithReceiver
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,6 +33,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSamWithReceiverScriptNewDefTest : AbstractDiagnosticsTest() {
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {

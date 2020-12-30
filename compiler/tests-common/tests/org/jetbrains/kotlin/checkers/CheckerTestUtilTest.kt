@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.checkers
 import com.google.common.collect.Lists
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
@@ -203,6 +204,7 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
     }
 
     fun testAbstractJetDiagnosticsTest() {
+        @OptIn(ObsoleteTestInfrastructure::class)
         val test = object : AbstractDiagnosticsTest() {
             init {
                 setUp()

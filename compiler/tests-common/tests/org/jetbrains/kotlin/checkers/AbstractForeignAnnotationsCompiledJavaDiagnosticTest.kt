@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.test.MockLibraryUtilExt.compileJavaFilesLibraryToJar
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractForeignAnnotationsCompiledJavaDiagnosticTest : AbstractDiagnosticsTest() {
     @OptIn(ExperimentalPathApi::class)
     override fun doMultiFileTest(
