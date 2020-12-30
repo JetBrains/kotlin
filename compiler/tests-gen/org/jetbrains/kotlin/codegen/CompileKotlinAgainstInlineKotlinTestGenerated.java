@@ -2133,6 +2133,24 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmName extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
+        }
+
+        public void testAllFilesPresentInJvmName() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/jvmName/simple.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

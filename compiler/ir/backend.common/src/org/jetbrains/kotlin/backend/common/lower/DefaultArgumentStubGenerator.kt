@@ -50,7 +50,7 @@ open class DefaultArgumentStubGenerator(
         return null
     }
 
-    open protected fun IrFunction.resolveAnnotations() = copyAnnotations()
+    protected open fun IrFunction.resolveAnnotations(): List<IrConstructorCall> = copyAnnotations()
 
     private fun lower(irFunction: IrFunction): List<IrFunction>? {
         val newIrFunction =
@@ -380,16 +380,16 @@ open class DefaultParameterInjector(
         // in an interface does not leave an abstract method after being moved to DefaultImpls (see InterfaceLowering).
         // Calling the fake override on an implementation of that interface would then result in a call to a method
         // that does not actually exist as DefaultImpls is not part of the inheritance hierarchy.
-        val stubFunction = declaration.findBaseFunctionWithDefaultArguments(skipInline, skipExternalMethods)
-            ?.generateDefaultsFunction(
-                context,
-                skipInline,
-                skipExternalMethods,
-                forceSetOverrideSymbols,
-                defaultArgumentStubVisibility(declaration),
-                useConstructorMarker(declaration),
-                emptyList()
-            ) ?: return null
+        val baseFunction = declaration.findBaseFunctionWithDefaultArguments(skipInline, skipExternalMethods)
+        val stubFunction = baseFunction?.generateDefaultsFunction(
+            context,
+            skipInline,
+            skipExternalMethods,
+            forceSetOverrideSymbols,
+            defaultArgumentStubVisibility(declaration),
+            useConstructorMarker(declaration),
+            baseFunction.copyAnnotations()
+        ) ?: return null
 
         log { "$declaration -> $stubFunction" }
 

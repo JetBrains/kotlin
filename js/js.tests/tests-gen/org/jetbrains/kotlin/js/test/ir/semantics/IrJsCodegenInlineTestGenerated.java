@@ -1913,6 +1913,19 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmName extends AbstractIrJsCodegenInlineTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvmName() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

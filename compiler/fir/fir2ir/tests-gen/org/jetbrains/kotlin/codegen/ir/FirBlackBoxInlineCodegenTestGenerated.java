@@ -2133,6 +2133,24 @@ public class FirBlackBoxInlineCodegenTestGenerated extends AbstractFirBlackBoxIn
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmName extends AbstractFirBlackBoxInlineCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+        }
+
+        public void testAllFilesPresentInJvmName() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/jvmName"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/jvmName/simple.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
