@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
 sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
+    KtPossibleMemberSymbol,
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol {

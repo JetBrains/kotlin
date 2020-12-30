@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -49,6 +50,11 @@ internal class KtFirKotlinPropertySymbol(
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
+
+    override val dispatchType: KtType? by cached {
+        firRef.dispatchReceiverTypeAndAnnotations(builder)
+    }
+
     override val receiverType: KtTypeAndAnnotations? by cached {
         firRef.receiverTypeAndAnnotations(builder)
     }

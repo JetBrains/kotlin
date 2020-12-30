@@ -5,6 +5,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.and
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -24,6 +25,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -43,6 +45,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -62,6 +65,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -81,6 +85,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -100,6 +105,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -119,6 +125,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -138,6 +145,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.dec
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -157,6 +165,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -176,6 +185,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -195,6 +205,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -214,6 +225,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -233,6 +245,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -252,6 +265,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -271,6 +285,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.inc
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -290,6 +305,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.inv
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -309,6 +325,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -328,6 +345,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -347,6 +365,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -366,6 +385,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -385,6 +405,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -404,6 +425,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -423,6 +445,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.or
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -442,6 +465,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -461,6 +485,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -480,6 +505,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -499,6 +525,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -518,6 +545,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -537,6 +565,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -556,6 +585,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/IntRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -575,6 +605,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/IntRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -594,6 +625,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/LongRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -613,6 +645,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/IntRange
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -632,6 +665,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -651,6 +685,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -670,6 +705,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -689,6 +725,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -708,6 +745,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -727,6 +765,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -746,6 +785,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.shl
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -765,6 +805,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.shr
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -784,6 +825,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -803,6 +845,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -822,6 +865,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -841,6 +885,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -860,6 +905,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -879,6 +925,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -898,6 +945,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Byte
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toByte
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -917,6 +965,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toChar
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -936,6 +985,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toDouble
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -955,6 +1005,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toFloat
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -974,6 +1025,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toInt
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -993,6 +1045,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toLong
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1012,6 +1065,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Short
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toShort
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1031,6 +1085,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.unaryMinus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1050,6 +1105,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.unaryPlus
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1069,6 +1125,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.ushr
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1088,6 +1145,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.xor
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1107,6 +1165,7 @@ KtFirConstructorSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   containingClassIdIfNonLocal: kotlin/Int
+  dispatchType: null
   isPrimary: true
   origin: LIBRARY
   symbolKind: MEMBER
@@ -1118,6 +1177,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.Int.equals
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1137,6 +1197,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.Int.hashCode
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false
@@ -1156,6 +1217,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/String
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toString
+  dispatchType: kotlin/Int
   isExtension: false
   isExternal: false
   isInline: false

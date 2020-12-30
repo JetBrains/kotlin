@@ -125,6 +125,7 @@ KtFirFunctionSymbol:
   annotatedType: [Anno3()] I
   annotations: []
   callableIdIfNonLocal: X.f
+  dispatchType: X
   isExtension: false
   isExternal: false
   isInline: false
@@ -144,6 +145,7 @@ KtFirKotlinPropertySymbol:
   annotatedType: [Anno4()] I
   annotations: []
   callableIdIfNonLocal: X.x
+  dispatchType: X
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true

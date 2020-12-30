@@ -5,6 +5,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.add
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -24,6 +25,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.add
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -43,6 +45,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.addAll
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -62,6 +65,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.addAll
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -81,6 +85,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.clear
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -100,6 +105,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableListIterator<E>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.listIterator
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -119,6 +125,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableListIterator<E>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.listIterator
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -138,6 +145,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.remove
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -157,6 +165,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.removeAll
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -176,6 +185,7 @@ KtFirFunctionSymbol:
   annotatedType: [] E
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.removeAt
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -195,6 +205,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.retainAll
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -214,6 +225,7 @@ KtFirFunctionSymbol:
   annotatedType: [] E
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.set
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -233,6 +245,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableList<E>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.subList
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -252,6 +265,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.contains
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -271,6 +285,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.containsAll
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -290,6 +305,7 @@ KtFirFunctionSymbol:
   annotatedType: [] E
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.get
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -309,6 +325,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.indexOf
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -328,6 +345,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.isEmpty
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -347,6 +365,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/MutableIterator<E>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.iterator
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -366,6 +385,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.lastIndexOf
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -385,6 +405,7 @@ KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.collections.List.size
+  dispatchType: kotlin/collections/MutableList<E>
   getter: null
   hasBackingField: false
   hasGetter: false
@@ -407,6 +428,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.equals
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -426,6 +448,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.hashCode
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false
@@ -445,6 +468,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/String
   annotations: []
   callableIdIfNonLocal: kotlin.collections.MutableList.toString
+  dispatchType: kotlin/collections/MutableList<E>
   isExtension: false
   isExternal: false
   isInline: false

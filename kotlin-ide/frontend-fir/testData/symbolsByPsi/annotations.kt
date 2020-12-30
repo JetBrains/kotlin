@@ -33,6 +33,7 @@ KtFirConstructorSymbol:
   annotatedType: [] Anno
   annotations: []
   containingClassIdIfNonLocal: Anno
+  dispatchType: null
   isPrimary: true
   origin: SOURCE
   symbolKind: MEMBER
@@ -63,6 +64,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
   annotations: [Anno(param1 = funparam, param2 = 3)]
   callableIdIfNonLocal: X.x
+  dispatchType: X
   isExtension: false
   isExternal: false
   isInline: false

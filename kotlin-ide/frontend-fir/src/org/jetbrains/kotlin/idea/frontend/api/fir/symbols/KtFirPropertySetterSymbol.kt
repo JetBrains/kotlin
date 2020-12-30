@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSetterParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 internal class KtFirPropertySetterSymbol(
     fir: FirPropertyAccessor,
@@ -57,6 +55,10 @@ internal class KtFirPropertySetterSymbol(
                 else -> KtSymbolKind.MEMBER
             }
         }
+
+    override val dispatchType: KtType? by cached {
+        firRef.dispatchReceiverTypeAndAnnotations(builder)
+    }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
