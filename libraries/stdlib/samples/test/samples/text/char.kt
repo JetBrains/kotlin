@@ -164,9 +164,12 @@ class Chars {
     fun charFromCode() {
         val codes = listOf(48, 65, 122, 946)
         assertPrints(codes.map { Char(it) }, "[0, A, z, β]")
+        assertPrints(codes.map { Char(it.toUShort()) }, "[0, A, z, β]")
 
         assertFails { Char(-1) }
+        assertPrints(Char(UShort.MIN_VALUE), "\u0000")
         assertFails { Char(1_000_000) }
+        assertPrints(Char(UShort.MAX_VALUE), "\uFFFF")
     }
 
     @Sample
