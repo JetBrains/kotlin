@@ -17,6 +17,7 @@ import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -273,14 +274,19 @@ private class ElementAnnotator(
     }
 
     private fun isUnstableAbiClassDiagnosticForModulesWithEnabledUnstableAbi(diagnostic: Diagnostic): Boolean {
-        val setting = when (diagnostic.factory) {
-            Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS -> K2JVMCompilerArguments::useIR
-            Errors.FIR_COMPILED_CLASS -> K2JVMCompilerArguments::useFir
-            else -> return false
-        }
+        val factory = diagnostic.factory
+        if (factory != Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS && factory != Errors.FIR_COMPILED_CLASS) return false
+
         val module = element.module ?: return false
         val moduleFacetSettings = KotlinFacetSettingsProvider.getInstance(element.project)?.getSettings(module) ?: return false
-        return moduleFacetSettings.isCompilerSettingPresent(setting)
+        return when (factory) {
+            Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS ->
+                moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useIR) &&
+                        !moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useOldBackend)
+            Errors.FIR_COMPILED_CLASS ->
+                moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useFir)
+            else -> error(factory)
+        }
     }
 
     companion object {

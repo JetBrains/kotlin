@@ -102,6 +102,13 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             useIRField = value
         }
 
+    private var useOldBackendField: kotlin.Boolean? = null
+    override var useOldBackend: kotlin.Boolean
+        get() = useOldBackendField ?: false
+        set(value) {
+            useOldBackendField = value
+        }
+
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
@@ -117,6 +124,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         noReflectField?.let { args.noReflect = it }
         noStdlibField?.let { args.noStdlib = it }
         useIRField?.let { args.useIR = it }
+        useOldBackendField?.let { args.useOldBackend = it }
     }
 }
 
@@ -135,4 +143,5 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     noReflect = true
     noStdlib = true
     useIR = false
+    useOldBackend = false
 }
