@@ -10030,6 +10030,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/delegatedProperty/delegateWithPrivateSet.kt");
         }
 
+        @TestMetadata("delegatedPropertyInEnum.kt")
+        public void testDelegatedPropertyInEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegatedPropertyInEnum.kt");
+        }
+
         @TestMetadata("extensionDelegatesWithSameNames.kt")
         public void testExtensionDelegatesWithSameNames() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/extensionDelegatesWithSameNames.kt");

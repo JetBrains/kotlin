@@ -9957,6 +9957,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractLightAnalysisModeTest {
+        @TestMetadata("delegatedPropertyInEnum.kt")
+        public void ignoreDelegatedPropertyInEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/delegatedPropertyInEnum.kt");
+        }
+
         @TestMetadata("genericDelegateUncheckedCast2.kt")
         public void ignoreGenericDelegateUncheckedCast2() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
