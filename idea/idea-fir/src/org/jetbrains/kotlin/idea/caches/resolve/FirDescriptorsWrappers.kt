@@ -8,11 +8,45 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-class FirWrapperSimpleFunctionDescriptor(val ktFunctionSymbol: KtFunctionSymbol) : FunctionDescriptor {
+class FirWrapperReceiverParameterDescriptor(val ktTypeAndAnnotations: KtTypeAndAnnotations): ReceiverParameterDescriptor {
+    override fun getName(): Name {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOriginal(): ParameterDescriptor {
+        TODO("Not yet implemented")
+    }
+
+    override fun getContainingDeclaration(): DeclarationDescriptor {
+        TODO("Not yet implemented")
+    }
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+        TODO("Not yet implemented")
+    }
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getVisibility(): DescriptorVisibility {
+        TODO("Not yet implemented")
+    }
+
+    override fun getSource(): SourceElement {
+        TODO("Not yet implemented")
+    }
+
+    override fun substitute(substitutor: TypeSubstitutor): ReceiverParameterDescriptor? {
+        TODO("Not yet implemented")
+    }
+
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? {
         TODO("Not yet implemented")
     }
@@ -20,6 +54,59 @@ class FirWrapperSimpleFunctionDescriptor(val ktFunctionSymbol: KtFunctionSymbol)
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? {
         TODO("Not yet implemented")
     }
+
+    override fun getTypeParameters(): List<TypeParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getReturnType(): KotlinType? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getValueParameters(): MutableList<ValueParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun hasStableParameterNames(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun hasSynthesizedParameterNames(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getOverriddenDescriptors(): MutableCollection<out CallableDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getType(): KotlinType {
+        TODO("Not yet implemented")
+    }
+
+    override fun getValue(): ReceiverValue {
+        TODO("Not yet implemented")
+    }
+
+    override fun copy(newOwner: DeclarationDescriptor): ReceiverParameterDescriptor {
+        TODO("Not yet implemented")
+    }
+
+    override val annotations: Annotations
+        get() = TODO("Not yet implemented")
+
+}
+
+class FirWrapperSimpleFunctionDescriptor(val ktFunctionSymbol: KtFunctionSymbol) : FunctionDescriptor {
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? =
+        ktFunctionSymbol.receiverType?.let { FirWrapperReceiverParameterDescriptor(it) }
+
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?  =
+        ktFunctionSymbol.dispatchType?.let { FirWrapperReceiverParameterDescriptor(it) }
+
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> {
         TODO("Not yet implemented")
