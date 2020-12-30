@@ -1138,6 +1138,14 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("idea/idea-fir/tests", "idea/testData") {
+            testClass<AbstractHighLevelInspectionTest> {
+                model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
+                model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
+                model("inspectionsLocal", pattern = "^(inspections\\.test)$", singleClass = true)
+            }
+        }
+
         testGroup("idea/scripting-support/test", "idea/scripting-support/testData") {
             testClass<AbstractScratchRunActionTest> {
                 model(

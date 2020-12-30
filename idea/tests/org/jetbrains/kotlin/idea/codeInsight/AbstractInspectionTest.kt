@@ -44,6 +44,8 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         }
     }
 
+    protected fun superSetUp() = super.setUp()
+
     override fun tearDown() {
         EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION)
         super.tearDown()
