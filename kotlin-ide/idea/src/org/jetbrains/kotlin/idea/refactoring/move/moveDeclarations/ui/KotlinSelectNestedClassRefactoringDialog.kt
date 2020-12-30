@@ -92,6 +92,7 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor(
                 listOf(nestedClass),
                 nestedClass.containingClassOrObject!!,
                 targetContainer as? KtClassOrObject ?: nestedClass.containingClassOrObject!!,
+                targetContainer as? PsiDirectory,
                 null
             )
         }

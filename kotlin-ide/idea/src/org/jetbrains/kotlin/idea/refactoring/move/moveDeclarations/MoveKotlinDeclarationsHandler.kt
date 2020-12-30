@@ -65,7 +65,7 @@ private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerAction
         originalClass: KtClassOrObject,
         targetClass: KtClassOrObject,
         moveCallback: MoveCallback?
-    ) = MoveKotlinNestedClassesDialog(project, elementsToMove, originalClass, targetClass, moveCallback).show()
+    ) = MoveKotlinNestedClassesDialog(project, elementsToMove, originalClass, targetClass, null, moveCallback).show()
 
     override fun invokeMoveKotlinTopLevelDeclarationsRefactoring(
         project: Project,
