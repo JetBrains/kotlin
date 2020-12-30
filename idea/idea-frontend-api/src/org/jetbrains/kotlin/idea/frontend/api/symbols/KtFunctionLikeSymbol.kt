@@ -25,6 +25,7 @@ abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
 abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtNamedSymbol,
     KtPossibleExtensionSymbol,
+    KtPossibleMemberSymbol,
     KtSymbolWithTypeParameters,
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithVisibility,

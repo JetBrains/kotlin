@@ -49,6 +49,11 @@ internal class KtFirKotlinPropertySymbol(
     override val annotatedType: KtTypeAndAnnotations by cached {
         firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
     }
+
+    override val dispatchType: KtTypeAndAnnotations? by cached {
+        firRef.dispatchReceiverTypeAndAnnotations(builder)
+    }
+
     override val receiverType: KtTypeAndAnnotations? by cached {
         firRef.receiverTypeAndAnnotations(builder)
     }

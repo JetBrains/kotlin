@@ -19,5 +19,9 @@ interface KtPossibleExtensionSymbol {
     val isExtension: Boolean
 }
 
+interface KtPossibleMemberSymbol {
+    val dispatchType: KtTypeAndAnnotations?
+}
+
 val KtCallableSymbol.isExtension: Boolean
     get() = (this as? KtPossibleExtensionSymbol)?.isExtension == true
