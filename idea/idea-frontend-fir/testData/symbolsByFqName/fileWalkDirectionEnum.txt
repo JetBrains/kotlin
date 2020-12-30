@@ -5,6 +5,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false
@@ -24,6 +25,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: true
@@ -43,6 +45,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
   annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false

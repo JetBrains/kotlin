@@ -6,6 +6,7 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: foo
+  dispatchType: null
   isExtension: true
   isExternal: false
   isInline: false

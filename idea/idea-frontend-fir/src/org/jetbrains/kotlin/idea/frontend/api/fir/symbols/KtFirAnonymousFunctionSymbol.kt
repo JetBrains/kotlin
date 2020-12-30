@@ -38,6 +38,11 @@ internal class KtFirAnonymousFunctionSymbol(
         }
     }
 
+    override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
+    override val receiverType: KtTypeAndAnnotations? by cached {
+        firRef.receiverTypeAndAnnotations(builder)
+    }
+
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         error("Could not create a pointer for anonymous function from library")

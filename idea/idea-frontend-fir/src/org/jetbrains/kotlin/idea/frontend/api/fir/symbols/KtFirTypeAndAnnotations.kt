@@ -75,3 +75,10 @@ internal fun FirRefWithValidityCheck<FirCallableDeclaration<*>>.receiverTypeAndA
         }
     }
 }
+
+internal fun FirRefWithValidityCheck<FirCallableMemberDeclaration<*>>.dispatchReceiverTypeAndAnnotations(builder: KtSymbolByFirBuilder) =
+    withFir { fir ->
+        fir.dispatchReceiverType?.let {
+            builder.buildKtType(it)
+        }
+    }

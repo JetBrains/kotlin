@@ -8,6 +8,7 @@ KtFirConstructorSymbol:
   annotatedType: [] A
   annotations: []
   containingClassIdIfNonLocal: A
+  dispatchType: null
   isPrimary: true
   origin: SOURCE
   symbolKind: MEMBER
@@ -28,6 +29,7 @@ KtFirConstructorSymbol:
   annotatedType: [] A
   annotations: []
   containingClassIdIfNonLocal: A
+  dispatchType: null
   isPrimary: false
   origin: SOURCE
   symbolKind: MEMBER
@@ -57,6 +59,7 @@ KtFirConstructorSymbol:
   annotatedType: [] A
   annotations: []
   containingClassIdIfNonLocal: A
+  dispatchType: null
   isPrimary: false
   origin: SOURCE
   symbolKind: MEMBER
