@@ -12,6 +12,10 @@ package kotlin.text
 /**
  * Creates a Char with the specified [code], or throws an exception if the [code] is out of `Char.MIN_VALUE.code..Char.MAX_VALUE.code`.
  *
+ * If the program that calls this function is written in a way that only valid [code] is passed as the argument,
+ * using the overload of this function that takes a [UShort] argument is preferable (`Char(intValue.toUShort())`).
+ * That overload doesn't check validity of the argument, and may improve program performance when the function is called routinely inside a loop.
+ *
  * @sample samples.text.Chars.charFromCode
  */
 @ExperimentalStdlibApi
@@ -22,6 +26,18 @@ public fun Char(code: Int): Char {
         throw IllegalArgumentException("Invalid Char code: $code")
     }
     return code.toChar()
+}
+
+/**
+ * Creates a Char with the specified [code].
+ *
+ * @sample samples.text.Chars.charFromCode
+ */
+@OptIn(ExperimentalUnsignedTypes::class)
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+public fun Char(code: UShort): Char {
+    return code.toInt().toChar()
 }
 
 /**
