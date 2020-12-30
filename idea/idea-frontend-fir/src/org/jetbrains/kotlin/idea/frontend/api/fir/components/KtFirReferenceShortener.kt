@@ -11,11 +11,11 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -247,6 +247,8 @@ internal class KtFirReferenceShortener(
         override fun visitFunctionCall(functionCall: FirFunctionCall) {
             super.visitFunctionCall(functionCall)
 
+            if (!canBePossibleToDropReceiver(functionCall)) return
+
             val callExpression = functionCall.psi as? KtCallExpression ?: return
             val qualifiedCallExpression = callExpression.getDotQualifiedExpressionForSelector() ?: return
 
@@ -261,6 +263,16 @@ internal class KtFirReferenceShortener(
             }
         }
 
+        private fun canBePossibleToDropReceiver(functionCall: FirFunctionCall): Boolean {
+            // we can remove receiver only if it is a qualifier
+            val explicitReceiver = functionCall.explicitReceiver as? FirResolvedQualifier ?: return false
+
+            // if there is no extension receiver necessary, then it can be removed
+            if (functionCall.extensionReceiver is FirNoReceiverExpression) return true
+
+            val receiverType = explicitReceiver.typeRef.toRegularClass(firResolveState.rootModuleSession) ?: return true
+            return receiverType.classKind != ClassKind.OBJECT
+        }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
             super.visitResolvedQualifier(resolvedQualifier)

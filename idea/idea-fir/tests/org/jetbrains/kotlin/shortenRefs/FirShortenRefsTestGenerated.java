@@ -46,6 +46,26 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/calls/classInSameFile.kt");
         }
 
+        @TestMetadata("explicitlyImportedFunctionFromLocalObject.kt")
+        public void testExplicitlyImportedFunctionFromLocalObject() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/explicitlyImportedFunctionFromLocalObject.kt");
+        }
+
+        @TestMetadata("extenstionFunctionOnCompanionObjectReceiverNotShortened.kt")
+        public void testExtenstionFunctionOnCompanionObjectReceiverNotShortened() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/extenstionFunctionOnCompanionObjectReceiverNotShortened.kt");
+        }
+
+        @TestMetadata("extenstionFunctionOnObjectReceiverNotShortened.kt")
+        public void testExtenstionFunctionOnObjectReceiverNotShortened() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/extenstionFunctionOnObjectReceiverNotShortened.kt");
+        }
+
+        @TestMetadata("extenstionFunctionReceiverNotShortened.kt")
+        public void testExtenstionFunctionReceiverNotShortened() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/extenstionFunctionReceiverNotShortened.kt");
+        }
+
         @TestMetadata("functionInSameFile.kt")
         public void testFunctionInSameFile() throws Exception {
             runTest("idea/testData/shortenRefsFir/calls/functionInSameFile.kt");
