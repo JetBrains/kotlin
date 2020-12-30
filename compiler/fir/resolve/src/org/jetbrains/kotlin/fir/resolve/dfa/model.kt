@@ -261,7 +261,6 @@ infix fun RealVariable.typeNotEq(type: ConeKotlinType): TypeStatement =
 fun DataFlowVariable.isSynthetic(): Boolean {
     contract {
         returns(true) implies (this@isSynthetic is SyntheticVariable)
-        returns(false) implies (this@isSynthetic is RealVariable)
     }
     return this is SyntheticVariable
 }
@@ -270,7 +269,6 @@ fun DataFlowVariable.isSynthetic(): Boolean {
 fun DataFlowVariable.isReal(): Boolean {
     contract {
         returns(true) implies (this@isReal is RealVariable)
-        returns(false) implies (this@isReal is SyntheticVariable)
     }
     return this is RealVariable
 }

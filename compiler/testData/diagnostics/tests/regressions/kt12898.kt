@@ -8,9 +8,9 @@ interface B<T : S?, S : Any> {
 class C(override val t: Any?) : B<Any?, Any>
 
 fun f(b: B<*, Any>) {
-    val y = <!OI;TYPE_MISMATCH!>b<!>.<!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>t<!>
-    if (<!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y<!> is String<!OI;USELESS_NULLABLE_CHECK!>?<!>) {
-        <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OI;DEBUG_INFO_SMARTCAST!>y<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    val y = <!TYPE_MISMATCH{OI}!>b<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>t<!>
+    if (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{NI}!>y<!> is String<!USELESS_NULLABLE_CHECK{OI}!>?<!>) {
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{NI}, DEBUG_INFO_SMARTCAST{OI}!>y<!>.<!DEBUG_INFO_MISSING_UNRESOLVED{NI}!>length<!>
     }
 }
 

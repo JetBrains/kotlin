@@ -440,7 +440,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(valueParameter) {
-            kind = OpenClass
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
             defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", "delegateFieldSymbol", withGetter = true)
@@ -450,9 +449,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("name", "Name.identifier(\"value\")")
         }
 
-        impl(simpleFunction) {
-            kind = OpenClass
-        }
+        impl(simpleFunction)
 
         impl(safeCallExpression) {
             useTypes(safeCallCheckedSubjectType)

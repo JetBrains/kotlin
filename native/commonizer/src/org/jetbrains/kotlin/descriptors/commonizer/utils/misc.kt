@@ -15,12 +15,6 @@ import java.util.Collections.singletonList
 import java.util.Collections.singletonMap
 import kotlin.collections.ArrayList
 
-internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
-    val result = ArrayList<T>(expectedCapacity)
-    toCollection(result)
-    return result
-}
-
 internal infix fun <K, V> Map<K, V>.compactConcat(other: Map<K, V>): Map<K, V> =
     when {
         isEmpty() -> other

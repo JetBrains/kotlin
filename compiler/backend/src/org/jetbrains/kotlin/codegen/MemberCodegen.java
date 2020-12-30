@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
+import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
@@ -83,7 +84,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     private final MemberCodegen<?> parentCodegen;
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
+
     private final Collection<ClassDescriptor> innerClasses = new LinkedHashSet<>();
+    private final Collection<SyntheticInnerClassInfo> syntheticInnerClasses = new LinkedHashSet<>();
 
     private ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
@@ -316,6 +319,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         genClassOrObject(context, descriptor.getSyntheticDeclaration(), state, this, descriptor);
     }
 
+    public void addSyntheticAnonymousInnerClass(SyntheticInnerClassInfo syntheticInnerClassInfo) {
+        syntheticInnerClasses.add(syntheticInnerClassInfo);
+    }
+
     private void writeInnerClasses() {
         // JVMS7 (4.7.6): a nested class or interface member will have InnerClasses information
         // for each enclosing class and for each immediate member
@@ -330,6 +337,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         for (ClassDescriptor innerClass : innerClasses) {
             writeInnerClass(innerClass);
+        }
+        for (SyntheticInnerClassInfo syntheticInnerClass : syntheticInnerClasses) {
+            v.visitInnerClass(syntheticInnerClass.getInternalName(), null, null, syntheticInnerClass.getFlags());
         }
     }
 
@@ -376,18 +386,12 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     protected void writeOuterClassAndEnclosingMethod() {
-        CodegenContext context = this.context.getParentContext();
-
-        while (context instanceof InlineLambdaContext) {
-            // If this is a lambda which will be inlined, skip its MethodContext and enclosing ClosureContext
-            //noinspection ConstantConditions
-            context = context.getParentContext().getParentContext();
-        }
+        CodegenContext<?> context = getNonInlineOuterContext(this.context.getParentContext());
         assert context != null : "Outermost context can't be null: " + this.context;
 
-        Type enclosingAsmType = computeOuterClass(context);
+        Type enclosingAsmType = computeOuterClass(typeMapper, state.getJvmDefaultMode(), element, context);
         if (enclosingAsmType != null) {
-            Method method = computeEnclosingMethod(context);
+            Method method = computeEnclosingMethod(typeMapper, context);
 
             v.visitOuterClass(
                     enclosingAsmType.getInternalName(),
@@ -397,15 +401,31 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
     }
 
+    public static CodegenContext<?> getNonInlineOuterContext(CodegenContext<?> parentContext) {
+        CodegenContext<?> context = parentContext;
+        while (context instanceof InlineLambdaContext) {
+            // If this is a lambda which will be inlined, skip its MethodContext and enclosing ClosureContext
+            //noinspection ConstantConditions
+            context = context.getParentContext().getParentContext();
+        }
+        return context;
+    }
+
     @Nullable
-    private Type computeOuterClass(@NotNull CodegenContext<?> context) {
+    public static Type computeOuterClass(
+            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull JvmDefaultMode jvmDefaultMode,
+            @NotNull KtPureElement element,
+            @NotNull CodegenContext<?> context
+    ) {
         CodegenContext<? extends ClassOrPackageFragmentDescriptor> outermost = context.getClassOrPackageParentContext();
         if (outermost instanceof ClassContext) {
             ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
-                if (isInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
-                        .isCompiledToJvmDefault(functionDescriptor, state.getJvmDefaultMode())) {
+                if (isInterface(functionDescriptor.getContainingDeclaration()) &&
+                    !JvmAnnotationUtilKt.isCompiledToJvmDefault(functionDescriptor, jvmDefaultMode)
+                ) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -425,7 +445,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     @Nullable
-    private Method computeEnclosingMethod(@NotNull CodegenContext context) {
+    public static Method computeEnclosingMethod(@NotNull KotlinTypeMapper typeMapper, @NotNull CodegenContext context) {
         if (context instanceof MethodContext) {
             FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
             if ("<clinit>".equals(functionDescriptor.getName().asString())) {

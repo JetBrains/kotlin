@@ -1,0 +1,22 @@
+class C {
+  constructor(x: Any?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val s: String?
+    get
+
+  init {
+    <this>.#s = { // BLOCK
+      val tmp0_safe_receiver: Any? = x
+      when {
+        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+        else -> tmp0_safe_receiver.toString()
+      }
+    }
+  }
+
+}
+

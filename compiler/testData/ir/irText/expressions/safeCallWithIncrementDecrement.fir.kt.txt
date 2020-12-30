@@ -1,0 +1,66 @@
+package test
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+var C?.p: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+operator fun Int?.inc(): Int? {
+  return { // BLOCK
+    val tmp0_safe_receiver: Int? = <this>
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.inc()
+    }
+  }
+}
+
+operator fun Int?.get(index: Int): Int {
+  return 42
+}
+
+operator fun Int?.set(index: Int, value: Int) {
+}
+
+fun testProperty(nc: C?) {
+  val <unary>: Int? = { // BLOCK
+    val tmp1_safe_receiver: C? = nc
+    when {
+      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+      else -> tmp1_safe_receiver.<get-p>()
+    }
+  }
+  { // BLOCK
+    val tmp2_safe_receiver: C? = nc
+    when {
+      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
+      else -> tmp2_safe_receiver.<set-p>(value = <unary>.inc())
+    }
+  } /*~> Unit */
+  <unary> /*~> Unit */
+}
+
+fun testArrayAccess(nc: C?) {
+  val <array>: Int? = { // BLOCK
+    val tmp3_safe_receiver: C? = nc
+    when {
+      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
+      else -> tmp3_safe_receiver.<get-p>()
+    }
+  }
+  val <index0>: Int = 0
+  val <unary>: Int = <array>.get(index = <index0>)
+  <array>.set(index = <index0>, value = <unary>.inc())
+  <unary> /*~> Unit */
+}

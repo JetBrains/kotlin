@@ -14,14 +14,14 @@ public abstract interface FooComponent {
     @kotlin.Metadata()
     public static final class Companion {
 
+        private Companion() {
+            super();
+        }
+
         @org.jetbrains.annotations.NotNull()
         public final java.lang.String create(@org.jetbrains.annotations.NotNull()
         java.lang.String context) {
             return null;
-        }
-
-        private Companion() {
-            super();
         }
     }
 }
@@ -33,13 +33,13 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class JvmStaticTest {
-    public final byte three = (byte)3;
-    public final char d = 'D';
-    private static final int one = 1;
-    public static final int two = 2;
-    public static final char c = 'C';
     @org.jetbrains.annotations.NotNull()
     public static final JvmStaticTest.Companion Companion = null;
+    public static final char c = 'C';
+    public final char d = 'D';
+    private static final int one = 1;
+    public final byte three = (byte)3;
+    public static final int two = 2;
 
     public JvmStaticTest() {
         super();
@@ -52,16 +52,16 @@ public final class JvmStaticTest {
     @kotlin.Metadata()
     public static final class Companion {
 
-        @java.lang.Deprecated()
-        public static void getOne$annotations() {
+        private Companion() {
+            super();
         }
 
         public final int getOne() {
             return 0;
         }
 
-        private Companion() {
-            super();
+        @java.lang.Deprecated()
+        public static void getOne$annotations() {
         }
     }
 }

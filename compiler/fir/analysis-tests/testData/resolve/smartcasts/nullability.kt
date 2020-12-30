@@ -39,18 +39,18 @@ fun test_1(x: A?) {
     if (x != null) {
         x.foo()
     } else {
-        x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
     }
-    x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }
 
 fun test_2(x: A?) {
     if (x == null) {
-        x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
     } else {
         x.foo()
     }
-    x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }
 
 fun test_3(x: A?) {
@@ -83,8 +83,8 @@ fun test_6(q: Q?) {
 fun test_7(q: Q?) {
     if (q?.fdata()?.fs()?.inc() != null) {
         q.fdata() // good
-        q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>() // bad
-        q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>().inc() // bad
+        q.fdata().<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>fs<!>()<!> // bad
+        q.fdata().<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>fs<!>()<!>.inc() // bad
     }
 }
 
@@ -98,44 +98,44 @@ fun test_9(a: Int, b: Int?) {
     if (a == b) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 
     if (a === b) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 
     if (b == a) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 
     if (b === a) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 }
 
 fun test_10(a: Int?, b: Int?) {
     if (a == b) {
-        b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 
     if (a === b) {
-        b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 
     if (b == a) {
-        b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 
     if (b === a) {
-        b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
 }
 
 fun test_11(q: QImpl?, q2: QImpl) {

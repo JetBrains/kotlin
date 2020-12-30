@@ -28,9 +28,9 @@ sealed class P {
 
 class K : P()
 
-<!REDECLARATION!>object B<!> {
+<!REDECLARATION{LT}!><!REDECLARATION{PSI}!>object B<!> {
     class I : <!SEALED_SUPERTYPE!>P<!>()
-}
+}<!>
 
 fun test() {
     class L : <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>P<!>()

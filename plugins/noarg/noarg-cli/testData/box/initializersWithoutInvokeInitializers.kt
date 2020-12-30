@@ -11,20 +11,15 @@ class Test(val a: String) {
 }
 
 fun box(): String {
-    try {
-        val test = Test::class.java.newInstance()
+    val test = Test::class.java.newInstance()
 
-        if (test.x != 0) {
-            return "Bad 5"
-        }
-
-        if (test.y != null) {
-            return "Bad Hello, world!"
-        }
-
-        return "OK"
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        return "Fail"
+    if (test.x != 0) {
+        return "Bad 5"
     }
+
+    if (test.y != null) {
+        return "Bad Hello, world!"
+    }
+
+    return "OK"
 }

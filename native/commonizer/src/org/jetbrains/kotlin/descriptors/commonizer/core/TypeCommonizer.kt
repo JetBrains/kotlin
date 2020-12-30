@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
+import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.FAILURE_MISSING_IN_SOME_TARGET
+import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDEE_LIBRARY
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-class TypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardCommonizer<CirType, CirType>() {
+class TypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirType, CirType>() {
     private lateinit var wrapped: Commonizer<*, CirType>
 
     override fun commonizationResult() = wrapped.result
@@ -22,10 +23,10 @@ class TypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardC
     override fun initialize(first: CirType) {
         @Suppress("UNCHECKED_CAST")
         wrapped = when (first) {
-            is CirClassType -> ClassTypeCommonizer(cache)
-            is CirTypeAliasType -> TypeAliasTypeCommonizer(cache)
+            is CirClassType -> ClassTypeCommonizer(classifiers)
+            is CirTypeAliasType -> TypeAliasTypeCommonizer(classifiers)
             is CirTypeParameterType -> TypeParameterTypeCommonizer()
-            is CirFlexibleType -> FlexibleTypeCommonizer(cache)
+            is CirFlexibleType -> FlexibleTypeCommonizer(classifiers)
         } as Commonizer<*, CirType>
     }
 
@@ -37,11 +38,11 @@ class TypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardC
     }
 }
 
-private class ClassTypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClassType, CirClassType>() {
+private class ClassTypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClassType, CirClassType>() {
     private lateinit var classId: ClassId
-    private val outerType = OuterClassTypeCommonizer(cache)
+    private val outerType = OuterClassTypeCommonizer(classifiers)
     private lateinit var anyVisibility: DescriptorVisibility
-    private val arguments = TypeArgumentListCommonizer(cache)
+    private val arguments = TypeArgumentListCommonizer(classifiers)
     private var isMarkedNullable = false
 
     override fun commonizationResult() = CirTypeFactory.createClassType(
@@ -66,22 +67,22 @@ private class ClassTypeCommonizer(private val cache: CirClassifiersCache) : Abst
         isMarkedNullable == next.isMarkedNullable
                 && classId == next.classifierId
                 && outerType.commonizeWith(next.outerType)
-                && commonizeClassifier(classId, cache.classes).first
+                && commonizeClass(classId, classifiers)
                 && arguments.commonizeWith(next.arguments)
 }
 
-private class OuterClassTypeCommonizer(cache: CirClassifiersCache) :
+private class OuterClassTypeCommonizer(classifiers: CirKnownClassifiers) :
     AbstractNullableCommonizer<CirClassType, CirClassType, CirClassType, CirClassType>(
-        wrappedCommonizerFactory = { ClassTypeCommonizer(cache) },
+        wrappedCommonizerFactory = { ClassTypeCommonizer(classifiers) },
         extractor = { it },
         builder = { it }
     )
 
-private class TypeAliasTypeCommonizer(private val cache: CirClassifiersCache) :
+private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifiers) :
     AbstractStandardCommonizer<CirTypeAliasType, CirClassOrTypeAliasType>() {
 
     private lateinit var typeAliasId: ClassId
-    private val arguments = TypeArgumentListCommonizer(cache)
+    private val arguments = TypeArgumentListCommonizer(classifiers)
     private var isMarkedNullable = false
     private var commonizedTypeBuilder: CommonizedTypeAliasTypeBuilder? = null // null means not selected yet
 
@@ -102,11 +103,11 @@ private class TypeAliasTypeCommonizer(private val cache: CirClassifiersCache) :
             return false
 
         if (commonizedTypeBuilder == null) {
-            val (commonized, commonClassifier) = commonizeClassifier(typeAliasId, cache.typeAliases)
-            if (!commonized)
+            val answer = commonizeTypeAlias(typeAliasId, classifiers)
+            if (!answer.commonized)
                 return false
 
-            commonizedTypeBuilder = when (commonClassifier) {
+            commonizedTypeBuilder = when (val commonClassifier = answer.commonClassifier) {
                 is CirClass -> CommonizedTypeAliasTypeBuilder.forClass(commonClassifier)
                 is CirTypeAlias -> CommonizedTypeAliasTypeBuilder.forTypeAlias(commonClassifier)
                 null -> CommonizedTypeAliasTypeBuilder.forKnownUnderlyingType(next.underlyingType)
@@ -174,9 +175,9 @@ private class TypeParameterTypeCommonizer : AbstractStandardCommonizer<CirTypePa
     }
 }
 
-private class FlexibleTypeCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirFlexibleType, CirFlexibleType>() {
-    private val lowerBound = TypeCommonizer(cache)
-    private val upperBound = TypeCommonizer(cache)
+private class FlexibleTypeCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirFlexibleType, CirFlexibleType>() {
+    private val lowerBound = TypeCommonizer(classifiers)
+    private val upperBound = TypeCommonizer(classifiers)
 
     override fun commonizationResult() = CirFlexibleType(
         lowerBound = lowerBound.result as CirSimpleType,
@@ -189,10 +190,12 @@ private class FlexibleTypeCommonizer(cache: CirClassifiersCache) : AbstractStand
         lowerBound.commonizeWith(next.lowerBound) && upperBound.commonizeWith(next.upperBound)
 }
 
-private class TypeArgumentCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirTypeProjection, CirTypeProjection>() {
+private class TypeArgumentCommonizer(
+    classifiers: CirKnownClassifiers
+) : AbstractStandardCommonizer<CirTypeProjection, CirTypeProjection>() {
     private var isStar = false
     private lateinit var projectionKind: Variance
-    private val type = TypeCommonizer(cache)
+    private val type = TypeCommonizer(classifiers)
 
     override fun commonizationResult() = if (isStar) CirStarTypeProjection else CirTypeProjectionImpl(
         projectionKind = projectionKind,
@@ -212,30 +215,61 @@ private class TypeArgumentCommonizer(cache: CirClassifiersCache) : AbstractStand
     }
 }
 
-private class TypeArgumentListCommonizer(cache: CirClassifiersCache) : AbstractListCommonizer<CirTypeProjection, CirTypeProjection>(
-    singleElementCommonizerFactory = { TypeArgumentCommonizer(cache) }
+private class TypeArgumentListCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirTypeProjection, CirTypeProjection>(
+    singleElementCommonizerFactory = { TypeArgumentCommonizer(classifiers) }
 )
 
-private inline fun <reified T : CirClassifier> commonizeClassifier(
-    classifierId: ClassId,
-    classifierNodes: Map<ClassId, CirNode<*, T>>,
-): Pair<Boolean, T?> {
-    if (classifierId.packageFqName.isUnderStandardKotlinPackages) {
-        /* either class or type alias from Kotlin stdlib */
-        return true to null
+private fun commonizeClass(classId: ClassId, classifiers: CirKnownClassifiers): Boolean {
+    if (classifiers.commonDependeeLibraries.hasClassifier(classId)) {
+        // The class is from common fragment of dependee library (ex: stdlib). Already commonized.
+        return true
+    } else if (classId.packageFqName.isUnderKotlinNativeSyntheticPackages) {
+        // C/Obj-C forward declarations are:
+        // - Either resolved to real classes/interfaces from other interop libraries (which are generated by C-interop tool and
+        //   are known to have modality/visibility/other attributes to successfully pass commonization).
+        // - Or resolved to the same synthetic classes/interfaces.
+        // ... and therefore are considered as successfully commonized.
+        return true
     }
 
-    /* or descriptors themselves can be commonized */
-    return when (val node = classifierNodes[classifierId]) {
+    return when (val node = classifiers.commonized.classNode(classId)) {
         null -> {
-            // No node means that the class or type alias was not subject for commonization at all, probably it lays
-            // not in commonized module descriptors but somewhere in their dependencies.
-            true to null
+            // No node means that the class was not subject for commonization.
+            // - Either it is missing in certain targets at all => not commonized.
+            // - Or it is a known forward declaration => consider it as commonized.
+            classifiers.forwardDeclarations.isExportedForwardDeclaration(classId)
         }
         else -> {
-            // If entry is present, then contents (common declaration) should not be null.
-            val commonClassifier = node.commonDeclaration()
-            (commonClassifier != null) to commonClassifier
+            // Common declaration in node is not null -> successfully commonized.
+            (node.commonDeclaration() != null)
         }
+    }
+}
+
+private fun commonizeTypeAlias(typeAliasId: ClassId, classifiers: CirKnownClassifiers): CommonizedTypeAliasAnswer {
+    if (classifiers.commonDependeeLibraries.hasClassifier(typeAliasId)) {
+        // The type alias is from common fragment of dependee library (ex: stdlib). Already commonized.
+        return SUCCESS_FROM_DEPENDEE_LIBRARY
+    }
+
+    return when (val node = classifiers.commonized.typeAliasNode(typeAliasId)) {
+        null -> {
+            // No node means that the type alias was not subject for commonization. It is missing in some target(s) => not commonized.
+            FAILURE_MISSING_IN_SOME_TARGET
+        }
+        else -> {
+            // Common declaration in node is not null -> successfully commonized.
+            CommonizedTypeAliasAnswer.create(node.commonDeclaration())
+        }
+    }
+}
+
+private class CommonizedTypeAliasAnswer(val commonized: Boolean, val commonClassifier: CirClassifier?) {
+    companion object {
+        val SUCCESS_FROM_DEPENDEE_LIBRARY = CommonizedTypeAliasAnswer(true, null)
+        val FAILURE_MISSING_IN_SOME_TARGET = CommonizedTypeAliasAnswer(false, null)
+
+        fun create(commonClassifier: CirClassifier?) =
+            if (commonClassifier != null) CommonizedTypeAliasAnswer(true, commonClassifier) else FAILURE_MISSING_IN_SOME_TARGET
     }
 }

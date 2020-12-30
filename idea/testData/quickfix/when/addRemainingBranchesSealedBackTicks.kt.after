@@ -15,8 +15,8 @@ fun test(foo: FooSealed?) = <caret>when (foo) {
     B -> TODO()
     C -> TODO()
     is D -> TODO()
-    is `true` -> TODO()
     is `false` -> TODO()
     `null` -> TODO()
+    is `true` -> TODO()
     null -> TODO()
 }

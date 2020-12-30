@@ -22,6 +22,7 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.computeTypeParameterBound
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
@@ -38,16 +39,24 @@ class BinaryJavaClass(
     override var access: Int = 0,
     override val outerClass: JavaClass?,
     classContent: ByteArray? = null
-) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MapBasedJavaAnnotationOwner {
-    private lateinit var myInternalName: String
-
+) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
+
     override lateinit var typeParameters: List<JavaTypeParameter>
-    override lateinit var supertypes: Collection<JavaClassifierType>
+    override lateinit var supertypes: List<JavaClassifierType>
+
     override val methods = arrayListOf<JavaMethod>()
     override val fields = arrayListOf<JavaField>()
     override val constructors = arrayListOf<JavaConstructor>()
+    override val recordComponents = arrayListOf<JavaRecordComponent>()
+
     override fun hasDefaultConstructor() = false // never: all constructors explicit in bytecode
+
+    private lateinit var myInternalName: String
+
+    // In accordance with JVMS, super class always comes before the interface list
+    private val superclass: JavaClassifierType? get() = supertypes.firstOrNull()
+    private val implementedInterfaces: List<JavaClassifierType> get() = supertypes.drop(1)
 
     override val annotationsByFqName by buildLazyValueForMap()
 
@@ -63,9 +72,37 @@ class BinaryJavaClass(
     override val isInterface get() = isSet(Opcodes.ACC_INTERFACE)
     override val isAnnotationType get() = isSet(Opcodes.ACC_ANNOTATION)
     override val isEnum get() = isSet(Opcodes.ACC_ENUM)
+
+    override val isRecord get() = isSet(Opcodes.ACC_RECORD)
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
+    override val isSealed: Boolean get() = permittedTypes.isNotEmpty()
+    override val permittedTypes = arrayListOf<JavaClassifierType>()
+
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
+        if (descriptor == null)
+            return null
+
+        fun getTargetType(baseType: JavaType) =
+            if (typePath != null) BinaryJavaAnnotation.computeTargetType(baseType, typePath) else baseType
+
+        val typeReference = TypeReference(typeRef)
+
+        val annotationOwner = when (typeReference.sort) {
+            TypeReference.CLASS_EXTENDS ->
+                getTargetType(if (typeReference.superTypeIndex == -1) superclass!! else implementedInterfaces[typeReference.superTypeIndex])
+            TypeReference.CLASS_TYPE_PARAMETER -> typeParameters[typeReference.typeParameterIndex]
+            TypeReference.CLASS_TYPE_PARAMETER_BOUND -> getTargetType(computeTypeParameterBound(typeParameters, typeReference))
+            else -> return null
+        }
+
+        if (annotationOwner !is MutableJavaAnnotationOwner) return null
+
+        return BinaryJavaAnnotation.addAnnotation(annotationOwner, descriptor, context, signatureParser, isFreshlySupportedAnnotation = true)
+    }
 
     override fun visitEnd() {
         methods.trimToSize()
@@ -77,7 +114,7 @@ class BinaryJavaClass(
         try {
             ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
                 this,
-                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+                ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
         } catch (e: Throwable) {
             throw IllegalStateException("Could not read class: $virtualFile", e)
@@ -165,23 +202,22 @@ class BinaryJavaClass(
         if (access.isSet(Opcodes.ACC_SYNTHETIC)) return null
 
         val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: desc), context)
-
         val processedValue = processValue(value, type)
+        val filed = BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue)
 
-        return BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue).run {
-            fields.add(this)
+        fields.add(filed)
 
-            object : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
-                override fun visitAnnotation(desc: String, visible: Boolean) =
-                    BinaryJavaAnnotation.addAnnotation(this@run.annotations, desc, context, signatureParser)
+        return AnnotationsCollectorFieldVisitor(filed, context, signatureParser)
+    }
 
-                override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean) =
-                    if (typePath == null)
-                        BinaryJavaAnnotation.addTypeAnnotation(type, desc, context, signatureParser)
-                    else
-                        null
-            }
-        }
+
+    override fun visitRecordComponent(name: String, descriptor: String, signature: String?): RecordComponentVisitor? {
+        val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: descriptor), context)
+        // TODO: Read isVararg properly
+        val isVararg = false
+        recordComponents.add(BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg))
+
+        return null
     }
 
     /**
@@ -204,7 +240,7 @@ class BinaryJavaClass(
     }
 
     override fun visitAnnotation(desc: String, visible: Boolean) =
-        BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
+        BinaryJavaAnnotation.addAnnotation(this, desc, context, signatureParser)
 
     override fun findInnerClass(name: Name): JavaClass? = findInnerClass(name, classFileContent = null)
 
@@ -217,5 +253,9 @@ class BinaryJavaClass(
                 classFileContent
             )
         }
+    }
+
+    override fun visitPermittedSubtypeExperimental(permittedSubtype: String?) {
+        permittedTypes.addIfNotNull(permittedSubtype?.convertInternalNameToClassifierType())
     }
 }

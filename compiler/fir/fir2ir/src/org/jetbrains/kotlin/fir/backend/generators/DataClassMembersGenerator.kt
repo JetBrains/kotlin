@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
@@ -32,13 +30,19 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -84,11 +88,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 // TODO
             }
 
-            override fun getBackingField(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrField? =
+            override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? =
                 irValueParameter?.let {
                     irClass.properties.single { irProperty ->
                         irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
-                    }.backingField
+                    }
                 }
 
             override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
@@ -96,21 +100,58 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 return components.irBuiltIns.anyType
             }
 
-            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>, descriptor: CallableDescriptor) {
-                // TODO
+            inner class Fir2IrHashCodeFunctionInfo(override val symbol: IrSimpleFunctionSymbol) : HashCodeFunctionInfo {
+                override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {
+                    // TODO
+                }
+            }
+
+            private fun getHashCodeFunction(klass: IrClass): IrSimpleFunctionSymbol =
+                klass.functions.singleOrNull {
+                    it.name.asString() == "hashCode" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null
+                }?.symbol
+                    ?: context.irBuiltIns.anyClass.functions.single { it.owner.name.asString() == "hashCode" }
+
+
+            val IrTypeParameter.erasedUpperBound: IrClass
+                get() {
+                    // Pick the (necessarily unique) non-interface upper bound if it exists
+                    for (type in superTypes) {
+                        val irClass = type.classOrNull?.owner ?: continue
+                        if (!irClass.isInterface && !irClass.isAnnotationClass) return irClass
+                    }
+
+                    // Otherwise, choose either the first IrClass supertype or recurse.
+                    // In the first case, all supertypes are interface types and the choice was arbitrary.
+                    // In the second case, there is only a single supertype.
+                    return when (val firstSuper = superTypes.first().classifierOrNull?.owner) {
+                        is IrClass -> firstSuper
+                        is IrTypeParameter -> firstSuper.erasedUpperBound
+                        else -> error("unknown supertype kind $firstSuper")
+                    }
+                }
+
+
+            override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
+                val classifier = type.classifierOrNull
+                val symbol = when {
+                    classifier.isArrayOrPrimitiveArray -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
+                    classifier is IrClassSymbol -> getHashCodeFunction(classifier.owner)
+                    classifier is IrTypeParameterSymbol -> getHashCodeFunction(classifier.owner.erasedUpperBound)
+                    else -> error("Unknown classifier kind $classifier")
+                }
+                return Fir2IrHashCodeFunctionInfo(symbol)
             }
         }
 
-        fun generateDispatchReceiverParameter(irFunction: IrFunction, valueParameterDescriptor: WrappedValueParameterDescriptor) =
+        fun generateDispatchReceiverParameter(irFunction: IrFunction) =
             irFunction.declareThisReceiverParameter(
                 components.symbolTable,
                 irClass.defaultType,
                 origin,
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET
-            ).apply {
-                valueParameterDescriptor.bind(this)
-            }
+            )
 
 
         private val FirSimpleFunction.matchesEqualsSignature: Boolean
@@ -136,7 +177,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             val properties = irClass.declarations
                 .filterIsInstance<IrProperty>()
                 .take(propertyParametersCount)
-                .map { it.descriptor }
             if (properties.isEmpty()) {
                 return emptyList()
             }
@@ -159,9 +199,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                             withForcedTypeCalculator = true
                         ).processFunctionsByName(name) {
                             val declaration = it.fir
-                            if (declaration is FirSimpleFunction &&
-                                declaration.matchesDataClassSyntheticMemberSignatures
-                            ) {
+                            if (declaration.matchesDataClassSyntheticMemberSignatures) {
                                 putIfAbsent(declaration.name, declaration)
                             }
                         }
@@ -216,8 +254,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         fun generateComponentBody(irFunction: IrFunction) {
             val index = getComponentIndex(irFunction)!!
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
-            val backingField = irDataClassMembersGenerator.getBackingField(null, valueParameter)!!
-            irDataClassMembersGenerator.generateComponentFunction(irFunction, backingField)
+            val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
+            irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
         }
 
         fun generateCopyBody(irFunction: IrFunction) =
@@ -228,7 +266,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             returnType: IrType,
             otherParameterNeeded: Boolean = false
         ): IrFunction {
-            val thisReceiverDescriptor = WrappedValueParameterDescriptor()
             val firFunction = buildSimpleFunction {
                 origin = FirDeclarationOrigin.Synthetic
                 this.name = name
@@ -278,7 +315,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 }
             }.apply {
                 parent = irClass
-                dispatchReceiverParameter = generateDispatchReceiverParameter(this, thisReceiverDescriptor)
+                dispatchReceiverParameter = generateDispatchReceiverParameter(this)
                 components.irBuiltIns.anyClass.descriptor.unsubstitutedMemberScope
                     .getContributedFunctions(this.name, NoLookupLocation.FROM_BACKEND)
                     .singleOrNull { function -> function.name == this.name }
@@ -288,20 +325,13 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             }
         }
 
-        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter {
-            val descriptor = WrappedValueParameterDescriptor()
-            return components.symbolTable.declareValueParameter(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor, type
-            ) { symbol ->
-                components.irFactory.createValueParameter(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, index, type, null,
-                    isCrossinline = false, isNoinline = false, isAssignable = false
-                )
-            }.apply {
+        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter =
+            components.irFactory.createValueParameter(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(), name, index, type, null,
+                isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+            ).apply {
                 parent = irFunction
-                descriptor.bind(this)
             }
-        }
     }
 
     companion object {

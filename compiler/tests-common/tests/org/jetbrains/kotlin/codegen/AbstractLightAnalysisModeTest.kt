@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
-import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
+import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
@@ -80,12 +80,12 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
                 return super.shouldWriteClass(access, name)
             }
 
-            override fun shouldWriteInnerClass(name: String): Boolean {
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean {
                 val classDescriptor = classInternalNames[name]
                 if (classDescriptor != null && shouldFilterClass(classDescriptor)) {
                     return false
                 }
-                return super.shouldWriteInnerClass(name)
+                return super.shouldWriteInnerClass(name, outerName, innerName)
             }
 
             private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
@@ -117,6 +117,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             else -> true
         }
 
-        override fun shouldWriteInnerClass(name: String) = true
+        override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?) =
+            outerName != null && innerName != null
     }
 }

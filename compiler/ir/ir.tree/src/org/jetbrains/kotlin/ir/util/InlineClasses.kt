@@ -69,11 +69,15 @@ fun getInlineClassUnderlyingType(irClass: IrClass): IrType {
 
 fun getInlineClassBackingField(irClass: IrClass): IrField {
     for (declaration in irClass.declarations) {
-        if (declaration is IrField)
+        if (declaration is IrField && !declaration.isStatic)
             return declaration
 
-        if (declaration is IrProperty)
-            return declaration.backingField ?: continue
+        if (declaration is IrProperty) {
+            val backingField = declaration.backingField
+            if (backingField != null && !backingField.isStatic) {
+                return backingField
+            }
+        }
     }
     error("Inline class has no field: ${irClass.fqNameWhenAvailable}")
 }

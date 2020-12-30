@@ -35,8 +35,6 @@ internal class ClassMemberGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
-    private val annotationGenerator = AnnotationGenerator(visitor)
-
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
@@ -51,7 +49,6 @@ internal class ClassMemberGenerator(
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
                     enterScope(irPrimaryConstructor)
-                    irPrimaryConstructor.valueParameters.forEach { symbolTable.introduceValueParameter(it) }
                     irPrimaryConstructor.putParametersInScope(primaryConstructor)
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
                 }
@@ -88,7 +85,6 @@ internal class ClassMemberGenerator(
                     // Scope for primary constructor should be entered before class declaration processing
                     with(declarationStorage) {
                         enterScope(irFunction)
-                        irFunction.valueParameters.forEach { symbolTable.introduceValueParameter(it) }
                         irFunction.putParametersInScope(firFunction)
                     }
                 }

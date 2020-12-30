@@ -49,13 +49,14 @@ import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
-import org.junit.*
+import org.junit.Assert
+import org.junit.Test
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
 
@@ -576,7 +577,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
         createProjectSubFile(
             "local.properties", """
-            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
+            sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}
         """
         )
         importProject()
@@ -600,7 +601,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
         createProjectSubFile(
             "local.properties", """
-            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
+            sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}
         """
         )
         importProject()

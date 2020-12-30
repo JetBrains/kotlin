@@ -36,4 +36,8 @@ public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement, D ex
     protected boolean isValid(ParametrizedDiagnostic<E> diagnostic) {
         return positioningStrategy.isValid(diagnostic.getPsiElement());
     }
+
+    public PositioningStrategy<? super E> getPositioningStrategy() {
+        return positioningStrategy;
+    }
 }

@@ -6,26 +6,31 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
+import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
-internal class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider() {
+class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider() {
     private val analysisSessionByModuleInfoCache =
         CachedValuesManager.getManager(project).createCachedValue {
             CachedValueProvider.Result(
                 ConcurrentHashMap<ModuleInfo, KtAnalysisSession>(),
-                PsiModificationTracker.MODIFICATION_COUNT
+                PsiModificationTracker.MODIFICATION_COUNT,
+                ProjectRootModificationTracker.getInstance(project),
+                project.createProjectWideOutOfBlockModificationTracker()
             )
         }
 
@@ -34,7 +39,7 @@ internal class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessio
             @Suppress("DEPRECATION")
             KtFirAnalysisSession.createForElement(contextElement)
         }.apply {
-            assertIsValid()
+            assertIsValidAndAccessible()
         }
     }
 
@@ -42,4 +47,9 @@ internal class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessio
         analysisSessionByModuleInfoCache.value.getOrPut(firModuleResolveState.moduleInfo) {
             KtFirAnalysisSession.createAnalysisSessionByResolveState(firModuleResolveState)
         }
+
+    @TestOnly
+    fun clearCaches() {
+        analysisSessionByModuleInfoCache.value.clear()
+    }
 }

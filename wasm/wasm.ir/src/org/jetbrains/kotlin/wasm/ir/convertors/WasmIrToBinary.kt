@@ -21,9 +21,14 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
         with(module) {
             // type section
             appendSection(1u) {
-                appendVectorSize(functionTypes.size + structs.size)
+                appendVectorSize(functionTypes.size + gcTypes.size)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                structs.forEach { appendStructTypeDeclaration(it) }
+                gcTypes.forEach {
+                    when (it) {
+                        is WasmStructDeclaration -> appendStructTypeDeclaration(it)
+                        is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
+                    }
+                }
             }
 
             // import section
@@ -148,7 +153,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
                     appendType(type)
                 }
             }
-            is WasmImmediate.StructType -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.HeapType -> appendHeapType(x.value)
         }
@@ -192,13 +197,22 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
         }
     }
 
+    private fun appendFiledType(field: WasmStructFieldDeclaration) {
+        appendType(field.type)
+        b.writeVarUInt1(field.isMutable)
+    }
+
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
         b.writeVarInt7(-0x21)
         b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
-            appendType(it.type)
-            b.writeVarUInt1(it.isMutable)
+            appendFiledType(it)
         }
+    }
+
+    private fun appendArrayTypeDeclaration(type: WasmArrayDeclaration) {
+        b.writeVarInt7(-0x22)
+        appendFiledType(type.field)
     }
 
     val WasmFunctionType.index: Int

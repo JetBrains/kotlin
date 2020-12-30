@@ -1,0 +1,65 @@
+interface ComponentContainer {
+
+}
+
+interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
+
+}
+
+interface ComponentDescriptor {
+
+}
+
+abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>> {
+  constructor(applicableTo: Class<E>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val applicableTo: Class<E>
+    field = applicableTo
+    get
+
+}
+
+class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>> {
+  constructor(container: ComponentContainer, resolver: PlatformExtensionsClashResolver<E>, clashedComponents: List<ComponentDescriptor>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private val resolver: PlatformExtensionsClashResolver<E>
+    field = resolver
+    private get
+
+  private val clashedComponents: List<ComponentDescriptor>
+    field = clashedComponents
+    private get
+
+}
+
+private val registrationMap: HashMap<Type, Any>
+  field = hashMapOf<Type, Any>()
+  private get
+
+fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<PlatformExtensionsClashResolver<*>>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<PlatformExtensionsClashResolver<*>> = clashResolvers.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val resolver: PlatformExtensionsClashResolver<*> = tmp0_iterator.next()
+      { // BLOCK
+        val clashedComponents: Collection<ComponentDescriptor> = { // BLOCK
+          val tmp1_elvis_lhs: Collection<ComponentDescriptor>? = <get-registrationMap>().get(key = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
+          when {
+            EQEQ(arg0 = tmp1_elvis_lhs, arg1 = null) -> continue
+            else -> tmp1_elvis_lhs
+          }
+        }
+        val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>> = ClashResolutionDescriptor<PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())
+      }
+    }
+  }
+}
+

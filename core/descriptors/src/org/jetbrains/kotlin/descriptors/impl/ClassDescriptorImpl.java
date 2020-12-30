@@ -149,6 +149,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isValue() {
+        return false;
+    }
+
+    @Override
     public boolean isInner() {
         return false;
     }

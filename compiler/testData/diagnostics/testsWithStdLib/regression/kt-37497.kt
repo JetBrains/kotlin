@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// FULL_JDK 
+// FULL_JDK
 // Issue: KT-37497
 
 import java.util.*

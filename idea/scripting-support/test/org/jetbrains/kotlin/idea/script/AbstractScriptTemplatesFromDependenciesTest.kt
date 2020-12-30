@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInnersForJPS
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -137,7 +137,7 @@ abstract class AbstractScriptTemplatesFromDependenciesTest : HeavyPlatformTestCa
     }
 
     private fun packJar(dir: File): File {
-        val contentDir = KotlinTestUtils.tmpDirForReusableFolder("folderForLibrary-${getTestName(true)}")
+        val contentDir = KtTestUtil.tmpDirForReusableFolder("folderForLibrary-${getTestName(true)}")
         return MockLibraryUtil.createJarFile(contentDir, dir, "templates")
     }
 }

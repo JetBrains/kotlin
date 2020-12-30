@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarati
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionFactory.registerIdeComponents
+import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirThreadSafeSymbolProviderWrapper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ModuleLibrariesSearchScope
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
@@ -160,14 +160,16 @@ internal object FirIdeSessionFactory {
                     this,
                     buildList {
                         add(
-                            KotlinDeserializedJvmSymbolsProvider(
-                                this@apply,
-                                project,
-                                packagePartProvider,
-                                javaSymbolProvider,
-                                kotlinClassFinder,
-                                javaClassFinder,
-                                kotlinScopeProvider
+                            FirThreadSafeSymbolProviderWrapper(
+                                KotlinDeserializedJvmSymbolsProvider(
+                                    this@apply,
+                                    project,
+                                    packagePartProvider,
+                                    javaSymbolProvider,
+                                    kotlinClassFinder,
+                                    javaClassFinder,
+                                    kotlinScopeProvider
+                                )
                             )
                         )
                         add(javaSymbolProvider)

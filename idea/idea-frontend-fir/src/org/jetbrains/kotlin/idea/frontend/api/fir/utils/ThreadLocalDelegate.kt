@@ -5,13 +5,19 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KProperty
 
 
-internal class ThreadLocalValue<V>(private val threadLocal: ThreadLocal<V>) {
+internal class ThreadLocalValue<V : Any>(private val init: () -> V) {
+    private val map = ConcurrentHashMap<Long, V>()
+
     @Suppress("NOTHING_TO_INLINE")
-    inline operator fun getValue(thisRef: Any?, property: KProperty<*>): V = threadLocal.get()
+    inline operator fun getValue(thisRef: Any?, property: KProperty<*>): V =
+        map.computeIfAbsent(Thread.currentThread().id) {
+            init()
+        }
 }
 
-internal inline fun <T> threadLocal(crossinline init: () -> T): ThreadLocalValue<T> =
-    ThreadLocalValue(ThreadLocal.withInitial { init() })
+internal fun <V : Any> threadLocal(init: () -> V): ThreadLocalValue<V> =
+    ThreadLocalValue(init)

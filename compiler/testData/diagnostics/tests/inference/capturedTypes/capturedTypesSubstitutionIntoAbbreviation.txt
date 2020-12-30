@@ -1,0 +1,93 @@
+package
+
+public fun getTag(): Tag<*>
+public fun getTag2(): Tag2<*>
+public fun getTag3(): Tag3<*>
+public fun getTag4(): Tag4<*>
+public fun getTag5(): Tag5<*>
+public fun getTag6(): Tag6<*>
+public fun getTag7(): Tag7<*>
+public fun getTag8(): Tag8<*>
+public fun main(): kotlin.Unit
+
+public final data class Tag</*0*/ L> {
+    public constructor Tag</*0*/ L>(/*0*/ action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */)
+    public final val action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final operator /*synthesized*/ fun component1(): Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */ = ...): Tag<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag2</*0*/ L> {
+    public constructor Tag2</*0*/ L>(/*0*/ action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */)
+    public final val action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final operator /*synthesized*/ fun component1(): Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */ = ...): Tag2<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag3</*0*/ in L> {
+    public constructor Tag3</*0*/ in L>(/*0*/ action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */)
+    public final val action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final operator /*synthesized*/ fun component1(): Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */ = ...): Tag3<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag4</*0*/ in L> {
+    public constructor Tag4</*0*/ in L>(/*0*/ action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */)
+    public final val action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final operator /*synthesized*/ fun component1(): Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */ = ...): Tag4<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag5</*0*/ L> {
+    public constructor Tag5</*0*/ L>(/*0*/ action: Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */)
+    public final val action: Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */
+    public final operator /*synthesized*/ fun component1(): Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */ = ...): Tag5<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag6</*0*/ out L> {
+    public constructor Tag6</*0*/ out L>(/*0*/ action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */)
+    public final val action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final operator /*synthesized*/ fun component1(): Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action<in L> /* = (in @kotlin.UnsafeVariance L) -> kotlin.Unit */ = ...): Tag6<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag7</*0*/ out L> {
+    public constructor Tag7</*0*/ out L>(/*0*/ action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */)
+    public final val action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final operator /*synthesized*/ fun component1(): Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action<L> /* = (@kotlin.UnsafeVariance L) -> kotlin.Unit */ = ...): Tag7<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Tag8</*0*/ out L> {
+    public constructor Tag8</*0*/ out L>(/*0*/ action: Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */)
+    public final val action: Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */
+    public final operator /*synthesized*/ fun component1(): Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */
+    public final /*synthesized*/ fun copy(/*0*/ action: Action2<L> /* = (@kotlin.UnsafeVariance L) -> L */ = ...): Tag8<L>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+public typealias Action</*0*/ K> = (@kotlin.UnsafeVariance K) -> kotlin.Unit
+public typealias Action2</*0*/ K> = (@kotlin.UnsafeVariance K) -> K

@@ -26,7 +26,7 @@ public class AndroidCompletionTestGenerated extends AbstractAndroidCompletionTes
     }
 
     public void testAllFilesPresentInCompletion() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/completion"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/completion"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("fqNameInAttr")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
@@ -63,21 +64,24 @@ internal inline fun FunctionCollector(
 }
 
 // collects member scopes for every non-empty package provided by this module
-internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqName, MemberScope) -> Unit) {
+internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(
+    probeRootPackageForEmptiness: Boolean = false, // false is the default as probing might be expensive and is not always necessary
+    collector: (FqName, MemberScope) -> Unit
+) {
     // we don's need to process fragments from other modules which are the dependencies of this module, so
     // let's use the appropriate package fragment provider
     val packageFragmentProvider = this.packageFragmentProvider
 
     fun recurse(packageFqName: FqName) {
-        if (packageFqName.isUnderStandardKotlinPackages || packageFqName.isUnderKotlinNativeSyntheticPackages)
-            return
+        val probeForEmptiness = probeRootPackageForEmptiness && packageFqName.isRoot
 
-        val ownPackageFragments = packageFragmentProvider.packageFragments(packageFqName)
-        val ownPackageMemberScopes = ownPackageFragments.asSequence()
-            .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor }
+        val ownPackageMemberScopes = packageFragmentProvider.packageFragments(packageFqName)
+            .asSequence()
+            .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor && it !is ClassifierAliasingPackageFragmentDescriptor }
             .map { it.getMemberScope() }
             .filter { it != MemberScope.Empty }
-            .toList(ownPackageFragments.size)
+            .filter { !probeForEmptiness || it.getContributedDescriptors().isNotEmpty() }
+            .toList()
 
         if (ownPackageMemberScopes.isNotEmpty()) {
             // don't include subpackages into chained member scope

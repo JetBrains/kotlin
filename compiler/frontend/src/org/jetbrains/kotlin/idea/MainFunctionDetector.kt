@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
@@ -201,5 +202,19 @@ class MainFunctionDetector {
 
         private fun hasAnnotationWithExactNumberOfArguments(function: KtNamedFunction, number: Int) =
             function.annotationEntries.any { it.valueArguments.size == number }
+    }
+
+    interface Factory {
+        fun createMainFunctionDetector(trace: BindingTrace, languageVersionSettings: LanguageVersionSettings): MainFunctionDetector
+
+        class Ordinary : Factory {
+            override fun createMainFunctionDetector(
+                trace: BindingTrace,
+                languageVersionSettings: LanguageVersionSettings
+            ): MainFunctionDetector {
+                return MainFunctionDetector(trace.bindingContext, languageVersionSettings)
+            }
+
+        }
     }
 }

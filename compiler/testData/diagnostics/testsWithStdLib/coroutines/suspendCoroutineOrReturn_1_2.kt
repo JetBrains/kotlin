@@ -20,7 +20,7 @@ class Controller {
     suspend fun yieldString(value: String) = suspendCoroutineUninterceptedOrReturn<Int> {
         it.resume(1)
         it checkType { _<Continuation<Int>>() }
-        it.<!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>resume<!>(<!NI;TYPE_MISMATCH!>""<!>)
+        it.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS{OI}!>resume<!>(<!TYPE_MISMATCH{NI}!>""<!>)
 
         // We can return anything here, 'suspendCoroutineUninterceptedOrReturn' is not very type-safe
         // Also we can call resume and then return the value too, but it's still just our problem

@@ -11,18 +11,14 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.withReadLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -35,8 +31,6 @@ abstract class FirModuleResolveState {
     abstract val rootModuleSession: FirSession
 
     abstract val moduleInfo: IdeaModuleInfo
-
-    abstract val firTransformerProvider: FirTransformerProvider
 
     internal abstract fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession
 
@@ -53,14 +47,17 @@ abstract class FirModuleResolveState {
     @TestOnly
     internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?
 
+    @InternalForInline
     abstract fun findNonLocalSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
     ): FirDeclaration
 
+    @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
     ): FirDeclaration
 
+    @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtLambdaExpression,
     ): FirDeclaration
@@ -81,20 +78,4 @@ abstract class FirModuleResolveState {
     )
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
-
-    fun <D : FirDeclaration, R> withFirDeclaration(declaration: D, action: (D) -> R): R {
-        val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
-        val session = originalDeclaration.session
-        return when {
-            originalDeclaration.origin == FirDeclarationOrigin.Source
-                    && session is FirIdeSourcesSession
-            -> {
-                val cache = session.cache
-                val file = getFirFile(declaration, cache)
-                    ?: error("Fir file was not found for\n${declaration.render()}\n${declaration.ktDeclaration.getElementTextInContext()}")
-                cache.firFileLockProvider.withReadLock(file) { action(declaration) }
-            }
-            else -> action(declaration)
-        }
-    }
 }

@@ -13,9 +13,9 @@ fun <T: Any> exclExcl(t: T?): T = t!!
 fun test11() {
     // not 'String!'
     exclExcl(A.foo()) checkType { _<String>() }
-    exclExcl(A.foo()) checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String?>() }
+    exclExcl(A.foo()) checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><String?>() }
 
     // not 'String!'
     A.foo()!! checkType { _<String>() }
-    A.foo()!! checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><String?>() }
+    A.foo()!! checkType { <!TYPE_MISMATCH{OI}, UNRESOLVED_REFERENCE_WRONG_RECEIVER{NI}!>_<!><String?>() }
 }

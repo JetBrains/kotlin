@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.editor.backspaceHandler;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class BackspaceHandlerTestGenerated extends AbstractBackspaceHandlerTest 
     }
 
     public void testAllFilesPresentInBackspaceHandler() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/backspaceHandler"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/backspaceHandler"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("rawStringDelete.kt")
@@ -57,7 +58,7 @@ public class BackspaceHandlerTestGenerated extends AbstractBackspaceHandlerTest 
         }
 
         public void testAllFilesPresentInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/backspaceHandler/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/editor/backspaceHandler/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("escapedStringTemplate.kt")

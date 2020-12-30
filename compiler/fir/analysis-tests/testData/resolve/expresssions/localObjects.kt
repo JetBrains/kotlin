@@ -12,10 +12,10 @@ fun test() {
     }
     b.foo()
 
-    <!LOCAL_OBJECT_NOT_ALLOWED!>object B<!> {
+    <!LOCAL_OBJECT_NOT_ALLOWED{LT}!><!LOCAL_OBJECT_NOT_ALLOWED{PSI}!>object B<!> {
         fun foo() {}
-    }
+    }<!>
     B.foo()
 }
 
-val bb = <!UNRESOLVED_REFERENCE!>B<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+val bb = <!UNRESOLVED_REFERENCE!>B<!>.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>

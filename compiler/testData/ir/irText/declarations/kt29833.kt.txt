@@ -1,0 +1,19 @@
+package interop
+
+object Definitions {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  const val KT_CONSTANT: String
+    field = "constant"
+    get
+
+  val ktValue: String
+    field = super.#CONSTANT
+    get
+
+}
+

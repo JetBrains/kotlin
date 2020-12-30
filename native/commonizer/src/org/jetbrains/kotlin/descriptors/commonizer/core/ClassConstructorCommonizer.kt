@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassConstructor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassConstructorFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirContainingClassDetailsFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
-class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClassConstructor, CirClassConstructor>() {
+class ClassConstructorCommonizer(
+    classifiers: CirKnownClassifiers
+) : AbstractStandardCommonizer<CirClassConstructor, CirClassConstructor>() {
     private var isPrimary = false
     private val visibility = VisibilityCommonizer.equalizing()
-    private val typeParameters = TypeParameterListCommonizer(cache)
-    private val valueParameters = CallableValueParametersCommonizer(cache)
+    private val typeParameters = TypeParameterListCommonizer(classifiers)
+    private val valueParameters = CallableValueParametersCommonizer(classifiers)
 
     override fun commonizationResult(): CirClassConstructor {
         val valueParameters = valueParameters.result

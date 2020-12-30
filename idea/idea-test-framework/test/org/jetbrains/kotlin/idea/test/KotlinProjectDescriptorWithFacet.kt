@@ -30,13 +30,25 @@ class KotlinProjectDescriptorWithFacet(
     private val languageVersion: LanguageVersion,
     private val multiPlatform: Boolean = false
 ) : KotlinLightProjectDescriptor() {
+
+    private var facetConfig: KotlinFacetConfiguration? = null
+
     override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry) {
         configureKotlinFacet(module) {
-            settings.languageLevel = languageVersion
-            if (multiPlatform) {
-                settings.compilerSettings = CompilerSettings().apply {
-                    additionalArguments += " -Xmulti-platform"
-                }
+            facetConfig = this
+            toFacetConfig(this)
+        }
+    }
+
+    fun replicateToFacetSettings() {
+        facetConfig?.let { toFacetConfig(it) }
+    }
+
+    private fun toFacetConfig(configuration: KotlinFacetConfiguration) {
+        configuration.settings.languageLevel = languageVersion
+        if (multiPlatform) {
+            configuration.settings.compilerSettings = CompilerSettings().apply {
+                additionalArguments += " -Xmulti-platform"
             }
         }
     }

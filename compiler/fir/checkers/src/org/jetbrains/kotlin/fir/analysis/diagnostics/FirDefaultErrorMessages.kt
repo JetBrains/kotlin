@@ -129,7 +129,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
     companion object {
         fun getRendererForDiagnostic(diagnostic: FirDiagnostic<*>): FirDiagnosticRenderer<*> {
             val factory = diagnostic.factory
-            return MAP[factory] ?: factory.defaultRenderer
+            return MAP[factory] ?: factory.firRenderer
         }
 
         // * - The old FE reports these diagnostics with additional parameters

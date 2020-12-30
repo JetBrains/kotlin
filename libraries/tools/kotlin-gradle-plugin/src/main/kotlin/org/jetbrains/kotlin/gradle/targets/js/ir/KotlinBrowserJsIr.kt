@@ -45,10 +45,10 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
         webpackTaskConfigurations.add {
-            webpackConfigAppliers.add(body)
+            webpackConfigApplier(body)
         }
         runTaskConfigurations.add {
-            webpackConfigAppliers.add(body)
+            webpackConfigApplier(body)
         }
         testTask {
             onTestFrameworkSet {

@@ -5,8 +5,8 @@
 
 package generators
 
-import java.io.*
 import templates.*
+import java.io.File
 import kotlin.system.exitProcess
 
 /**

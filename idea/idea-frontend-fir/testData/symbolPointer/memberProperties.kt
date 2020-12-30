@@ -4,13 +4,18 @@ class A {
 }
 
 // SYMBOLS:
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: A.x
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: 10
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL
@@ -19,35 +24,40 @@ KtFirPropertySymbol:
   receiverType: null
   setter: null
   symbolKind: MEMBER
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  annotatedType: [] kotlin/Int
+  annotations: []
+  hasBody: true
   isDefault: false
   isInline: false
   isOverride: false
   modality: FINAL
   origin: SOURCE
   symbolKind: TOP_LEVEL
-  type: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl cannot be cast to org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
   visibility: PUBLIC
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
+  annotatedType: [] kotlin/Int
   annotations: []
   callableIdIfNonLocal: A.y
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
   isConst: false
   isExtension: true
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverType: [] kotlin/Int
   setter: null
   symbolKind: MEMBER
-  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
@@ -60,7 +70,7 @@ KtFirClassOrObjectSymbol:
   name: A
   origin: SOURCE
   primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC

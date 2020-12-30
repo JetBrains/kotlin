@@ -1,6 +1,6 @@
 package sample
 
-fun main() {
+fun <!LINE_MARKER!>main<!>() {
     ActualizedInLeft()
     ActualizedInRight()
 }

@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
 
@@ -47,7 +47,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
@@ -67,7 +67,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
     }
 
     override fun tearDown() = runAll(
-        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
+        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory()) },
         ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
         ThrowableRunnable { super.tearDown() },
     )

@@ -6,7 +6,7 @@ fun <K> id(arg: K): K = arg
 
 fun test() {
     id(<!UNRESOLVED_REFERENCE!>unresolved<!>)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-    <!UNRESOLVED_REFERENCE!>unresolved<!>!!<!NI;UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    <!UNRESOLVED_REFERENCE!>unresolved<!>!!<!UNNECESSARY_NOT_NULL_ASSERTION{NI}!>!!<!>
     try {
         id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
     } catch (e: Exception) {

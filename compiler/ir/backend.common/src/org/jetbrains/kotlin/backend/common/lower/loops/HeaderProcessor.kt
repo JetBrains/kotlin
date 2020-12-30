@@ -297,7 +297,7 @@ internal class ProgressionLoopHeader(
 
             // loopVariable = inductionVariable
             // inductionVariable = inductionVariable + step
-            listOfNotNull(loopVariable, incrementInductionVariable(this))
+            listOfNotNull(this@ProgressionLoopHeader.loopVariable, incrementInductionVariable(this))
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
@@ -552,11 +552,8 @@ internal class WithIndexLoopHeader(
             //
             // We "wire" the 1st destructured component to index, and the 2nd to the loop variable value from the underlying iterable.
             loopVariableComponents[1]?.initializer = irGet(indexVariable)
-            listOfNotNull(loopVariableComponents[1], incrementIndexStatement) + nestedLoopHeader.initializeIteration(
-                loopVariableComponents[2],
-                linkedMapOf(),
-                builder
-            )
+            listOfNotNull(loopVariableComponents[1], incrementIndexStatement) +
+                    nestedLoopHeader.initializeIteration(loopVariableComponents[2], linkedMapOf(), builder)
         }
 
     // Use the nested loop header to build the loop. More info in comments in initializeIteration().

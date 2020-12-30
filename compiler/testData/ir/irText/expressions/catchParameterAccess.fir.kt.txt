@@ -1,0 +1,5 @@
+fun test(f: Function0<Unit>) {
+  return try f.invoke()
+  catch (e: Exception)throw e
+
+}

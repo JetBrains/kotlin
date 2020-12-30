@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -33,7 +35,6 @@ internal class FirModuleResolveStateForCompletion(
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
 
     override val rootModuleSession get() = originalState.rootModuleSession
-    override val firTransformerProvider: FirTransformerProvider get() = originalState.firTransformerProvider
     private val fileStructureCache = originalState.fileStructureCache
 
     private val completionMapping = mutableMapOf<KtElement, FirElement>()
@@ -46,6 +47,7 @@ internal class FirModuleResolveStateForCompletion(
         synchronized(completionMapping) { completionMapping[psi] }?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
+            originalState.firFileBuilder,
             originalState.rootModuleSession.cache,
             fileStructureCache,
         )
@@ -92,14 +94,17 @@ internal class FirModuleResolveStateForCompletion(
         error("Diagnostics should not be retrieved in completion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findNonLocalSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
         error("Should not be used in completion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
         error("Should not be used in completion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration {
         error("Should not be used in completion")
     }

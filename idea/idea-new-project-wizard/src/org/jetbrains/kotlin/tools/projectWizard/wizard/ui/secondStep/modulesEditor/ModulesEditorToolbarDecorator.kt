@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.createPanelWithPopupHandler
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.*
 import javax.swing.JComponent
 
 class ModulesEditorToolbarDecorator(
@@ -72,7 +73,7 @@ class ModulesEditorToolbarDecorator(
                     null -> ""
                 }
 
-                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd.capitalize())
+                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd.capitalize(Locale.US))
             }
             event.presentation.isEnabled
         }
@@ -103,7 +104,7 @@ class ModulesEditorToolbarDecorator(
                 isEnabled = tree.selectedSettingItem is Module
                 text = KotlinNewProjectWizardUIBundle.message(
                     "editor.modules.remove.tooltip",
-                    selectedModuleKindText?.let { " ${it.capitalize()}" }.orEmpty()
+                    selectedModuleKindText?.let { " ${it.capitalize(Locale.US)}" }.orEmpty()
                 )
             }
             event.presentation.isEnabled

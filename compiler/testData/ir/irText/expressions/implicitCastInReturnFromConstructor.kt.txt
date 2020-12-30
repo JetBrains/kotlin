@@ -1,0 +1,16 @@
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  constructor(x: Any?) {
+    this/*C*/()
+    when {
+      x is Unit -> return x /*~> Unit */
+    }
+  }
+
+}
+

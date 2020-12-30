@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -36,7 +37,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(testRootDisposable, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KtTestUtil.getHomeDirectory())
     }
 
     @Throws(Exception::class)
@@ -106,9 +107,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         get() = ModuleManager.getInstance(myProject).modules
 
     override fun getProjectDirOrFile(isDirectoryBasedProject: Boolean): Path {
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
-        return File(projectFilePath).toPath()
+        val projectFilePath = "$projectRoot/projectFile.ipr"
+        val file = File(projectFilePath).absoluteFile
+        TestCase.assertTrue("Project file should exists $projectFilePath", file.exists())
+        return file.toPath()
     }
 
     override fun doCreateAndOpenProject(): Project {

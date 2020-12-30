@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
@@ -32,6 +32,7 @@ abstract class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTest() {
 abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
     companion object {
         val LIBRARY_KT = File("plugins/parcelize/parcelize-compiler/testData/boxLib.kt")
+        private const val ANDROID_TOOLS_PREFIX = "studio.android.sdktools."
 
         private val androidPluginPath: String by lazy {
             System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
@@ -39,7 +40,7 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
         }
 
         private fun getLayoutLibFile(pattern: String): File {
-            val nameRegex = "^$pattern-[0-9\\.]+\\.jar$".toRegex()
+            val nameRegex = "^($ANDROID_TOOLS_PREFIX)?$pattern-[0-9\\.]+\\.jar$".toRegex()
             return File(androidPluginPath).listFiles().orEmpty().singleOrNull { it.name.matches(nameRegex) }
                 ?: error("Can't find file for pattern $nameRegex in $androidPluginPath. " +
                                  "Available files: \n${File(androidPluginPath).list().orEmpty().asList()}")
@@ -177,10 +178,10 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         ParcelizeComponentRegistrar.registerParcelizeComponents(environment.project)
         addParcelizeRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(JvmClasspathRoot(KotlinTestUtils.findAndroidApiJar())))
+        environment.updateClasspath(listOf(JvmClasspathRoot(KtTestUtil.findAndroidApiJar())))
     }
 
     override fun updateJavaClasspath(javaClasspath: MutableList<String>) {
-        javaClasspath += KotlinTestUtils.findAndroidApiJar().absolutePath
+        javaClasspath += KtTestUtil.findAndroidApiJar().absolutePath
     }
 }

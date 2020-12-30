@@ -1,0 +1,13 @@
+operator fun J?.component1(): Int {
+  return 1
+}
+
+private operator fun J.component2(): Int {
+  return 2
+}
+
+fun test() {
+  val <destruct>: J? = j()
+  val a: Int = <destruct>.component1()
+  val b: Int = <destruct> /*!! J */.component2()
+}

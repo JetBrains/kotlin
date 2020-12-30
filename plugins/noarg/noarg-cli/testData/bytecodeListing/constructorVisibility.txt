@@ -1,0 +1,29 @@
+@NoArg
+@kotlin.Metadata
+public final class Internal {
+    // source: 'constructorVisibility.kt'
+    public method <init>(): void
+    public method <init>(p0: boolean): void
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class NoArg {
+    // source: 'constructorVisibility.kt'
+}
+
+@NoArg
+@kotlin.Metadata
+public final class Private {
+    // source: 'constructorVisibility.kt'
+    public method <init>(): void
+    private method <init>(p0: int[]): void
+}
+
+@NoArg
+@kotlin.Metadata
+public abstract class Protected {
+    // source: 'constructorVisibility.kt'
+    public method <init>(): void
+    protected method <init>(p0: char): void
+}

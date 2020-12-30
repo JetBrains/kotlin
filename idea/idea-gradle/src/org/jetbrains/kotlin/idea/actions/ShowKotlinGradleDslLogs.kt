@@ -45,7 +45,7 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
             RevealFileAction.openDirectory(logsDir)
         } else {
             val parent = WindowManager.getInstance().getStatusBar(project)?.component
-                ?: WindowManager.getInstance().findVisibleFrame().rootPane
+                ?: WindowManager.getInstance().findVisibleFrame()?.rootPane
             JBPopupFactory.getInstance()
                 .createHtmlTextBalloonBuilder(
                     KotlinIdeaGradleBundle.message(

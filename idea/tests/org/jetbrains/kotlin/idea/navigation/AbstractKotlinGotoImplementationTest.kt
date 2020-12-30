@@ -9,7 +9,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 @Suppress("DEPRECATION")
@@ -20,7 +20,7 @@ abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase()
         invalidateLibraryCache(project)
     }
 
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + File.separator
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory() + File.separator
 
     override fun getProjectJDK(): Sdk = PluginTestCaseBase.mockJdk()
 

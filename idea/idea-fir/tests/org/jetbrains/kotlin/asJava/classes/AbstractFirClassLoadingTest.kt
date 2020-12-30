@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.debugger.readAction
+import org.jetbrains.kotlin.findUsages.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
-import org.jetbrains.kotlin.idea.perf.UltraLightChecker.checkByJavaFile
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker.getJavaFileForTest
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker.renderLightClasses
 import org.jetbrains.kotlin.psi.KtFile

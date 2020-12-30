@@ -653,9 +653,14 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument, @NotNull Annotations annotations) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(Annotations.Companion.getEMPTY(), getArray(), types);
+        return KotlinTypeFactory.simpleNotNullType(annotations, getArray(), types);
+    }
+
+    @NotNull
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+        return getArrayType(projectionType, argument, Annotations.Companion.getEMPTY());
     }
 
     @NotNull
@@ -817,6 +822,26 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isULong(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongFqName.toUnsafe());
+    }
+
+    public static boolean isUByteArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uByteArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUShortArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uShortArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUIntArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uIntArrayFqName.toUnsafe());
+    }
+
+    public static boolean isULongArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUnsignedArrayType(@NotNull KotlinType type) {
+        return isUByteArray(type) || isUShortArray(type) || isUIntArray(type) || isULongArray(type);
     }
 
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {

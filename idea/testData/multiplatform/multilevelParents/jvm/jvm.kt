@@ -1,8 +1,8 @@
 package sample
 
-actual interface A_Common {
-    actual fun common_1_A()
-    actual fun common_2_A()
+actual interface <!LINE_MARKER("descr='Has declaration in common module'")!>A_Common<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>common_1_A<!>()
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>common_2_A<!>()
     fun jvm_A()
 }
 

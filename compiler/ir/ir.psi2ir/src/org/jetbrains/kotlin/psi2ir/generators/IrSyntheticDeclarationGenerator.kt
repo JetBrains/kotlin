@@ -27,7 +27,6 @@ class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrElementVisi
         val result = mutableListOf<DeclarationDescriptor>()
         result.addAll(DescriptorUtils.getAllDescriptors(descriptor.unsubstitutedMemberScope))
         result.addAll(descriptor.constructors)
-        result.addAll(descriptor.sealedSubclasses)
         descriptor.companionObjectDescriptor?.let { result.add(it) }
 
         return result

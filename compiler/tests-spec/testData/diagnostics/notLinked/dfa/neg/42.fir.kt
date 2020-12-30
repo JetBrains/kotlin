@@ -19,8 +19,8 @@ fun case_1(x: Any) {
  */
 fun case_2(x: Any?) {
     if (x is Int || x is Float?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 
@@ -30,8 +30,8 @@ fun case_2(x: Any?) {
  */
 fun case_3(x: Any?) {
     if (x is Int? || x is Float) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 

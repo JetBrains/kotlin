@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -310,7 +309,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
-        block.writeResultType(session)
+        if (data is ResolutionMode.WithExpectedType && data.expectedTypeRef is FirResolvedTypeRef) {
+            // Top-down propagation: from the explicit type of the enclosing declaration to the block type
+            block.resultType = data.expectedTypeRef
+        } else {
+            // Bottom-up propagation: from the return type of the last expression in the block to the block type
+            block.writeResultType(session)
+        }
 
         dataFlowAnalyzer.exitBlock(block)
     }
@@ -612,7 +617,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             else
                 callableReferenceAccess
 
-        if (data !is ResolutionMode.ContextDependent) {
+        if (data !is ResolutionMode.ContextDependent /* ContextDependentDelegate is Ok here */) {
             val resolvedReference =
                 components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
                     callableReferenceAccess, data.expectedType, resolutionContext,
@@ -862,8 +867,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         val secondResult = augmentedArraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
 
-        val firstSucceed = firstCalls.all { it.typeRef !is FirErrorTypeRef }
-        val secondSucceed = secondCalls.all { it.typeRef !is FirErrorTypeRef }
+        fun isSuccessful(functionCall: FirFunctionCall): Boolean =
+            functionCall.typeRef !is FirErrorTypeRef && functionCall.calleeReference is FirResolvedNamedReference
+
+        val firstSucceed = firstCalls.all(::isSuccessful)
+        val secondSucceed = secondCalls.all(::isSuccessful)
 
         val result: FirStatement = when {
             firstSucceed && secondSucceed -> {

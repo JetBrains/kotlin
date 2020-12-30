@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.findUsages;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class KotlinFindUsagesWithLibraryFirTestGenerated extends AbstractKotlinF
     }
 
     public void testAllFilesPresentInLibraryUsages() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/findUsages/libraryUsages/javaLibrary")
@@ -37,7 +38,7 @@ public class KotlinFindUsagesWithLibraryFirTestGenerated extends AbstractKotlinF
         }
 
         public void testAllFilesPresentInJavaLibrary() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/javaLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/javaLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
         }
 
         @TestMetadata("LibraryClassUsages.0.kt")
@@ -80,7 +81,7 @@ public class KotlinFindUsagesWithLibraryFirTestGenerated extends AbstractKotlinF
         }
 
         public void testAllFilesPresentInKotlinLibrary() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/kotlinLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/kotlinLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
         }
 
         @TestMetadata("LibraryClassUsages.0.kt")
@@ -153,7 +154,7 @@ public class KotlinFindUsagesWithLibraryFirTestGenerated extends AbstractKotlinF
         }
 
         public void testAllFilesPresentIn_library() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
         }
 
         @TestMetadata("idea/testData/findUsages/libraryUsages/_library/library")
@@ -165,7 +166,7 @@ public class KotlinFindUsagesWithLibraryFirTestGenerated extends AbstractKotlinF
             }
 
             public void testAllFilesPresentInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library/library"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/findUsages/libraryUsages/_library/library"), Pattern.compile("^(.+)\\.0\\.kt$"), null, true);
             }
         }
     }

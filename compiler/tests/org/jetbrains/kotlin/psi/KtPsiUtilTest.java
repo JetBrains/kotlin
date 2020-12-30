@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.Assert;
 
 import java.io.File;
@@ -40,8 +41,8 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
     @NotNull
     private KtFile loadPsiFile(@NotNull String name) {
         try {
-            String text = KotlinTestUtils.doLoadFile(KotlinTestUtils.getTestDataPathBase(), name);
-            return KotlinTestUtils.createFile(name + ".kt", text, getProject());
+            String text = KtTestUtil.doLoadFile(KtTestUtil.getTestDataPathBase(), name);
+            return KtTestUtil.createFile(name + ".kt", text, getProject());
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -84,7 +85,7 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
     }
 
     public void testIsLocalClass() throws IOException {
-        String text = FileUtil.loadFile(new File(KotlinTestUtils.getTestDataPathBase() + "/psiUtil/isLocalClass.kt"), true);
+        String text = FileUtil.loadFile(new File(KtTestUtil.getTestDataPathBase() + "/psiUtil/isLocalClass.kt"), true);
         KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(text);
 
         @SuppressWarnings("unchecked")

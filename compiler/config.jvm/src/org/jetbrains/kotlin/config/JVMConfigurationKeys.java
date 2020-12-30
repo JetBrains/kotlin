@@ -117,8 +117,8 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");
 
-    public static final CompilerConfigurationKey<Boolean> IS_IR_WITH_STABLE_ABI =
-            CompilerConfigurationKey.create("Is IR with stable ABI");
+    public static final CompilerConfigurationKey<JvmAbiStability> ABI_STABILITY =
+            CompilerConfigurationKey.create("ABI stability of class files produced by JVM IR and/or FIR");
 
     public static final CompilerConfigurationKey<Boolean> DO_NOT_CLEAR_BINDING_CONTEXT =
             CompilerConfigurationKey.create("When using the IR backend, do not clear BindingContext between psi2ir and lowerings");
@@ -140,4 +140,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
             CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_PREVIEW =
+            CompilerConfigurationKey.create("Enable Java language preview features");
 }

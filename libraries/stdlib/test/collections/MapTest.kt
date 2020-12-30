@@ -400,6 +400,43 @@ class MapTest {
         assertEquals(3, filteredByValue["b"])
     }
 
+    @Test
+    fun entriesCovariantContains() {
+        // Based on https://youtrack.jetbrains.com/issue/KT-42428.
+        fun doTest(implName: String, map: Map<String, Int>, key: String, value: Int) {
+            class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
+                override fun toString(): String = "$key=$value"
+                override fun hashCode(): Int = key.hashCode() xor value.hashCode()
+                override fun equals(other: Any?): Boolean =
+                    other is Map.Entry<*, *> && key == other.key && value == other.value
+            }
+
+            val mapDescription = "$implName: ${map::class}"
+
+            assertTrue(map.keys.contains(key), mapDescription)
+            assertEquals(value, map[key], mapDescription)
+            // This one requires special efforts to make it work this way.
+            // map.entries can in fact be `MutableSet<MutableMap.MutableEntry>`,
+            // which [contains] method takes [MutableEntry], so the compiler may generate special bridge
+            // returning false for values that aren't [MutableEntry] (including [SimpleEntry]).
+            assertTrue(map.entries.contains(SimpleEntry(key, value)), mapDescription)
+            assertTrue(map.entries.toSet().contains(SimpleEntry(key, value)), mapDescription)
+        }
+
+        val mapLetterToIndex = ('a'..'z').mapIndexed { i, c -> "$c" to i }.toMap()
+        doTest("default read-only", mapLetterToIndex, "h", 7)
+        doTest("default mutable", mapLetterToIndex.toMutableMap(), "b", 1)
+        doTest("HashMap", mapLetterToIndex.toMap(HashMap()), "c", 2)
+        doTest("LinkedHashMap", mapLetterToIndex.toMap(LinkedHashMap()), "d", 3)
+
+        val builtMap = buildMap {
+            putAll(mapLetterToIndex)
+            doTest("MapBuilder", this, "z", 25)
+        }
+        doTest("built Map", builtMap, "y", 24)
+    }
+
+
     fun testPlusAssign(doPlusAssign: (MutableMap<String, Int>) -> Unit) {
         val map = hashMapOf("a" to 1, "b" to 2)
         doPlusAssign(map)

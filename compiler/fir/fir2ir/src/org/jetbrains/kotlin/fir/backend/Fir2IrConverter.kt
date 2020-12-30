@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -276,11 +276,13 @@ class Fir2IrConverter(
             val declarationStorage = Fir2IrDeclarationStorage(components, fir2irVisitor, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
             val builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
+            val annotationGenerator = AnnotationGenerator(components)
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
             components.typeConverter = typeConverter
             components.visibilityConverter = visibilityConverter
             components.builtIns = builtIns
+            components.annotationGenerator = annotationGenerator
             val irFiles = mutableListOf<IrFile>()
 
             for (firFile in firFiles) {
@@ -301,7 +303,6 @@ class Fir2IrConverter(
             components.fakeOverrideGenerator = fakeOverrideGenerator
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
-            declarationStorage.annotationGenerator = AnnotationGenerator(components)
             for (firFile in firFiles) {
                 converter.processClassHeaders(firFile)
             }
@@ -317,14 +318,7 @@ class Fir2IrConverter(
 
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
-            for (descriptor in symbolTable.wrappedTopLevelCallableDescriptors()) {
-                val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor as WrappedDeclarationDescriptor<*>)
-                val owner = descriptor.owner
-                owner.parent = parentClass ?: continue
-                if (owner is IrProperty) {
-                    owner.backingField?.parent = parentClass
-                }
-            }
+            irModuleFragment.acceptVoid(ExternalPackageParentPatcher(stubGenerator))
 
             evaluateConstants(irModuleFragment)
 

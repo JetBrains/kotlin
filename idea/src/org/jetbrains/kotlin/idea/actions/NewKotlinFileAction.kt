@@ -29,9 +29,11 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -47,10 +49,10 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
     KotlinBundle.message("action.new.file.description"),
     KotlinFileType.INSTANCE.icon
 ), DumbAware {
-    override fun postProcess(createdElement: PsiFile?, templateName: String?, customProperties: Map<String, String>?) {
+    override fun postProcess(createdElement: PsiFile, templateName: String?, customProperties: Map<String, String>?) {
         super.postProcess(createdElement, templateName, customProperties)
 
-        val module = ModuleUtilCore.findModuleForPsiElement(createdElement!!)
+        val module = ModuleUtilCore.findModuleForPsiElement(createdElement)
 
         if (createdElement is KtFile) {
             if (module != null) {
@@ -91,11 +93,20 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
                 KotlinIcons.INTERFACE,
                 "Kotlin Interface"
             )
-            .addKind(
-                KotlinBundle.message("action.new.file.dialog.data.class.title"),
-                KotlinIcons.CLASS,
-                "Kotlin Data Class"
+
+        if (project.getLanguageVersionSettings().supportsFeature(LanguageFeature.SealedInterfaces)) {
+            builder.addKind(
+                KotlinBundle.message("action.new.file.dialog.sealed.interface.title"),
+                KotlinIcons.INTERFACE,
+                "Kotlin Sealed Interface"
             )
+        }
+
+        builder.addKind(
+            KotlinBundle.message("action.new.file.dialog.data.class.title"),
+            KotlinIcons.CLASS,
+            "Kotlin Data Class"
+        )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.enum.title"),
                 KotlinIcons.ENUM,

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class JvmPackagePartSource(
@@ -25,7 +26,7 @@ class JvmPackagePartSource(
     nameResolver: NameResolver,
     override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
     override val isPreReleaseInvisible: Boolean = false,
-    override val isInvisibleIrDependency: Boolean = false,
+    override val abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
     val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
 ) : DeserializedContainerSource {
     constructor(
@@ -34,7 +35,7 @@ class JvmPackagePartSource(
         nameResolver: NameResolver,
         incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
         isPreReleaseInvisible: Boolean = false,
-        isInvisibleIrDependency: Boolean = false
+        abiStability: DeserializedContainerAbiStability = DeserializedContainerAbiStability.STABLE,
     ) : this(
         JvmClassName.byClassId(kotlinClass.classId),
         kotlinClass.classHeader.multifileClassName?.let {
@@ -44,7 +45,7 @@ class JvmPackagePartSource(
         nameResolver,
         incompatibility,
         isPreReleaseInvisible,
-        isInvisibleIrDependency,
+        abiStability,
         kotlinClass
     )
 

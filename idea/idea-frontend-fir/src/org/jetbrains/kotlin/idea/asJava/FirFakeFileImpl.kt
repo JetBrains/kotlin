@@ -12,11 +12,12 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class FirFakeFileImpl(private val classOrObject: KtClassOrObject, ktClass: KtLightClass) : FakeFileForLightClass(
     classOrObject.containingKtFile,
-    { if (classOrObject.isTopLevel()) ktClass else FirLightClassForSymbol.create(getOutermostClassOrObject(classOrObject))!! },
+    { if (classOrObject.isTopLevel()) ktClass else getOrCreateFirLightClass(getOutermostClassOrObject(classOrObject))!! },
     { null }
 ) {
 

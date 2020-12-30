@@ -1,0 +1,4 @@
+val Class<*>.test: Array<out Field?>?
+  get(): Array<out Field?>? {
+    return <this>.getDeclaredFields()
+  }

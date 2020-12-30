@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatureWriter>, FirSessionComponent {
@@ -86,8 +87,17 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         typeContext.hasNothingInNonContravariantPosition(type)
     }
 
+    private fun FirClassLikeSymbol<*>.toRegularClassSymbol(): FirRegularClassSymbol? = when (this) {
+        is FirRegularClassSymbol -> this
+        is FirTypeAliasSymbol -> {
+            val expandedType = fir.expandedTypeRef.coneType.fullyExpandedType(session) as? ConeClassLikeType
+            expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+        }
+        else -> null
+    }
+
     private fun ConeClassLikeType.buildPossiblyInnerType(): PossiblyInnerConeType? =
-        buildPossiblyInnerType(lookupTag.toSymbol(session) as? FirRegularClassSymbol?, 0)
+        buildPossiblyInnerType(lookupTag.toSymbol(session)?.toRegularClassSymbol(), 0)
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
         val parentClassId = classId?.outerClassId ?: return null
@@ -180,7 +190,8 @@ val FirSession.jvmTypeMapper: FirJvmTypeMapper by FirSession.sessionComponentAcc
 class ConeTypeSystemCommonBackendContextForTypeMapping(
     val context: ConeTypeContext
 ) : TypeSystemCommonBackendContext by context, TypeSystemCommonBackendContextForTypeMapping {
-    private val symbolProvider = context.session.firSymbolProvider
+    private val session = context.session
+    private val symbolProvider = session.firSymbolProvider
 
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         return this is ConeTypeParameterLookupTag
@@ -191,7 +202,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         return when (this) {
             is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable = false)
             is ConeClassLikeLookupTag -> {
-                val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
+                val symbol = toSymbol(session) as? FirRegularClassSymbol
                     ?: error("Class for $this not found")
                 symbol.fir.defaultType()
             }
@@ -201,7 +212,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeSimpleKotlinType)
-        return isSuspendFunctionType(context.session)
+        return isSuspendFunctionType(session)
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {
@@ -225,8 +236,8 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         require(this is ConeTypeParameterLookupTag)
         val bounds = this.typeParameterSymbol.fir.bounds.map { it.coneType }
         return bounds.firstOrNull {
-            val classId = it.classId ?: return@firstOrNull false
-            val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return@firstOrNull false
+            val classSymbol = it.safeAs<ConeClassLikeType>()?.fullyExpandedType(session)
+                ?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return@firstOrNull false
             val kind = classSymbol.fir.classKind
             kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS
         } ?: bounds.first()

@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -32,9 +35,8 @@ import org.jetbrains.kotlin.psi.*
  *
  * To create analysis session consider using [analyze]
  */
-abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTokenOwner {
+abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner {
     protected abstract val smartCastProvider: KtSmartCastProvider
-    protected abstract val typeProvider: KtTypeProvider
     protected abstract val diagnosticProvider: KtDiagnosticProvider
     protected abstract val scopeProvider: KtScopeProvider
     protected abstract val containingDeclarationProvider: KtSymbolContainingDeclarationProvider
@@ -43,20 +45,37 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
     protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
 
-    /// TODO: get rid of
-    @Deprecated("Used only in completion now, temporary")
-    abstract fun createContextDependentCopy(): KtAnalysisSession
+    @Suppress("LeakingThis")
+
+    protected open val typeRenderer: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
+    protected abstract val expressionTypeProvider: KtExpressionTypeProvider
+    protected abstract val typeProvider: KtTypeProvider
+    protected abstract val subtypingComponent: KtSubtypingComponent
+    protected abstract val expressionHandlingComponent: KtExpressionHandlingComponent
+
+    abstract fun createContextDependentCopy(originalKtFile: KtFile, fakeKtElement: KtElement): KtAnalysisSession
 
     fun KtCallableSymbol.getOverriddenSymbols(containingDeclaration: KtClassOrObjectSymbol): List<KtCallableSymbol> =
         symbolDeclarationOverridesProvider.getOverriddenSymbols(this, containingDeclaration)
 
     fun KtExpression.getSmartCasts(): Collection<KtType> = smartCastProvider.getSmartCastedToTypes(this)
 
-    fun KtExpression.getImplicitReceiverSmartCasts(): Collection<ImplicitReceiverSmartCast> = smartCastProvider.getImplicitReceiverSmartCasts(this)
+    fun KtExpression.getImplicitReceiverSmartCasts(): Collection<ImplicitReceiverSmartCast> =
+        smartCastProvider.getImplicitReceiverSmartCasts(this)
 
-    fun KtExpression.getKtType(): KtType = typeProvider.getKtExpressionType(this)
+    fun KtExpression.getKtType(): KtType = expressionTypeProvider.getKtExpressionType(this)
 
-    fun KtDeclaration.getReturnKtType(): KtType = typeProvider.getReturnTypeForKtDeclaration(this)
+    fun KtDeclaration.getReturnKtType(): KtType = expressionTypeProvider.getReturnTypeForKtDeclaration(this)
+
+    infix fun KtType.isEqualTo(other: KtType): Boolean = subtypingComponent.isEqualTo(this, other)
+
+    infix fun KtType.isSubTypeOf(superType: KtType): Boolean = subtypingComponent.isSubTypeOf(this, superType)
+
+    fun PsiElement.getExpectedType(): KtType? = expressionTypeProvider.getExpectedType(this)
+
+    fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
+
+    val builtinTypes: KtBuiltinTypes get() = typeProvider.builtinTypes
 
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 
@@ -64,9 +83,11 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
-    fun KtClassOrObjectSymbol.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
+    fun KtSymbolWithMembers.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
 
-    fun KtClassOrObjectSymbol.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
+    fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
+
+    fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> = scopeProvider.getFileScope(this)
 
     fun KtPackageSymbol.getPackageScope(): KtPackageScope = scopeProvider.getPackageScope(this)
 
@@ -97,9 +118,13 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtProperty.getVariableSymbol(): KtVariableSymbol = symbolProvider.getVariableSymbol(this)
 
+    fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KtAnonymousObjectSymbol = symbolProvider.getAnonymousObjectSymbol(this)
+
     fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol = symbolProvider.getClassOrObjectSymbol(this)
 
     fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol = symbolProvider.getPropertyAccessorSymbol(this)
+
+    fun KtFile.getFileSymbol(): KtFileSymbol = symbolProvider.getFileSymbol(this)
 
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
@@ -110,9 +135,9 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = restoreSymbol(this@KtAnalysisSession)
 
-    fun KtCallExpression.resolveCall(): CallInfo? = callResolver.resolveCall(this)
+    fun KtCallExpression.resolveCall(): KtCall? = callResolver.resolveCall(this)
 
-    fun KtBinaryExpression.resolveCall(): CallInfo? = callResolver.resolveCall(this)
+    fun KtBinaryExpression.resolveCall(): KtCall? = callResolver.resolveCall(this)
 
     fun KtReference.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
@@ -134,4 +159,10 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
         psiFakeCompletionExpression,
         psiReceiverExpression
     )
+
+    fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
+        typeRenderer.render(this, options)
+
+    fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
+        expressionHandlingComponent.getReturnExpressionTargetSymbol(this)
 }

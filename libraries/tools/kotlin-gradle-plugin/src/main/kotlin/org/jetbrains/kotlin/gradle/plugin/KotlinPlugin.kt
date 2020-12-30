@@ -777,24 +777,10 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     )
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
+        syncKotlinAndAndroidSourceSets(kotlinAndroidTarget)
+
         val project = kotlinAndroidTarget.project
         val ext = project.extensions.getByName("android") as BaseExtension
-
-        ext.sourceSets.all { sourceSet ->
-            logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $sourceSet")
-            val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
-                kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, sourceSet.name)
-            ).apply {
-                createDefaultDependsOnEdges(kotlinAndroidTarget, sourceSet, this)
-                kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
-                kotlin.srcDirs(sourceSet.java.srcDirs)
-            }
-            sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
-
-            ifKaptEnabled(project) {
-                Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
-            }
-        }
 
         val kotlinOptions = KotlinJvmOptionsImpl()
         project.whenEvaluated {
@@ -850,21 +836,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
             addKotlinDependenciesToAndroidSourceSets(project, kotlinAndroidTarget)
         }
-    }
-
-    private fun createDefaultDependsOnEdges(
-        kotlinAndroidTarget: KotlinAndroidTarget,
-        androidSourceSet: AndroidSourceSet,
-        kotlinSourceSet: KotlinSourceSet
-    ) {
-        val commonSourceSetName = when (androidSourceSet.name) {
-            "main" -> "commonMain"
-            "test" -> "commonTest"
-            "androidTest" -> "commonTest"
-            else -> return
-        }
-        val commonSourceSet = kotlinAndroidTarget.project.kotlinExtension.sourceSets.findByName(commonSourceSetName) ?: return
-        kotlinSourceSet.dependsOn(commonSourceSet)
     }
 
     /**
@@ -1049,7 +1020,7 @@ internal fun configureJavaTask(
     }
 }
 
-private fun ifKaptEnabled(project: Project, block: () -> Unit) {
+internal fun ifKaptEnabled(project: Project, block: () -> Unit) {
     var triggered = false
 
     fun trigger() {

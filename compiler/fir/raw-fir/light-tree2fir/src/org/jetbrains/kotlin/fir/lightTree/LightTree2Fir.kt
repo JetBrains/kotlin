@@ -52,7 +52,7 @@ class LightTree2Fir(
     }
 
     fun buildFirFile(file: File): FirFile {
-        val code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+        val code = FileUtil.loadFile(file, CharsetToolkit.UTF8, true)
         return buildFirFile(code, file.name)
     }
 

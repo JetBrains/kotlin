@@ -41,7 +41,7 @@ class JavaClassUseSiteMemberScope(
     internal val symbol = klass.symbol
 
     internal fun bindOverrides(name: Name) {
-        val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
+        val overrideCandidates = mutableSetOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) {
             overrideCandidates += it
         }
@@ -81,54 +81,51 @@ class JavaClassUseSiteMemberScope(
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
         val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
-        val klass = symbol.fir
         declaredMemberScope.processPropertiesByName(propertyName) { variableSymbol ->
             if (variableSymbol.isStatic) return@processPropertiesByName
             overrideCandidates += variableSymbol
             processor(variableSymbol)
         }
 
-        if (klass is FirJavaClass) {
-            for (getterName in getterNames) {
-                var getterSymbol: FirNamedFunctionSymbol? = null
-                var setterSymbol: FirNamedFunctionSymbol? = null
-                declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
-                    if (getterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
-                        val function = functionSymbol.fir
-                        if (!function.isStatic && function.valueParameters.isEmpty()) {
-                            getterSymbol = functionSymbol
-                        }
+        for (getterName in getterNames) {
+            var getterSymbol: FirNamedFunctionSymbol? = null
+            var setterSymbol: FirNamedFunctionSymbol? = null
+            declaredMemberScope.processFunctionsByName(getterName) { functionSymbol ->
+                if (getterSymbol == null) {
+                    val function = functionSymbol.fir
+                    if (!function.isStatic && function.valueParameters.isEmpty()) {
+                        getterSymbol = functionSymbol
                     }
                 }
-                val setterName = session.syntheticNamesProvider.setterNameByGetterName(getterName)
-                if (getterSymbol != null && setterName != null) {
-                    declaredMemberScope.processFunctionsByName(setterName) { functionSymbol ->
-                        if (setterSymbol == null && functionSymbol is FirNamedFunctionSymbol) {
-                            val function = functionSymbol.fir
-                            if (!function.isStatic && function.valueParameters.size == 1) {
-                                val returnTypeRef = function.returnTypeRef
-                                if (returnTypeRef.isUnit) {
-                                    // Unit return type
-                                    setterSymbol = functionSymbol
-                                } else if (returnTypeRef is FirJavaTypeRef) {
-                                    // Void/void return type
-                                    when (val returnType = returnTypeRef.type) {
-                                        is JavaPrimitiveTypeImpl ->
-                                            if (returnType.psi.kind == JvmPrimitiveTypeKind.VOID) {
-                                                setterSymbol = functionSymbol
-                                            }
-                                        is JavaPrimitiveType ->
-                                            if (returnType.type == null) {
-                                                setterSymbol = functionSymbol
-                                            }
-                                    }
+            }
+            val setterName = session.syntheticNamesProvider.setterNameByGetterName(getterName)
+            if (getterSymbol != null && setterName != null) {
+                declaredMemberScope.processFunctionsByName(setterName) { functionSymbol ->
+                    if (setterSymbol == null) {
+                        val function = functionSymbol.fir
+                        if (!function.isStatic && function.valueParameters.size == 1) {
+                            val returnTypeRef = function.returnTypeRef
+                            if (returnTypeRef.isUnit) {
+                                // Unit return type
+                                setterSymbol = functionSymbol
+                            } else if (returnTypeRef is FirJavaTypeRef) {
+                                // Void/void return type
+                                when (val returnType = returnTypeRef.type) {
+                                    is JavaPrimitiveTypeImpl ->
+                                        if (returnType.psi.kind == JvmPrimitiveTypeKind.VOID) {
+                                            setterSymbol = functionSymbol
+                                        }
+                                    is JavaPrimitiveType ->
+                                        if (returnType.type == null) {
+                                            setterSymbol = functionSymbol
+                                        }
                                 }
                             }
                         }
                     }
-                    val accessorSymbol = generateAccessorSymbol(getterSymbol!!, setterSymbol, propertyName)
-                    overrideCandidates += accessorSymbol
                 }
+                val accessorSymbol = generateAccessorSymbol(getterSymbol!!, setterSymbol, propertyName)
+                overrideCandidates += accessorSymbol
             }
         }
 
@@ -144,15 +141,15 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        // Do not generate accessors at all?
-        if (name.isSpecial) {
-            return processAccessorFunctionsAndPropertiesByName(name, emptyList(), processor)
+        val getterNames = if (symbol.fir is FirJavaClass) {
+            FirJavaSyntheticNamesProvider.possibleGetterNamesByPropertyName(name)
+        } else {
+            emptyList()
         }
-        val getterNames = FirJavaSyntheticNamesProvider.possibleGetterNamesByPropertyName(name)
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (symbol.fir !is FirJavaClass) {
             return super.processFunctionsByName(name, processor)
         }

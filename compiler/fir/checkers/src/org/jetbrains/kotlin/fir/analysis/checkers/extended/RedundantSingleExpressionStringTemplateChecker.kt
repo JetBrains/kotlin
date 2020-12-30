@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilder
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
@@ -15,11 +14,11 @@ import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -38,12 +37,12 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecke
     }
 
     private fun FirStatement.stringParentChildrenCount(): Int? {
-        return when (source) {
+        return when (val source = source) {
             is FirPsiSourceElement<*> -> {
-                source.psi?.stringParentChildrenCount()
+                source.psi.stringParentChildrenCount()
             }
             is FirLightSourceElement -> {
-                (source as FirLightSourceElement).element.stringParentChildrenCount(source as FirLightSourceElement)
+                source.lighterASTNode.stringParentChildrenCount(source)
             }
             else -> null
         }
@@ -55,11 +54,10 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecke
     }
 
     private fun LighterASTNode.stringParentChildrenCount(source: FirLightSourceElement): Int? {
-        val parent = source.tree.getParent(this)
-        return if (parent?.tokenType == KtNodeTypes.STRING_TEMPLATE) {
-            val childrenOfParent = Ref<Array<LighterASTNode>>()
-            source.tree.getChildren(parent!!, childrenOfParent)
-            childrenOfParent.get().filter { it is PsiBuilder.Marker }.size
+        val parent = source.treeStructure.getParent(this)
+        return if (parent != null && parent.tokenType == KtNodeTypes.STRING_TEMPLATE) {
+            val childrenOfParent = parent.getChildren(source.treeStructure)
+            childrenOfParent.filter { it is PsiBuilder.Marker }.size
         } else {
             parent?.stringParentChildrenCount(source)
         }

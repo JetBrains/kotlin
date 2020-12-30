@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 
@@ -31,11 +32,11 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
     private val incompatibleVersion = JvmBytecodeBinaryVersion(42, 0, 0).toArray()
 
     private fun doTest(relativeDirectory: String, version: IntArray = incompatibleVersion) {
-        val directory = KotlinTestUtils.getTestDataPathBase() + relativeDirectory
+        val directory = KtTestUtil.getTestDataPathBase() + relativeDirectory
         val librarySource = File(directory, "A.kt")
         val usageSource = File(directory, "B.kt")
 
-        val tmpdir = KotlinTestUtils.tmpDir(this::class.java.simpleName)
+        val tmpdir = KtTestUtil.tmpDir(this::class.java.simpleName)
 
         val environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(testRootDisposable)
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(librarySource), tmpdir, environment)

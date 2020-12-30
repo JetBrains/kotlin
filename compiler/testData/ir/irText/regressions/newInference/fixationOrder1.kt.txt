@@ -1,0 +1,21 @@
+fun <X : Any?, Y : Any?> foo(): Function1<X, Y> {
+  TODO()
+}
+
+interface Inv2<A : Any?, B : Any?> {
+
+}
+
+fun <T : Any?, R : Any?> check(x: T, y: R, f: Function1<T, R>): Inv2<T, R> {
+  TODO()
+}
+
+fun test(): Inv2<String, Int> {
+  return check<String, Int>(x = "", y = 1, f = foo<String, Int>())
+}
+
+fun box(): String {
+  val x: Inv2<String, Int> = test()
+  return "OK"
+}
+

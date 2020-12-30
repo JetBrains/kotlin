@@ -58,7 +58,7 @@ internal fun remapArgumentsWithVararg(
             ) {
                 arguments += arg
                 if (this.source == null) {
-                    this.source = arg.source
+                    this.source = arg.source?.fakeElement(FirFakeSourceElementKind.VarargArgument)
                 }
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.

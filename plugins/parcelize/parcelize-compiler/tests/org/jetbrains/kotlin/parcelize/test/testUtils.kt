@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.parcelize.test
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -18,5 +18,5 @@ fun addParcelizeRuntimeLibrary(environment: KotlinCoreEnvironment) {
 }
 
 fun addAndroidJarLibrary(environment: KotlinCoreEnvironment) {
-    environment.updateClasspath(listOf(JvmClasspathRoot(KotlinTestUtils.findAndroidApiJar())))
+    environment.updateClasspath(listOf(JvmClasspathRoot(KtTestUtil.findAndroidApiJar())))
 }

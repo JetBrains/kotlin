@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -52,12 +52,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
@@ -71,7 +69,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.SimpleGenericDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
@@ -342,9 +340,7 @@ object KotlinToJVMBytecodeCompiler {
             firAnalyzerFacade.runResolution()
             val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
             AnalyzerWithCompilerReport.reportDiagnostics(
-                SimpleDiagnostics(
-                    firDiagnostics.map { it.toRegularDiagnostic() }
-                ),
+                SimpleGenericDiagnostics(firDiagnostics),
                 environment.messageCollector
             )
             performanceManager?.notifyAnalysisFinished()
@@ -356,7 +352,8 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationStarted()
 
             performanceManager?.notifyIRTranslationStarted()
-            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr()
+            val extensions = JvmGeneratorExtensions()
+            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 
@@ -392,10 +389,8 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, sourceManager
-            ) { context, irClass, _, serializationBindings, parent ->
-                FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
-            }
+                generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components)
+            )
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
 
@@ -425,30 +420,6 @@ object KotlinToJVMBytecodeCompiler {
             else null
 
         return writeOutputs(environment, projectConfiguration, chunk, outputs, mainClassFqName)
-    }
-
-    private fun FirDiagnostic<*>.toRegularDiagnostic(): Diagnostic {
-        val psiSource = element as FirPsiSourceElement<*>
-        @Suppress("UNCHECKED_CAST")
-        when (this) {
-            is FirSimpleDiagnostic ->
-                return SimpleDiagnostic(
-                    psiSource.psi, factory.psiDiagnosticFactory as DiagnosticFactory0<PsiElement>, severity
-                )
-            is FirDiagnosticWithParameters1<*, *> ->
-                return DiagnosticWithParameters1(
-                    psiSource.psi, this.a, factory.psiDiagnosticFactory as DiagnosticFactory1<PsiElement, Any>, severity
-                )
-            is FirDiagnosticWithParameters2<*, *, *> ->
-                return DiagnosticWithParameters2(
-                    psiSource.psi, this.a, this.b, factory.psiDiagnosticFactory as DiagnosticFactory2<PsiElement, Any, Any>, severity
-                )
-            is FirDiagnosticWithParameters3<*, *, *, *> ->
-                return DiagnosticWithParameters3(
-                    psiSource.psi, this.a, this.b, this.c,
-                    factory.psiDiagnosticFactory as DiagnosticFactory3<PsiElement, Any, Any, Any>, severity
-                )
-        }
     }
 
     private fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> =
@@ -490,6 +461,10 @@ object KotlinToJVMBytecodeCompiler {
                 environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
             }
 
+            if (result.additionalClassPathRoots.isNotEmpty()) {
+                environment.updateClasspath(result.additionalClassPathRoots.map { JvmClasspathRoot(it, false) })
+            }
+
             if (result.additionalKotlinRoots.isNotEmpty()) {
                 environment.addKotlinSourceRoots(result.additionalKotlinRoots)
             }
@@ -499,8 +474,8 @@ object KotlinToJVMBytecodeCompiler {
             // Clear all diagnostic messages
             configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
 
-            // Repeat analysis with additional Java roots (kapt generated sources)
-            return analyze(environment)
+            // Repeat analysis with additional source roots generated by compiler plugins.
+            return repeatAnalysisIfNeeded(analyze(environment), environment)
         }
 
         return result
@@ -595,8 +570,6 @@ object KotlinToJVMBytecodeCompiler {
         sourceFiles: List<KtFile>,
         module: Module?
     ): GenerationState {
-        val isIR = (configuration.getBoolean(JVMConfigurationKeys.IR) ||
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
         val generationState = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
@@ -606,13 +579,12 @@ object KotlinToJVMBytecodeCompiler {
             configuration
         )
             .codegenFactory(
-                if (isIR) JvmIrCodegenFactory(
+                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory(
                     configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
                 ) else DefaultCodegenFactory
             )
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
-            .isIrBackend(isIR)
             .build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

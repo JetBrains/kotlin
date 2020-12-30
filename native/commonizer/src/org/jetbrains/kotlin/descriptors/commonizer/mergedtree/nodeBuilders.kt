@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -54,44 +53,44 @@ internal fun buildPackageNode(
 internal fun buildPropertyNode(
     storageManager: StorageManager,
     size: Int,
-    cache: CirClassifiersCache,
+    classifiers: CirKnownClassifiers,
     parentCommonDeclaration: NullableLazyValue<*>?
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
     size = size,
     parentCommonDeclaration = parentCommonDeclaration,
-    commonizerProducer = { PropertyCommonizer(cache) },
+    commonizerProducer = { PropertyCommonizer(classifiers) },
     nodeProducer = ::CirPropertyNode
 )
 
 internal fun buildFunctionNode(
     storageManager: StorageManager,
     size: Int,
-    cache: CirClassifiersCache,
+    classifiers: CirKnownClassifiers,
     parentCommonDeclaration: NullableLazyValue<*>?
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
     size = size,
     parentCommonDeclaration = parentCommonDeclaration,
-    commonizerProducer = { FunctionCommonizer(cache) },
+    commonizerProducer = { FunctionCommonizer(classifiers) },
     nodeProducer = ::CirFunctionNode
 )
 
 internal fun buildClassNode(
     storageManager: StorageManager,
     size: Int,
-    cacheRW: CirClassifiersCacheImpl,
+    classifiers: CirKnownClassifiers,
     parentCommonDeclaration: NullableLazyValue<*>?,
     classId: ClassId
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
     parentCommonDeclaration = parentCommonDeclaration,
-    commonizerProducer = { ClassCommonizer(cacheRW) },
+    commonizerProducer = { ClassCommonizer(classifiers) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirClassNode(targetDeclarations, commonDeclaration, classId).also {
-            cacheRW.classes[classId] = it
+            classifiers.commonized.addClassNode(classId, it)
         }
     }
 )
@@ -99,29 +98,29 @@ internal fun buildClassNode(
 internal fun buildClassConstructorNode(
     storageManager: StorageManager,
     size: Int,
-    cache: CirClassifiersCache,
+    classifiers: CirKnownClassifiers,
     parentCommonDeclaration: NullableLazyValue<*>?
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
     size = size,
     parentCommonDeclaration = parentCommonDeclaration,
-    commonizerProducer = { ClassConstructorCommonizer(cache) },
+    commonizerProducer = { ClassConstructorCommonizer(classifiers) },
     nodeProducer = ::CirClassConstructorNode
 )
 
 internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     size: Int,
-    cacheRW: CirClassifiersCacheImpl,
-    classId: ClassId
+    classifiers: CirKnownClassifiers,
+    typeAliasId: ClassId
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,
-    commonizerProducer = { TypeAliasCommonizer(cacheRW) },
+    commonizerProducer = { TypeAliasCommonizer(classifiers) },
     recursionMarker = CirClassifierRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirTypeAliasNode(targetDeclarations, commonDeclaration, classId).also {
-            cacheRW.typeAliases[classId] = it
+        CirTypeAliasNode(targetDeclarations, commonDeclaration, typeAliasId).also {
+            classifiers.commonized.addTypeAliasNode(typeAliasId, it)
         }
     }
 )

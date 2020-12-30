@@ -7,6 +7,15 @@ public final class State {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
+    public State(int someInt, long someLong) {
+        super();
+    }
+
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
+        super();
+    }
+
     public final int getSomeInt() {
         return 0;
     }
@@ -18,15 +27,6 @@ public final class State {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSomeString() {
         return null;
-    }
-
-    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
-    java.lang.String someString) {
-        super();
-    }
-
-    public State(int someInt, long someLong) {
-        super();
     }
 }
 
@@ -42,28 +42,7 @@ public final class State2 {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String someString = null;
 
-    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
-    java.lang.String someString) {
-        return 0;
-    }
-
-    public final int test(int someInt, long someLong) {
-        return 0;
-    }
-
-    public final int test(int someInt) {
-        return 0;
-    }
-
-    public final void someMethod(@org.jetbrains.annotations.NotNull()
-    java.lang.String str) {
-    }
-
-    public final void methodWithoutArgs() {
-    }
-
-    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
-    java.lang.String someString) {
+    public State2(int someInt) {
         super();
     }
 
@@ -71,7 +50,28 @@ public final class State2 {
         super();
     }
 
-    public State2(int someInt) {
+    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         super();
+    }
+
+    public final void methodWithoutArgs() {
+    }
+
+    public final void someMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.String str) {
+    }
+
+    public final int test(int someInt) {
+        return 0;
+    }
+
+    public final int test(int someInt, long someLong) {
+        return 0;
+    }
+
+    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
+        return 0;
     }
 }

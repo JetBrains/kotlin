@@ -51,6 +51,8 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeFlexible' type=<root>.Test origin=null
           x: GET_VAR 'x: kotlin.String? declared in <root>.Test.takeFlexible' type=kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:returnNotNull visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[EnhancedNullability] kotlin.String
+      annotations:
+        NotNull(value = <null>)
       overridden:
         public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
@@ -60,6 +62,8 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNotNull' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:returnNullable visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[FlexibleNullability] kotlin.String?
+      annotations:
+        Nullable(value = <null>)
       overridden:
         public abstract fun returnNullable (): @[FlexibleNullability] kotlin.String? declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test

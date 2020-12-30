@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.junit.Test
 
 class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParameter>, List<CirTypeParameter>>() {
@@ -108,7 +108,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
         )
     )
 
-    override fun createCommonizer() = TypeParameterListCommonizer(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = TypeParameterListCommonizer(MOCK_CLASSIFIERS)
 
     private companion object {
         fun mockTypeParams(vararg params: Pair<String, String>): List<CirTypeParameter> {

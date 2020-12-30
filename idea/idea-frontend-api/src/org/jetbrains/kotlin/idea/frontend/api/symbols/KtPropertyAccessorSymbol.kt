@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
 sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     KtSymbolWithModality<KtCommonSymbolModality>,
-    KtSymbolWithVisibility {
+    KtSymbolWithVisibility,
+    KtAnnotatedSymbol {
+
     abstract val isDefault: Boolean
     abstract val isInline: Boolean
     abstract val isOverride: Boolean
+    abstract val hasBody: Boolean
 
     abstract val symbolKind: KtSymbolKind
 

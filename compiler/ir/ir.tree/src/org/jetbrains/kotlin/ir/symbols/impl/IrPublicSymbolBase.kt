@@ -8,36 +8,43 @@ package org.jetbrains.kotlin.ir.symbols.impl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
 abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> @OptIn(ObsoleteDescriptorBasedAPI::class) constructor(
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: D,
-    override val signature: IdSignature
+    override val signature: IdSignature,
+    private val _descriptor: D?
 ) : IrSymbol {
+    @ObsoleteDescriptorBasedAPI
+    @Suppress("UNCHECKED_CAST")
+    override val descriptor: D
+        get() = _descriptor ?: (owner as IrDeclaration).toIrBasedDescriptor() as D
+
+    @ObsoleteDescriptorBasedAPI
+    override val hasDescriptor: Boolean
+        get() = _descriptor != null
+
     override fun toString(): String {
         if (isBound) return owner.render()
         return "Unbound public symbol for $signature"
     }
 }
 
-abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D, sig: IdSignature) :
-    IrBindableSymbol<D, B>, IrPublicSymbolBase<D>(descriptor, sig) {
+abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(sig: IdSignature, descriptor: D?) :
+    IrBindableSymbol<D, B>, IrPublicSymbolBase<D>(sig, descriptor) {
 
     init {
-        assert(isOriginalDescriptor(descriptor)) {
-            "Substituted descriptor $descriptor for ${descriptor.original}"
+        assert(descriptor == null || isOriginalDescriptor(descriptor)) {
+            "Substituted descriptor $descriptor for ${descriptor!!.original}"
         }
         assert(sig.isPublic)
     }
 
     private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
-        descriptor is WrappedDeclarationDescriptor<*> ||
-                // TODO fix declaring/referencing value parameters: compute proper original descriptor
-                descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
+        // TODO fix declaring/referencing value parameters: compute proper original descriptor
+        descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 
     private var _owner: B? = null
@@ -56,26 +63,26 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         get() = _owner != null
 }
 
-class IrClassPublicSymbolImpl(descriptor: ClassDescriptor, sig: IdSignature) :
-    IrBindablePublicSymbolBase<ClassDescriptor, IrClass>(descriptor, sig),
+class IrClassPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
+    IrBindablePublicSymbolBase<ClassDescriptor, IrClass>(sig, descriptor),
     IrClassSymbol
 
-class IrEnumEntryPublicSymbolImpl(descriptor: ClassDescriptor, sig: IdSignature) :
-    IrBindablePublicSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, sig),
+class IrEnumEntryPublicSymbolImpl(sig: IdSignature, descriptor: ClassDescriptor? = null) :
+    IrBindablePublicSymbolBase<ClassDescriptor, IrEnumEntry>(sig, descriptor),
     IrEnumEntrySymbol
 
-class IrSimpleFunctionPublicSymbolImpl(descriptor: FunctionDescriptor, sig: IdSignature) :
-    IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, sig),
+class IrSimpleFunctionPublicSymbolImpl(sig: IdSignature, descriptor: FunctionDescriptor? = null) :
+    IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(sig, descriptor),
     IrSimpleFunctionSymbol
 
-class IrConstructorPublicSymbolImpl(descriptor: ClassConstructorDescriptor, sig: IdSignature) :
-    IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, sig),
+class IrConstructorPublicSymbolImpl(sig: IdSignature, descriptor: ClassConstructorDescriptor? = null) :
+    IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(sig, descriptor),
     IrConstructorSymbol
 
-class IrPropertyPublicSymbolImpl(descriptor: PropertyDescriptor, sig: IdSignature) :
-    IrBindablePublicSymbolBase<PropertyDescriptor, IrProperty>(descriptor, sig),
+class IrPropertyPublicSymbolImpl(sig: IdSignature, descriptor: PropertyDescriptor? = null) :
+    IrBindablePublicSymbolBase<PropertyDescriptor, IrProperty>(sig, descriptor),
     IrPropertySymbol
 
-class IrTypeAliasPublicSymbolImpl(descriptor: TypeAliasDescriptor, sig: IdSignature) :
-    IrBindablePublicSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, sig),
+class IrTypeAliasPublicSymbolImpl(sig: IdSignature, descriptor: TypeAliasDescriptor? = null) :
+    IrBindablePublicSymbolBase<TypeAliasDescriptor, IrTypeAlias>(sig, descriptor),
     IrTypeAliasSymbol

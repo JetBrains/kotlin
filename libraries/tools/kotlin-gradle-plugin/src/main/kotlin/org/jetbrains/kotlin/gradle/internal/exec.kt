@@ -71,19 +71,21 @@ internal fun Project.execWithProgress(description: String, readStdErr: Boolean =
 
 internal fun Project.execWithErrorLogger(
     description: String,
-    body: (ExecAction, ProgressLogger) -> TeamCityMessageCommonClient
+    body: (ExecAction, ProgressLogger) -> Pair<TeamCityMessageCommonClient, TeamCityMessageCommonClient>
 ): ExecResult {
     this as ProjectInternal
 
     val exec = services.get(ExecActionFactory::class.java).newExecAction()
     return project!!.operation(description) {
         progress(description)
-        val client = body(exec, this)
+        val (standardClient, errorClient) = body(exec, this)
         exec.isIgnoreExitValue = true
         val result = exec.execute()
         if (result.exitValue != 0) {
             error(
-                client.testFailedMessage()
+                errorClient.testFailedMessage()
+                    ?: standardClient.testFailedMessage()
+                    ?: "Error occurred. See log for details."
             )
         }
         result

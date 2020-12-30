@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-interface TowerScopeLevel {
+abstract class TowerScopeLevel {
 
     sealed class Token<out T : AbstractFirBasedSymbol<*>> {
         object Properties : Token<FirVariableSymbol<*>>()
@@ -31,13 +31,13 @@ interface TowerScopeLevel {
         object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
-    fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
-        token: Token<T>,
-        name: Name,
-        processor: TowerScopeLevelProcessor<T>
-    ): ProcessorAction
+    abstract fun processFunctionsByName(name: Name, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessorAction
 
-    interface TowerScopeLevelProcessor<T : AbstractFirBasedSymbol<*>> {
+    abstract fun processPropertiesByName(name: Name, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessorAction
+
+    abstract fun processObjectsByName(name: Name, processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>): ProcessorAction
+
+    interface TowerScopeLevelProcessor<in T : AbstractFirBasedSymbol<*>> {
         fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
@@ -48,7 +48,7 @@ interface TowerScopeLevel {
     }
 }
 
-abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel {
+abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel() {
     protected fun FirCallableSymbol<*>.hasConsistentExtensionReceiver(extensionReceiver: Receiver?): Boolean {
         return (extensionReceiver != null) == hasExtensionReceiver()
     }
@@ -71,7 +71,7 @@ class MemberScopeTowerLevel(
     private val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
-        output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
+        output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
     ): ProcessorAction {
         var empty = true
@@ -115,36 +115,45 @@ class MemberScopeTowerLevel(
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
     }
 
-    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
-        token: TowerScopeLevel.Token<T>,
+    override fun processFunctionsByName(
         name: Name,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+        processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessorAction {
-        val isInvoke = name == OperatorNameConventions.INVOKE && token == TowerScopeLevel.Token.Functions
+        val isInvoke = name == OperatorNameConventions.INVOKE
         if (implicitExtensionInvokeMode && !isInvoke) {
             return ProcessorAction.NEXT
         }
-        return when (token) {
-            is TowerScopeLevel.Token.Properties -> processMembers(processor) { consumer ->
-                this.processPropertiesByName(name) {
+        return processMembers(processor) { consumer ->
+            this.processFunctionsAndConstructorsByName(
+                name, session, bodyResolveComponents,
+                includeInnerConstructors = true,
+                processor = {
                     // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
                     @Suppress("UNCHECKED_CAST")
-                    consumer(it as T)
+                    consumer(it as FirFunctionSymbol<*>)
                 }
-            }
-            TowerScopeLevel.Token.Functions -> processMembers(processor) { consumer ->
-                this.processFunctionsAndConstructorsByName(
-                    name, session, bodyResolveComponents,
-                    includeInnerConstructors = true,
-                    processor = {
-                        // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                        @Suppress("UNCHECKED_CAST")
-                        consumer(it as T)
-                    }
-                )
-            }
-            TowerScopeLevel.Token.Objects -> ProcessorAction.NEXT
+            )
         }
+    }
+
+    override fun processPropertiesByName(
+        name: Name,
+        processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
+    ): ProcessorAction {
+        return processMembers(processor) { consumer ->
+            this.processPropertiesByName(name) {
+                // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                @Suppress("UNCHECKED_CAST")
+                consumer(it)
+            }
+        }
+    }
+
+    override fun processObjectsByName(
+        name: Name,
+        processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
+    ): ProcessorAction {
+        return ProcessorAction.NEXT
     }
 
     override fun replaceReceiverValue(receiverValue: ReceiverValue): SessionBasedTowerLevel {
@@ -208,7 +217,7 @@ class ScopeTowerLevel(
 
     private fun <T : AbstractFirBasedSymbol<*>> consumeCallableCandidate(
         candidate: FirCallableSymbol<*>,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+        processor: TowerScopeLevelProcessor<T>
     ) {
         if (candidate.hasConsistentReceivers(extensionReceiver)) {
             val dispatchReceiverValue = dispatchReceiverValue(candidate)
@@ -222,35 +231,47 @@ class ScopeTowerLevel(
         }
     }
 
-    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
-        token: TowerScopeLevel.Token<T>,
+    override fun processFunctionsByName(
         name: Name,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
+        processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessorAction {
         var empty = true
-        @Suppress("UNCHECKED_CAST")
-        when (token) {
-            TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
-                empty = false
-                consumeCallableCandidate(candidate, processor)
-            }
-            TowerScopeLevel.Token.Functions -> scope.processFunctionsAndConstructorsByName(
-                name,
-                session,
-                bodyResolveComponents,
-                includeInnerConstructors = includeInnerConstructors
-            ) { candidate ->
-                empty = false
-                consumeCallableCandidate(candidate, processor)
-            }
-            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
-                empty = false
-                processor.consumeCandidate(
-                    it as T, dispatchReceiverValue = null,
-                    extensionReceiverValue = null,
-                    scope = scope
-                )
-            }
+        scope.processFunctionsAndConstructorsByName(
+            name,
+            session,
+            bodyResolveComponents,
+            includeInnerConstructors = includeInnerConstructors
+        ) { candidate ->
+            empty = false
+            consumeCallableCandidate(candidate, processor)
+        }
+        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+    }
+
+    override fun processPropertiesByName(
+        name: Name,
+        processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
+    ): ProcessorAction {
+        var empty = true
+        scope.processPropertiesByName(name) { candidate ->
+            empty = false
+            consumeCallableCandidate(candidate, processor)
+        }
+        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+    }
+
+    override fun processObjectsByName(
+        name: Name,
+        processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
+    ): ProcessorAction {
+        var empty = true
+        scope.processClassifiersByName(name) {
+            empty = false
+            processor.consumeCandidate(
+                it, dispatchReceiverValue = null,
+                extensionReceiverValue = null,
+                scope = scope
+            )
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
     }

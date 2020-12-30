@@ -26,11 +26,9 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import java.io.File
 
@@ -41,7 +39,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KtTestUtil.getAnnotationsJar()
         ).apply {
             if (useJavac) {
                 put(JVMConfigurationKeys.USE_JAVAC, true)
@@ -107,5 +105,5 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     }
 
     private fun prepareJar() =
-            MockLibraryUtil.compileJavaFilesLibraryToJar(TEST_DATA_PATH, "result.jar")
+        MockLibraryUtilExt.compileJavaFilesLibraryToJar(TEST_DATA_PATH, "result.jar")
 }

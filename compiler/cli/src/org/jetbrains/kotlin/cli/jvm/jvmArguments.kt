@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
@@ -19,9 +20,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArguments) {
-
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
     put(JVMConfigurationKeys.INCLUDE_RUNTIME, arguments.includeRuntime)
 
     putIfNotNull(JVMConfigurationKeys.FRIEND_PATHS, arguments.friendPaths?.asList())
@@ -39,7 +37,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     }
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
-    if (jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion) {
+    if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
         val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         if (jvmDefaultMode.forAllMethodsWithBody) {
             messageCollector.report(
@@ -53,7 +51,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val runtimeStringConcat = JvmStringConcat.fromString(arguments.stringConcat!!)
         if (runtimeStringConcat != null) {
             put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
-            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
+            if (jvmTarget.majorVersion < JvmTarget.JVM_9.majorVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
                 messageCollector.report(
                     WARNING,
                     "`-Xstring-concat=${arguments.stringConcat}` does nothing with JVM target `${jvmTarget.description}`."
@@ -61,8 +59,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown `string-concat` mode: ${arguments.jvmTarget}\n" +
-                        "Supported versions: ${JvmStringConcat.values().joinToString { it.name.toLowerCase() }}"
+                ERROR, "Unknown -Xstring-concat mode: ${arguments.jvmTarget}\n" +
+                        "Supported versions: ${JvmStringConcat.values().joinToString { it.description }}"
             )
         }
     }
@@ -71,9 +69,6 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 }
 
 fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): Boolean {
-
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
     if (arguments.noJdk) {
         put(JVMConfigurationKeys.NO_JDK, true)
 
@@ -84,7 +79,7 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
     }
 
     if (arguments.jdkHome != null) {
-        val jdkHome = File(arguments.jdkHome)
+        val jdkHome = File(arguments.jdkHome!!)
         if (!jdkHome.exists()) {
             messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
             return false
@@ -114,7 +109,6 @@ fun CompilerConfiguration.configureExplicitContentRoots(arguments: K2JVMCompiler
 }
 
 fun CompilerConfiguration.configureStandardLibs(paths: KotlinPaths?, arguments: K2JVMCompilerArguments) {
-    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val isModularJava = isModularJava()
 
     fun addRoot(moduleName: String, libraryName: String, getLibrary: (KotlinPaths) -> File, noLibraryArgument: String) {
@@ -171,8 +165,23 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    put(JVMConfigurationKeys.IR, arguments.useIR && !arguments.noUseIR)
-    put(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI, arguments.isIrWithStableAbi)
+    val useIR = (arguments.useIR && !arguments.noUseIR) || arguments.useFir
+    put(JVMConfigurationKeys.IR, useIR)
+
+    val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
+    if (arguments.abiStability != null) {
+        if (abiStability == null) {
+            messageCollector.report(
+                ERROR,
+                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.values().map { it.description }}"
+            )
+        } else if (!useIR && abiStability == JvmAbiStability.UNSTABLE) {
+            messageCollector.report(ERROR, "-Xabi-stability=unstable is not supported in the old JVM backend")
+        } else {
+            put(JVMConfigurationKeys.ABI_STABILITY, abiStability)
+        }
+    }
+
     put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, arguments.doNotClearBindingContext)
     put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
     put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
@@ -189,49 +198,45 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, arguments.noUnifiedNullChecks)
 
     if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
-        getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+        messageCollector.report(
             ERROR,
             "Unknown constructor call normalization mode: ${arguments.constructorCallNormalizationMode}, " +
                     "supported modes: ${JVMConstructorCallNormalizationMode.values().map { it.description }}"
         )
     }
 
-    val constructorCallNormalizationMode =
-        JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
+    val constructorCallNormalizationMode = JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
     if (constructorCallNormalizationMode != null) {
-        put(
-            JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
-            constructorCallNormalizationMode
-        )
+        put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE, constructorCallNormalizationMode)
     }
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
     if (assertionsMode == null) {
-        getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+        messageCollector.report(
             ERROR,
-            "Unknown assertions mode: ${arguments.assertionsMode}, " +
-                    "supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.values().map { it.description }}"
         )
     }
-    put(
-        JVMConfigurationKeys.ASSERTIONS_MODE,
-        assertionsMode ?: JVMAssertionsMode.DEFAULT
-    )
+    put(JVMConfigurationKeys.ASSERTIONS_MODE, assertionsMode ?: JVMAssertionsMode.DEFAULT)
 
     put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
     put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
     put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, arguments.useOldClassFilesReading)
 
     if (arguments.useOldClassFilesReading) {
-        getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            .report(INFO, "Using the old java class files reading implementation")
+        messageCollector.report(INFO, "Using the old java class files reading implementation")
     }
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
     put(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS, arguments.useOldSpilledVarTypeAnalysis)
     put(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, arguments.useOldInlineClassesManglingScheme)
+    put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, arguments.enableJvmPreview)
+
+    if (arguments.enableJvmPreview) {
+        messageCollector.report(INFO, "Using preview Java language features")
+    }
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 }
@@ -243,3 +248,6 @@ fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) 
         ?.filterNot { it.isEmpty() }
         ?.let { put(JVMConfigurationKeys.KLIB_PATHS, it) }
 }
+
+private val CompilerConfiguration.messageCollector: MessageCollector
+    get() = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

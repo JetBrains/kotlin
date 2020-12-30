@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
-abstract class IrVariable : IrValueDeclaration(), IrSymbolDeclaration<IrVariableSymbol> {
+abstract class IrVariable : IrValueDeclaration() {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptor
+    abstract override val symbol: IrVariableSymbol
 
     abstract val isVar: Boolean
     abstract val isConst: Boolean

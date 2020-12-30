@@ -81,6 +81,7 @@ class FunctionClassDescriptor(
     override fun isData() = false
     override fun isInline() = false
     override fun isFun() = false
+    override fun isValue() = false
     override fun isExpect() = false
     override fun isActual() = false
     override fun isExternal() = false

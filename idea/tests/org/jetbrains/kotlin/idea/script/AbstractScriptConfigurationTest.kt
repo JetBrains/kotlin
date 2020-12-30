@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.jetbrains.kotlin.utils.PathUtil
@@ -345,7 +346,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {
         //TODO: tmpDir would be enough, but there is tricky fail under AS otherwise
-        val outDir = KotlinTestUtils.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
+        val outDir = KtTestUtil.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
 
         val javaSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), srcDir)
         if (javaSourceFiles.isNotEmpty()) {

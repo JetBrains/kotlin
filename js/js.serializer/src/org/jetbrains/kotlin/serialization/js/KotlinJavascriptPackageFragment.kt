@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -94,8 +95,8 @@ class KotlinJavascriptPackageFragment(
         override val isPreReleaseInvisible: Boolean =
             configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0
 
-        override val isInvisibleIrDependency: Boolean
-            get() = false
+        override val abiStability: DeserializedContainerAbiStability
+            get() = DeserializedContainerAbiStability.STABLE
 
         override val presentableString: String
             get() = "Package '$fqName'"

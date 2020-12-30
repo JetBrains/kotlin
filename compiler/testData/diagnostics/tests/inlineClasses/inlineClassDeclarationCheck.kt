@@ -15,14 +15,21 @@ inline class A9(final val x: Int)
 
 class B1 {
     companion object {
-        <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C1(val x: Int)
+        inline class C1(val x: Int)
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> inline class C11(val x: Int)
     }
 
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C2(val x: Int)
+    inline class C2(val x: Int)
+    inner <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C21(val x: Int)
 }
 
 object B2 {
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C3(val x: Int)
+    inline class C3(val x: Int)
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> inline class C31(val x: Int)
+}
+
+fun foo() {
+    <!INLINE_CLASS_NOT_TOP_LEVEL, WRONG_MODIFIER_TARGET!>inline<!> class C4(val x: Int)
 }
 
 final inline class D0(val x: Int)

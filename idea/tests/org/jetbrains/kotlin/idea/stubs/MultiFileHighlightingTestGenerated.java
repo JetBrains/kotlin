@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.stubs;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlig
     }
 
     public void testAllFilesPresentInMultiFileHighlighting() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("annotatedParameter.kt")

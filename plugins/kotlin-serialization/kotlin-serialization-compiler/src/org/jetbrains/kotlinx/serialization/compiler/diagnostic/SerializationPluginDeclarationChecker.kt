@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.hasBackingField
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
@@ -122,8 +123,16 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
-        if (descriptor.isInline) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED)
+        if (descriptor.isInlineClass() && !canSupportInlineClasses(descriptor.module, trace)) {
+            descriptor.onSerializableAnnotation {
+                trace.report(
+                    SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
+                        it,
+                        VersionReader.minVersionForInlineClasses.toString(),
+                        VersionReader.getVersionsForCurrentModuleFromTrace(descriptor.module, trace)?.implementationVersion.toString()
+                    )
+                )
+            }
             return false
         }
         if (!descriptor.hasSerializableAnnotationWithoutArgs) return false
@@ -248,6 +257,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
     private fun KotlinType.isUnsupportedInlineType() = isInlineClassType() && !KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(this)
 
+    private fun canSupportInlineClasses(module: ModuleDescriptor, trace: BindingTrace): Boolean {
+        if (isIde) return true // do not get version from jar manifest in ide
+        return VersionReader.canSupportInlineClasses(module, trace)
+    }
+
     private fun AbstractSerialGenerator.checkType(
         module: ModuleDescriptor,
         type: KotlinType,
@@ -257,8 +271,12 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     ) {
         if (type.genericIndex != null) return // type arguments always have serializer stored in class' field
         val element = ktType?.typeElement
-        if (type.isUnsupportedInlineType()) {
-            trace.report(SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element ?: fallbackElement))
+        if (type.isUnsupportedInlineType() && !canSupportInlineClasses(module, trace)) {
+            trace.report(SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(
+                element ?: fallbackElement,
+                VersionReader.minVersionForInlineClasses.toString(),
+                VersionReader.getVersionsForCurrentModuleFromTrace(module, trace)?.implementationVersion.toString()
+            ))
         }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {

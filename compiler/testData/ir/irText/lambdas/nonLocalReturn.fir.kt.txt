@@ -1,0 +1,50 @@
+fun test0() {
+  run<Nothing>(block = local fun <anonymous>(): Nothing {
+    return Unit
+  }
+)
+}
+
+fun test1() {
+  run<Unit>(block = local fun <anonymous>() {
+    return Unit
+  }
+)
+}
+
+fun test2() {
+  run<Unit>(block = local fun <anonymous>() {
+    return Unit
+  }
+)
+}
+
+fun test3() {
+  run<Unit>(block = local fun <anonymous>() {
+    return run<Nothing>(block = local fun <anonymous>(): Nothing {
+      return Unit
+    }
+)
+  }
+)
+}
+
+fun testLrmFoo1(ints: List<Int>) {
+  ints.forEach<Int>(action = local fun <anonymous>(it: Int) {
+    when {
+      EQEQ(arg0 = it, arg1 = 0) -> return Unit
+    }
+    print(message = it)
+  }
+)
+}
+
+fun testLrmFoo2(ints: List<Int>) {
+  ints.forEach<Int>(action = local fun <anonymous>(it: Int) {
+    when {
+      EQEQ(arg0 = it, arg1 = 0) -> return Unit
+    }
+    print(message = it)
+  }
+)
+}

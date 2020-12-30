@@ -1,0 +1,87 @@
+fun use(x: Any, y: Any) {
+}
+
+class P {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  operator fun component1(): Int {
+    return <this>.<get-x>()
+  }
+
+  operator fun component2(): Int {
+    return <this>.<get-y>()
+  }
+
+}
+
+class Q<T1 : Any?, T2 : Any?> {
+  constructor(x: T1, y: T2) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: T1
+    field = x
+    get
+
+  val y: T2
+    field = y
+    get
+
+  operator fun component1(): T1 {
+    return <this>.<get-x>()
+  }
+
+  operator fun component2(): T2 {
+    return <this>.<get-y>()
+  }
+
+}
+
+fun test1() {
+  val <destruct>: P = notNullP() /*!! P */
+  val x: Int = <destruct>.component1()
+  val y: Int = <destruct>.component2()
+  use(x = x, y = y)
+}
+
+fun test2() {
+  val <destruct>: Q<@FlexibleNullability String, String?>? = notNullComponents()
+  val x: @FlexibleNullability String = <destruct>.component1()
+  val y: String? = <destruct>.component2()
+  use(x = x, y = y /*!! String */)
+}
+
+fun test2Desugared() {
+  val tmp: Q<@FlexibleNullability String, String?>? = notNullComponents()
+  val x: @FlexibleNullability String = tmp.component1()
+  val y: String? = tmp.component2()
+  use(x = x, y = y /*!! String */)
+}
+
+fun test3() {
+  val <destruct>: Q<@FlexibleNullability String, String?> = notNullQAndComponents() /*!! Q<@FlexibleNullability String, String?> */
+  val x: @FlexibleNullability String = <destruct>.component1()
+  val y: String? = <destruct>.component2()
+  use(x = x, y = y /*!! String */)
+}
+
+fun test4() {
+  val <destruct>: IndexedValue<P?> = listOfNotNull() /*!! List<P?> */.withIndex<P?>().first<IndexedValue<P?>>()
+  val x: Int = <destruct>.component1()
+  val y: P? = <destruct>.component2()
+  use(x = x, y = y /*!! P */)
+}

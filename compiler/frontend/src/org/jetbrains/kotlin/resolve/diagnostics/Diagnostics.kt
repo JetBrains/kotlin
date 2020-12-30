@@ -17,24 +17,25 @@
 package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.GenericDiagnostics
 
-interface Diagnostics : Iterable<Diagnostic> {
+interface Diagnostics : GenericDiagnostics<Diagnostic> {
     //should not be called on readonly views
     //any Diagnostics object returned by BindingContext#getDiagnostics() should implement this property
     val modificationTracker: ModificationTracker
         get() = throw IllegalStateException("Trying to obtain modification tracker for Diagnostics object of class ${this::class.java}")
 
-    fun all(): Collection<Diagnostic>
+    override fun all(): Collection<Diagnostic>
+
+    override fun isEmpty(): Boolean = all().isEmpty()
+
+    override fun iterator(): Iterator<Diagnostic> = all().iterator()
 
     fun forElement(psiElement: PsiElement): Collection<Diagnostic>
 
-    fun isEmpty(): Boolean = all().isEmpty()
-
     fun noSuppression(): Diagnostics
-
-    override fun iterator() = all().iterator()
 
     companion object {
         val EMPTY: Diagnostics = object : Diagnostics {

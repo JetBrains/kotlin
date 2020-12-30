@@ -13,7 +13,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="201.7223.91" until-build="201.*"/>
+  <idea-version since-build="201.7223.91" until-build="203.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -86,6 +86,25 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 <!--decompiler-->
 
   <extensions defaultExtensionNs="com.intellij">
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.refactoring" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.migrationTool" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.new.wizard" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.gradle.performance" version="1"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.IDESettingsFUSCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector"/>
+    <statistics.projectUsagesCollector implementation="org.jetbrains.kotlin.idea.statistics.ProjectConfigurationCollector"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
     <!-- fir-specific -->
     <projectService serviceInterface="org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider"
                         serviceImplementation="org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider"/>
@@ -111,7 +130,10 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
                           implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinHighLevelExpressionTypeProvider"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.fir.highlighter.KotlinDiagnosticHighlightingPassFactory"/>
 
-
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirModificationTrackerService"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory"
+                    serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory"/>
+    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinOutOfBlockPsiTreeChangePreprocessor"/>
   </extensions>
 
   <!--  scripts  -->
@@ -244,6 +266,11 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 <!--    <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>-->
 <!--    <classesWithAnnotatedMembersSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinClassesWithAnnotatedMembersSearcher"/>-->
 <!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.DefaultAnnotationMethodKotlinImplicitReferenceSearcher"/>-->
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.FirPluginOracleService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.FirPluginOracleServiceFirImpl"/>
+
+
 
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 

@@ -58,6 +58,7 @@ public final class Test {
     public final inner class Test$Inner
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'annotationsOnHiddenConstructor.kt'

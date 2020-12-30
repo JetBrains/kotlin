@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
@@ -55,6 +56,13 @@ class ErasedInlineClassBodyCodegen(
         generateUnboxMethod()
         generateFunctionsFromAny()
         generateSpecializedEqualsStub()
+        generateJvmInlineAnnotation()
+    }
+
+    private fun generateJvmInlineAnnotation() {
+        if (descriptor.isInline) {
+            v.newAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME.topLevelClassAsmType().descriptor, true).visitEnd()
+        }
     }
 
     private fun generateFunctionsFromAny() {

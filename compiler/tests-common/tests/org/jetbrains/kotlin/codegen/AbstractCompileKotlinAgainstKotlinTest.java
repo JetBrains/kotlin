@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -35,8 +36,8 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTestCase {
     private File tmpdir;
-    private File aDir;
-    private File bDir;
+    protected File aDir;
+    protected File bDir;
 
     @Override
     protected void setUp() throws Exception {
@@ -44,8 +45,8 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         tmpdir = KotlinTestUtils.tmpDirForTest(this);
         aDir = new File(tmpdir, "a");
         bDir = new File(tmpdir, "b");
-        KotlinTestUtils.mkdirs(aDir);
-        KotlinTestUtils.mkdirs(bDir);
+        KtTestUtil.mkdirs(aDir);
+        KtTestUtil.mkdirs(bDir);
     }
 
     @Override
@@ -80,7 +81,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         return new Pair<>(factoryA, factoryB);
     }
 
-    private void invokeBox(@NotNull String className) throws Exception {
+    protected void invokeBox(@NotNull String className) throws Exception {
         callBoxMethodAndCheckResult(createGeneratedClassLoader(), className);
     }
 
@@ -115,7 +116,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         Disposable compileDisposable = createDisposable("compileA");
         CompilerConfiguration configuration = createConfiguration(
                 ConfigurationKind.ALL, getTestJdkKind(files), getBackendA(),
-                Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+                Collections.singletonList(KtTestUtil.getAnnotationsJar()),
                 Collections.emptyList(), Collections.singletonList(testFile)
         );
 
@@ -138,7 +139,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         String commonHeader = StringsKt.substringBefore(files.get(0).content, "FILE:", "");
         CompilerConfiguration configuration = createConfiguration(
                 ConfigurationKind.ALL, getTestJdkKind(files), getBackendB(),
-                Arrays.asList(KotlinTestUtils.getAnnotationsJar(), aDir),
+                Arrays.asList(KtTestUtil.getAnnotationsJar(), aDir),
                 Collections.emptyList(), Arrays.asList(testFile, new TestFile("header", commonHeader))
         );
 
@@ -167,7 +168,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     ) {
 
         List<KtFile> ktFiles =
-                files.stream().map(file -> KotlinTestUtils.createFile(file.name, file.content, environment.getProject()))
+                files.stream().map(file -> KtTestUtil.createFile(file.name, file.content, environment.getProject()))
                         .collect(Collectors.toList());
 
         ModuleVisibilityManager.SERVICE.getInstance(environment.getProject()).addModule(

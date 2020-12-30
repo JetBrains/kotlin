@@ -1,5 +1,4 @@
-// COMMON_COROUTINES_TEST
-@COROUTINES_PACKAGE.RestrictsSuspension
+@kotlin.coroutines.RestrictsSuspension
 class RestrictedController
 
 suspend fun Any?.extFun() {}

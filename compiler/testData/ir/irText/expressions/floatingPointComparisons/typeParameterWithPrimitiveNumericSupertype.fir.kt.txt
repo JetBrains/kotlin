@@ -1,0 +1,64 @@
+fun <T : Any?> test0(x: Any, y: T): Boolean {
+  return when {
+    x is Int -> EQEQ(arg0 = x /*as Int */, arg1 = y)
+    else -> false
+  }
+}
+
+fun <T : Float> test1(x: Any, y: T): Boolean {
+  return when {
+    x is Float -> ieee754equals(arg0 = x /*as Float */, arg1 = y)
+    else -> false
+  }
+}
+
+fun <T : Double> test2(x: Any, y: T): Boolean {
+  return when {
+    x is Float -> ieee754equals(arg0 = x /*as Float */.toDouble(), arg1 = y)
+    else -> false
+  }
+}
+
+fun <T : Float> test3(x: Any, y: T): Boolean {
+  return when {
+    x is Int -> ieee754equals(arg0 = x /*as Int */.toFloat(), arg1 = y)
+    else -> false
+  }
+}
+
+fun <T : Float?> test4(x: Any, y: T): Boolean {
+  return when {
+    x is Int -> ieee754equals(arg0 = x /*as Int */.toFloat(), arg1 = y)
+    else -> false
+  }
+}
+
+fun <T : Float?, R : T> test5(x: Any, y: R): Boolean {
+  return when {
+    x is Int -> ieee754equals(arg0 = x /*as Int */.toFloat(), arg1 = y)
+    else -> false
+  }
+}
+
+fun <T : Number> test6(x: Any, y: T): Boolean {
+  return when {
+    x is Int -> EQEQ(arg0 = x /*as Int */, arg1 = y)
+    else -> false
+  }
+}
+
+class F<T : Float> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun testCapturedType(x: T, y: Any): Boolean {
+    return when {
+      y is Double -> ieee754equals(arg0 = x.toDouble(), arg1 = y /*as Double */)
+      else -> false
+    }
+  }
+
+}

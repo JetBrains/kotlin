@@ -164,7 +164,7 @@ object KotlinNameSuggester {
                     val argText = typeArguments.joinToString(separator = "") { it.typeReference?.typeElement?.render() ?: "" }
                     "$argText${referenceExpression?.text ?: ""}"
                 }
-                else -> text.capitalize()
+                else -> text.capitalizeAsciiOnly()
             }
         }
 

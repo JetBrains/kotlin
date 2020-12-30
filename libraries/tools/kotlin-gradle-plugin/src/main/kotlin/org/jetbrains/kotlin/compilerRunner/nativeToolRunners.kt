@@ -92,11 +92,13 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
     override val mustRunViaExec get() = true
 
     override val execEnvironment by lazy {
-        val llvmExecutablesPath = llvmExecutablesPath
-        if (llvmExecutablesPath != null)
-            super.execEnvironment + ("PATH" to "$llvmExecutablesPath;${System.getenv("PATH")}")
-        else
-            super.execEnvironment
+        val result = mutableMapOf<String, String>()
+        result.putAll(super.execEnvironment)
+        result["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
+        llvmExecutablesPath?.let {
+            result["PATH"] = "$it;${System.getenv("PATH")}"
+        }
+        result
     }
 
     private val llvmExecutablesPath: String? by lazy {

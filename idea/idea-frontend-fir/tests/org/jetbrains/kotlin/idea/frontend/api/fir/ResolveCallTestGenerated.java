@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     public void testAllFilesPresentInResolveCall() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/analysisSession/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/analysisSession/resolveCall"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("functionCallInTheSameFile.kt")
@@ -56,6 +57,16 @@ public class ResolveCallTestGenerated extends AbstractResolveCallTest {
     @TestMetadata("javaFunctionCall.kt")
     public void testJavaFunctionCall() throws Exception {
         runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/javaFunctionCall.kt");
+    }
+
+    @TestMetadata("resolveCallInSuperConstructorParam.kt")
+    public void testResolveCallInSuperConstructorParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/resolveCallInSuperConstructorParam.kt");
+    }
+
+    @TestMetadata("simpleCallWithNonMatchingArgs.kt")
+    public void testSimpleCallWithNonMatchingArgs() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/analysisSession/resolveCall/simpleCallWithNonMatchingArgs.kt");
     }
 
     @TestMetadata("variableAsFunction.kt")

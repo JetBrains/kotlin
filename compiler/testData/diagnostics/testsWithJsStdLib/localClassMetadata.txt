@@ -35,8 +35,8 @@ public interface I {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <main> --
 package
 
 public fun test(): kotlin.Unit
+

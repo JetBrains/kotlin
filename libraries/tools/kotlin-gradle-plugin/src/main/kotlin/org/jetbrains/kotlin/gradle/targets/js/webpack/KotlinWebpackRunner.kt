@@ -9,6 +9,7 @@ import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.process.ExecSpec
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.internal.TeamCityMessageCommonClient
 import org.jetbrains.kotlin.gradle.internal.execWithErrorLogger
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
@@ -25,29 +26,29 @@ internal data class KotlinWebpackRunner(
     val config: KotlinWebpackConfig
 ) {
     fun execute() = npmProject.project.execWithErrorLogger("webpack") { execAction, progressLogger ->
-        val client = configureClient(progressLogger)
-        client.apply {
-            configureExec(
-                execAction,
-                client
-            )
-        }
+        configureExec(
+            execAction,
+            progressLogger
+        )
     }
 
     fun start(): ExecHandle {
         val execFactory = execHandleFactory.newExec()
         configureExec(
             execFactory,
-            configureClient(null)
+            null
         )
         val exec = execFactory.build()
         exec.start()
         return exec
     }
 
-    private fun configureClient(progressLogger: ProgressLogger?): TeamCityMessageCommonClient {
+    private fun configureClient(
+        clientType: LogType,
+        progressLogger: ProgressLogger?
+    ): TeamCityMessageCommonClient {
         val logger = npmProject.project.logger
-        return TeamCityMessageCommonClient(logger)
+        return TeamCityMessageCommonClient(clientType, logger)
             .apply {
                 if (progressLogger != null) {
                     this.progressLogger = progressLogger
@@ -57,21 +58,24 @@ internal data class KotlinWebpackRunner(
 
     private fun configureExec(
         execFactory: ExecSpec,
-        client: TeamCityMessageCommonClient
-    ) {
+        progressLogger: ProgressLogger?
+    ): Pair<TeamCityMessageCommonClient, TeamCityMessageCommonClient> {
         check(config.entry?.isFile == true) {
             "${this}: Entry file not existed \"${config.entry}\""
         }
 
+        val standardClient = configureClient(LogType.LOG, progressLogger)
         execFactory.standardOutput = TCServiceMessageOutputStreamHandler(
-            client = client,
+            client = standardClient,
             onException = { },
-            logger = client.log
+            logger = standardClient.log
         )
+
+        val errorClient = configureClient(LogType.ERROR, progressLogger)
         execFactory.errorOutput = TCServiceMessageOutputStreamHandler(
-            client = client,
+            client = errorClient,
             onException = { },
-            logger = client.log
+            logger = errorClient.log
         )
 
         config.save(configFile)
@@ -89,5 +93,7 @@ internal data class KotlinWebpackRunner(
             nodeArgs,
             args
         )
+
+        return standardClient to errorClient
     }
 }

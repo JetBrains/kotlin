@@ -1,0 +1,65 @@
+data class A {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  fun component1(): Int {
+    return <this>.#x
+  }
+
+  fun component2(): Int {
+    return <this>.#y
+  }
+
+  fun copy(x: Int = <this>.#x, y: Int = <this>.#y): A {
+    return A(x = x, y = y)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is A -> return false
+    }
+    val tmp0_other_with_cast: A = other as A
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  }
+
+}
+
+var fn: Function1<A, Int>
+  field = local fun <anonymous>(<destruct>: A): Int {
+    val _: Int = <destruct>.component1()
+    val y: Int = <destruct>.component2()
+    return 42.plus(other = y)
+  }
+
+  get
+  set

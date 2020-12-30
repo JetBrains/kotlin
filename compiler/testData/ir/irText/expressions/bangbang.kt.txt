@@ -1,0 +1,30 @@
+fun test1(a: Any?): Any {
+  return CHECK_NOT_NULL<Any>(arg0 = a)
+}
+
+fun test2(a: Any?): Int {
+  return CHECK_NOT_NULL<Int>(arg0 = { // BLOCK
+    val tmp0_safe_receiver: Any? = a
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.hashCode()
+    }
+  })
+}
+
+fun <X : Any?> test3(a: X): X {
+  return CHECK_NOT_NULL<X>(arg0 = a)
+}
+
+fun useString(s: String) {
+}
+
+fun <X : Any?> test4(a: X) {
+  when {
+    a is String? -> CHECK_NOT_NULL<X>(arg0 = a) /*~> Unit */
+  }
+  when {
+    a is String? -> useString(s = CHECK_NOT_NULL<X>(arg0 = a) /*as String */)
+  }
+}
+

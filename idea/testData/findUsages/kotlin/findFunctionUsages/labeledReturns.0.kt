@@ -10,3 +10,5 @@ fun test() {
 
     foo(fun(): Boolean { return@foo false })
 }
+
+// FIR_IGNORE

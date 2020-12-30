@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,12 +26,17 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
     }
 
     public void testAllFilesPresentInSymbolsByPsi() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/symbolsByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/symbolsByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbolsByPsi/annotations.kt");
+    }
+
+    @TestMetadata("anonymousObject.kt")
+    public void testAnonymousObject() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/anonymousObject.kt");
     }
 
     @TestMetadata("class.kt")
@@ -66,5 +72,15 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
     @TestMetadata("implicitReturn.kt")
     public void testImplicitReturn() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbolsByPsi/implicitReturn.kt");
+    }
+
+    @TestMetadata("localDeclarations.kt")
+    public void testLocalDeclarations() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/localDeclarations.kt");
+    }
+
+    @TestMetadata("typeAnnotations.kt")
+    public void testTypeAnnotations() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/typeAnnotations.kt");
     }
 }

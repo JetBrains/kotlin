@@ -3,13 +3,13 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Foo {
 
+    public Foo() {
+        super();
+    }
+
     @org.jetbrains.annotations.Nullable()
     public final java.lang.Object a(@org.jetbrains.annotations.NotNull()
     kotlin.coroutines.Continuation<ABC> p0) {
         return null;
-    }
-
-    public Foo() {
-        super();
     }
 }

@@ -1,0 +1,144 @@
+@OptIn(markerClass = [ExperimentalTypeInference::class])
+fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
+  return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
+    val collector: FlowCollector<R> = $this$flow
+    flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
+      block.invoke(p1 = $this$flowScope, p2 = collector)
+    }
+)
+  }
+)
+}
+
+fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
+  return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
+    val safeCollector: SafeCollector<T> = SafeCollector<T>(collector = $this$unsafeFlow)
+    safeCollector.invokeSafely<T>(action = action)
+  }
+)
+}
+
+suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(name = "cause") Throwable?, Unit>) {
+}
+
+@OptIn(markerClass = [ExperimentalTypeInference::class])
+inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
+  TODO()
+}
+
+@Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
+fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<@ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
+  return <this>.onCompletion<T>(action = local suspend fun FlowCollector<T>.<anonymous>(it: Throwable?) {
+    action.invoke(p1 = it)
+  }
+)
+}
+
+private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
+  return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
+    val channel: ChannelCoroutine<Any> = $this$produce.<get-channel>() as ChannelCoroutine<Any>
+    flow.collect<Any?>(action = local suspend fun <anonymous>(value: Any?) {
+      return channel.sendFair(element = { // BLOCK
+        val tmp0_elvis_lhs: Any? = value
+        when {
+          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> Any()
+          else -> tmp0_elvis_lhs
+        }
+      })
+    }
+)
+  }
+)
+}
+
+private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
+  return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
+    flow.collect<Any?>(action = local suspend fun <anonymous>(value: Any?) {
+      return $this$produce.<get-channel>().send(e = { // BLOCK
+        val tmp0_elvis_lhs: Any? = value
+        when {
+          EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> Any()
+          else -> tmp0_elvis_lhs
+        }
+      })
+    }
+)
+  }
+)
+}
+
+class SafeCollector<T : Any?> : FlowCollector<T> {
+  constructor(collector: FlowCollector<T>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal val collector: FlowCollector<T>
+    field = collector
+    internal get
+
+  override suspend fun emit(value: T) {
+  }
+
+}
+
+@OptIn(markerClass = [ExperimentalTypeInference::class])
+fun <T : Any?> flow(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
+  TODO()
+}
+
+@OptIn(markerClass = [ExperimentalTypeInference::class])
+suspend fun <R : Any?> flowScope(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
+  TODO()
+}
+
+suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunction1<@ParameterName(name = "value") T, Unit>) {
+}
+
+open class ChannelCoroutine<E : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  suspend fun sendFair(element: E) {
+  }
+
+}
+
+interface CoroutineScope {
+
+}
+
+interface Flow<out T : Any?> {
+  abstract suspend fun collect(collector: FlowCollector<T>) 
+
+}
+
+interface FlowCollector<in T : Any?> {
+  abstract suspend fun emit(value: T) 
+
+}
+
+interface ReceiveChannel<out E : Any?> {
+
+}
+
+@OptIn(markerClass = [ExperimentalTypeInference::class])
+fun <E : Any?> CoroutineScope.produce(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
+  TODO()
+}
+
+interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {
+  abstract val channel: SendChannel<E>
+    abstract get
+
+}
+
+interface SendChannel<in E : Any?> {
+  abstract suspend fun send(e: E) 
+
+}
+

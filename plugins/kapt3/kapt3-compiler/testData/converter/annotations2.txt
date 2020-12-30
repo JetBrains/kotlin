@@ -23,10 +23,10 @@ public final class AnnotationsTest {
         super();
     }
 
-    @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "top-level-fun-receiver")
-    java.lang.String $this$topLevelFun) {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int $this$topLevelVal) {
+        return null;
     }
 
     @Anno(value = "top-level-val")
@@ -34,10 +34,10 @@ public final class AnnotationsTest {
     public static void getTopLevelVal$annotations(int p0) {
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int $this$topLevelVal) {
-        return null;
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "top-level-fun-receiver")
+    java.lang.String $this$topLevelFun) {
     }
 }
 
@@ -56,13 +56,13 @@ public enum Enum {
     /*public static final*/ BLACK /* = new Enum() */;
     private final int x = 0;
 
-    public final int getX() {
-        return 0;
-    }
-
     @Anno(value = "enum-constructor")
     Enum(@Anno(value = "x")
     int x) {
+    }
+
+    public final int getX() {
+        return 0;
     }
 }
 
@@ -78,21 +78,23 @@ public abstract class Test {
     @org.jetbrains.annotations.NotNull()
     private java.lang.String v;
 
+    @Anno(value = "test-constructor")
+    protected Test(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "v-param")
+    java.lang.String v) {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     @Anno(value = "abstract-method")
     public abstract java.lang.String abstractMethod();
 
-    @Anno(value = "abstract-val")
-    @java.lang.Deprecated()
-    public static void getAbstractVal$annotations() {
-    }
-
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String getAbstractVal();
 
-    @Anno(value = "v-property")
+    @Anno(value = "abstract-val")
     @java.lang.Deprecated()
-    public static void getV$annotations() {
+    public static void getAbstractVal$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -101,16 +103,14 @@ public abstract class Test {
         return null;
     }
 
+    @Anno(value = "v-property")
+    @java.lang.Deprecated()
+    public static void getV$annotations() {
+    }
+
     @Anno(value = "v-set")
     public final void setV(@org.jetbrains.annotations.NotNull()
     @Anno(value = "v-setparam")
     java.lang.String p0) {
-    }
-
-    @Anno(value = "test-constructor")
-    protected Test(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "v-param")
-    java.lang.String v) {
-        super();
     }
 }

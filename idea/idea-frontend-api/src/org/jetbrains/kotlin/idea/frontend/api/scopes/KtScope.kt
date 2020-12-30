@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.scopes
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -41,12 +43,16 @@ interface KtCompositeScope : KtScope {
     val subScopes: List<KtScope>
 }
 
-interface KtMemberScope : KtScope {
-    val owner: KtClassOrObjectSymbol
+interface KtMemberScope : KtDeclarationScope<KtSymbolWithMembers> {
+    override val owner: KtSymbolWithMembers
 }
 
-interface KtDeclaredMemberScope : KtScope {
-    val owner: KtClassOrObjectSymbol
+interface KtDeclaredMemberScope : KtDeclarationScope<KtSymbolWithMembers> {
+    override val owner: KtSymbolWithMembers
+}
+
+interface KtDeclarationScope<out T : KtSymbolWithDeclarations> : KtScope {
+    val owner: T
 }
 
 interface KtPackageScope : KtScope, KtSubstitutedScope<KtPackageScope> {

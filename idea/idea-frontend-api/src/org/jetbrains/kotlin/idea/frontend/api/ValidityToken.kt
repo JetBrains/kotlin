@@ -8,14 +8,23 @@ package org.jetbrains.kotlin.idea.frontend.api
 abstract class ValidityToken {
     abstract fun isValid(): Boolean
     abstract fun getInvalidationReason(): String
+
+    abstract fun isAccessible(): Boolean
+    abstract fun getInaccessibilityReason(): String
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ValidityToken.assertIsValid() {
+inline fun ValidityToken.assertIsValidAndAccessible() {
     if (!isValid()) {
-        throw InvalidEntityAccessException("Access to invalid $this, invalidation reason is ${getInvalidationReason()}")
+        throw InvalidEntityAccessException("Access to invalid $this: ${getInvalidationReason()}")
+    }
+    if (!isAccessible()) {
+        throw InaccessibleEntityAccessException("$this is inaccessible: ${getInaccessibilityReason()}")
     }
 }
 
-class InvalidEntityAccessException(override val message: String): IllegalStateException()
+abstract class BadEntityAccessException(): IllegalStateException()
+
+class InvalidEntityAccessException(override val message: String) : BadEntityAccessException()
+class InaccessibleEntityAccessException(override val message: String): BadEntityAccessException()
 

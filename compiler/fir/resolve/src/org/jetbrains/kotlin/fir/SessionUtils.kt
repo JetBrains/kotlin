@@ -37,16 +37,7 @@ fun FirSimpleFunction.lowestVisibilityAmongOverrides(
     firTypeScope.processFunctionsByName(symbol.fir.name) { }
 
     firTypeScope.processOverriddenFunctions(symbol) {
-        val overriddenVisibility = when (val fir = it.fir) {
-            is FirMemberDeclaration -> fir.visibility
-            is FirPropertyAccessor -> fir.visibility
-            else -> null
-        }
-
-        overriddenVisibility?.let { that ->
-            visibility = that
-        }
-
+        visibility = it.fir.visibility
         ProcessorAction.NEXT
     }
 

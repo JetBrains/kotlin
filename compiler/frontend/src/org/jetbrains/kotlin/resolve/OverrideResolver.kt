@@ -586,7 +586,9 @@ class OverrideResolver(
             if (kind != FAKE_OVERRIDE && kind != DELEGATION) return
 
             val directOverridden = descriptor.overriddenDescriptors
-            assert(!directOverridden.isEmpty()) { kind.toString() + " " + descriptor.name.asString() + " must override something" }
+
+            // directOverridden may be empty if user tries to delegate implementation of abstract class instead of interface
+            if (directOverridden.isEmpty()) return
 
             // collects map from the directly overridden descriptor to the set of declarations:
             // -- if directly overridden is not fake, the set consists of one element: this directly overridden

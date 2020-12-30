@@ -729,7 +729,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val copyFrom = when {
                 compilations.all { it.isAppleCompilation } ->
                     compilations.selectFirstAvailableTarget(
-                        "watchos_arm64", "watchos_arm32", "watchos_x86",
+                        "watchos_arm64", "watchos_arm32", "watchos_x64", "watchos_x86",
                         "ios_arm64", "ios_arm32", "ios_x64",
                         "tvos_arm64", "tvos_x64"
                     )

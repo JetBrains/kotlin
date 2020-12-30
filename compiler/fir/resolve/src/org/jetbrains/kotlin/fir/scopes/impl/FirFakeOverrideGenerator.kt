@@ -54,7 +54,7 @@ object FirFakeOverrideGenerator {
     }
 
     private fun createSubstitutionOverrideFunction(
-        fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
+        fakeOverrideSymbol: FirNamedFunctionSymbol,
         session: FirSession,
         baseFunction: FirSimpleFunction,
         newDispatchReceiverType: ConeKotlinType?,
@@ -85,7 +85,7 @@ object FirFakeOverrideGenerator {
     }
 
     fun createCopyForFirFunction(
-        newSymbol: FirFunctionSymbol<FirSimpleFunction>,
+        newSymbol: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
         session: FirSession,
         origin: FirDeclarationOrigin,

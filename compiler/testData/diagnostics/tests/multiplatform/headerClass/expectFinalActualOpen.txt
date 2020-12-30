@@ -16,7 +16,6 @@ public final expect class Foo {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -37,3 +36,4 @@ public open class JavaBar {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public actual typealias Bar = JavaBar
+

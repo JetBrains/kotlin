@@ -35,20 +35,20 @@ fun test_2(e: A) {
     val a = when (e) {
         is D -> 1
         is E -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
     val b = when (e) {
         is B -> 1
         is D -> 2
         is E -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
     val c = when (e) {
         is B -> 1
         is D -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
     val d = when (e) {
         is C -> 1
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 }

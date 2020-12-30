@@ -39,6 +39,10 @@ class StarProjectionImpl(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeProjection = this
+
+    override fun replaceType(type: KotlinType): TypeProjection {
+        throw UnsupportedOperationException("Replacing type for star projection is unsupported")
+    }
 }
 
 fun TypeParameterDescriptor.starProjectionType(): KotlinType {
@@ -69,4 +73,8 @@ class StarProjectionForAbsentTypeParameter(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeProjection = this
+
+    override fun replaceType(type: KotlinType): TypeProjection {
+        throw UnsupportedOperationException("Replacing type for star projection is unsupported")
+    }
 }

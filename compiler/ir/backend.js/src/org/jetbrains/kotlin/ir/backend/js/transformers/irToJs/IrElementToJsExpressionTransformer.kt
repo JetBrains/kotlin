@@ -23,6 +23,18 @@ import org.jetbrains.kotlin.js.backend.ast.*
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
+    override fun visitComposite(expression: IrComposite, data: JsGenerationContext): JsExpression {
+        val size = expression.statements.size
+        if (size == 0) TODO("Empty IrComposite is not supported")
+
+        val first = expression.statements[0].accept(this, data)
+        if (size == 1) return first
+
+        return expression.statements.fold(first) { left, right ->
+            JsBinaryOperation(JsBinaryOperator.COMMA, left, right.accept(this, data))
+        }
+    }
+
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
         assert(expression.elements.none { it is IrSpreadElement })
         return JsArrayLiteral(expression.elements.map { it.accept(this, context) })
@@ -149,21 +161,37 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val function = expression.symbol.owner
         val arguments = translateCallArguments(expression, context, this)
         val klass = function.parentAsClass
-        return if (klass.isInline) {
-            assert(function.isPrimary) {
-                "Inline class secondary constructors must be lowered into static methods"
-            }
-            // Argument value constructs unboxed inline class instance
-            arguments.single()
-        } else {
-            val ref = when {
-                klass.isEffectivelyExternal() ->
-                    context.getRefForExternalClass(klass)
 
-                else ->
-                    context.getNameForClass(klass).makeRef()
+        require(!klass.isInline) {
+            "All inline class constructor calls must be lowered to static function calls"
+        }
+
+        return when {
+            klass.isEffectivelyExternal() -> {
+                val refForExternalClass = context.getRefForExternalClass(klass)
+                val varargParameterIndex = expression.symbol.owner.varargParameterIndex()
+                if (varargParameterIndex == -1) {
+                    JsNew(refForExternalClass, arguments)
+                } else {
+                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
+                        JsNullLiteral(),
+                        arguments,
+                        varargParameterIndex
+                    )
+                    JsNew(
+                        JsInvocation(
+                            JsNameRef("apply", JsNameRef("bind", JsNameRef("Function"))),
+                            refForExternalClass,
+                            argumentsAsSingleArray
+                        ),
+                        emptyList()
+                    )
+                }
             }
-            JsNew(ref, arguments)
+            else -> {
+                val ref = context.getNameForClass(klass).makeRef()
+                JsNew(ref, arguments)
+            }
         }
     }
 

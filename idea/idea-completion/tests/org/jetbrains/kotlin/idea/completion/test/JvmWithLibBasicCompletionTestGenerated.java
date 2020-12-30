@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBa
     }
 
     public void testAllFilesPresentInWithLib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/basic/withLib"), Pattern.compile("^(.+)\\.kt$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-completion/testData/basic/withLib"), Pattern.compile("^(.+)\\.kt$"), null, false);
     }
 
     @TestMetadata("NamedArgumentsJava.kt")

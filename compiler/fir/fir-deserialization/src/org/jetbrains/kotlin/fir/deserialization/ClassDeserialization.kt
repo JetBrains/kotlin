@@ -69,6 +69,7 @@ fun deserializeClassToSymbol(
         isData = Flags.IS_DATA.get(classProto.flags)
         isInline = Flags.IS_INLINE_CLASS.get(classProto.flags)
         isExternal = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
+        isFun = Flags.IS_FUN_INTERFACE.get(classProto.flags)
     }
     val isSealed = modality == Modality.SEALED
     val annotationDeserializer = defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
@@ -202,6 +203,8 @@ fun deserializeClassToSymbol(
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
 
         it.versionRequirementsTable = context.versionRequirementTable
+
+        it.sourceElement = containerSource
     }
 }
 

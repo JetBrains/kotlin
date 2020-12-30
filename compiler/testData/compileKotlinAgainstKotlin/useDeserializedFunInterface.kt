@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 
 // FILE: A.kt

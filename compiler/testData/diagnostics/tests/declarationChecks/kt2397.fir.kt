@@ -9,7 +9,7 @@ interface T {
     final val c : Int
        get() = 42
 
-    final val d = 1
+    final val d = <!PROPERTY_INITIALIZER_IN_INTERFACE!>1<!>
 }
 
 class A {

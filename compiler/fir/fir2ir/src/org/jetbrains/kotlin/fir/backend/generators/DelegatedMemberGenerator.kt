@@ -42,8 +42,6 @@ internal class DelegatedMemberGenerator(
 
         val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         subClassScope.processAllFunctions { functionSymbol ->
-            if (functionSymbol !is FirNamedFunctionSymbol) return@processAllFunctions
-
             val unwrapped =
                 functionSymbol
                     .unwrapDelegateTarget(subClassLookupTag, subClassScope::getDirectOverriddenFunctions, firField, firSubClass)
@@ -76,11 +74,12 @@ internal class DelegatedMemberGenerator(
             val member = declarationStorage.getIrPropertySymbol(unwrapped.symbol).owner as? IrProperty
                 ?: return@processAllProperties
 
-            val irSubFunction =
-                generateDelegatedProperty(subClass, firSubClass, irField, member, propertySymbol.fir)
+            val irSubProperty = generateDelegatedProperty(
+                subClass, firSubClass, irField, member, propertySymbol.fir
+            )
 
-            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubFunction)
-            subClass.addMember(irSubFunction)
+            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
+            subClass.addMember(irSubProperty)
         }
     }
 
@@ -135,6 +134,7 @@ internal class DelegatedMemberGenerator(
         delegateFunction.overriddenSymbols =
             delegateOverride.generateOverriddenFunctionSymbols(firSubClass, session, scopeSession, declarationStorage)
                 .filter { it.owner != delegateFunction }
+        annotationGenerator.generate(delegateFunction, delegateOverride)
 
         val body = createDelegateBody(irField, delegateFunction, superFunction)
         delegateFunction.body = body
@@ -197,16 +197,19 @@ internal class DelegatedMemberGenerator(
                 firDelegateProperty, subClass, origin = IrDeclarationOrigin.DELEGATED_MEMBER,
                 containingClass = firSubClass.symbol.toLookupTag()
             )
+        annotationGenerator.generate(delegateProperty, firDelegateProperty)
 
         delegateProperty.getter!!.body = createDelegateBody(irField, delegateProperty.getter!!, superProperty.getter!!)
         delegateProperty.getter!!.overriddenSymbols =
             firDelegateProperty.generateOverriddenAccessorSymbols(firSubClass, isGetter = true, session, scopeSession, declarationStorage)
+        annotationGenerator.generate(delegateProperty.getter!!, firDelegateProperty)
         if (delegateProperty.isVar) {
             delegateProperty.setter!!.body = createDelegateBody(irField, delegateProperty.setter!!, superProperty.setter!!)
             delegateProperty.setter!!.overriddenSymbols =
                 firDelegateProperty.generateOverriddenAccessorSymbols(
                     firSubClass, isGetter = false, session, scopeSession, declarationStorage
                 )
+            annotationGenerator.generate(delegateProperty.setter!!, firDelegateProperty)
         }
 
         return delegateProperty

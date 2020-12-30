@@ -26,24 +26,32 @@ abstract class FirAbstractImportingScope(
     lookupInFir: Boolean
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
-    // TODO: Rewrite somehow?
-    fun getStaticsScope(classId: ClassId): FirScope? {
-        val symbol = provider.getClassLikeSymbolByFqName(classId) ?: return null
+    private fun getStaticsScope(symbol: FirClassLikeSymbol<*>): FirScope? {
         if (symbol is FirTypeAliasSymbol) {
             val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(session)
             if (expansionSymbol != null) {
-                return getStaticsScope(expansionSymbol.classId)
+                return getStaticsScope(expansionSymbol)
             }
         } else {
             val firClass = (symbol as FirClassSymbol<*>).fir
 
-            return if (firClass.classKind == ClassKind.OBJECT)
-                FirObjectImportedCallableScope(classId, firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false))
-            else
+            return if (firClass.classKind == ClassKind.OBJECT) {
+                FirObjectImportedCallableScope(
+                    symbol.classId,
+                    firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+                )
+            } else {
                 firClass.scopeProvider.getStaticScope(firClass, session, scopeSession)
+            }
         }
 
         return null
+
+    }
+
+    fun getStaticsScope(classId: ClassId): FirScope? {
+        val symbol = provider.getClassLikeSymbolByFqName(classId) ?: return null
+        return getStaticsScope(symbol)
     }
 
     protected fun <T : FirCallableSymbol<*>> processCallables(
@@ -79,7 +87,6 @@ abstract class FirAbstractImportingScope(
                 processor(symbol)
             }
         }
-
     }
 
     abstract fun <T : FirCallableSymbol<*>> processCallables(
@@ -88,11 +95,11 @@ abstract class FirAbstractImportingScope(
         processor: (FirCallableSymbol<*>) -> Unit
     )
 
-    final override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         return processCallables(
             name,
             TowerScopeLevel.Token.Functions
-        ) { if (it is FirFunctionSymbol<*>) processor(it) }
+        ) { if (it is FirNamedFunctionSymbol) processor(it) }
     }
 
     final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

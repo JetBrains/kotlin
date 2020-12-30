@@ -452,6 +452,8 @@ fun KtModifierList.hasSuspendModifier() = hasModifier(KtTokens.SUSPEND_KEYWORD)
 
 fun KtModifierList.hasFunModifier() = hasModifier(KtTokens.FUN_KEYWORD)
 
+fun KtModifierList.hasValueModifier() = hasModifier(KtTokens.VALUE_KEYWORD)
+
 fun ASTNode.children() = generateSequence(firstChildNode) { node -> node.treeNext }
 fun ASTNode.parents() = generateSequence(treeParent) { node -> node.treeParent }
 

@@ -145,6 +145,7 @@ class VariableStorage(private val session: FirSession) {
             returns(true) implies(this@isStable != null)
         }
         when (this) {
+            is FirAnonymousObjectSymbol -> return false
             is FirFunctionSymbol<*>,
             is FirClassSymbol<*>,
             is FirBackingFieldSymbol -> return true

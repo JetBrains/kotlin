@@ -1,0 +1,18 @@
+interface IA {
+  abstract operator fun get(index: String): Int 
+
+}
+
+interface IB {
+  abstract operator fun IA.set(index: String, value: Int) 
+
+}
+
+fun IB.test(a: IA) {
+  { // BLOCK
+    val tmp0_array: IA = a
+    val tmp1_index0: String = ""
+    (<this>, tmp0_array).set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 42))
+  }
+}
+

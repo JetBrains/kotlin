@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.inline.isEffectivelyInlineOnly
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -92,7 +93,9 @@ class SuspendFunctionGenerationStrategy(
             sourceFile = declaration.containingKtFile.name,
             shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
             needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
-            internalNameForDispatchReceiver = containingClassInternalNameOrNull(),
+            internalNameForDispatchReceiver = (originalSuspendDescriptor.containingDeclaration as? ClassDescriptor)?.let {
+                if (it.isInlineClass()) state.typeMapper.mapType(it).internalName else null
+            } ?: containingClassInternalNameOrNull(),
             languageVersionSettings = languageVersionSettings,
             disableTailCallOptimizationForFunctionReturningUnit = originalSuspendDescriptor.returnType?.isUnit() == true &&
                     originalSuspendDescriptor.overriddenDescriptors.isNotEmpty() &&

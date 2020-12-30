@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.io.path.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempFile
+import kotlin.io.path.writeText
 
 const val JSPECIFY_NULLNESS_MISMATCH_MARK = "jspecify_nullness_mismatch"
 
@@ -27,7 +29,9 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         super.doMultiFileTest(
             wholeFile,
             files,
-            MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+            MockLibraryUtilExt.compileJavaFilesLibraryToJar(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH, "foreign-annotations"),
+            usePsiClassFilesReading = false,
+            excludeNonTypeUseJetbrainsAnnotations = true
         )
     }
 
@@ -149,7 +153,6 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
     }
 
     companion object {
-        const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/jdk8-annotations"
         const val JSPECIFY_JAVA_SOURCES_PATH = "compiler/testData/foreignAnnotationsJava8/tests/jspecify/java"
         const val MAIN_KT_FILE_DIRECTIVE = "// FILE: main.kt\n"
 

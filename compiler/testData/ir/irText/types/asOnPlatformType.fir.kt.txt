@@ -1,0 +1,16 @@
+fun test() {
+  val nullStr: String? = nullString()
+  val nonnullStr: String? = nonnullString()
+  nullStr.foo<String?>() /*~> Unit */
+  nonnullStr.foo<String?>() /*~> Unit */
+  nullStr.fooN<String?>() /*~> Unit */
+  nonnullStr.fooN<String?>() /*~> Unit */
+}
+
+inline fun <reified T : Any?> T.foo(): T {
+  return <this> as T
+}
+
+inline fun <reified T : Any?> T.fooN(): T? {
+  return <this> as T?
+}

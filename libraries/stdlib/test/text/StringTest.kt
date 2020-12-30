@@ -11,6 +11,7 @@ import test.collections.behaviors.iteratorBehavior
 import test.collections.behaviors.setBehavior
 import test.collections.compare
 import kotlin.math.sign
+import kotlin.native.concurrent.SharedImmutable
 import kotlin.random.Random
 
 
@@ -18,6 +19,7 @@ fun createString(content: String): CharSequence = content
 fun createStringBuilder(content: String): CharSequence = StringBuilder((content as Any).toString()) // required for Rhino JS
 
 
+@SharedImmutable
 val charSequenceBuilders = listOf(::createString, ::createStringBuilder)
 
 fun withOneCharSequenceArg(f: ((String) -> CharSequence) -> Unit) {
@@ -896,6 +898,22 @@ class StringTest {
 
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
         assertEquals("-a-b-b-A-b-", input.replace("", "-", ignoreCase = true))
+
+        fun testIgnoreCase(chars: String) {
+            for ((i, c) in chars.withIndex()) {
+                val message = "Char: $c (${c.toInt()})"
+                val expectOneReplaced = chars.replaceRange(i..i, "_")
+                val expectAllReplaced = "_".repeat(chars.length)
+                assertEquals(expectOneReplaced, chars.replace(c, '_'), message)
+                assertEquals(expectAllReplaced, chars.replace(c, '_', ignoreCase = true), "$message, ignoreCase")
+                assertEquals(expectOneReplaced, chars.replace(c.toString(), "_"), "$message, as string")
+                assertEquals(expectAllReplaced, chars.replace(c.toString(), "_", ignoreCase = true), "$message, as string, ignoreCase")
+            }
+        }
+
+        testIgnoreCase("üÜ")
+        testIgnoreCase("öÖ")
+        testIgnoreCase("äÄ")
     }
 
     @Test fun replaceFirst() {

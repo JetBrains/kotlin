@@ -11,18 +11,18 @@
  */
 
 fun test1(): Int {
-    val x: String = if (true) <!NI;TYPE_MISMATCH!>{
+    val x: String = if (true) <!TYPE_MISMATCH{NI}!>{
         when {
-            true -> <!OI;TYPE_MISMATCH!>Any()<!>
-            else -> <!OI;NULL_FOR_NONNULL_TYPE!>null<!>
+            true -> <!TYPE_MISMATCH{OI}!>Any()<!>
+            else -> <!NULL_FOR_NONNULL_TYPE{OI}!>null<!>
         }
     }<!> else ""
     return x.hashCode()
 }
 
 fun test2(): Int {
-    val x: String = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>when {
-                        true -> <!OI;TYPE_MISMATCH!>Any()<!>
+    val x: String = <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>when {
+                        true -> <!TYPE_MISMATCH{OI}!>Any()<!>
                         else -> null
                     } ?: return 0<!>
     return x.hashCode()

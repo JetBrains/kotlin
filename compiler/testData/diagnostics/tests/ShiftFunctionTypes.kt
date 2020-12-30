@@ -1,12 +1,12 @@
 // FIR_IDENTICAL
-// FILE: f.kt
+// FILE: a.kt
 class A {
 }
 
-// FILE: f.kt
+// FILE: b.kt
 package n
   class B
-// FILE: f.kt
+// FILE: c.kt
 abstract class XXX() {
     abstract val a : Int
     abstract val a2 : n.B

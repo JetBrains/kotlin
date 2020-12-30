@@ -1,0 +1,64 @@
+val p: Any?
+  field = null
+  get
+
+fun foo(): Any? {
+  return null
+}
+
+fun test1(a: Any?, b: Any): Any {
+  return { // BLOCK
+    val tmp0_elvis_lhs: Any? = a
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b
+      else -> tmp0_elvis_lhs
+    }
+  }
+}
+
+fun test2(a: String?, b: Any): Any {
+  return { // BLOCK
+    val tmp0_elvis_lhs: String? = a
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b
+      else -> tmp0_elvis_lhs
+    }
+  }
+}
+
+fun test3(a: Any?, b: Any?): String {
+  when {
+    b !is String -> return ""
+  }
+  when {
+    a !is String? -> return ""
+  }
+  return { // BLOCK
+    val tmp0_elvis_lhs: Any? = a
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b /*as String */
+      else -> tmp0_elvis_lhs /*as String */
+    }
+  }
+}
+
+fun test4(x: Any): Any {
+  return { // BLOCK
+    val tmp0_elvis_lhs: Any? = <get-p>()
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> x
+      else -> tmp0_elvis_lhs
+    }
+  }
+}
+
+fun test5(x: Any): Any {
+  return { // BLOCK
+    val tmp0_elvis_lhs: Any? = foo()
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> x
+      else -> tmp0_elvis_lhs
+    }
+  }
+}
+

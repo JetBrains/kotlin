@@ -21,12 +21,16 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtEnumEntry -> getEnumEntrySymbol(psi)
         is KtLambdaExpression -> getAnonymousFunctionSymbol(psi)
         is KtProperty -> getVariableSymbol(psi)
-        is KtClassOrObject -> getClassOrObjectSymbol(psi)
+        is KtClassOrObject -> {
+            val literalExpression = (psi as? KtObjectDeclaration)?.parent as? KtObjectLiteralExpression
+            literalExpression?.let(::getAnonymousObjectSymbol) ?: getClassOrObjectSymbol(psi)
+        }
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
     abstract fun getParameterSymbol(psi: KtParameter): KtParameterSymbol
+    abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
     abstract fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol
     abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
     abstract fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol
@@ -35,6 +39,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     abstract fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KtAnonymousFunctionSymbol
     abstract fun getAnonymousFunctionSymbol(psi: KtLambdaExpression): KtAnonymousFunctionSymbol
     abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
+    abstract fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol
     abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
     abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
 

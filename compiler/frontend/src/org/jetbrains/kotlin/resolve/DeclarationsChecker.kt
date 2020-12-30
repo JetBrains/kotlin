@@ -270,7 +270,7 @@ class DeclarationsChecker(
 
         if (declaration is KtPrimaryConstructor &&
             !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass) &&
-            !constructorDescriptor.constructedClass.isInline
+            !constructorDescriptor.constructedClass.isInlineClass()
         ) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {

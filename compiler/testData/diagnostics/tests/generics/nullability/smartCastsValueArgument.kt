@@ -1,5 +1,5 @@
 // !WITH_NEW_INFERENCE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE,-UNUSED_PARAMETER,-ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE,-UNUSED_VALUE
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 
 fun <T : CharSequence> bar1(x: T) {}
 fun bar2(x: CharSequence) {}
@@ -14,7 +14,7 @@ fun <T : CharSequence?> foo(x: T) {
         y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
         y2 = <!TYPE_MISMATCH!>x<!>
 
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;DEBUG_INFO_SMARTCAST!>x<!>)
+        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>bar1<!>(<!DEBUG_INFO_SMARTCAST{NI}!>x<!>)
         bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!TYPE_MISMATCH!>x<!>)
@@ -40,13 +40,13 @@ fun <T : CharSequence?> foo(x: T) {
 
     if (1 == 1) {
         val y = x!!
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(<!NI;DEBUG_INFO_SMARTCAST!>x<!>)
+        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>bar1<!>(<!DEBUG_INFO_SMARTCAST{NI}!>x<!>)
         bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
         bar3(<!TYPE_MISMATCH!>x<!>)
 
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar1<!>(y)
-        bar2(<!OI;DEBUG_INFO_SMARTCAST!>y<!>)
+        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>bar1<!>(y)
+        bar2(<!DEBUG_INFO_SMARTCAST{OI}!>y<!>)
         bar3(<!TYPE_MISMATCH!>y<!>)
     }
 }

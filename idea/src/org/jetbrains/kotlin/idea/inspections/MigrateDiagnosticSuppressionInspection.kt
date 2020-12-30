@@ -46,7 +46,7 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
     }
 
     class ReplaceDiagnosticNameFix(private val diagnosticFactory: DiagnosticFactory<*>) : LocalQuickFix {
-        override fun getName() = KotlinBundle.message("replace.diagnostic.name.fix.text", familyName, diagnosticFactory.name)
+        override fun getName() = KotlinBundle.message("replace.diagnostic.name.fix.text", familyName, diagnosticFactory.name!!)
 
         override fun getFamilyName() = KotlinBundle.message("replace.diagnostic.name.fix.family.name")
 

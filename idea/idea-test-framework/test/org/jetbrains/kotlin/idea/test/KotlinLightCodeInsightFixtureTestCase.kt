@@ -24,7 +24,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiClassOwner
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
@@ -51,10 +50,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 import java.util.*
 import kotlin.reflect.full.findAnnotation
 
@@ -67,6 +68,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 
     protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected fun testDataFilePath(): Path = testDataFile().toPath()
 
     protected fun testPath(fileName: String = fileName()): String = testDataFile(fileName).toString()
 
@@ -92,7 +95,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
 
         runPostStartupActivitiesOnce(project)
-        VfsRootAccess.allowRootAccess(project, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(project, KtTestUtil.getHomeDirectory())
 
         EditorTracker.getInstance(project)
 

@@ -1,0 +1,27 @@
+inline fun foo(): Boolean {
+  return false
+}
+
+fun run(x: Boolean, y: Boolean): String {
+  var z: Int = 10
+  { // BLOCK
+    l2@ do// COMPOSITE {
+    z = z.plus(other = 1)
+    when {
+      greater(arg0 = z, arg1 = 100) -> return "NOT_OK"
+    }
+    when {
+      x -> continue@l2
+    }
+    when {
+      y -> continue@l2
+    }
+    // }    while (foo())
+  }
+  return "OK"
+}
+
+fun box(): String {
+  return run(x = true, y = true)
+}
+

@@ -11,5 +11,5 @@ fun test(b: Boolean) {
     } else {
         a = null
     }
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
 }

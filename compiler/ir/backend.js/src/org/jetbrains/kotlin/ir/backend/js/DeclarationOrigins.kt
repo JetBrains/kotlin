@@ -14,5 +14,5 @@ object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
     object JS_CLOSURE_BOX_CLASS : IrStatementOriginImpl("JS_CLOSURE_BOX_CLASS")
     object JS_CLOSURE_BOX_CLASS_DECLARATION : IrDeclarationOriginImpl("JS_CLOSURE_BOX_CLASS_DECLARATION")
     object BRIDGE_TO_EXTERNAL_FUNCTION : IrDeclarationOriginImpl("BRIDGE_TO_EXTERNAL_FUNCTION")
-    object OBJECT_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("BRIDGE_TO_EXTERNAL_FUNCTION")
+    object OBJECT_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("OBJECT_GET_INSTANCE_FUNCTION")
 }

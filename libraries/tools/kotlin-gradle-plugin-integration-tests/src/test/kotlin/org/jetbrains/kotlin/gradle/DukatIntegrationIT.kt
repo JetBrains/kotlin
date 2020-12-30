@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -265,13 +266,13 @@ class DukatIntegrationIT : BaseGradleIT() {
             "${ExternalsOutputFormat.externalsOutputFormatProperty}=${ExternalsOutputFormat.SOURCE}"
         }
 
-        val externalSrcs = "build/externals/both-jsIr/src"
+        val externalSrcs = "build/externals/both-js-ir/src"
         project.build("compileKotlinJsLegacy") {
             assertSuccessful()
             assertTasksExecuted(":irGenerateExternalsIntegrated")
 
             assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
-            val legacyExternals = "build/externals/both-jsLegacy/src"
+            val legacyExternals = "build/externals/both-js-legacy/src"
             val directoryFile = fileInWorkingDir(legacyExternals)
             assertTrue(
                 !directoryFile.exists(),
@@ -330,7 +331,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.setupWorkingDir()
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        project.build("assemble") {
+        project.build("assemble", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
         }
     }
@@ -350,13 +351,13 @@ class DukatIntegrationIT : BaseGradleIT() {
             """.trimIndent()
         }
 
-        val externalSrcs = "build/externals/both-jsLegacy/src"
+        val externalSrcs = "build/externals/both-js-legacy/src"
         project.build("compileKotlinJsLegacy") {
             assertSuccessful()
 
             assertSingleFileExists(externalSrcs, "index.d.jar")
 
-            val irExternals = "build/externals/both-jsIr/src"
+            val irExternals = "build/externals/both-js-ir/src"
             val directoryFile = fileInWorkingDir(irExternals)
             assertTrue(
                 !directoryFile.exists(),
@@ -380,14 +381,14 @@ class DukatIntegrationIT : BaseGradleIT() {
             """.trimIndent()
         }
 
-        val externalSrcs = "build/externals/both-jsIr/src"
-        project.build("assemble") {
+        val externalSrcs = "build/externals/both-js-ir/src"
+        project.build("assemble", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
 
             assertTasksExecuted(":irGenerateExternalsIntegrated")
 
             assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
-            val legacyExternals = "build/externals/both-jsLegacy/src"
+            val legacyExternals = "build/externals/both-js-legacy/src"
             val directoryFile = fileInWorkingDir(legacyExternals)
             assertTrue(
                 !directoryFile.exists(),

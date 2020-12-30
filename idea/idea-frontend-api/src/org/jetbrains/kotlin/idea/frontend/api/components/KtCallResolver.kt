@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
-import org.jetbrains.kotlin.idea.frontend.api.CallInfo
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 
 abstract class KtCallResolver : KtAnalysisSessionComponent() {
-    abstract fun resolveCall(call: KtCallExpression): CallInfo?
-    abstract fun resolveCall(call: KtBinaryExpression): CallInfo?
+    abstract fun resolveCall(call: KtCallExpression): KtCall?
+    abstract fun resolveCall(call: KtBinaryExpression): KtCall?
 }

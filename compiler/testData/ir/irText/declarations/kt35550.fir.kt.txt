@@ -1,0 +1,25 @@
+interface I {
+  val <T : Any?> T.id: T
+    get(): T {
+      return <this>
+    }
+
+}
+
+class A : I {
+  constructor(i: I) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = i
+  }
+
+  override val <T : Any?> T.id: T
+    override get(): T {
+      return (<this>.#<$$delegate_0>, <this>).<get-id></* null */>()
+    }
+
+  local /* final field */ val <$$delegate_0>: I
+
+}
+

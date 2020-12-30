@@ -26,7 +26,7 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
     }
 
     public void testAllFilesPresentInGutterIcon() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("color.kt")
@@ -68,7 +68,7 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
         }
 
         public void testAllFilesPresentInRes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("idea/testData/android/gutterIcon/res/drawable")
@@ -80,7 +80,7 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
             }
 
             public void testAllFilesPresentInDrawable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/drawable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/drawable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
         }
 
@@ -93,7 +93,7 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
             }
 
             public void testAllFilesPresentInLayout() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/layout"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/layout"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
         }
 
@@ -106,7 +106,7 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
             }
 
             public void testAllFilesPresentInMipmap_mdpi() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/mipmap-mdpi"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/mipmap-mdpi"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
         }
 
@@ -119,7 +119,7 @@ public class AndroidGutterIconTestGenerated extends AbstractAndroidGutterIconTes
             }
 
             public void testAllFilesPresentInValues() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/values"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/gutterIcon/res/values"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
         }
     }

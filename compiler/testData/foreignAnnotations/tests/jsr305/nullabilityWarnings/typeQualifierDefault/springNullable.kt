@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// JSR305_GLOBAL_REPORT warn
+// JSR305_GLOBAL_REPORT: warn
 
 // FILE: spr/Nullable.java
 
@@ -69,7 +69,7 @@ public class A {
 fun main(a: A) {
     a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
-    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("String", "Nothing?")!>null<!>, "").length
+    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("String; Nothing?")!>null<!>, "").length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length

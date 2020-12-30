@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
-interface IrFakeOverrideProperty : IrSymbolDeclaration<IrPropertySymbol> {
+interface IrFakeOverrideProperty : IrDeclaration {
+    override val symbol: IrPropertySymbol
+
     var modality: Modality
     var getter: IrSimpleFunction?
     var setter: IrSimpleFunction?

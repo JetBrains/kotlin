@@ -92,7 +92,10 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: wasm/ir/src/org/jetbrains/kotlin/wasm/ir/convertors
       - License: MIT ([license/third_party/asmble_license.txt][asmble])
       - Origin: Copyright (C) 2018 Chad Retz
-      
+
+ - Path: compiler/tests-common/tests/org/jetbrains/kotlin/codegen/ir/ComposeLikeGenerationExtension.kt
+      - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
+      - Origin: Derived from JetPack Compose compiler plugin code, Copyright 2019 The Android Open Source Project
 
 ## Kotlin Test Data
 

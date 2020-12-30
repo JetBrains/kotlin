@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.caches.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -30,7 +31,7 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     }
 
     public void testAllFilesPresentInMultiplatform() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("callableReferences")
@@ -178,6 +179,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/multilevelParents/");
     }
 
+    @TestMetadata("multiplatformLibrary")
+    public void testMultiplatformLibrary() throws Exception {
+        runTest("idea/testData/multiplatform/multiplatformLibrary/");
+    }
+
     @TestMetadata("overrideExpect")
     public void testOverrideExpect() throws Exception {
         runTest("idea/testData/multiplatform/overrideExpect/");
@@ -236,6 +242,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     @TestMetadata("typeParameters")
     public void testTypeParameters() throws Exception {
         runTest("idea/testData/multiplatform/typeParameters/");
+    }
+
+    @TestMetadata("unresolvedInMultiplatformLibrary")
+    public void testUnresolvedInMultiplatformLibrary() throws Exception {
+        runTest("idea/testData/multiplatform/unresolvedInMultiplatformLibrary/");
     }
 
     @TestMetadata("useCorrectBuiltIns")

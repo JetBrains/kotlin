@@ -238,7 +238,7 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : NotNull
 
     override fun substitutionResult(replacement: KotlinType): KotlinType {
         val unwrappedType = replacement.unwrap()
-        if (!TypeUtils.isNullableType(unwrappedType) && !unwrappedType.isTypeParameter()) return unwrappedType
+        if (!unwrappedType.isTypeParameter() && !TypeUtils.isNullableType(unwrappedType)) return unwrappedType
 
         return when (unwrappedType) {
             is SimpleType -> unwrappedType.prepareReplacement()

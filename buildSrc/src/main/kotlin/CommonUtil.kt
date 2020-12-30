@@ -54,11 +54,12 @@ var Project.javaHome: String?
         extra["javaHome"] = v
     }
 
-fun Project.generator(fqName: String, sourceSet: SourceSet? = null) = smartJavaExec {
+fun Project.generator(fqName: String, sourceSet: SourceSet? = null, configure: JavaExec.() -> Unit = {}) = smartJavaExec {
     classpath = (sourceSet ?: testSourceSet).runtimeClasspath
     mainClass.set(fqName)
     workingDir = rootDir
     systemProperty("line.separator", "\n")
+    configure()
 }
 
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {

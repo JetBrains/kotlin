@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
 import org.jetbrains.kotlin.lexer.KtTokens
+import java.util.*
 
 class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
@@ -294,7 +295,7 @@ class ClassLiteralExpression(val type: Type): Expression() {
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean = true) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = when {
-        elementType is PrimitiveType -> (elementType.toNotNullType().canonicalCode() + "ArrayOf").decapitalize()
+        elementType is PrimitiveType -> (elementType.toNotNullType().canonicalCode() + "ArrayOf").decapitalize(Locale.US)
         needExplicitType -> "arrayOf<" + arrayType.elementType.canonicalCode() + ">"
         else -> "arrayOf"
     }

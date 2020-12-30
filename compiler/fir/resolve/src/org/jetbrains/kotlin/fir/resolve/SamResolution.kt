@@ -45,7 +45,7 @@ val SAM_PARAMETER_NAME = Name.identifier("block")
 class FirSamResolverImpl(
     private val firSession: FirSession,
     private val scopeSession: ScopeSession,
-    private val outerClassManager: FirOuterClassManager,
+    private val outerClassManager: FirOuterClassManager? = null,
 ) : FirSamResolver() {
 
     private val resolvedFunctionType: MutableMap<FirRegularClass, Any> = mutableMapOf()
@@ -70,11 +70,7 @@ class FirSamResolverImpl(
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        val firRegularClass =
-            firSession.firSymbolProvider
-                .getSymbolByLookupTag(type.lookupTag)
-                ?.fir as? FirRegularClass
-                ?: return null
+        val firRegularClass = type.lookupTag.toFirRegularClass(firSession) ?: return null
 
         val unsubstitutedFunctionType = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
@@ -166,6 +162,7 @@ class FirSamResolverImpl(
 
         return buildSimpleFunction {
             session = firSession
+            source = firRegularClass.source
             name = classId.shortClassName
             origin = FirDeclarationOrigin.SamConstructor
             status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
@@ -209,7 +206,7 @@ class FirSamResolverImpl(
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
-            containingClassAttr = outerClassManager.outerClass(firRegularClass.symbol)?.toLookupTag()
+            containingClassAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
         }
     }
 
@@ -287,13 +284,8 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
 
         classUseSiteMemberScope.processFunctionsByName(candidateName) { functionSymbol ->
             val firFunction = functionSymbol.fir
-            require(firFunction is FirSimpleFunction) {
-                "${functionSymbol.callableId
-                    .callableName} is expected to be _root_ide_package_.org.jetbrains.kotlin.fir.declarations.FirSimpleFunction, but ${functionSymbol::class} was found"
-            }
-
-            if (firFunction.modality != Modality.ABSTRACT || firFunction
-                    .isPublicInObject(checkOnlyName = false)
+            if (firFunction.modality != Modality.ABSTRACT ||
+                firFunction.isPublicInObject(checkOnlyName = false)
             ) return@processFunctionsByName
 
             if (resultMethod != null) {

@@ -40,7 +40,6 @@ public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnviron
         registerApplicationExtensionPoint(JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider.class);
 
         registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider.class);
-        registerApplicationExtensionPoint(ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler.class);
 
         registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
 

@@ -8,6 +8,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
@@ -21,24 +25,71 @@ import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
+    @Input
     var mode: Mode = Mode.DEVELOPMENT,
+    @Internal
     var entry: File? = null,
+    @Nested
+    @Optional
     var output: KotlinWebpackOutput? = null,
+    @Internal
     var outputPath: File? = null,
+    @Input
+    @Optional
     var outputFileName: String? = entry?.name,
+    @Internal
     var configDirectory: File? = null,
+    @Internal
     var bundleAnalyzerReportDir: File? = null,
+    @Internal
     var reportEvaluatedConfigFile: File? = null,
+    @Input
+    @Optional
     var devServer: DevServer? = null,
+    @Nested
     var cssSupport: KotlinWebpackCssSupport = KotlinWebpackCssSupport(),
+    @Input
+    @Optional
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
+    @Input
     var showProgress: Boolean = false,
+    @Input
     var sourceMaps: Boolean = false,
+    @Input
     var export: Boolean = true,
+    @Input
     var progressReporter: Boolean = false,
+    @Input
+    @Optional
     var progressReporterPathFilter: String? = null,
+    @Input
     var resolveFromModulesFirst: Boolean = false
 ) {
+    @get:Input
+    @get:Optional
+    val entryInput: String?
+        get() = entry?.absoluteFile?.normalize()?.absolutePath
+
+    @get:Input
+    @get:Optional
+    val outputPathInput: String?
+        get() = outputPath?.absoluteFile?.normalize()?.absolutePath
+
+    @get:Input
+    @get:Optional
+    val configDirectoryInput: String?
+        get() = configDirectory?.absoluteFile?.normalize()?.absolutePath
+
+    @get:Input
+    @get:Optional
+    val bundleAnalyzerReportDirInput: String?
+        get() = bundleAnalyzerReportDir?.absoluteFile?.normalize()?.absolutePath
+
+    @get:Input
+    @get:Optional
+    val reportEvaluatedConfigFileInput: String?
+        get() = reportEvaluatedConfigFile?.absoluteFile?.normalize()?.absolutePath
+
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
             it.add(versions.kotlinJsTestRunner)
@@ -251,8 +302,8 @@ data class KotlinWebpackConfig(
                             ? ${outputFileName!!.jsQuoted()}
                             : ${multiEntryOutput.jsQuoted()};
                     },
-                    library: "${output!!.library}",
-                    libraryTarget: "${output!!.libraryTarget}",
+                    ${output!!.library?.let { "library: ${it.jsQuoted()}," } ?: ""}
+                    ${output!!.libraryTarget?.let { "libraryTarget: ${it.jsQuoted()}," } ?: ""}
                     globalObject: "${output!!.globalObject}"
                 };
                 

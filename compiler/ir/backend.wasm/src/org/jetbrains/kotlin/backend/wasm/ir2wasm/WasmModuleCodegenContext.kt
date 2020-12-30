@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 interface WasmModuleCodegenContext : WasmBaseCodegenContext {
     fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction)
     fun defineGlobal(irField: IrFieldSymbol, wasmGlobal: WasmGlobal)
-    fun defineStructType(irClass: IrClassSymbol, wasmStruct: WasmStructDeclaration)
+    fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration)
     fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal)
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType)
     fun addJsFun(importName: String, jsCode: String)

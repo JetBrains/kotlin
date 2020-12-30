@@ -90,13 +90,12 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class JJ {
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String b = null;
-    @org.jetbrains.annotations.NotNull()
     public static final app.JJ INSTANCE = null;
-
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getB() {
-        return null;
+    private static final java.lang.String b = null;
+
+    private JJ() {
+        super();
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -104,8 +103,9 @@ public final class JJ {
         return null;
     }
 
-    private JJ() {
-        super();
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getB() {
+        return null;
     }
 }
 
@@ -136,59 +136,8 @@ public final class MyActivity {
     public int propE = app.B.id.textView;
     private final int propF = 0;
 
-    @Bind(id = lib.R.id.textView)
-    @java.lang.Deprecated()
-    public static void getA$annotations() {
-    }
-
-    public final int getA() {
-        return 0;
-    }
-
-    @Bind(id = lib.R.id.textView)
-    @java.lang.Deprecated()
-    public static void getB$annotations() {
-    }
-
-    public final int getB() {
-        return 0;
-    }
-
-    @Bind(id = app.R.layout.mainActivity)
-    @java.lang.Deprecated()
-    public static void getC$annotations() {
-    }
-
-    public final int getC() {
-        return 0;
-    }
-
-    @Bind(id = app.R.layout.mainActivity)
-    @java.lang.Deprecated()
-    public static void getD$annotations() {
-    }
-
-    public final int getD() {
-        return 0;
-    }
-
-    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
-    @Bind(id = app.R2.layout.mainActivity)
-    @java.lang.Deprecated()
-    public static void getE$annotations() {
-    }
-
-    public final int getE() {
-        return 0;
-    }
-
-    @Bind(id = app.B.id.textView)
-    @java.lang.Deprecated()
-    public static void getF$annotations() {
-    }
-
-    public final int getF() {
-        return 0;
+    public MyActivity() {
+        super();
     }
 
     @Bind(id = lib.R.id.textView)
@@ -212,8 +161,59 @@ public final class MyActivity {
     public final void foo5() {
     }
 
+    public final int getA() {
+        return 0;
+    }
+
+    @Bind(id = lib.R.id.textView)
+    @java.lang.Deprecated()
+    public static void getA$annotations() {
+    }
+
+    public final int getB() {
+        return 0;
+    }
+
+    @Bind(id = lib.R.id.textView)
+    @java.lang.Deprecated()
+    public static void getB$annotations() {
+    }
+
+    public final int getC() {
+        return 0;
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    @java.lang.Deprecated()
+    public static void getC$annotations() {
+    }
+
+    public final int getD() {
+        return 0;
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    @java.lang.Deprecated()
+    public static void getD$annotations() {
+    }
+
+    public final int getE() {
+        return 0;
+    }
+
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
+    @Bind(id = app.R2.layout.mainActivity)
+    @java.lang.Deprecated()
+    public static void getE$annotations() {
+    }
+
+    public final int getF() {
+        return 0;
+    }
+
     @Bind(id = app.B.id.textView)
-    public final void plainIntConstant() {
+    @java.lang.Deprecated()
+    public static void getF$annotations() {
     }
 
     public final int getPropB() {
@@ -224,15 +224,15 @@ public final class MyActivity {
         return 0;
     }
 
-    public final void setPropC(int p0) {
-    }
-
     public final int getPropF() {
         return 0;
     }
 
-    public MyActivity() {
-        super();
+    @Bind(id = app.B.id.textView)
+    public final void plainIntConstant() {
+    }
+
+    public final void setPropC(int p0) {
     }
 }
 

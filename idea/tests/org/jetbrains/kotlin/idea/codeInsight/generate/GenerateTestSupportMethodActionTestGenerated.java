@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight.generate;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenera
     }
 
     public void testAllFilesPresentInTestFrameworkSupport() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/codeInsight/generate/testFrameworkSupport/jUnit4")
@@ -37,7 +38,7 @@ public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenera
         }
 
         public void testAllFilesPresentInJUnit4() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport/jUnit4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport/jUnit4"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("dataMethod.kt")
@@ -85,7 +86,7 @@ public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenera
         }
 
         public void testAllFilesPresentInJunit3() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport/junit3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport/junit3"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("setUp.kt")
@@ -123,7 +124,7 @@ public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenera
         }
 
         public void testAllFilesPresentInTestNG() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport/testNG"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/generate/testFrameworkSupport/testNG"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("dataMethod.kt")

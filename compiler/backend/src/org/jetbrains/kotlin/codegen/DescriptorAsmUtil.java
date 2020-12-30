@@ -216,7 +216,7 @@ public class DescriptorAsmUtil {
     private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor, @Nullable OwnerKind kind) {
         if (!(functionDescriptor instanceof ConstructorDescriptor)) return false;
         ClassDescriptor classDescriptor = ((ConstructorDescriptor) functionDescriptor).getConstructedClass();
-        return classDescriptor.isInline() && kind == OwnerKind.IMPLEMENTATION;
+        return InlineClassesUtilsKt.isInlineClass(classDescriptor) && kind == OwnerKind.IMPLEMENTATION;
     }
 
     public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
@@ -559,7 +559,7 @@ public class DescriptorAsmUtil {
         if (receiverKotlinType.isMarkedNullable()) return null;
 
         DeclarationDescriptor receiverTypeDescriptor = receiverKotlinType.getConstructor().getDeclarationDescriptor();
-        assert receiverTypeDescriptor instanceof ClassDescriptor && ((ClassDescriptor) receiverTypeDescriptor).isInline() :
+        assert receiverTypeDescriptor != null && InlineClassesUtilsKt.isInlineClass(receiverTypeDescriptor) :
                 "Inline class type expected: " + receiverKotlinType;
         ClassDescriptor receiverClassDescriptor = (ClassDescriptor) receiverTypeDescriptor;
         FunctionDescriptor toStringDescriptor = receiverClassDescriptor.getUnsubstitutedMemberScope()

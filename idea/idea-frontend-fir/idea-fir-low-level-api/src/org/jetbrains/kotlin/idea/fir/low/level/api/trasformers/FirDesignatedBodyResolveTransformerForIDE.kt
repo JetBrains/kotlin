@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirIdeDesigna
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 
 internal class FirDesignatedBodyResolveTransformerForIDE(
-    private val designation: Iterator<FirElement>,
+    private val designation: Iterator<FirDeclaration>,
+    targetDeclaration: FirDeclaration,
     session: FirSession,
     scopeSession: ScopeSession,
     private val towerDataContextCollector: FirTowerDataContextCollector? = null
@@ -37,10 +38,11 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
+    private val phaseReplaceOracle = PhaseReplaceOracle(targetDeclaration)
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        if (designation.hasNext()) {
-            designation.next().visitNoTransform(this, data)
+        if (designation.hasNext()) phaseReplaceOracle.transformDeclarationInside(designation.next()) {
+            it.visitNoTransform(this, data)
             return declaration.compose()
         }
 
@@ -54,4 +56,6 @@ internal class FirDesignatedBodyResolveTransformerForIDE(
     override fun onBeforeStatementResolution(statement: FirStatement) {
         towerDataContextCollector?.addStatementContext(statement, context.towerDataContext)
     }
+
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = phaseReplaceOracle.needReplacePhase(firDeclaration)
 }

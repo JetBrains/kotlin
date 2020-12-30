@@ -48,7 +48,8 @@ fun compile(
     dceDriven: Boolean = false,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false
+    relativeRequirePath: Boolean = false,
+    propertyLazyInitialization: Boolean,
 ): CompilerResult {
     stageController = StageController()
 
@@ -62,7 +63,16 @@ fun compile(
         is MainModule.Klib -> dependencyModules
     }
 
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, allModules.first(), exportedDeclarations, configuration, es6mode = es6mode)
+    val context = JsIrBackendContext(
+        moduleDescriptor,
+        irBuiltIns,
+        symbolTable,
+        allModules.first(),
+        exportedDeclarations,
+        configuration,
+        es6mode = es6mode,
+        propertyLazyInitialization = propertyLazyInitialization,
+    )
 
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)

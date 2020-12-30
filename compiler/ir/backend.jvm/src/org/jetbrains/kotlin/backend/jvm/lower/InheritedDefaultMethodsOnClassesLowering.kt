@@ -260,12 +260,6 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
  * interface implementation should be generated into the class containing the fake override; or null if the given function is not a fake
  * override of any interface implementation or such method was already generated into the superclass or is a method from Any.
  */
-private fun isDefaultImplsBridge(f: IrSimpleFunction) =
-    f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
-
 internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode): IrSimpleFunction? {
     if (!isFakeOverride) return null
     parent.let { if (it is IrClass && it.isJvmInterface) return null }
@@ -292,3 +286,6 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
 
     return implementation
 }
+
+private fun isDefaultImplsBridge(f: IrSimpleFunction) =
+    f.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE

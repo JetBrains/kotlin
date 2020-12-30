@@ -1,0 +1,9 @@
+fun <K1 : Any?, V1 : Any?> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1> {
+  return when {
+    <this>.isEmpty() -> mapOf<K1, V1>(pair = pair)
+    else -> LinkedHashMap<K1?, V1?>(p0 = <this>).apply<LinkedHashMap<K1?, V1?>>(block = local fun LinkedHashMap<K1?, V1?>.<anonymous>() {
+      <this>.put(p0 = pair.<get-first>(), p1 = pair.<get-second>()) /*~> Unit */
+    }
+)
+  }
+}

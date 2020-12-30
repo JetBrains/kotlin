@@ -12,8 +12,8 @@
  * overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 1 -> sentence 3
  */
 
-val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test1<!> = when {
-    true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE{OI}!>test1<!> = when {
+    true -> { <!TYPE_MISMATCH{OI}!>{ true }<!> }
     else -> TODO()
 }
 
@@ -22,10 +22,10 @@ val test1a: () -> Boolean = when {
     else -> TODO()
 }
 
-val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test2<!> = when {
-    true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE{OI}!>test2<!> = when {
+    true -> { <!TYPE_MISMATCH{OI}!>{ true }<!> }
     else -> when {
-        true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
+        true -> { <!TYPE_MISMATCH{OI}!>{ true }<!> }
         else -> TODO()
     }
 }
@@ -33,14 +33,14 @@ val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test2<!> = when {
 val test2a: () -> Boolean = when {
     true -> { { true } }
     else -> when {
-        true -> { <!OI;TYPE_MISMATCH!>{ true }<!> } // TODO
+        true -> { <!TYPE_MISMATCH{OI}!>{ true }<!> } // TODO
         else -> TODO()
     }
 }
 
-val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>test3<!> = when {
-    true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
-    true -> { <!OI;TYPE_MISMATCH!>{ true }<!> }
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE{OI}!>test3<!> = when {
+    true -> { <!TYPE_MISMATCH{OI}!>{ true }<!> }
+    true -> { <!TYPE_MISMATCH{OI}!>{ true }<!> }
     else -> TODO()
 }
 

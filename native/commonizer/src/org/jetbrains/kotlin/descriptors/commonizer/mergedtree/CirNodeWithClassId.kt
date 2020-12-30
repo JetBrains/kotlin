@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.name.ClassId
 
-interface CirNodeWithClassId<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+interface CirNodeWithClassId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
     val classId: ClassId
 }

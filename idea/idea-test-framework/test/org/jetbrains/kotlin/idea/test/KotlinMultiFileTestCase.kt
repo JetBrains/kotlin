@@ -17,14 +17,14 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 
 abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected var isMultiModule = false
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
 
         runWriteAction {
             PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)
@@ -75,7 +75,7 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
         super.tearDown()
     }
 }

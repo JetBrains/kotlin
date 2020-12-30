@@ -14,5 +14,5 @@ import kotlin.reflect.KFunction3
 fun main() {
     val x = a.b.c.D<String, Int>::foo
 
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KFunction3<a.b.c.D<String, Int>, String, Int, a.b.c.D<String, Int>>>(x)
+    checkSubtype<KFunction3<a.b.c.D<String, Int>, String, Int, a.b.c.D<String, Int>>>(x)
 }

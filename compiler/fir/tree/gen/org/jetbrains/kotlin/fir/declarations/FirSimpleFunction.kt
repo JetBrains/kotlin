@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -40,7 +40,7 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirFunction<FirSimp
     abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val contractDescription: FirContractDescription
     abstract val name: Name
-    abstract override val symbol: FirFunctionSymbol<FirSimpleFunction>
+    abstract override val symbol: FirNamedFunctionSymbol
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameter>
 

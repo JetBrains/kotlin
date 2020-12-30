@@ -8,11 +8,14 @@ package test.time
 
 import test.numbers.assertAlmostEquals
 import test.*
+import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.random.*
 
+@SharedImmutable
 private val expectStorageUnit = DurationUnit.NANOSECONDS
+@SharedImmutable
 private val units = DurationUnit.values()
 
 class DurationTest {

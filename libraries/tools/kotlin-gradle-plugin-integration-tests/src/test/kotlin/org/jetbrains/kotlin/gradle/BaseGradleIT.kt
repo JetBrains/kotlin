@@ -153,6 +153,22 @@ abstract class BaseGradleIT {
             return wrapper
         }
 
+        fun maybeUpdateSettingsScript(wrapperVersion: String, settingsScript: File) {
+            // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
+            if (GradleVersion.version(wrapperVersion) >= GradleVersion.version("5.4")) {
+                settingsScript.apply {
+                    if(exists()) {
+                        modify {
+                            it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
+                        }
+                        modify {
+                            it.replace("enableFeaturePreview(\"GRADLE_METADATA\")", "//")
+                        }
+                    }
+                }
+            }
+        }
+
         private fun createNewWrapperDir(version: String): File =
             createTempDir("GradleWrapper-$version-")
                 .apply {
@@ -215,7 +231,7 @@ abstract class BaseGradleIT {
         val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
-        val warningMode: WarningMode = WarningMode.Summary
+        val warningMode: WarningMode = WarningMode.Fail
     )
 
     enum class ConfigurationCacheProblems {
@@ -321,6 +337,7 @@ abstract class BaseGradleIT {
 
         val env = createEnvironmentVariablesMap(options)
         val wrapperDir = prepareWrapper(wrapperVersion, env)
+
         val cmd = createBuildCommand(wrapperDir, params, options)
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
@@ -328,6 +345,8 @@ abstract class BaseGradleIT {
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
+
+        maybeUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
 
         val result = runProcess(cmd, projectDir, env, options)
         try {

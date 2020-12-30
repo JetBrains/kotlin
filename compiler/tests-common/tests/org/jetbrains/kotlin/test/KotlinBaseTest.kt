@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
+import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -17,35 +17,22 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.lang.reflect.Field
 import java.util.*
 import java.util.regex.Pattern
 
 abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() {
-
-    @JvmField
-    protected var coroutinesPackage: String = ""
-
     @Throws(Exception::class)
     override fun setUp() {
-        coroutinesPackage = ""
         super.setUp()
-    }
-
-    @Throws(java.lang.Exception::class)
-    protected open fun doTestWithCoroutinesPackageReplacement(filePath: String, coroutinesPackage: String) {
-        this.coroutinesPackage = coroutinesPackage
-        doTest(filePath)
     }
 
     @Throws(java.lang.Exception::class)
     protected open fun doTest(filePath: String) {
         val file = File(filePath)
-        var expectedText = KotlinTestUtils.doLoadFile(file)
-        if (coroutinesPackage.isNotEmpty()) {
-            expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        val expectedText = KtTestUtil.doLoadFile(file)
         doMultiFileTest(file, createTestFilesFromFile(file, expectedText))
     }
 
@@ -60,6 +47,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
     protected open fun getTestJdkKind(files: List<F>): TestJdkKind {
+        if (files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.content, "JDK_15") }) return TestJdkKind.FULL_JDK_15
+
         for (file in files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
                 return TestJdkKind.FULL_JDK
@@ -95,7 +84,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives,
             configuration,
-            coroutinesPackage,
             parseDirectivesPerFiles()
         )
         updateConfiguration(configuration)
@@ -200,18 +188,16 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             testFilesWithConfigurationDirectives: List<TestFile>,
             configuration: CompilerConfiguration
         ) {
-            updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "", false)
+            updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, false)
         }
 
 
         private fun updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives: List<TestFile>,
             configuration: CompilerConfiguration,
-            coroutinesPackage: String,
             usePreparsedDirectives: Boolean
         ) {
             var explicitLanguageVersionSettings: LanguageVersionSettings? = null
-            var disableReleaseCoroutines = false
             var includeCompatExperimentalCoroutines = false
             val kotlinConfigurationFlags: MutableList<String> = ArrayList(0)
             for (testFile in testFilesWithConfigurationDirectives) {
@@ -227,6 +213,11 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                         ?: error("Unknown target: $targetString")
                     configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
                 }
+
+                if (directives.contains(ENABLE_JVM_PREVIEW)) {
+                    configuration.put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, true)
+                }
+
                 val version = directives["LANGUAGE_VERSION"]
                 if (version != null) {
                     throw AssertionError(
@@ -239,13 +230,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     """.trimIndent()
                     )
                 }
-                if (directives.contains("COMMON_COROUTINES_TEST")) {
-                    assert(!directives.contains("COROUTINES_PACKAGE")) { "Must replace COROUTINES_PACKAGE prior to tests compilation" }
-                    if (StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage) {
-                        disableReleaseCoroutines = true
-                        includeCompatExperimentalCoroutines = true
-                    }
-                }
                 if (content.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
                     includeCompatExperimentalCoroutines = true
                 }
@@ -254,13 +238,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     assert(explicitLanguageVersionSettings == null) { "Should not specify !LANGUAGE directive twice" }
                     explicitLanguageVersionSettings = fileLanguageVersionSettings
                 }
-            }
-            if (disableReleaseCoroutines) {
-                explicitLanguageVersionSettings = CompilerTestLanguageVersionSettings(
-                    Collections.singletonMap(LanguageFeature.ReleaseCoroutines, LanguageFeature.State.DISABLED),
-                    ApiVersion.LATEST_STABLE,
-                    LanguageVersion.LATEST_STABLE, emptyMap()
-                )
             }
             if (includeCompatExperimentalCoroutines) {
                 configuration.addJvmClasspathRoot(ForTestCompileRuntime.coroutinesCompatForTests())

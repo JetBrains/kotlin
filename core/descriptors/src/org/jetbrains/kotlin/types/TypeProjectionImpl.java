@@ -35,6 +35,12 @@ public class TypeProjectionImpl extends TypeProjectionBase {
 
     @Override
     @NotNull
+    public TypeProjectionBase replaceType(@NotNull KotlinType type) {
+        return new TypeProjectionImpl(this.projection, type);
+    }
+
+    @Override
+    @NotNull
     public Variance getProjectionKind() {
         return projection;
     }

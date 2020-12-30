@@ -1,0 +1,50 @@
+val test1: Long
+  field = 42L
+  get
+
+val test2: Short
+  field = 42S
+  get
+
+val test3: Byte
+  field = 42B
+  get
+
+val test4: Long
+  field = 42.unaryMinus().toLong()
+  get
+
+val test5: Short
+  field = 42.unaryMinus().toShort()
+  get
+
+val test6: Byte
+  field = 42.unaryMinus().toByte()
+  get
+
+fun test() {
+  val test1: Int? = 42
+  val test2: Long = 42L
+  val test3: Long? = 42L
+  val test4: Long? = -1L
+  val test5: Long? = 1.unaryMinus().toLong()
+  val test6: Short? = 1.unaryMinus().toShort()
+  val test7: Byte? = 1.unaryMinus().toByte()
+}
+
+fun testImplicitArguments(x: Long = 1.unaryMinus().toLong()) {
+}
+
+class TestImplicitArguments {
+  constructor(x: Long = 1.unaryMinus().toLong()) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Long
+    field = x
+    get
+
+}
+

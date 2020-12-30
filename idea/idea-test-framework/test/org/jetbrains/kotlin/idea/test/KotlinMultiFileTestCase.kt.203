@@ -17,14 +17,14 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 
 abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected var isMultiModule = false
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(testRootDisposable, KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KtTestUtil.getHomeDirectory())
 
         runWriteAction {
             PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)

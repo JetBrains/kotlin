@@ -5,30 +5,32 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
+import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 class FirJvmElementAwareStringTable(
+    private val typeMapper: IrTypeMapper,
+    private val components: Fir2IrComponents,
     nameResolver: JvmNameResolver? = null
 ) : JvmStringTable(nameResolver), FirElementAwareStringTable {
-    override fun getLocalClassIdReplacement(classLikeDeclaration: FirClassLikeDeclaration<*>): ClassId {
-        return when (classLikeDeclaration.symbol.classId.outerClassId) {
-            // TODO: how to determine parent declaration for FIR local class properly?
-            //is ClassifierDescriptorWithTypeParameters -> getLocalClassIdReplacement(container).createNestedClassId(descriptor.name)
-//            null -> {
-//                throw IllegalStateException(
-//                    "getLocalClassIdReplacement should only be called for local classes: ${classLikeDeclaration.render()}"
-//                )
-//            }
+    override fun getLocalClassIdReplacement(firClass: FirClass<*>): ClassId =
+        components.classifierStorage.getCachedIrClass(firClass)?.getLocalClassIdReplacement()
+            ?: throw AssertionError("not a local class: ${firClass.symbol.classId}")
+
+    private fun IrClass.getLocalClassIdReplacement(): ClassId =
+        when (val parent = parent) {
+            is IrClass -> parent.getLocalClassIdReplacement().createNestedClassId(name)
             else -> {
-                classLikeDeclaration.symbol.classId
-                // TODO: typeMapper.mapClass
-                //val fqName = FqName(typeMapper.mapClass(descriptor).internalName.replace('/', '.'))
-                //ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), true)
+                val fqName = FqName(typeMapper.mapClass(this).internalName.replace('/', '.'))
+                ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), true)
             }
         }
-    }
 }

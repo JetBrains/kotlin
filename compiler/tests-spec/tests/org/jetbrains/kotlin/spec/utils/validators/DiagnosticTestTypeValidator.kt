@@ -52,7 +52,7 @@ class DiagnosticTestTypeValidator(
     private fun collectDiagnostics(files: List<BaseDiagnosticsTest.TestFile>) {
         files.forEach { file ->
             file.actualDiagnostics.forEach {
-                val diagnosticName = it.diagnostic.factory.name
+                val diagnosticName = it.diagnostic.factory.name!!
                 diagnosticStats.run { put(diagnosticName, getOrDefault(diagnosticName, 0) + 1) }
                 diagnostics.add(it.diagnostic)
             }

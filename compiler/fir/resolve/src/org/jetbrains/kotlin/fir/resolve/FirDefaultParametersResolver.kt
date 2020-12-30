@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
@@ -23,9 +24,10 @@ class FirDefaultParametersResolver : FirSessionComponent {
     ): Boolean {
         if (valueParameter.defaultValue != null) return true
         if (originScope !is FirTypeScope) return false
+        val symbol = function.symbol as? FirNamedFunctionSymbol ?: return false
         var result = false
 
-        originScope.processOverriddenFunctions(function.symbol) { overridden ->
+        originScope.processOverriddenFunctions(symbol) { overridden ->
             if (overridden.fir.valueParameters[index].defaultValue != null) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP

@@ -91,7 +91,8 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 firFile.declarations
             }
             val original = originalDeclaration
-            declarations?.first { it.psi === this || it.psi == original }
+            declarations?.firstOrNull { it.psi == this || it.psi == original }
+                ?: error("Cannot find corresponding fir for\n${this.getElementTextInContext()}")
         }
         this is KtConstructor<*> -> {
             val containingClass = containingClassOrObject
@@ -128,3 +129,5 @@ private fun KtTypeAlias.findFir(firSymbolProvider: FirSymbolProvider): FirTypeAl
     }
 }
 
+val FirDeclaration.isGeneratedDeclaration
+    get() = realPsi == null

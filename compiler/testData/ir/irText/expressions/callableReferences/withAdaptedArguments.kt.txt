@@ -1,0 +1,81 @@
+fun use(fn: Function1<Int, String>): String {
+  return fn.invoke(p1 = 1)
+}
+
+fun use0(fn: Function0<String>): String {
+  return fn.invoke()
+}
+
+fun coerceToUnit(fn: Function1<Int, Unit>) {
+}
+
+fun fnWithDefault(a: Int, b: Int = 42): String {
+  return "abc"
+}
+
+fun fnWithDefaults(a: Int = 1, b: Int = 2): String {
+  return ""
+}
+
+fun fnWithVarargs(vararg xs: Int): String {
+  return "abc"
+}
+
+object Host {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun importedObjectMemberWithVarargs(vararg xs: Int): String {
+    return "abc"
+  }
+
+}
+
+fun testDefault(): String {
+  return use(fn = local fun fnWithDefault(p0: Int): String {
+    return fnWithDefault(a = p0)
+  }
+)
+}
+
+fun testVararg(): String {
+  return use(fn = local fun fnWithVarargs(p0: Int): String {
+    return fnWithVarargs(xs = [p0])
+  }
+)
+}
+
+fun testCoercionToUnit() {
+  return coerceToUnit(fn = local fun fnWithDefault(p0: Int) {
+    fnWithDefault(a = p0) /*~> Unit */
+  }
+)
+}
+
+fun testImportedObjectMember(): String {
+  return use(fn = { // BLOCK
+    local fun importedObjectMemberWithVarargs(p0: Int): String {
+      return importedObjectMemberWithVarargs(xs = [p0])
+    }
+
+    Host::importedObjectMemberWithVarargs
+  })
+}
+
+fun testDefault0(): String {
+  return use0(fn = local fun fnWithDefaults(): String {
+    return fnWithDefaults()
+  }
+)
+}
+
+fun testVararg0(): String {
+  return use0(fn = local fun fnWithVarargs(): String {
+    return fnWithVarargs()
+  }
+)
+}
+

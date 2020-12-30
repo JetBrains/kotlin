@@ -65,8 +65,22 @@ class DeclarationsConverter(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     offset: Int = 0,
     context: Context<LighterASTNode> = Context()
-) : BaseConverter(session, tree, offset, context) {
-    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, offset + 1, context)
+) : BaseConverter(session, tree, context) {
+    @set:PrivateForInline
+    override var offset: Int = offset
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withOffset(newOffset: Int, block: () -> R): R {
+        val oldOffset = offset
+        offset = newOffset
+        return try {
+            block()
+        } finally {
+            offset = oldOffset
+        }
+    }
+
+    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -486,7 +500,7 @@ class DeclarationsConverter(
 
                     //parse data class
                     if (modifiers.isDataClass() && firPrimaryConstructor != null) {
-                        val zippedParameters = properties.map { it.source?.lightNode!! to it }
+                        val zippedParameters = properties.map { it.source!!.lighterASTNode to it }
                         DataClassMembersGenerator(
                             baseSession,
                             classNode,
@@ -1396,7 +1410,7 @@ class DeclarationsConverter(
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
             return DeclarationsConverter(
-                baseSession, baseScopeProvider, stubMode, blockTree, offset = tree.getStartOffset(block), context
+                baseSession, baseScopeProvider, stubMode, blockTree, offset = offset + tree.getStartOffset(block), context
             ).convertBlockExpression(blockTree.root)
         } else {
             val firExpression = buildExpressionStub()
@@ -1712,7 +1726,8 @@ class DeclarationsConverter(
         if (identifier == null)
             return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax) }
 
-        val theSource = userType.toFirSourceElement()
+        // Note: we take TYPE_REFERENCE, not USER_TYPE, as the source (to be consistent with RawFirBuilder)
+        val theSource = tree.getParent(userType)!!.toFirSourceElement()
         val qualifierPart = FirQualifierPartImpl(
             identifier.nameAsSafeName(),
             FirTypeArgumentListImpl(theSource).apply {

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 
 class KtScratchSourceFileProcessor {
     companion object {
@@ -71,6 +72,7 @@ class KtScratchSourceFileProcessor {
         fun process(expression: ScratchExpression) {
             val psiElement = expression.element
             when (psiElement) {
+                is KtDestructuringDeclaration -> processDestructuringDeclaration(expression, psiElement)
                 is KtVariableDeclaration -> processDeclaration(expression, psiElement)
                 is KtFunction -> processDeclaration(expression, psiElement)
                 is KtClassOrObject -> processDeclaration(expression, psiElement)
@@ -87,6 +89,23 @@ class KtScratchSourceFileProcessor {
             val context = RenderingContext.of(descriptor)
             objectBuilder.println(Renderers.COMPACT.render(descriptor, context))
             objectBuilder.appendLineInfo(e)
+        }
+
+        private fun processDestructuringDeclaration(e: ScratchExpression, c: KtDestructuringDeclaration) {
+            val entries = c.entries.mapNotNull { if (it.isSingleUnderscore) null else it.resolveToDescriptorIfAny() }
+            entries.forEach {
+                val context = RenderingContext.of(it)
+                val rendered = Renderers.COMPACT.render(it, context)
+                classBuilder.append(rendered).newLine()
+                objectBuilder.println(rendered)
+            }
+            objectBuilder.appendLineInfo(e)
+            classBuilder.append("init {").newLine()
+            classBuilder.append(c.text).newLine()
+            entries.forEach {
+                classBuilder.append("this.${it.name} = ${it.name}").newLine()
+            }
+            classBuilder.append("}").newLine()
         }
 
         private fun processExpression(e: ScratchExpression, expr: KtExpression) {

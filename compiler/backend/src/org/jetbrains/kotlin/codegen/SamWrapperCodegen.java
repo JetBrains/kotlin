@@ -20,6 +20,8 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
+import org.jetbrains.kotlin.codegen.context.CodegenContext;
+import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -62,6 +64,7 @@ public class SamWrapperCodegen {
     private final SamType samType;
     private final MemberCodegen<?> parentCodegen;
     private final int visibility;
+    private final int classFlags;
     public static final String SAM_WRAPPER_SUFFIX = "$0";
 
     public SamWrapperCodegen(
@@ -76,6 +79,7 @@ public class SamWrapperCodegen {
         this.samType = samType;
         this.parentCodegen = parentCodegen;
         visibility = isInsideInline ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
+        classFlags = visibility | ACC_FINAL | ACC_SUPER;
     }
 
     @NotNull
@@ -121,7 +125,7 @@ public class SamWrapperCodegen {
         cv.defineClass(
                 file,
                 state.getClassFileVersion(),
-                ACC_FINAL | ACC_SUPER | visibility,
+                classFlags,
                 asmType.getInternalName(),
                 null,
                 OBJECT_TYPE.getInternalName(),
@@ -130,6 +134,8 @@ public class SamWrapperCodegen {
         cv.visitSource(file.getName(), null);
 
         WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv, state);
+
+        generateInnerClassInformation(file, asmType, cv);
 
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);
@@ -158,6 +164,24 @@ public class SamWrapperCodegen {
         cv.done();
 
         return asmType;
+    }
+
+    private void generateInnerClassInformation(@NotNull KtFile file, Type asmType, ClassBuilder cv) {
+        parentCodegen.addSyntheticAnonymousInnerClass(new SyntheticInnerClassInfo(asmType.getInternalName(), classFlags));
+        FieldOwnerContext<?> parentContext = parentCodegen.context;
+        CodegenContext<?> outerContext = MemberCodegen.getNonInlineOuterContext(parentContext);
+        assert outerContext != null :
+                "Outer context for SAM wrapper " + asmType.getInternalName() + " is null, parentContext:" + parentContext;
+        Type outerClassType = MemberCodegen.computeOuterClass(state.getTypeMapper(), state.getJvmDefaultMode(), file, outerContext);
+        assert outerClassType != null :
+                "Outer class for SAM wrapper " + asmType.getInternalName() + " is null, parentContext:" + parentContext;
+        Method enclosingMethod = MemberCodegen.computeEnclosingMethod(state.getTypeMapper(), outerContext);
+        cv.visitOuterClass(
+                outerClassType.getInternalName(),
+                enclosingMethod == null ? null : enclosingMethod.getName(),
+                enclosingMethod == null ? null : enclosingMethod.getDescriptor()
+        );
+        cv.visitInnerClass(asmType.getInternalName(), null, null, classFlags);
     }
 
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {

@@ -1,0 +1,25 @@
+annotation class TestAnnWithIntArray : Annotation {
+  constructor(x: IntArray) /* primary */
+  val x: IntArray
+    field = x
+    get
+
+}
+
+annotation class TestAnnWithStringArray : Annotation {
+  constructor(x: Array<String>) /* primary */
+  val x: Array<String>
+    field = x
+    get
+
+}
+
+@TestAnnWithIntArray(x = [1, 2, 3])
+@TestAnnWithStringArray(x = ["a", "b", "c"])
+fun test1() {
+}
+
+@TestAnnWithIntArray(x = [4, 5, 6])
+@TestAnnWithStringArray(x = ["d", "e", "f"])
+fun test2() {
+}

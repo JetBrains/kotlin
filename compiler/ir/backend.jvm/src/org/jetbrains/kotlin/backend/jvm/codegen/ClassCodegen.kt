@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
@@ -189,14 +189,13 @@ class ClassCodegen private constructor(
     }
 
     private val metadataSerializer: MetadataSerializer =
-        context.serializerFactory(context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer)
+        context.backendExtension.createSerializer(
+            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+        )
 
     private fun generateKotlinMetadataAnnotation() {
         // TODO: if `-Xmultifile-parts-inherit` is enabled, write the corresponding flag for parts and facades to [Metadata.extraInt].
-        var extraFlags = JvmAnnotationNames.METADATA_JVM_IR_FLAG
-        if (state.isIrWithStableAbi) {
-            extraFlags += JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
-        }
+        val extraFlags = context.backendExtension.generateMetadataExtraFlags(state.abiStability)
 
         val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
         val metadata = irClass.metadata
@@ -306,6 +305,11 @@ class ClassCodegen private constructor(
         (field.metadata as? MetadataSource.Property)?.let {
             metadataSerializer.bindFieldMetadata(it, fieldType to fieldName)
         }
+
+        if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
+            // TODO: Write annotations to the component
+            visitor.addRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+        }
     }
 
     private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
@@ -354,7 +358,19 @@ class ClassCodegen private constructor(
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
             val continuationClass = method.continuationClass() // null if `SuspendLambda.invokeSuspend` - `this` is continuation itself
             val continuationClassCodegen = lazy { if (continuationClass != null) getOrCreate(continuationClass, context, method) else this }
-            node.acceptWithStateMachine(method, this, smapCopyingVisitor) { continuationClassCodegen.value.visitor }
+
+            // For suspend lambdas continuation class is null, and we need to use containing class to put L$ fields
+            val attributeContainer = continuationClass?.attributeOwnerId ?: irClass.attributeOwnerId
+
+            node.acceptWithStateMachine(
+                method,
+                this,
+                smapCopyingVisitor,
+                context.continuationClassesVarsCountByType[attributeContainer] ?: emptyMap()
+            ) {
+                continuationClassCodegen.value.visitor
+            }
+
             if (continuationClass != null && (continuationClassCodegen.isInitialized() || method.isSuspendCapturingCrossinline())) {
                 continuationClassCodegen.value.generate()
             }
@@ -365,7 +381,7 @@ class ClassCodegen private constructor(
 
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> {
-                assert(method.isSyntheticMethodForProperty) {
+                assert(method.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS) {
                     "MetadataSource.Property on IrFunction should only be used for synthetic \$annotations methods: ${method.render()}"
                 }
                 metadataSerializer.bindMethodMetadata(metadata, Method(node.name, node.desc))
@@ -398,7 +414,7 @@ class ClassCodegen private constructor(
                     ?: containerClass.declarations.firstIsInstanceOrNull<IrConstructor>()
                     ?: error("Class in a non-static initializer found, but container has no constructors: ${containerClass.render()}")
             } else parentFunction
-            if (enclosingFunction != null || irClass.isAnonymousObject) {
+            if (enclosingFunction != null || irClass.isAnonymousInnerClass) {
                 val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)
                 visitor.visitOuterClass(parentClassCodegen.type.internalName, method?.name, method?.descriptor)
             }
@@ -407,12 +423,25 @@ class ClassCodegen private constructor(
         for (klass in innerClasses) {
             val innerClass = typeMapper.classInternalName(klass)
             val outerClass =
-                if (klass.attributeOwnerId in context.isEnclosedInConstructor) null
-                else klass.parent.safeAs<IrClass>()?.let(typeMapper::classInternalName)
-            val innerName = klass.name.takeUnless { it.isSpecial }?.asString()
-            visitor.visitInnerClass(innerClass, outerClass, innerName, klass.calculateInnerClassAccessFlags(context))
+                if (klass.isSamWrapper || klass.attributeOwnerId in context.isEnclosedInConstructor)
+                    null
+                else {
+                    when (val parent = klass.parent) {
+                        is IrClass -> typeMapper.classInternalName(parent)
+                        else -> null
+                    }
+                }
+            val innerName = if (klass.isAnonymousInnerClass) null else klass.name.asString()
+            val accessFlags = klass.calculateInnerClassAccessFlags(context)
+            visitor.visitInnerClass(innerClass, outerClass, innerName, accessFlags)
         }
     }
+
+    private val IrClass.isAnonymousInnerClass: Boolean
+        get() = isSamWrapper || name.isSpecial // NB '<Continuation>' is treated as anonymous inner class here
+
+    private val IrClass.isSamWrapper: Boolean
+        get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
 
     override fun addInnerClassInfoFromAnnotation(innerClass: IrClass) {
         // It's necessary for proper recovering of classId by plain string JVM descriptor when loading annotations
@@ -452,14 +481,14 @@ private val IrClass.flags: Int
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
+                hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
 
 private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or
-            (if (isDeprecatedCallable ||
-                correspondingPropertySymbol?.owner?.isDeprecatedCallable == true ||
-                shouldHaveSpecialDeprecationFlag(context)
+            (if (isDeprecatedCallable(context) ||
+                correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true
             ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
@@ -474,10 +503,6 @@ private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: 
             languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
-
-fun IrField.shouldHaveSpecialDeprecationFlag(context: JvmBackendContext): Boolean {
-    return annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
-}
 
 private val IrDeclarationOrigin.flags: Int
     get() = (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or

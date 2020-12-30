@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
@@ -68,10 +69,8 @@ internal class FirFileBuilder(
     inline fun <R> runCustomResolveUnderLock(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R =
         cache.firFileLockProvider.withWriteLock(firFile) { resolve() }
 
-    inline fun <R : Any> runCustomResolveWithPCECheck(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R {
-        val lock = cache.firFileLockProvider.getLockFor(firFile)
-        return lock.writeLock().lockWithPCECheck(LOCKING_INTERVAL_MS) { resolve() }
-    }
+    inline fun <R : Any> runCustomResolveWithPCECheck(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R =
+        cache.firFileLockProvider.withWriteLockPCECheck(firFile, LOCKING_INTERVAL_MS, resolve)
 
     fun runResolveWithoutLock(
         firFile: FirFile,
@@ -83,10 +82,11 @@ internal class FirFileBuilder(
             "Trying to resolve file ${firFile.name} from $fromPhase to $toPhase"
         }
         var currentPhase = fromPhase
+        val scopeSession = ScopeSession()
         while (currentPhase < toPhase) {
             if (checkPCE) checkCanceled()
             currentPhase = currentPhase.next
-            firPhaseRunner.runPhase(firFile, currentPhase)
+            firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
         }
     }
 

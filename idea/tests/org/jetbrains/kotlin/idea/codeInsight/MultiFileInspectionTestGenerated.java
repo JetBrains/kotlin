@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
     }
 
     public void testAllFilesPresentInMultiFileInspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"), null);
+        KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("fakeJvmFieldConstant/fakeJvmFieldConstant.test")
@@ -46,6 +47,11 @@ public class MultiFileInspectionTestGenerated extends AbstractMultiFileInspectio
     @TestMetadata("kotlinInternalInJavaTest/kotlinInternalInJavaTest.test")
     public void testKotlinInternalInJavaTest_KotlinInternalInJavaTest() throws Exception {
         runTest("idea/testData/multiFileInspections/kotlinInternalInJavaTest/kotlinInternalInJavaTest.test");
+    }
+
+    @TestMetadata("kotlinSealedInJavaTest/kotlinSealedInJavaTest.test")
+    public void testKotlinSealedInJavaTest_KotlinSealedInJavaTest() throws Exception {
+        runTest("idea/testData/multiFileInspections/kotlinSealedInJavaTest/kotlinSealedInJavaTest.test");
     }
 
     @TestMetadata("mainInTwoModules/mainInTwoModules.test")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.safeDelete;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("class1.kt")
@@ -110,7 +111,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinClassWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classWithDelegationCalls.kt")
@@ -128,7 +129,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInJavaClassWithKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin"), Pattern.compile("^(.+)\\.java$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin"), Pattern.compile("^(.+)\\.java$"), null, true);
         }
 
         @TestMetadata("ImportJavaClassToKotlin.java")
@@ -156,7 +157,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("anonymousObject.kt")
@@ -224,7 +225,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("fun1.kt")
@@ -322,7 +323,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinFunctionWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("funExt.kt")
@@ -395,7 +396,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInJavaFunctionWithKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("mixedHierarchy1.kt")
@@ -418,7 +419,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("implement1.kt")
@@ -551,7 +552,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinPropertyWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("implement1.kt")
@@ -624,7 +625,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInJavaPropertyWithKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("middleJava1.kt")
@@ -667,7 +668,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinTypeAlias() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -690,7 +691,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinTypeParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("internalUsages1.kt")
@@ -783,7 +784,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinTypeParameterWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("internalUsages1.kt")
@@ -881,7 +882,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinValueParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("dataClassComponent.kt")
@@ -1054,7 +1055,7 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
         }
 
         public void testAllFilesPresentInKotlinValueParameterWithJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("dataClassComponent.kt")

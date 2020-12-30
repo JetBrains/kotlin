@@ -57,7 +57,11 @@ abstract class AnnotationCodegen(
     /**
      * @param returnType can be null if not applicable (e.g. [annotated] is a class)
      */
-    fun genAnnotations(annotated: IrAnnotationContainer?, returnType: Type?, typeForTypeAnnotations: IrType?) {
+    fun genAnnotations(
+        annotated: IrAnnotationContainer?,
+        returnType: Type?,
+        typeForTypeAnnotations: IrType?
+    ) {
         if (annotated == null) return
 
         val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
@@ -94,7 +98,10 @@ abstract class AnnotationCodegen(
             }
         }
 
-        generateAdditionalAnnotations(annotated, returnType, annotationDescriptorsAlreadyPresent)
+        if (!skipNullabilityAnnotations && annotated is IrDeclaration && returnType != null && !AsmUtil.isPrimitive(returnType)) {
+            generateNullabilityAnnotationForCallable(annotated, annotationDescriptorsAlreadyPresent)
+        }
+
         generateTypeAnnotations(annotated, typeForTypeAnnotations)
     }
 
@@ -109,16 +116,6 @@ abstract class AnnotationCodegen(
     }
 
 
-    private fun generateAdditionalAnnotations(
-        annotated: IrAnnotationContainer,
-        returnType: Type?,
-        annotationDescriptorsAlreadyPresent: MutableSet<String>
-    ) {
-        if (!skipNullabilityAnnotations && annotated is IrDeclaration && returnType != null && !AsmUtil.isPrimitive(returnType)) {
-            generateNullabilityAnnotationForCallable(annotated, annotationDescriptorsAlreadyPresent)
-        }
-    }
-
     private fun generateNullabilityAnnotationForCallable(
         declaration: IrDeclaration, // There is no superclass that encompasses IrFunction, IrField and nothing else.
         annotationDescriptorsAlreadyPresent: MutableSet<String>
@@ -127,6 +124,7 @@ abstract class AnnotationCodegen(
         if (declaration is IrValueParameter) {
             val parent = declaration.parent as IrDeclaration
             if (isInvisibleForNullabilityAnalysis(parent)) return
+            if (isMovedReceiverParameterOfStaticInlineClassReplacement(declaration, parent)) return
         }
 
         // No need to annotate annotation methods since they're always non-null
@@ -166,6 +164,10 @@ abstract class AnnotationCodegen(
 
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass)
     }
+
+    private fun isMovedReceiverParameterOfStaticInlineClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
+        parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT &&
+                parameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
 
     private fun generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent: MutableSet<String>, annotationClass: Class<*>) {
         val descriptor = Type.getType(annotationClass).descriptor
@@ -284,7 +286,8 @@ abstract class AnnotationCodegen(
             when {
                 declaration.origin.isSynthetic ->
                     true
-                declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ->
+                declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+                        declaration.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ->
                     true
                 else ->
                     false

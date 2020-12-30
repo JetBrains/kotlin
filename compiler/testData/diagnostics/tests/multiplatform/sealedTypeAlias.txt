@@ -19,7 +19,6 @@ public sealed expect class Presence {
     }
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -44,3 +43,4 @@ public sealed class P {
     }
 }
 public actual typealias Presence = P
+

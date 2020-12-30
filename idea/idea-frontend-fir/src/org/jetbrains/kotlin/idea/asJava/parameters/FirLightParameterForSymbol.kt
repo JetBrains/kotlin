@@ -5,31 +5,32 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.idea.util.ifTrue
 
 internal class FirLightParameterForSymbol(
     private val parameterSymbol: KtParameterSymbol,
     containingMethod: FirLightMethod
-) : FirLightParameter(containingMethod) {
-    private val _name: String = parameterSymbol.name.asString()
-    override fun getName(): String = _name
-
-    private val _isVarArgs: Boolean = parameterSymbol.isVararg
-    override fun isVarArgs() = _isVarArgs
-    override fun hasModifierProperty(name: String): Boolean =
-        modifierList.hasModifierProperty(name)
-
-    override val kotlinOrigin: KtParameter? = parameterSymbol.psi as? KtParameter
+) : FirLightParameterBaseForSymbol(parameterSymbol, containingMethod) {
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
+
+        val annotationSite = (parameterSymbol is KtConstructorParameterSymbol).ifTrue {
+            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+        }
+
+        val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
+
         parameterSymbol.computeAnnotations(
             parent = this,
-            nullability = parameterSymbol.type.getTypeNullability(parameterSymbol, FirResolvePhase.TYPES),
-            annotationUseSiteTarget = null,
+            nullability = nullability,
+            annotationUseSiteTarget = annotationSite,
+            includeAnnotationsWithoutSite = true
         )
     }
 
@@ -38,21 +39,11 @@ internal class FirLightParameterForSymbol(
         FirLightClassModifierList(this, emptySet(), _annotations)
     }
 
-    private val _type by lazyPub {
-        val convertedType = parameterSymbol.asPsiType(this, FirResolvePhase.TYPES)
-
-        if (convertedType is PsiArrayType && parameterSymbol.isVararg) {
-            PsiEllipsisType(convertedType.componentType, convertedType.annotationProvider)
-        } else convertedType
-    }
-
-    override fun getType(): PsiType = _type
+    override fun isVarArgs() = parameterSymbol.isVararg
 
     override fun equals(other: Any?): Boolean =
         this === other ||
-                (other is FirLightParameterForSymbol &&
-                 kotlinOrigin == other.kotlinOrigin &&
-                 parameterSymbol == other.parameterSymbol)
+                (other is FirLightParameterForSymbol && parameterSymbol == other.parameterSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 }

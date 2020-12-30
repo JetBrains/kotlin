@@ -6,3 +6,5 @@ package p
 fun f() {
 
 }
+
+// FIR_COMPARISON

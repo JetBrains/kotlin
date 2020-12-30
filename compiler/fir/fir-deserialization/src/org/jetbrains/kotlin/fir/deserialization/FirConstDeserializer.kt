@@ -20,24 +20,21 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 class FirConstDeserializer(
     val session: FirSession,
-    private val partSource: KotlinJvmBinaryClass? = null,
-    private val facadeSource: KotlinJvmBinaryClass? = null
+    private val binaryClass: KotlinJvmBinaryClass? = null
 ) {
-    companion object {
-        private val constantCache = mutableMapOf<CallableId, FirExpression>()
-    }
+    private val constantCache = mutableMapOf<CallableId, FirExpression>()
 
     fun loadConstant(propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver): FirExpression? {
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
 
         constantCache[callableId]?.let { return it }
 
-        if (facadeSource == null && partSource == null) {
+        if (binaryClass == null) {
             val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue) ?: return null
             return buildFirConstant(value, null, value.type.name, nameResolver)?.apply { constantCache[callableId] = this }
         }
 
-        (facadeSource ?: partSource)!!.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+        binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
@@ -60,11 +57,11 @@ class FirConstDeserializer(
             "CHAR", "C" -> buildConstExpression(null, FirConstKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toChar())
             "SHORT", "S" -> buildConstExpression(null, FirConstKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort())
             "INT", "I" -> buildConstExpression(null, FirConstKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int)
-            "LONG", "J" -> buildConstExpression(null, FirConstKind.Long, (protoValue?.intValue ?: sourceValue) as Long)
-            "FLOAT", "F" -> buildConstExpression(null, FirConstKind.Float, (protoValue?.floatValue ?: sourceValue) as Float)
-            "DOUBLE", "D" -> buildConstExpression(null, FirConstKind.Double, (protoValue?.doubleValue ?: sourceValue) as Double)
+            "LONG", "J" -> buildConstExpression(null, FirConstKind.Long, protoValue?.intValue ?: sourceValue as Long)
+            "FLOAT", "F" -> buildConstExpression(null, FirConstKind.Float, protoValue?.floatValue ?: sourceValue as Float)
+            "DOUBLE", "D" -> buildConstExpression(null, FirConstKind.Double, protoValue?.doubleValue ?: sourceValue as Double)
             "BOOLEAN", "Z" -> buildConstExpression(null, FirConstKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0)
-            "STRING", "Ljava/lang/String" -> buildConstExpression(
+            "STRING", "Ljava/lang/String;" -> buildConstExpression(
                 null, FirConstKind.String, protoValue?.stringValue?.let { nameResolver.getString(it) } ?: sourceValue as String
             )
             else -> null

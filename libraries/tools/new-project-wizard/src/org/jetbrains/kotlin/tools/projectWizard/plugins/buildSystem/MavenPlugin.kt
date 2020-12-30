@@ -52,7 +52,7 @@ class MavenPlugin(context: Context) : BuildSystemPlugin(context) {
             isAvailable = isMaven
 
             withAction {
-                val repositories = pluginRepositoreis.propertyValue
+                val repositories = getPluginRepositoriesWithDefaultOnes()
                 updateBuildFiles { buildFile ->
                     buildFile.withIrs(repositories.map(::PluginRepositoryMavenIR)).asSuccess()
                 }

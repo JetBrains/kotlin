@@ -15,7 +15,7 @@ class MyClass {
         m = create()
         // See KT-7428
         for ((k, v) in <!SMARTCAST_IMPOSSIBLE!>m<!>)
-            res += (<!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>k<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>length<!> <!NI;DEBUG_INFO_MISSING_UNRESOLVED!>+<!> <!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>v<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED!>length<!>)
+            res += (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{NI}!>k<!>.<!DEBUG_INFO_MISSING_UNRESOLVED{NI}!>length<!> <!DEBUG_INFO_MISSING_UNRESOLVED{NI}!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE{NI}!>v<!>.<!DEBUG_INFO_MISSING_UNRESOLVED{NI}!>length<!>)
         return res
     }
 }

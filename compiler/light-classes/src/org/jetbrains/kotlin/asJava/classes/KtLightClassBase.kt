@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 abstract class KtLightClassBase protected constructor(manager: PsiManager)
     : AbstractLightClass(manager, KotlinLanguage.INSTANCE), KtLightClass, PsiExtensibleClass {
     protected open val myInnersCache = KotlinClassInnerStuffCache(
-        this, listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker))
+        myClass = this,
+        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
+        lazyCreator = LightClassesLazyCreator(project)
+    )
 
     override fun getDelegate() = clsDelegate
 

@@ -53,6 +53,10 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         }
 
     private fun computeClassInternalName(irClass: IrClass): StringBuilder {
+        context.getLocalClassType(irClass)?.internalName?.let {
+            return StringBuilder(it)
+        }
+
         val shortName = SpecialNames.safeIdentifier(irClass.name).identifier
 
         when (val parent = irClass.parent) {
@@ -71,11 +75,6 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
                     return computeClassInternalName(parent.parentAsClass.parentAsClass)
                         .append("$").append(parent.name.asString())
                 }
-        }
-
-        val localClassType = context.getLocalClassType(irClass)
-        if (localClassType != null) {
-            return StringBuilder(localClassType.internalName)
         }
 
         error(

@@ -201,7 +201,7 @@ class GenerationState private constructor(
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =
-        if (target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion)
+        if (target.majorVersion >= JvmTarget.JVM_9.majorVersion)
             configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INLINE
         else JvmStringConcat.INLINE
 
@@ -272,7 +272,10 @@ class GenerationState private constructor(
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
-    val classFileVersion: Int = target.bytecodeVersion
+    val classFileVersion: Int = run {
+        val minorVersion = if (configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)) 0xffff else 0
+        (minorVersion shl 16) + target.majorVersion
+    }
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
 
@@ -295,7 +298,7 @@ class GenerationState private constructor(
             ?: if (languageVersionSettings.languageVersion >= LanguageVersion.LATEST_STABLE) JvmMetadataVersion.INSTANCE
             else JvmMetadataVersion(1, 1, 18)
 
-    val isIrWithStableAbi = configuration.getBoolean(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI)
+    val abiStability = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 
     val globalSerializationBindings = JvmSerializationBindings()
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }

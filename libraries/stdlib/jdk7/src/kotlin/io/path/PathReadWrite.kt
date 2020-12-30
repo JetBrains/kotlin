@@ -157,8 +157,8 @@ public fun Path.readText(charset: Charset = Charsets.UTF_8): String =
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public fun Path.writeText(text: String, charset: Charset = Charsets.UTF_8, vararg options: OpenOption) {
-    Files.newOutputStream(this, *options).writer(charset).use { it.write(text) }
+public fun Path.writeText(text: CharSequence, charset: Charset = Charsets.UTF_8, vararg options: OpenOption) {
+    Files.newOutputStream(this, *options).writer(charset).use { it.append(text) }
 }
 
 /**
@@ -169,8 +169,8 @@ public fun Path.writeText(text: String, charset: Charset = Charsets.UTF_8, varar
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public fun Path.appendText(text: String, charset: Charset = Charsets.UTF_8) {
-    Files.newOutputStream(this, StandardOpenOption.APPEND).writer(charset).use { it.write(text) }
+public fun Path.appendText(text: CharSequence, charset: Charset = Charsets.UTF_8) {
+    Files.newOutputStream(this, StandardOpenOption.APPEND).writer(charset).use { it.append(text) }
 }
 
 /**

@@ -148,7 +148,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
     }
 
-    fun FirExpression.toReturn(baseSource: FirSourceElement? = source, labelName: String? = null): FirReturnExpression {
+    fun FirExpression.toReturn(
+        baseSource: FirSourceElement? = source,
+        labelName: String? = null,
+        fromKtReturnExpression: Boolean = false
+    ): FirReturnExpression {
         return buildReturnExpression {
             fun FirFunctionTarget.bindToErrorFunction(message: String, kind: DiagnosticKind) {
                 bind(
@@ -162,7 +166,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 )
             }
 
-            source = baseSource?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
+            source =
+                if (fromKtReturnExpression) baseSource?.realElement()
+                else baseSource?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
             result = this@toReturn
             if (labelName == null) {
                 target = context.firFunctionTargets.lastOrNull { !it.isLambda } ?: FirFunctionTarget(labelName, isLambda = false).apply {
@@ -386,7 +392,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             source = base?.toFirSourceElement()
             // Fast-pass if there is no non-const string expressions
             if (!hasExpressions) return buildConstExpression(source, FirConstKind.String, sb.toString())
-            argumentList.arguments.singleOrNull()?.let { return it }
         }
     }
 

@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
@@ -42,7 +44,6 @@ internal class FirModuleResolveStateImpl(
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
 ) : FirModuleResolveState() {
     override val rootModuleSession: FirIdeSourcesSession get() = sessionProvider.rootModuleSession
-    override val firTransformerProvider: FirTransformerProvider get() = firFileBuilder.firPhaseRunner.transformerProvider
     val fileStructureCache = FileStructureCache(firFileBuilder, firLazyDeclarationResolver)
     val elementBuilder = FirElementBuilder()
     private val diagnosticsCollector = DiagnosticsCollector(fileStructureCache, rootModuleSession.cache)
@@ -51,7 +52,7 @@ internal class FirModuleResolveStateImpl(
         sessionProvider.getSession(moduleInfo)!!
 
     override fun getOrBuildFirFor(element: KtElement): FirElement =
-        elementBuilder.getOrBuildFirFor(element, rootModuleSession.cache, fileStructureCache)
+        elementBuilder.getOrBuildFirFor(element, firFileBuilder, rootModuleSession.cache, fileStructureCache)
 
     override fun getFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
@@ -71,6 +72,7 @@ internal class FirModuleResolveStateImpl(
         error("Should be called only from FirModuleResolveStateForCompletion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findNonLocalSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
     ): FirDeclaration = ktDeclaration.findSourceNonLocalFirDeclaration(
@@ -79,9 +81,11 @@ internal class FirModuleResolveStateImpl(
         sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
     )
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
         findSourceFirDeclarationByExpression(ktDeclaration)
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
         findSourceFirDeclarationByExpression(ktDeclaration)
 
@@ -97,8 +101,15 @@ internal class FirModuleResolveStateImpl(
             rootModuleSession.firIdeProvider.symbolProvider,
             sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
         )
+        if (container.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
+            val cache = (container.session as FirIdeSourcesSession).cache
+            firLazyDeclarationResolver.lazyResolveDeclaration(container, cache, FirResolvePhase.BODY_RESOLVE, checkPCE = false /*TODO*/)
+        }
         val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(container) { firDeclaration ->
-            firDeclaration.psi == ktDeclaration
+            when (val realPsi = firDeclaration.realPsi) {
+                is KtObjectLiteralExpression -> realPsi.objectDeclaration == ktDeclaration
+                else -> realPsi == ktDeclaration
+            }
         }
         return firDeclaration
             ?: error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")

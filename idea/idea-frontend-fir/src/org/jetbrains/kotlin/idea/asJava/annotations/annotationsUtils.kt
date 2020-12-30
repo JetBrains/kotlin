@@ -10,22 +10,23 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
+import org.jetbrains.kotlin.psi.KtFile
 
-internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
+internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
+
+internal fun KtFileSymbol.hasJvmMultifileClassAnnotation(): Boolean =
+    hasAnnotation("kotlin/jvm/JvmMultifileClass", AnnotationUseSiteTarget.FILE)
 
 internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): String? {
     val annotation = annotations.firstOrNull {
@@ -39,17 +40,14 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     }
 }
 
-internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean {
-
-    //TODO Move it to HL API
+internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean {
     require(this is KtFirSymbol<*>)
 
     return this.firRef.withFir(FirResolvePhase.TYPES) {
         if (it !is FirAnnotatedDeclaration) return@withFir false
 
         val deprecatedAnnotationCall = it.annotations.firstOrNull { annotationCall ->
-            val siteTarget = annotationCall.useSiteTarget
-            (siteTarget == null || siteTarget == annotationUseSiteTarget) &&
+            annotationCall.useSiteTarget == annotationUseSiteTarget &&
                     annotationCall.classId?.asString() == "kotlin/Deprecated"
         } ?: return@withFir false
 
@@ -62,29 +60,37 @@ internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: An
     }
 }
 
+internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(annotationUseSiteTarget: AnnotationUseSiteTarget? = null) =
+    isHiddenByDeprecation(annotationUseSiteTarget) || hasJvmSyntheticAnnotation(annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmField", null)
 
+internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
+    hasAnnotation("kotlin/PublishedApi", annotationUseSiteTarget)
+
+internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
+    hasAnnotation("kotlin/Deprecated", annotationUseSiteTarget)
+
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmOverloads", null)
 
-internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean =
-    hasAnnotation("kotlin/jvm/JvmStatic", null)
+internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
+    hasAnnotation("kotlin/jvm/JvmStatic", annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean =
     hasAnnotation("kotlin/internal/InlineOnly", null)
 
 internal fun KtAnnotatedSymbol.hasAnnotation(classIdString: String, annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
     annotations.any {
-        val siteTarget = it.useSiteTarget
-        (siteTarget == null || siteTarget == annotationUseSiteTarget) && it.classId?.asString() == classIdString
+        it.useSiteTarget == annotationUseSiteTarget && it.classId?.asString() == classIdString
     }
 
 internal fun KtAnnotatedSymbol.computeAnnotations(
     parent: PsiElement,
     nullability: NullabilityType,
-    annotationUseSiteTarget: AnnotationUseSiteTarget?
+    annotationUseSiteTarget: AnnotationUseSiteTarget?,
+    includeAnnotationsWithoutSite: Boolean = true
 ): List<PsiAnnotation> {
 
     if (nullability == NullabilityType.Unknown && annotations.isEmpty()) return emptyList()
@@ -105,7 +111,10 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     for (annotation in annotations) {
 
         val siteTarget = annotation.useSiteTarget
-        if (siteTarget == null || siteTarget == annotationUseSiteTarget) {
+
+        if ((includeAnnotationsWithoutSite && siteTarget == null) ||
+            siteTarget == annotationUseSiteTarget
+        ) {
             result.add(FirLightAnnotationForAnnotationCall(annotation, parent))
         }
     }

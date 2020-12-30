@@ -29,9 +29,9 @@ fun main() {
     checkSubtype<Outer<out CharSequence>.Inner>(outer.bar())
     checkSubtype<Outer<out CharSequence>.Inner>(outer.Inner())
 
-    outer.<!OI;MEMBER_PROJECTED_OUT!>set<!>(<!NI;TYPE_MISMATCH!>outer.bar()<!>)
-    outer.<!OI;MEMBER_PROJECTED_OUT!>set<!>(<!NI;TYPE_MISMATCH!>outer.Inner()<!>)
+    outer.<!MEMBER_PROJECTED_OUT{OI}!>set<!>(<!TYPE_MISMATCH{NI}!>outer.bar()<!>)
+    outer.<!MEMBER_PROJECTED_OUT{OI}!>set<!>(<!TYPE_MISMATCH{NI}!>outer.Inner()<!>)
 
     val x: Outer<String>.Inner = factoryString()
-    outer.<!OI;MEMBER_PROJECTED_OUT!>set<!>(<!NI;TYPE_MISMATCH!>x<!>)
+    outer.<!MEMBER_PROJECTED_OUT{OI}!>set<!>(<!TYPE_MISMATCH{NI}!>x<!>)
 }

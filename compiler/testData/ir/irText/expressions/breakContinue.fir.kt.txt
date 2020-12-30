@@ -1,0 +1,34 @@
+fun test1() {
+  while (true) break
+  dobreak  while (true)
+  while (true) continue
+  docontinue  while (true)
+}
+
+fun test2() {
+  OUTER@ while (true) { // BLOCK
+    INNER@ while (true) { // BLOCK
+      break@INNER
+      break@OUTER
+    }
+    break@OUTER
+  }
+  OUTER@ while (true) { // BLOCK
+    INNER@ while (true) { // BLOCK
+      continue@INNER
+      continue@OUTER
+    }
+    continue@OUTER
+  }
+}
+
+fun test3() {
+  L@ while (true) { // BLOCK
+    L@ while (true) break@L
+    break@L
+  }
+  L@ while (true) { // BLOCK
+    L@ while (true) continue@L
+    continue@L
+  }
+}

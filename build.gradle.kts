@@ -188,7 +188,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4.30-dev-17200"
+    extra["versions.kotlin-native"] = "1.4.30-dev-17395"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -293,6 +293,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:checkers",
     ":compiler:fir:entrypoint",
     ":compiler:fir:analysis-tests",
+    ":compiler:fir:analysis-tests:legacy-fir-tests",
     ":wasm:wasm.ir"
 )
 
@@ -467,7 +468,7 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { !isTestDistributionEnabled() }
     }
 
     normalization {
@@ -569,7 +570,7 @@ val dist = tasks.register("dist") {
 }
 
 val syncMutedTests = tasks.register("syncMutedTests") {
-    dependsOn(":compiler:tests-mutes:run")
+    dependsOn(":compiler:tests-mutes:tc-integration:run")
 }
 
 val copyCompilerToIdeaPlugin by task<Copy> {
@@ -630,6 +631,7 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":compiler:test",
+            ":compiler:tests-common-new:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
             ":compiler:tests-spec:test",
@@ -666,6 +668,7 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
+        dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
     }
 
@@ -675,6 +678,7 @@ tasks {
             ":compiler:fir:raw-fir:psi2fir:test",
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
+            ":compiler:fir:analysis-tests:legacy-fir-tests:test",
             ":compiler:fir:fir2ir:test",
             ":plugins:fir:fir-plugin-prototype:test"
         )
@@ -710,7 +714,6 @@ tasks {
     }
 
     register("miscCompilerTest") {
-        dependsOn("wasmCompilerTest")
         dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
@@ -854,6 +857,8 @@ tasks {
 
     register("kaptIdeTest") {
         dependsOn(":kotlin-annotation-processing:test")
+        dependsOn(":kotlin-annotation-processing-base:test")
+        dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
     register("gradleIdeTest") {
@@ -868,6 +873,7 @@ tasks {
             ":idea:idea-gradle:test",
             ":idea:test",
             ":compiler:test",
+            ":compiler:container:test",
             ":js:js.tests:test"
         )
 

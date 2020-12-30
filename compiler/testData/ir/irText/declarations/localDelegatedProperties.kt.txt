@@ -1,0 +1,32 @@
+fun test1() {
+  val x: Int
+    val x$delegate: Lazy<Int> = lazy<Int>(initializer = local fun <anonymous>(): Int {
+      return 42
+    }
+)
+    local get(): Int {
+      return x$delegate.getValue<Int>(thisRef = null, property = ::x)
+    }
+
+  println(message = <get-x>())
+}
+
+fun test2() {
+  var x: Int
+    val x$delegate: HashMap<String, Int> = hashMapOf<String, Int>()
+    local get(): Int {
+      return x$delegate.getValue<Int, Int>(thisRef = null, property = ::x)
+    }
+    local set(value: Int) {
+      return x$delegate.setValue<Int>(thisRef = null, property = ::x, value = value)
+    }
+
+  <set-x>(value = 0)
+  { // BLOCK
+    val tmp0: Int = <get-x>()
+    <set-x>(value = tmp0.inc())
+    tmp0
+  } /*~> Unit */
+  <set-x>(value = <get-x>().plus(other = 1))
+}
+

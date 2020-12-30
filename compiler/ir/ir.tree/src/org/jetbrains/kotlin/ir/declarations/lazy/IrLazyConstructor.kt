@@ -58,7 +58,7 @@ class IrLazyConstructor(
 
     override var typeParameters: List<IrTypeParameter> by lazyVar {
         typeTranslator.buildWithScope(this) {
-            stubGenerator.symbolTable.withScope(descriptor) {
+            stubGenerator.symbolTable.withScope(this) {
                 val classTypeParametersCount = descriptor.constructedClass.original.declaredTypeParameters.size
                 val allConstructorTypeParameters = descriptor.typeParameters
                 allConstructorTypeParameters.subList(classTypeParametersCount, allConstructorTypeParameters.size).mapTo(ArrayList()) {

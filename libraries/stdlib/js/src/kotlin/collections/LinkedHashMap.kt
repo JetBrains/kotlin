@@ -1,7 +1,8 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 /*
  * Based on GWT LinkedHashMap
  * Copyright 2008 Google Inc.
@@ -40,7 +41,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
         }
     }
 
-    private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
+    private inner class EntrySet : AbstractEntrySet<MutableEntry<K, V>, K, V>() {
 
         private inner class EntryIterator : MutableIterator<MutableEntry<K, V>> {
             // The last entry that was returned from this iterator.
@@ -85,7 +86,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
             this@LinkedHashMap.clear()
         }
 
-        override operator fun contains(element: MutableEntry<K, V>): Boolean = containsEntry(element)
+        override fun containsEntry(element: Map.Entry<K, V>): Boolean = this@LinkedHashMap.containsEntry(element)
 
         override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = EntryIterator()
 

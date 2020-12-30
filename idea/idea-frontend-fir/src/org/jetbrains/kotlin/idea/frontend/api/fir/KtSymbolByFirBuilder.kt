@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -41,15 +40,10 @@ internal class KtSymbolByFirBuilder private constructor(
     override val token: ValidityToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
+    private val filesCache: BuilderCache<FirFile, KtFileSymbol>,
     private val typesCache: BuilderCache<ConeKotlinType, KtType>
 ) : ValidityTokenOwner {
-    private val typeCheckerContext by threadLocal {
-        ConeTypeCheckerContext(
-            isErrorTypeEqualsToAnything = true,
-            isStubTypeEqualsToAnything = true,
-            resolveState.rootModuleSession
-        )
-    }
+    private val resolveState by weakRef(resolveState)
 
     private val firProvider get() = resolveState.rootModuleSession.firSymbolProvider
 
@@ -63,10 +57,10 @@ internal class KtSymbolByFirBuilder private constructor(
         resolveState = resolveState,
         withReadOnlyCaching = false,
         symbolsCache = BuilderCache(),
-        typesCache = BuilderCache()
+        typesCache = BuilderCache(),
+        filesCache = BuilderCache(),
     )
 
-    private val resolveState by weakRef(resolveState)
 
     fun createReadOnlyCopy(newResolveState: FirModuleResolveState): KtSymbolByFirBuilder {
         check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
@@ -76,7 +70,8 @@ internal class KtSymbolByFirBuilder private constructor(
             resolveState = newResolveState,
             withReadOnlyCaching = true,
             symbolsCache = symbolsCache.createReadOnlyCopy(),
-            typesCache = typesCache.createReadOnlyCopy()
+            typesCache = typesCache.createReadOnlyCopy(),
+            filesCache = filesCache.createReadOnlyCopy(),
         )
     }
 
@@ -94,6 +89,7 @@ internal class KtSymbolByFirBuilder private constructor(
             is FirField -> buildFieldSymbol(fir)
             is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
             is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
+            is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
             else ->
                 TODO(fir::class.toString())
         }
@@ -118,6 +114,9 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildClassSymbol(fir: FirRegularClass) = symbolsCache.cache(fir) { KtFirClassOrObjectSymbol(fir, resolveState, token, this) }
 
+    fun buildAnonymousObjectSymbol(fir: FirAnonymousObject) =
+        symbolsCache.cache(fir) { KtFirAnonymousObjectSymbol(fir, resolveState, token, this) }
+
     // TODO it can be a constructor parameter, which may be split into parameter & property
     // we should handle them both
     fun buildParameterSymbol(fir: FirValueParameter) =
@@ -134,7 +133,8 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
     fun buildConstructorSymbol(fir: FirConstructor) = symbolsCache.cache(fir) { KtFirConstructorSymbol(fir, resolveState, token, this) }
-    fun buildTypeParameterSymbol(fir: FirTypeParameter) = symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token) }
+    fun buildTypeParameterSymbol(fir: FirTypeParameter) =
+        symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token, this) }
 
     fun buildTypeAliasSymbol(fir: FirTypeAlias) = symbolsCache.cache(fir) { KtFirTypeAliasSymbol(fir, resolveState, token) }
     fun buildEnumEntrySymbol(fir: FirEnumEntry) = symbolsCache.cache(fir) { KtFirEnumEntrySymbol(fir, resolveState, token, this) }
@@ -142,10 +142,13 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction) =
         symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, resolveState, token, this) }
 
+    fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token, this) }
+
     fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol = symbolsCache.cache(fir) {
         when {
             fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this)
-            else -> KtFirPropertySymbol(fir, resolveState, token, this)
+            fir is FirSyntheticProperty -> KtFirSyntheticJavaPropertySymbol(fir, resolveState, token, this)
+            else -> KtFirKotlinPropertySymbol(fir, resolveState, token, this)
         }
     }
 
@@ -193,15 +196,19 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
 
-    fun buildKtType(coneType: FirTypeRef): KtType = buildKtType(coneType.coneTypeUnsafe<ConeKotlinType>())
+    fun buildKtType(coneType: FirTypeRef): KtType =
+        buildKtType(
+            coneType.coneTypeSafe<ConeKotlinType>()
+                ?: error("")
+        )
 
     fun buildKtType(coneType: ConeKotlinType): KtType = typesCache.cache(coneType) {
         when (coneType) {
-            is ConeClassLikeTypeImpl -> KtFirClassType(coneType, typeCheckerContext, token, this)
-            is ConeTypeParameterType -> KtFirTypeParameterType(coneType, typeCheckerContext, token, this)
-            is ConeClassErrorType -> KtFirErrorType(coneType, typeCheckerContext, token)
-            is ConeFlexibleType -> KtFirFlexibleType(coneType, typeCheckerContext, token, this)
-            is ConeIntersectionType -> KtFirIntersectionType(coneType, typeCheckerContext, token, this)
+            is ConeClassLikeTypeImpl -> KtFirClassType(coneType, token, this)
+            is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this)
+            is ConeClassErrorType -> KtFirErrorType(coneType, token)
+            is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this)
+            is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this)
             is ConeDefinitelyNotNullType -> buildKtType(coneType.original)
             else -> TODO(coneType::class.toString())
         }

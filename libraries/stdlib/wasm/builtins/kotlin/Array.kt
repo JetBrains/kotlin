@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
  * for more information on arrays.
  */
 public class Array<T> constructor(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
+    private var storage: WasmAnyArray = WasmAnyArray(size)
 
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified
@@ -26,7 +26,7 @@ public class Array<T> constructor(size: Int) {
      */
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     public constructor(size: Int, init: (Int) -> T) : this(size) {
-        JsArray_fill_T(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     /**
@@ -41,7 +41,7 @@ public class Array<T> constructor(size: Int) {
      */
     @Suppress("UNCHECKED_CAST")
     public operator fun get(index: Int): T =
-        WasmExternRefToAny(JsArray_get_WasmExternRef(jsArray, index)) as T
+        storage.get(index) as T
 
     /**
      * Sets the array element at the specified [index] to the specified [value]. This method can
@@ -54,14 +54,14 @@ public class Array<T> constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public operator fun set(index: Int, value: T) {
-        JsArray_set_WasmExternRef(jsArray, index, value.toWasmExternRef())
+        storage.set(index, value)
     }
 
     /**
      * Returns the number of elements in the array.
      */
     public val size: Int
-        get() = JsArray_getSize(jsArray)
+        get() = storage.len()
 
     /**
      * Creates an iterator for iterating over the elements of the array.

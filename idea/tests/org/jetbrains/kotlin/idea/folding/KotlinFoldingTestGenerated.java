@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.folding;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         }
 
         public void testAllFilesPresentInNoCollapse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("class.kt")
@@ -80,7 +81,7 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         }
 
         public void testAllFilesPresentInCheckCollapse() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("collectionFactoryFunctions.kt")

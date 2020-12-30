@@ -145,6 +145,7 @@ open class IncrementalJvmCache(
                 }
                 protoMap.remove(className, changesCollector)
                 classFqNameToSourceMap.remove(className.fqNameForClassNameWithoutDollars)
+                classAttributesMap.remove(className.fqNameForClassNameWithoutDollars)
                 internalNameToSource.remove(className.internalName)
 
                 // TODO NO_CHANGES? (delegates only)
@@ -271,6 +272,7 @@ open class IncrementalJvmCache(
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 
+        @Synchronized
         fun process(kotlinClass: LocalFileKotlinClass, changesCollector: ChangesCollector) {
             return put(kotlinClass, changesCollector)
         }
@@ -282,10 +284,12 @@ open class IncrementalJvmCache(
         // from files compiled during last round.
         // However there is no need to compare old and new data in this case
         // (also that would fail with exception).
+        @Synchronized
         fun storeModuleMapping(className: JvmClassName, bytes: ByteArray) {
             storage[className.internalName] = ProtoMapValue(isPackageFacade = false, bytes = bytes, strings = emptyArray())
         }
 
+        @Synchronized
         private fun put(kotlinClass: LocalFileKotlinClass, changesCollector: ChangesCollector) {
             val header = kotlinClass.classHeader
 
@@ -308,6 +312,7 @@ open class IncrementalJvmCache(
         operator fun get(className: JvmClassName): ProtoMapValue? =
             storage[className.internalName]
 
+        @Synchronized
         fun remove(className: JvmClassName, changesCollector: ChangesCollector) {
             val key = className.internalName
             val oldValue = storage[key] ?: return
@@ -324,6 +329,8 @@ open class IncrementalJvmCache(
 
     private inner class JavaSourcesProtoMap(storageFile: File) :
         BasicStringMap<SerializedJavaClass>(storageFile, JavaClassProtoMapValueExternalizer) {
+
+        @Synchronized
         fun process(jvmClassName: JvmClassName, newData: SerializedJavaClass, changesCollector: ChangesCollector) {
             val key = jvmClassName.internalName
             val oldData = storage[key]
@@ -335,6 +342,7 @@ open class IncrementalJvmCache(
             )
         }
 
+        @Synchronized
         fun remove(className: JvmClassName, changesCollector: ChangesCollector) {
             val key = className.internalName
             val oldValue = storage[key] ?: return
@@ -374,6 +382,7 @@ open class IncrementalJvmCache(
         operator fun contains(className: JvmClassName): Boolean =
             className.internalName in storage
 
+        @Synchronized
         fun process(kotlinClass: LocalFileKotlinClass, changesCollector: ChangesCollector) {
             val key = kotlinClass.className.internalName
             val oldMap = storage[key] ?: emptyMap()
@@ -390,6 +399,7 @@ open class IncrementalJvmCache(
             }
         }
 
+        @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
@@ -522,6 +532,7 @@ open class IncrementalJvmCache(
             return result
         }
 
+        @Synchronized
         fun process(kotlinClass: LocalFileKotlinClass, changesCollector: ChangesCollector) {
             val key = kotlinClass.className.internalName
             val oldMap = storage[key] ?: emptyMap()
@@ -547,6 +558,7 @@ open class IncrementalJvmCache(
         private fun functionNameBySignature(signature: String): String =
             signature.substringBefore("(")
 
+        @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
@@ -568,6 +580,7 @@ sealed class ChangeInfo(val fqName: FqName) {
 
     class SignatureChanged(fqName: FqName, val areSubclassesAffected: Boolean) : ChangeInfo(fqName)
 
+    class ParentsChanged(fqName: FqName, val parentsChanged: Collection<FqName>) : ChangeInfo(fqName)
 
     protected open fun toStringProperties(): String = "fqName = $fqName"
 

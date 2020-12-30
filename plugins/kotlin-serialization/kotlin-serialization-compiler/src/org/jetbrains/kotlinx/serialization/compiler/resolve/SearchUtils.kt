@@ -82,6 +82,16 @@ internal fun ModuleDescriptor.getClassFromInternalSerializationPackage(classSimp
         )
     ) { "Can't locate class $classSimpleName from package ${SerializationPackages.internalPackageFqName}" }
 
+internal fun ModuleDescriptor.getClassFromSerializationDescriptorsPackage(classSimpleName: String) =
+    requireNotNull(
+        findClassAcrossModuleDependencies(
+            ClassId(
+                SerializationPackages.descriptorsPackageFqName,
+                Name.identifier(classSimpleName)
+            )
+        )
+    ) { "Can't locate class $classSimpleName from package ${SerializationPackages.descriptorsPackageFqName}" }
+
 internal fun getSerializationPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.packageFqName.child(Name.identifier(classSimpleName))
 

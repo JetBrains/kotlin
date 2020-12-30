@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.descriptors.commonizer.Parameters
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.name.ClassId
@@ -22,40 +21,77 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
+/**
+ * N.B. Limitations on C/Obj-C interop.
+ *
+ * [Case 1]: An interop library with two fragments for two targets. The first fragment has a forward declaration of classifier A.
+ * The second one has a definition of class A. Both fragments have a top-level callable (ex: function)
+ * with the same signature that refers to type "A" as its return type.
+ *
+ * What will happen: Forward declarations will be ignored during building CIR merged tree. So the node for class A
+ * will contain CirClass "A" for the second target only. This node will not succeed in commonization, and no common class
+ * declaration will be produced. As a result the top-level callable will not be commonized, as it refers to the type "A"
+ * that is not formally commonized.
+ *
+ * This is not strictly correct: The classifier "A" exists in both targets though in different form. So if the user
+ * would write shared source code that uses "A" and the callable, then this code would successfully compile against both targets.
+ *
+ * The reason why commonization of such classifiers is not supported yet is that this is quite a rare case that requires
+ * a complex implementation with potential performance penalty.
+ *
+ * [Case 2]: A library with two fragments for two targets. The first fragment is interop. The second one is not.
+ * Similarly to case 1, the 1st fragment has a forward declaration of a classifier, and the 2nd has a real classifier.
+ *
+ * At the moment, this is an exotic case. It could happen if someone tries to commonize an MPP library for Native and non-Native
+ * targets (which is not supported yet), or a Native library where one fragment is produced via C-interop tool and the other one
+ * is compiled from Kotlin/Native source code (not sure this should be supported at all).
+ */
 class CirTreeMerger(
     private val storageManager: StorageManager,
-    private val parameters: Parameters
+    private val classifiers: CirKnownClassifiers,
+    private val parameters: CommonizerParameters
 ) {
     class CirTreeMergeResult(
         val root: CirRootNode,
-        val absentModuleInfos: Map<InputTarget, Collection<ModuleInfo>>
+        val missingModuleInfos: Map<LeafTarget, Collection<ModuleInfo>>
     )
 
     private val size = parameters.targetProviders.size
-    private lateinit var cacheRW: CirClassifiersCacheImpl
 
     fun merge(): CirTreeMergeResult {
+        val result = processRoot()
+        System.gc()
+        return result
+    }
+
+    private fun processRoot(): CirTreeMergeResult {
         val rootNode: CirRootNode = buildRootNode(storageManager, size)
-        cacheRW = rootNode.cache
+
+        // remember any exported forward declarations from common fragments of dependee modules
+        parameters.dependeeModulesProvider?.loadModuleInfos()?.values?.forEach(::processCInteropModuleAttributes)
+
+        // load common dependencies
+        val dependeeModules = parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
 
         val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { it.modulesProvider.loadModuleInfos() }
         val commonModuleNames = allModuleInfos.map { it.keys }.reduce { a, b -> a intersect b }
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
-            processTarget(rootNode, targetIndex, targetProvider, commonModuleNames)
+            val commonModuleInfos = allModuleInfos[targetIndex].filterKeys { it in commonModuleNames }
+            processTarget(rootNode, targetIndex, targetProvider, commonModuleInfos, dependeeModules)
             parameters.progressLogger?.invoke("Loaded declarations for [${targetProvider.target.name}]")
             System.gc()
         }
 
-        val absentModuleInfos = allModuleInfos.mapIndexed { index, moduleInfos ->
+        val missingModuleInfos = allModuleInfos.mapIndexed { index, moduleInfos ->
             val target = parameters.targetProviders[index].target
-            val absentInfos = moduleInfos.filterKeys { name -> name !in commonModuleNames }.values
-            target to absentInfos
+            val missingInfos = moduleInfos.filterKeys { name -> name !in commonModuleNames }.values
+            target to missingInfos
         }.toMap()
 
         return CirTreeMergeResult(
             root = rootNode,
-            absentModuleInfos = absentModuleInfos
+            missingModuleInfos = missingModuleInfos
         )
     }
 
@@ -63,7 +99,8 @@ class CirTreeMerger(
         rootNode: CirRootNode,
         targetIndex: Int,
         targetProvider: TargetProvider,
-        commonModuleNames: Set<String>
+        commonModuleInfos: Map<String, ModuleInfo>,
+        dependeeModules: Collection<ModuleDescriptor>
     ) {
         rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(
             targetProvider.target,
@@ -71,20 +108,26 @@ class CirTreeMerger(
             targetProvider.builtInsProvider
         )
 
-        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules()
+        val targetDependeeModules = targetProvider.dependeeModulesProvider?.loadModules(dependeeModules)?.values.orEmpty()
+        val allDependeeModules = targetDependeeModules + dependeeModules
+
+        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules(allDependeeModules)
         val modules: MutableMap<Name, CirModuleNode> = rootNode.modules
 
         moduleDescriptors.forEach { (name, moduleDescriptor) ->
-            if (name in commonModuleNames)
-                processModule(modules, targetIndex, moduleDescriptor)
+            val moduleInfo = commonModuleInfos[name] ?: return@forEach
+            processModule(modules, targetIndex, moduleInfo, moduleDescriptor)
         }
     }
 
     private fun processModule(
         modules: MutableMap<Name, CirModuleNode>,
         targetIndex: Int,
+        moduleInfo: ModuleInfo,
         moduleDescriptor: ModuleDescriptor
     ) {
+        processCInteropModuleAttributes(moduleInfo)
+
         val moduleName: Name = moduleDescriptor.name.intern()
         val moduleNode: CirModuleNode = modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, size)
@@ -140,7 +183,7 @@ class CirTreeMerger(
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
         val propertyNode: CirPropertyNode = properties.getOrPut(PropertyApproximationKey(propertyDescriptor)) {
-            buildPropertyNode(storageManager, size, cacheRW, parentCommonDeclaration)
+            buildPropertyNode(storageManager, size, classifiers, parentCommonDeclaration)
         }
         propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(propertyDescriptor)
     }
@@ -152,7 +195,7 @@ class CirTreeMerger(
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
         val functionNode: CirFunctionNode = functions.getOrPut(FunctionApproximationKey(functionDescriptor)) {
-            buildFunctionNode(storageManager, size, cacheRW, parentCommonDeclaration)
+            buildFunctionNode(storageManager, size, classifiers, parentCommonDeclaration)
         }
         functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(functionDescriptor)
     }
@@ -168,7 +211,7 @@ class CirTreeMerger(
         val classId = classIdFunction(className)
 
         val classNode: CirClassNode = classes.getOrPut(className) {
-            buildClassNode(storageManager, size, cacheRW, parentCommonDeclaration, classId)
+            buildClassNode(storageManager, size, classifiers, parentCommonDeclaration, classId)
         }
         classNode.targetDeclarations[targetIndex] = CirClassFactory.create(classDescriptor)
 
@@ -203,7 +246,7 @@ class CirTreeMerger(
         parentCommonDeclaration: NullableLazyValue<*>?
     ) {
         val constructorNode: CirClassConstructorNode = constructors.getOrPut(ConstructorApproximationKey(constructorDescriptor)) {
-            buildClassConstructorNode(storageManager, size, cacheRW, parentCommonDeclaration)
+            buildClassConstructorNode(storageManager, size, classifiers, parentCommonDeclaration)
         }
         constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(constructorDescriptor)
     }
@@ -218,8 +261,20 @@ class CirTreeMerger(
         val typeAliasClassId = internedClassId(packageFqName, typeAliasName)
 
         val typeAliasNode: CirTypeAliasNode = typeAliases.getOrPut(typeAliasName) {
-            buildTypeAliasNode(storageManager, size, cacheRW, typeAliasClassId)
+            buildTypeAliasNode(storageManager, size, classifiers, typeAliasClassId)
         }
         typeAliasNode.targetDeclarations[targetIndex] = CirTypeAliasFactory.create(typeAliasDescriptor)
+    }
+
+    private fun processCInteropModuleAttributes(moduleInfo: ModuleInfo) {
+        val cInteropAttributes = moduleInfo.cInteropAttributes ?: return
+        val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return
+        val mainPackageFqName = FqName(cInteropAttributes.mainPackageFqName).intern()
+
+        exportForwardDeclarations.forEach { classFqName ->
+            // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
+            val className = Name.identifier(classFqName.substringAfterLast('.')).intern()
+            classifiers.forwardDeclarations.addExportedForwardDeclaration(internedClassId(mainPackageFqName, className))
+        }
     }
 }

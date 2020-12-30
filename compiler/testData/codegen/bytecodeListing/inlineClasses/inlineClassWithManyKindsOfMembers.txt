@@ -56,6 +56,7 @@ public interface IFoo {
     public abstract method setOverridingVar(p0: int): void
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'inlineClassWithManyKindsOfMembers.kt'

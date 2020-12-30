@@ -31,7 +31,8 @@ import com.sun.tools.javac.util.List as JavacList
 fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
     processors: List<IncrementalProcessor>,
-    additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
+    additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
+    binaryTypesToReprocess: List<String> = emptyList()
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
 
@@ -39,6 +40,13 @@ fun KaptContext.doAnnotationProcessing(
 
     val compilerAfterAP: JavaCompiler
     try {
+        if (javaSourceFiles.isEmpty() && binaryTypesToReprocess.isEmpty() && additionalSources.isEmpty()) {
+            if (logger.isVerbose) {
+                logger.info("Skipping annotation processing as all sources are up-to-date.")
+            }
+            return
+        }
+
         if (isJava9OrLater()) {
             val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
             initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
@@ -48,6 +56,7 @@ fun KaptContext.doAnnotationProcessing(
 
         if (logger.isVerbose) {
             logger.info("Processing java sources with annotation processors: ${javaSourceFiles.joinToString()}")
+            logger.info("Processing types with annotation processors: ${binaryTypesToReprocess.joinToString()}")
         }
         val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
 
@@ -65,23 +74,19 @@ fun KaptContext.doAnnotationProcessing(
                 CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
             )
 
-            val generatedSourcesListener = sourcesStructureListener?.let {
-                compiler.getTaskListeners().remove(it)
-                GeneratedTypesTaskListener(cacheManager!!.javaCache)
-            }?.also { compiler.getTaskListeners().add(it) }
-
+            val additionalClassNames = JavacList.from(binaryTypesToReprocess)
             if (isJava9OrLater()) {
-                val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
-                processAnnotationsMethod.invoke(compiler, analyzedFiles)
+                val processAnnotationsMethod =
+                    compiler.javaClass.getMethod("processAnnotations", JavacList::class.java, java.util.Collection::class.java)
+                processAnnotationsMethod.invoke(compiler, analyzedFiles, additionalClassNames)
                 compiler
             } else {
-                compiler.processAnnotations(analyzedFiles).also {
-                    generatedSourcesListener?.let { compiler.getTaskListeners().remove(it) }
-                }
+                compiler.processAnnotations(analyzedFiles, additionalClassNames)
             }
         } catch (e: AnnotationProcessingError) {
             throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
         }
+        sourcesStructureListener?.let { compiler.getTaskListeners().remove(it) }
 
         cacheManager?.updateCache(processors, sourcesStructureListener?.failureReason != null)
 
@@ -156,7 +161,7 @@ private class ProcessorWrapper(private val delegate: IncrementalProcessor) : Pro
     private var initTime: Long = 0
     private val roundTime = mutableListOf<Long>()
 
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         val (time, result) = measureTimeMillisWithResult {
             delegate.process(annotations, roundEnv)
         }

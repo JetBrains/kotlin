@@ -677,10 +677,14 @@ class GeneralNativeIT : BaseGradleIT() {
             "$projectName/build/classes/kotlin/host/test/${projectName}_test.klib",
         )
 
-        build(":projectLibrary:build") {
+        // Enable info log to see cinterop environment variables.
+        build(":projectLibrary:build", "--info") {
             assertSuccessful()
             assertTasksExecuted(":projectLibrary:cinteropAnotherNumberHost")
             libraryFiles("projectLibrary", "anotherNumber").forEach { assertFileExists(it) }
+            checkNativeCustomEnvironment(":projectLibrary:cinteropAnotherNumberHost", toolName = "cinterop") { env ->
+                assertEquals("1", env["LIBCLANG_DISABLE_CRASH_RECOVERY"])
+            }
         }
 
         build(":publishedLibrary:build", ":publishedLibrary:publish") {
@@ -839,8 +843,18 @@ class GeneralNativeIT : BaseGradleIT() {
             return Collections.indexOfSubList(this, elements.toList()) != -1
         }
 
-        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> {
-            val arguments = output.lineSequence()
+        private enum class NativeToolSettingsKind(val title: String) {
+            COMMAND_LINE_ARGUMENTS("Arguments"),
+            CUSTOM_ENV_VARIABLES("Custom ENV variables")
+        }
+
+        private fun CompiledProject.extractNativeToolSettings(
+            toolName: String,
+            taskPath: String?,
+            settingsKind: NativeToolSettingsKind
+        ): Sequence<String> {
+            val settingsPrefix = "${settingsKind.title} = ["
+            val settings = output.lineSequence()
                 .run {
                     if (taskPath != null) dropWhile { "Executing actions for task '$taskPath'" !in it }.drop(1) else this
                 }
@@ -851,22 +865,39 @@ class GeneralNativeIT : BaseGradleIT() {
                 .drop(1)
                 .dropWhile {
                     check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
-                    "Arguments = [" !in it
+                    settingsPrefix !in it
                 }
 
-            val argumentsHeader = arguments.firstOrNull()
-            check(argumentsHeader != null && "Arguments = [" in argumentsHeader) { "No arguments in $argumentsHeader" }
-
-            return if (argumentsHeader.trimEnd().endsWith(']'))
-                emptyList() // no arguments
+            val settingsHeader = settings.firstOrNull()
+            check(settingsHeader != null && settingsPrefix in settingsHeader) {
+                "Cannot find setting '${settingsKind.title}' for task ${taskPath}"
+            }
+            
+            return if (settingsHeader.trimEnd().endsWith(']'))
+                emptySequence() // No parameters.
             else
-                arguments.drop(1).map { it.trim() }.takeWhile { it != "]" }.toList()
+                settings.drop(1).map { it.trim() }.takeWhile { it != "]" }
         }
+
+        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> =
+            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
+
+        fun CompiledProject.extractNativeCustomEnvironment(taskPath: String? = null, toolName: String): Map<String, String> =
+            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {
+                val (key, value) = it.split("=")
+                key.trim() to value.trim()
+            }.toMap()
 
         fun CompiledProject.checkNativeCommandLineArguments(
             vararg taskPaths: String,
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
+        
+        fun CompiledProject.checkNativeCustomEnvironment(
+            vararg taskPaths: String,
+            toolName: String = "konanc",
+            check: (Map<String, String>) -> Unit
+        ) = taskPaths.forEach { taskPath -> check(extractNativeCustomEnvironment(taskPath, toolName)) }
     }
 }

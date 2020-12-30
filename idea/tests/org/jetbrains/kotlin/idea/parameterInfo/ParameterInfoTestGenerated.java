@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.parameterInfo;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     }
 
     public void testAllFilesPresentInParameterInfo() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "withLib1/sharedLib", "withLib2/sharedLib", "withLib3/sharedLib");
     }
 
     @TestMetadata("idea/testData/parameterInfo/annotations")
@@ -37,7 +38,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/annotations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/annotations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ConstructorCall.kt")
@@ -65,7 +66,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInArrayAccess() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/arrayAccess"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/arrayAccess"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Overloads.kt")
@@ -103,7 +104,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInFunctionCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/functionCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/functionCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Conflicting.kt")
@@ -406,7 +407,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInTypeArguments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("BaseClass.kt")
@@ -469,7 +470,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInWithLib1() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/withLib1"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "sharedLib");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/withLib1"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "sharedLib");
         }
 
         @TestMetadata("useJavaFromLib.kt")
@@ -487,7 +488,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInWithLib2() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/withLib2"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "sharedLib");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/withLib2"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "sharedLib");
         }
 
         @TestMetadata("useJavaSAMFromLib.kt")
@@ -505,7 +506,7 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
         }
 
         public void testAllFilesPresentInWithLib3() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/withLib3"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "sharedLib");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/parameterInfo/withLib3"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true, "sharedLib");
         }
 
         @TestMetadata("useJavaSAMFromLib.kt")

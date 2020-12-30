@@ -22,17 +22,17 @@ fun test_3(x: Any) {
     (x as? A)?.bar(x)?.foo(x.bool())?.let {
         x.bool()
     }
-    x.<!UNRESOLVED_REFERENCE!>bool<!>()
+    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bool<!>()<!>
 }
 
 fun test_4(x: A?) {
     x?.id()?.bool()
-    x.<!INAPPLICABLE_CANDIDATE!>id<!>()
+    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>id<!>()<!>
 }
 
 fun Any?.boo(b: Boolean) {}
 
 fun test_5(x: A?) {
     x?.let { return }?.boo(x.bool())
-    x.<!INAPPLICABLE_CANDIDATE!>id<!>()
+    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>id<!>()<!>
 }
