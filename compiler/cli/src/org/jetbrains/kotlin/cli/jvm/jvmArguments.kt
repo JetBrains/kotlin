@@ -165,7 +165,12 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    val useIR = (arguments.useIR && !arguments.useOldBackend) || arguments.useFir
+    val useIR = arguments.useFir ||
+            if (languageVersionSettings.supportsFeature(LanguageFeature.JvmIrEnabledByDefault)) {
+                !arguments.useOldBackend
+            } else {
+                arguments.useIR && !arguments.useOldBackend
+            }
     put(JVMConfigurationKeys.IR, useIR)
 
     val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
