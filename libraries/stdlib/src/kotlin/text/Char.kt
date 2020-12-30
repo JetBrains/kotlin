@@ -37,6 +37,24 @@ public fun Char(code: Int): Char {
 public inline val Char.code: Int get() = this.toInt()
 
 /**
+ * Returns the numeric value of the decimal digit that this Char represents.
+ * Throws an exception if this Char is not a valid decimal digit.
+ *
+ * A Char is considered to represent a decimal digit if the Char is one of the ASCII decimal digits '0' through '9'.
+ * In this case, `this.code - '0'.code` is returned.
+ *
+ * @sample samples.text.Chars.digitToInt
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+public fun Char.digitToInt(): Int {
+    if (this in '0'..'9') {
+        return this - '0'
+    }
+    throw IllegalArgumentException("Char $this is not a decimal digit")
+}
+
+/**
  * Returns the numeric value of the digit that this Char represents in the specified [radix].
  * Throws an exception if the [radix] is not in the range `2..36` or if this Char is not a valid digit in the specified [radix].
  *
@@ -49,8 +67,26 @@ public inline val Char.code: Int get() = this.toInt()
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
-public fun Char.digitToInt(radix: Int = 10): Int {
+public fun Char.digitToInt(radix: Int): Int {
     return digitToIntOrNull(radix) ?: throw IllegalArgumentException("Char $this is not a digit in the given radix=$radix")
+}
+
+/**
+ *
+ * Returns the numeric value of the decimal digit that this Char represents, or `null` if this Char is not a valid decimal digit.
+ *
+ * A Char is considered to represent a decimal digit if the Char is one of the ASCII decimal digits '0' through '9'.
+ * In this case, `this.code - '0'.code` is returned.
+ *
+ * @sample samples.text.Chars.digitToIntOrNull
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+public fun Char.digitToIntOrNull(): Int? {
+    if (this in '0'..'9') {
+        return this - '0'
+    }
+    return null
 }
 
 /**
@@ -66,7 +102,7 @@ public fun Char.digitToInt(radix: Int = 10): Int {
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
-public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
+public fun Char.digitToIntOrNull(radix: Int): Int? {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
     }
@@ -80,8 +116,25 @@ public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
 }
 
 /**
+ * Returns the Char that represents this decimal digit.
+ * Throws an exception if this value is not in the range `0..9`.
+ *
+ * If this value is in `0..9`, the decimal digit Char with code `'0'.code + this` is returned.
+ *
+ * @sample samples.text.Chars.digitToChar
+ */
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+public fun Int.digitToChar(): Char {
+    if (this in 0..9) {
+        return '0' + this
+    }
+    throw IllegalArgumentException("Int $this is not a decimal digit")
+}
+
+/**
  * Returns the Char that represents this numeric digit value in the specified [radix].
- * Throws an exception if the [radix] is not in the range `2..36` or if this value is not less than the specified [radix].
+ * Throws an exception if the [radix] is not in the range `2..36` or if this value is not in the range `0 until radix`.
  *
  * If this value is less than `10`, the decimal digit Char with code `'0'.code + this` is returned.
  * Otherwise, the uppercase Latin letter with code `'A'.code + this - 10` is returned.
@@ -90,7 +143,7 @@ public fun Char.digitToIntOrNull(radix: Int = 10): Int? {
  */
 @ExperimentalStdlibApi
 @SinceKotlin("1.4")
-public fun Int.digitToChar(radix: Int = 10): Char {
+public fun Int.digitToChar(radix: Int): Char {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
     }
