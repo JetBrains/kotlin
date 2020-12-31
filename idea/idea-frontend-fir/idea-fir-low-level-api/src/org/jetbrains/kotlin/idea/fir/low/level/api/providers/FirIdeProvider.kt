@@ -114,10 +114,8 @@ internal class FirIdeProvider(
         TODO()
     }
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        // TODO: KT-41048
-        return emptySet()
-    }
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
+        indexHelper.getClassNamesInPackage(fqName)
 
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
