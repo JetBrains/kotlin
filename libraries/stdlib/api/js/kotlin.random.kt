@@ -88,7 +88,7 @@ public abstract class Random {
 
     public open fun nextLong(from: kotlin.Long, until: kotlin.Long): kotlin.Long
 
-    public companion object of Random Default : kotlin.random.Random {
+    public companion object of Random Default : kotlin.random.Random, kotlin.io.Serializable {
         public open override fun nextBits(bitCount: kotlin.Int): kotlin.Int
 
         public open override fun nextBoolean(): kotlin.Boolean
