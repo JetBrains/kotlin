@@ -5188,6 +5188,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsExport/dataClass.kt");
         }
 
+        @TestMetadata("exportedDefaultStub.kt")
+        public void testExportedDefaultStub() throws Exception {
+            runTest("js/js.translator/testData/box/jsExport/exportedDefaultStub.kt");
+        }
+
         @TestMetadata("jsExportInClass.kt")
         public void testJsExportInClass() throws Exception {
             runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");

@@ -5,7 +5,12 @@ module.exports = function() {
     var p = new Point(3, 7);
 
     return {
-        "res": p.copy(13, 11).toString()
+        "copy00": p.copy().toString(),
+        "copy01": p.copy(undefined, 11).toString(),
+        "copy10": p.copy(15).toString(),
+        "copy11": p.copy(13, 11).toString(),
+        "component1": p.component1(),
+        "component2": p.component2()
     };
 };
 

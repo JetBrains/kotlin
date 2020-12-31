@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -23,6 +24,13 @@ import org.jetbrains.kotlin.name.Name
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
 
 fun IrFunction.hasStableJsName(): Boolean {
+    if (
+        origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
+        origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+    ) {
+        return false
+    }
+
     val namedOrMissingGetter = when (this) {
         is IrSimpleFunction -> {
             val owner = correspondingPropertySymbol?.owner
@@ -35,7 +43,7 @@ fun IrFunction.hasStableJsName(): Boolean {
         else -> true
     }
 
-    return (isEffectivelyExternal() || getJsName() != null || parentClassOrNull?.isJsExport() == true) && namedOrMissingGetter
+    return (isEffectivelyExternal() || getJsName() != null || isJsExport() || parentClassOrNull?.isJsExport() == true) && namedOrMissingGetter
 }
 
 fun IrFunction.isEqualsInheritedFromAny() =
