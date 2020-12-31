@@ -125,26 +125,25 @@ object FirSessionFactory {
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
-            register(
-                FirSymbolProvider::class,
-                FirCompositeSymbolProvider(
-                    this,
-                    listOf(
-                        KotlinDeserializedJvmSymbolsProvider(
-                            this, project,
-                            packagePartProvider,
-                            javaSymbolProvider,
-                            kotlinClassFinder,
-                            javaClassFinder,
-                            kotlinScopeProvider
-                        ),
-                        FirBuiltinSymbolProvider(this, kotlinScopeProvider),
-                        FirCloneableSymbolProvider(this, kotlinScopeProvider),
+            val symbolProvider = FirCompositeSymbolProvider(
+                this,
+                listOf(
+                    KotlinDeserializedJvmSymbolsProvider(
+                        this, project,
+                        packagePartProvider,
                         javaSymbolProvider,
-                        FirDependenciesSymbolProviderImpl(this)
-                    )
+                        kotlinClassFinder,
+                        javaClassFinder,
+                        kotlinScopeProvider
+                    ),
+                    FirBuiltinSymbolProvider(this, kotlinScopeProvider),
+                    FirCloneableSymbolProvider(this, kotlinScopeProvider),
+                    javaSymbolProvider,
+                    FirDependenciesSymbolProviderImpl(this)
                 )
             )
+            register(FirSymbolProvider::class, symbolProvider)
+            register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
     }
 
