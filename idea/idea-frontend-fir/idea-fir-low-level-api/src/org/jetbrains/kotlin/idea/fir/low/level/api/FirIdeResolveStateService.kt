@@ -41,7 +41,9 @@ internal class FirIdeResolveStateService(project: Project) {
             moduleInfo: IdeaModuleInfo,
             sessionProviderStorage: FirIdeSessionProviderStorage
         ): FirModuleResolveStateImpl {
-            require(moduleInfo is ModuleSourceInfo)
+            if (moduleInfo !is ModuleSourceInfo) {
+                error("Creating FirModuleResolveState is not yet supported for $moduleInfo")
+            }
             val sessionProvider = sessionProviderStorage.getSessionProvider(moduleInfo)
             val firFileBuilder = sessionProvider.rootModuleSession.firFileBuilder
             return FirModuleResolveStateImpl(
