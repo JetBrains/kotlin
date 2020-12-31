@@ -33,6 +33,12 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
     }
 }
 
+@OptIn(LookupTagInternals::class)
+fun ConeClassLikeLookupTag.toSymbolOrError(useSiteSession: FirSession): FirClassLikeSymbol<*> =
+    toSymbol(useSiteSession)
+        ?: error("Class symbol with classId $classId was not found")
+
+
 fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? =
     session.firSymbolProvider.getSymbolByLookupTag(this)?.fir as? FirRegularClass
 
