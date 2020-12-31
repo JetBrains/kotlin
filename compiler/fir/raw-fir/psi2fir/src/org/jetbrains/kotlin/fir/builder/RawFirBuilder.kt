@@ -64,23 +64,32 @@ class RawFirBuilder(
         return reference.accept(Visitor(), Unit) as FirTypeRef
     }
 
-    fun buildFunctionWithBody(function: KtNamedFunction): FirFunction<*> {
-        return buildDeclaration(function) as FirFunction<*>
+    fun buildFunctionWithBody(function: KtNamedFunction, original: FirFunction<*>?): FirFunction<*> {
+        return buildDeclaration(function, original) as FirFunction<*>
     }
 
-    fun buildSecondaryConstructor(secondaryConstructor: KtSecondaryConstructor): FirConstructor {
-        return buildDeclaration(secondaryConstructor) as FirConstructor
+    fun buildSecondaryConstructor(secondaryConstructor: KtSecondaryConstructor, original: FirConstructor?): FirConstructor {
+        return buildDeclaration(secondaryConstructor, original) as FirConstructor
     }
 
-    fun buildPropertyWithBody(property: KtProperty): FirProperty {
+    fun buildPropertyWithBody(property: KtProperty, original: FirProperty?): FirProperty {
         require(!property.isLocal) { "Should not be used to build local properties (variables)" }
-        return buildDeclaration(property) as FirProperty
+        return buildDeclaration(property, original) as FirProperty
     }
 
-    private fun buildDeclaration(declaration: KtDeclaration): FirDeclaration {
+    private fun buildDeclaration(declaration: KtDeclaration, original: FirDeclaration?): FirDeclaration {
         assert(mode ==  RawFirBuilderMode.NORMAL) { "Building FIR declarations isn't supported in stub or lazy mode mode" }
-        setupContextForPosition(declaration)
-        return declaration.accept(Visitor(), Unit) as FirDeclaration
+        setupContextForPosition(declaration,)
+        val firDeclaration = declaration.accept(Visitor(), Unit) as FirDeclaration
+        original?.let { firDeclaration.copyContainingClassAttrFrom(it) }
+        return firDeclaration
+    }
+
+    // TODO this is a (temporary) hack, instead we should properly initialize [context]
+    private fun FirDeclaration.copyContainingClassAttrFrom(from: FirDeclaration) {
+        (this as? FirCallableMemberDeclaration<*>)?.let {
+            it.containingClassAttr = (from as? FirCallableMemberDeclaration<*>)?.containingClassAttr
+        }
     }
 
     private fun setupContextForPosition(position: KtElement) {
