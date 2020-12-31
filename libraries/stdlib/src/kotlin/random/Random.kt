@@ -270,13 +270,13 @@ public abstract class Random {
     companion object Default : Random(), Serializable {
         private val defaultRandom: Random = defaultPlatformRandom()
 
-        private object Dummy : Serializable {
+        private object Serialized : Serializable {
             private const val serialVersionUID = 0L
 
             private fun readResolve(): Any = Random
         }
 
-        private fun writeReplace(): Any = Dummy
+        private fun writeReplace(): Any = Serialized
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()

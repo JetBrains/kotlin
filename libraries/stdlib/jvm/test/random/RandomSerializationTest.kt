@@ -5,15 +5,9 @@
 
 package random
 
-import test.io.deserializeFromHex
-import test.io.serializeAndDeserialize
-import kotlin.random.Random
-import kotlin.random.asJavaRandom
-import kotlin.random.asKotlinRandom
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
+import test.io.*
+import kotlin.random.*
+import kotlin.test.*
 
 class RandomSerializationTest {
     @Test
@@ -38,19 +32,40 @@ class RandomSerializationTest {
     }
 
     @Test
-    fun deserializeDefault() = assertSame(
-        expected = Random,
-        actual = deserializeFromHex("ac ed 00 05 73 72 00 22 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 52 61 6e 64 6f 6d 24 44 65 66 61 75 6c 74 24 44 75 6d 6d 79 00 00 00 00 00 00 00 00 02 00 00 78 70"),
-    )
+    fun deserializeDefault() {
+        val randomSerialized = serializeToHex(Random)
+        try {
+            assertSame(
+                    expected = Random,
+                    actual = deserializeFromHex("ac ed 00 05 73 72 00 27 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 52 61 6e 64 6f 6d 24 44 65 66 61 75 6c 74 24 53 65 72 69 61 6c 69 7a 65 64 00 00 00 00 00 00 00 00 02 00 00 78 70")
+            )
+        } catch (e: Throwable) {
+            fail("Actual serialized form: $randomSerialized", e)
+        }
+    }
 
     @Test
     fun deserializeXorWow() {
-        val instance = Random(0)
+        fun checkEquivalentToSerialized(instance: Random, serializedHex: String) {
+            val serialized = serializeToHex(instance)
 
-        val deserialized =
-            deserializeFromHex<Random>("ac ed 00 05 73 72 00 1a 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 58 6f 72 57 6f 77 52 61 6e 64 6f 6d 00 00 00 00 00 00 00 00 02 00 06 49 00 06 61 64 64 65 6e 64 49 00 01 76 49 00 01 77 49 00 01 78 49 00 01 79 49 00 01 7a 78 70 01 61 f1 40 23 9d 3d b3 c9 07 82 1d 6a 67 48 b0 e3 f9 bd 0c b6 5b de 32")
+            try {
+                val deserialized = deserializeFromHex<Random>(serializedHex)
+                testRandomsHaveSameState(instance, deserialized)
+            } catch (e: Throwable) {
+                fail("Actual serialized from: $serialized", e)
+            }
+        }
 
-        testRandomsHaveSameState(instance, deserialized)
+        checkEquivalentToSerialized(
+                instance = Random(0),
+                serializedHex = "ac ed 00 05 73 72 00 1a 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 58 6f 72 57 6f 77 52 61 6e 64 6f 6d 00 00 00 00 00 00 00 00 02 00 06 49 00 06 61 64 64 65 6e 64 49 00 01 76 49 00 01 77 49 00 01 78 49 00 01 79 49 00 01 7a 78 70 01 61 f1 40 23 9d 3d b3 c9 07 82 1d 6a 67 48 b0 e3 f9 bd 0c b6 5b de 32"
+        )
+
+        checkEquivalentToSerialized(
+                instance = Random(0).apply { repeat(64) { nextLong() } }, // advance state by discarding values
+                serializedHex = "ac ed 00 05 73 72 00 1a 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 58 6f 72 57 6f 77 52 61 6e 64 6f 6d 00 00 00 00 00 00 00 00 02 00 06 49 00 06 61 64 64 65 6e 64 49 00 01 76 49 00 01 77 49 00 01 78 49 00 01 79 49 00 01 7a 78 70 04 25 d3 c0 be 0e 05 94 fd be 13 de a4 17 b2 90 b0 de a4 64 9c 72 81 64"
+        )
     }
 
     @Test
