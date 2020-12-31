@@ -909,6 +909,8 @@ public final class ByteArray {
 }
 
 public final class Char : kotlin.Comparable<kotlin.Char> {
+/*∆*/     @kotlin.ExperimentalStdlibApi
+/*∆*/     @kotlin.SinceKotlin(version = "1.4")
 /*∆*/     public constructor Char(code: kotlin.UShort)
 /*∆*/ 
     public open override operator fun compareTo(other: kotlin.Char): kotlin.Int

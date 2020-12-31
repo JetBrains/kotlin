@@ -12,8 +12,11 @@ package kotlin
 // TODO: KT-35100
 //@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 //public inline class Char internal constructor (val value: Int) : Comparable<Char> {
+public class Char
 @OptIn(ExperimentalUnsignedTypes::class)
-public class Char(code: UShort) : Comparable<Char> {
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+constructor(code: UShort) : Comparable<Char> {
     private val value: Int = code.toInt()
 
     /**
