@@ -81,8 +81,8 @@ internal class ReanalyzableFunctionStructureElement(
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
     ): ReanalyzableFunctionStructureElement {
-        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration) as FirSimpleFunction
         val originalFunction = firSymbol.fir as FirSimpleFunction
+        val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration, originalFunction) as FirSimpleFunction
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalFunction, newFunction) {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -119,8 +119,8 @@ internal class ReanalyzablePropertyStructureElement(
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
     ): ReanalyzablePropertyStructureElement {
-        val newProperty = firIdeProvider.buildPropertyWithBody(newKtDeclaration)
         val originalProperty = firSymbol.fir
+        val newProperty = firIdeProvider.buildPropertyWithBody(newKtDeclaration, originalProperty)
 
         return FileStructureUtil.withDeclarationReplaced(firFile, cache, originalProperty, newProperty) {
             firLazyDeclarationResolver.lazyResolveDeclaration(

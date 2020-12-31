@@ -95,12 +95,12 @@ internal class FirIdeProvider(
 
     // TODO move out of here
     // used only for completion
-    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction): FirFunction<*> {
-        return RawFirBuilder(session, kotlinScopeProvider).buildFunctionWithBody(ktNamedFunction)
+    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction, original: FirFunction<*>): FirFunction<*> {
+        return RawFirBuilder(session, kotlinScopeProvider).buildFunctionWithBody(ktNamedFunction, original)
     }
 
-    fun buildPropertyWithBody(ktNamedFunction: KtProperty): FirProperty {
-        return RawFirBuilder(session, kotlinScopeProvider).buildPropertyWithBody(ktNamedFunction)
+    fun buildPropertyWithBody(ktNamedFunction: KtProperty, original: FirProperty): FirProperty {
+        return RawFirBuilder(session, kotlinScopeProvider).buildPropertyWithBody(ktNamedFunction, original)
     }
 
 
