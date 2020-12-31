@@ -103,6 +103,7 @@ private fun KtElement.getFirOfClosestParent(cache: Map<KtElement, FirElement>): 
 }
 
 
+// TODO: simplify
 internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtNamedDeclaration? {
     var container: PsiElement? = this
     while (container != null && container !is KtFile) {
@@ -111,6 +112,7 @@ internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate:
             && container !is KtPrimaryConstructor
             && container.hasFqName()
             && container !is KtEnumEntry
+            && container !is KtFunctionLiteral
             && container.containingClassOrObject !is KtEnumEntry
             && predicate(container)
         ) {
