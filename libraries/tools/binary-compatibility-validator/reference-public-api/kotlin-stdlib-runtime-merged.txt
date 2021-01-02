@@ -4426,6 +4426,7 @@ public abstract class kotlin/properties/ObservableProperty : kotlin/properties/R
 	protected fun beforeChange (Lkotlin/reflect/KProperty;Ljava/lang/Object;Ljava/lang/Object;)Z
 	public fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class kotlin/properties/PropertyDelegateProvider {
