@@ -21,13 +21,20 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
 open class KotlinPackageJsonTask : DefaultTask() {
+
+    init {
+        onlyIf {
+            nodeJs.npmResolutionManager.isConfiguringState()
+        }
+    }
+
     private lateinit var nodeJs: NodeJsRootExtension
 
     @Transient
     private lateinit var compilation: KotlinJsCompilation
 
     private val compilationResolver
-        get() = nodeJs.npmResolutionManager.requireConfiguringState()[project][compilation]
+        get() = nodeJs.npmResolutionManager.resolver[project][compilation]
 
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer

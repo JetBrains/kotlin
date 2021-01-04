@@ -80,11 +80,11 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     private val forceFullResolve: Boolean
         get() = isInIdeaSync
 
+    internal val resolver = KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
+
     @Volatile
     private var state: ResolutionState =
-        ResolutionState.Configuring(
-            KotlinRootNpmResolver(nodeJsSettings, forceFullResolve)
-        )
+        ResolutionState.Configuring(resolver)
 
     internal sealed class ResolutionState {
         abstract val npmProjects: List<NpmProject>
@@ -120,6 +120,9 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
+
+    internal fun isConfiguringState(): Boolean =
+        this.state is ResolutionState.Configuring
 
     internal fun prepare() = prepareIfNeeded(requireNotPrepared = true)
 
