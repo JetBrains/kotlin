@@ -146,5 +146,30 @@ task("aggregateResults", JavaExec::class) {
     args(listOf(File(rootDir, "build")))
 }
 
+projectTest(taskName = "fe10ProjectPerformanceTest") {
+    include("**/*WholeProjectPerformanceComparisonFE10ImplTest*")
+
+    workingDir = rootDir
+
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
+
+    maxHeapSize = "3g"
+    jvmArgs("-DperformanceProjects=${System.getProperty("performanceProjects")}")
+    jvmArgs("-Didea.debug.mode=true")
+    jvmArgs("-DemptyProfile=${System.getProperty("emptyProfile")}")
+    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
+
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        project.findProperty("cacheRedirectorEnabled")?.let {
+            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+        }
+    }
+}
+
 
 testsJar()
