@@ -7,25 +7,46 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.parentOfType
+import com.intellij.refactoring.PackageWrapper
+import com.intellij.refactoring.move.MoveCallback
+import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.kotlin.descriptors.containingPackage
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.*
+import org.jetbrains.kotlin.idea.refactoring.move.getTargetPackageFqName
+import org.jetbrains.kotlin.idea.refactoring.move.guessNewFileName
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandlerActions
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesModel
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesToUpperLevelModel
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsModel
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 
 class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixAction<KtTypeReference>(element) {
 
-    private val moveHandler = MoveKotlinDeclarationsHandler(false)
+    private val moveHandler = 
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            MoveKotlinDeclarationsHandler(MoveKotlinDeclarationsHandlerTestActions())
+        } else {
+            MoveKotlinDeclarationsHandler(false)
+        }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val typeReference = element ?: return
@@ -78,4 +99,115 @@ class MoveToSealedMatchingPackageFix(element: KtTypeReference) : KotlinQuickFixA
             return MoveToSealedMatchingPackageFix(annotationEntry)
         }
     }
+}
+
+private class MoveKotlinDeclarationsHandlerTestActions : MoveKotlinDeclarationsHandlerActions {
+
+    override fun invokeMoveKotlinTopLevelDeclarationsRefactoring(
+        project: Project,
+        elementsToMove: Set<KtNamedDeclaration>,
+        targetPackageName: String,
+        targetDirectory: PsiDirectory?,
+        targetFile: KtFile?,
+        freezeTargets: Boolean,
+        moveToPackage: Boolean,
+        moveCallback: MoveCallback?
+    ) {
+        val sourceFiles = getSourceFiles(elementsToMove)
+        val targetFilePath =
+            targetFile?.virtualFile?.path ?: sourceFiles[0].virtualFile.parent.path + "/" + guessNewFileName(elementsToMove)
+
+        val model = MoveKotlinTopLevelDeclarationsModel(
+            project = project,
+            elementsToMove = elementsToMove.toList(),
+            targetPackage = targetPackageName,
+            selectedPsiDirectory = targetDirectory,
+            fileNameInPackage = "Derived.kt",
+            targetFilePath = targetFilePath,
+            isMoveToPackage = true,
+            isSearchReferences = false,
+            isSearchInComments = false,
+            isSearchInNonJavaFiles = false,
+            isDeleteEmptyFiles = false,
+            applyMPPDeclarations = false,
+            moveCallback = null
+        )
+
+        model.computeModelResult(throwOnConflicts = true).processor.run()
+    }
+
+    private fun getSourceFiles(elementsToMove: Collection<KtNamedDeclaration>): List<KtFile> {
+        return elementsToMove.map { obj: KtPureElement -> obj.containingKtFile }
+            .distinct()
+    }
+
+    override fun invokeKotlinSelectNestedClassChooser(nestedClass: KtClassOrObject, targetContainer: PsiElement?) =
+        doWithMoveKotlinNestedClassesToUpperLevelModel(nestedClass, targetContainer)
+
+    private fun doWithMoveKotlinNestedClassesToUpperLevelModel(nestedClass: KtClassOrObject, targetContainer: PsiElement?) {
+
+        val outerClass = nestedClass.containingClassOrObject ?: throw FailedToRunCaseException()
+        val newTarget = targetContainer
+            ?: outerClass.containingClassOrObject
+            ?: outerClass.containingFile.let { it.containingDirectory ?: it }
+
+        val packageName = getTargetPackageFqName(newTarget)?.asString() ?: ""
+
+        val model = object : MoveKotlinNestedClassesToUpperLevelModel(
+            project = nestedClass.project,
+            innerClass = nestedClass,
+            target = newTarget,
+            parameter = "",
+            className = nestedClass.name ?: "",
+            passOuterClass = false,
+            searchInComments = false,
+            isSearchInNonJavaFiles = false,
+            packageName = packageName,
+            isOpenInEditor = false
+        ) {
+            override fun chooseSourceRoot(
+                newPackage: PackageWrapper,
+                contentSourceRoots: List<VirtualFile>,
+                initialDir: PsiDirectory?
+            ) = contentSourceRoots.firstOrNull()
+        }
+
+        model.computeModelResult(throwOnConflicts = true).processor.run()
+    }
+
+    override fun invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
+        project: Project,
+        initialDirectory: PsiDirectory?,
+        elements: List<PsiFileSystemItem>,
+        moveCallback: MoveCallback?
+    ) {
+        val targetPath =
+            initialDirectory?.virtualFile?.path
+                ?: elements.firstOrNull()?.containingFile?.virtualFile?.path
+                ?: throw NotImplementedError()
+
+        val model = KotlinAwareMoveFilesOrDirectoriesModel(
+            project = project,
+            elementsToMove = elements,
+            targetDirectoryName = randomDirectoryPathMutator(targetPath),
+            updatePackageDirective = randomBoolean(),
+            searchReferences = randomBoolean(),
+            moveCallback = null
+        )
+
+        project.executeCommand(MoveHandler.getRefactoringName()) {
+            model.computeModelResult().processor.run()
+        }
+    }
+
+    override fun showErrorHint(project: Project, editor: Editor?, message: String, title: String, helpId: String?) =
+        throw NotImplementedError()
+
+    override fun invokeMoveKotlinNestedClassesRefactoring(
+        project: Project,
+        elementsToMove: List<KtClassOrObject>,
+        originalClass: KtClassOrObject,
+        targetClass: KtClassOrObject,
+        moveCallback: MoveCallback?
+    ) = throw NotImplementedError()
 }
