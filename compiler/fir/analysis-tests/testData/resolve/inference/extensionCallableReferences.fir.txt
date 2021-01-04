@@ -27,5 +27,5 @@ FILE: extensionCallableReferences.kt
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval extensionValRef: R|kotlin/reflect/KProperty1<B, A>| = Q|B|::R|/extensionVal|
-        lval extensionFunRef: R|kotlin/reflect/KFunction1<B, A>| = Q|B|::R|/extensionFun|
+        lval extensionFunRef: R|@ExtensionFunctionType kotlin/reflect/KFunction1<B, A>| = Q|B|::R|/extensionFun|
     }

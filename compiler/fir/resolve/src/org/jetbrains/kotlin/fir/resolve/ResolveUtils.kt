@@ -78,7 +78,13 @@ fun createFunctionalType(
     }
 
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
-    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), receiverAndParameterTypes.toTypedArray(), isNullable = false)
+    val attributes = if (receiverType != null) ConeAttributes.WithExtensionFunctionType else ConeAttributes.Empty
+    return ConeClassLikeTypeImpl(
+        ConeClassLikeLookupTagImpl(functionalTypeId),
+        receiverAndParameterTypes.toTypedArray(),
+        isNullable = false,
+        attributes = attributes
+    )
 }
 
 fun createKPropertyType(
