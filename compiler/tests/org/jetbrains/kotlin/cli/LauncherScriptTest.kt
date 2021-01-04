@@ -48,9 +48,16 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
         pb.directory(workDirectory)
         val process = pb.start()
-        val stdout = StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() })
-        val stderr = StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() })
-            .replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
+        val stdout =
+            AbstractCliTest.getNormalizedCompilerOutput(
+                StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
+                null, testDataDirectory
+            )
+        val stderr =
+            AbstractCliTest.getNormalizedCompilerOutput(
+                StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
+                null, testDataDirectory
+            ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
         process.waitFor(10, TimeUnit.SECONDS)
         val exitCode = process.exitValue()
         try {
@@ -226,6 +233,19 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
 
         runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
+    }
+
+    fun testScriptWithXArguments() {
+        runProcess(
+            "kotlin", "$testDataDirectory/funWithResultReturn.kts",
+            expectedExitCode = 1,
+            expectedStderr = """error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.kts:2:11)
+compiler/testData/launcher/funWithResultReturn.kts:2:11: error: 'kotlin.Result' cannot be used as a return type
+fun f() : Result<Int> = Result.success(42)
+          ^
+          """
+        )
+        runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
     }
 
     fun testProperty() {

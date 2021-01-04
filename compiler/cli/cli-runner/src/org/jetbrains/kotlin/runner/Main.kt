@@ -42,6 +42,7 @@ object Main {
         var collectingExpressions = false
         var needsCompiler = false
         val arguments = arrayListOf<String>()
+        val compilerArguments = arrayListOf<String>()
         var expression: String? = null
         var noReflect = false
 
@@ -103,6 +104,10 @@ object Main {
             }
             else if ("-no-reflect" == arg) {
                 noReflect = true
+                compilerArguments.add(arg)
+            }
+            else if (arg.startsWith("-X")) {
+                compilerArguments.add(arg)
             }
             else if (arg.startsWith("-")) {
                 throw RunnerException("unsupported argument: $arg")
@@ -146,7 +151,7 @@ object Main {
             }
         }
 
-        runner.run(classpath, arguments, compilerClasspath)
+        runner.run(classpath, compilerArguments, arguments, compilerClasspath)
     }
 
     private fun MutableList<URL>.addPath(path: String) {
@@ -167,19 +172,21 @@ object Main {
     private fun printUsageAndExit() {
         println("""kotlin: run Kotlin programs, scripts or REPL.
 
-Usage: kotlin <options> <command> <arguments>
+Usage: kotlin <options> <command> [<arguments>]
 where command may be one of:
   foo.Bar                    Runs the 'main' function from the class with the given qualified name
+                             (compiler arguments are ignored) 
   app.jar                    Runs the given JAR file as 'java -jar' would do
-                             (-classpath argument is ignored and no Kotlin runtime is added to the classpath)
-""" +
-//  script.kts                 Compiles and runs the given script
-//  -expression (-e) '2+2'     Evaluates the expression and prints the result
-"""and possible options include:
+                             (compiler arguments are ignored and no Kotlin stdlib is added to the classpath)
+  script.kts                 Compiles and runs the given script, passing <arguments> to it
+  -expression (-e) '2+2'     Evaluates the expression and prints the result, passing <arguments> to it
+  <no command>               Runs Kotlin REPL, passing <arguments> to it
+and possible options include:
   -classpath (-cp) <path>    Paths where to find user class files
   -Dname=value               Set a system JVM property
   -J<option>                 Pass an option directly to JVM
   -no-reflect                Don't include Kotlin reflection implementation into classpath
+  -X<flag>[=value]           Pass -X argument to the compiler
   -version                   Display Kotlin version
   -help (-h)                 Print a synopsis of options
 """)
