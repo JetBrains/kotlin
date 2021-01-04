@@ -11077,6 +11077,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/enum/asReturnExpression.kt");
         }
 
+        @TestMetadata("bigEnum.kt")
+        public void testBigEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/bigEnum.kt");
+        }
+
         @TestMetadata("classForEnumEntry.kt")
         public void testClassForEnumEntry() throws Exception {
             runTest("compiler/testData/codegen/box/enum/classForEnumEntry.kt");
