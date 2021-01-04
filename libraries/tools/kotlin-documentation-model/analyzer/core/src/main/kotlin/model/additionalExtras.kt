@@ -72,7 +72,9 @@ data class AnnotationValue(val annotation: Annotations.Annotation) : AnnotationP
 data class ArrayValue(val value: List<AnnotationParameterValue>) : AnnotationParameterValue()
 data class EnumValue(val enumName: String, val enumDri: DRI) : AnnotationParameterValue()
 data class ClassValue(val className: String, val classDRI: DRI) : AnnotationParameterValue()
-data class StringValue(val value: String) : AnnotationParameterValue()
+data class StringValue(val value: String) : AnnotationParameterValue() {
+    override fun toString(): String = value
+}
 
 
 object PrimaryConstructorExtra : ExtraProperty<DFunction>, ExtraProperty.Key<DFunction, PrimaryConstructorExtra> {
