@@ -58,6 +58,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
                 StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
                 null, testDataDirectory
             ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
+                .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
         process.waitFor(10, TimeUnit.SECONDS)
         val exitCode = process.exitValue()
         try {
@@ -198,9 +199,9 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "-e",
             "println(args.joinToString())",
             "--",
-            "-a",
+            "-e",
             "b",
-            expectedStdout = "-a, b\n"
+            expectedStdout = "-e, b\n"
         )
         runProcess(
             "kotlin",
@@ -243,7 +244,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
 compiler/testData/launcher/funWithResultReturn.kts:2:11: error: 'kotlin.Result' cannot be used as a return type
 fun f() : Result<Int> = Result.success(42)
           ^
-          """
+"""
         )
         runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
     }
@@ -252,7 +253,16 @@ fun f() : Result<Int> = Result.success(42)
         runProcess("kotlin", "-e", "println(42)", expectedStdout = "42\n")
         runProcess(
             "kotlin", "-no-stdlib", "-e", "println(42)",
-            expectedExitCode = 1, expectedStderrContains = Regex("error: unresolved reference: println")
+            expectedExitCode = 1,
+            expectedStderr = """error: unresolved reference: println (script.kts:1:1)
+error: no script runtime was found in the classpath: class 'kotlin.script.templates.standard.ScriptTemplateWithArgs' not found. Please add kotlin-script-runtime.jar to the module dependencies. (script.kts:1:1)
+script.kts:1:1: error: unresolved reference: println
+println(42)
+^
+script.kts:1:1: error: no script runtime was found in the classpath: class 'kotlin.script.templates.standard.ScriptTemplateWithArgs' not found. Please add kotlin-script-runtime.jar to the module dependencies.
+println(42)
+^
+"""
         )
     }
 
@@ -263,5 +273,65 @@ fun f() : Result<Int> = Result.success(42)
             "kotlin", "PropertyKt", "-Dresult=OK",
             workDirectory = tmpdir, expectedStdout = "OK\n"
         )
+    }
+
+    fun testHowToRunExpression() {
+        runProcess(
+            "kotlin", "-howtorun", "jar", "-e", "println(args.joinToString())", "-a", "b",
+            expectedExitCode = 1, expectedStderr = "error: expression evaluation is not compatible with -howtorun argument jar\n"
+        )
+        runProcess(
+            "kotlin", "-howtorun", "script", "-e", "println(args.joinToString())", "-a", "b",
+            expectedStdout = "-a, b\n"
+        )
+    }
+
+    fun testHowToRunScript() {
+        runProcess(
+            "kotlin", "-howtorun", "classfile", "$testDataDirectory/printargs.kts", "--", "-a", "b",
+            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/printargs.kts\n"
+        )
+        runProcess(
+            "kotlin", "-howtorun", "script", "$testDataDirectory/printargs.kts", "--", "-a", "b",
+            expectedStdout = "-a, b\n"
+        )
+    }
+
+    fun testHowToRunCustomScript() {
+        runProcess(
+            "kotlin", "$testDataDirectory/funWithResultReturn.myscript",
+            expectedExitCode = 1, expectedStderr = "error: could not find or load main class \$TESTDATA_DIR\$/funWithResultReturn.myscript\n"
+        )
+        runProcess(
+            "kotlin", "-howtorun", "script", "$testDataDirectory/funWithResultReturn.myscript",
+            expectedExitCode = 1, expectedStderr = "error: unrecognized script type: funWithResultReturn.myscript; Specify path to the script file as the first argument\n"
+        )
+        runProcess(
+            "kotlin", "-howtorun", ".kts", "$testDataDirectory/funWithResultReturn.myscript",
+            expectedExitCode = 1, expectedStderr = """error: unresolved reference: CompilerOptions (funWithResultReturn.myscript:1:7)
+error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.myscript:3:11)
+compiler/testData/launcher/funWithResultReturn.myscript:1:7: error: unresolved reference: CompilerOptions
+@file:CompilerOptions("-Xallow-result-return-type")
+      ^
+compiler/testData/launcher/funWithResultReturn.myscript:3:11: error: 'kotlin.Result' cannot be used as a return type
+fun f() : Result<Int> = Result.success(42)
+          ^
+"""
+        )
+        runProcess(
+            "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/funWithResultReturn.myscript",
+            expectedStdout = "42\n"
+        )
+    }
+
+    fun testHowToRunClassFile() {
+        runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+
+        runProcess(
+            "kotlin", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
+            expectedExitCode = 1,
+            expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
+        )
+        runProcess("kotlin", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
 }

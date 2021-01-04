@@ -127,11 +127,20 @@ private fun MutableList<String>.addClasspathArgIfNeeded(classpath: List<URL>) {
     }
 }
 
+private fun ArrayList<String>.addScriptArguments(arguments: List<String>) {
+    if (arguments.isNotEmpty() && arguments.first() != "--") {
+        add("--")
+    }
+    addAll(arguments)
+}
+
 class ReplRunner : RunnerWithCompiler() {
     override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
-        val compilerArgs = ArrayList<String>()
-        compilerArgs.addClasspathArgIfNeeded(classpath)
-        compilerArgs.addAll(compilerArguments)
+        val compilerArgs = ArrayList<String>().apply {
+            addClasspathArgIfNeeded(classpath)
+            addAll(compilerArguments)
+            addScriptArguments(arguments)
+        }
         runCompiler(compilerClasspath, compilerArgs)
     }
 }
@@ -143,10 +152,7 @@ class ScriptRunner(private val path: String) : RunnerWithCompiler() {
             addAll(compilerArguments)
             add("-script")
             add(path)
-            if (arguments.isNotEmpty() && arguments.first() != "--") {
-                add("--")
-            }
-            addAll(arguments)
+            addScriptArguments(arguments)
         }
         runCompiler(compilerClasspath, compilerArgs)
     }
@@ -159,10 +165,7 @@ class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
             addAll(compilerArguments)
             add("-expression")
             add(code)
-            if (arguments.isNotEmpty() && arguments.first() != "--") {
-                add("--")
-            }
-            addAll(arguments)
+            addScriptArguments(arguments)
         }
         runCompiler(compilerClasspath, compilerArgs)
     }
