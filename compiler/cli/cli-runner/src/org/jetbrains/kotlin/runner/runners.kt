@@ -32,7 +32,7 @@ abstract class AbstractRunner : Runner {
 
     protected abstract fun createClassLoader(classpath: List<URL>): ClassLoader
 
-    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+    override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
         val classLoader = createClassLoader(classpath)
 
         val mainClass = try {
@@ -128,17 +128,19 @@ private fun MutableList<String>.addClasspathArgIfNeeded(classpath: List<URL>) {
 }
 
 class ReplRunner : RunnerWithCompiler() {
-    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+    override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
         val compilerArgs = ArrayList<String>()
         compilerArgs.addClasspathArgIfNeeded(classpath)
+        compilerArgs.addAll(compilerArguments)
         runCompiler(compilerClasspath, compilerArgs)
     }
 }
 
 class ScriptRunner(private val path: String) : RunnerWithCompiler() {
-    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+    override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
         val compilerArgs = ArrayList<String>().apply {
             addClasspathArgIfNeeded(classpath)
+            addAll(compilerArguments)
             add("-script")
             add(path)
             if (arguments.isNotEmpty() && arguments.first() != "--") {
@@ -151,9 +153,10 @@ class ScriptRunner(private val path: String) : RunnerWithCompiler() {
 }
 
 class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
-    override fun run(classpath: List<URL>, arguments: List<String>, compilerClasspath: List<URL>) {
+    override fun run(classpath: List<URL>, compilerArguments: List<String>, arguments: List<String>, compilerClasspath: List<URL>) {
         val compilerArgs = ArrayList<String>().apply {
             addClasspathArgIfNeeded(classpath)
+            addAll(compilerArguments)
             add("-expression")
             add(code)
             if (arguments.isNotEmpty() && arguments.first() != "--") {
