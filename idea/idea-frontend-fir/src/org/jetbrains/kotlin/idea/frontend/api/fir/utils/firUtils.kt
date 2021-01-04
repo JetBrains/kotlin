@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsignedConstantValue
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtUnsupportedConstantValue
 
 internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session: FirSession): Map<String, FirExpression> {
@@ -50,6 +51,6 @@ internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session:
 
 internal fun FirExpression.convertConstantExpression(): KtConstantValue =
     when (this) {
-        is FirConstExpression<*> -> KtSimpleConstantValue(value)
+        is FirConstExpression<*> -> if (kind.isUnsigned) KtUnsignedConstantValue(value) else KtSimpleConstantValue(value)
         else -> KtUnsupportedConstantValue
     }

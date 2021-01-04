@@ -9,3 +9,6 @@ sealed class KtConstantValue
 object KtUnsupportedConstantValue : KtConstantValue()
 
 data class KtSimpleConstantValue<T>(val constant: T?) : KtConstantValue()
+
+// If it it UBite 200 then the runtimeConstant would be (-56).toByte()
+data class KtUnsignedConstantValue<T>(val runtimeConstant: T?) : KtConstantValue()
