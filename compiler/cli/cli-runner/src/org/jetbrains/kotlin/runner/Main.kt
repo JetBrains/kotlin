@@ -44,6 +44,7 @@ object Main {
         val arguments = arrayListOf<String>()
         val compilerArguments = arrayListOf<String>()
         var expression: String? = null
+        var noStdLib = false
         var noReflect = false
 
         fun setExpression(expr: String) {
@@ -102,6 +103,10 @@ object Main {
                 collectingExpressions = true
                 needsCompiler = true
             }
+            else if ("-no-stdlib" == arg) {
+                noStdLib = true
+                compilerArguments.add(arg)
+            }
             else if ("-no-reflect" == arg) {
                 noReflect = true
                 compilerArguments.add(arg)
@@ -132,7 +137,9 @@ object Main {
             classpath.addPath(".")
         }
 
-        classpath.addPath("$KOTLIN_HOME/lib/kotlin-stdlib.jar")
+        if (!noStdLib) {
+            classpath.addPath("$KOTLIN_HOME/lib/kotlin-stdlib.jar")
+        }
 
         if (!noReflect) {
             classpath.addPath("$KOTLIN_HOME/lib/kotlin-reflect.jar")
@@ -185,6 +192,7 @@ and possible options include:
   -classpath (-cp) <path>    Paths where to find user class files
   -Dname=value               Set a system JVM property
   -J<option>                 Pass an option directly to JVM
+  -no-stdlib                 Don't include Kotlin standard library into classpath
   -no-reflect                Don't include Kotlin reflection implementation into classpath
   -X<flag>[=value]           Pass -X argument to the compiler
   -version                   Display Kotlin version
