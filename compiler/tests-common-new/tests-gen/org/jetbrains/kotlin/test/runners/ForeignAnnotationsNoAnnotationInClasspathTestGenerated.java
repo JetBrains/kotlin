@@ -92,6 +92,12 @@ public class ForeignAnnotationsNoAnnotationInClasspathTestGenerated extends Abst
             runTest("compiler/testData/foreignAnnotations/tests/rxjava.kt");
         }
 
+        @Test
+        @TestMetadata("rxjava3.kt")
+        public void testRxjava3() throws Exception {
+            runTest("compiler/testData/foreignAnnotations/tests/rxjava3.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305")
         @TestDataPath("$PROJECT_ROOT")
