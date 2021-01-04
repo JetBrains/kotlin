@@ -11044,6 +11044,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractLightAnalysisModeTest {
+        @TestMetadata("bigEnum.kt")
+        public void ignoreBigEnum() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/bigEnum.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
