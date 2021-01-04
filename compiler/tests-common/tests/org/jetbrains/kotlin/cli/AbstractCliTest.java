@@ -24,6 +24,7 @@ import kotlin.io.FilesKt;
 import kotlin.io.path.PathsKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.checkers.AbstractForeignAnnotationsTestKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -81,7 +82,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
+    public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @Nullable ExitCode exitCode, @NotNull String testDataDir) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
         String normalizedOutputWithoutExitCode = StringUtil.convertLineSeparators(pureOutput)
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
@@ -95,7 +96,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
                 .replaceAll("log4j:WARN.*\n", "");
 
-        return normalizedOutputWithoutExitCode + exitCode + "\n";
+        return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
     }
 
     private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
