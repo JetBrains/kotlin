@@ -3,9 +3,11 @@ fun <X> foo(x: X) {}
 // SYMBOLS:
 /*
 KtFirTypeParameterSymbol:
+  isReified: false
   name: X
   origin: SOURCE
   upperBounds: [kotlin/Any?]
+  variance: INVARIANT
 
 KtFirFunctionValueParameterSymbol:
   annotatedType: [] X
