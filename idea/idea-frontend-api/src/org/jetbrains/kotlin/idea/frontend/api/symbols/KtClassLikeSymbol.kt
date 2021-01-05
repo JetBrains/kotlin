@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.Variance
 
 sealed class KtClassifierSymbol : KtSymbol, KtNamedSymbol
 
@@ -16,6 +17,8 @@ abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
 
     abstract val upperBounds: List<KtType>
+    abstract val variance: Variance
+    abstract val isReified: Boolean
 }
 
 sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtNamedSymbol, KtSymbolWithKind {

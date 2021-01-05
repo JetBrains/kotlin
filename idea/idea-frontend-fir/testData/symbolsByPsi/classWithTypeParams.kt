@@ -4,14 +4,18 @@ class A<T, R> {
 // SYMBOLS:
 /*
 KtFirTypeParameterSymbol:
+  isReified: false
   name: T
   origin: SOURCE
   upperBounds: [kotlin/Any?]
+  variance: INVARIANT
 
 KtFirTypeParameterSymbol:
+  isReified: false
   name: R
   origin: SOURCE
   upperBounds: [kotlin/Any?]
+  variance: INVARIANT
 
 KtFirClassOrObjectSymbol:
   annotations: []
