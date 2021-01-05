@@ -6,6 +6,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/collections/Iterator
   classKind: INTERFACE
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: ABSTRACT
   name: Iterator

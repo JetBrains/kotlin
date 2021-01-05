@@ -8,6 +8,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/Lazy
   classKind: INTERFACE
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: ABSTRACT
   name: Lazy

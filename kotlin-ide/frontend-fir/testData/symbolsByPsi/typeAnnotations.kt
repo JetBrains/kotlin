@@ -22,6 +22,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: Anno1
   classKind: ANNOTATION_CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: Anno1
@@ -37,6 +41,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: Anno2
   classKind: ANNOTATION_CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: Anno2
@@ -52,6 +60,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: Anno3
   classKind: ANNOTATION_CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: Anno3
@@ -67,6 +79,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: Anno4
   classKind: ANNOTATION_CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: Anno4
@@ -82,6 +98,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: I
   classKind: INTERFACE
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: ABSTRACT
   name: I
@@ -147,6 +167,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: X
   classKind: CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: X
