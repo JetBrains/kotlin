@@ -157,13 +157,8 @@ class MethodInliner(
         // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.
         // So wrapping with LocalVariablesSorter to keep old behavior
         // TODO: investigate LocalVariablesSorter removing (see also same code in RemappingClassBuilder.java)
-        val remappingMethodAdapter = MethodRemapper(
-            LocalVariablesSorter(
-                resultNode.access,
-                resultNode.desc,
-                wrapWithMaxLocalCalc(resultNode)
-            ), AsmTypeRemapper(remapper, result)
-        )
+        val localVariablesSorter = LocalVariablesSorter(resultNode.access, resultNode.desc, wrapWithMaxLocalCalc(resultNode))
+        val remappingMethodAdapter = MethodRemapper(localVariablesSorter, AsmTypeRemapper(remapper, result))
 
         val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
@@ -174,7 +169,9 @@ class MethodInliner(
                 transformationInfo = iterator.next()
 
                 val oldClassName = transformationInfo!!.oldClassName
-                if (transformationInfo!!.shouldRegenerate(isSameModule)) {
+                if (inliningContext.parent?.transformationInfo?.oldClassName == oldClassName) {
+                    // Object constructs itself, don't enter an infinite recursion of regeneration.
+                } else if (transformationInfo!!.shouldRegenerate(isSameModule)) {
                     //TODO: need poping of type but what to do with local funs???
                     val newClassName = transformationInfo!!.newClassName
                     remapper.addMapping(oldClassName, newClassName)
@@ -206,7 +203,7 @@ class MethodInliner(
                         ReifiedTypeInliner.putNeedClassReificationMarker(mv)
                         result.reifiedTypeParametersUsages.mergeAll(transformResult.reifiedTypeParametersUsages)
                     }
-                } else if (!transformationInfo!!.wasAlreadyRegenerated) {
+                } else {
                     result.addNotChangedClass(oldClassName)
                 }
             }
@@ -300,7 +297,7 @@ class MethodInliner(
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
                     //TODO add skipped this and receiver
-                    val lambdaResult = inliner.doInline(this.mv, varRemapper, true, info, invokeCall.finallyDepthShift)
+                    val lambdaResult = inliner.doInline(localVariablesSorter, varRemapper, true, info, invokeCall.finallyDepthShift)
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
@@ -312,19 +309,19 @@ class MethodInliner(
                     inlineOnlySmapSkipper?.onInlineLambdaEnd(remappingMethodAdapter)
                 } else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     //TODO add proper message
-                    var info = transformationInfo as? AnonymousObjectTransformationInfo ?: throw AssertionError(
+                    val newInfo = transformationInfo as? AnonymousObjectTransformationInfo ?: throw AssertionError(
                         "<init> call doesn't correspond to object transformation info for '$owner.$name': $transformationInfo"
                     )
-                    val objectConstructsItself = inlineCallSiteInfo.ownerClassName == info.oldClassName
-                    if (objectConstructsItself) {
-                        // inline fun f() -> new f$1 -> fun something() in class f$1 -> new f$1
-                        //                   ^-- fetch the info that was created for this instruction
-                        info = inliningContext.parent?.transformationInfo as? AnonymousObjectTransformationInfo
-                            ?: throw AssertionError("anonymous object $owner constructs itself, but we have no info on in")
-                    }
+                    // inline fun f() -> new f$1 -> fun something() in class f$1 -> new f$1
+                    //                   ^-- fetch the info that was created for this instruction
+                    // Currently, this self-reference pattern only happens in coroutine objects, which construct
+                    // copies of themselves in `create` or `invoke` (not `invokeSuspend`).
+                    val existingInfo = inliningContext.parent?.transformationInfo?.takeIf { it.oldClassName == newInfo.oldClassName }
+                            as AnonymousObjectTransformationInfo?
+                    val info = existingInfo ?: newInfo
                     if (info.shouldRegenerate(isSameModule)) {
                         for (capturedParamDesc in info.allRecapturedParameters) {
-                            val realDesc = if (objectConstructsItself && capturedParamDesc.fieldName == AsmUtil.THIS) {
+                            val realDesc = if (existingInfo != null && capturedParamDesc.fieldName == AsmUtil.THIS) {
                                 // The captures in `info` are relative to the parent context, so a normal `this` there
                                 // is a captured outer `this` here.
                                 CapturedParamDesc(Type.getObjectType(owner), AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type)
