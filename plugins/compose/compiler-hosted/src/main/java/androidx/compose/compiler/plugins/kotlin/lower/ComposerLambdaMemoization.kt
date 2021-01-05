@@ -123,6 +123,8 @@ private class FunctionContext(
         declaration.valueParameters.forEach {
             declareLocal(it)
         }
+        declaration.dispatchReceiverParameter?.let { declareLocal(it) }
+        declaration.extensionReceiverParameter?.let { declareLocal(it) }
     }
 
     override fun declareLocal(local: IrValueDeclaration?) {
@@ -453,10 +455,16 @@ class ComposerLambdaMemoization(
         expression: IrExpression,
         captures: List<IrValueDeclaration>
     ): IrExpression {
+        // If the function doesn't capture, Kotlin's default optimization is sufficient
+        if (captures.isEmpty()) return expression
+
+        // If the function captures any unstable values or var declarations, do not memoize
         if (captures.any {
             !((it as? IrVariable)?.isVar != true && stabilityOf(it.type).knownStable())
         }
         ) return expression
+
+        // Otherwise memoize the expression based on the stable captured values
         val rememberParameterCount = captures.size + 1 // One additional parameter for the lambda
         val declaration = functionContext.declaration
         val rememberFunctions = getTopLevelFunctions(
