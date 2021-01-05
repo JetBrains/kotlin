@@ -394,7 +394,7 @@ val jvmPhases = NamedCompilerPhase(
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then
             // should be last transformation
-            removeDeclarationsThatWouldBeInlined then
+            prepareForBytecodeInlining then
             validateIrAfterLowering
 )
 
