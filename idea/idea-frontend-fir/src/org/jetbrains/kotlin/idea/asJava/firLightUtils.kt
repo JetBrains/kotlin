@@ -245,7 +245,8 @@ internal fun KtSymbolVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): S
 private fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
     // Top-level private class has PACKAGE_LOCAL visibility in Java
     // Nested private class has PRIVATE visibility
-    KtSymbolVisibility.PRIVATE -> if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+    KtSymbolVisibility.PRIVATE, KtSymbolVisibility.PRIVATE_TO_THIS ->
+        if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
     KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }

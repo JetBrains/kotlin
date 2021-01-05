@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -185,7 +182,7 @@ internal fun FirLightClassBase.createMethods(
 
                 if (declaration is KtKotlinPropertySymbol && declaration.isConst) continue
 
-                if (declaration.visibility == KtSymbolVisibility.PRIVATE &&
+                if (declaration.visibility.isPrivateOrPrivateToThis() &&
                     declaration.getter?.hasBody == false &&
                     declaration.setter?.hasBody == false
                 ) continue
@@ -194,7 +191,7 @@ internal fun FirLightClassBase.createMethods(
 
                 fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
                     if (isInline) return false
-                    if (!hasBody && visibility == KtSymbolVisibility.PRIVATE) return false
+                    if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
                     if (declaration.isHiddenOrSynthetic(siteTarget)) return false
                     if (isHiddenOrSynthetic()) return false
                     return true
