@@ -1447,7 +1447,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(%composer: Composer<*>?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(A)<D>,<{}>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
+              %composer.startRestartGroup(<>, "C(A)<D>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 val x = 123
                 D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
@@ -1457,10 +1457,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                     %composer.skipToGroupEnd()
                   }
                 }, %composer, 0b0110)
-                C(remember({
-                  {
-                  }
-                }, %composer, 0), %composer, 0b0110)
+                C({
+                }, %composer, 0)
                 C(stableFun(123), %composer, 0b0110)
                 C(16.dp + 10.dp, %composer, 0b0110)
                 C(Dp(16), %composer, 0b0110)
