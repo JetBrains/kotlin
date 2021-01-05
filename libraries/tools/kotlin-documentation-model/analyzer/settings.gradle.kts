@@ -17,6 +17,8 @@ include("plugins:base:frontend")
 include("plugins:base:search-component")
 include("plugins:base:base-test-utils")
 include("plugins:all-modules-page")
+include("plugins:templating")
+include("plugins:versioning")
 
 include("plugins:mathjax")
 include("plugins:gfm")
