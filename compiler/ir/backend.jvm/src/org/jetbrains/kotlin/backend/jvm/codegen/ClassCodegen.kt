@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -484,20 +483,10 @@ class ClassCodegen private constructor(
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {
             val psiElement = PsiSourceManager.findPsiElement(this)
-            // For declarations inside lambdas, produce a descriptor which refers back to the original function.
-            // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
-            // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.
-            // TODO: this is really not very useful, as this does nothing for other anonymous objects.
-            val isLambda = irClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                    irClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-            val descriptor = if (isLambda)
-                irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: toIrBasedDescriptor()
-            else
-                toIrBasedDescriptor()
             return if (origin == IrDeclarationOrigin.FILE_CLASS)
-                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, descriptor)
+                JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
             else
-                OtherOrigin(psiElement, descriptor)
+                OtherOrigin(psiElement, toIrBasedDescriptor())
         }
 
     companion object {
