@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isPrivateOrPrivateToThis
 
 internal class FirLightAnnotationClassSymbol(
     private val classOrObjectSymbol: KtClassOrObjectSymbol,
@@ -44,7 +44,7 @@ internal class FirLightAnnotationClassSymbol(
 
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
             val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility == KtSymbolVisibility.PRIVATE }
+                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
                 .filterNot { it is KtConstructorSymbol }
 
             createMethods(visibleDeclarations, result)
