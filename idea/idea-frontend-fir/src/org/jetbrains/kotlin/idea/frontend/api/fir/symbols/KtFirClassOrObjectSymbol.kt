@@ -53,6 +53,10 @@ internal class KtFirClassOrObjectSymbol(
     override val isInline: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInline }
     override val isFun: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isFun }
 
+    override val isExpect: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isExpect }
+    override val isActual: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isActual }
+    override val isExternal: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isExternal }
+
     override val companionObject: KtClassOrObjectSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
         fir.companionObject?.let { builder.buildClassSymbol(it) }
     }

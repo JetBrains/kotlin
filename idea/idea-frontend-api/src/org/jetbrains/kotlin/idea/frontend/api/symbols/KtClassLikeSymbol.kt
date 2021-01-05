@@ -46,6 +46,10 @@ abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(),
     abstract val isInline: Boolean
     abstract val isFun: Boolean
 
+    abstract val isExpect: Boolean
+    abstract val isActual: Boolean
+    abstract val isExternal: Boolean
+
     abstract val companionObject: KtClassOrObjectSymbol?
 
     abstract val superTypes: List<KtTypeAndAnnotations>
