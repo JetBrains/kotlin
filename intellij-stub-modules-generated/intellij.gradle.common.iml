@@ -13,5 +13,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
+    <orderEntry type="library" name="Slf4j" exported="" level="project" />
+    <orderEntry type="library" name="Gradle" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.inspect" exported="" />
   </component>
 </module>

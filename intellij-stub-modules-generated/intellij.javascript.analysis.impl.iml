@@ -14,5 +14,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript" exported="" />
   </component>
 </module>

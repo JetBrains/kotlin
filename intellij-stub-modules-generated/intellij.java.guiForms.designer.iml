@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.guiForms.compiler" exported="" />
+    <orderEntry type="module" module-name="intellij.java.i18n" exported="" />
   </component>
 </module>

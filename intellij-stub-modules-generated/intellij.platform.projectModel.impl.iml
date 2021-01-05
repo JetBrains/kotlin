@@ -15,5 +15,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.ex" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.concurrency" exported="" />
   </component>
 </module>

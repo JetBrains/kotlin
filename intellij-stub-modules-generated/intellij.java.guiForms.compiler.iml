@@ -16,5 +16,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil" exported="" />
   </component>
 </module>

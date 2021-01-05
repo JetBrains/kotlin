@@ -14,5 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
+    <orderEntry type="module" module-name="intellij.java.jam" exported="" />
+    <orderEntry type="module" module-name="intellij.java.remoteServers" exported="" />
   </component>
 </module>

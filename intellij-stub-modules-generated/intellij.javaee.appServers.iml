@@ -14,5 +14,18 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.platform" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.web" exported="" />
+    <orderEntry type="module" module-name="intellij.java.debugger" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.execution" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.application" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.ejb" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers.impl" exported="" />
   </component>
 </module>

@@ -15,5 +15,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.indexing.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.analysis" exported="" />
+    <orderEntry type="library" name="ASM" exported="" level="project" />
   </component>
 </module>

@@ -14,5 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.structureView.impl" exported="" />
   </component>
 </module>

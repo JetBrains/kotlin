@@ -13,5 +13,14 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.tasks" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
+    <orderEntry type="library" name="gson" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core" exported="" />
+    <orderEntry type="library" name="markdownj" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.tasks.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.tasks" exported="" />
   </component>
 </module>

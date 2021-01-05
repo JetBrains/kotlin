@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.jsp" exported="" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" exported="" />
+    <orderEntry type="module" module-name="intellij.java.i18n" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.jsp.base.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.el" exported="" />
   </component>
 </module>

@@ -15,5 +15,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.indexing.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />
+    <orderEntry type="module" module-name="intellij.java.indexing" exported="" />
   </component>
 </module>

@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.regexp" exported="" />
+    <orderEntry type="module" module-name="intellij.idea.community.resources" exported="" />
   </component>
 </module>

@@ -15,5 +15,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util" exported="" />
   </component>
 </module>

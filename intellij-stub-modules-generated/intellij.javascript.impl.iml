@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javascript" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript.structureView" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript.duplicatesDetection" exported="" />
   </component>
 </module>

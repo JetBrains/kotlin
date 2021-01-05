@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.clouds.docker" exported="" />
+    <orderEntry type="module" module-name="intellij.clouds.docker.remoteRun" exported="" />
   </component>
 </module>

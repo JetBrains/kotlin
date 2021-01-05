@@ -13,5 +13,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="module" module-name="intellij.java.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" />
+    <orderEntry type="module" module-name="intellij.relaxng" exported="" />
+    <orderEntry type="module" module-name="intellij.java.ui" exported="" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.execution" exported="" />
   </component>
 </module>

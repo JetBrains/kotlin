@@ -13,5 +13,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.hibernate.console" exported="" />
   </component>
 </module>

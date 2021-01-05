@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Ant" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
   </component>
 </module>

@@ -15,5 +15,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.editor" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.resources.en" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />
   </component>
 </module>

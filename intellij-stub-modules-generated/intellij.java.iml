@@ -14,5 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" exported="" />
+    <orderEntry type="module" module-name="intellij.xml" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" exported="" />
+    <orderEntry type="module" module-name="intellij.java.resources.en" exported="" />
+    <orderEntry type="module" module-name="intellij.java.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.java.indexing" exported="" />
+    <orderEntry type="module" module-name="intellij.java.analysis" exported="" />
   </component>
 </module>

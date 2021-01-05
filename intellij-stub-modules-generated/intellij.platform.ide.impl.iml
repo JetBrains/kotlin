@@ -14,5 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.editor.ex" exported="" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" exported="" />
   </component>
 </module>

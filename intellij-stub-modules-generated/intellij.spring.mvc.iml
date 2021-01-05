@@ -13,5 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.spring" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.web" exported="" />
+    <orderEntry type="module" module-name="intellij.microservices" exported="" />
   </component>
 </module>

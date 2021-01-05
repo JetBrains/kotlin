@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.jsp" exported="" />
+    <orderEntry type="module" module-name="intellij.java" exported="" />
   </component>
 </module>

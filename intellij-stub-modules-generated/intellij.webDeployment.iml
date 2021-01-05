@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" exported="" />
+    <orderEntry type="library" name="jzlib" exported="" level="project" />
+    <orderEntry type="library" name="JSch" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ssh" exported="" />
   </component>
 </module>

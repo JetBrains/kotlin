@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lvcs" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" exported="" />
   </component>
 </module>

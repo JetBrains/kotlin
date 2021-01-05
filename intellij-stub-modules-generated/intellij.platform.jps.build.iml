@@ -14,5 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.jps.build.javac.rt" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="library" name="ASM" exported="" level="project" />
   </component>
 </module>

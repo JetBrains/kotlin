@@ -14,5 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.testRunner" exported="" />
+    <orderEntry type="library" name="tcServiceMessages" exported="" level="project" />
   </component>
 </module>

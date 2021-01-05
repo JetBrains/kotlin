@@ -13,5 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.diagram" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.graph" exported="" />
   </component>
 </module>

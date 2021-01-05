@@ -15,5 +15,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.analysis" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" exported="" />
   </component>
 </module>

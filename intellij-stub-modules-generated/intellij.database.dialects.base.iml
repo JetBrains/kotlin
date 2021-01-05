@@ -14,5 +14,21 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database" exported="" />
+    <orderEntry type="module" module-name="intellij.database.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.database.sql.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.database.jdbcConsole" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" exported="" />
+    <orderEntry type="library" name="Guava" exported="" level="project" />
+    <orderEntry type="library" name="Jettison" exported="" level="project" />
+    <orderEntry type="library" name="Trove4j" exported="" level="project" />
+    <orderEntry type="library" name="fastutil-min" exported="" level="project" />
   </component>
 </module>

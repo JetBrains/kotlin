@@ -14,5 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.platform" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.ejb" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" exported="" />
   </component>
 </module>

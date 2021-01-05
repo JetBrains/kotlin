@@ -15,5 +15,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.rt" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.classLoader" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.strings" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.collections" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.text.matching" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.diagnostic" exported="" />
   </component>
 </module>

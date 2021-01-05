@@ -13,5 +13,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="snakeyaml" exported="" level="project" />
+    <orderEntry type="library" name="commons-compress" exported="" level="project" />
+    <orderEntry type="library" name="Guava" exported="" level="project" />
+    <orderEntry type="library" name="jackson" exported="" level="project" />
   </component>
 </module>

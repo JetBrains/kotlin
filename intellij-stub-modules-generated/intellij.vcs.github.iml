@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.tasks.core" exported="" />
+    <orderEntry type="module" module-name="intellij.tasks" exported="" />
   </component>
 </module>

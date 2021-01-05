@@ -16,5 +16,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="http-client" exported="" level="project" />
+    <orderEntry type="library" name="commons-logging" exported="" level="project" />
+    <orderEntry type="library" name="Slf4j" exported="" level="project" />
+    <orderEntry type="library" name="org.apache.maven:maven-resolver-provider" exported="" level="project" />
   </component>
 </module>

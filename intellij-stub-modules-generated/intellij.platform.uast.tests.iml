@@ -13,5 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.uast" exported="" />
+    <orderEntry type="module" module-name="intellij.java.uast" exported="" />
   </component>
 </module>

@@ -13,5 +13,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="ASM" exported="" level="project" />
+    <orderEntry type="library" name="intellij-coverage" exported="" level="project" />
+    <orderEntry type="library" name="intellij-test-discovery" exported="" level="project" />
+    <orderEntry type="library" name="Trove4j" exported="" level="project" />
   </component>
 </module>

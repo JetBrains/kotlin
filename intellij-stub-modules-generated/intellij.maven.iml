@@ -14,5 +14,21 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="module" module-name="intellij.maven.server" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.execution" exported="" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.ui" exported="" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" exported="" />
+    <orderEntry type="library" name="JUnit4" exported="" level="project" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.maven.model" exported="" />
   </component>
 </module>

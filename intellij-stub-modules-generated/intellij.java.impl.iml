@@ -14,5 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.indexing.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.structureView" exported="" />
   </component>
 </module>

@@ -13,5 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Slf4j" exported="" level="project" />
+    <orderEntry type="library" name="Gradle" exported="" level="project" />
   </component>
 </module>

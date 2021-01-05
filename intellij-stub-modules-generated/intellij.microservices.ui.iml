@@ -14,5 +14,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JUnit4" exported="" level="project" />
   </component>
 </module>

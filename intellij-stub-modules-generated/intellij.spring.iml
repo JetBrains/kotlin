@@ -13,5 +13,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.jam" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.java.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.ui" exported="" />
+    <orderEntry type="module" module-name="intellij.properties.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.uast" exported="" />
+    <orderEntry type="module" module-name="intellij.java" exported="" />
   </component>
 </module>

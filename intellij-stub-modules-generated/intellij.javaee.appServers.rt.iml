@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.rt" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.agent.rt" exported="" />
   </component>
 </module>

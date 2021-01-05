@@ -14,5 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.core" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.diff" exported="" />
   </component>
 </module>

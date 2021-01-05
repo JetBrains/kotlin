@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.css" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates" exported="" />
+    <orderEntry type="module" module-name="intellij.css.analysis" exported="" />
+    <orderEntry type="module" module-name="intellij.css.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.duplicatesDetector" exported="" />
   </component>
 </module>

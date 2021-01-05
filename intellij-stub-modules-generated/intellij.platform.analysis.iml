@@ -15,5 +15,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.editor" exported="" />
   </component>
 </module>

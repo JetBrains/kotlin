@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates.analysis" exported="" />
   </component>
 </module>

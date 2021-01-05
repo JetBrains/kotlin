@@ -15,5 +15,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.regexp" exported="" />
   </component>
 </module>
