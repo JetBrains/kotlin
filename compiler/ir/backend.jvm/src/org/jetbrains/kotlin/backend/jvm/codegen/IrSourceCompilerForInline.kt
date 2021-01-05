@@ -167,5 +167,4 @@ private tailrec fun IrDeclaration.isInlineOrInsideInline(): Boolean {
     return parent.isInlineOrInsideInline()
 }
 
-// TODO generate better labels; this is unique (includes the object's address), but not very descriptive
-internal fun IrLoop.nonLocalReturnLabel(forBreak: Boolean): String = "$this\$${if (forBreak) "break" else "continue"}"
+internal fun IrLoop.nonLocalReturnLabel(forBreak: Boolean): String = "${label!!}\$${if (forBreak) "break" else "continue"}"
