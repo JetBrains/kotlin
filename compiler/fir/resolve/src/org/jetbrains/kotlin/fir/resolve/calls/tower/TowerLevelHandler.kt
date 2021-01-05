@@ -66,7 +66,7 @@ internal class TowerLevelHandler {
 }
 
 private class TowerScopeLevelProcessor(
-    val callInfo: CallInfo,
+    override val callInfo: CallInfo,
     val explicitReceiverKind: ExplicitReceiverKind,
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,

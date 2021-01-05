@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.isInner
+import org.jetbrains.kotlin.fir.declarations.isPrimaryConstructor
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
@@ -51,6 +53,8 @@ abstract class TowerScopeLevel {
             scope: FirScope,
             builtInExtensionFunctionReceiverValue: ReceiverValue? = null
         )
+
+        val callInfo: CallInfo
     }
 }
 
@@ -244,7 +248,17 @@ class ScopeTowerLevel(
         processor: TowerScopeLevelProcessor<T>
     ) {
         val candidateReceiverTypeRef = candidate.fir.receiverTypeRef
-        val receiverExpected = extensionsOnly || extensionReceiver != null
+        val containingDeclaration = processor.callInfo.containingDeclarations.lastOrNull()
+        var extReceiver = extensionReceiver
+        // Inside a primary constructor, do not use `this` as an extension receiver,
+        // unless the candidate is a constructor call (to other classes of course), which needs a dispatch receiver.
+        if (extReceiver is ImplicitDispatchReceiverValue &&
+            containingDeclaration?.isPrimaryConstructor == true &&
+            candidate !is FirConstructorSymbol
+        ) {
+            extReceiver = null
+        }
+        val receiverExpected = extensionsOnly || extReceiver != null
         if (candidateReceiverTypeRef == null == receiverExpected) return
         val dispatchReceiverValue = dispatchReceiverValue(candidate)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
