@@ -26,10 +26,6 @@ interface TransformationInfo {
 
     val nameGenerator: NameGenerator
 
-    val wasAlreadyRegenerated: Boolean
-        get() = false
-
-
     fun shouldRegenerate(sameModule: Boolean): Boolean
 
     fun canRemoveAfterTransformation(): Boolean
@@ -86,9 +82,6 @@ class AnonymousObjectTransformationInfo internal constructor(
 
     lateinit var capturedLambdasToInline: Map<String, LambdaInfo>
 
-    override val wasAlreadyRegenerated: Boolean
-        get() = alreadyRegenerated
-
     constructor(
         ownerInternalName: String,
         needReification: Boolean,
@@ -97,9 +90,14 @@ class AnonymousObjectTransformationInfo internal constructor(
         nameGenerator: NameGenerator
     ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
 
-    override fun shouldRegenerate(sameModule: Boolean): Boolean = !alreadyRegenerated &&
-            (!sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated ||
-                    functionalArguments.values.any { it != NonInlineableArgumentForInlineableParameterCalledInSuspend })
+    // TODO: unconditionally regenerating an object if it has previously been regenerated is a hack that works around
+    //   the fact that TypeRemapper cannot differentiate between different references to the same object. See the test
+    //   boxInline/anonymousObject/constructOriginalInRegenerated.kt for an example where a single anonymous object
+    //   is referenced twice with otherwise different `shouldRegenerate` results and the inliner gets confused, trying
+    //   to map the inner reference to the outer regenerated type and producing an infinite recursion.
+    override fun shouldRegenerate(sameModule: Boolean): Boolean = alreadyRegenerated ||
+            !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated ||
+                    functionalArguments.values.any { it != NonInlineableArgumentForInlineableParameterCalledInSuspend }
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda

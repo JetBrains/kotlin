@@ -102,6 +102,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTest("compiler/testData/codegen/boxInline/anonymousObject/changingReturnType.kt");
         }
 
+        @TestMetadata("constructOriginalInRegenerated.kt")
+        public void testConstructOriginalInRegenerated() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/constructOriginalInRegenerated.kt");
+        }
+
         @TestMetadata("constructorVisibility.kt")
         public void testConstructorVisibility() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/constructorVisibility.kt");
