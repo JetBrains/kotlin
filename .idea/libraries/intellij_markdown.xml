@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="intellij-markdown" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains:markdown:0.1.41" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/markdown/0.1.41/markdown-0.1.41.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
