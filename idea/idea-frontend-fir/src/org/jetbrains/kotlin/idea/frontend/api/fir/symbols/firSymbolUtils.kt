@@ -39,6 +39,7 @@ internal fun Visibility?.getSymbolVisibility(): KtSymbolVisibility = when (this)
     Visibilities.Public -> KtSymbolVisibility.PUBLIC
     Visibilities.Protected -> KtSymbolVisibility.PROTECTED
     Visibilities.Private -> KtSymbolVisibility.PRIVATE
+    Visibilities.PrivateToThis -> KtSymbolVisibility.PRIVATE_TO_THIS
     Visibilities.Internal -> KtSymbolVisibility.INTERNAL
     Visibilities.Local -> KtSymbolVisibility.LOCAL
     Visibilities.Unknown -> KtSymbolVisibility.UNKNOWN
