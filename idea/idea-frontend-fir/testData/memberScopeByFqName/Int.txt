@@ -1175,6 +1175,10 @@ KtFirClassOrObjectSymbol:
   classIdIfNonLocal: kotlin/Int.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: Companion
