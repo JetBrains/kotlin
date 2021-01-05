@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolP
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 internal class KtFirTypeParameterSymbol(
     fir: FirTypeParameter,
@@ -33,6 +34,9 @@ internal class KtFirTypeParameterSymbol(
     override val upperBounds: List<KtType> by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
         fir.bounds.map { type -> builder.buildKtType(type) }
     }
+
+    override val variance: Variance get() = firRef.withFir { it.variance }
+    override val isReified: Boolean get() = firRef.withFir { it.isReified }
 
     override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
