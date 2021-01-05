@@ -17,5 +17,4 @@ sealed class KtCommonSymbolModality : KtSymbolModality() {
     object FINAL : KtCommonSymbolModality()
     object ABSTRACT : KtCommonSymbolModality()
     object OPEN : KtCommonSymbolModality()
-    object UNKNOWN : KtCommonSymbolModality()
 }
