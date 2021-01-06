@@ -142,7 +142,7 @@ private fun KtSymbolModality.toDescriptorModality(): Modality =
     }
 
 private fun KtClassKind.toDescriptorKlassKind(): ClassKind =
-    when(this) {
+    when (this) {
         KtClassKind.CLASS -> ClassKind.CLASS
         KtClassKind.ENUM_CLASS -> ClassKind.ENUM_CLASS
         KtClassKind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
@@ -190,8 +190,18 @@ class KtSymbolBasedClassDescriptor(override val ktSymbol: KtClassOrObjectSymbol)
 
     override fun getOriginal(): ClassDescriptor = this
 
-    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = implementationPlanned()
-    override fun getConstructors(): Collection<ClassConstructorDescriptor> = implementationPlanned()
+    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = ktSymbol.primaryConstructor?.let {
+        KtSymbolBasedConstructorDescriptor(it, this)
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getConstructors(): Collection<ClassConstructorDescriptor> = buildList {
+        ktSymbol.primaryConstructor?.let { add(KtSymbolBasedConstructorDescriptor(it, this@KtSymbolBasedClassDescriptor)) }
+        ktSymbol.secondaryConstructors.forEach {
+            add(KtSymbolBasedConstructorDescriptor(it, this@KtSymbolBasedClassDescriptor))
+        }
+    }
+
     override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = implementationPostponed()
@@ -262,7 +272,6 @@ abstract class KtSymbolBasedFunctionLikeDescriptor() :
     }
 
 
-
     override fun getModality(): Modality {
         TODO("Not yet implemented")
     }
@@ -331,11 +340,31 @@ class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol) :
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
 }
 
-class KtSymbolBasedConstructorDescriptor(override val ktSymbol: KtConstructorSymbol) : KtSymbolBasedFunctionLikeDescriptor() {
+class KtSymbolBasedConstructorDescriptor(
+    override val ktSymbol: KtConstructorSymbol,
+    private val ktSBClassDescriptor: KtSymbolBasedClassDescriptor
+) : KtSymbolBasedFunctionLikeDescriptor(),
+    ClassConstructorDescriptor {
     override fun getName(): Name = Name.special("<init>")
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
+
+    override fun getConstructedClass(): ClassDescriptor = ktSBClassDescriptor
+    override fun isPrimary(): Boolean = ktSymbol.isPrimary
+
+    override fun getReturnType(): KotlinType = ktSBClassDescriptor.defaultType
+
+    override fun getOriginal(): ClassConstructorDescriptor = this
+    override fun getContainingDeclaration(): ClassDescriptor = ktSBClassDescriptor
+
+    override fun copy(
+        newOwner: DeclarationDescriptor,
+        modality: Modality,
+        visibility: DescriptorVisibility,
+        kind: CallableMemberDescriptor.Kind,
+        copyOverrides: Boolean
+    ): ClassConstructorDescriptor = noImplementation()
 }
 
 class KtSymbolBasedAnonymousDescriptor(override val ktSymbol: KtAnonymousFunctionSymbol) : KtSymbolBasedFunctionLikeDescriptor() {
