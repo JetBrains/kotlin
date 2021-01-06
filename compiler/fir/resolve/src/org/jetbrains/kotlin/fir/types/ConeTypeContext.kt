@@ -402,7 +402,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return false
     }
 
-    override fun SimpleTypeMarker.isStubType(): Boolean {
+    override fun KotlinTypeMarker.isStubType(): Boolean {
         return this is StubTypeMarker
     }
 

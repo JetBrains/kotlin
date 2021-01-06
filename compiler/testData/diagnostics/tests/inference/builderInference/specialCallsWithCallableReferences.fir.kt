@@ -102,7 +102,7 @@ fun poll11(flag: Boolean): Flow<String> {
 fun poll12(flag: Boolean): Flow<String> {
     return flow {
         val inv = if (flag) { ::bar3 } else { ::foo3 }
-        inv()
+        <!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -256,7 +256,7 @@ fun poll41(): Flow<String> {
 fun poll42(): Flow<String> {
     return flow {
         val inv = try { ::bar3 } finally { ::foo3 }
-        inv()
+        <!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -305,7 +305,7 @@ fun poll51(): Flow<String> {
 fun poll52(): Flow<String> {
     return flow {
         val inv = try { ::bar3 } catch (e: Exception) { ::foo3 } finally { ::foo3 }
-        inv()
+        <!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -403,7 +403,7 @@ fun poll71(): Flow<String> {
 fun poll72(): Flow<String> {
     return flow {
         val inv = ::bar3!!
-        inv()
+        <!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 

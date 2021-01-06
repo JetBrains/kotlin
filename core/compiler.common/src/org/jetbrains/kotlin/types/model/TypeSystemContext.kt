@@ -267,7 +267,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
         return null
     }
 
-    fun SimpleTypeMarker.isStubType(): Boolean
+    fun KotlinTypeMarker.isStubType(): Boolean
 
     fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker
 
