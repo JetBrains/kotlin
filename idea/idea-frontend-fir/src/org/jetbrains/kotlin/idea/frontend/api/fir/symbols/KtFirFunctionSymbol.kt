@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFu
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableId
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
@@ -66,9 +67,10 @@ internal class KtFirFunctionSymbol(
     override val isExternal: Boolean get() = firRef.withFir { it.isExternal }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val callableIdIfNonLocal: FqName?
+    override val callableIdIfNonLocal: KtCallableId?
         get() = firRef.withFir { fir ->
-            fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
+            val callableId = fir.symbol.callableId.takeUnless { fir.isLocal } ?: return@withFir null
+            KtCallableId(callableId.packageName, callableId.className, callableId.callableName)
         }
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->
@@ -92,7 +94,7 @@ internal class KtFirFunctionSymbol(
             )
             KtSymbolKind.NON_PROPERTY_PARAMETER -> error("KtFunction could not be a parameter")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
-                callableIdIfNonLocal?.asString() ?: name.asString()
+                callableIdIfNonLocal?.asFqNameForDebugInfo()?.asString() ?: name.asString()
             )
         }
     }

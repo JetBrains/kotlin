@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbolWithKind {
     abstract val valueParameters: List<KtParameterSymbol>
@@ -22,6 +23,24 @@ abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol(), KtPossibleExt
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
 }
 
+data class KtCallableId(
+    val packageName: FqName,
+    val className: FqName?,
+    val callableName: Name
+) {
+    var classId: ClassId? = null
+        get() {
+            if (field == null && className != null) {
+                field = ClassId(packageName, className, false)
+            }
+            return field
+        }
+
+    fun asFqNameForDebugInfo(): FqName {
+        return classId?.asSingleFqName()?.child(callableName) ?: packageName.child(callableName)
+    }
+}
+
 abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtNamedSymbol,
     KtPossibleExtensionSymbol,
@@ -30,7 +49,7 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol {
-    abstract val callableIdIfNonLocal: FqName?
+    abstract val callableIdIfNonLocal: KtCallableId?
 
     abstract val isSuspend: Boolean
     abstract val isOperator: Boolean

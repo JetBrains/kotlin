@@ -49,7 +49,7 @@ object DebugSymbolRenderer {
         is KtSymbol -> {
             val symbolTag = when (value) {
                 is KtClassLikeSymbol -> renderValue(value.classIdIfNonLocal ?: "<local>/${value.name}")
-                is KtFunctionSymbol -> renderValue(value.callableIdIfNonLocal ?: "<local>/${value.name}")
+                is KtFunctionSymbol -> renderValue(value.callableIdIfNonLocal?.asFqNameForDebugInfo() ?: "<local>/${value.name}")
                 is KtConstructorSymbol -> "<constructor>"
                 is KtNamedSymbol -> renderValue(value.name)
                 is KtPropertyGetterSymbol -> "<getter>"
