@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 object A {
     class B
     fun foo() = 1
