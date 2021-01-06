@@ -203,6 +203,8 @@ where possible options include:
   -J<option>                 Pass an option directly to JVM
   -no-stdlib                 Don't include Kotlin standard library into classpath
   -no-reflect                Don't include Kotlin reflection implementation into classpath
+  -compiler-path             Kotlin compiler classpath for compiling script or expression or running REPL 
+                             If not specified, try to find the compiler in the environment
   -X<flag>[=value]           Pass -X argument to the compiler
   -version                   Display Kotlin version
   -help (-h)                 Print a synopsis of options
