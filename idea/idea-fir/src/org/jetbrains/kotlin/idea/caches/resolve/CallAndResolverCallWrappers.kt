@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.wrappers.KtSymbolBasedFunctionDescriptor
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtFunctionCall
@@ -87,7 +88,7 @@ class FirWrapperResolvedCall(val firWrapperCall: FirWrapperCall) : ResolvedCall<
     }
 
     override fun getResultingDescriptor(): CallableDescriptor {
-        return FirWrapperSimpleFunctionDescriptor(((ktCall as KtFunctionCall).targetFunction as KtSuccessCallTarget).symbol as KtFunctionSymbol)
+        return KtSymbolBasedFunctionDescriptor(((ktCall as KtFunctionCall).targetFunction as KtSuccessCallTarget).symbol as KtFunctionSymbol)
     }
 
     override fun getExtensionReceiver(): ReceiverValue? {
