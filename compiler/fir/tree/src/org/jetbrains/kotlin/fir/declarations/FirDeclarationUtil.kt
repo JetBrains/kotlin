@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
@@ -110,6 +111,9 @@ val FirClass<*>.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSaf
 
 fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
     declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
+
+fun FirClass<*>.getSecondaryConstructors(): Collection<FirConstructor> =
+    declarations.mapNotNull { declaration -> declaration.safeAs<FirConstructor>()?.takeIf { !it.isPrimary } }
 
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
