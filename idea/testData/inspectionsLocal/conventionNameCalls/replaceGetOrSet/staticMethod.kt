@@ -1,4 +1,4 @@
-// PROBLEM: none
-fun foo() {
-    JavaClass.<caret>get(JavaClass())
-}
+//// PROBLEM: none
+//fun foo() {
+//    JavaClass.<caret>get(JavaClass())
+//}
