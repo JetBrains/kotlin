@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -293,9 +295,6 @@ abstract class KtSymbolBasedFunctionLikeDescriptor() :
     }
 
 
-    override fun isOperator(): Boolean {
-        TODO("Not yet implemented")
-    }
 
     override fun isInfix(): Boolean {
         TODO("Not yet implemented")
@@ -338,6 +337,23 @@ abstract class KtSymbolBasedFunctionLikeDescriptor() :
 class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol) : KtSymbolBasedFunctionLikeDescriptor(), KtSymbolBasedNamed {
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
+    override fun getContainingDeclaration(): DeclarationDescriptor {
+        val callableId = ktSymbol.callableIdIfNonLocal ?: return ContainerStubForLocalFunctions
+        val ktElement = ktSymbol.psi as? KtElement ?: containerDeclarationImplementationPostponed()
+
+        if (callableId.classId != null) {
+            analyze(ktElement) {
+                val ktClassOrObjectSymbol = callableId.classId!!.getCorrespondingToplevelClassOrObjectSymbol()
+                    ?: return ContainerStubForLocalFunctions // TODO: it is entirely incorrect
+                return KtSymbolBasedClassDescriptor(ktClassOrObjectSymbol)
+            }
+        } else {
+            return KtSymbolBasedPackageFragmentDescriptor(callableId.packageName)
+        }
+    }
+
+    override fun isOperator(): Boolean = ktSymbol.isOperator
+
 }
 
 class KtSymbolBasedConstructorDescriptor(
@@ -354,6 +370,8 @@ class KtSymbolBasedConstructorDescriptor(
     override fun isPrimary(): Boolean = ktSymbol.isPrimary
 
     override fun getReturnType(): KotlinType = ktSBClassDescriptor.defaultType
+
+    override fun isOperator(): Boolean = false
 
     override fun getOriginal(): ClassConstructorDescriptor = this
     override fun getContainingDeclaration(): ClassDescriptor = ktSBClassDescriptor
@@ -372,6 +390,8 @@ class KtSymbolBasedAnonymousDescriptor(override val ktSymbol: KtAnonymousFunctio
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
+
+    override fun isOperator(): Boolean = false
 }
 
 private fun CallableDescriptor.getDispatchReceiverParameter(ktSymbol: KtPossibleMemberSymbol): ReceiverParameterDescriptor? {
@@ -401,4 +421,44 @@ private class KtSymbolStubDispatchReceiverParameterDescriptor(val receiverType: 
 
     override fun copy(newOwner: DeclarationDescriptor): ReceiverParameterDescriptor =
         noImplementation("Copy should be called from IDE code")
+}
+
+private object ContainerStubForLocalFunctions : DeclarationDescriptor {
+    override fun getName(): Name = Name.special("<stub for local classes for KtSymolBasedDescriptors")
+
+    override fun getOriginal(): DeclarationDescriptor = this
+
+    override fun getContainingDeclaration(): DeclarationDescriptor? = null
+
+    override val annotations: Annotations
+        get() = Annotations.EMPTY
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R =
+        noImplementation("IDE shouldn't use visitor on descriptors")
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) =
+        noImplementation("IDE shouldn't use visitor on descriptors")
+}
+
+class KtSymbolBasedPackageFragmentDescriptor(override val fqName: FqName): PackageFragmentDescriptor {
+
+    override fun getName(): Name = fqName.shortName()
+
+    override fun getOriginal(): DeclarationDescriptorWithSource = this
+
+
+    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
+
+    override val annotations: Annotations
+        get() = Annotations.EMPTY
+
+    override fun getContainingDeclaration(): ModuleDescriptor = implementationPostponed("")
+
+    override fun getMemberScope(): MemberScope = noImplementation("")
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R =
+        noImplementation("IDE shouldn't use visitor on descriptors")
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) =
+        noImplementation("IDE shouldn't use visitor on descriptors")
 }
