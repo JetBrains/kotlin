@@ -91,8 +91,12 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 firFile.declarations
             }
             val original = originalDeclaration
+
+            /*
+            It is possible that we will not be able to find needed declaration here when the code is invalid,
+            e.g, we have two conflicting declarations with the same name and we are searching in the wrong one
+             */
             declarations?.firstOrNull { it.psi == this || it.psi == original }
-                ?: error("Cannot find corresponding fir for\n${this.getElementTextInContext()}")
         }
         this is KtConstructor<*> -> {
             val containingClass = containingClassOrObject
