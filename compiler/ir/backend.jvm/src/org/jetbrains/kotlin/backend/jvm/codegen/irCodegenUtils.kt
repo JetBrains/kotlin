@@ -180,11 +180,7 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
         return Opcodes.ACC_PRIVATE
     }
 
-    if (this is IrFunction && (isReifiable() || isBridge())) {
-        return Opcodes.ACC_PUBLIC
-    }
-
-    if (isEffectivelyInlineOnly()) {
+    if (isInlineOnlyPrivateInBytecode() || isInlineOnlyPropertyAccessor()) {
         return Opcodes.ACC_PRIVATE
     }
 
