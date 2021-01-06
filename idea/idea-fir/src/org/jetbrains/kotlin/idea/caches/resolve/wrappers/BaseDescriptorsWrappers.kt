@@ -8,16 +8,20 @@ package org.jetbrains.kotlin.idea.caches.resolve.wrappers
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.descriptors.impl.AbstractReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -50,14 +54,19 @@ internal fun containerDeclarationImplementationPostponed(): Nothing =
 
 internal fun typeAliasImplementationPlanned(): Nothing = implementationPlanned("It is easy to implement, but it isn't first priority")
 
-abstract class KtSymbolBasedDeclarationDescriptor<T : KtNamedSymbol>(val ktSymbol: T) : DeclarationDescriptorWithSource {
+interface KtSymbolBasedNamed : Named {
+    val ktSymbol: KtNamedSymbol
+    override fun getName(): Name = ktSymbol.name
+}
+
+abstract class KtSymbolBasedDeclarationDescriptor : DeclarationDescriptorWithSource {
+    abstract val ktSymbol: KtSymbol
     override val annotations: Annotations
         get() {
             val ktAnnotations = (ktSymbol as? KtAnnotatedSymbol)?.annotations ?: return Annotations.EMPTY
             return Annotations.create(ktAnnotations.map(::KtSymbolBasedAnnotationDescriptor))
         }
 
-    override fun getName(): Name = ktSymbol.name
     override fun getSource(): SourceElement = ktSymbol.psi.safeAs<KtPureElement>().toSourceElement()
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R = noImplementation()
@@ -142,8 +151,8 @@ private fun KtClassKind.toDescriptorKlassKind(): ClassKind =
         KtClassKind.INTERFACE -> ClassKind.INTERFACE
     }
 
-class KtSymbolBasedClassDescriptor(ktSymbol: KtClassOrObjectSymbol) :
-    KtSymbolBasedDeclarationDescriptor<KtClassOrObjectSymbol>(ktSymbol), ClassDescriptor {
+class KtSymbolBasedClassDescriptor(override val ktSymbol: KtClassOrObjectSymbol) :
+    KtSymbolBasedDeclarationDescriptor(), KtSymbolBasedNamed, ClassDescriptor {
 
     override fun isInner(): Boolean = ktSymbol.isInner
     override fun isCompanionObject(): Boolean = ktSymbol.isCompanion
@@ -176,11 +185,13 @@ class KtSymbolBasedClassDescriptor(ktSymbol: KtClassOrObjectSymbol) :
         )
     }
 
+    override fun getThisAsReceiverParameter(): ReceiverParameterDescriptor =
+        ReceiverParameterDescriptorImpl(this, ImplicitClassReceiver(this), Annotations.EMPTY)
+
     override fun getOriginal(): ClassDescriptor = this
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = implementationPlanned()
     override fun getConstructors(): Collection<ClassConstructorDescriptor> = implementationPlanned()
-    override fun getThisAsReceiverParameter(): ReceiverParameterDescriptor = implementationPlanned()
     override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = implementationPostponed()
@@ -196,8 +207,8 @@ class KtSymbolBasedClassDescriptor(ktSymbol: KtClassOrObjectSymbol) :
 }
 
 class KtSymbolBasedTypeParameterDescriptor(
-    ktSymbol: KtTypeParameterSymbol
-) : KtSymbolBasedDeclarationDescriptor<KtTypeParameterSymbol>(ktSymbol), TypeParameterDescriptor {
+    override val ktSymbol: KtTypeParameterSymbol
+) : KtSymbolBasedDeclarationDescriptor(), KtSymbolBasedNamed, TypeParameterDescriptor {
     override fun isReified(): Boolean = ktSymbol.isReified
     override fun getVariance(): Variance = ktSymbol.variance
 
@@ -219,4 +230,146 @@ class KtSymbolBasedTypeParameterDescriptor(
 
     override fun isCapturedFromOuterDeclaration(): Boolean = noImplementation()
     override fun getStorageManager(): StorageManager = noImplementation()
+}
+
+abstract class KtSymbolBasedFunctionLikeDescriptor() :
+    KtSymbolBasedDeclarationDescriptor(), FunctionDescriptor {
+    abstract override val ktSymbol: KtFunctionLikeSymbol
+
+
+    override fun getVisibility(): DescriptorVisibility {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTypeParameters(): List<TypeParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getReturnType(): KotlinType? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getValueParameters(): MutableList<ValueParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun hasStableParameterNames(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun hasSynthesizedParameterNames(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+
+
+    override fun getModality(): Modality {
+        TODO("Not yet implemented")
+    }
+
+    override fun isExpect(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isActual(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isExternal(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getKind(): CallableMemberDescriptor.Kind {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun isOperator(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isInfix(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isInline(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isTailrec(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isSuspend(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
+
+    override fun getOriginal(): FunctionDescriptor = this
+    override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
+
+    override fun getOverriddenDescriptors(): MutableCollection<out FunctionDescriptor> = implementationPostponed()
+    override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean = implementationPostponed()
+
+    override fun getInitialSignatureDescriptor(): FunctionDescriptor? = noImplementation()
+    override fun isHiddenToOvercomeSignatureClash(): Boolean = noImplementation()
+
+    override fun setOverriddenDescriptors(overriddenDescriptors: MutableCollection<out CallableMemberDescriptor>) = noImplementation()
+    override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out FunctionDescriptor> = noImplementation()
+    override fun copy(
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
+    ): FunctionDescriptor = noImplementation()
+}
+
+class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol) : KtSymbolBasedFunctionLikeDescriptor(), KtSymbolBasedNamed {
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
+}
+
+class KtSymbolBasedConstructorDescriptor(override val ktSymbol: KtConstructorSymbol) : KtSymbolBasedFunctionLikeDescriptor() {
+    override fun getName(): Name = Name.special("<init>")
+
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
+}
+
+class KtSymbolBasedAnonymousDescriptor(override val ktSymbol: KtAnonymousFunctionSymbol) : KtSymbolBasedFunctionLikeDescriptor() {
+    override fun getName(): Name = SpecialNames.ANONYMOUS_FUNCTION
+
+    override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
+    override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
+}
+
+private fun CallableDescriptor.getDispatchReceiverParameter(ktSymbol: KtPossibleMemberSymbol): ReceiverParameterDescriptor? {
+    val ktDispatchTypeAndAnnotations = ktSymbol.dispatchType ?: return null
+    return KtSymbolStubDispatchReceiverParameterDescriptor(ktDispatchTypeAndAnnotations.type)
+}
+
+private fun CallableDescriptor.getExtensionReceiverParameter(ktSymbol: KtPossibleExtensionSymbol): ReceiverParameterDescriptor? {
+    val receiverTypeAndAnnotation = ktSymbol.receiverType ?: return null
+    val receiverValue = ExtensionReceiver(this, receiverTypeAndAnnotation.type.toKotlinType(), null)
+    return ReceiverParameterDescriptorImpl(this, receiverValue, receiverTypeAndAnnotation.getDescriptorsAnnotations())
+}
+
+private class KtSymbolBasedReceiverValue(val ktType: KtType) : ReceiverValue {
+    override fun getType(): KotlinType = ktType.toKotlinType()
+
+    override fun replaceType(newType: KotlinType): ReceiverValue = noImplementation("Should be called from IDE")
+    override fun getOriginal(): ReceiverValue = this
+}
+
+// Don't think that annotation is important here, because containingDeclaration used way more then annotation and they are not supported here
+private class KtSymbolStubDispatchReceiverParameterDescriptor(val receiverType: KtType) :
+    AbstractReceiverParameterDescriptor(Annotations.EMPTY) {
+    override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
+
+    override fun getValue(): ReceiverValue = KtSymbolBasedReceiverValue(receiverType)
+
+    override fun copy(newOwner: DeclarationDescriptor): ReceiverParameterDescriptor =
+        noImplementation("Copy should be called from IDE code")
 }

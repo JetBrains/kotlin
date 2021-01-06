@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class KtSymbolBasedAbstractTypeConstructor<T> internal constructor(
     val ktSBDescriptor: T
-) : TypeConstructor where T : KtSymbolBasedDeclarationDescriptor<*>, T : ClassifierDescriptor {
+) : TypeConstructor where T : KtSymbolBasedDeclarationDescriptor, T : ClassifierDescriptor {
     override fun getDeclarationDescriptor(): ClassifierDescriptor = ktSBDescriptor
 
     // TODO: captured types
