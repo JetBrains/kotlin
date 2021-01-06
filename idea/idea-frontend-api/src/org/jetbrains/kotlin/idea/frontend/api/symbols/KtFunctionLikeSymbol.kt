@@ -16,7 +16,7 @@ abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbo
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionLikeSymbol>
 }
 
-abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
+abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol(), KtPossibleExtensionSymbol {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
 
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
@@ -43,7 +43,7 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }
 
-abstract class KtConstructorSymbol : KtFunctionLikeSymbol(), KtAnnotatedSymbol, KtSymbolWithVisibility {
+abstract class KtConstructorSymbol : KtFunctionLikeSymbol(), KtPossibleMemberSymbol, KtAnnotatedSymbol, KtSymbolWithVisibility {
     abstract val isPrimary: Boolean
     abstract val containingClassIdIfNonLocal: ClassId?
 

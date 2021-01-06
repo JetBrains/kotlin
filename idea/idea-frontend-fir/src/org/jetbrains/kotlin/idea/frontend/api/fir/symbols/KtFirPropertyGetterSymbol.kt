@@ -54,6 +54,16 @@ internal class KtFirPropertyGetterSymbol(
         firRef.toAnnotationsList()
     }
 
+    override val dispatchType: KtTypeAndAnnotations? by cached {
+        firRef.dispatchReceiverTypeAndAnnotations(builder)
+    }
+
+    override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
+
+    override val receiverType: KtTypeAndAnnotations? by cached {
+        firRef.receiverTypeAndAnnotations(builder)
+    }
+
     override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         TODO("Creating pointers for getters from library is not supported yet")
