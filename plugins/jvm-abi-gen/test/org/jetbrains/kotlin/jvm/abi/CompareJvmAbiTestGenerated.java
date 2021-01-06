@@ -30,6 +30,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
     }
 
+    @TestMetadata("anonymousObjects")
+    public void testAnonymousObjects() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/anonymousObjects/");
+    }
+
     @TestMetadata("classFlags")
     public void testClassFlags() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/classFlags/");
@@ -50,6 +55,31 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
         runTest("plugins/jvm-abi-gen/testData/compare/constant/");
     }
 
+    @TestMetadata("declarationOrder")
+    public void testDeclarationOrder() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrder/");
+    }
+
+    @TestMetadata("declarationOrderInline")
+    public void testDeclarationOrderInline() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInline/");
+    }
+
+    @TestMetadata("declarationOrderInlineCall")
+    public void testDeclarationOrderInlineCall() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineCall/");
+    }
+
+    @TestMetadata("declarationOrderInlineNonInline")
+    public void testDeclarationOrderInlineNonInline() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineNonInline/");
+    }
+
+    @TestMetadata("declarationOrderPrivateInline")
+    public void testDeclarationOrderPrivateInline() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
+    }
+
     @TestMetadata("functionBody")
     public void testFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");
@@ -58,6 +88,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("inlineFunctionBody")
     public void testInlineFunctionBody() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
+    }
+
+    @TestMetadata("lambdas")
+    public void testLambdas() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/lambdas/");
     }
 
     @TestMetadata("parameterName")
@@ -78,6 +113,11 @@ public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
     @TestMetadata("superClass")
     public void testSuperClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compare/superClass/");
+    }
+
+    @TestMetadata("syntheticAccessors")
+    public void testSyntheticAccessors() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compare/syntheticAccessors/");
     }
 
     @TestMetadata("topLevelPrivateMembers")
