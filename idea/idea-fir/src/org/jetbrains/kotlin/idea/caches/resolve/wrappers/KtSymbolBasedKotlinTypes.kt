@@ -7,18 +7,25 @@ package org.jetbrains.kotlin.idea.caches.resolve.wrappers
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.idea.frontend.api.KtStarProjectionTypeArgument
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentVariance
+import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeAliasSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
+import org.jetbrains.kotlin.idea.frontend.api.types.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class KtSymbolBasedAbstractTypeConstructor<T> internal constructor(
     val ktSBDescriptor: T
@@ -36,54 +43,93 @@ abstract class KtSymbolBasedAbstractTypeConstructor<T> internal constructor(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = noImplementation("ktSBDescriptor = $ktSBDescriptor")
-
 }
 
 class KtSymbolBasedClassTypeConstructor(ktSBDescriptor: KtSymbolBasedClassDescriptor) :
     KtSymbolBasedAbstractTypeConstructor<KtSymbolBasedClassDescriptor>(ktSBDescriptor) {
     override fun getParameters(): List<TypeParameterDescriptor> =
-        ktSBDescriptor.ktSymbol.typeParameters.map { KtSymbolBasedTypeParameterDescriptor(it, ktSBDescriptor) }
+        ktSBDescriptor.ktSymbol.typeParameters.map(::KtSymbolBasedTypeParameterDescriptor)
 
-    override fun getSupertypes(): Collection<KotlinType> {
-        TODO("Not yet implemented")
-    }
+    override fun getSupertypes(): Collection<KotlinType> = ktSBDescriptor.ktSymbol.superTypes.map(KtTypeAndAnnotations::toKotlinType)
 }
 
 class KtSymbolBasedTypeParameterTypeConstructor(ktSBDescriptor: KtSymbolBasedTypeParameterDescriptor) :
     KtSymbolBasedAbstractTypeConstructor<KtSymbolBasedTypeParameterDescriptor>(ktSBDescriptor) {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 
-    override fun getSupertypes(): Collection<KotlinType> {
-        ktSBDescriptor.ktSymbol.upperBounds
-        TODO("Not yet implemented")
-    }
+    override fun getSupertypes(): Collection<KotlinType> = ktSBDescriptor.ktSymbol.upperBounds.map(KtType::toKotlinType)
 }
 
-class KtSymbolBasedTypeParameterDescriptor(
-    ktSymbol: KtTypeParameterSymbol,
-    val containingDeclaration: KtSymbolBasedDeclarationDescriptor<*>
-) : KtSymbolBasedDeclarationDescriptor<KtTypeParameterSymbol>(ktSymbol), TypeParameterDescriptor {
-    override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
-    override fun isReified(): Boolean = ktSymbol.isReified
-    override fun getVariance(): Variance = ktSymbol.variance
+// This class is not suppose to be used as "is instance of" because scopes could be wrapped into other scopes
+// so generally it isn't a good idea
+internal class MemberScopeForKtSymbolBasedDescriptors(lazyDebugInfo: () -> String) : MemberScope {
+    private val additionalInfo by lazy(lazyDebugInfo)
 
-    override fun getTypeConstructor(): TypeConstructor {
-        TODO("Not yet implemented")
-    }
+    private fun noImplementation(): Nothing =
+        error("Scope for descriptors based on KtSymbols should not be used, additional info: $additionalInfo")
 
-    override fun getDefaultType(): SimpleType {
-        TODO("Not yet implemented")
-    }
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = noImplementation()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = noImplementation()
+    override fun getFunctionNames(): Set<Name> = noImplementation()
+    override fun getVariableNames(): Set<Name> = noImplementation()
+    override fun getClassifierNames(): Set<Name> = noImplementation()
+    override fun printScopeStructure(p: Printer): Unit = noImplementation()
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor = noImplementation()
 
-    override fun getUpperBounds(): List<KotlinType> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getOriginal(): TypeParameterDescriptor = this
-
-    // there is no such thing in FIR, and it seems like it isn't really needed for IDE and could be bypassed on client site
-    override fun getIndex(): Int = implementationPostponed()
-
-    override fun isCapturedFromOuterDeclaration(): Boolean = noImplementation()
-    override fun getStorageManager(): StorageManager = noImplementation()
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ): Collection<DeclarationDescriptor> = noImplementation()
 }
+
+fun KtTypeAndAnnotations.getDescriptorsAnnotations(): Annotations =
+    Annotations.create(annotations.map { KtSymbolBasedAnnotationDescriptor(it) })
+
+fun KtTypeAndAnnotations.toKotlinType(): UnwrappedType = type.toKotlinType(getDescriptorsAnnotations())
+
+fun KtTypeArgumentVariance.toVariance(): Variance =
+    when (this) {
+        KtTypeArgumentVariance.COVARIANT -> Variance.OUT_VARIANCE
+        KtTypeArgumentVariance.CONTRAVARIANT -> Variance.IN_VARIANCE
+        KtTypeArgumentVariance.INVARIANT -> Variance.INVARIANT
+    }
+
+fun KtTypeArgument.toTypeProjection(): TypeProjection =
+    when (this) {
+        KtStarProjectionTypeArgument -> StarProjectionForAbsentTypeParameter(DefaultBuiltIns.Instance)
+        is KtTypeArgumentWithVariance -> TypeProjectionImpl(variance.toVariance(), type.toKotlinType())
+    }
+
+fun KtType.toKotlinType(annotations: Annotations = Annotations.EMPTY): UnwrappedType {
+    if (this is KtNonDenotableType) return toKotlinType(annotations)
+
+    val typeConstructor = when (this) {
+        is KtTypeParameterType -> KtSymbolBasedTypeParameterDescriptor(this.symbol).typeConstructor
+        is KtClassType -> when (val classLikeSymbol = classSymbol) {
+            is KtTypeAliasSymbol -> typeAliasImplementationPlanned()
+            is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(classLikeSymbol).typeConstructor
+        }
+        is KtErrorType -> ErrorUtils.createErrorTypeConstructorWithCustomDebugName(error)
+        else -> error("Unexpected subclass: ${this.javaClass}")
+    }
+
+    val ktTypeArguments = this.safeAs<KtClassType>()?.typeArguments ?: emptyList()
+
+    val markedAsNullable = this.safeAs<KtTypeWithNullability>()?.nullability == KtTypeNullability.NULLABLE
+
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        annotations, typeConstructor, ktTypeArguments.map(KtTypeArgument::toTypeProjection), markedAsNullable,
+        MemberScopeForKtSymbolBasedDescriptors { this.asStringForDebugging() }
+    )
+}
+
+fun KtNonDenotableType.toKotlinType(annotations: Annotations = Annotations.EMPTY): UnwrappedType =
+    when (this) {
+        is KtFlexibleType -> KotlinTypeFactory.flexibleType(
+            lowerBound.toKotlinType(annotations) as SimpleType,
+            upperBound.toKotlinType(annotations) as SimpleType
+        )
+        // most likely it isn't correct and intersectTypes(List<UnwrappedType>) should be used,
+        // but I don't think that we will have the real problem with that implementation
+        is KtIntersectionType -> IntersectionTypeConstructor(conjuncts.map { it.toKotlinType() }).createType()
+    }

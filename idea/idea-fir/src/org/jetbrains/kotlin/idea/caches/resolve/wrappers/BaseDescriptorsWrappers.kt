@@ -10,13 +10,16 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -39,7 +42,13 @@ internal fun implementationPlanned(additionalInfo: String): Nothing = TODO("SE_t
  *      there is no "resulting descriptor" and type arguments are passed together with the target function.
  * - equals on descriptors and type constructors. It isn't clear what type of equality we should implement,
  *      will figure that later o real cases.
+ * See the functions below
  */
+
+internal fun containerDeclarationImplementationPostponed(): Nothing =
+    implementationPostponed("It isn't clear what we really need and how to implement it")
+
+internal fun typeAliasImplementationPlanned(): Nothing = implementationPlanned("It is easy to implement, but it isn't first priority")
 
 abstract class KtSymbolBasedDeclarationDescriptor<T : KtNamedSymbol>(val ktSymbol: T) : DeclarationDescriptorWithSource {
     override val annotations: Annotations
@@ -157,29 +166,24 @@ class KtSymbolBasedClassDescriptor(ktSymbol: KtClassOrObjectSymbol) :
     override fun getTypeConstructor(): TypeConstructor = KtSymbolBasedClassTypeConstructor(this)
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
-        ktSymbol.typeParameters.map { KtSymbolBasedTypeParameterDescriptor(it, this) }
+        ktSymbol.typeParameters.map { KtSymbolBasedTypeParameterDescriptor(it) }
 
     override fun getDefaultType(): SimpleType {
-        TODO("Not yet implemented")
-    }
-
-    override fun getConstructors(): Collection<ClassConstructorDescriptor> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getThisAsReceiverParameter(): ReceiverParameterDescriptor {
-        TODO("Not yet implemented")
-    }
-
-    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? {
-        TODO("Not yet implemented")
+        val arguments = TypeUtils.getDefaultTypeProjections(typeConstructor.parameters)
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, typeConstructor, arguments, false,
+            MemberScopeForKtSymbolBasedDescriptors { "ktSymbol = $ktSymbol" }
+        )
     }
 
     override fun getOriginal(): ClassDescriptor = this
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> = implementationPostponed()
+    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = implementationPlanned()
+    override fun getConstructors(): Collection<ClassConstructorDescriptor> = implementationPlanned()
+    override fun getThisAsReceiverParameter(): ReceiverParameterDescriptor = implementationPlanned()
+    override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
 
-    override fun getContainingDeclaration(): DeclarationDescriptor = implementationPlanned()
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = implementationPostponed()
 
     override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope = noImplementation()
     override fun getMemberScope(typeSubstitution: TypeSubstitution): MemberScope = noImplementation()
@@ -191,3 +195,28 @@ class KtSymbolBasedClassDescriptor(ktSymbol: KtClassOrObjectSymbol) :
     override fun getDefaultFunctionTypeForSamInterface(): SimpleType = noImplementation()
 }
 
+class KtSymbolBasedTypeParameterDescriptor(
+    ktSymbol: KtTypeParameterSymbol
+) : KtSymbolBasedDeclarationDescriptor<KtTypeParameterSymbol>(ktSymbol), TypeParameterDescriptor {
+    override fun isReified(): Boolean = ktSymbol.isReified
+    override fun getVariance(): Variance = ktSymbol.variance
+
+    override fun getTypeConstructor(): TypeConstructor = KtSymbolBasedTypeParameterTypeConstructor(this)
+
+    override fun getDefaultType(): SimpleType =
+        KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            MemberScopeForKtSymbolBasedDescriptors { "ktSymbol = $ktSymbol" }
+        )
+
+    override fun getUpperBounds(): List<KotlinType> = ktSymbol.upperBounds.map(KtType::toKotlinType)
+    override fun getOriginal(): TypeParameterDescriptor = this
+
+    override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
+
+    // there is no such thing in FIR, and it seems like it isn't really needed for IDE and could be bypassed on client site
+    override fun getIndex(): Int = implementationPostponed()
+
+    override fun isCapturedFromOuterDeclaration(): Boolean = noImplementation()
+    override fun getStorageManager(): StorageManager = noImplementation()
+}
