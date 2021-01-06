@@ -14,6 +14,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Trove4j" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Trove4j" level="project" />
   </component>
 </module>

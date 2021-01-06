@@ -15,6 +15,15 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.javaee.rt" exported="" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/javax.enterprise.deploy.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.remoteServers.agent.rt" exported="" />
   </component>
 </module>

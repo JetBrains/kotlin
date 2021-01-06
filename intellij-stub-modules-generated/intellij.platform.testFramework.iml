@@ -16,16 +16,16 @@
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
-    <orderEntry type="library" name="JUnit4" exported="" level="project" />
+    <orderEntry type="library" exported="" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
-    <orderEntry type="library" name="Log4J" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Log4J" level="project" />
     <orderEntry type="module" module-name="intellij.java.rt" exported="" />
-    <orderEntry type="library" name="org.codehaus.groovy:groovy" exported="" level="project" />
-    <orderEntry type="module" module-name="intellij.platform.resources" exported="" />
-    <orderEntry type="module" module-name="intellij.xml.dom.impl" exported="" />
-    <orderEntry type="module" module-name="intellij.platform.images" exported="" />
-    <orderEntry type="module" module-name="intellij.regexp" exported="" />
-    <orderEntry type="library" name="jetCheck" exported="" level="project" />
+    <orderEntry type="library" exported="" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.resources" exported="" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" exported="" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.images" exported="" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.regexp" exported="" scope="RUNTIME" />
+    <orderEntry type="library" exported="" name="jetCheck" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testFramework.core" exported="" />
   </component>
 </module>

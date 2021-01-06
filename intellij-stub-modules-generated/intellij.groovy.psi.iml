@@ -13,6 +13,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.codehaus.groovy:groovy" exported="" level="project" />
+    <orderEntry type="library" exported="" name="org.codehaus.groovy:groovy" level="project" />
   </component>
 </module>

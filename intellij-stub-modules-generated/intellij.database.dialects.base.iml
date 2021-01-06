@@ -26,9 +26,9 @@
     <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
     <orderEntry type="module" module-name="intellij.platform.core.impl" exported="" />
-    <orderEntry type="library" name="Guava" exported="" level="project" />
-    <orderEntry type="library" name="Jettison" exported="" level="project" />
-    <orderEntry type="library" name="Trove4j" exported="" level="project" />
-    <orderEntry type="library" name="fastutil-min" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Guava" level="project" />
+    <orderEntry type="library" exported="" name="Jettison" level="project" />
+    <orderEntry type="library" exported="" name="Trove4j" level="project" />
+    <orderEntry type="library" exported="" name="fastutil-min" level="project" />
   </component>
 </module>

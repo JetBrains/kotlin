@@ -16,7 +16,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
     <orderEntry type="module" module-name="intellij.platform.core" exported="" />
-    <orderEntry type="library" name="jgoodies-forms" exported="" level="project" />
+    <orderEntry type="library" exported="" name="jgoodies-forms" level="project" />
     <orderEntry type="module" module-name="intellij.java.guiForms.rt" exported="" />
     <orderEntry type="module" module-name="intellij.platform.resources.en" exported="" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />

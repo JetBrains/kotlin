@@ -13,8 +13,35 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="kotlin-stdlib-jdk8" exported="" level="project" />
+    <orderEntry type="library" exported="" name="kotlin-stdlib-jdk8" level="project" />
     <orderEntry type="module" module-name="intellij.platform.remoteServers.agent.rt" exported="" />
-    <orderEntry type="library" name="jetbrains-annotations" exported="" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library name="commons-cli-transitive">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-cli-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" exported="" scope="PROVIDED" name="jetbrains-annotations" level="project" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library name="com.github.docker-java:docker-java-api:3.2.5" type="repository">
+        <properties maven-id="com.github.docker-java:docker-java-api:3.2.5">
+          <exclude>
+            <dependency maven-id="com.fasterxml.jackson.core:jackson-annotations" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.5/docker-java-api-3.2.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.5/docker-java-api-3.2.5-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

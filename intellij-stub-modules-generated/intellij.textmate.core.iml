@@ -13,6 +13,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="joni" exported="" level="project" />
+    <orderEntry type="library" exported="" name="joni" level="project" />
   </component>
 </module>

@@ -15,7 +15,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
-    <orderEntry type="library" name="Velocity" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Velocity" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.usageView" exported="" />
     <orderEntry type="module" module-name="intellij.platform.indexing.impl" exported="" />

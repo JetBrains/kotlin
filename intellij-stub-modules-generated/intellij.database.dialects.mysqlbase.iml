@@ -14,6 +14,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="jts-io-common" exported="" level="project" />
+    <orderEntry type="library" exported="" name="jts-io-common" level="project" />
   </component>
 </module>

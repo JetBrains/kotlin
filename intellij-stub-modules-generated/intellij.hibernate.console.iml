@@ -13,7 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="jetbrains-annotations-java5" exported="" level="project" />
+    <orderEntry type="library" exported="" name="jetbrains-annotations-java5" level="project" />
     <orderEntry type="module" module-name="intellij.database.jdbcConsole" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.rt" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.jpa.console" exported="" />

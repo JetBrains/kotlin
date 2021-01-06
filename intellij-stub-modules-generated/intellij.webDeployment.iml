@@ -14,10 +14,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="Commons VFS" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps:commons-vfs2:2.2.1.9" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/commons-vfs2/2.2.1.9/commons-vfs2-2.2.1.9.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/commons-vfs2/2.2.1.9/commons-vfs2-2.2.1.9-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.commercial.verifier" exported="" />
     <orderEntry type="module" module-name="intellij.platform.commercial" exported="" />
-    <orderEntry type="library" name="jzlib" exported="" level="project" />
-    <orderEntry type="library" name="JSch" exported="" level="project" />
+    <orderEntry type="library" exported="" name="jzlib" level="project" />
+    <orderEntry type="library" exported="" name="JSch" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ssh" exported="" />
   </component>
 </module>

@@ -17,8 +17,8 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension" exported="" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
-    <orderEntry type="library" name="Slf4j" exported="" level="project" />
-    <orderEntry type="library" name="Gradle" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Slf4j" level="project" />
+    <orderEntry type="library" exported="" name="Gradle" level="project" />
     <orderEntry type="module" module-name="intellij.platform.inspect" exported="" />
   </component>
 </module>

@@ -13,7 +13,40 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Slf4j" exported="" level="project" />
-    <orderEntry type="library" name="Gradle" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Slf4j" level="project" />
+    <orderEntry type="library" exported="" name="Gradle" level="project" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library name="org.codehaus.groovy:groovy:2.4.17 - Gradle Tooling" type="repository">
+        <properties maven-id="org.codehaus.groovy:groovy:2.4.17" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.17/groovy-2.4.17.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy/2.4.17/groovy-2.4.17-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library name="org.codehaus.groovy:groovy-ant:2.4.17 - Gradle Tooling" type="repository">
+        <properties maven-id="org.codehaus.groovy:groovy-ant:2.4.17">
+          <exclude>
+            <dependency maven-id="org.codehaus.groovy:groovy" />
+            <dependency maven-id="org.apache.ant:ant" />
+            <dependency maven-id="org.codehaus.groovy:groovy-groovydoc" />
+            <dependency maven-id="org.apache.ant:ant-junit" />
+            <dependency maven-id="org.apache.ant:ant-launcher" />
+            <dependency maven-id="org.apache.ant:ant-antlr" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.17/groovy-ant-2.4.17.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/groovy/groovy-ant/2.4.17/groovy-ant-2.4.17-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

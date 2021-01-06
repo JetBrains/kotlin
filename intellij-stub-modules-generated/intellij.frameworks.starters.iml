@@ -14,6 +14,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="JUnit4" exported="" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="JUnit4" level="project" />
   </component>
 </module>

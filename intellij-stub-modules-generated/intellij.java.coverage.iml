@@ -17,5 +17,16 @@
     <orderEntry type="module" module-name="intellij.platform.coverage" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution" exported="" />
     <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="module-library" exported="">
+      <library name="CoverageReport">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/coverage-report.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/coverage-report-idea.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/freemarker.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

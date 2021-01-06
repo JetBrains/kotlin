@@ -17,6 +17,6 @@
     <orderEntry type="module" module-name="intellij.platform.analysis" exported="" />
     <orderEntry type="module" module-name="intellij.platform.core" exported="" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" scope="TEST" />
   </component>
 </module>

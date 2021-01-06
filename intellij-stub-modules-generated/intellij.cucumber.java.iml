@@ -13,5 +13,25 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="cucumber-core-1.2" type="repository">
+        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-core:1.2.4" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-core/1.2.4/cucumber-core-1.2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="gherkin" type="repository">
+        <properties maven-id="info.cukes:gherkin:2.12.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/gherkin/2.12.2/gherkin-2.12.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

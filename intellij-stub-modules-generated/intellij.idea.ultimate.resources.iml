@@ -14,5 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="" scope="RUNTIME">
+      <library name="tips-idea" type="repository">
+        <properties maven-id="com.jetbrains.intellij.documentation:tips-intellij-idea:202.18" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-intellij-idea/202.18/tips-intellij-idea-202.18.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

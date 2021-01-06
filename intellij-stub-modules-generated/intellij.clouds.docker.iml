@@ -13,9 +13,30 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="snakeyaml" exported="" level="project" />
-    <orderEntry type="library" name="commons-compress" exported="" level="project" />
-    <orderEntry type="library" name="Guava" exported="" level="project" />
-    <orderEntry type="library" name="jackson" exported="" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library name="docker-commons-io">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-io-2.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="jackson-dataformat-yaml" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.8/jackson-dataformat-yaml-2.9.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.8/jackson-dataformat-yaml-2.9.8-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" exported="" name="snakeyaml" level="project" />
+    <orderEntry type="library" exported="" name="commons-compress" level="project" />
+    <orderEntry type="library" exported="" name="Guava" level="project" />
+    <orderEntry type="library" exported="" name="jackson" level="project" />
   </component>
 </module>

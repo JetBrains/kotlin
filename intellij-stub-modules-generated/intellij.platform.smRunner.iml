@@ -16,6 +16,6 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.testRunner" exported="" />
-    <orderEntry type="library" name="tcServiceMessages" exported="" level="project" />
+    <orderEntry type="library" exported="" name="tcServiceMessages" level="project" />
   </component>
 </module>

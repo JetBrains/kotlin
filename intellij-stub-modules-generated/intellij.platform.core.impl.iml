@@ -17,6 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.core" exported="" />
-    <orderEntry type="library" name="kotlin-stdlib-jdk8" exported="" level="project" />
+    <orderEntry type="library" exported="" name="kotlin-stdlib-jdk8" level="project" />
   </component>
 </module>

@@ -14,9 +14,18 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util.rt" exported="" />
-    <orderEntry type="library" name="jetbrains-annotations-java5" exported="" level="project" />
-    <orderEntry type="library" name="JDOM" exported="" level="project" />
-    <orderEntry type="library" name="Trove4j" exported="" level="project" />
+    <orderEntry type="library" exported="" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="library" exported="" name="JDOM" level="project" />
+    <orderEntry type="library" exported="" name="Trove4j" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene-core-2.4.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.maven.model" exported="" />
   </component>
 </module>

@@ -15,7 +15,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="jetbrains-annotations" exported="" level="project" />
+    <orderEntry type="library" exported="" name="jetbrains-annotations" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.rt" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.classLoader" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.strings" exported="" />

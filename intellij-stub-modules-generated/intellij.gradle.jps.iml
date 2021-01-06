@@ -13,6 +13,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Ant" exported="" level="project" />
+    <orderEntry type="library" exported="" name="Ant" level="project" />
   </component>
 </module>

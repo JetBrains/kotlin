@@ -17,6 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
-    <orderEntry type="library" name="CGLIB" exported="" level="project" />
+    <orderEntry type="library" exported="" name="CGLIB" level="project" />
   </component>
 </module>

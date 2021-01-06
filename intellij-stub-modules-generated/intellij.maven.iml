@@ -24,9 +24,9 @@
     <orderEntry type="module" module-name="intellij.java.execution" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.ui" exported="" />
-    <orderEntry type="module" module-name="intellij.java.guiForms.rt" exported="" />
-    <orderEntry type="library" name="JUnit4" exported="" level="project" />
-    <orderEntry type="module" module-name="intellij.java.testFramework" exported="" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" exported="" scope="PROVIDED" />
+    <orderEntry type="library" exported="" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" exported="" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" exported="" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
     <orderEntry type="module" module-name="intellij.maven.model" exported="" />
