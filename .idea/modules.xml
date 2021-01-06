@@ -1654,6 +1654,13 @@
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.javaee.appServers.tomee.agent.rt.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.javaee.appServers.tomee.agent.rt.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.javaee.appServers.tomcat.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.javaee.appServers.tomcat.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.javaee.appServers.tomee.agent.impl.rt.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.javaee.appServers.tomee.agent.impl.rt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/platform/external-system-impl/intellij.platform.externalSystem.tests.iml" filepath="$PROJECT_DIR$/intellij-community/platform/external-system-impl/intellij.platform.externalSystem.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/java/compiler/intellij.java.compiler.tests.iml" filepath="$PROJECT_DIR$/intellij-community/java/compiler/intellij.java.compiler.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml" filepath="$PROJECT_DIR$/intellij-community/plugins/gradle/tooling-extension-impl/intellij.gradle.toolingExtension.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/plugins/gradle/intellij.gradle.tests.iml" filepath="$PROJECT_DIR$/intellij-community/plugins/gradle/intellij.gradle.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/plugins/stats-collector/intellij.statsCollector.tests.iml" filepath="$PROJECT_DIR$/intellij-community/plugins/stats-collector/intellij.statsCollector.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/jps/model-impl/intellij.platform.jps.model.tests.iml" filepath="$PROJECT_DIR$/intellij-community/jps/model-impl/intellij.platform.jps.model.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/platform/testFramework/extensions/intellij.platform.testExtensions.iml" filepath="$PROJECT_DIR$/intellij-community/platform/testFramework/extensions/intellij.platform.testExtensions.iml" />
     </modules>
   </component>
 </project>
