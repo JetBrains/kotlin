@@ -14,8 +14,4 @@ fun main(args: Array<String>) {
     // Module oracle.desktop
     val a: com.oracle.awt.AWTUtils? = null
     println(a)
-
-    // No module, this class is declared in $JDK_9/lib/ant-javafx.jar
-    val x: com.sun.javafx.tools.ant.AntLog? = null
-    println(x)
 }
