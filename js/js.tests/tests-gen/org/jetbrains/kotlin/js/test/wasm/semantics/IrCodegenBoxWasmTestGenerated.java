@@ -14599,6 +14599,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/when/implicitExhaustiveAndReturn.kt");
         }
 
+        @TestMetadata("inferredTypeParameters.kt")
+        public void testInferredTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/when/inferredTypeParameters.kt");
+        }
+
         @TestMetadata("kt2457.kt")
         public void testKt2457() throws Exception {
             runTest("compiler/testData/codegen/box/when/kt2457.kt");
