@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun main() {
     // Module java.naming
     val b: javax.naming.Binding? = null
     println(b)
@@ -10,8 +10,4 @@ fun main(args: Array<String>) {
     // Module jdk.httpserver
     val s: com.sun.net.httpserver.HttpServer? = null
     println(s)
-
-    // Module oracle.desktop
-    val a: com.oracle.awt.AWTUtils? = null
-    println(a)
 }
