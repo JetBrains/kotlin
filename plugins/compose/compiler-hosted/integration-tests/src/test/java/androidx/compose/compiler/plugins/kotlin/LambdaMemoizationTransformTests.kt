@@ -121,4 +121,114 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             @Composable fun Wrap(content: @Composable () -> Unit) { }
         """
     )
+
+    // Ensure we don't remember lambdas that do not capture variables.
+    @Test
+    fun testLambdaNoCapture() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun TestLambda(content: () -> Unit) {
+              content()
+            }
+
+            @Composable
+            fun Test() {
+              TestLambda {
+                println("Doesn't capture")
+              }
+            }
+        """,
+        """
+        @Composable
+        fun TestLambda(content: Function0<Unit>, %composer: Composer<*>?, %changed: Int) {
+          %composer.startRestartGroup(<>, "C(TestLambda):Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b1110 === 0) {
+            %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+          }
+          if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+            content()
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+            TestLambda(content, %composer, %changed or 0b0001)
+          }
+        }
+        @Composable
+        fun Test(%composer: Composer<*>?, %changed: Int) {
+          %composer.startRestartGroup(<>, "C(Test)<TestLa...>:Test.kt")
+          if (%changed !== 0 || !%composer.skipping) {
+            TestLambda({
+              println("Doesn't capture")
+            }, %composer, 0)
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+            Test(%composer, %changed or 0b0001)
+          }
+        }
+    """
+    )
+
+    // Ensure the above test is valid as this should remember the lambda
+    @Test
+    fun testLambdaDoesCapture() = verifyComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun TestLambda(content: () -> Unit) {
+              content()
+            }
+
+            @Composable
+            fun Test(a: String) {
+              TestLambda {
+                println("Captures a" + a)
+              }
+            }
+        """,
+        """
+        @Composable
+        fun TestLambda(content: Function0<Unit>, %composer: Composer<*>?, %changed: Int) {
+          %composer.startRestartGroup(<>, "C(TestLambda):Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b1110 === 0) {
+            %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
+          }
+          if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+            content()
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+            TestLambda(content, %composer, %changed or 0b0001)
+          }
+        }
+        @Composable
+        fun Test(a: String, %composer: Composer<*>?, %changed: Int) {
+          %composer.startRestartGroup(<>, "C(Test)<{>,<TestLa...>:Test.kt")
+          val %dirty = %changed
+          if (%changed and 0b1110 === 0) {
+            %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+          }
+          if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+            TestLambda(remember(a, {
+              {
+                println("Captures a" + a)
+              }
+            }, %composer, 0), %composer, 0)
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+            Test(a, %composer, %changed or 0b0001)
+          }
+        }
+        """
+    )
 }
