@@ -546,7 +546,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.spyJS.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.spyJS.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.statsCollector.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.statsCollector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.statsCollector.completionRanker.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.statsCollector.completionRanker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij-community/plugins/stats-collector/log-events/intellij.statsCollector.logEvents.iml" filepath="$PROJECT_DIR$/intellij-community/plugins/stats-collector/log-events/intellij.statsCollector.logEvents.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.statsCollector.logEvents.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.statsCollector.logEvents.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-community/plugins/stats-collector/intellij.statsCollector.tests.iml" filepath="$PROJECT_DIR$/intellij-community/plugins/stats-collector/intellij.statsCollector.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.stylus.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.stylus.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.swagger.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.swagger.iml" />
