@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="ion" type="repository">
+    <properties maven-id="org.jetbrains.intellij.deps:ion-java:1.5.2-2" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij/community/lib/annotations/ion" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/ion-java/1.5.2-2/ion-java-1.5.2-2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/ion-java/1.5.2-2/ion-java-1.5.2-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
