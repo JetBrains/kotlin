@@ -37113,6 +37113,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("inferredTypeParameters.kt")
+        public void testInferredTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/when/inferredTypeParameters.kt");
+        }
+
+        @Test
         @TestMetadata("integralWhenWithNoInlinedConstants.kt")
         public void testIntegralWhenWithNoInlinedConstants() throws Exception {
             runTest("compiler/testData/codegen/box/when/integralWhenWithNoInlinedConstants.kt");
