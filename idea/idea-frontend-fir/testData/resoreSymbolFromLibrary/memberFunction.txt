@@ -3,6 +3,7 @@ callable: kotlin/collections/List.get
 // SYMBOLS:
 KtFirFunctionSymbol:
   annotatedType: [] E
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.collections.List.get
   dispatchType: kotlin/collections/List<E>

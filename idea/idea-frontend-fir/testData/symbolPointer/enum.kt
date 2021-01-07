@@ -18,6 +18,7 @@ KtFirEnumEntrySymbol:
   symbolKind: MEMBER
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X
   classKind: ENUM_CLASS

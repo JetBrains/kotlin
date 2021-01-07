@@ -4,6 +4,7 @@ fun foo(x: Int) {}
 /*
 KtFirFunctionValueParameterSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   hasDefaultValue: false
   isVararg: false
@@ -13,6 +14,7 @@ KtFirFunctionValueParameterSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: foo
   dispatchType: null

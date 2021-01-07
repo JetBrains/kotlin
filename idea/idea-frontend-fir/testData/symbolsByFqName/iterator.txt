@@ -2,6 +2,7 @@ class: kotlin/collections/Iterator
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/collections/Iterator
   classKind: INTERFACE

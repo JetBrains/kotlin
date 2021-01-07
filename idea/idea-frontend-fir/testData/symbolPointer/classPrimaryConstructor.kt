@@ -4,6 +4,7 @@ class A() {
 // SYMBOLS:
 KtFirConstructorSymbol:
   annotatedType: [] A
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: A
   dispatchType: null
@@ -15,6 +16,7 @@ KtFirConstructorSymbol:
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
   classKind: CLASS

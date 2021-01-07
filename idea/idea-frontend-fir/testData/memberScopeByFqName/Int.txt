@@ -3,6 +3,7 @@ class: kotlin/Int
 // SYMBOLS:
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.and
   dispatchType: kotlin/Int
@@ -23,6 +24,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   dispatchType: kotlin/Int
@@ -43,6 +45,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   dispatchType: kotlin/Int
@@ -63,6 +66,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   dispatchType: kotlin/Int
@@ -83,6 +87,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   dispatchType: kotlin/Int
@@ -103,6 +108,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   dispatchType: kotlin/Int
@@ -123,6 +129,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.compareTo
   dispatchType: kotlin/Int
@@ -143,6 +150,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.dec
   dispatchType: kotlin/Int
@@ -163,6 +171,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   dispatchType: kotlin/Int
@@ -183,6 +192,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   dispatchType: kotlin/Int
@@ -203,6 +213,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   dispatchType: kotlin/Int
@@ -223,6 +234,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   dispatchType: kotlin/Int
@@ -243,6 +255,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   dispatchType: kotlin/Int
@@ -263,6 +276,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.div
   dispatchType: kotlin/Int
@@ -283,6 +297,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.inc
   dispatchType: kotlin/Int
@@ -303,6 +318,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.inv
   dispatchType: kotlin/Int
@@ -323,6 +339,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   dispatchType: kotlin/Int
@@ -343,6 +360,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   dispatchType: kotlin/Int
@@ -363,6 +381,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   dispatchType: kotlin/Int
@@ -383,6 +402,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   dispatchType: kotlin/Int
@@ -403,6 +423,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   dispatchType: kotlin/Int
@@ -423,6 +444,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.minus
   dispatchType: kotlin/Int
@@ -443,6 +465,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.or
   dispatchType: kotlin/Int
@@ -463,6 +486,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   dispatchType: kotlin/Int
@@ -483,6 +507,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   dispatchType: kotlin/Int
@@ -503,6 +528,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   dispatchType: kotlin/Int
@@ -523,6 +549,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   dispatchType: kotlin/Int
@@ -543,6 +570,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   dispatchType: kotlin/Int
@@ -563,6 +591,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.plus
   dispatchType: kotlin/Int
@@ -583,6 +612,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/IntRange
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   dispatchType: kotlin/Int
@@ -603,6 +633,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/IntRange
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   dispatchType: kotlin/Int
@@ -623,6 +654,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/LongRange
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   dispatchType: kotlin/Int
@@ -643,6 +675,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/ranges/IntRange
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.rangeTo
   dispatchType: kotlin/Int
@@ -663,6 +696,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: [kotlin/SinceKotlin]
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   dispatchType: kotlin/Int
@@ -683,6 +717,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
+  annotationClassIds: [kotlin/SinceKotlin]
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   dispatchType: kotlin/Int
@@ -703,6 +738,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
+  annotationClassIds: [kotlin/SinceKotlin]
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   dispatchType: kotlin/Int
@@ -723,6 +759,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: [kotlin/SinceKotlin]
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   dispatchType: kotlin/Int
@@ -743,6 +780,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
+  annotationClassIds: [kotlin/SinceKotlin]
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   dispatchType: kotlin/Int
@@ -763,6 +801,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: [kotlin/SinceKotlin]
   annotations: [kotlin/SinceKotlin(version = 1.1)]
   callableIdIfNonLocal: kotlin.Int.rem
   dispatchType: kotlin/Int
@@ -783,6 +822,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.shl
   dispatchType: kotlin/Int
@@ -803,6 +843,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.shr
   dispatchType: kotlin/Int
@@ -823,6 +864,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   dispatchType: kotlin/Int
@@ -843,6 +885,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   dispatchType: kotlin/Int
@@ -863,6 +906,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   dispatchType: kotlin/Int
@@ -883,6 +927,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   dispatchType: kotlin/Int
@@ -903,6 +948,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   dispatchType: kotlin/Int
@@ -923,6 +969,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.times
   dispatchType: kotlin/Int
@@ -943,6 +990,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Byte
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toByte
   dispatchType: kotlin/Int
@@ -963,6 +1011,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toChar
   dispatchType: kotlin/Int
@@ -983,6 +1032,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Double
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toDouble
   dispatchType: kotlin/Int
@@ -1003,6 +1053,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Float
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toFloat
   dispatchType: kotlin/Int
@@ -1023,6 +1074,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toInt
   dispatchType: kotlin/Int
@@ -1043,6 +1095,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Long
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toLong
   dispatchType: kotlin/Int
@@ -1063,6 +1116,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Short
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toShort
   dispatchType: kotlin/Int
@@ -1083,6 +1137,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.unaryMinus
   dispatchType: kotlin/Int
@@ -1103,6 +1158,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.unaryPlus
   dispatchType: kotlin/Int
@@ -1123,6 +1179,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.ushr
   dispatchType: kotlin/Int
@@ -1143,6 +1200,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.xor
   dispatchType: kotlin/Int
@@ -1163,6 +1221,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.equals
   dispatchType: kotlin/Int
@@ -1183,6 +1242,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.hashCode
   dispatchType: kotlin/Int
@@ -1203,6 +1263,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/String
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.Int.toString
   dispatchType: kotlin/Int
@@ -1222,6 +1283,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/Int.Companion
   classKind: COMPANION_OBJECT
