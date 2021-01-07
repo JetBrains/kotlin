@@ -9,6 +9,7 @@ KtFirConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 

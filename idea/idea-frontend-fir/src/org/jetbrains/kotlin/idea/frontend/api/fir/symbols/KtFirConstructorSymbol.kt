@@ -59,6 +59,12 @@ internal class KtFirConstructorSymbol(
 
     override val isPrimary: Boolean get() = firRef.withFir { it.isPrimary }
 
+    override val typeParameters by firRef.withFirAndCache { fir ->
+        fir.typeParameters.map { typeParameter ->
+            builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
+        }
+    }
+
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {

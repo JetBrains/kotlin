@@ -11,6 +11,7 @@ KtFirConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
@@ -30,6 +31,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
   visibility: PUBLIC
 
@@ -58,6 +60,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
   visibility: PUBLIC
 

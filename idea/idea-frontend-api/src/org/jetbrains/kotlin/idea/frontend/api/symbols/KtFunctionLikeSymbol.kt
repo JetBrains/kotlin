@@ -42,7 +42,10 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionSymbol>
 }
 
-abstract class KtConstructorSymbol : KtFunctionLikeSymbol(), KtAnnotatedSymbol, KtSymbolWithVisibility {
+abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
+    KtAnnotatedSymbol,
+    KtSymbolWithVisibility,
+    KtSymbolWithTypeParameters {
     abstract val isPrimary: Boolean
     abstract val containingClassIdIfNonLocal: ClassId?
 
