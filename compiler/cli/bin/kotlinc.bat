@@ -1,13 +1,9 @@
 @echo off
-rem based on scalac.bat from the Scala distribution
-rem ##########################################################################
-rem # Copyright 2002-2011, LAMP/EPFL
-rem # Copyright 2011-2015, JetBrains
-rem #
-rem # This is free software; see the distribution for copying conditions.
-rem # There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
-rem # PARTICULAR PURPOSE.
-rem ##########################################################################
+
+rem Based on scalac.bat from the Scala distribution
+rem Copyright 2002-2011, LAMP/EPFL
+rem Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+rem Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 
 rem We adopt the following conventions:
 rem - System/user environment variables start with a letter
