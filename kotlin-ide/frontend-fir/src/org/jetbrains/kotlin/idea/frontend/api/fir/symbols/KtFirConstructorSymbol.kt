@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAnnotation
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirConstructorSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
@@ -51,9 +54,9 @@ internal class KtFirConstructorSymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by cached {
-        firRef.toAnnotationsList()
-    }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
+    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
+    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
     override val containingClassIdIfNonLocal: ClassId?
         get() = firRef.withFir { fir -> fir.containingClass()?.classId /* TODO check if local */ }

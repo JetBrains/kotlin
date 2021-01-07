@@ -4,6 +4,7 @@ class A {
 // SYMBOLS:
 /*
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
   classKind: CLASS

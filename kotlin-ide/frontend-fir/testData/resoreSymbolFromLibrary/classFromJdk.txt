@@ -4,6 +4,7 @@ class: java/lang/String
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: java/lang/String
   classKind: CLASS

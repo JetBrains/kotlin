@@ -23,6 +23,7 @@ KtFirJavaFieldSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.hash32
   dispatchType: java/lang/String
@@ -53,6 +54,7 @@ KtFirJavaFieldSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.length
   dispatchType: java/lang/String
@@ -73,6 +75,7 @@ KtFirFunctionSymbol:
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.CharSequence.length
   dispatchType: kotlin/CharSequence
@@ -96,6 +99,7 @@ KtFirKotlinPropertySymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.isEmpty
   dispatchType: java/lang/String
@@ -116,6 +120,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.charAt
   dispatchType: java/lang/String
@@ -136,6 +141,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.codePointAt
   dispatchType: java/lang/String
@@ -156,6 +162,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.codePointBefore
   dispatchType: java/lang/String
@@ -176,6 +183,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.codePointCount
   dispatchType: java/lang/String
@@ -196,6 +204,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.offsetByCodePoints
   dispatchType: java/lang/String
@@ -216,6 +225,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.getChars
   dispatchType: java/lang/String
@@ -236,6 +246,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.getChars
   dispatchType: java/lang/String
@@ -256,6 +267,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: [kotlin/Deprecated]
   annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   callableIdIfNonLocal: java.lang.String.getBytes
   dispatchType: java/lang/String
@@ -276,6 +288,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/ByteArray
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.getBytes
   dispatchType: java/lang/String
@@ -296,6 +309,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/ByteArray
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.getBytes
   dispatchType: java/lang/String
@@ -316,6 +330,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/ByteArray
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.getBytes
   dispatchType: java/lang/String
@@ -336,6 +351,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.equals
   dispatchType: java/lang/String
@@ -356,6 +372,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.contentEquals
   dispatchType: java/lang/String
@@ -376,6 +393,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.contentEquals
   dispatchType: java/lang/String
@@ -396,6 +414,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.equalsIgnoreCase
   dispatchType: java/lang/String
@@ -416,6 +435,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.compareTo
   dispatchType: java/lang/String
@@ -436,6 +456,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.compareToIgnoreCase
   dispatchType: java/lang/String
@@ -456,6 +477,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.regionMatches
   dispatchType: java/lang/String
@@ -476,6 +498,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.regionMatches
   dispatchType: java/lang/String
@@ -496,6 +519,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.startsWith
   dispatchType: java/lang/String
@@ -516,6 +540,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.startsWith
   dispatchType: java/lang/String
@@ -536,6 +561,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.endsWith
   dispatchType: java/lang/String
@@ -556,6 +582,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.hashCode
   dispatchType: java/lang/String
@@ -576,6 +603,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.indexOf
   dispatchType: java/lang/String
@@ -596,6 +624,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.indexOf
   dispatchType: java/lang/String
@@ -616,6 +645,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.indexOf
   dispatchType: java/lang/String
@@ -636,6 +666,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.indexOf
   dispatchType: java/lang/String
@@ -656,6 +687,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.indexOfSupplementary
   dispatchType: java/lang/String
@@ -676,6 +708,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.lastIndexOf
   dispatchType: java/lang/String
@@ -696,6 +729,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.lastIndexOf
   dispatchType: java/lang/String
@@ -716,6 +750,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.lastIndexOf
   dispatchType: java/lang/String
@@ -736,6 +771,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.lastIndexOf
   dispatchType: java/lang/String
@@ -756,6 +792,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.lastIndexOfSupplementary
   dispatchType: java/lang/String
@@ -776,6 +813,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.substring
   dispatchType: java/lang/String
@@ -796,6 +834,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.substring
   dispatchType: java/lang/String
@@ -816,6 +855,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/CharSequence
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.subSequence
   dispatchType: java/lang/String
@@ -836,6 +876,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.concat
   dispatchType: java/lang/String
@@ -856,6 +897,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.replace
   dispatchType: java/lang/String
@@ -876,6 +918,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.replace
   dispatchType: java/lang/String
@@ -896,6 +939,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.matches
   dispatchType: java/lang/String
@@ -916,6 +960,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.contains
   dispatchType: java/lang/String
@@ -936,6 +981,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.replaceFirst
   dispatchType: java/lang/String
@@ -956,6 +1002,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.replaceAll
   dispatchType: java/lang/String
@@ -976,6 +1023,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, @EnhancedNullability kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>>
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.split
   dispatchType: java/lang/String
@@ -996,6 +1044,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, @EnhancedNullability kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>>
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.split
   dispatchType: java/lang/String
@@ -1016,6 +1065,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.toLowerCase
   dispatchType: java/lang/String
@@ -1036,6 +1086,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.toLowerCase
   dispatchType: java/lang/String
@@ -1056,6 +1107,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.toUpperCase
   dispatchType: java/lang/String
@@ -1076,6 +1128,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.toUpperCase
   dispatchType: java/lang/String
@@ -1096,6 +1149,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.trim
   dispatchType: java/lang/String
@@ -1116,6 +1170,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @FlexibleNullability kotlin/String
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.toString
   dispatchType: java/lang/String
@@ -1136,6 +1191,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/CharArray
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.toCharArray
   dispatchType: java/lang/String
@@ -1156,6 +1212,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] @EnhancedNullability kotlin/String
+  annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.intern
   dispatchType: java/lang/String
@@ -1214,6 +1271,7 @@ KtFirClassOrObjectSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1226,6 +1284,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1238,6 +1297,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1250,6 +1310,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1262,6 +1323,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1274,6 +1336,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: [kotlin/Deprecated]
   annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1286,6 +1349,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: [kotlin/Deprecated]
   annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1298,6 +1362,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1310,6 +1375,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1322,6 +1388,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1334,6 +1401,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1346,6 +1414,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1358,6 +1427,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1370,6 +1440,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1382,6 +1453,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1394,6 +1466,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null
@@ -1406,6 +1479,7 @@ KtFirConstructorSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
+  annotationClassIds: [kotlin/Deprecated]
   annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   containingClassIdIfNonLocal: java/lang/String
   dispatchType: null

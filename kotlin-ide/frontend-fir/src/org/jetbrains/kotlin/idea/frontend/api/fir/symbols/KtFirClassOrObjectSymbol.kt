@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAnnotation
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
@@ -42,9 +45,9 @@ internal class KtFirClassOrObjectSymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by cached {
-        firRef.toAnnotationsList()
-    }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
+    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
+    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
     override val isInner: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInner }
     override val isData: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isData }

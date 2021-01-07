@@ -3,6 +3,7 @@ callable: kotlin/collections/listOf
 // SYMBOLS:
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
   dispatchType: null
@@ -23,6 +24,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
   dispatchType: null
@@ -43,6 +45,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
   dispatchType: null

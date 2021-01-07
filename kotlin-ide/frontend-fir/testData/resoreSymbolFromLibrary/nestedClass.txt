@@ -2,6 +2,7 @@ class: kotlin/collections/MutableMap.MutableEntry
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE

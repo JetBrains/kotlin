@@ -6,6 +6,7 @@ class A {
 // SYMBOLS:
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: A.x
   dispatchType: A
@@ -26,6 +27,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: A.y
   dispatchType: A
@@ -45,6 +47,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
   classKind: CLASS

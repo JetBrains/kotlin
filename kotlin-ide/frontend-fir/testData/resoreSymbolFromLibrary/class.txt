@@ -4,6 +4,7 @@ class: kotlin/Lazy
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/Lazy
   classKind: INTERFACE

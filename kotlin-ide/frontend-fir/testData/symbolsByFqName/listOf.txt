@@ -2,6 +2,7 @@ class: kotlin/io/FileWalkDirection
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/io/FileWalkDirection
   classKind: ENUM_CLASS

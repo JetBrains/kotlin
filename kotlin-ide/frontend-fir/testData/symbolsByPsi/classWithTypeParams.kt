@@ -18,6 +18,7 @@ KtFirTypeParameterSymbol:
   variance: INVARIANT
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
   classKind: CLASS

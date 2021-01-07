@@ -4,6 +4,7 @@ fun y() {}
 // SYMBOLS:
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: x
   dispatchType: null
@@ -24,6 +25,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: y
   dispatchType: null
