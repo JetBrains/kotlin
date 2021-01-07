@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
@@ -208,10 +209,10 @@ fun argumentsWithVarargAsSingleArray(
     // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
     // We are using `Function.prototype.apply` function to pass all arguments as a single array.
     // For this purpose are concatenating non-vararg arguments with vararg.
-    var arraysForConcat: MutableList<JsExpression> = mutableListOf<JsExpression>().apply {
-        additionalReceiver?.let { add(it) }
-    }
-    val concatElements: MutableList<JsExpression> = mutableListOf()
+    var arraysForConcat = mutableListOf<JsExpression>()
+    arraysForConcat.addIfNotNull(additionalReceiver)
+
+    val concatElements = mutableListOf<JsExpression>()
 
     arguments
         .forEachIndexed { index, argument ->
