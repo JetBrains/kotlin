@@ -432,6 +432,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij-community/jps/model-impl/intellij.platform.jps.model.tests.iml" filepath="$PROJECT_DIR$/intellij-community/jps/model-impl/intellij.platform.jps.model.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lang.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lang.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lang.impl.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lang.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/platform/lang-impl/intellij.platform.lang.tests.iml" filepath="$PROJECT_DIR$/intellij-community/platform/lang-impl/intellij.platform.lang.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.langInjection.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.langInjection.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lvcs.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lvcs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lvcs.impl.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.lvcs.impl.iml" />
