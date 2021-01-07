@@ -54,3 +54,9 @@ projectTest(parallel = true) {
 //    dependsOn(embeddableTestRuntime)
 //    classpath = embeddableTestRuntime
 //}
+
+projectTest(taskName = "testWithIr", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-ir")
+}
