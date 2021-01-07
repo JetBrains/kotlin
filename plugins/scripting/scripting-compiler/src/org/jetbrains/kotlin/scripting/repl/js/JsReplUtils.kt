@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.LineId
@@ -23,11 +23,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.backend.js.getModuleDescriptorByLibrary
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.util.Logger
@@ -37,7 +35,6 @@ import java.io.FileOutputStream
 import java.io.FileReader
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.jvm.JsDependency
@@ -215,12 +212,4 @@ class DependencyLoader {
         }
     }
 }
-
-class JsReplCompilationState(
-    lock: ReentrantReadWriteLock,
-    nameTables: NameTables,
-    dependencies: List<ModuleDescriptor>,
-    val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState,
-    val symbolTable: SymbolTable
-) : JsCompilationState(lock, nameTables, dependencies)
 

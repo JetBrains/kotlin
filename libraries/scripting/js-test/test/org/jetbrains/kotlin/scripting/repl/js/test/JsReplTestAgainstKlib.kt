@@ -20,14 +20,14 @@ class JsReplTestAgainstKlib : AbstractJsReplTest() {
 
     private var dependencyCode: String? = null
 
-    override fun createCompilationState(): JsReplCompilationState {
+    override fun createCompilationState(): JsReplCompilerState {
         val nameTables = NameTables(emptyList(), mappedNames = mutableMapOf())
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
         val dependencyCompiler = JsScriptDependencyCompiler(environment.configuration, nameTables, symbolTable)
         val dependencies = readLibrariesFromConfiguration(environment.configuration)
         dependencyCode = dependencyCompiler.compile(dependencies)
 
-        return JsReplCompilationState(
+        return JsReplCompilerState(
             ReentrantReadWriteLock(),
             nameTables,
             dependencies,

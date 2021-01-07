@@ -31,9 +31,9 @@ class JsReplTestAgainstBinaries : AbstractJsReplTest() {
         dependencyLoader.saveNames(nameTable)
     }
 
-    override fun createCompilationState(): JsReplCompilationState {
+    override fun createCompilationState(): JsReplCompilerState {
         val replState = ReplCodeAnalyzerBase.ResettableAnalyzerState()
-        return JsReplCompilationState(ReentrantReadWriteLock(), dependencyLoader.loadNames(), dependencies, replState, createSymbolTable())
+        return JsReplCompilerState(ReentrantReadWriteLock(), dependencyLoader.loadNames(), dependencies, replState, createSymbolTable())
     }
 
     private fun createSymbolTable(): SymbolTable =

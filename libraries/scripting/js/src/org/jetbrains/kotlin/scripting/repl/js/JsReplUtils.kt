@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.repl.js
 
-import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.cli.common.repl.IReplStageHistory
+import org.jetbrains.kotlin.cli.common.repl.IReplStageState
 import org.jetbrains.kotlin.js.engine.ScriptEngineWithTypedResult
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.reflect.KClass
@@ -17,24 +15,17 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 
-abstract class JsState(override val lock: ReentrantReadWriteLock) : IReplStageState<ScriptDescriptor> {
-    override val history: IReplStageHistory<ScriptDescriptor>
+// NOTE: the state management machinery is not implemented here, since it is unused at the moment in the JS REPL (see JvmReplEvaluatorState for complete implementation, if needed)
+class JsEvaluationState(override val lock: ReentrantReadWriteLock, val engine: ScriptEngineWithTypedResult) : IReplStageState<Nothing> {
+    override fun dispose() {
+        engine.reset()
+    }
+
+    override val history: IReplStageHistory<Nothing>
         get() = TODO("not implemented")
 
     override val currentGeneration: Int
         get() = TODO("not implemented")
-
-}
-
-abstract class JsCompilationState(
-    lock: ReentrantReadWriteLock,
-    val nameTables: NameTables,
-    val dependencies: List<ModuleDescriptor>) : JsState(lock)
-
-class JsEvaluationState(lock: ReentrantReadWriteLock, val engine: ScriptEngineWithTypedResult) : JsState(lock) {
-    override fun dispose() {
-        engine.reset()
-    }
 }
 
 class JsCompiledScript(
