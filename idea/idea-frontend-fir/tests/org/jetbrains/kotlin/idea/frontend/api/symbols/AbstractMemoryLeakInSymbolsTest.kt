@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.io.FileUtil
+import com.sun.management.HotSpotDiagnosticMXBean
 import junit.framework.Assert
+import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
@@ -21,7 +23,14 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
+import sun.management.HotSpotDiagnostic
 import java.io.File
+import java.lang.management.ManagementFactory
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.io.path.absolute
 
 abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun isFirPlugin() = true
@@ -42,8 +51,11 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
             symbols.map { it.hasNoFirElementLeak() }.filterIsInstance<LeakCheckResult.Leak>()
         }
         if (leakedSymbols.isNotEmpty()) {
+            val memoryDumpPath = dumpHeap()
             Assert.fail(
-                """The following symbols leaked (${leakedSymbols.size}/${symbols.size})
+                """Some symbols leaked (${leakedSymbols.size}/${symbols.size})
+                   Memory dump is $memoryDumpPath
+                   Symbols:
                    ${leakedSymbols.joinToString(separator = "\n") { it.symbol }}
                    """.trimIndent()
             )
@@ -53,6 +65,7 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     private fun invalidateAllCaches(ktFile: KtFile) {
         (project.service<KotlinOutOfBlockModificationTrackerFactory>() as KotlinFirOutOfBlockModificationTrackerFactory).incrementModificationsCount()
+//        project.service<LibraryModificationTracker>().incModificationCount()
         (project.service<KtAnalysisSessionProvider>() as KtFirAnalysisSessionProvider).clearCaches()
         executeOnPooledThreadInReadAction { analyze(ktFile) {} }
     }
@@ -67,5 +80,16 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
         object NoLeak : LeakCheckResult()
         data class Leak(val symbol: String) : LeakCheckResult()
     }
-}
 
+    private fun dumpHeap(): Path {
+        val fileNameSuffix = SimpleDateFormat("yyMMddHHmmss").format(Date())
+        val path = Paths.get(basePath).resolve("memoryLeakDump_${fileNameSuffix}.hprof")
+        val server = ManagementFactory.getPlatformMBeanServer()
+        ManagementFactory.newPlatformMXBeanProxy(
+            server,
+            "com.sun.management:type=HotSpotDiagnostic",
+            HotSpotDiagnosticMXBean::class.java
+        ).dumpHeap(path.toString(), true)
+        return path.toAbsolutePath()
+    }
+}
