@@ -101,6 +101,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/argumentPassedMultipleTimes.args");
         }
 
+        @TestMetadata("bothJvmIrAndOldBackend.args")
+        public void testBothJvmIrAndOldBackend() throws Exception {
+            runTest("compiler/testData/cli/jvm/bothJvmIrAndOldBackend.args");
+        }
+
         @TestMetadata("classAndFileClassClash.args")
         public void testClassAndFileClassClash() throws Exception {
             runTest("compiler/testData/cli/jvm/classAndFileClassClash.args");
