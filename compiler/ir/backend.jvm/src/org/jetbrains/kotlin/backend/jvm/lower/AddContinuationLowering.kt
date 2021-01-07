@@ -285,7 +285,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 if (flag.capturesCrossinline || function.isInline) {
                     result += context.irFactory.buildFun {
                         containerSource = view.containerSource
-                        name = Name.identifier(view.name.asString() + FOR_INLINE_SUFFIX)
+                        name = Name.identifier(context.methodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
                         returnType = view.returnType
                         modality = view.modality
                         isSuspend = view.isSuspend

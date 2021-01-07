@@ -98,8 +98,10 @@ internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
     ) return null
     return parentAsClass.declarations.find {
-        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId &&
-                it.name.asString() + FOR_INLINE_SUFFIX == name.asString()
+        // The function may not be named `it.name.asString() + FOR_INLINE_SUFFIX` due to name mangling,
+        // e.g., for internal declarations. We check for a function with the same `attributeOwnerId` instead.
+        // This is copied in `AddContinuationLowering`.
+        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId
     } as IrSimpleFunction?
 }
 

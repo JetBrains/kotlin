@@ -1453,6 +1453,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/effectivelyInlineOnly.kt");
         }
 
+        @TestMetadata("internalInlineSuspend.kt")
+        public void testInternalInlineSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/internalInlineSuspend.kt");
+        }
+
         @TestMetadata("mergeLvt.kt")
         public void testMergeLvt() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/mergeLvt.kt");
