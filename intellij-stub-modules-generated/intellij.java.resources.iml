@@ -15,6 +15,5 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.regexp" exported="" scope="RUNTIME" />
-    <orderEntry type="module" module-name="intellij.idea.community.resources" exported="" />
   </component>
 </module>
