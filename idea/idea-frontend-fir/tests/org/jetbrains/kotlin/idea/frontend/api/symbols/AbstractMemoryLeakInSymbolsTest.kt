@@ -65,7 +65,7 @@ abstract class AbstractMemoryLeakInSymbolsTest : KotlinLightCodeInsightFixtureTe
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     private fun invalidateAllCaches(ktFile: KtFile) {
         (project.service<KotlinOutOfBlockModificationTrackerFactory>() as KotlinFirOutOfBlockModificationTrackerFactory).incrementModificationsCount()
-//        project.service<LibraryModificationTracker>().incModificationCount()
+        project.service<LibraryModificationTracker>().incModificationCount()
         (project.service<KtAnalysisSessionProvider>() as KtFirAnalysisSessionProvider).clearCaches()
         executeOnPooledThreadInReadAction { analyze(ktFile) {} }
     }
