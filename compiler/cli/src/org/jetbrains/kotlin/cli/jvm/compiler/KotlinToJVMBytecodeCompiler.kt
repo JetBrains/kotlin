@@ -328,7 +328,7 @@ object KotlinToJVMBytecodeCompiler {
                 project, environment.createPackagePartProvider(librariesScope)
             )
 
-            val moduleInfo = FirJvmModuleInfo(module.getModuleName(), listOf(librariesModuleInfo))
+            val moduleInfo = FirJvmModuleInfo(module, listOf(librariesModuleInfo))
             val session = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope, project) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()

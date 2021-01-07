@@ -132,6 +132,13 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
 private object SourceElementKey : FirDeclarationDataKey()
 var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
+val FirMemberDeclaration.containerSource: SourceElement?
+    get() = when (this) {
+        is FirCallableMemberDeclaration<*> -> containerSource
+        is FirRegularClass -> sourceElement
+        else -> null
+    }
+
 private object IsFromVarargKey : FirDeclarationDataKey()
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 private object IsReferredViaField : FirDeclarationDataKey()

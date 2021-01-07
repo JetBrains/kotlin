@@ -449,6 +449,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             )
             annotations +=
                 c.annotationDeserializer.loadConstructorAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
+            containerSource = c.containerSource
         }.build().apply {
             containingClassAttr = c.dispatchReceiver!!.lookupTag
             versionRequirementsTable = c.versionRequirementTable

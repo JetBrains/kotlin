@@ -626,6 +626,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}"))
     }
 
+    fun testInternalFromFriendModuleFir() {
+        val library = compileLibrary("library")
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}", "-Xuse-fir"))
+    }
+
     fun testJvmDefaultClashWithOld() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all"))
