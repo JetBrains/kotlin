@@ -170,19 +170,12 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
             false
         } ?: run {
             messageCollector.reportArgumentParseProblems(it)
-            reportArgumentsIgnoredGenerally(
-                it,
-                messageCollector,
-                ignoredOptionsReportingState
-            )
+            val error = reportArgumentsNotAllowed(it, messageCollector, ignoredOptionsReportingState)
+            reportArgumentsIgnoredGenerally(it, messageCollector, ignoredOptionsReportingState)
             if (isRefinement) {
-                reportArgumentsIgnoredFromRefinement(
-                    it,
-                    messageCollector,
-                    ignoredOptionsReportingState
-                )
+                reportArgumentsIgnoredFromRefinement(it, messageCollector, ignoredOptionsReportingState)
             }
-            true
+            !error
         }
     }
 }
