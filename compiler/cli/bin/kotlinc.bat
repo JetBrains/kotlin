@@ -15,10 +15,9 @@ call :set_home
 if "%_KOTLIN_COMPILER%"=="" set _KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler 
 
 if not "%JAVA_HOME%"=="" (
-  if exist "%JAVA_HOME%\bin\java.exe" set "_JAVACMD=%JAVA_HOME%\bin\java.exe"
+  rem Prepend JAVA_HOME to local PATH to be able to simply execute "java" later in the script.
+  set "PATH=%JAVA_HOME%\bin;%PATH%"
 )
-
-if "%_JAVACMD%"=="" set _JAVACMD=java
 
 rem We use the value of the JAVA_OPTS environment variable if defined
 if "%JAVA_OPTS%"=="" set JAVA_OPTS=-Xmx256M -Xms32M
@@ -42,17 +41,22 @@ goto loop
 :loopend
 
 if "%_KOTLIN_RUNNER%"=="1" (
-  "%_JAVACMD%" %JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
+  java %JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
     org.jetbrains.kotlin.runner.Main %KOTLIN_OPTS%
 ) else (
   setlocal EnableDelayedExpansion
-  SET _ADDITIONAL_CLASSPATH=
+  set _ADDITIONAL_CLASSPATH=
+
+  call :set_java_version
+  if !_java_major_version! lss 13 (
+    set JAVA_OPTS=!JAVA_OPTS! "-noverify"
+  )
 
   if not "%_KOTLIN_TOOL%"=="" (
     set _ADDITIONAL_CLASSPATH=;%_KOTLIN_HOME%\lib\%_KOTLIN_TOOL%
   )
 
-  "%_JAVACMD%" %JAVA_OPTS% -noverify -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
+  java !JAVA_OPTS! -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
     org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar!_ADDITIONAL_CLASSPATH!" ^
     %_KOTLIN_COMPILER% %KOTLIN_OPTS%
 )
@@ -69,6 +73,29 @@ rem # subroutines
   set _KOTLIN_HOME=%_BIN_DIR%..
 goto :eof
 
+rem Parses "java -version" output and stores the major version to _java_major_version.
+rem Note that this only loads the first component of the version, so "1.8.0_265" -> "1".
+rem But it's fine because major version is 9 for JDK 9, and so on.
+rem Needs to be executed in the EnableDelayedExpansion mode.
+:set_java_version
+  set _version=
+  rem Parse output and take the third token from the string containing " version ".
+  rem It should be something like "1.8.0_275" or "15.0.1".
+  for /f "tokens=3" %%i in ('java -version 2^>^&1 ^| findstr /i " version "') do (
+    rem Split the string by "-" or "." and take the first token.
+    for /f "delims=-. tokens=1" %%j in ("%%i") do (
+      rem At this point, _version should be something like "1 or "15. Note the leading quote.
+      set _version=%%j
+    )
+  )
+  if "!_version!"=="" (
+    rem If failed to parse the output, set the version to 1.
+    set _java_major_version=1
+  ) else (
+    rem Strip the leading quote.
+    set _java_major_version=!_version:~1!
+  )
+goto :eof
+
 :end
 endlocal
-
