@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
+import org.jetbrains.kotlin.idea.invalidateCaches
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import java.io.File
 
@@ -21,6 +23,11 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
             myFixture.configureByFile(fileName())
             checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
         }
+    }
+
+    override fun tearDown() {
+        project.invalidateCaches(file as? KtFile)
+        super.tearDown()
     }
 
     override fun checkHighlighting(
