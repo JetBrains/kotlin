@@ -39,7 +39,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
-        val existedScripts = context.symbolTable.listExistedScripts()
+        val previousScripts = context.extensions.getPreviousScripts()
 
         return context.symbolTable.declareScript(descriptor).buildWithScope { irScript ->
 
@@ -54,7 +54,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             // TODO: since script could reference instances of previous one their receivers have to be enlisted in its scope
             // Remove this code once script is no longer represented by Class
-            existedScripts.forEach {
+            previousScripts.forEach {
                 if (it.owner != irScript && it.descriptor !in importedScripts) {
                     context.symbolTable.introduceValueParameter(it.owner.thisReceiver)
                 }
@@ -117,7 +117,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     valueParameter to irProperty.symbol
                 }
 
-            irScript.earlierScripts = existedScripts
+            irScript.earlierScripts = previousScripts
 
             for (d in ktScript.declarations) {
                 when (d) {
