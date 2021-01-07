@@ -1110,6 +1110,7 @@ KtFirConstructorSymbol:
   isPrimary: true
   origin: LIBRARY
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: []
   visibility: PRIVATE
 

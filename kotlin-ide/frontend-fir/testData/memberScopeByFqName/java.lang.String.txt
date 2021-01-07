@@ -1124,6 +1124,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
@@ -1134,6 +1135,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(original)]
   visibility: PUBLIC
 
@@ -1144,6 +1146,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(value)]
   visibility: PUBLIC
 
@@ -1154,6 +1157,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(value), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count)]
   visibility: PUBLIC
 
@@ -1164,6 +1168,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(codePoints), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count)]
   visibility: PUBLIC
 
@@ -1174,6 +1179,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(ascii), KtFirConstructorValueParameterSymbol(hibyte), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count)]
   visibility: PUBLIC
 
@@ -1184,6 +1190,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(ascii), KtFirConstructorValueParameterSymbol(hibyte)]
   visibility: PUBLIC
 
@@ -1194,6 +1201,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(length), KtFirConstructorValueParameterSymbol(charsetName)]
   visibility: PUBLIC
 
@@ -1204,6 +1212,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(length), KtFirConstructorValueParameterSymbol(charset)]
   visibility: PUBLIC
 
@@ -1214,6 +1223,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(charsetName)]
   visibility: PUBLIC
 
@@ -1224,6 +1234,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(charset)]
   visibility: PUBLIC
 
@@ -1234,6 +1245,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(length)]
   visibility: PUBLIC
 
@@ -1244,6 +1256,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(bytes)]
   visibility: PUBLIC
 
@@ -1254,6 +1267,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(buffer)]
   visibility: PUBLIC
 
@@ -1264,6 +1278,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(builder)]
   visibility: PUBLIC
 
@@ -1274,6 +1289,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(value), KtFirConstructorValueParameterSymbol(share)]
   visibility: UNKNOWN
 
@@ -1284,6 +1300,7 @@ KtFirConstructorSymbol:
   isPrimary: false
   origin: JAVA
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count), KtFirConstructorValueParameterSymbol(value)]
   visibility: UNKNOWN
 
