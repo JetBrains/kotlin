@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
+import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -2275,10 +2276,8 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
                 is Scope.LoopScope -> {
-                    if (jump.loop == scope.loop) {
-                        break@loop
-                    }
-                    scope.markJump(extraEndLocation)
+                    scope.markJump(jump, extraEndLocation)
+                    if (jump.loop == scope.loop) break@loop
                 }
                 is Scope.BlockScope -> {
                     scope.markJump(extraEndLocation)
@@ -3079,10 +3078,19 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun handleLoop(loop: IrLoop): IrExpression {
-        val loopScope = withScope(Scope.LoopScope(loop)) {
-            loop.transformChildrenVoid()
+        val loopScope = Scope.LoopScope(loop)
+        withScope(loopScope) {
+            loop.condition = loop.condition.transform(this, null)
+            if (loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
+                loop.condition = loop.condition.asReplaceableGroup(loopScope)
+            }
+
+            loop.body = loop.body?.transform(this, null)
+            if (loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
+                loop.body = loop.body?.asReplaceableGroup(loopScope)
+            }
         }
-        return if (loopScope.hasComposableCalls) {
+        return if (!loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
             loop.asCoalescableGroup(loopScope)
         } else {
             loop
@@ -3226,7 +3234,9 @@ class ComposableFunctionBodyTransformer(
         open val fileScope: FileScope? get() = parent?.fileScope
         open val nearestComposer: IrValueParameter? get() = parent?.nearestComposer
 
-        class SourceLocation(val element: IrElement, val repeatable: Boolean = false) {
+        open class SourceLocation(val element: IrElement) {
+            open val repeatable: Boolean
+                get() = false
             var used = false
                 private set
             fun markUsed() { used = true }
@@ -3586,7 +3596,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
-            private fun realizeEndCalls(makeEnd: () -> IrExpression) {
+            protected open fun realizeEndCalls(makeEnd: () -> IrExpression) {
                 extraEndLocations.forEach {
                     it(makeEnd())
                 }
@@ -3600,7 +3610,7 @@ class ComposableFunctionBodyTransformer(
             var hasReturn = false
                 private set
             var hasJump = false
-                private set
+                protected set
             private var realizeCoalescableChildGroup = {}
             private var shouldRealizeCoalescableChild = false
             private var coalescableChild: BlockScope? = null
@@ -3612,8 +3622,41 @@ class ComposableFunctionBodyTransformer(
             override val fileScope: FileScope? get() = this
         }
         class LoopScope(val loop: IrLoop) : BlockScope("loop") {
-            override fun sourceLocationOf(call: IrElement): SourceLocation =
-                SourceLocation(call, repeatable = true)
+            private val jumpEndLocations = mutableListOf<(IrExpression) -> Unit>()
+            var needsGroupPerIteration = false
+                private set
+
+            override fun sourceLocationOf(call: IrElement): SourceLocation {
+                return object : SourceLocation(call) {
+                    override val repeatable: Boolean
+                        // the calls in the group only repeat if the loop scope doesn't create
+                        // a group per iteration
+                        get() = !needsGroupPerIteration
+                }
+            }
+
+            fun markJump(jump: IrBreakContinue, extraEndLocation: (IrExpression) -> Unit) {
+                if (jump.loop != loop) {
+                    super.markJump(extraEndLocation)
+                } else {
+                    hasJump = true
+                    // if there is a continue jump in the loop, it means that the repeating
+                    // pattern of the call graph can differ per iteration, which means that we will
+                    // need to create a group for each iteration or else we could end up with slot
+                    // table misalignment.
+                    if (jump is IrContinue) needsGroupPerIteration = true
+                    jumpEndLocations.push(extraEndLocation)
+                }
+            }
+
+            override fun realizeEndCalls(makeEnd: () -> IrExpression) {
+                super.realizeEndCalls(makeEnd)
+                if (needsGroupPerIteration) {
+                    jumpEndLocations.forEach {
+                        it(makeEnd())
+                    }
+                }
+            }
         }
         class WhenScope : BlockScope("when")
         class BranchScope : BlockScope("branch")
@@ -3626,7 +3669,10 @@ class ComposableFunctionBodyTransformer(
             }
 
             override fun sourceLocationOf(call: IrElement): SourceLocation =
-                SourceLocation(call, repeatable = true)
+                object : SourceLocation(call) {
+                    override val repeatable: Boolean
+                        get() = true
+                }
         }
         class ParametersScope : BlockScope("parameters")
         class ComposableLambdaScope : BlockScope("composableLambda") {

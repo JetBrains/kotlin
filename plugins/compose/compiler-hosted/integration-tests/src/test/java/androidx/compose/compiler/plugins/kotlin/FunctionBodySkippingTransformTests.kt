@@ -560,6 +560,48 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testLoopWithContinueAndCallAfter(): Unit = comparisonPropagation(
+        """
+            @Composable fun Call() {}
+            fun condition(): Boolean = true
+        """,
+        """
+            @Composable
+            @ComposableContract(restartable=false)
+            fun Example() {
+                Call()
+                for (index in 0..1) {
+                    Call()
+                    if (condition())
+                        continue
+                    Call()
+                }
+            }
+        """,
+        """
+            @Composable
+            @ComposableContract(restartable = false)
+            fun Example(%composer: Composer<*>?, %changed: Int) {
+              %composer.startReplaceableGroup(<>, "C(Example)<Call()>:Test.kt")
+              Call(%composer, 0)
+              val tmp0_iterator = 0 .. 1.iterator()
+              while (tmp0_iterator.hasNext()) {
+                %composer.startReplaceableGroup(<>, "<Call()>,<Call()>")
+                val index = tmp0_iterator.next()
+                Call(%composer, 0)
+                if (condition()) {
+                  %composer.endReplaceableGroup()
+                  continue
+                }
+                Call(%composer, 0)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
     fun testSimpleBoxWithShape(): Unit = comparisonPropagation(
         """
             import androidx.compose.runtime.Stable
