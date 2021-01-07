@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="hibernate5_2">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/intellij/lib/dev/hibernate5_2" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/intellij/lib/dev/hibernate5_2" recursive="false" />
+  </library>
+</component>

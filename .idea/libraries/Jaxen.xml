@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="Jaxen" type="repository">
+    <properties include-transitive-deps="false" maven-id="jaxen:jaxen:1.2.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/jaxen/jaxen/1.2.0/jaxen-1.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/jaxen/jaxen/1.2.0/jaxen-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

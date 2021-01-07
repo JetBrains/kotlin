@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="cli-parser" type="repository">
+    <properties maven-id="com.github.spullara.cli-parser:cli-parser:1.1.5" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/spullara/cli-parser/cli-parser/1.1.5/cli-parser-1.1.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/spullara/cli-parser/cli-parser/1.1.5/cli-parser-1.1.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

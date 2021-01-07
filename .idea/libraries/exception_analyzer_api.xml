@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="exception-analyzer-api" type="repository">
+    <properties maven-id="org.jetbrains.intellij.deps:exception-analyzer-api:1.10.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/exception-analyzer-api/1.10.0/exception-analyzer-api-1.10.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/3.5.1/protobuf-java-3.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

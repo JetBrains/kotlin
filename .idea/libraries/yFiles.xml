@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="yFiles">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/y.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/ysvg.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/batik-compat.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/src/y-doc.zip!/api" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/src/ysvg-2.2.0.1.zip!/ysvg-2.2.0.1/doc" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

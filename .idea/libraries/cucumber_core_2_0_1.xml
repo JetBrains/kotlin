@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="cucumber-core:2.0.1" type="repository">
+    <properties maven-id="io.cucumber:cucumber-core:2.4.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/2.4.0/cucumber-core-2.4.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-html/0.2.6/cucumber-html-0.2.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-jvm-deps/1.0.6/cucumber-jvm-deps-1.0.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/gherkin/5.0.0/gherkin-5.0.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/tag-expressions/1.1.1/tag-expressions-1.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

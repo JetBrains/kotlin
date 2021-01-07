@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="ktor-server-jetty" type="repository">
+    <properties maven-id="io.ktor:ktor-server-jetty:1.3.1">
+      <exclude>
+        <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-core-common" />
+        <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-core" />
+        <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" />
+        <dependency maven-id="org.slf4j:slf4j-api" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-reflect" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-common" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk7" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk8" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-jetty/1.3.1/ktor-server-jetty-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/atomicfu/0.14.1/atomicfu-0.14.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-host-common/1.3.1/ktor-server-host-common-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-core/1.3.1/ktor-server-core-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-utils-jvm/1.3.1/ktor-utils-jvm-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-io-jvm/1.3.1/ktor-io-jvm-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-http-jvm/1.3.1/ktor-http-jvm-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/typesafe/config/1.3.1/config-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-http-cio-jvm/1.3.1/ktor-http-cio-jvm-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-network/1.3.1/ktor-network-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-servlet/1.3.1/ktor-server-servlet-1.3.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-server/9.4.24.v20191120/jetty-server-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-http/9.4.24.v20191120/jetty-http-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-io/9.4.24.v20191120/jetty-io-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-servlets/9.4.24.v20191120/jetty-servlets-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-continuation/9.4.24.v20191120/jetty-continuation-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/9.4.24.v20191120/jetty-util-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-alpn-server/9.4.24.v20191120/jetty-alpn-server-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-alpn-openjdk8-server/9.4.24.v20191120/jetty-alpn-openjdk8-server-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-alpn-java-server/9.4.24.v20191120/jetty-alpn-java-server-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/alpn/alpn-api/1.1.3.v20160715/alpn-api-1.1.3.v20160715.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/http2/http2-server/9.4.24.v20191120/http2-server-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/http2/http2-common/9.4.24.v20191120/http2-common-9.4.24.v20191120.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/http2/http2-hpack/9.4.24.v20191120/http2-hpack-9.4.24.v20191120.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-jetty/1.3.1/ktor-server-jetty-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/atomicfu/0.14.1/atomicfu-0.14.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-host-common/1.3.1/ktor-server-host-common-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-core/1.3.1/ktor-server-core-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-utils-jvm/1.3.1/ktor-utils-jvm-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-io-jvm/1.3.1/ktor-io-jvm-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-http-jvm/1.3.1/ktor-http-jvm-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/typesafe/config/1.3.1/config-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-http-cio-jvm/1.3.1/ktor-http-cio-jvm-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-network/1.3.1/ktor-network-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/io/ktor/ktor-server-servlet/1.3.1/ktor-server-servlet-1.3.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-server/9.4.24.v20191120/jetty-server-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-http/9.4.24.v20191120/jetty-http-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-io/9.4.24.v20191120/jetty-io-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-servlets/9.4.24.v20191120/jetty-servlets-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-continuation/9.4.24.v20191120/jetty-continuation-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/9.4.24.v20191120/jetty-util-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-alpn-server/9.4.24.v20191120/jetty-alpn-server-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-alpn-openjdk8-server/9.4.24.v20191120/jetty-alpn-openjdk8-server-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-alpn-java-server/9.4.24.v20191120/jetty-alpn-java-server-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/alpn/alpn-api/1.1.3.v20160715/alpn-api-1.1.3.v20160715-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/http2/http2-server/9.4.24.v20191120/http2-server-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/http2/http2-common/9.4.24.v20191120/http2-common-9.4.24.v20191120-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/http2/http2-hpack/9.4.24.v20191120/http2-hpack-9.4.24.v20191120-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

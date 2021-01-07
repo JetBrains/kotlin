@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="Java-WebSocket" type="repository">
+    <properties maven-id="org.java-websocket:Java-WebSocket:1.4.0">
+      <exclude>
+        <dependency maven-id="org.slf4j:slf4j-api" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/java-websocket/Java-WebSocket/1.4.0/Java-WebSocket-1.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/java-websocket/Java-WebSocket/1.4.0/Java-WebSocket-1.4.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/java-websocket/Java-WebSocket/1.4.0/Java-WebSocket-1.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

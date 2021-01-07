@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="Spring">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/spring-aspects.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/spring.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/src/spring-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="gant-groovy" type="repository">
+    <properties maven-id="org.codehaus.gant:gant_groovy2.3:1.9.11">
+      <exclude>
+        <dependency maven-id="org.codehaus.groovy:groovy-all" />
+        <dependency maven-id="org.apache.ant:ant" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/gant/gant_groovy2.3/1.9.11/gant_groovy2.3-1.9.11.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.2/commons-cli-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/gant/gant_groovy2.3/1.9.11/gant_groovy2.3-1.9.11-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.2/commons-cli-1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

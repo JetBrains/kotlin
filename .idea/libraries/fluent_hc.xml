@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="fluent-hc" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.apache.httpcomponents:fluent-hc:4.5.12" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/fluent-hc/4.5.12/fluent-hc-4.5.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/fluent-hc/4.5.12/fluent-hc-4.5.12-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

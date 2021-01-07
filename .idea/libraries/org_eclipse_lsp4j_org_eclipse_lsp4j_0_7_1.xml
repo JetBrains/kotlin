@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.eclipse.lsp4j:org.eclipse.lsp4j:0.7.1" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.eclipse.lsp4j:org.eclipse.lsp4j:0.7.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j/0.7.1/org.eclipse.lsp4j-0.7.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j/0.7.1/org.eclipse.lsp4j-0.7.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j/0.7.1/org.eclipse.lsp4j-0.7.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="proxy-vole" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps:proxy-vole:1.0.5-jb.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/proxy-vole/1.0.5-jb.2/proxy-vole-1.0.5-jb.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/proxy-vole/1.0.5-jb.2/proxy-vole-1.0.5-jb.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

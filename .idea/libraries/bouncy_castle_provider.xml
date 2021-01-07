@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="bouncy-castle-provider" type="repository">
+    <properties maven-id="org.bouncycastle:bcpkix-jdk15on:1.65" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.65/bcpkix-jdk15on-1.65.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.65/bcprov-jdk15on-1.65.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.65/bcpkix-jdk15on-1.65-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.65/bcprov-jdk15on-1.65-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

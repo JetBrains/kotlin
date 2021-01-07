@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="truth" type="repository">
+    <properties maven-id="com.google.truth:truth:0.42">
+      <exclude>
+        <dependency maven-id="com.google.guava:guava" />
+        <dependency maven-id="org.checkerframework:checker-compat-qual" />
+        <dependency maven-id="org.checkerframework:checker-qual" />
+        <dependency maven-id="junit:junit" />
+        <dependency maven-id="com.google.auto.value:auto-value-annotations" />
+        <dependency maven-id="com.google.errorprone:error_prone_annotations" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/truth/truth/0.42/truth-0.42.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/java-diff-utils/diffutils/1.3.0/diffutils-1.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

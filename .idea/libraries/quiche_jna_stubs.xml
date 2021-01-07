@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="quiche-jna-stubs" type="repository">
+    <properties maven-id="com.jetbrains.quiche:quiche-jna-stubs:15" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij/platform/rd-platform/quiche-jna-stubs-annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/quiche/quiche-jna-stubs/15/quiche-jna-stubs-15.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/quiche/quiche-jna-stubs/15/quiche-jna-stubs-15-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

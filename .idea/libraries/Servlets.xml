@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="Servlets">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/servlet-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/jsp-api.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

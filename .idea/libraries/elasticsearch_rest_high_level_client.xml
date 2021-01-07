@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="elasticsearch-rest-high-level-client" type="repository">
+    <properties maven-id="org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.2">
+      <exclude>
+        <dependency maven-id="com.fasterxml.jackson.core:jackson-core" />
+        <dependency maven-id="com.fasterxml.jackson.dataformat:jackson-dataformat-cbor" />
+        <dependency maven-id="com.fasterxml.jackson.dataformat:jackson-dataformat-smile" />
+        <dependency maven-id="com.fasterxml.jackson.dataformat:jackson-dataformat-yaml" />
+        <dependency maven-id="commons-codec:commons-codec" />
+        <dependency maven-id="commons-logging:commons-logging" />
+        <dependency maven-id="org.apache.httpcomponents:httpclient" />
+        <dependency maven-id="org.apache.httpcomponents:httpcore" />
+        <dependency maven-id="org.hdrhistogram:HdrHistogram" />
+        <dependency maven-id="org.yaml:snakeyaml" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/client/elasticsearch-rest-high-level-client/7.4.2/elasticsearch-rest-high-level-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch/7.4.2/elasticsearch-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-core/7.4.2/elasticsearch-core-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-secure-sm/7.4.2/elasticsearch-secure-sm-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-x-content/7.4.2/elasticsearch-x-content-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-geo/7.4.2/elasticsearch-geo-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/8.2.0/lucene-core-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-analyzers-common/8.2.0/lucene-analyzers-common-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-backward-codecs/8.2.0/lucene-backward-codecs-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-grouping/8.2.0/lucene-grouping-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-highlighter/8.2.0/lucene-highlighter-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-join/8.2.0/lucene-join-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-memory/8.2.0/lucene-memory-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-misc/8.2.0/lucene-misc-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-queries/8.2.0/lucene-queries-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-queryparser/8.2.0/lucene-queryparser-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-sandbox/8.2.0/lucene-sandbox-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-spatial/8.2.0/lucene-spatial-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-spatial-extras/8.2.0/lucene-spatial-extras-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-spatial3d/8.2.0/lucene-spatial3d-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-suggest/8.2.0/lucene-suggest-8.2.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-cli/7.4.2/elasticsearch-cli-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/sf/jopt-simple/jopt-simple/5.0.2/jopt-simple-5.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.8.1/hppc-0.8.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time/2.10.3/joda-time-2.10.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/tdunning/t-digest/3.2/t-digest-3.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-api/2.11.1/log4j-api-2.11.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/jna/4.5.1/jna-4.5.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/client/elasticsearch-rest-client/7.4.2/elasticsearch-rest-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpasyncclient/4.1.4/httpasyncclient-4.1.4.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore-nio/4.4.11/httpcore-nio-4.4.11.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/mapper-extras-client/7.4.2/mapper-extras-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/parent-join-client/7.4.2/parent-join-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/aggs-matrix-stats-client/7.4.2/aggs-matrix-stats-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/rank-eval-client/7.4.2/rank-eval-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/lang-mustache-client/7.4.2/lang-mustache-client-7.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/spullara/mustache/java/compiler/0.9.3/compiler-0.9.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/client/elasticsearch-rest-high-level-client/7.4.2/elasticsearch-rest-high-level-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch/7.4.2/elasticsearch-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-core/7.4.2/elasticsearch-core-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-secure-sm/7.4.2/elasticsearch-secure-sm-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-x-content/7.4.2/elasticsearch-x-content-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-geo/7.4.2/elasticsearch-geo-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-core/8.2.0/lucene-core-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-analyzers-common/8.2.0/lucene-analyzers-common-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-backward-codecs/8.2.0/lucene-backward-codecs-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-grouping/8.2.0/lucene-grouping-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-highlighter/8.2.0/lucene-highlighter-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-join/8.2.0/lucene-join-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-memory/8.2.0/lucene-memory-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-misc/8.2.0/lucene-misc-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-queries/8.2.0/lucene-queries-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-queryparser/8.2.0/lucene-queryparser-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-sandbox/8.2.0/lucene-sandbox-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-spatial/8.2.0/lucene-spatial-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-spatial-extras/8.2.0/lucene-spatial-extras-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-spatial3d/8.2.0/lucene-spatial3d-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/lucene/lucene-suggest/8.2.0/lucene-suggest-8.2.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/elasticsearch-cli/7.4.2/elasticsearch-cli-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/sf/jopt-simple/jopt-simple/5.0.2/jopt-simple-5.0.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.8.1/hppc-0.8.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/joda-time/joda-time/2.10.3/joda-time-2.10.3-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/tdunning/t-digest/3.2/t-digest-3.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-api/2.11.1/log4j-api-2.11.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/jna/4.5.1/jna-4.5.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/client/elasticsearch-rest-client/7.4.2/elasticsearch-rest-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpasyncclient/4.1.4/httpasyncclient-4.1.4-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/httpcomponents/httpcore-nio/4.4.11/httpcore-nio-4.4.11-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/mapper-extras-client/7.4.2/mapper-extras-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/parent-join-client/7.4.2/parent-join-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/aggs-matrix-stats-client/7.4.2/aggs-matrix-stats-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/rank-eval-client/7.4.2/rank-eval-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/elasticsearch/plugin/lang-mustache-client/7.4.2/lang-mustache-client-7.4.2-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/spullara/mustache/java/compiler/0.9.3/compiler-0.9.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

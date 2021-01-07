@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.jetbrains.kotlinx:kotlinx-serialization-runtime" type="repository">
+    <properties maven-id="org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-serialization-runtime/0.20.0/kotlinx-serialization-runtime-0.20.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.3.70/kotlin-stdlib-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.70/kotlin-stdlib-common-1.3.70.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jsch-nio" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.pastdev:jsch-nio:1.0.14" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/pastdev/jsch-nio/1.0.14/jsch-nio-1.0.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/pastdev/jsch-nio/1.0.14/jsch-nio-1.0.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

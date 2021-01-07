@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.jetbrains.kotlin:kotlin-compiler" type="repository">
+    <properties maven-id="org.jetbrains.kotlin:kotlin-compiler:1.3.70" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.3.70/kotlin-stdlib-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.70/kotlin-stdlib-common-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-runtime/1.3.70/kotlin-script-runtime-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.3.70/kotlin-reflect-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/trove4j/1.0.20181211/trove4j-1.0.20181211.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/trove4j/1.0.20181211/trove4j-1.0.20181211.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.3.70/kotlin-reflect-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-runtime/1.3.70/kotlin-script-runtime-1.3.70.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/one" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/misc" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/sun" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/google" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/icons" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/jna" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/util" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/codeInsight" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/injected" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/serviceContainer" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/pom" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/execution" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/reference" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/formatting" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/testFramework" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/ui" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/patterns" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/lang" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/serialization" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/xml" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/lexer" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/navigation" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/diagnostic" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/psi" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/extapi" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/core" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/model" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/ide" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/concurrency" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/roots" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/diagnostic" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/module" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/components" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/ui" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/command" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/projectRoots" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/application" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/fileTypes" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/vfs" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/extensions" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/fileEditor" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/wm" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/editor" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/util" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler/1.3.70/kotlin-compiler-1.3.70.jar!/com/intellij/openapi/progress" />
+    </excluded>
+  </library>
+</component>

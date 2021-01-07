@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="mockwebsphere">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/mock-websphereadmin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

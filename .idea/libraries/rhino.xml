@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="rhino" type="repository">
+    <properties maven-id="org.mozilla:rhino:1.7.12" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/mozilla/rhino/1.7.12/rhino-1.7.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/mozilla/rhino/1.7.12/rhino-1.7.12-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

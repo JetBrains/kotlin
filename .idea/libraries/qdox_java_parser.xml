@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="qdox-java-parser" type="repository">
+    <properties maven-id="com.thoughtworks.qdox:qdox:2.0-M10" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/qdox/qdox/2.0-M10/qdox-2.0-M10.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/thoughtworks/qdox/qdox/2.0-M10/qdox-2.0-M10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

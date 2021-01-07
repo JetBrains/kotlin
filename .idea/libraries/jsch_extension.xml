@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jsch-extension" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.pastdev:jsch-extension:0.1.11" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/pastdev/jsch-extension/0.1.11/jsch-extension-0.1.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/pastdev/jsch-extension/0.1.11/jsch-extension-0.1.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

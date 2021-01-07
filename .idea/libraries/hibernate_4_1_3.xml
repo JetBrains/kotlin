@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="hibernate-4.1.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/hibernate4/dom4j-1.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/hibernate4/hibernate-core-4.1.3.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

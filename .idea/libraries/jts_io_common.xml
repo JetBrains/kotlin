@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jts-io-common" type="repository">
+    <properties maven-id="org.locationtech.jts.io:jts-io-common:1.16.1">
+      <exclude>
+        <dependency maven-id="junit:junit" />
+        <dependency maven-id="org.hamcrest:hamcrest-core" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/locationtech/jts/io/jts-io-common/1.16.1/jts-io-common-1.16.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/locationtech/jts/jts-core/1.16.1/jts-core-1.16.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

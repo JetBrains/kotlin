@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="SSHJ" type="repository">
+    <properties maven-id="com.hierynomus:sshj:0.29.0">
+      <exclude>
+        <dependency maven-id="org.slf4j:slf4j-api" />
+        <dependency maven-id="org.bouncycastle:bcprov-jdk15on" />
+        <dependency maven-id="org.bouncycastle:bcpkix-jdk15on" />
+        <dependency maven-id="com.jcraft:jzlib" />
+      </exclude>
+    </properties>
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/hierynomus/sshj/0.29.0/sshj-0.29.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/hierynomus/sshj/0.29.0/sshj-0.29.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/i2p/crypto/eddsa/0.3.0/eddsa-0.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

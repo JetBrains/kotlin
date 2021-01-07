@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="jnaerator-runtime" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.nativelibs4java:jnaerator-runtime:0.12" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/nativelibs4java/jnaerator-runtime/0.12/jnaerator-runtime-0.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/nativelibs4java/jnaerator-runtime/0.12/jnaerator-runtime-0.12-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.openjdk.jmh:jmh-core" type="repository">
+    <properties maven-id="org.openjdk.jmh:jmh-core:1.19" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjdk/jmh/jmh-core/1.19/jmh-core-1.19.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/sf/jopt-simple/jopt-simple/4.6/jopt-simple-4.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-math3/3.2/commons-math3-3.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

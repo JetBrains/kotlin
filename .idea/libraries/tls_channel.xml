@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="tls-channel" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.github.marianobarrios:tls-channel:0.3.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/marianobarrios/tls-channel/0.3.2/tls-channel-0.3.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/marianobarrios/tls-channel/0.3.2/tls-channel-0.3.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
