@@ -111,13 +111,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
 
-        // External interfaces cannot normally have companion objects.
-        // However, stdlib uses them to simulate string literal unions
-        // TODO: Stop abusing this tech
-        if (obj.isCompanion && obj.parentAsClass.isInterface) {
-            return JsNullLiteral()
-        }
-
         return context.getRefForExternalClass(obj)
     }
 
