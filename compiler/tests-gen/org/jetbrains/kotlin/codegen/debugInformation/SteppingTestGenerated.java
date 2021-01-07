@@ -99,6 +99,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("constantConditions.kt")
+    public void testConstantConditions() throws Exception {
+        runTest("compiler/testData/debug/stepping/constantConditions.kt");
+    }
+
+    @Test
     @TestMetadata("constructorCall.kt")
     public void testConstructorCall() throws Exception {
         runTest("compiler/testData/debug/stepping/constructorCall.kt");
@@ -270,6 +276,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("localFunctionWIthOnelineExpressionBody.kt")
     public void testLocalFunctionWIthOnelineExpressionBody() throws Exception {
         runTest("compiler/testData/debug/stepping/localFunctionWIthOnelineExpressionBody.kt");
+    }
+
+    @Test
+    @TestMetadata("multilineExpression.kt")
+    public void testMultilineExpression() throws Exception {
+        runTest("compiler/testData/debug/stepping/multilineExpression.kt");
     }
 
     @Test

@@ -242,6 +242,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt19723.kt");
         }
 
+        @TestMetadata("kt29595.kt")
+        public void testKt29595() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt29595.kt");
+        }
+
         @TestMetadata("kt34656.kt")
         public void testKt34656() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt34656.kt");
@@ -260,6 +265,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("kt42815_delegated.kt")
         public void testKt42815_delegated() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt42815_delegated.kt");
+        }
+
+        @TestMetadata("kt6007.kt")
+        public void testKt6007() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
         }
 
         @TestMetadata("kt6552.kt")
@@ -990,6 +1000,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             @TestMetadata("kt18728_4.kt")
             public void testKt18728_4() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_4.kt");
+            }
+
+            @TestMetadata("lambdaOnLhs.kt")
+            public void testLambdaOnLhs() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/lambdaOnLhs.kt");
             }
 
             @TestMetadata("map.kt")
@@ -4450,6 +4465,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             @TestMetadata("insideObject.kt")
             public void testInsideObject() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/insideObject.kt");
+            }
+
+            @TestMetadata("kt30708.kt")
+            public void testKt30708() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/stateMachine/kt30708.kt");
             }
 
             @TestMetadata("lambdaTransformation.kt")
