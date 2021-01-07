@@ -873,8 +873,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             return buildAssignmentOperatorStatement {
                 source = baseSource
                 this.operation = operation
-                // TODO: take good psi
-                leftArgument = this@generateAssignment?.convert() ?: buildErrorExpression {
+                leftArgument = withDefaultSourceElementKind(FirFakeSourceElementKind.DesugaredCompoundAssignment) {
+                    this@generateAssignment?.convert()
+                } ?: buildErrorExpression {
                     source = null
                     diagnostic = ConeSimpleDiagnostic(
                         "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionRequired

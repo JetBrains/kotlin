@@ -256,7 +256,6 @@ object UnusedChecker : FirControlFlowChecker() {
             vararg qualifiedAccesses: FirQualifiedAccess,
         ): PathAwareVariableStatusInfo {
             fun retrieveSymbol(qualifiedAccess: FirQualifiedAccess): FirPropertySymbol? {
-                if (qualifiedAccess.source?.kind is FirFakeSourceElementKind) return null
                 val reference = qualifiedAccess.calleeReference as? FirResolvedNamedReference ?: return null
                 val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return null
                 return if (symbol !in localProperties) null else symbol
