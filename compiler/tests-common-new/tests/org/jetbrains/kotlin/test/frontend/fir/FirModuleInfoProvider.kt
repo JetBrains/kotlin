@@ -27,16 +27,13 @@ class FirModuleInfoProvider(
             module.dependencies.mapTo(dependencies) {
                 convertToFirModuleInfo(testServices.dependencyProvider.getTestModule(it.moduleName))
             }
-            FirJvmModuleInfo(
-                module.name,
-                dependencies
-            )
+            FirJvmModuleInfo(Name.identifier(module.name), dependencies)
         }
     }
 
     fun builtinsModuleInfoForModule(module: TestModule): FirJvmModuleInfo {
         return builtinsByModule.getOrPut(module) {
-            FirJvmModuleInfo(Name.special("<built-ins>"), emptyList())
+            FirJvmModuleInfo(Name.special("<built-ins>"))
         }
     }
 }
