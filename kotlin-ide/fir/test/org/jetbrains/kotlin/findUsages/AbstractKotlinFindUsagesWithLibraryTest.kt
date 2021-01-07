@@ -6,11 +6,18 @@
 package org.jetbrains.kotlin.findUsages
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.invalidateCaches
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractKotlinFindUsagesWithLibraryFirTest : AbstractKotlinFindUsagesWithLibraryTest() {
     override fun isFirPlugin(): Boolean = true
+
+    override fun tearDown() {
+        project.invalidateCaches(file as? KtFile)
+        super.tearDown()
+    }
 
     override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
         super.doTest<T>(path)
