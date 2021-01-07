@@ -61,12 +61,6 @@ object JsExternalChecker : DeclarationChecker {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
-        if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE &&
-            descriptor.containingDeclaration.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
-        ) {
-            trace.report(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE.on(declaration))
-        }
-
         if (descriptor !is PropertyAccessorDescriptor && descriptor.isExtension) {
             val target = when (descriptor) {
                 is FunctionDescriptor -> "extension function"
