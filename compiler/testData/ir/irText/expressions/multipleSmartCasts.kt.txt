@@ -1,0 +1,24 @@
+interface IC1 {
+  abstract operator fun component1(): Int
+
+}
+
+interface IC2 {
+  abstract operator fun component2(): String
+
+}
+
+fun test(x: Any) {
+  when {
+    when {
+      x is IC1 -> x is IC2
+      else -> false
+    } -> { // BLOCK
+      // COMPOSITE {
+      val tmp0_container: Any = x
+      val x1: Int = tmp0_container /*as IC1 */.component1()
+      val x2: String = tmp0_container /*as IC2 */.component2()
+      // }
+    }
+  }
+}

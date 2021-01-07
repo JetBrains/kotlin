@@ -5886,6 +5886,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/ieee754/smartCastToDoubleAndComparableToDouble.kt");
         }
 
+        @TestMetadata("smartCastToInt.kt")
+        public void testSmartCastToInt() throws Exception {
+            runTest("compiler/testData/codegen/box/ieee754/smartCastToInt.kt");
+        }
+
         @TestMetadata("whenNoSubject_properIeeeComparisons.kt")
         public void testWhenNoSubject_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/whenNoSubject_properIeeeComparisons.kt");
@@ -13251,6 +13256,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("kt19100.kt")
         public void testKt19100() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/kt19100.kt");
+        }
+
+        @TestMetadata("multipleSmartCast.kt")
+        public void testMultipleSmartCast() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/multipleSmartCast.kt");
         }
 
         @TestMetadata("smartCastInsideIf.kt")

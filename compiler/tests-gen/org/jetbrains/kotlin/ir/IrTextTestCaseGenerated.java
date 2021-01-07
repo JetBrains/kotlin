@@ -1187,6 +1187,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/membersImportedFromObject.kt");
         }
 
+        @TestMetadata("multipleSmartCasts.kt")
+        public void testMultipleSmartCasts() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/multipleSmartCasts.kt");
+        }
+
         @TestMetadata("multipleThisReferences.kt")
         public void testMultipleThisReferences() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/multipleThisReferences.kt");
@@ -1450,6 +1455,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("whenReturnUnit.kt")
         public void testWhenReturnUnit() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whenReturnUnit.kt");
+        }
+
+        @TestMetadata("whenSmartCastToEnum.kt")
+        public void testWhenSmartCastToEnum() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/whenSmartCastToEnum.kt");
         }
 
         @TestMetadata("whenUnusedExpression.kt")
