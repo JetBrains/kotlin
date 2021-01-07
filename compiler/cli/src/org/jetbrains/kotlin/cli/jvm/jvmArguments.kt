@@ -171,6 +171,16 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
             } else {
                 arguments.useIR && !arguments.useOldBackend
             }
+
+    if (arguments.useIR && arguments.useOldBackend) {
+        messageCollector.report(
+            STRONG_WARNING,
+            "Both -Xuse-ir and -Xuse-old-backend are passed. This is an inconsistent configuration. " +
+                    "The compiler will use the ${if (useIR) "JVM IR" else "old JVM"} backend"
+        )
+    }
+    messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
+
     put(JVMConfigurationKeys.IR, useIR)
 
     val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
