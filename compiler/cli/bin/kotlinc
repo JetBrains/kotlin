@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
-#
-##############################################################################
+
+# Based on scalac from the Scala distribution
 # Copyright 2002-2011, LAMP/EPFL
-# Copyright 2011-2015, JetBrains
-#
-# This is free software; see the distribution for copying conditions.
-# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
-# PARTICULAR PURPOSE.
-##############################################################################
+# Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+# Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 
 cygwin=false;
 case "`uname`" in
