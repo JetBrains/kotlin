@@ -156,11 +156,19 @@ internal object FirReferenceResolveHelper {
             }
             is FirReturnExpression -> getSymbolsByReturnExpression(expression, fir, symbolBuilder)
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
+            is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun getSymbolsByVariableAssignment(
+        fir: FirVariableAssignment,
+        session: FirSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> = fir.calleeReference.toTargetSymbol(session, symbolBuilder)
 
     private fun getSymbolsByNameArgumentExpression(
         expression: KtSimpleNameExpression,
