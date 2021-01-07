@@ -33,7 +33,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         expectedStdout: String = "",
         expectedStderr: String = "",
         expectedExitCode: Int = 0,
-        workDirectory: File? = null
+        workDirectory: File? = null,
+        environment: Map<String, String> = emptyMap(),
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
@@ -43,9 +44,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         // So, use ProcessBuilder instead.
         val pb = ProcessBuilder(
             launcherFile.absolutePath,
-            // In cmd, `=` is delimeter, so we need to surround parameter with quotes.
+            // In cmd, `=` is delimiter, so we need to surround parameter with quotes.
             *quoteIfNeeded(args)
         )
+        pb.environment().putAll(environment)
         pb.directory(workDirectory)
         val process = pb.start()
         val stdout =
@@ -333,5 +335,18 @@ fun f() : Result<Int> = Result.success(42)
             expectedStderr = "error: could not read manifest from test.HelloWorldKt: test.HelloWorldKt (No such file or directory)\n"
         )
         runProcess("kotlin", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+    }
+
+    fun testKotlincJdk15() {
+        val jdk15 = mapOf("JAVA_HOME" to KtTestUtil.getJdk15Home().absolutePath)
+        runProcess(
+            "kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path,
+            environment = jdk15,
+        )
+
+        runProcess(
+            "kotlin", "-e", "listOf('O'.toString() + 'K')",
+            expectedStdout = "[OK]\n", environment = jdk15,
+        )
     }
 }
