@@ -1243,13 +1243,16 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %changed: Int) {
-              %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>:Test.kt")
+              %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
               while (items.hasNext()) {
+                %composer.startReplaceableGroup(<>, "<P(i)>")
                 val i = items.next()
                 if (i == 0) {
+                  %composer.endReplaceableGroup()
                   continue
                 }
                 P(i, %composer, 0)
+                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -1275,14 +1278,17 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %changed: Int) {
-              %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>:Test.kt")
+              %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
               while (items.hasNext()) {
+                %composer.startReplaceableGroup(<>, "<P(i)>")
                 val i = items.next()
                 P(i, %composer, 0)
                 if (i == 0) {
+                  %composer.endReplaceableGroup()
                   continue
                 }
                 print(i)
+                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
@@ -1308,14 +1314,17 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @ComposableContract(restartable = false)
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer<*>?, %changed: Int) {
-              %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>,<P(i)>:Test.kt")
+              %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
               while (items.hasNext()) {
+                %composer.startReplaceableGroup(<>, "<P(i)>,<P(i)>")
                 val i = items.next()
                 P(i, %composer, 0)
                 if (i == 0) {
+                  %composer.endReplaceableGroup()
                   continue
                 }
                 P(i, %composer, 0)
+                %composer.endReplaceableGroup()
               }
               %composer.endReplaceableGroup()
             }
