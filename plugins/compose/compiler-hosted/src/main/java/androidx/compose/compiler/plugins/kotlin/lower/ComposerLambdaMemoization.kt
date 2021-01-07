@@ -499,11 +499,6 @@ class ComposerLambdaMemoization(
             // The result type type parameter is first, followed by the argument types
             putTypeArgument(0, expression.type)
             val lambdaArgumentIndex = if (directRememberFunction != null) {
-                // Call to the non-vararg version
-                for (i in 1..captures.size) {
-                    putTypeArgument(i, captures[i - 1].type)
-                }
-
                 // condition arguments are the first `arg.size` arguments
                 for (i in captures.indices) {
                     putValueArgument(i, irBuilder.irGet(captures[i]))
