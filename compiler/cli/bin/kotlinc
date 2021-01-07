@@ -67,13 +67,18 @@ fi
 
 declare -a kotlin_app
 
+java_version="$(findJavaVersion)"
+if [[ $java_version -ge 9 ]]; then
+    # Workaround the illegal reflective access warning from ReflectionUtil to ResourceBundle.setParent, see IDEA-248785.
+    java_args=("${java_args[@]}" "--add-opens" "java.base/java.util=ALL-UNNAMED")
+fi
+
 if [ -n "$KOTLIN_RUNNER" ]; then
     java_args=("${java_args[@]}" "-Dkotlin.home=${KOTLIN_HOME}")
     kotlin_app=("${KOTLIN_HOME}/lib/kotlin-runner.jar" "org.jetbrains.kotlin.runner.Main")
 else
     [ -n "$KOTLIN_COMPILER" ] || KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 
-    java_version="$(findJavaVersion)"
     if [[ $java_version < 13 ]]; then
         java_args=("${java_args[@]}" "-noverify")
     fi
