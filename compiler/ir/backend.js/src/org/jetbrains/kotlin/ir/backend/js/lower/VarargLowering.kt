@@ -119,7 +119,7 @@ private class VarargTransformer(
         for (e in expression.elements) {
             when (e) {
                 is IrSpreadElement -> {
-                    if (!currentList.isEmpty()) {
+                    if (currentList.isNotEmpty()) {
                         segments.add(arrayInfo.toPrimitiveArrayLiteral(currentList))
                         currentList.clear()
                     }
@@ -131,7 +131,7 @@ private class VarargTransformer(
                 }
             }
         }
-        if (!currentList.isEmpty()) {
+        if (currentList.isNotEmpty()) {
             segments.add(arrayInfo.toPrimitiveArrayLiteral(currentList))
             currentList.clear()
         }
@@ -207,7 +207,7 @@ private class VarargTransformer(
             if (argument == null && varargElementType != null) {
                 val arrayInfo = InlineClassArrayInfo(varargElementType, parameter.type)
                 val emptyArray = with (arrayInfo) {
-                    boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList<IrExpression>()))
+                    boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList()))
                 }
 
                 expression.putValueArgument(i, emptyArray)
