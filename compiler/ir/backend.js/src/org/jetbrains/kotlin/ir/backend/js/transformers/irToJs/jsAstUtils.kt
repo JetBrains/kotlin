@@ -223,12 +223,11 @@ fun argumentsWithVarargAsSingleArray(
                     concatElements.add(JsArrayLiteral(arraysForConcat))
                     arraysForConcat = mutableListOf()
 
-                    val varargArgument = if (argument is JsArrayLiteral) {
-                        argument
-                    } else {
-                        val arraySliceCall = JsNameRef("call", JsNameRef("slice", JsArrayLiteral()))
-                        JsInvocation(arraySliceCall, argument)
-                    }
+                    val varargArgument = when (argument) {
+                        is JsArrayLiteral -> argument
+                        is JsNew -> argument.arguments.firstOrNull() as? JsArrayLiteral
+                        else -> null
+                    } ?: JsInvocation(JsNameRef("call", JsNameRef("slice", JsArrayLiteral())), argument)
 
                     concatElements.add(varargArgument)
                 }
