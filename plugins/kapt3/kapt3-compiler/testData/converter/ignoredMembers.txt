@@ -7,8 +7,7 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String nonIgnoredProperty = "";
 
-    public Test() {
-        super();
+    public final void nonIgnoredFun() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -16,6 +15,7 @@ public final class Test {
         return null;
     }
 
-    public final void nonIgnoredFun() {
+    public Test() {
+        super();
     }
 }
