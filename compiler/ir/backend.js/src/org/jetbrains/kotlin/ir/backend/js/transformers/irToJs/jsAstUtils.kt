@@ -242,10 +242,12 @@ fun argumentsWithVarargAsSingleArray(
         concatElements.add(JsArrayLiteral(arraysForConcat))
     }
 
-    return concatElements.singleOrNull()
+    val concatElementsResolved = concatElements.dropWhile { (it is JsArrayLiteral) && (it.expressions.isEmpty()) }
+
+    return concatElementsResolved.singleOrNull()
         ?: JsInvocation(
-            JsNameRef("concat", concatElements.first()),
-            concatElements.drop(1)
+            JsNameRef("concat", concatElementsResolved.first()),
+            concatElementsResolved.drop(1)
         )
 }
 
