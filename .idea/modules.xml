@@ -400,6 +400,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.credentialStore.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.credentialStore.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.debugger.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.debugger.impl.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.debugger.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-community/platform/xdebugger-testFramework/intellij.platform.debugger.testFramework.iml" filepath="$PROJECT_DIR$/intellij-community/platform/xdebugger-testFramework/intellij.platform.debugger.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.diagnostic.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.diagnostic.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.diff.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.diff.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.diff.impl.iml" filepath="$PROJECT_DIR$/intellij-stub-modules-generated/intellij.platform.diff.impl.iml" />
