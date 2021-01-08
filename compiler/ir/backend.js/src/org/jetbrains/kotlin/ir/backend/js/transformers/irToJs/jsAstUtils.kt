@@ -240,15 +240,18 @@ fun argumentsWithVarargAsSingleArray(
             }
         }
 
-    if (arraysForConcat.isNotEmpty() || concatElements.isEmpty()) {
+    if (arraysForConcat.isNotEmpty()) {
         concatElements.add(JsArrayLiteral(arraysForConcat))
     }
 
-    return concatElements.singleOrNull()
-        ?: JsInvocation(
+    return when (concatElements.size) {
+        0 -> JsArrayLiteral()
+        1 -> concatElements[0]
+        else -> JsInvocation(
             JsNameRef("concat", concatElements.first()),
             concatElements.drop(1)
         )
+    }
 }
 
 fun IrFunction.varargParameterIndex() = valueParameters.indexOfFirst { it.varargElementType != null }
