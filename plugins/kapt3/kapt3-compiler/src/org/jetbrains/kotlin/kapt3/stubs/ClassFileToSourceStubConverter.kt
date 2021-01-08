@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.kapt3.base.pairedListToMap
 import org.jetbrains.kotlin.kapt3.base.plus
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
+import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
@@ -387,17 +388,27 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             )
         }
 
-        val fields = mapJList<FieldNode, JCTree>(clazz.fields) {
-            if (it.isEnumValue()) null else convertField(it, clazz, lineMappings, packageFqName)
+        val fieldsPositions = mutableMapOf<JCTree, MemberData>()
+        val fields = mapJList<FieldNode, JCTree>(clazz.fields) { fieldNode ->
+            if (fieldNode.isEnumValue()) {
+                null
+            } else {
+                convertField(fieldNode, clazz, lineMappings, packageFqName)?.also {
+                    fieldsPositions[it] = MemberData(fieldNode.name, fieldNode.desc, lineMappings.getPosition(clazz, fieldNode))
+                }
+            }
         }
 
-        val methods = mapJList<MethodNode, JCTree>(clazz.methods) {
+        val methodsPositions = mutableMapOf<JCTree, MemberData>()
+        val methods = mapJList<MethodNode, JCTree>(clazz.methods) { methodNode ->
             if (isEnum) {
-                if (it.name == "values" && it.desc == "()[L${clazz.name};") return@mapJList null
-                if (it.name == "valueOf" && it.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapJList null
+                if (methodNode.name == "values" && methodNode.desc == "()[L${clazz.name};") return@mapJList null
+                if (methodNode.name == "valueOf" && methodNode.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapJList null
             }
 
-            convertMethod(it, clazz, lineMappings, packageFqName, isInner)
+            convertMethod(methodNode, clazz, lineMappings, packageFqName, isInner)?.also {
+                methodsPositions[it] = MemberData(methodNode.name, methodNode.desc, lineMappings.getPosition(clazz, methodNode))
+            }
         }
 
         val nestedClasses = mapJList<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
@@ -411,14 +422,62 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         val superTypes = calculateSuperTypes(clazz, genericType)
 
+        val classPosition = lineMappings.getPosition(clazz)
+        val sortedFields = JavacList.from(fields.sortedWith(MembersPositionComparator(classPosition, fieldsPositions)))
+        val sortedMethods = JavacList.from(methods.sortedWith(MembersPositionComparator(classPosition, methodsPositions)))
+
         return treeMaker.ClassDef(
             modifiers,
             treeMaker.name(simpleName),
             genericType.typeParameters,
             superTypes.superClass,
             superTypes.interfaces,
-            enumValues + fields + methods + nestedClasses
+            enumValues + sortedFields + sortedMethods + nestedClasses
         ).keepKdocComments(clazz)
+    }
+
+    private class MemberData(val name: String, val descriptor: String, val position: KotlinPosition?)
+
+    /**
+     * Sort class members. If the source file for the class is unknown, just sort using name and descriptor. Otherwise:
+     * - all members in the same source file as the class come first (members may come from other source files)
+     * - members from the class are sorted using their position in the source file
+     * - members from other source files are sorted using their name and descriptor
+     *
+     * More details: Class methods and fields are currently sorted at serialization (see DescriptorSerializer.sort) and at deserialization
+     * (see DeserializedMemberScope.OptimizedImplementation#addMembers). Therefore, the contents of the generated stub files are sorted in
+     * incremental builds but not in clean builds.
+     * The consequence is that the contents of the generated stub files may not be consistent across a clean build and an incremental
+     * build, making the build non-deterministic and dependent tasks run unnecessarily (see KT-40882).
+     */
+    private class MembersPositionComparator(val classSource: KotlinPosition?, val memberData: Map<JCTree, MemberData>) :
+        Comparator<JCTree> {
+        override fun compare(o1: JCTree, o2: JCTree): Int {
+            val data1 = memberData.getValue(o1)
+            val data2 = memberData.getValue(o2)
+            classSource ?: return compareDescriptors(data1, data2)
+
+            val position1 = data1.position
+            val position2 = data2.position
+
+            return if (position1 != null && position1.path == classSource.path) {
+                if (position2 != null && position2.path == classSource.path) {
+                    position1.pos.compareTo(position2.pos)
+                } else {
+                    -1
+                }
+            } else if (position2 != null && position2.path == classSource.path) {
+                1
+            } else {
+                compareDescriptors(data1, data2)
+            }
+        }
+
+        private fun compareDescriptors(m1: MemberData, m2: MemberData): Int {
+            val nameComparison = m1.name.compareTo(m2.name)
+            if (nameComparison != 0) return nameComparison
+            return m1.descriptor.compareTo(m2.descriptor)
+        }
     }
 
     private class ClassSupertypes(val superClass: JCExpression?, val interfaces: JavacList<JCExpression>)
