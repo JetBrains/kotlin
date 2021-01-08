@@ -16,7 +16,13 @@ interface KtSymbol : ValidityTokenOwner {
     fun createPointer(): KtSymbolPointer<KtSymbol>
 }
 
+/**
+ * A place where [KtSymbol] came from
+ */
 enum class KtSymbolOrigin {
+    /**
+     * Declaration from Kotlin sources
+     */
     SOURCE,
 
     /**
@@ -25,6 +31,16 @@ enum class KtSymbolOrigin {
      * For enum classes the `valueOf` & `values` functions are generated
      */
     SOURCE_MEMBER_GENERATED,
+
+    /**
+     * A Kotlin declaration came from some .class file
+     */
     LIBRARY,
-    JAVA, SAM_CONSTRUCTOR
+
+    /**
+     * A Kotlin declaration came from some Java source file or from some Java library
+     */
+    JAVA,
+
+    SAM_CONSTRUCTOR
 }
