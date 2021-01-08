@@ -26,6 +26,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
                 getContainingDeclarationForKotlinInSourceSymbol(symbol)
             KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA -> getContainingDeclarationForLibrarySymbol(symbol)
+            KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
             KtSymbolOrigin.SAM_CONSTRUCTOR -> TODO()
         }
     }

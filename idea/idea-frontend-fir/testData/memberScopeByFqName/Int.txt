@@ -1233,7 +1233,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: equals
-  origin: LIBRARY
+  origin: INTERSECTION_OVERRIDE
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -1254,7 +1254,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: hashCode
-  origin: LIBRARY
+  origin: INTERSECTION_OVERRIDE
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -1275,7 +1275,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: toString
-  origin: LIBRARY
+  origin: INTERSECTION_OVERRIDE
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []

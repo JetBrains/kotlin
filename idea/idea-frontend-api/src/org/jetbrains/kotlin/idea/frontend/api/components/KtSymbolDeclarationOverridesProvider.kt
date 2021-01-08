@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionComponent() {
@@ -19,5 +18,9 @@ abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionComponent
         containingDeclaration: KtClassOrObjectSymbol
     ): List<KtCallableSymbol>
 
-    //abstract fun getOverriddenSymbols(callableSymbol: KtCallableSymbol, containingDeclaration: KtClassOrObjectSymbol): List<KtCallableSymbol>
+    /**
+     * If [symbol] origin is [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE]
+     * Then returns the symbols which [symbol] overrides, otherwise empty collection
+     */
+    abstract fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): Collection<KtCallableSymbol>
 }
