@@ -940,6 +940,8 @@ tasks {
     register("classes") {
         finalizedBy("jarsForIde")
     }
+
+    register("testClasses")
 }
 
 fun CopySpec.setExecutablePermissions() {
