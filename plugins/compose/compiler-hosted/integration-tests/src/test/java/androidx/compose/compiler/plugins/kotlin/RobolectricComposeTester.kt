@@ -99,6 +99,7 @@ class RobolectricComposeTester internal constructor(
             endProviders.invoke(composer)
         }
 
+        @Suppress("DEPRECATION")
         @OptIn(ExperimentalComposeApi::class)
         val composition = compositionFor(root, UiApplier(root), Recomposer.current())
         fun setContent() {
