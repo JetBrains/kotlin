@@ -14,6 +14,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="jps-build-test" type="repository">
+        <properties maven-id="com.jetbrains.intellij.idea:jps-build-test:202.7660.26" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/intellij/idea/jps-build-test/202.7660.26/jps-build-test-202.7660.26.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.jps.build.javac.rt" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
     <orderEntry type="library" exported="" name="ASM" level="project" />
