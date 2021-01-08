@@ -220,7 +220,9 @@ fun argumentsWithVarargAsSingleArray(
 
                 // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
                 varargParameterIndex -> {
-                    concatElements.add(JsArrayLiteral(arraysForConcat))
+                    if (arraysForConcat.isNotEmpty()) {
+                        concatElements.add(JsArrayLiteral(arraysForConcat))
+                    }
                     arraysForConcat = mutableListOf()
 
                     val varargArgument = when (argument) {
@@ -242,12 +244,10 @@ fun argumentsWithVarargAsSingleArray(
         concatElements.add(JsArrayLiteral(arraysForConcat))
     }
 
-    val concatElementsResolved = concatElements.dropWhile { (it is JsArrayLiteral) && (it.expressions.isEmpty()) }
-
-    return concatElementsResolved.singleOrNull()
+    return concatElements.singleOrNull()
         ?: JsInvocation(
-            JsNameRef("concat", concatElementsResolved.first()),
-            concatElementsResolved.drop(1)
+            JsNameRef("concat", concatElements.first()),
+            concatElements.drop(1)
         )
 }
 
