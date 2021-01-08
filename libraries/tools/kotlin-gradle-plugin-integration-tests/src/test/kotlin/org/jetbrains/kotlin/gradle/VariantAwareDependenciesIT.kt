@@ -283,13 +283,22 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         // variants chosen over the runtime ones when resolving a configuration with no required Usage:
         with(Project("simpleProject")) {
             setupWorkingDir()
-            gradleBuildScript().appendText("\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }")
+            gradleBuildScript().appendText(
+                "\n" + """
+                    dependencies { implementation 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }
+
+                    configurations {
+                        customConfiguration.extendsFrom implementation
+                        customConfiguration.canBeResolved(true)
+                    }
+                """.trimIndent()
+            )
 
             testResolveAllConfigurations {
-                assertContains(">> :compileClasspath --> kotlin-compiler-embeddable-${defaultBuildOptions().kotlinVersion}.jar")
+                assertContains(">> :customConfiguration --> kotlin-compiler-embeddable-${defaultBuildOptions().kotlinVersion}.jar")
 
                 // Check that the transitive dependencies with 'runtime' scope are also available:
-                assertContains(">> :runtimeClasspath --> kotlin-script-runtime-${defaultBuildOptions().kotlinVersion}.jar")
+                assertContains(">> :customConfiguration --> kotlin-script-runtime-${defaultBuildOptions().kotlinVersion}.jar")
             }
         }
 
