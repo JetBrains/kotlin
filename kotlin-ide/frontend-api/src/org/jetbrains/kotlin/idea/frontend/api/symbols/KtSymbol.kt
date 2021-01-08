@@ -42,5 +42,17 @@ enum class KtSymbolOrigin {
      */
     JAVA,
 
-    SAM_CONSTRUCTOR
+    SAM_CONSTRUCTOR,
+
+    /**
+     * Consider the following code:
+     * ```
+     * interface A { fun x() }
+     * interface B { fun x() }
+     *
+     * interface C : A, B
+     * ```
+     * The intersection of functions A.foo & B.foo will create a function C.foo which will be marked with [INTERSECTION_OVERRIDE]
+     */
+    INTERSECTION_OVERRIDE,
 }
