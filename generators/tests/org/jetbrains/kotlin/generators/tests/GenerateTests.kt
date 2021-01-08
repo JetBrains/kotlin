@@ -102,10 +102,7 @@ import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
 import org.jetbrains.kotlin.idea.index.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
 import org.jetbrains.kotlin.idea.inspections.AbstractLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractMultiFileLocalInspectionTest
-import org.jetbrains.kotlin.idea.intentions.AbstractConcatenatedStringGeneratorTest
-import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
-import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest2
-import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
+import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
@@ -1143,6 +1140,10 @@ fun main(args: Array<String>) {
                 model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
                 model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
                 model("inspectionsLocal", pattern = "^(inspections\\.test)$", singleClass = true)
+            }
+
+            testClass<AbstractHighLevelIntentionTest> {
+                model("intentions", pattern = "^([\\w\\-_]+)\\.(kt|kts)$")
             }
         }
 
