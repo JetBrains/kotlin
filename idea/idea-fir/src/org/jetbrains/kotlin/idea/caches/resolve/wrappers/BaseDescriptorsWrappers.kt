@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.caches.resolve.StubModuleDescriptor
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
@@ -204,7 +205,21 @@ class KtSymbolBasedClassDescriptor(override val ktSymbol: KtClassOrObjectSymbol)
         }
     }
 
-    override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
+    override fun getContainingDeclaration(): DeclarationDescriptor {
+        val currentClassId = ktSymbol.classIdIfNonLocal ?: return ContainerStubForLocalFunctions
+        val ktElement = ktSymbol.psi as? KtElement
+
+        val outerClassId = currentClassId.outerClassId
+        if (outerClassId != null) {
+            analyze(ktElement  ?: containerDeclarationImplementationPostponed()) {
+                val ktClassOrObjectSymbol = outerClassId.getCorrespondingToplevelClassOrObjectSymbol()
+                    ?: return ContainerStubForLocalFunctions // TODO: it is entirely incorrect
+                return KtSymbolBasedClassDescriptor(ktClassOrObjectSymbol)
+            }
+        } else {
+            return KtSymbolBasedPackageFragmentDescriptor(currentClassId.packageFqName)
+        }
+    }
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = implementationPostponed()
 
@@ -279,7 +294,7 @@ abstract class KtSymbolBasedFunctionLikeDescriptor() :
     override fun getOriginal(): FunctionDescriptor = this
     override fun getContainingDeclaration(): DeclarationDescriptor = containerDeclarationImplementationPostponed()
 
-    override fun getOverriddenDescriptors(): MutableCollection<out FunctionDescriptor> = implementationPostponed()
+    override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList() // todo incorrenct implementation
     override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean = implementationPostponed()
 
     override fun getInitialSignatureDescriptor(): FunctionDescriptor? = noImplementation()
@@ -303,10 +318,10 @@ class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol) :
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
     override fun getContainingDeclaration(): DeclarationDescriptor {
         val callableId = ktSymbol.callableIdIfNonLocal ?: return ContainerStubForLocalFunctions
-        val ktElement = ktSymbol.psi as? KtElement ?: containerDeclarationImplementationPostponed()
+        val ktElement = ktSymbol.psi as? KtElement
 
         if (callableId.classId != null) {
-            analyze(ktElement) {
+            analyze(ktElement ?: containerDeclarationImplementationPostponed()) {
                 val ktClassOrObjectSymbol = callableId.classId!!.getCorrespondingToplevelClassOrObjectSymbol()
                     ?: return ContainerStubForLocalFunctions // TODO: it is entirely incorrect
                 return KtSymbolBasedClassDescriptor(ktClassOrObjectSymbol)
@@ -454,7 +469,7 @@ class KtSymbolBasedPackageFragmentDescriptor(override val fqName: FqName) : Pack
     override val annotations: Annotations
         get() = Annotations.EMPTY
 
-    override fun getContainingDeclaration(): ModuleDescriptor = implementationPostponed("")
+    override fun getContainingDeclaration(): ModuleDescriptor = StubModuleDescriptor()
 
     override fun getMemberScope(): MemberScope = noImplementation("")
 

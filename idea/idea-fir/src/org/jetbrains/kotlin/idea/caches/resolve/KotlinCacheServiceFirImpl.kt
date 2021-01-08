@@ -11,22 +11,71 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
+
+class StubModuleDescriptor : DeclarationDescriptorImpl(Annotations.EMPTY, Name.identifier("module_for_testing")), ModuleDescriptor {
+    override val builtIns: KotlinBuiltIns
+        get() = DefaultBuiltIns.Instance
+    override val stableName: Name?
+        get() = TODO("Not yet implemented")
+    override val platform: TargetPlatform?
+        get() = TODO("Not yet implemented")
+
+    override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPackage(fqName: FqName): PackageViewDescriptor {
+        TODO("Not yet implemented")
+    }
+
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        TODO("Not yet implemented")
+    }
+
+    override val allDependencyModules: List<ModuleDescriptor>
+        get() = TODO("Not yet implemented")
+    override val expectedByModules: List<ModuleDescriptor>
+        get() = TODO("Not yet implemented")
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = TODO("Not yet implemented")
+
+    override fun <T> getCapability(capability: ModuleCapability<T>): T? {
+        TODO("Not yet implemented")
+    }
+
+    override val isValid: Boolean
+        get() = TODO("Not yet implemented")
+
+    override fun assertValid() {
+        TODO("Not yet implemented")
+    }
+
+}
 
 class ResolutionFacadeFirImpl(
     override val project: Project,
@@ -38,7 +87,7 @@ class ResolutionFacadeFirImpl(
     override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext = FirBasedBindingContext()
 
     override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult {
-        TODO("Not yet implemented")
+        return AnalysisResult.success(FirBasedBindingContext(), StubModuleDescriptor())
     }
 
     override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
@@ -93,7 +142,7 @@ class KotlinCacheServiceFirImpl(val project: Project) : KotlinCacheService {
         getResolutionFacadeByModuleInfo(file.getModuleInfo(), platform)
 
     override fun getSuppressionCache(): KotlinSuppressCache {
-        TODO("Not yet implemented")
+        return BindingContextSuppressCache(FirBasedBindingContext())
     }
 
     override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
