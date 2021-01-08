@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.Variance
 
 abstract class KtTypeRenderer : KtAnalysisSessionComponent() {
     abstract fun render(type: KtType, options: KtTypeRendererOptions): String
@@ -83,9 +84,9 @@ class KtDefaultTypeRenderer(override val analysisSession: KtAnalysisSession, ove
             }
             is KtTypeArgumentWithVariance -> {
                 val varianceWithSpace = when (typeArgument.variance) {
-                    KtTypeArgumentVariance.COVARIANT -> "out "
-                    KtTypeArgumentVariance.CONTRAVARIANT -> "in "
-                    KtTypeArgumentVariance.INVARIANT -> ""
+                    Variance.OUT_VARIANCE -> "out "
+                    Variance.IN_VARIANCE -> "in "
+                    Variance.INVARIANT -> ""
                 }
                 append(varianceWithSpace)
                 render(typeArgument.type, options)

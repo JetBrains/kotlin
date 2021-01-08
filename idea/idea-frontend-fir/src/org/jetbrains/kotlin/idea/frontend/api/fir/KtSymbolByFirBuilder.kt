@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.Variance
 import java.util.concurrent.ConcurrentMap
 
 /**
@@ -189,9 +190,9 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
     private fun ProjectionKind.toVariance() = when (this) {
-        ProjectionKind.OUT -> KtTypeArgumentVariance.COVARIANT
-        ProjectionKind.IN -> KtTypeArgumentVariance.CONTRAVARIANT
-        ProjectionKind.INVARIANT -> KtTypeArgumentVariance.INVARIANT
+        ProjectionKind.OUT -> Variance.OUT_VARIANCE
+        ProjectionKind.IN -> Variance.IN_VARIANCE
+        ProjectionKind.INVARIANT -> Variance.INVARIANT
         ProjectionKind.STAR -> error("KtStarProjectionTypeArgument be directly created")
     }
 
