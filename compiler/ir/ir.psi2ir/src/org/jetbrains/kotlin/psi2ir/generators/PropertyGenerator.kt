@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -96,8 +99,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             irProperty.backingField = generatePropertyBackingField(ktDeclarationContainer, propertyDescriptor, generateInitializer)
 
             val getter = propertyDescriptor.getter
-                ?: if (generateSyntheticAccessors)
-                    // TODO: check if this is the correct way to generate synthetic accessor
+                ?: if (generateSyntheticAccessors) {
                     PropertyGetterDescriptorImpl(
                         propertyDescriptor,
                         Annotations.EMPTY, Modality.FINAL, DescriptorVisibilities.PUBLIC, false, false, false,
@@ -105,14 +107,28 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     ).apply {
                         initialize(propertyDescriptor.type)
                     }
-                else throw AssertionError("Property declared in primary constructor has no getter: $propertyDescriptor")
+                } else
+                    throw AssertionError("Property declared in primary constructor has no getter: $propertyDescriptor")
             irProperty.getter =
                 FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(getter, ktDeclarationContainer)
 
             if (propertyDescriptor.isVar) {
                 val setter = propertyDescriptor.setter
-                    // TODO: implement setter descriptor generation, if needed
-                    ?: throw AssertionError("Property declared in primary constructor has no setter: $propertyDescriptor")
+                    ?: if (generateSyntheticAccessors) {
+                        PropertySetterDescriptorImpl(
+                            propertyDescriptor,
+                            Annotations.EMPTY, Modality.FINAL, DescriptorVisibilities.PUBLIC, false, false, false,
+                            CallableMemberDescriptor.Kind.SYNTHESIZED, null, propertyDescriptor.source
+                        ).apply {
+                            val setterValueParameter = ValueParameterDescriptorImpl(
+                                this, null, 0, Annotations.EMPTY, Name.identifier("value"), propertyDescriptor.type,
+                                declaresDefaultValue = false, isCrossinline = false, isNoinline = false,
+                                varargElementType = null, source = SourceElement.NO_SOURCE
+                            )
+                            initialize(setterValueParameter)
+                        }
+                    } else
+                        throw AssertionError("Property declared in primary constructor has no setter: $propertyDescriptor")
                 irProperty.setter =
                     FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(setter, ktDeclarationContainer)
             }

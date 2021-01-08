@@ -111,7 +111,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                         startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
                     )
                     val irProperty =
-                        PropertyGenerator(declarationGenerator).generateSyntheticProperty(ktScript, providedProperty, valueParameter)
+                        PropertyGenerator(declarationGenerator).generateSyntheticProperty(ktScript, providedProperty, valueParameter, generateSyntheticAccessors = true)
                     irProperty.origin = IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY
                     irScript.statements += irProperty
                     valueParameter to irProperty.symbol
