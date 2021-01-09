@@ -36,6 +36,7 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     FirDeclarationOrigin.SamConstructor -> KtSymbolOrigin.SAM_CONSTRUCTOR
     FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.IntersectionOverride -> KtSymbolOrigin.INTERSECTION_OVERRIDE
+    FirDeclarationOrigin.Delegated -> KtSymbolOrigin.DELEGATED
     else -> {
         val overridden = (this as? FirCallableDeclaration<*>)?.originalIfFakeOverride()
             ?: throw InvalidFirDeclarationOriginForSymbol(this)
