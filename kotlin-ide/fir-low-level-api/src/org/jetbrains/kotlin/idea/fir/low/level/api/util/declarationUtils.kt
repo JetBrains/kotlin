@@ -101,7 +101,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             containerClassFir.declarations.first { it.psi === this }
         }
         this is KtTypeAlias -> findFir(firSymbolProvider)
-        else -> error("Invalid container $this::class")
+        else -> error("Invalid container ${this::class}\n${getElementTextInContext()}")
     }
     return candidate?.takeIf { it.realPsi == this }
 }

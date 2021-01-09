@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
@@ -29,7 +30,7 @@ internal object FileStructureUtil {
             firFile.declarations as MutableList<FirDeclaration>
         } else {
             val classLikeLookupTag = from.containingClass()
-                ?: error("Class name should not be null for non-top-level & non-local declarations")
+                ?: error("Class name should not be null for non-top-level & non-local declarations, but was null for\n${from.render()}")
             val containingClass = classLikeLookupTag.toSymbol(firFile.session)?.fir as FirRegularClass
             containingClass.declarations as MutableList<FirDeclaration>
         }

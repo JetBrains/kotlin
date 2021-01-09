@@ -98,7 +98,7 @@ internal class KtFirCallResolver(
             is FirSimpleNamedReference ->
                 error(
                     """
-                      Looks like FirFunctionCall was not resolved to BODY_RESOLVE phase,
+                      Looks like ${this::class.simpleName} && it calle reference ${calleeReference::class.simpleName} were not resolved to BODY_RESOLVE phase,
                       consider resolving it containing declaration before starting resolve calls
                       ${this.render()}
                       ${(this.psi as? KtElement)?.getElementTextInContext()}
