@@ -171,13 +171,20 @@ fun translateCall(
                 JsBlock(
                     JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
                     JsReturn(
-                        JsInvocation(
-                            JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
-                            listOf(
-                                receiverRef,
-                                argumentsAsSingleArray
+                        if (argumentsAsSingleArray is JsArrayLiteral) {
+                            JsInvocation(
+                                JsNameRef(symbolName, receiverRef),
+                                argumentsAsSingleArray.expressions
                             )
-                        )
+                        } else {
+                            JsInvocation(
+                                JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
+                                listOf(
+                                    receiverRef,
+                                    argumentsAsSingleArray
+                                )
+                            )
+                        }
                     )
                 ),
                 "VarargIIFE"
