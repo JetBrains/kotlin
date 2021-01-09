@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -140,6 +142,7 @@ internal object FirReferenceResolveHelper {
         analysisSession: KtFirAnalysisSession
     ): Collection<KtSymbol> {
         val expression = ref.expression
+        if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
         val fir = expression.getOrBuildFir(analysisSession.firResolveState)
         val session = analysisSession.firResolveState.rootModuleSession
@@ -161,6 +164,11 @@ internal object FirReferenceResolveHelper {
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
+    }
+
+    private fun KtSimpleNameExpression.isSyntheticOperatorReference() = when (this) {
+        is KtOperationReferenceExpression -> operationSignTokenType in syntheticTokenTypes
+        else -> false
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -409,4 +417,6 @@ internal object FirReferenceResolveHelper {
     private tailrec fun KtTypeElement.unwrapNullable(): KtTypeElement? {
         return if (this is KtNullableType) innerType?.unwrapNullable() else this
     }
+
+    private val syntheticTokenTypes = TokenSet.create(KtTokens.ELVIS, KtTokens.EXCLEXCL)
 }
