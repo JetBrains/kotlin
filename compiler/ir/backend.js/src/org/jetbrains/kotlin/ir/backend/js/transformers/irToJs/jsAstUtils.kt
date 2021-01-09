@@ -166,30 +166,37 @@ fun translateCall(
             // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
             val receiverName = JsName("\$externalVarargReceiverTmp")
             val receiverRef = receiverName.makeRef()
-            JsInvocation(
-                // Create scope for temporary variable holding dispatch receiver
-                // It is used both during method reference and passing `this` value to `apply` function.
-                JsNameRef(
-                    "call",
-                    JsFunction(
-                        emptyScope,
-                        JsBlock(
-                            JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
-                            JsReturn(
-                                JsInvocation(
-                                    JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
-                                    listOf(
-                                        receiverRef,
-                                        argumentsAsSingleArray
-                                    )
-                                )
+            val iifeFun = JsFunction(
+                emptyScope,
+                JsBlock(
+                    JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
+                    JsReturn(
+                        JsInvocation(
+                            JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
+                            listOf(
+                                receiverRef,
+                                argumentsAsSingleArray
                             )
-                        ),
-                        "VarargIIFE"
+                        )
                     )
                 ),
-                JsThisRef()
+                "VarargIIFE"
             )
+
+            val iifeFunHasContext = (jsDispatchReceiver as? JsNameRef)?.qualifier is JsThisRef
+            if (iifeFunHasContext) {
+                JsInvocation(
+                    // Create scope for temporary variable holding dispatch receiver
+                    // It is used both during method reference and passing `this` value to `apply` function.
+                    JsNameRef(
+                        "call",
+                        iifeFun
+                    ),
+                    JsThisRef()
+                )
+            } else {
+                JsInvocation(iifeFun)
+            }
         } else {
             JsInvocation(
                 JsNameRef("apply", JsNameRef(symbolName)),
