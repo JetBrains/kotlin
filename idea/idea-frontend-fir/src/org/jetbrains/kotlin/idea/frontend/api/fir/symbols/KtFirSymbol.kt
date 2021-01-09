@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.name.ClassId
 
 internal interface KtFirSymbol<F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
     val firRef: FirRefWithValidityCheck<F>
@@ -37,6 +37,11 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.IntersectionOverride -> KtSymbolOrigin.INTERSECTION_OVERRIDE
     FirDeclarationOrigin.Delegated -> KtSymbolOrigin.DELEGATED
+    FirDeclarationOrigin.Synthetic -> {
+        if (isSyntheticFunctionalInterface()) KtSymbolOrigin.LIBRARY
+        else throw InvalidFirDeclarationOriginForSymbol(this)
+    }
+
     else -> {
         val overridden = (this as? FirCallableDeclaration<*>)?.originalIfFakeOverride()
             ?: throw InvalidFirDeclarationOriginForSymbol(this)
@@ -44,5 +49,14 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     }
 }
 
+private fun FirDeclaration.isSyntheticFunctionalInterface(): Boolean {
+    if (this !is FirRegularClass) return false
+    return classId.isSyntheticFunctionalInterface()
+}
+
+private fun ClassId.isSyntheticFunctionalInterface(): Boolean {
+    return FunctionClassKind.byClassNamePrefix(packageFqName, relativeClassName.asString()) != null
+}
+
 class InvalidFirDeclarationOriginForSymbol(declaration: FirDeclaration) :
-    IllegalStateException("Invalid FirDeclarationOrigin ${declaration.origin::class.simpleName} for ${declaration.render()}" )
+    IllegalStateException("Invalid FirDeclarationOrigin ${declaration.origin::class.simpleName} for ${declaration.render()}")
