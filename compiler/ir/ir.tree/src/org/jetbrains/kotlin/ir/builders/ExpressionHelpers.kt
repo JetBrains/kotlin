@@ -70,8 +70,8 @@ fun IrBuilderWithScope.irReturn(value: IrExpression) =
         value
     )
 
-fun IrBuilderWithScope.irBoolean(value: Boolean) =
-    IrConstImpl(startOffset, endOffset, context.irBuiltIns.booleanType, IrConstKind.Boolean, value)
+fun IrBuilderWithScope.irBoolean(value: Boolean, type: IrType = context.irBuiltIns.booleanType) =
+    IrConstImpl(startOffset, endOffset, type, IrConstKind.Boolean, value)
 
 fun IrBuilderWithScope.irUnit() =
     irGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
@@ -317,11 +317,23 @@ fun IrBuilderWithScope.irInt(value: Int, type: IrType = context.irBuiltIns.intTy
 fun IrBuilderWithScope.irLong(value: Long, type: IrType = context.irBuiltIns.longType) =
     IrConstImpl.long(startOffset, endOffset, type, value)
 
-fun IrBuilderWithScope.irChar(value: Char) =
-    IrConstImpl.char(startOffset, endOffset, context.irBuiltIns.charType, value)
+fun IrBuilderWithScope.irChar(value: Char, type: IrType = context.irBuiltIns.charType) =
+    IrConstImpl.char(startOffset, endOffset, type, value)
 
-fun IrBuilderWithScope.irString(value: String) =
-    IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, value)
+fun IrBuilderWithScope.irFloat(value: Float, type: IrType = context.irBuiltIns.floatType) =
+    IrConstImpl.float(startOffset, endOffset, type, value)
+
+fun IrBuilderWithScope.irDouble(value: Double, type: IrType = context.irBuiltIns.doubleType) =
+    IrConstImpl.double(startOffset, endOffset, type, value)
+
+fun IrBuilderWithScope.irShort(value: Short, type: IrType = context.irBuiltIns.shortType) =
+    IrConstImpl.short(startOffset, endOffset, type, value)
+
+fun IrBuilderWithScope.irByte(value: Byte, type: IrType = context.irBuiltIns.byteType) =
+    IrConstImpl.byte(startOffset, endOffset, type, value)
+
+fun IrBuilderWithScope.irString(value: String, type: IrType = context.irBuiltIns.stringType) =
+    IrConstImpl.string(startOffset, endOffset, type, value)
 
 fun IrBuilderWithScope.irConcat() =
     IrStringConcatenationImpl(startOffset, endOffset, context.irBuiltIns.stringType)
