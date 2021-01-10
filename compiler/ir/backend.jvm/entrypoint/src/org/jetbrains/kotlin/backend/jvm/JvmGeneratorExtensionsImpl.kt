@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = true) : GeneratorExtensions(), JvmGeneratorExtensions {
+open class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = true) : GeneratorExtensions(), JvmGeneratorExtensions {
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
 
     override val samConversion: SamConversion

@@ -8,7 +8,6 @@ package kotlin.script.experimental.jvmhost.repl
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.cli.common.repl.ReplCompilerWithoutCheck
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerStageHistory
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
@@ -78,7 +77,7 @@ class JvmReplCompiler(
                 )
             }
             else -> {
-                val message = res.reports.joinToString("\n") { it.message }
+                val message = res.reports.joinToString("\n")
                 if (res.isIncomplete()) {
                     ReplCompileResult.Incomplete(message)
                 } else {
