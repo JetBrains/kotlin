@@ -326,6 +326,8 @@ fun IrBuilderWithScope.irString(value: String) =
 fun IrBuilderWithScope.irConcat() =
     IrStringConcatenationImpl(startOffset, endOffset, context.irBuiltIns.stringType)
 
+fun IrBuilderWithScope.irVararg(type: IrType, varargElementType: IrType, elements: List<IrExpression> = emptyList()) =
+    IrVarargImpl(startOffset, endOffset, type, varargElementType, elements)
 
 inline fun IrBuilderWithScope.irBlock(
     startOffset: Int = this.startOffset,
