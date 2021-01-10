@@ -164,19 +164,23 @@ fun translateCall(
         if (jsDispatchReceiver != null) {
             // TODO: Do not create IIFE when receiver expression is simple or has no side effects
             // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-            val receiverName = JsName("\$externalVarargReceiverTmp")
-            val receiverRef = receiverName.makeRef()
             val iifeFun = JsFunction(
                 emptyScope,
-                JsBlock(
-                    JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
-                    JsReturn(
-                        if (argumentsAsSingleArray is JsArrayLiteral) {
+                if (argumentsAsSingleArray is JsArrayLiteral) {
+                    JsBlock(
+                        JsReturn(
                             JsInvocation(
-                                JsNameRef(symbolName, receiverRef),
+                                JsNameRef(symbolName, jsDispatchReceiver),
                                 argumentsAsSingleArray.expressions
                             )
-                        } else {
+                        )
+                    )
+                } else {
+                    val receiverName = JsName("\$externalVarargReceiverTmp")
+                    val receiverRef = receiverName.makeRef()
+                    JsBlock(
+                        JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
+                        JsReturn(
                             JsInvocation(
                                 JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
                                 listOf(
@@ -184,9 +188,9 @@ fun translateCall(
                                     argumentsAsSingleArray
                                 )
                             )
-                        }
+                        )
                     )
-                ),
+                },
                 "VarargIIFE"
             )
 
