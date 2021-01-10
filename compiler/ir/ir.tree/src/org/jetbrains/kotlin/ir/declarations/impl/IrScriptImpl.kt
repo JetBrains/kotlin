@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -51,7 +52,9 @@ class IrScriptImpl(
     override lateinit var implicitReceiversParameters: List<IrValueParameter>
     override lateinit var providedProperties: List<Pair<IrValueParameter, IrPropertySymbol>>
     override var resultProperty: IrPropertySymbol? = null
+    override var earlierScriptsParameter: IrValueParameter? = null
     override var earlierScripts: List<IrScriptSymbol>? = null
+    override var targetClass: IrClassSymbol? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ScriptDescriptor

@@ -41,5 +41,5 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
     open val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = false
 
-    open fun getPreviousScripts(): List<IrScriptSymbol> = emptyList()
+    open fun getPreviousScripts(): List<IrScriptSymbol>? = null
 }

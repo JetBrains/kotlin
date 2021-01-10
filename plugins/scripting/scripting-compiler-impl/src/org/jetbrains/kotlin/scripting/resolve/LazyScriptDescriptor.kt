@@ -75,7 +75,7 @@ class LazyScriptDescriptor(
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
     }
 
-    override fun getResultValue(): ReplResultPropertyDescriptor? {
+    private val _resultValue: () -> ReplResultPropertyDescriptor? = resolveSession.storageManager.createNullableLazyValue {
         val expression = scriptInfo.script
             .getChildOfType<KtBlockExpression>()
             ?.getChildrenOfType<KtScriptInitializer>()?.lastOrNull()
@@ -85,7 +85,7 @@ class LazyScriptDescriptor(
             resolveSession.trace.bindingContext.getType(it)
         }
 
-        return if (type != null && !type.isUnit() && !type.isNothing()) {
+        if (type != null && !type.isUnit() && !type.isNothing()) {
             resultFieldName()?.let {
                 ReplResultPropertyDescriptor(
                     it,
@@ -97,6 +97,8 @@ class LazyScriptDescriptor(
             }
         } else null
     }
+
+    override fun getResultValue(): ReplResultPropertyDescriptor? = _resultValue()
 
     fun resultFieldName(): Name? {
         // TODO: implement robust REPL/script selection

@@ -117,6 +117,8 @@ open class DeepCopyIrTreeWithSymbols(
         ).also { scriptCopy ->
             scriptCopy.thisReceiver = declaration.thisReceiver.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
+            scriptCopy.earlierScripts = declaration.earlierScripts
+            scriptCopy.earlierScriptsParameter = declaration.earlierScriptsParameter
             scriptCopy.explicitCallParameters = declaration.explicitCallParameters.map { it.transform() }
             scriptCopy.implicitReceiversParameters = declaration.implicitReceiversParameters.map { it.transform() }
             scriptCopy.providedProperties = declaration.providedProperties.map { it.first.transform() to it.second }

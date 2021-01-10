@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -32,5 +33,9 @@ abstract class IrScript :
 
     abstract var resultProperty: IrPropertySymbol?
 
+    abstract var earlierScriptsParameter: IrValueParameter?
+
     abstract var earlierScripts: List<IrScriptSymbol>?
+
+    abstract var targetClass: IrClassSymbol?
 }
