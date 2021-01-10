@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
@@ -1616,6 +1617,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/generators/org.jetbrains.kotlin.kotlin.generators.main.iml" filepath="$PROJECT_DIR$/.idea/modules/generators/org.jetbrains.kotlin.kotlin.generators.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/generators/org.jetbrains.kotlin.kotlin.generators.test.iml" filepath="$PROJECT_DIR$/.idea/modules/generators/org.jetbrains.kotlin.kotlin.generators.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea/org.jetbrains.kotlin.kotlin.idea.iml" filepath="$PROJECT_DIR$/.idea/modules/idea/org.jetbrains.kotlin.kotlin.idea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea-runner/org.jetbrains.kotlin.kotlin.idea-runner.iml" filepath="$PROJECT_DIR$/.idea/modules/idea-runner/org.jetbrains.kotlin.kotlin.idea-runner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea-runner/org.jetbrains.kotlin.kotlin.idea-runner.main.iml" filepath="$PROJECT_DIR$/.idea/modules/idea-runner/org.jetbrains.kotlin.kotlin.idea-runner.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea-runner/org.jetbrains.kotlin.kotlin.idea-runner.test.iml" filepath="$PROJECT_DIR$/.idea/modules/idea-runner/org.jetbrains.kotlin.kotlin.idea-runner.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea/org.jetbrains.kotlin.kotlin.idea.main.iml" filepath="$PROJECT_DIR$/.idea/modules/idea/org.jetbrains.kotlin.kotlin.idea.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/idea/org.jetbrains.kotlin.kotlin.idea.test.iml" filepath="$PROJECT_DIR$/.idea/modules/idea/org.jetbrains.kotlin.kotlin.idea.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/jps-plugin/org.jetbrains.kotlin.kotlin.jps-plugin.iml" filepath="$PROJECT_DIR$/.idea/modules/jps-plugin/org.jetbrains.kotlin.kotlin.jps-plugin.iml" />
