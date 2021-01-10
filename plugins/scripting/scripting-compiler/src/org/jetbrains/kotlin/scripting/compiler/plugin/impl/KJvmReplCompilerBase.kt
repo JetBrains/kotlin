@@ -7,6 +7,13 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.JvmNameProvider
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -16,13 +23,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerStageHistory
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.JvmReplCompilerState
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.*
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicits
 import org.jetbrains.kotlin.scripting.resolve.skipExtensionsResolutionForImplicitsExceptInnermost
@@ -112,45 +122,35 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
                     )
                 }
 
-                val no = scriptPriority.getAndIncrement()
+                val snippetNo = scriptPriority.getAndIncrement()
 
                 val analysisResult =
-                    compilationState.analyzerEngine.analyzeReplLineWithImportedScripts(snippetKtFile, sourceFiles.drop(1), snippet, no)
+                    compilationState.analyzerEngine.analyzeReplLineWithImportedScripts(
+                        snippetKtFile,
+                        sourceFiles.drop(1),
+                        snippet,
+                        snippetNo
+                    )
                 AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
 
                 val scriptDescriptor = when (analysisResult) {
-                    is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> return failure(
-                        messageCollector
-                    )
+                    is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> return failure(messageCollector)
                     is ReplCodeAnalyzerBase.ReplLineAnalysisResult.Successful -> {
                         (analysisResult.scriptDescriptor as? ScriptDescriptor)
-                            ?: return failure(
-                                snippet,
-                                messageCollector,
-                                "Unexpected script descriptor type ${analysisResult.scriptDescriptor::class}"
-                            )
+                            ?: throw AssertionError("Unexpected script descriptor type ${analysisResult.scriptDescriptor::class}")
                     }
-                    else -> return failure(
-                        snippet,
-                        messageCollector,
-                        "Unexpected result ${analysisResult::class.java}"
-                    )
+                    else -> throw AssertionError("Unexpected result ${analysisResult::class.java}")
                 }
 
-                val generationState = GenerationState.Builder(
-                    snippetKtFile.project,
-                    ClassBuilderFactories.BINARIES,
-                    compilationState.analyzerEngine.module,
-                    compilationState.analyzerEngine.trace.bindingContext,
-                    sourceFiles,
-                    compilationState.environment.configuration
-                ).build().apply {
-                    scriptSpecific.earlierScriptsForReplInterpreter = history.map { it.item }
-                    beforeCompile()
-                }
-                KotlinCodegenFacade.generatePackage(generationState, snippetKtFile.script!!.containingKtFile.packageFqName, sourceFiles)
+                val isIr = context.environment.configuration.getBoolean(JVMConfigurationKeys.IR)
 
-                history.push(LineId(no, 0, snippet.hashCode()), scriptDescriptor)
+                val generationState = if (isIr) {
+                    generateWithBackendIr(compilationState, snippetKtFile, sourceFiles)
+                } else {
+                    generateWithOldBackend(compilationState, snippetKtFile, sourceFiles)
+                }
+
+                history.push(LineId(snippetNo, 0, snippet.hashCode()), scriptDescriptor)
 
                 val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
                 val compiledScript =
@@ -174,6 +174,55 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase> protected cons
                     )
             }
         }.last()
+
+    private fun generateWithOldBackend(
+        compilationState: ReplCompilationState<AnalyzerT>,
+        snippetKtFile: KtFile,
+        sourceFiles: List<KtFile>
+    ): GenerationState {
+        val generationState = GenerationState.Builder(
+            snippetKtFile.project,
+            ClassBuilderFactories.BINARIES,
+            compilationState.analyzerEngine.module,
+            compilationState.analyzerEngine.trace.bindingContext,
+            sourceFiles,
+            compilationState.environment.configuration
+        ).build().also { generationState ->
+            generationState.scriptSpecific.earlierScriptsForReplInterpreter = history.map { it.item }
+            generationState.beforeCompile()
+        }
+        KotlinCodegenFacade.generatePackage(generationState, snippetKtFile.script!!.containingKtFile.packageFqName, sourceFiles)
+
+        return generationState
+    }
+
+    private fun generateWithBackendIr(
+        compilationState: ReplCompilationState<AnalyzerT>,
+        snippetKtFile: KtFile,
+        sourceFiles: List<KtFile>
+    ): GenerationState {
+        val generatorExtensions = object : JvmGeneratorExtensions() {
+            override fun getPreviousScripts() = history.map { compilationState.symbolTable.referenceScript(it.item) }
+        }
+        val codegenFactory = JvmIrCodegenFactory(
+            compilationState.environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases),
+            compilationState.mangler, compilationState.symbolTable, generatorExtensions
+        )
+        val generationState = GenerationState.Builder(
+            snippetKtFile.project,
+            ClassBuilderFactories.BINARIES,
+            compilationState.analyzerEngine.module,
+            compilationState.analyzerEngine.trace.bindingContext,
+            sourceFiles,
+            compilationState.environment.configuration
+        )
+            .codegenFactory(codegenFactory)
+            .build()
+
+        generationState.codegenFactory.generateModule(generationState, generationState.files)
+
+        return generationState
+    }
 
     override suspend fun invoke(
         script: SourceCode,
@@ -294,4 +343,15 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
         // ReplCodeAnalyzer1(context.environment)
         analyzerInit(context, implicitsResolutionFilter)
     }
+
+    private val manglerAndSymbolTable by lazy {
+        val mangler = JvmManglerDesc(
+            MainFunctionDetector(analyzerEngine.trace.bindingContext, environment.configuration.languageVersionSettings)
+        )
+        val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider)
+        mangler to symbolTable
+    }
+
+    override val mangler: JvmManglerDesc get() = manglerAndSymbolTable.first
+    override val symbolTable: SymbolTable get() = manglerAndSymbolTable.second
 }
