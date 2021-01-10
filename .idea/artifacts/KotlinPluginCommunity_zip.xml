@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="KotlinPluginCommunity.zip">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPluginCommunity_zip</output-path>
+    <root id="root">
+      <element id="archive" name="KotlinPluginCommunity.zip">
+        <element id="directory" name="Kotlin">
+          <element id="artifact" artifact-name="KotlinPluginCommunity" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

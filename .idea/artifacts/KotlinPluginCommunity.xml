@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ArtifactManager">
+  <artifact name="KotlinPluginCommunity">
+    <output-path>$PROJECT_DIR$/out/artifacts/KotlinPluginCommunity</output-path>
+    <root id="root">
+      <element id="directory" name="lib">
+        <element id="archive" name="android-extensions-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/android-extensions-compiler-plugin-for-ide/1.4.30-dev-local/android-extensions-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-android-extensions-runtime.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-android-extensions-runtime/1.4.30-dev-local/kotlin-android-extensions-runtime-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="allopen-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/allopen-compiler-plugin-for-ide/1.4.30-dev-local/allopen-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlinx-serialization-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlinx-serialization-compiler-plugin-for-ide/1.4.30-dev-local/kotlinx-serialization-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="sam-with-receiver-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/sam-with-receiver-compiler-plugin-for-ide/1.4.30-dev-local/sam-with-receiver-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="noarg-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/noarg-compiler-plugin-for-ide/1.4.30-dev-local/noarg-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-scripting-compiler-impl.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-compiler-impl/1.4.30-dev-local/kotlin-scripting-compiler-impl-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="directory" name="jps">
+          <element id="archive" name="kotlin-jps-plugin.jar">
+            <element id="module-output" name="kotlin.jps-plugin" />
+            <element id="module-output" name="kotlin.jps-common" />
+            <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/compiler-components-for-jps/1.4.30-dev-local/compiler-components-for-jps-1.4.30-dev-local.jar" path-in-jar="/" />
+          </element>
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-allopen.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.allopen" />
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-annotation-based-compiler-support.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.annotation-based-compiler-support" />
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-kapt.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.kapt" />
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-kotlinx-serialization.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.kotlinx-serialization" />
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-noarg.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.noarg" />
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-sam-with-receiver.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.sam-with-receiver" />
+        </element>
+        <element id="archive" name="kotlin-compiler-plugins-scripting.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.scripting" />
+        </element>
+        <element id="archive" name="kotlin-scripting-common.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-common/1.4.30-dev-local/kotlin-scripting-common-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-script-runtime.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-runtime/1.4.30-dev-local/kotlin-script-runtime-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-scripting-jvm.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-jvm/1.4.30-dev-local/kotlin-scripting-jvm-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-gradle-statistics-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-gradle-statistics-for-ide/1.4.30-dev-local/kotlin-gradle-statistics-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-gradle-gradle-idea.jar">
+          <element id="module-output" name="kotlin.gradle.gradle-idea" />
+        </element>
+        <element id="archive" name="kotlin-gradle-gradle-native.jar">
+          <element id="module-output" name="kotlin.gradle.gradle-native" />
+        </element>
+        <element id="archive" name="kotlin-gradle-gradle-tooling.jar">
+          <element id="module-output" name="kotlin.gradle.gradle-tooling" />
+        </element>
+        <element id="archive" name="kotlin-j2k-idea.jar">
+          <element id="module-output" name="kotlin.j2k.idea" />
+        </element>
+        <element id="archive" name="kotlin-j2k-new.jar">
+          <element id="module-output" name="kotlin.j2k.new" />
+        </element>
+        <element id="archive" name="kotlin-j2k-old.jar">
+          <element id="module-output" name="kotlin.j2k.old" />
+        </element>
+        <element id="archive" name="kotlin-j2k-services.jar">
+          <element id="module-output" name="kotlin.j2k.services" />
+        </element>
+        <element id="archive" name="kotlin-jvm-debugger-core.jar">
+          <element id="module-output" name="kotlin.jvm-debugger.core" />
+        </element>
+        <element id="archive" name="kotlin-jvm-debugger-coroutines.jar">
+          <element id="module-output" name="kotlin.jvm-debugger.coroutines" />
+        </element>
+        <element id="archive" name="kotlin-jvm-debugger-evaluation.jar">
+          <element id="module-output" name="kotlin.jvm-debugger.evaluation" />
+        </element>
+        <element id="archive" name="kotlin-jvm-debugger-sequence.jar">
+          <element id="module-output" name="kotlin.jvm-debugger.sequence" />
+        </element>
+        <element id="archive" name="kotlin-jvm-debugger-util.jar">
+          <element id="module-output" name="kotlin.jvm-debugger.util" />
+        </element>
+        <element id="archive" name="kotlin-project-wizard-cli.jar">
+          <element id="module-output" name="kotlin.project-wizard.cli" />
+        </element>
+        <element id="archive" name="kotlin-project-wizard-core.jar">
+          <element id="module-output" name="kotlin.project-wizard.core" />
+        </element>
+        <element id="archive" name="kotlin-project-wizard-idea.jar">
+          <element id="module-output" name="kotlin.project-wizard.idea" />
+        </element>
+        <element id="archive" name="kotlin-uast-kotlin.jar">
+          <element id="module-output" name="kotlin.uast.uast-kotlin" />
+        </element>
+        <element id="archive" name="kotlin-uast-kotlin-idea.jar">
+          <element id="module-output" name="kotlin.uast.uast-kotlin-idea" />
+        </element>
+        <element id="archive" name="kotlin-analysis.jar">
+          <element id="module-output" name="kotlin.analysis" />
+        </element>
+        <element id="archive" name="kotlin-common.jar">
+          <element id="module-output" name="kotlin.common" />
+        </element>
+        <element id="archive" name="kotlin-core.jar">
+          <element id="module-output" name="kotlin.core" />
+        </element>
+        <element id="archive" name="kotlin-eval4j.jar">
+          <element id="module-output" name="kotlin.eval4j" />
+        </element>
+        <element id="archive" name="kotlin-fir.jar">
+          <element id="module-output" name="kotlin.fir" />
+        </element>
+        <element id="archive" name="kotlin-formatter.jar">
+          <element id="module-output" name="kotlin.formatter" />
+        </element>
+        <element id="archive" name="kotlin-git.jar">
+          <element id="module-output" name="kotlin.git" />
+        </element>
+        <element id="archive" name="kotlin-idea.jar">
+          <element id="module-output" name="kotlin.idea" />
+          <element id="directory" name="META-INF">
+            <element id="directory" name="extensions">
+              <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.30-dev-local/kotlin-compiler-for-ide-1.4.30-dev-local.jar" path-in-jar="/META-INF/extensions/" />
+            </element>
+          </element>
+        </element>
+        <element id="archive" name="kotlin-jps-common.jar">
+          <element id="module-output" name="kotlin.jps-common" />
+        </element>
+        <element id="archive" name="kotlin-jvm.jar">
+          <element id="module-output" name="kotlin.jvm" />
+        </element>
+        <element id="archive" name="kotlin-live-templates.jar">
+          <element id="module-output" name="kotlin.live-templates" />
+        </element>
+        <element id="archive" name="kotlin-maven.jar">
+          <element id="module-output" name="kotlin.maven" />
+        </element>
+        <element id="archive" name="kotlin-native.jar">
+          <element id="module-output" name="kotlin.native" />
+        </element>
+        <element id="archive" name="kotlin-repl.jar">
+          <element id="module-output" name="kotlin.repl" />
+        </element>
+        <element id="archive" name="kotlin-script-util.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-script-util/1.4.30-dev-local/kotlin-script-util-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-scripting.jar">
+          <element id="module-output" name="kotlin.scripting" />
+        </element>
+        <element id="library" level="project" name="javaslang" />
+        <element id="library" level="project" name="kotlinx-collections-immutable-jvm" />
+        <element id="library" level="project" name="javax-inject" />
+        <element id="archive" name="kotlin-stdlib.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.4.30-dev-local/kotlin-stdlib-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-stdlib-jdk7.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.4.30-dev-local/kotlin-stdlib-jdk7-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-stdlib-jdk8.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.4.30-dev-local/kotlin-stdlib-jdk8-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-reflect.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.30-dev-local/kotlin-reflect-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-plugin.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.30-dev-local/kotlin-compiler-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="archive" name="kotlin-frontend-independent.jar">
+          <element id="module-output" name="kotlin.fir.frontend-independent" />
+        </element>
+        <element id="archive" name="kotlin-line-indent-provider.jar">
+          <element id="module-output" name="kotlin.line-indent-provider" />
+        </element>
+        <element id="archive" name="kotlin-scripting-ide-services.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.scripting-ide-services" />
+        </element>
+        <element id="library" level="module" name="intellij-markdown" module-name="intellij.markdown" />
+        <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
+        <element id="archive" name="kotlin-coroutines-experimental-compat.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.30-dev-local/kotlin-coroutines-experimental-compat-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+        <element id="library" level="project" name="completion-ranking-kotlin" />
+        <element id="archive" name="kotlin-parcelize.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.parcelize" />
+        </element>
+        <element id="archive" name="parcelize-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/parcelize-compiler-plugin-for-ide/1.4.30-dev-local/parcelize-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        </element>
+      </element>
+      <element id="directory" name="kotlinc">
+        <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.30-dev-local/kotlin-dist-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+      </element>
+    </root>
+  </artifact>
+</component>
