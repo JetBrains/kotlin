@@ -162,22 +162,18 @@ fun translateCall(
         )
 
         if (jsDispatchReceiver != null) {
-            // TODO: Do not create IIFE when receiver expression is simple or has no side effects
-            // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-            val iifeFun = JsFunction(
-                emptyScope,
-                if (argumentsAsSingleArray is JsArrayLiteral) {
-                    JsBlock(
-                        JsReturn(
-                            JsInvocation(
-                                JsNameRef(symbolName, jsDispatchReceiver),
-                                argumentsAsSingleArray.expressions
-                            )
-                        )
-                    )
-                } else {
-                    val receiverName = JsName("\$externalVarargReceiverTmp")
-                    val receiverRef = receiverName.makeRef()
+            if (argumentsAsSingleArray is JsArrayLiteral) {
+                JsInvocation(
+                    JsNameRef(symbolName, jsDispatchReceiver),
+                    argumentsAsSingleArray.expressions
+                )
+            } else {
+                // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
+                val receiverName = JsName("\$externalVarargReceiverTmp")
+                val receiverRef = receiverName.makeRef()
+
+                val iifeFun = JsFunction(
+                    emptyScope,
                     JsBlock(
                         JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
                         JsReturn(
@@ -189,24 +185,24 @@ fun translateCall(
                                 )
                             )
                         )
-                    )
-                },
-                "VarargIIFE"
-            )
-
-            val iifeFunHasContext = (jsDispatchReceiver as? JsNameRef)?.qualifier is JsThisRef
-            if (iifeFunHasContext) {
-                JsInvocation(
-                    // Create scope for temporary variable holding dispatch receiver
-                    // It is used both during method reference and passing `this` value to `apply` function.
-                    JsNameRef(
-                        "call",
-                        iifeFun
                     ),
-                    JsThisRef()
+                    "VarargIIFE"
                 )
-            } else {
-                JsInvocation(iifeFun)
+
+                val iifeFunHasContext = (jsDispatchReceiver as? JsNameRef)?.qualifier is JsThisRef
+                if (iifeFunHasContext) {
+                    JsInvocation(
+                        // Create scope for temporary variable holding dispatch receiver
+                        // It is used both during method reference and passing `this` value to `apply` function.
+                        JsNameRef(
+                            "call",
+                            iifeFun
+                        ),
+                        JsThisRef()
+                    )
+                } else {
+                    JsInvocation(iifeFun)
+                }
             }
         } else {
             JsInvocation(
