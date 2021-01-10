@@ -13,5 +13,72 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.maven.server" />
+    <orderEntry type="library" scope="PROVIDED" name="plexus-utils" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/maven-dependency-tree-1.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/archetype-common-2.0-alpha-4-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/mercury-artifact-1.0-alpha-6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/maven2/lib/maven-2.2.1-uber.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/maven2/boot/classworlds-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-artifact-test/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-project/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-settings/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-core/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-plugin-descriptor/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-plugin-api/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-artifact-manager/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-plugin-descriptor/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-script/maven-script-beanshell/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-error-diagnostics/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-plugin-parameter-documenter/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-settings/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-model/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-plugin-registry/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-artifact/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-core-it-runner/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-core/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-artifact-manager/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-toolchain/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-monitor/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-artifact/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-compat/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-script/maven-script-ant/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-script/maven-script-ant/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-toolchain/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-reporting/maven-reporting-api/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/apache-maven/src/test/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-project/src/main/java" />
+          <root url="jar://$MODULE_DIR$/lib-src/apache-maven-2.2.1-src.zip!/apache-maven-2.2.1/maven-profile/src/main/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/nexus-indexer-1.2.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib-src/nexus-indexer-1.2.3-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="commons-logging" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/commons-beanutils.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.maven" scope="TEST" />
   </component>
 </module>

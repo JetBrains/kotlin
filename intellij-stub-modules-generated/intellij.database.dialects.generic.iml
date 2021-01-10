@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module" module-name="intellij.database.dialects.sql92" />
   </component>
 </module>

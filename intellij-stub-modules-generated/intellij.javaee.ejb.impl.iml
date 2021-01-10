@@ -14,6 +14,27 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" />
+    <orderEntry type="module" module-name="intellij.javaee.ejb" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="module" module-name="intellij.platform.graph.impl" />
     <orderEntry type="module" module-name="intellij.java.jam.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa.ql" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.diagram.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.persistence.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.database" />
+    <orderEntry type="module" module-name="intellij.javaee.persistence" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa.impl" />
   </component>
 </module>

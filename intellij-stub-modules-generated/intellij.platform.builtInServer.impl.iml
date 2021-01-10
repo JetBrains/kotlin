@@ -16,6 +16,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.xml" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="XmlRPC" level="project" />
+    <orderEntry type="library" name="commons-imaging" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
   </component>
 </module>

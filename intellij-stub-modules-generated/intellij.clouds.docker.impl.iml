@@ -14,7 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" />
+    <orderEntry type="module" module-name="intellij.clouds.docker.agent.rt" />
     <orderEntry type="module" module-name="intellij.clouds.docker" exported="" />
+    <orderEntry type="module" module-name="intellij.clouds.docker.compose" />
+    <orderEntry type="module" module-name="intellij.clouds.docker.file" />
     <orderEntry type="module" module-name="intellij.clouds.docker.remoteRun" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>
 </module>

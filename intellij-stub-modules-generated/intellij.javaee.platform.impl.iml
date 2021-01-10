@@ -15,11 +15,41 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.java.debugger" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.resources" />
     <orderEntry type="module" module-name="intellij.javaee.platform" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.javaee.persistence" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.java.jam.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
     <orderEntry type="module" module-name="intellij.java.ui" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.rt" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.java.remoteServers" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" />
     <orderEntry type="module" module-name="intellij.java.remoteServers.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.jam" exported="" />
+    <orderEntry type="module" module-name="intellij.database.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jps" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.i18n" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.langInjection" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.frameworks.starters" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" />
+    <orderEntry type="module" module-name="intellij.javaee.ejb" />
   </component>
 </module>

@@ -14,5 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.spring.messaging" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.java.analysis.impl" scope="TEST" />
   </component>
 </module>

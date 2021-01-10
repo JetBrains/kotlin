@@ -14,5 +14,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.android.lang" />
+    <orderEntry type="module" module-name="intellij.platform.editor" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.java.psi" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.android.projectSystem" />
+    <orderEntry type="library" scope="PROVIDED" name="kotlin-plugin-android-compile-deps" level="project" />
   </component>
 </module>

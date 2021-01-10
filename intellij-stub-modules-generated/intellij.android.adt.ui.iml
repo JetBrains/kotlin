@@ -14,5 +14,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="truth" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui.model" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" name="jcip" level="project" />
+    <orderEntry type="module" module-name="intellij.android.observable" />
+    <orderEntry type="module" module-name="intellij.android.artwork" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="Java Compatibility" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.webp" />
   </component>
 </module>

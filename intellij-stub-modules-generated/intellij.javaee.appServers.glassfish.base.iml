@@ -14,5 +14,13 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.javaee.appServers" exported="" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.glassfish.agent.rt" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
   </component>
 </module>

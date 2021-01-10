@@ -13,5 +13,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.spring.boot" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="library" scope="TEST" name="hamcrest" level="project" />
+    <orderEntry type="module" module-name="intellij.gradle.java" />
+    <orderEntry type="module" module-name="intellij.frameworks.starters" />
   </component>
 </module>

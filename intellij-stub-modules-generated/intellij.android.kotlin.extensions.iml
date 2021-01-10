@@ -14,6 +14,21 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.android.common" />
+    <orderEntry type="module" module-name="intellij.android.core" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
+    <orderEntry type="module" module-name="intellij.gradle" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.android.kotlin.idea" />
     <orderEntry type="module" module-name="intellij.android.kotlin.extensions.common" exported="" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="kotlin-plugin-android-compile-deps" level="project" />
+    <orderEntry type="module" module-name="intellij.android.projectSystem" />
   </component>
 </module>

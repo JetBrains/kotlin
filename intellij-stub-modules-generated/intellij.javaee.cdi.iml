@@ -14,5 +14,25 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java.jam" />
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.xml" />
+    <orderEntry type="module" module-name="intellij.diagram.impl" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.platform.graph.impl" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.frameworks.starters" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

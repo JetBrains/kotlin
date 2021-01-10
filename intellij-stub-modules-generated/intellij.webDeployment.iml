@@ -14,6 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
     <orderEntry type="module-library" exported="">
       <library name="Commons VFS" type="repository">
         <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps:commons-vfs2:2.2.1.9" />
@@ -26,10 +30,26 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="commons-net" level="project" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
+    <orderEntry type="library" name="commons-logging" level="project" />
     <orderEntry type="module" module-name="intellij.platform.commercial.verifier" exported="" />
     <orderEntry type="module" module-name="intellij.platform.commercial" exported="" />
+    <orderEntry type="module" module-name="intellij.xml" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="library" exported="" name="jzlib" level="project" />
     <orderEntry type="library" exported="" name="JSch" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
+    <orderEntry type="module" module-name="intellij.platform.builtInServer" />
+    <orderEntry type="module" module-name="intellij.platform.credentialStore" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="bouncy-castle-provider" level="project" />
+    <orderEntry type="library" name="jsch-agent-proxy" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ssh" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.log.impl" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

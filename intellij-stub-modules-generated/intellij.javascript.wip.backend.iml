@@ -14,5 +14,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
+    <orderEntry type="module" module-name="intellij.javascript.wip.protocol" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.protocolReaderRuntime" />
+    <orderEntry type="module" module-name="intellij.js.liveEdit.protocol" />
+    <orderEntry type="module" module-name="intellij.javascript.v8.backend" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
+    <orderEntry type="module" module-name="intellij.javascript" />
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

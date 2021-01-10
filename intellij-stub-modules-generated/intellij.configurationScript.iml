@@ -14,5 +14,19 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.yaml" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer" />
+    <orderEntry type="library" scope="TEST" name="jackson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="library" name="snakeyaml-engine" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

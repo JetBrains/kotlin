@@ -14,5 +14,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module-library">
+      <library name="cassandra-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:cassandra:1.20" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/cassandra/1.20/cassandra-1.20.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

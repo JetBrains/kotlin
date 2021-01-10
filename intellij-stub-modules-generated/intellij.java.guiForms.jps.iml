@@ -14,5 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.compiler" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
+    <orderEntry type="library" scope="TEST" name="Java Compatibility" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

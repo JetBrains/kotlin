@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.spring.el" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.javaee.el" />
+    <orderEntry type="module" module-name="intellij.javaee.jsp.impl" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
   </component>
 </module>

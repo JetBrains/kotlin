@@ -13,5 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.yaml" />
+    <orderEntry type="module" module-name="intellij.spring.boot" />
+    <orderEntry type="module" module-name="intellij.microservices.config" />
   </component>
 </module>

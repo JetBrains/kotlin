@@ -13,7 +13,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.diagram" exported="" />
     <orderEntry type="module" module-name="intellij.platform.graph" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.graph.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>

@@ -14,5 +14,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javascript.v8.protocol" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.js.liveEdit.protocol" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.protocolReaderRuntime" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger.backend" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

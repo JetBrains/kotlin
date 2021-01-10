@@ -14,5 +14,23 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.android.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.android.app-inspection" />
+    <orderEntry type="module" module-name="intellij.android.common" />
+    <orderEntry type="module" module-name="intellij.android.transport" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.android.artwork" />
+    <orderEntry type="library" name="studio-proto" level="project" />
+    <orderEntry type="library" name="transport-proto" level="project" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui.model" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Guava" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="library" scope="TEST" name="studio-grpc" level="project" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui" />
+    <orderEntry type="library" scope="TEST" name="truth" level="project" />
   </component>
 </module>

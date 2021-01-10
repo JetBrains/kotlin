@@ -21,5 +21,11 @@
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" exported="" />
     <orderEntry type="module" module-name="intellij.xml.analysis.impl" exported="" />
     <orderEntry type="module" module-name="intellij.javascript" exported="" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates.analysis" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

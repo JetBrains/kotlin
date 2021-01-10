@@ -14,5 +14,49 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.microservices" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.yaml" />
+    <orderEntry type="module" module-name="intellij.java.jam" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.java.psi" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.javaee.jax.rs" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" scope="PROVIDED" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="module-library">
+      <library name="jackson-dataformat-yaml" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.8/jackson-dataformat-yaml-2.9.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.8/jackson-dataformat-yaml-2.9.8-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="module" module-name="intellij.maven" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.gradle.common" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" name="jcef" level="project" />
+    <orderEntry type="module-library">
+      <library name="org.webjars:swagger-ui:3.25.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.webjars:swagger-ui:3.25.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/webjars/swagger-ui/3.25.5/swagger-ui-3.25.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.restClient" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.markdown" scope="PROVIDED" />
   </component>
 </module>

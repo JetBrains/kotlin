@@ -15,5 +15,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
   </component>
 </module>

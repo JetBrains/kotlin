@@ -14,5 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" name="debugger-memory-agent" level="project" />
+    <orderEntry type="library" name="commons-io" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
   </component>
 </module>

@@ -14,5 +14,34 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.android.designer" />
+    <orderEntry type="module" module-name="intellij.android.core" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui" />
+    <orderEntry type="module" module-name="intellij.android.layout-ui" />
+    <orderEntry type="library" name="studio-analytics-proto" level="project" />
+    <orderEntry type="module" module-name="intellij.android.artwork" />
+    <orderEntry type="module" module-name="intellij.android.common" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module-library">
+      <library name="eclipse-layout-kernel" type="repository">
+        <properties maven-id="org.eclipse.elk:org.eclipse.elk.alg.layered:0.3.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/elk/org.eclipse.elk.alg.layered/0.3.0/org.eclipse.elk.alg.layered-0.3.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/elk/org.eclipse.elk.core/0.3.0/org.eclipse.elk.core-0.3.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/elk/org.eclipse.elk.graph/0.3.0/org.eclipse.elk.graph-0.3.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/emf/org.eclipse.emf.common/2.12.0/org.eclipse.emf.common-2.12.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/emf/org.eclipse.emf.ecore/2.12.0/org.eclipse.emf.ecore-2.12.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.android.projectSystem" />
+    <orderEntry type="library" name="protobuf" level="project" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui.model" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" scope="TEST" />
   </component>
 </module>

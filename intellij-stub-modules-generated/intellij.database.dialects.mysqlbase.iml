@@ -14,6 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
     <orderEntry type="library" exported="" name="jts-io-common" level="project" />
   </component>
 </module>

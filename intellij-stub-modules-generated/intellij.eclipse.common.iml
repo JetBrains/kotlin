@@ -13,5 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
   </component>
 </module>

@@ -14,7 +14,29 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.java.guiForms.compiler" exported="" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.platform.icons" />
+    <orderEntry type="library" name="jgoodies-forms" level="project" />
+    <orderEntry type="library" name="ASM" level="project" />
     <orderEntry type="module" module-name="intellij.java.i18n" exported="" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="library" name="Java Compatibility" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

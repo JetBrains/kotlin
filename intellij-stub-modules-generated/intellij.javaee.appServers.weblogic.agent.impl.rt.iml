@@ -14,5 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="mockweblogic" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.weblogic.agent.rt" />
   </component>
 </module>

@@ -14,5 +14,24 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="JSch" level="project" />
+    <orderEntry type="library" name="SSHJ" level="project" />
+    <orderEntry type="library" name="jzlib" level="project" />
+    <orderEntry type="library" name="Slf4j" level="project" />
+    <orderEntry type="library" name="bouncy-castle-provider" level="project" />
+    <orderEntry type="library" name="jsch-agent-proxy-sshj" level="project" />
+    <orderEntry type="library" name="jsch-agent-proxy" level="project" />
+    <orderEntry type="library" name="jsch-agent-proxy-jsch" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="pty4j" level="project" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="library" name="commons-lang3" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>
 </module>

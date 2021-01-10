@@ -14,5 +14,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module" module-name="intellij.database.dialects.mssql" />
+    <orderEntry type="module-library">
+      <library name="sybase-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:sybase:1.7" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/sybase/1.7/sybase-1.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

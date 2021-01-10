@@ -13,5 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.boot" scope="RUNTIME" />
+    <orderEntry type="library" name="JUnit4" level="project" />
   </component>
 </module>

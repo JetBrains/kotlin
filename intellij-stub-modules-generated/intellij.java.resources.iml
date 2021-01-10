@@ -14,6 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.resources" />
     <orderEntry type="module" module-name="intellij.regexp" exported="" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.resources.en" />
   </component>
 </module>

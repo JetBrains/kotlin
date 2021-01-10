@@ -16,6 +16,9 @@
     <orderEntry type="module" module-name="intellij.tasks" exported="" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
     <orderEntry type="module-library" exported="">
       <library name="axis-1.4">
         <CLASSES>
@@ -28,11 +31,48 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="XmlRPC" level="project" />
     <orderEntry type="library" exported="" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.core" exported="" />
+    <orderEntry type="module" module-name="intellij.regexp" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/json-path-0.8.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/json-smart-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
     <orderEntry type="library" exported="" name="markdownj" level="project" />
+    <orderEntry type="library" name="http-client" level="project" />
     <orderEntry type="module" module-name="intellij.platform.tasks.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.tasks" exported="" />
+    <orderEntry type="module" module-name="intellij.tasks.compatibility" />
+    <orderEntry type="module-library">
+      <library name="commons-discovery" type="repository">
+        <properties include-transitive-deps="false" maven-id="commons-discovery:commons-discovery:0.4" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/commons-discovery/commons-discovery/0.4/commons-discovery-0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="javax.annotation-api" level="project" />
+    <orderEntry type="module" module-name="intellij.tasks.jira" scope="RUNTIME" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

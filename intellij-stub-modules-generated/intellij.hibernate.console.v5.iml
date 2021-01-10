@@ -14,5 +14,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.hibernate.console" exported="" />
+    <orderEntry type="library" scope="PROVIDED" name="hibernate-5.0.0" level="project" />
   </component>
 </module>

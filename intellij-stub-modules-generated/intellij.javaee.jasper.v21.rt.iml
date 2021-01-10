@@ -14,5 +14,25 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="jasper:6.0.53" type="repository">
+        <properties maven-id="org.apache.tomcat:jasper:6.0.53" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/jasper/6.0.53/jasper-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/servlet-api/6.0.53/servlet-api-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/juli/6.0.53/juli-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/jsp-api/6.0.53/jsp-api-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/catalina/6.0.53/catalina-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/coyote/6.0.53/coyote-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/annotations-api/6.0.53/annotations-api-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/el-api/6.0.53/el-api-6.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/core/compiler/ecj/4.3.1/ecj-4.3.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/jasper-el/6.0.53/jasper-el-6.0.53.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.jasper.v2.rt" />
   </component>
 </module>

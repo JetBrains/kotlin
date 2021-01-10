@@ -14,6 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.java.jam.impl" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
     <orderEntry type="module" module-name="intellij.javaee.platform" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.application" exported="" />
   </component>

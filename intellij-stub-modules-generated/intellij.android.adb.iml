@@ -14,5 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="library" name="jsr305" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>

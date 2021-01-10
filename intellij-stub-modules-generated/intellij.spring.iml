@@ -19,9 +19,12 @@
     <orderEntry type="module" module-name="intellij.java.impl" exported="" />
     <orderEntry type="module" module-name="intellij.xml.dom.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.ui" exported="" />
+    <orderEntry type="module" module-name="intellij.aopCommon" />
     <orderEntry type="module" module-name="intellij.properties.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
     <orderEntry type="module" module-name="intellij.platform.uast" exported="" />
     <orderEntry type="module" module-name="intellij.java" exported="" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

@@ -14,5 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.platform.images" />
+    <orderEntry type="module" module-name="intellij.css" />
   </component>
 </module>

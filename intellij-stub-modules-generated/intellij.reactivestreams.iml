@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="intellij.java.ui" exported="" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
     <orderEntry type="module" module-name="intellij.jvm.analysis" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>

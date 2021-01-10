@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.java" />
   </component>
 </module>

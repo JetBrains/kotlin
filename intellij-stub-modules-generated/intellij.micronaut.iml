@@ -14,5 +14,36 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.jvm.analysis" />
+    <orderEntry type="module" module-name="intellij.java.jam" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.properties" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.uast" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.microservices" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.microservices.uast" />
+    <orderEntry type="module" module-name="intellij.microservices.config" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.yaml" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.restClient" />
+    <orderEntry type="module" module-name="intellij.micronaut" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.properties.psi" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.microservices" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.microservices.uast" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.jam" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.frameworks.starters" />
   </component>
 </module>

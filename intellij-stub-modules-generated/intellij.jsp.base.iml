@@ -13,6 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.xml" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
   </component>
 </module>

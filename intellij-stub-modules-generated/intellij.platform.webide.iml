@@ -14,5 +14,18 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

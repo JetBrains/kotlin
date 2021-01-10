@@ -14,5 +14,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module-library">
+      <library name="derby-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:derby:1.6" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/derby/1.6/derby-1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

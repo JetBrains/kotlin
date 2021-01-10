@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.tasks.core" />
+    <orderEntry type="module" module-name="intellij.tasks.compatibility" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="library" name="XmlRPC" level="project" />
   </component>
 </module>

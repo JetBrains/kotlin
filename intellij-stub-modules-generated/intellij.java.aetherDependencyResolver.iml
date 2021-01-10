@@ -16,9 +16,67 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
     <orderEntry type="library" exported="" name="http-client" level="project" />
     <orderEntry type="library" exported="" name="commons-logging" level="project" />
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" exported="" name="org.apache.maven:maven-resolver-provider" level="project" />
+    <orderEntry type="module-library">
+      <library name="org.apache.maven.resolver:maven-resolver-transport-file" type="repository">
+        <properties maven-id="org.apache.maven.resolver:maven-resolver-transport-file:1.3.3">
+          <exclude>
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-api" />
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-spi" />
+            <dependency maven-id="org.slf4j:slf4j-api" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-transport-file/1.3.3/maven-resolver-transport-file-1.3.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.apache.maven.resolver:maven-resolver-transport-http" type="repository">
+        <properties maven-id="org.apache.maven.resolver:maven-resolver-transport-http:1.3.3">
+          <exclude>
+            <dependency maven-id="org.slf4j:slf4j-api" />
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-api" />
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-util" />
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-spi" />
+            <dependency maven-id="org.apache.httpcomponents:httpclient" />
+            <dependency maven-id="org.apache.httpcomponents:httpcore" />
+            <dependency maven-id="org.slf4j:jcl-over-slf4j" />
+            <dependency maven-id="commons-codec:commons-codec" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-transport-http/1.3.3/maven-resolver-transport-http-1.3.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.apache.maven.resolver:maven-resolver-connector-basic" type="repository">
+        <properties maven-id="org.apache.maven.resolver:maven-resolver-connector-basic:1.3.3">
+          <exclude>
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-api" />
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-spi" />
+            <dependency maven-id="org.apache.maven.resolver:maven-resolver-util" />
+            <dependency maven-id="org.slf4j:slf4j-api" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-connector-basic/1.3.3/maven-resolver-connector-basic-1.3.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="commons-lang3" level="project" />
   </component>
 </module>

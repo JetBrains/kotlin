@@ -13,5 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.langInjection" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" />
   </component>
 </module>

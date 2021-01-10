@@ -14,5 +14,29 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.android.core" />
+    <orderEntry type="module" module-name="intellij.android.sdkUpdates" />
+    <orderEntry type="module" module-name="intellij.android.designer" />
+    <orderEntry type="module" module-name="intellij.android.app-inspection.ide" />
+    <orderEntry type="module" module-name="intellij.android.profilersAndroid" />
+    <orderEntry type="module" module-name="intellij.android.adb" />
+    <orderEntry type="module" module-name="intellij.android.debuggers" />
+    <orderEntry type="module" module-name="intellij.android.lang" />
+    <orderEntry type="module" module-name="intellij.android.projectSystem" />
+    <orderEntry type="module" module-name="intellij.android.projectSystem.gradle" />
+    <orderEntry type="module" module-name="intellij.android.transport" />
+    <orderEntry type="module" module-name="intellij.android.android-layout-inspector" />
+    <orderEntry type="module" module-name="intellij.android.lang-databinding" />
+    <orderEntry type="module" module-name="intellij.android.databinding" />
+    <orderEntry type="module" module-name="intellij.android.mlkit" />
+    <orderEntry type="module" module-name="intellij.android.naveditor" />
+    <orderEntry type="module" module-name="intellij.android.layout-inspector" />
+    <orderEntry type="module" module-name="intellij.android.compose-designer" />
+    <orderEntry type="module" module-name="intellij.android.designer.customview" />
+    <orderEntry type="module" module-name="intellij.android.room" />
+    <orderEntry type="module" module-name="intellij.android.build-attribution" />
+    <orderEntry type="module" module-name="intellij.lint" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>
 </module>

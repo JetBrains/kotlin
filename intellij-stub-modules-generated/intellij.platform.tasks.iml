@@ -14,5 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="library" name="JDOM" level="project" />
   </component>
 </module>

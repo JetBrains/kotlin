@@ -13,5 +13,26 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.platform" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.xml" />
+    <orderEntry type="module" module-name="intellij.javaee.persistence.impl" />
+    <orderEntry type="module" module-name="intellij.database.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa.ql" />
+    <orderEntry type="module" module-name="intellij.hibernate.console" />
+    <orderEntry type="module" module-name="intellij.hibernate.console.v3" />
+    <orderEntry type="module" module-name="intellij.hibernate.console.v4" />
+    <orderEntry type="module" module-name="intellij.hibernate.console.v5" />
+    <orderEntry type="module" module-name="intellij.hibernate.console.v52" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

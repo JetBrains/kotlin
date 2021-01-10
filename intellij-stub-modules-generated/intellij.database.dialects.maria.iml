@@ -14,5 +14,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module" module-name="intellij.database.dialects.mysqlbase" />
+    <orderEntry type="module-library">
+      <library name="mariadb-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:mariadb:1.8" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/mariadb/1.8/mariadb-1.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

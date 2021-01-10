@@ -14,6 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.webide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.builtInServer" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
   </component>
 </module>

@@ -13,5 +13,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.platform" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.spring.mvc" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
   </component>
 </module>

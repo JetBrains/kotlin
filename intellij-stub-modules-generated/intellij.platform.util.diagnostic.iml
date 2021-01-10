@@ -16,5 +16,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

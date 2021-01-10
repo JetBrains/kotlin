@@ -14,5 +14,23 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.android.profilers" />
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui" />
+    <orderEntry type="module" module-name="intellij.android.adt.ui.model" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="library" scope="TEST" name="truth" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.android.artwork" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="library" name="Java Compatibility" level="project" />
+    <orderEntry type="module" module-name="intellij.android.transport" scope="TEST" />
+    <orderEntry type="library" name="studio-proto" level="project" />
+    <orderEntry type="library" name="transport-proto" level="project" />
+    <orderEntry type="library" name="studio-grpc" level="project" />
   </component>
 </module>

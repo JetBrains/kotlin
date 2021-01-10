@@ -75,5 +75,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="library" name="LicenseDecoder" level="project" />
   </component>
 </module>

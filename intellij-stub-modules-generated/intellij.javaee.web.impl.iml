@@ -14,9 +14,36 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jasper.v2.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.platform" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
     <orderEntry type="module" module-name="intellij.javaee.web" exported="" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
+    <orderEntry type="module" module-name="intellij.java.debugger" />
+    <orderEntry type="module" module-name="intellij.java.resources" />
+    <orderEntry type="module" module-name="intellij.java.plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.java.remoteServers.impl" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.jps" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="library" name="protobuf" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
     <orderEntry type="module" module-name="intellij.javaee.app.servers" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.application" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.app.servers.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.microservices" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
   </component>
 </module>

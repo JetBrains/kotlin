@@ -14,5 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.duplicatesDetector" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" />
+    <orderEntry type="module" module-name="intellij.javascript" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
   </component>
 </module>

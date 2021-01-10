@@ -13,5 +13,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.debugger.agent.storage" />
+    <orderEntry type="module-library">
+      <library name="asm-capture">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/asm-capture.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

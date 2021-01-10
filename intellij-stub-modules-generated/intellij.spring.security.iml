@@ -14,5 +14,14 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.aopCommon" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.javaee.el" />
+    <orderEntry type="module" module-name="intellij.javaee.jsp.impl" />
+    <orderEntry type="module" module-name="intellij.spring.el" />
+    <orderEntry type="module" module-name="intellij.xml.analysis.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.microservices.uast" />
+    <orderEntry type="module" module-name="intellij.microservices" />
   </component>
 </module>

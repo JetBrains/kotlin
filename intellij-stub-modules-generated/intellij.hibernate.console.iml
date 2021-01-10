@@ -17,5 +17,6 @@
     <orderEntry type="module" module-name="intellij.database.jdbcConsole" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.rt" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.jpa.console" exported="" />
+    <orderEntry type="library" scope="PROVIDED" name="hibernate-4.1.3" level="project" />
   </component>
 </module>

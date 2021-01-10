@@ -18,5 +18,12 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.java.psi" exported="" />
     <orderEntry type="module" module-name="intellij.platform.core.impl" exported="" />
+    <orderEntry type="library" name="ASM" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="module" module-name="intellij.platform.core.ui" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

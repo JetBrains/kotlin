@@ -13,5 +13,21 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.spring.boot" />
+    <orderEntry type="module" module-name="intellij.spring.mvc" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.spring.boot.run" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.spring.mvc.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.microservices" />
+    <orderEntry type="module" module-name="intellij.spring.boot.cloud" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module" module-name="intellij.microservices.config" />
+    <orderEntry type="module" module-name="intellij.microservices.uast" />
+    <orderEntry type="module" module-name="intellij.restClient" scope="TEST" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

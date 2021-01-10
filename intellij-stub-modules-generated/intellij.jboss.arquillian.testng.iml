@@ -13,5 +13,13 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.testng" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.jboss.arquillian" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.jboss" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>

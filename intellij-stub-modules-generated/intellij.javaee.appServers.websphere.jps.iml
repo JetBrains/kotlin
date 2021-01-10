@@ -13,5 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" />
+    <orderEntry type="library" name="JDOM" level="project" />
   </component>
 </module>

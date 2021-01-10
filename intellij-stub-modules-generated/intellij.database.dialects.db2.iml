@@ -14,5 +14,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module-library">
+      <library name="db2-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:db2_luw:1.21" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/db2_luw/1.21/db2_luw-1.21.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

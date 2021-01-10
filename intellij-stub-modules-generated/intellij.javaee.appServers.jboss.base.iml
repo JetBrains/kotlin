@@ -14,5 +14,12 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.javaee.appServers" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.jboss.agent.rt" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
   </component>
 </module>

@@ -14,5 +14,18 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.jsp.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.el" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.spring.security" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.spring.mvc" />
+    <orderEntry type="module" module-name="intellij.spring.el" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
   </component>
 </module>

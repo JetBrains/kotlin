@@ -14,6 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.remoteServers.agent.rt" exported="" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
   </component>
 </module>

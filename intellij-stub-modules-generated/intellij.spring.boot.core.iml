@@ -13,5 +13,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.properties" />
+    <orderEntry type="module" module-name="intellij.spring.boot" />
+    <orderEntry type="module" module-name="intellij.regexp" />
+    <orderEntry type="module" module-name="intellij.spring.el" />
+    <orderEntry type="module" module-name="intellij.javaee.jsp.impl" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="module" module-name="intellij.gradle.common" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module" module-name="intellij.microservices.config" />
   </component>
 </module>

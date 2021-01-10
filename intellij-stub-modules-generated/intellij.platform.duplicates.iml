@@ -14,7 +14,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.duplicates.analysis" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

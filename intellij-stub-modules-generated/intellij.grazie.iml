@@ -14,5 +14,199 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.11" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.11" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-html-jvm/0.6.11/kotlinx-html-jvm-0.6.11.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-html-jvm/0.6.11/kotlinx-html-jvm-0.6.11-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="jackson-module-kotlin" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="library" name="Slf4j" level="project" />
+    <orderEntry type="library" name="commons-lang3" level="project" />
+    <orderEntry type="library" name="commons-logging" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module-library">
+      <library name="org.apache.commons:commons-text:1.7" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.apache.commons:commons-text:1.7" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-text/1.7/commons-text-1.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-text/1.7/commons-text-1.7-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="library" name="miglayout-swing" level="project" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" />
+    <orderEntry type="module" module-name="intellij.properties" />
+    <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.markdown" />
+    <orderEntry type="module" module-name="intellij.yaml" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
+    <orderEntry type="library" name="swingx" level="project" />
+    <orderEntry type="module-library">
+      <library name="tanvd.grazi:grazi-language-detector:0.1.12" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi:grazi-language-detector:0.1.12" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/grazi-language-detector/0.1.12/grazi-language-detector-0.1.12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/grazi-language-detector/0.1.12/grazi-language-detector-0.1.12-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="RUNTIME" name="jna" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module-library">
+      <library name="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.10" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.10" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.10/grazi-language-tool-en-4.7.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.10/grazi-language-tool-en-4.7.10-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="tanvd.grazi.languagetool:grazi-language-tool:4.7.10" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool:4.7.10" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.10/grazi-language-tool-4.7.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.10/grazi-language-tool-4.7.10-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="tech.uom.lib:uom-lib-common:1.1" type="repository">
+        <properties include-transitive-deps="false" maven-id="tech.uom.lib:uom-lib-common:1.1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tech/uom/lib/uom-lib-common/1.1/uom-lib-common-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/tech/uom/lib/uom-lib-common/1.1/uom-lib-common-1.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="tech.units:indriya:1.2" type="repository">
+        <properties include-transitive-deps="false" maven-id="tech.units:indriya:1.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tech/units/indriya/1.2/indriya-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/tech/units/indriya/1.2/indriya-1.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="javax.measure:unit-api:1.0" type="repository">
+        <properties include-transitive-deps="false" maven-id="javax.measure:unit-api:1.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/javax/measure/unit-api/1.0/unit-api-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/javax/measure/unit-api/1.0/unit-api-1.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="net.loomchild:segment:2.0.1" type="repository">
+        <properties include-transitive-deps="false" maven-id="net.loomchild:segment:2.0.1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/net/loomchild/segment/2.0.1/segment-2.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/net/loomchild/segment/2.0.1/segment-2.0.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.carrot2:morfologik-stemming:2.1.6" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.carrot2:morfologik-stemming:2.1.6" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-stemming/2.1.6/morfologik-stemming-2.1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-stemming/2.1.6/morfologik-stemming-2.1.6-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.carrot2:morfologik-speller:2.1.6" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.carrot2:morfologik-speller:2.1.6" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-speller/2.1.6/morfologik-speller-2.1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-speller/2.1.6/morfologik-speller-2.1.6-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="com.carrotsearch:hppc:0.7.2" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.carrotsearch:hppc:0.7.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.7.2/hppc-0.7.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.7.2/hppc-0.7.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.carrot2:morfologik-fsa-builders:2.1.6" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.carrot2:morfologik-fsa-builders:2.1.6" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa-builders/2.1.6/morfologik-fsa-builders-2.1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa-builders/2.1.6/morfologik-fsa-builders-2.1.6-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.carrot2:morfologik-fsa:2.1.6" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.carrot2:morfologik-fsa:2.1.6" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa/2.1.6/morfologik-fsa-2.1.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa/2.1.6/morfologik-fsa-2.1.6-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" scope="RUNTIME" name="jetbrains-annotations" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

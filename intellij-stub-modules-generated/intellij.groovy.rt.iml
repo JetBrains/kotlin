@@ -14,5 +14,9 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.classLoader" />
+    <orderEntry type="module" module-name="intellij.groovy.constants.rt" />
+    <orderEntry type="library" scope="PROVIDED" name="Slf4j" level="project" />
   </component>
 </module>

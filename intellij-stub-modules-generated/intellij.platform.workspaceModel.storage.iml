@@ -14,5 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="Slf4j" level="project" />
+    <orderEntry type="library" name="kotlin-reflect" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" name="Kryo" level="project" />
+    <orderEntry type="library" name="Objenesis" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ex" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

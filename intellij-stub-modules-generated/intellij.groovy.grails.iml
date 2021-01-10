@@ -13,5 +13,53 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.groovy" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="library" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="module" module-name="intellij.groovy.grails.rt" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="module" module-name="intellij.properties" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.spring.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
+    <orderEntry type="module" module-name="intellij.java.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.copyright" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="module" module-name="intellij.java.i18n" />
+    <orderEntry type="module" module-name="intellij.regexp" />
+    <orderEntry type="module" module-name="intellij.hibernate" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.javascript.langInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.spring.persistence" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.groovy.grails.compilerPatch" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="module" module-name="intellij.gradle.java" />
+    <orderEntry type="module" module-name="intellij.groovy.grails.gradleTooling" />
+    <orderEntry type="module" module-name="intellij.javaee.el" />
+    <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.gradle.javaee" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.coverage" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="module" module-name="intellij.javaee.jsp.base.impl" />
+    <orderEntry type="library" scope="TEST" name="org.codehaus.groovy:groovy-xml" level="project" />
   </component>
 </module>

@@ -13,6 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="hibernate-3.6.10" level="project" />
     <orderEntry type="module" module-name="intellij.hibernate.console" exported="" />
+    <orderEntry type="library" scope="PROVIDED" name="mock-hibernate-3.2" level="project" />
   </component>
 </module>

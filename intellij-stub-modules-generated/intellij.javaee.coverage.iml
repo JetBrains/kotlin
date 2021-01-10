@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.coverage" />
+    <orderEntry type="module" module-name="intellij.javaee.platform" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.jsp.base" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" />
   </component>
 </module>

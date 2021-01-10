@@ -14,5 +14,24 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.debugger.memory.agent" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.ui" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.manifest" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.remoteServers.impl" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.uiDesigner" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.java.analysis.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.indexing.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.uast" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.structuralSearch" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.typeMigration" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.resources" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.resources.en" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.langInjection" scope="RUNTIME" />
   </component>
 </module>

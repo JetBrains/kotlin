@@ -13,5 +13,20 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.glassfish.main.admin:admin-util:5.1.0-RC1" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.glassfish.main.admin:admin-util:5.1.0-RC1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/main/admin/admin-util/5.1.0-RC1/admin-util-5.1.0-RC1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/glassfish/main/admin/admin-util/5.1.0-RC1/admin-util-5.1.0-RC1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.appServers.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.glassfish.v3.base.agent.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.glassfish.v3_1.base.agent.rt" />
   </component>
 </module>

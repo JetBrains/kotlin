@@ -14,5 +14,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
+    <orderEntry type="library" scope="TEST" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="module" module-name="intellij.gradle.java" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
   </component>
 </module>

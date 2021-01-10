@@ -19,5 +19,14 @@
     <orderEntry type="module" module-name="intellij.platform.indexing" exported="" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />
     <orderEntry type="module" module-name="intellij.platform.analysis" exported="" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" scope="TEST" name="jmock" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="hamcrest" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ex" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

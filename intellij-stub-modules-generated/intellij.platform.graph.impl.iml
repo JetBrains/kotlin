@@ -14,6 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="yFiles" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.platform.graph" exported="" />
+    <orderEntry type="library" scope="RUNTIME" name="xml-apis-ext" level="project" />
   </component>
 </module>

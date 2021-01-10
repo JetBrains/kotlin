@@ -14,6 +14,23 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
+    <orderEntry type="module" module-name="intellij.java.debugger" />
+    <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testRunner" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
+    <orderEntry type="module" module-name="intellij.testng.rt" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="library" name="TestNG" level="project" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
+    <orderEntry type="module" module-name="intellij.java.typeMigration" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
   </component>
 </module>

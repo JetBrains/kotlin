@@ -13,5 +13,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Mac" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" name="batik-transcoder" level="project" />
+    <orderEntry type="library" name="imgscalr" level="project" />
+    <orderEntry type="library" name="jna" level="project" />
+    <orderEntry type="library" name="xml-apis-ext" level="project" />
+    <orderEntry type="library" name="Java Compatibility" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="batik-codec" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

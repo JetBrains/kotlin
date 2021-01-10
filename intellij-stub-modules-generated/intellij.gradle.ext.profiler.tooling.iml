@@ -13,5 +13,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
   </component>
 </module>

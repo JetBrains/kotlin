@@ -14,7 +14,20 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.properties" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="module" module-name="intellij.java.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.jsp.base" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="module" module-name="intellij.jvm.analysis" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

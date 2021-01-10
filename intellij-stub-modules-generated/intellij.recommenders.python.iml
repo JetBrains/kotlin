@@ -13,5 +13,40 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.recommenders" />
+    <orderEntry type="module-library">
+      <library name="recommenders-java-commons" type="repository">
+        <properties maven-id="com.jetbrains.recommenders.java:recommenders-java-commons:0.5.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.2/recommenders-java-commons-0.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.2/recommenders-java-commons-0.5.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="recommenders-jayes" type="repository">
+        <properties maven-id="org.eclipse.recommenders:recommenders-jayes:2.5.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/recommenders/recommenders-jayes/2.5.5/recommenders-jayes-2.5.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="recommenders-jayes-io" type="repository">
+        <properties maven-id="org.eclipse.recommenders:recommenders-jayes-io:2.5.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/recommenders/recommenders-jayes-io/2.5.5/recommenders-jayes-io-2.5.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
   </component>
 </module>

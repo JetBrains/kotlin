@@ -13,5 +13,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="JUnit4" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="ant-1.7.1" type="repository">
+        <properties maven-id="org.apache.ant:ant:1.7.1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant/1.7.1/ant-1.7.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/ant/ant-launcher/1.7.1/ant-launcher-1.7.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

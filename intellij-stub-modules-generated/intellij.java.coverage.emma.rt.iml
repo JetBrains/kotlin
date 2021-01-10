@@ -14,5 +14,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="emma" level="project" />
   </component>
 </module>

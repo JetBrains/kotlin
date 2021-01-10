@@ -14,5 +14,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.javaee.platform" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.ejb.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.langInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.maven.jps" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.diagram.impl" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" />
+    <orderEntry type="module" module-name="intellij.javaee.application" />
   </component>
 </module>

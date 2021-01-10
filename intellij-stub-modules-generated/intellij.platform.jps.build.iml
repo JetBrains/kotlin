@@ -26,6 +26,32 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.jps.build.javac.rt" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.compiler" />
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil" />
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil.java8" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" />
     <orderEntry type="library" exported="" name="ASM" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="library" name="jgoodies-forms" level="project" />
+    <orderEntry type="library" name="protobuf" level="project" />
+    <orderEntry type="module" module-name="intellij.java.rt" scope="RUNTIME" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Eclipse" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
+    <orderEntry type="library" scope="TEST" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="library" name="javax.annotation-api" level="project" />
+    <orderEntry type="library" name="qdox-java-parser" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

@@ -14,9 +14,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
+    <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
     <orderEntry type="module" module-name="intellij.java.jam" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.icons" />
+    <orderEntry type="module" module-name="intellij.jsp.base" />
     <orderEntry type="module" module-name="intellij.java.remoteServers" exported="" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.java.analysis.impl" />
   </component>
 </module>

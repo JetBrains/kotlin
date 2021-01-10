@@ -18,5 +18,10 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
     <orderEntry type="module" module-name="intellij.platform.extensions" exported="" />
+    <orderEntry type="library" name="automaton" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

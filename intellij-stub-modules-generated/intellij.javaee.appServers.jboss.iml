@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.appServers.jboss.base" />
+    <orderEntry type="module" module-name="intellij.maven" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.maven.ext" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javaee.application" scope="TEST" />
   </component>
 </module>

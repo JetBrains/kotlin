@@ -13,5 +13,197 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.maven.server" />
+    <orderEntry type="library" name="commons-logging" level="project" />
+    <orderEntry type="module" module-name="intellij.maven" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.maven.server.m3.common" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven:maven-compat:3.3.9" type="repository">
+        <properties maven-id="org.apache.maven:maven-compat:3.3.9">
+          <exclude>
+            <dependency maven-id="com.google.inject:guice" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-compat/3.3.9/maven-compat-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.3.9/maven-model-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model-builder/3.3.9/maven-model-builder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-builder-support/3.3.9/maven-builder-support-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings/3.3.9/maven-settings-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.3.9/maven-artifact-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-core/3.3.9/maven-core-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings-builder/3.3.9/maven-settings-builder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-repository-metadata/3.3.9/maven-repository-metadata-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-api/3.3.9/maven-plugin-api-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-aether-provider/3.3.9/maven-aether-provider-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-spi/1.0.2.v20150114/aether-spi-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-impl/1.0.2.v20150114/aether-impl-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-api/1.0.2.v20150114/aether-api-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-util/1.0.2.v20150114/aether-util-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-classworlds/2.5.2/plexus-classworlds-2.5.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/3.0.22/plexus-utils-3.0.22.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-interpolation/1.21/plexus-interpolation-1.21.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/sisu/org.eclipse.sisu.plexus/0.3.2/org.eclipse.sisu.plexus-0.3.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0/cdi-api-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/sisu/org.eclipse.sisu.inject/0.3.2/org.eclipse.sisu.inject-0.3.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-component-annotations/1.6/plexus-component-annotations-1.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-provider-api/2.10/wagon-provider-api-2.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven.shared:maven-dependency-tree:1.2" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.apache.maven.shared:maven-dependency-tree:1.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/shared/maven-dependency-tree/1.2/maven-dependency-tree-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven:maven-core:3.3.9" type="repository">
+        <properties maven-id="org.apache.maven:maven-core:3.3.9">
+          <exclude>
+            <dependency maven-id="com.google.inject:guice" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-core/3.3.9/maven-core-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.3.9/maven-model-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings/3.3.9/maven-settings-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings-builder/3.3.9/maven-settings-builder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-builder-support/3.3.9/maven-builder-support-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-repository-metadata/3.3.9/maven-repository-metadata-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.3.9/maven-artifact-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-api/3.3.9/maven-plugin-api-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model-builder/3.3.9/maven-model-builder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-aether-provider/3.3.9/maven-aether-provider-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-spi/1.0.2.v20150114/aether-spi-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-impl/1.0.2.v20150114/aether-impl-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-api/1.0.2.v20150114/aether-api-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-util/1.0.2.v20150114/aether-util-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/sisu/org.eclipse.sisu.plexus/0.3.2/org.eclipse.sisu.plexus-0.3.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0/cdi-api-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/sisu/org.eclipse.sisu.inject/0.3.2/org.eclipse.sisu.inject-0.3.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-interpolation/1.21/plexus-interpolation-1.21.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/3.0.22/plexus-utils-3.0.22.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-classworlds/2.5.2/plexus-classworlds-2.5.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-component-annotations/1.6/plexus-component-annotations-1.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/plexus-cipher/1.4/plexus-cipher-1.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven:maven-embedder:3.3.9" type="repository">
+        <properties maven-id="org.apache.maven:maven-embedder:3.3.9" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-embedder/3.3.9/maven-embedder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings/3.3.9/maven-settings-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-core/3.3.9/maven-core-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/3.3.9/maven-model-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-settings-builder/3.3.9/maven-settings-builder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-repository-metadata/3.3.9/maven-repository-metadata-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.3.9/maven-artifact-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-aether-provider/3.3.9/maven-aether-provider-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-spi/1.0.2.v20150114/aether-spi-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-impl/1.0.2.v20150114/aether-impl-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-api/1.0.2.v20150114/aether-api-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/aether/aether-util/1.0.2.v20150114/aether-util-1.0.2.v20150114.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/inject/guice/4.0/guice-4.0-no_aop.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-interpolation/1.21/plexus-interpolation-1.21.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-plugin-api/3.3.9/maven-plugin-api-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model-builder/3.3.9/maven-model-builder-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-builder-support/3.3.9/maven-builder-support-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/18.0/guava-18.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-compat/3.3.9/maven-compat-3.3.9.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/wagon/wagon-provider-api/2.10/wagon-provider-api-2.10.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/3.0.22/plexus-utils-3.0.22.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-classworlds/2.5.2/plexus-classworlds-2.5.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/sisu/org.eclipse.sisu.plexus/0.3.2/org.eclipse.sisu.plexus-0.3.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/enterprise/cdi-api/1.0/cdi-api-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/sisu/org.eclipse.sisu.inject/0.3.2/org.eclipse.sisu.inject-0.3.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-component-annotations/1.6/plexus-component-annotations-1.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/plexus-sec-dispatcher/1.3/plexus-sec-dispatcher-1.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/plexus-cipher/1.7/plexus-cipher-1.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.2/commons-cli-1.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="com.google.inject:guice-no_aop:4.0" type="repository">
+        <properties maven-id="com.google.inject:guice:4.0">
+          <exclude>
+            <dependency maven-id="aopalliance:aopalliance" />
+            <dependency maven-id="com.google.guava:guava" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/inject/guice/4.0/guice-4.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/inject/javax.inject/1/javax.inject-1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven.archetype:archetype-catalog:2.2" type="repository">
+        <properties maven-id="org.apache.maven.archetype:archetype-catalog:2.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/archetype/archetype-catalog/2.2/archetype-catalog-2.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.5.8/plexus-utils-1.5.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven.archetype:archetype-common:2.2" type="repository">
+        <properties maven-id="org.apache.maven.archetype:archetype-common:2.2">
+          <exclude>
+            <dependency maven-id="net.sourceforge.jchardet:jchardet" />
+            <dependency maven-id="org.codehaus.plexus:plexus-component-annotations" />
+            <dependency maven-id="dom4j:dom4j" />
+            <dependency maven-id="jdom:jdom" />
+            <dependency maven-id="org.apache.maven:maven-model" />
+            <dependency maven-id="org.apache.maven:maven-project" />
+            <dependency maven-id="org.apache.maven.shared:maven-invoker" />
+            <dependency maven-id="org.codehaus.plexus:plexus-container-default" />
+            <dependency maven-id="org.codehaus.plexus:plexus-utils" />
+            <dependency maven-id="commons-io:commons-io" />
+            <dependency maven-id="org.codehaus.plexus:plexus-velocity" />
+            <dependency maven-id="org.apache.velocity:velocity" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/archetype/archetype-common/2.2/archetype-common-2.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/archetype/archetype-catalog/2.2/archetype-catalog-2.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/archetype/archetype-descriptor/2.2/archetype-descriptor-2.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/archetype/archetype-registry/2.2/archetype-registry-2.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

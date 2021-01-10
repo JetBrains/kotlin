@@ -14,7 +14,62 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JSch" level="project" />
+    <orderEntry type="library" name="ASM" level="project" />
+    <orderEntry type="library" name="XStream" level="project" />
+    <orderEntry type="library" name="Jettison" level="project" />
+    <orderEntry type="library" name="microba" level="project" />
+    <orderEntry type="library" name="automaton" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="module-library">
+      <library name="unidecode" type="repository">
+        <properties maven-id="me.xuender:unidecode:0.0.7" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/me/xuender/unidecode/0.0.7/unidecode-0.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/me/xuender/unidecode/0.0.7/unidecode-0.0.7-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="commons-compress" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
     <orderEntry type="module" module-name="intellij.database" exported="" />
     <orderEntry type="module" module-name="intellij.database.sql" exported="" />
+    <orderEntry type="module" module-name="intellij.database.jdbcConsole" />
+    <orderEntry type="module" module-name="intellij.platform.credentialStore" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
+    <orderEntry type="module" module-name="intellij.platform.images" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ssh" />
+    <orderEntry type="module" module-name="intellij.profiler.common" />
+    <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" />
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library name="tips-database-plugin" type="repository">
+        <properties maven-id="com.jetbrains.intellij.documentation:tips-database-plugin:202.47" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-database-plugin/202.47/tips-database-plugin-202.47.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="jcef" level="project" />
+    <orderEntry type="library" name="jts-io-common" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

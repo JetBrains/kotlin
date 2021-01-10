@@ -16,19 +16,76 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.java" exported="" />
     <orderEntry type="module" module-name="intellij.maven.server" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.xml.langInjection" />
     <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
     <orderEntry type="module" module-name="intellij.xml.dom.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
     <orderEntry type="module" module-name="intellij.java.ui" exported="" />
     <orderEntry type="module" module-name="intellij.java.guiForms.rt" exported="" scope="PROVIDED" />
+    <orderEntry type="library" name="jgoodies-forms" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" exported="" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.groovy" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
+    <orderEntry type="module" module-name="intellij.maven.jps" />
+    <orderEntry type="module" module-name="intellij.maven.artifactResolver.m3" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.maven.artifactResolver.m31" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module-library">
+      <library name="plexus-archiver" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.codehaus.plexus:plexus-archiver:3.0.3" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-archiver/3.0.3/plexus-archiver-3.0.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-archiver/3.0.3/plexus-archiver-3.0.3-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.externalSystem" exported="" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" />
+    <orderEntry type="library" name="Slf4j" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.maven.server.m3.common" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="module" module-name="intellij.maven.errorProne.compiler" scope="RUNTIME" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="hamcrest" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="io.takari:maven-wrapper:0.5.5" type="repository">
+        <properties maven-id="io.takari:maven-wrapper:0.5.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/takari/maven-wrapper/0.5.5/maven-wrapper-0.5.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.workspaceModel.storage" />
+    <orderEntry type="module" module-name="intellij.platform.workspaceModel.ide" />
+    <orderEntry type="module" module-name="intellij.repository.search" />
+    <orderEntry type="module" module-name="intellij.groovy.jps" scope="TEST" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="module" module-name="intellij.maven.model" exported="" />
+    <orderEntry type="library" name="commons-cli" level="project" />
   </component>
 </module>

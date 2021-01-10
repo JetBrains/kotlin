@@ -14,5 +14,18 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.log" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.log.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.dvcs" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="library" name="miglayout-swing" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

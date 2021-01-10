@@ -14,7 +14,30 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.java.execution" exported="" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
+    <orderEntry type="module" module-name="intellij.java.debugger.impl" />
+    <orderEntry type="library" name="jgoodies-forms" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testRunner" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="module" module-name="intellij.java.jshell.protocol" />
+    <orderEntry type="library" name="intellij-coverage" level="project" />
+    <orderEntry type="library" name="intellij-test-discovery" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="precompiled_jshell-frontend" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="miglayout-swing" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

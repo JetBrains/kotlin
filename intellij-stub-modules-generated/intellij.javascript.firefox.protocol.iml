@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.protocolReaderRuntime" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

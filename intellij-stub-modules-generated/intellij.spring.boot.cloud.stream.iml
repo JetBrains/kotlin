@@ -13,5 +13,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.spring.boot" />
+    <orderEntry type="module" module-name="intellij.spring.integration" />
+    <orderEntry type="module" module-name="intellij.spring.el" />
+    <orderEntry type="module" module-name="intellij.javaee.jsp.impl" />
+    <orderEntry type="module" module-name="intellij.microservices.config" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

@@ -13,5 +13,72 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java.aetherDependencyResolver" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module-library">
+      <library name="recommenders-java-statics-model" type="repository">
+        <properties maven-id="com.jetbrains.recommenders.java:recommenders-java-statics-model:0.5.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-statics-model/0.5.2/recommenders-java-statics-model-0.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-statics-model/0.5.2/recommenders-java-statics-model-0.5.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="recommenders-java-commons" type="repository">
+        <properties maven-id="com.jetbrains.recommenders.java:recommenders-java-commons:0.5.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.2/recommenders-java-commons-0.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.2/recommenders-java-commons-0.5.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="org.apache.commons:commons-pool2" type="repository">
+        <properties maven-id="org.apache.commons:commons-pool2:2.8.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-pool2/2.8.0/commons-pool2-2.8.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-pool2/2.8.0/commons-pool2-2.8.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="org.apache.maven:maven-resolver-provider" level="project" />
+    <orderEntry type="module-library">
+      <library name="recommenders-jayes" type="repository">
+        <properties maven-id="org.eclipse.recommenders:recommenders-jayes:2.5.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/recommenders/recommenders-jayes/2.5.5/recommenders-jayes-2.5.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="recommenders-jayes-io" type="repository">
+        <properties maven-id="org.eclipse.recommenders:recommenders-jayes-io:2.5.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/recommenders/recommenders-jayes-io/2.5.5/recommenders-jayes-io-2.5.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="module" module-name="intellij.recommenders" />
   </component>
 </module>

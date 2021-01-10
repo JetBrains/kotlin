@@ -16,5 +16,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Ant" level="project" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.compiler" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
+    <orderEntry type="library" name="ASM" level="project" />
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil" />
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil.java8" scope="RUNTIME" />
   </component>
 </module>

@@ -16,6 +16,15 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.testRunner" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="library" exported="" name="tcServiceMessages" level="project" />
+    <orderEntry type="library" scope="TEST" name="Objenesis" level="project" />
+    <orderEntry type="library" scope="TEST" name="easymock" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" scope="TEST" name="Trove4j" level="project" />
   </component>
 </module>

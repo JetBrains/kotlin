@@ -15,17 +15,43 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" />
     <orderEntry type="module" module-name="intellij.platform.core" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.bootstrap" />
     <orderEntry type="library" exported="" name="jgoodies-forms" level="project" />
     <orderEntry type="module" module-name="intellij.java.guiForms.rt" exported="" />
+    <orderEntry type="library" name="commons-codec" level="project" />
     <orderEntry type="module" module-name="intellij.platform.resources.en" exported="" />
+    <orderEntry type="library" name="automaton" level="project" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.icons" />
     <orderEntry type="module" module-name="intellij.platform.projectModel" exported="" />
+    <orderEntry type="library" name="proxy-vole" level="project" />
     <orderEntry type="module" module-name="intellij.platform.analysis" exported="" />
     <orderEntry type="module" module-name="intellij.platform.editor" exported="" />
+    <orderEntry type="library" name="pty4j" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="http-client" level="project" />
+    <orderEntry type="library" name="jna" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="ini4j" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="library" name="Java Compatibility" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="delight-rhino-sandbox" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="rhino" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="netty-handler-proxy" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.ex" exported="" />
     <orderEntry type="module" module-name="intellij.platform.concurrency" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" exported="" />
     <orderEntry type="module" module-name="intellij.platform.core.ui" exported="" />
     <orderEntry type="module" module-name="intellij.platform.ide.util.io" exported="" />
+    <orderEntry type="library" name="jcef" level="project" />
+    <orderEntry type="library" name="rd-core" level="project" />
+    <orderEntry type="library" name="rd-framework" level="project" />
+    <orderEntry type="library" name="rd-swing" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

@@ -14,5 +14,109 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.clouds.docker.agent.rt" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="jaxb-api" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="jaxb-runtime" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="tomcat-websocket-transitive">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/javax.websocket-client-api-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/tomcat-juli-8.0.22.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/tomcat-servlet-api-8.0.22.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/tomcat-util-8.0.22.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/tomcat-websocket-8.0.22.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/tomcat-websocket-api-8.0.22.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="snakeyaml-transitive">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/snakeyaml-1.15.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="slf4j-log4j12-for-IDEA-163279">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/slf4j-log4j12-1.7.25.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Log4J" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="com.github.docker-java:docker-java-transport-okhttp:3.2.5" type="repository">
+        <properties maven-id="com.github.docker-java:docker-java-transport-okhttp:3.2.5">
+          <exclude>
+            <dependency maven-id="org.slf4j:slf4j-api" />
+            <dependency maven-id="com.github.docker-java:docker-java-api" />
+            <dependency maven-id="com.fasterxml.jackson.core:jackson-annotations" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport-okhttp/3.2.5/docker-java-transport-okhttp-3.2.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.5/docker-java-core-3.2.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.5/docker-java-transport-3.2.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.6/commons-io-2.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-compress/1.20/commons-compress-1.20.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.10.3/jackson-databind-2.10.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.10.3/jackson-core-2.10.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/19.0/guava-19.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.64/bcpkix-jdk15on-1.64.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.64/bcprov-jdk15on-1.64.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okhttp3/okhttp/3.14.4/okhttp-3.14.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.17.2/okio-1.17.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/5.5.0/jna-5.5.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport-okhttp/3.2.5/docker-java-transport-okhttp-3.2.5-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.5/docker-java-core-3.2.5-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.5/docker-java-transport-3.2.5-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-io/commons-io/2.6/commons-io-2.6-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-compress/1.20/commons-compress-1.20-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.10.3/jackson-databind-2.10.3-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.10.3/jackson-core-2.10.3-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/19.0/guava-19.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.64/bcpkix-jdk15on-1.64-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.64/bcprov-jdk15on-1.64-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okhttp3/okhttp/3.14.4/okhttp-3.14.4-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.17.2/okio-1.17.2-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna-platform/5.5.0/jna-platform-5.5.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/5.5.0/jna-5.5.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="javax.activation:javax.activation-api:1.2.0" type="repository">
+        <properties maven-id="javax.activation:javax.activation-api:1.2.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="com.fasterxml.jackson.core:jackson-annotations:2.10.3" type="repository">
+        <properties maven-id="com.fasterxml.jackson.core:jackson-annotations:2.10.3" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.10.3/jackson-annotations-2.10.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

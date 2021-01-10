@@ -14,6 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.ide.resources" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.ide.customization" scope="RUNTIME" />
     <orderEntry type="module-library" exported="" scope="RUNTIME">
       <library name="tips-idea" type="repository">
         <properties maven-id="com.jetbrains.intellij.documentation:tips-intellij-idea:202.18" />

@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.agent.rt" />
+    <orderEntry type="module" module-name="intellij.platform.util.rt" />
   </component>
 </module>

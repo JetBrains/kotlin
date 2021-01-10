@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
+    <orderEntry type="module" module-name="intellij.javaFX.common" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
   </component>
 </module>

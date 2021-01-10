@@ -14,10 +14,82 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.w3validators" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates" />
+    <orderEntry type="library" name="rhino" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.markdown" scope="PROVIDED" />
     <orderEntry type="module" module-name="intellij.javascript" exported="" />
+    <orderEntry type="module" module-name="intellij.javascript.testing" />
     <orderEntry type="module" module-name="intellij.javascript.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
     <orderEntry type="module" module-name="intellij.javascript.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
     <orderEntry type="module" module-name="intellij.javascript.structureView" exported="" />
+    <orderEntry type="module" module-name="intellij.regexp" />
+    <orderEntry type="module" module-name="intellij.copyright" />
+    <orderEntry type="module" module-name="intellij.platform.structuralSearch" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.ui" />
+    <orderEntry type="module" module-name="intellij.platform.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.platform.graph" />
+    <orderEntry type="module" module-name="intellij.diagram.impl" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.platform.graph.impl" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" />
+    <orderEntry type="library" name="markdown4j" level="project" />
+    <orderEntry type="module-library">
+      <library name="semver4j" type="repository">
+        <properties include-transitive-deps="false" maven-id="com.vdurmont:semver4j:2.2.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/vdurmont/semver4j/2.2.0/semver4j-2.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/vdurmont/semver4j/2.2.0/semver4j-2.2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.terminal" />
+    <orderEntry type="library" name="org.eclipse.lsp4j:org.eclipse.lsp4j:0.7.1" level="project" />
+    <orderEntry type="library" name="org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.7.1" level="project" />
+    <orderEntry type="library" name="NanoXML" level="project" />
     <orderEntry type="module" module-name="intellij.javascript.duplicatesDetection" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="module-library">
+      <library name="completion-ranking-js" type="repository">
+        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-js:0.0.7" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-js/0.0.7/completion-ranking-js-0.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="completion-ranking-typescript" type="repository">
+        <properties maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-typescript:0.1.1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-typescript/0.1.1/completion-ranking-typescript-0.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module" module-name="intellij.grazie" />
+    <orderEntry type="module" module-name="intellij.platform.inspect" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

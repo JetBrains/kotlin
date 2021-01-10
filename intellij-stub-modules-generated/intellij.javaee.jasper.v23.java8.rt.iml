@@ -14,5 +14,27 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Ant" level="project" />
+    <orderEntry type="module" module-name="intellij.javaee.jasper.v23.rt" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="tomcat-jasper:9.0.19" type="repository">
+        <properties maven-id="org.apache.tomcat:tomcat-jasper:9.0.19" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-jasper/9.0.19/tomcat-jasper-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-servlet-api/9.0.19/tomcat-servlet-api-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-juli/9.0.19/tomcat-juli-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-jsp-api/9.0.19/tomcat-jsp-api-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-el-api/9.0.19/tomcat-el-api-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/ecj/3.16.0/ecj-3.16.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-jasper-el/9.0.19/tomcat-jasper-el-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-api/9.0.19/tomcat-api-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-util-scan/9.0.19/tomcat-util-scan-9.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-util/9.0.19/tomcat-util-9.0.19.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.jasper.v2.rt" />
   </component>
 </module>

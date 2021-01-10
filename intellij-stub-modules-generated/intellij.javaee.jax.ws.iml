@@ -13,5 +13,39 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="commons-codec" level="project" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../ws-tests/testData/lib/axis.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.langInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.langInjection" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javaee.jax.ws.utils" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="module" module-name="intellij.microservices" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

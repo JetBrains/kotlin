@@ -14,5 +14,27 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.diagram" />
+    <orderEntry type="module" module-name="intellij.platform.webide.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.testing" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.javascript.chrome.connector" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.javascript.v8.backend" />
+    <orderEntry type="module" module-name="intellij.platform.scriptDebugger.backend" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
+    <orderEntry type="library" name="snakeyaml" level="project" />
+    <orderEntry type="module" module-name="intellij.javascript.wip.backend" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

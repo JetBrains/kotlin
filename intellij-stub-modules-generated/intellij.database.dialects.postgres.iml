@@ -14,5 +14,18 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module" module-name="intellij.database.dialects.postgresbase" />
+    <orderEntry type="module" module-name="intellij.database.dialects.postgresgreenplumbase" />
+    <orderEntry type="module-library">
+      <library name="postgres-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:postgres:1.17" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/postgres/1.17/postgres-1.17.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

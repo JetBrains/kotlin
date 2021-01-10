@@ -14,5 +14,14 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.jpa.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.spring.core" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa.ql" />
+    <orderEntry type="module" module-name="intellij.spring.el" />
+    <orderEntry type="module" module-name="intellij.database.sql" />
+    <orderEntry type="module" module-name="intellij.spring.persistence" scope="TEST" />
   </component>
 </module>

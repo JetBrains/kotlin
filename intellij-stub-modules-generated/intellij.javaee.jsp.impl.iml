@@ -13,10 +13,28 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Servlets" level="project" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.jsp" exported="" />
     <orderEntry type="module" module-name="intellij.jsp.spi" exported="" />
+    <orderEntry type="module" module-name="intellij.javaee.web" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.css" />
+    <orderEntry type="module" module-name="intellij.css.impl" />
     <orderEntry type="module" module-name="intellij.java.i18n" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.jsp.base.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.jsp.base" />
     <orderEntry type="module" module-name="intellij.javaee.el" exported="" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

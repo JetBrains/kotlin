@@ -14,5 +14,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.javaee.appServers" exported="" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers" />
+    <orderEntry type="module" module-name="intellij.javaee.app.servers.impl" />
   </component>
 </module>

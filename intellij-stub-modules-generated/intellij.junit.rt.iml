@@ -14,5 +14,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
   </component>
 </module>

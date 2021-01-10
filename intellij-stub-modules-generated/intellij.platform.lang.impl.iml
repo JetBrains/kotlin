@@ -14,13 +14,44 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.boot" />
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
     <orderEntry type="library" exported="" name="Velocity" level="project" />
+    <orderEntry type="library" name="commons-collections" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.usageView" exported="" />
+    <orderEntry type="library" name="cli-parser" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.indexing" />
     <orderEntry type="module" module-name="intellij.platform.indexing.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.projectModel.impl" exported="" />
+    <orderEntry type="library" name="swingx" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
     <orderEntry type="module" module-name="intellij.platform.analysis.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.structureView.impl" exported="" />
+    <orderEntry type="library" name="commons-logging" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
+    <orderEntry type="module" module-name="intellij.platform.builtInServer" />
+    <orderEntry type="library" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="library" name="XStream" level="project" />
+    <orderEntry type="library" name="miglayout-swing" level="project" />
+    <orderEntry type="library" name="jna" level="project" />
+    <orderEntry type="library" name="lz4-java" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="module" module-name="intellij.platform.workspaceModel.ide" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="library" name="jackson-module-kotlin" level="project" />
+    <orderEntry type="library" name="xz" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module" module-name="intellij.platform.inspect" scope="RUNTIME" />
+    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

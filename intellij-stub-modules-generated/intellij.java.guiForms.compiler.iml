@@ -16,6 +16,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.java.guiForms.rt" />
+    <orderEntry type="library" name="ASM" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
+    <orderEntry type="library" name="jgoodies-forms" level="project" />
     <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.util" scope="TEST" />
   </component>
 </module>

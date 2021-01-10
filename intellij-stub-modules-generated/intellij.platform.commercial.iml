@@ -14,7 +14,19 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.bootstrap" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.license" />
+    <orderEntry type="library" name="LicenseServerAPI" level="project" />
+    <orderEntry type="library" name="LicenseDecoder" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" name="cloud-config-client" level="project" />
+    <orderEntry type="library" name="ini4j" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="library" name="commons-compress" level="project" />
+    <orderEntry type="module" module-name="intellij.performanceTesting" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
   </component>
 </module>

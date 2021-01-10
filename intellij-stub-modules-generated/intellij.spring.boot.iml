@@ -16,5 +16,9 @@
     <orderEntry type="module" module-name="intellij.spring" exported="" />
     <orderEntry type="module" module-name="intellij.json" exported="" />
     <orderEntry type="module" module-name="intellij.xml.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.microservices.config" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

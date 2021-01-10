@@ -14,5 +14,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module" module-name="intellij.javascript" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.javascript.psi.impl" scope="PROVIDED" />
+    <orderEntry type="module" module-name="intellij.database.dialects.mongo" />
   </component>
 </module>

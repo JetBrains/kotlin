@@ -13,5 +13,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="netty-codec-http" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.util.ex" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="jna" level="project" />
+    <orderEntry type="library" name="pty4j" level="project" />
+    <orderEntry type="library" name="winp" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

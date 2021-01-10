@@ -16,5 +16,19 @@
     <orderEntry type="module" module-name="intellij.platform.jps.build" exported="" />
     <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" exported="" />
     <orderEntry type="module" module-name="intellij.platform.jps.model" exported="" />
+    <orderEntry type="module" module-name="intellij.java.compiler.instrumentationUtil" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="aspectjtools" type="repository">
+        <properties maven-id="org.aspectj:aspectjtools:1.9.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/aspectj/aspectjtools/1.9.2/aspectjtools-1.9.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/aspectj/aspectjtools/1.9.2/aspectjtools-1.9.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

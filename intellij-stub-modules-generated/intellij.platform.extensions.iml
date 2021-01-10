@@ -15,5 +15,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

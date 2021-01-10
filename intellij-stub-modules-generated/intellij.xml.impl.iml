@@ -15,8 +15,33 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.xml" exported="" />
+    <orderEntry type="library" name="Xerces" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="module" module-name="intellij.platform.icons" />
+    <orderEntry type="module-library">
+      <library name="XmlBeans" type="repository">
+        <properties maven-id="org.apache.xmlbeans:xmlbeans:2.6.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/stax/stax-api/1.0.1/stax-api-1.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.resources" />
+    <orderEntry type="module" module-name="intellij.platform.vcs" />
+    <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="module" module-name="intellij.xml.psi.impl" exported="" />
     <orderEntry type="module" module-name="intellij.xml.analysis.impl" exported="" />
+    <orderEntry type="library" name="swingx" level="project" />
     <orderEntry type="module" module-name="intellij.xml.structureView.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.builtInServer" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

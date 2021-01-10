@@ -13,5 +13,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="library" name="rd-core" level="project" />
+    <orderEntry type="library" name="rd-framework" level="project" />
+    <orderEntry type="library" name="rd-swing" level="project" />
   </component>
 </module>

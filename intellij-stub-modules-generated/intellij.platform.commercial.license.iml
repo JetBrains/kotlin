@@ -14,5 +14,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.bootstrap" />
+    <orderEntry type="library" name="LicenseServerAPI" level="project" />
+    <orderEntry type="library" name="LicenseDecoder" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="proxy-vole" level="project" />
+    <orderEntry type="library" name="miglayout-swing" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

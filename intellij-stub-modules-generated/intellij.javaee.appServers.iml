@@ -21,11 +21,14 @@
     <orderEntry type="module" module-name="intellij.java.debugger" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.platform.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.javaee.appServers.rt" />
     <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.app.servers" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.application" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.ejb" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.app.servers.impl" exported="" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

@@ -13,5 +13,29 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.gherkin" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.groovy" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" />
+    <orderEntry type="module" module-name="intellij.java.psi" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module-library">
+      <library name="cucumber-groovy" type="repository">
+        <properties include-transitive-deps="false" maven-id="info.cukes:cucumber-groovy:1.2.4" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.2.4/cucumber-groovy-1.2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/info/cukes/cucumber-groovy/1.2.4/cucumber-groovy-1.2.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.cucumber.java" />
   </component>
 </module>

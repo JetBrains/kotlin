@@ -14,6 +14,34 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.gradle" />
     <orderEntry type="module" module-name="intellij.gradle.common" exported="" />
+    <orderEntry type="module" module-name="intellij.java.coverage" />
+    <orderEntry type="module" module-name="intellij.gradle.jps" />
+    <orderEntry type="module" module-name="intellij.java.ui" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="module" module-name="intellij.groovy" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="library" name="swingx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="library" name="Kryo" level="project" />
+    <orderEntry type="library" name="Objenesis" level="project" />
+    <orderEntry type="library" name="Ant" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
+    <orderEntry type="library" name="XStream" level="project" />
+    <orderEntry type="module" module-name="intellij.groovy.psi" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
+    <orderEntry type="module" module-name="intellij.properties.psi" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>

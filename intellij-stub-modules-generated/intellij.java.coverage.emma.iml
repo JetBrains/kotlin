@@ -14,5 +14,13 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" name="emma" level="project" />
+    <orderEntry type="module" module-name="intellij.java.coverage" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.java.coverage.emma.rt" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.java.execution.impl" />
   </component>
 </module>

@@ -15,7 +15,20 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.xml.psi" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
+    <orderEntry type="module" module-name="intellij.platform.indexing.impl" />
+    <orderEntry type="library" name="Xerces" level="project" />
     <orderEntry type="module" module-name="intellij.regexp" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="library" name="xml-resolver" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

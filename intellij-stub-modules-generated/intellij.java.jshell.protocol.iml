@@ -14,5 +14,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
   </component>
 </module>

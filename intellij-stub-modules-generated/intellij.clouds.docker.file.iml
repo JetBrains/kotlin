@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.clouds.docker" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
   </component>
 </module>

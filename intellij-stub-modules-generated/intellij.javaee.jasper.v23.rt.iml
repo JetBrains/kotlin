@@ -14,5 +14,26 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Ant" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="tomcat-jasper:8.0.53" type="repository">
+        <properties maven-id="org.apache.tomcat:tomcat-jasper:8.0.53" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-jasper/8.0.53/tomcat-jasper-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-servlet-api/8.0.53/tomcat-servlet-api-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-juli/8.0.53/tomcat-juli-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-jsp-api/8.0.53/tomcat-jsp-api-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-el-api/8.0.53/tomcat-el-api-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jdt/ecj/3.12.3/ecj-3.12.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-jasper-el/8.0.53/tomcat-jasper-el-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-api/8.0.53/tomcat-api-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-util-scan/8.0.53/tomcat-util-scan-8.0.53.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/tomcat/tomcat-util/8.0.53/tomcat-util-8.0.53.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.jasper.v2.rt" />
   </component>
 </module>

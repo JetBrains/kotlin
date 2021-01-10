@@ -13,5 +13,30 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jetbrains-annotations-java5" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="library" name="NanoXML" level="project" />
+    <orderEntry type="module" module-name="intellij.android.common" />
+    <orderEntry type="module-library">
+      <library name="apkzlib" type="repository">
+        <properties maven-id="com.android.tools.build:apkzlib:4.0.0">
+          <exclude>
+            <dependency maven-id="com.google.code.findbugs:jsr305" />
+            <dependency maven-id="com.google.guava:guava" />
+            <dependency maven-id="org.bouncycastle:bcpkix-jdk15on" />
+            <dependency maven-id="org.bouncycastle:bcprov-jdk15on" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/android/tools/build/apkzlib/4.0.0/apkzlib-4.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/android/tools/build/apksig/4.0.0/apksig-4.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/android/tools/build/apkzlib/4.0.0/apkzlib-4.0.0-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/android/tools/build/apksig/4.0.0/apksig-4.0.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

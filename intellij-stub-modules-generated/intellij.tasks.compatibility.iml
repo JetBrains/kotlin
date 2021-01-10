@@ -13,6 +13,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.tasks" />
     <orderEntry type="library" exported="" name="http-client-3.1" level="project" />
   </component>
 </module>

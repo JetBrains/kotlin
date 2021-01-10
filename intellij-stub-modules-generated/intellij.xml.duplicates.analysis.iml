@@ -14,5 +14,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xml.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.duplicates.analysis" />
+    <orderEntry type="module" module-name="intellij.platform.analysis.impl" />
   </component>
 </module>

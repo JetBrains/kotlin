@@ -14,6 +14,13 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.uast" exported="" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" name="JUnit4" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.core.impl" />
     <orderEntry type="module" module-name="intellij.java.uast" exported="" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" />
   </component>
 </module>

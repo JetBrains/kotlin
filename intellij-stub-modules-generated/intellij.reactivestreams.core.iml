@@ -14,5 +14,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.reactivestreams" />
+    <orderEntry type="module" module-name="intellij.reactivestreams.reactor" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.analysis.impl" />
+    <orderEntry type="module" module-name="intellij.jvm.analysis" />
+    <orderEntry type="module" module-name="intellij.reactivestreams.rxjava" />
   </component>
 </module>

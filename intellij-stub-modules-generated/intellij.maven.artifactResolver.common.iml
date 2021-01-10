@@ -18,5 +18,16 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="org.apache.maven:maven-artifact:3.0.5" type="repository">
+        <properties maven-id="org.apache.maven:maven-artifact:3.0.5" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-artifact/3.0.5/maven-artifact-3.0.5.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/2.0.6/plexus-utils-2.0.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

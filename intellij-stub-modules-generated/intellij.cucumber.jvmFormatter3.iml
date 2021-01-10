@@ -13,5 +13,22 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="cucumber-core:3.0.2" type="repository">
+        <properties maven-id="io.cucumber:cucumber-core:3.0.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/3.0.2/cucumber-core-3.0.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-html/0.2.7/cucumber-html-0.2.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/gherkin/5.0.0/gherkin-5.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/tag-expressions/1.1.1/tag-expressions-1.1.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/5.0.19/cucumber-expressions-5.0.19.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/datatable/1.0.3/datatable-1.0.3.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/datatable-dependencies/1.0.3/datatable-dependencies-1.0.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.cucumber.jvmFormatter" />
   </component>
 </module>

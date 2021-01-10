@@ -16,9 +16,22 @@
     <orderEntry type="module" module-name="intellij.platform.externalSystem" exported="" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" exported="" />
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension" exported="" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingExtension.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" exported="" />
     <orderEntry type="library" exported="" name="Slf4j" level="project" />
     <orderEntry type="library" exported="" name="Gradle" level="project" />
+    <orderEntry type="library" name="org.codehaus.groovy:groovy" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" />
+    <orderEntry type="library" name="ion" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
     <orderEntry type="module" module-name="intellij.platform.inspect" exported="" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="commons-cli" level="project" />
   </component>
 </module>

@@ -13,6 +13,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.remoteServers" />
+    <orderEntry type="module" module-name="intellij.platform.remoteServers.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.platform.execution.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="module" module-name="intellij.clouds.docker.agent.rt" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
+    <orderEntry type="library" scope="PROVIDED" name="Log4J" level="project" />
     <orderEntry type="module-library" exported="">
       <library name="docker-commons-io">
         <CLASSES>
@@ -38,5 +47,24 @@
     <orderEntry type="library" exported="" name="commons-compress" level="project" />
     <orderEntry type="library" exported="" name="Guava" level="project" />
     <orderEntry type="library" exported="" name="jackson" level="project" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="module-library">
+      <library name="com.squareup.okhttp3:okhttp:3.4.2" type="repository">
+        <properties maven-id="com.squareup.okhttp3:okhttp:3.4.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okhttp3/okhttp/3.4.2/okhttp-3.4.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.9.0/okio-1.9.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okhttp3/okhttp/3.4.2/okhttp-3.4.2-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.9.0/okio-1.9.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="TEST" name="mockito" level="project" />
+    <orderEntry type="library" name="jackson-module-kotlin" level="project" />
   </component>
 </module>

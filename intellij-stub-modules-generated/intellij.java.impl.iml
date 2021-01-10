@@ -14,11 +14,61 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="module" module-name="intellij.java.rt" />
     <orderEntry type="module" module-name="intellij.platform.lang.impl" exported="" />
     <orderEntry type="module" module-name="intellij.platform.execution.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.xml.dom" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
+    <orderEntry type="module" module-name="intellij.platform.icons" />
+    <orderEntry type="library" name="jcip" level="project" />
     <orderEntry type="module" module-name="intellij.java.psi.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.regexp" />
     <orderEntry type="module" module-name="intellij.java.indexing.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.java.indexing" />
+    <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
     <orderEntry type="module" module-name="intellij.java.analysis.impl" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="Velocity" level="project" />
+    <orderEntry type="library" name="commons-collections" level="project" />
     <orderEntry type="module" module-name="intellij.java.structureView" exported="" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="library" name="nekohtml" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
+    <orderEntry type="module" module-name="intellij.java.uast" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.java.compiler" />
+    <orderEntry type="library" name="jaxb-api" level="project" />
+    <orderEntry type="library" name="javax.activation" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="jaxb-runtime" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
+    <orderEntry type="module-library">
+      <library name="completion-ranking-java" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.completion:completion-ranking-java:0.2.1" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-java/0.2.1/completion-ranking-java-0.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-java/0.2.1/completion-ranking-java-0.2.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.copyright" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module" module-name="intellij.platform.inspect" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
   </component>
 </module>

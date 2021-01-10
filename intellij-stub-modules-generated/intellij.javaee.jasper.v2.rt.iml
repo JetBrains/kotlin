@@ -14,5 +14,31 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="jasper-compiler:5.5.23" type="repository">
+        <properties maven-id="tomcat:jasper-compiler:5.5.23" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tomcat/jasper-compiler/5.5.23/jasper-compiler-5.5.23.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/ant/ant/1.6.5/ant-1.6.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="jasper-runtime:5.5.23" type="repository">
+        <properties maven-id="tomcat:jasper-runtime:5.5.23" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/tomcat/jasper-runtime/5.5.23/jasper-runtime-5.5.23.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-el/commons-el/1.0/commons-el-1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.0.3/commons-logging-1.0.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

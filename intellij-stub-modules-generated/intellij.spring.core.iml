@@ -13,5 +13,68 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
+    <orderEntry type="module" module-name="intellij.xml.impl" />
+    <orderEntry type="library" name="ASM" level="project" />
+    <orderEntry type="module" module-name="intellij.java.i18n" />
+    <orderEntry type="module" module-name="intellij.java.execution" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.regexp" />
+    <orderEntry type="module" module-name="intellij.spring.customNs" />
+    <orderEntry type="module" module-name="intellij.spellchecker" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="module" module-name="intellij.database" />
+    <orderEntry type="module" module-name="intellij.properties.psi.impl" />
+    <orderEntry type="module" module-name="intellij.spring.el" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.javaee.platform.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.javaee.persistence.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.javaee.web.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.aspectj" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.spring.web" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.spring.aop" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.spring.eclipse" scope="RUNTIME" />
+    <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="intellij.spring.graph" />
+    <orderEntry type="module" module-name="intellij.maven" />
+    <orderEntry type="module" module-name="intellij.groovy.psi" />
+    <orderEntry type="module" module-name="intellij.jsp" />
+    <orderEntry type="module" module-name="intellij.jsp.spi" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="org.springframework:spring-beans:4.3.18.RELEASE" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.springframework:spring-beans:4.3.18.RELEASE" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/4.3.18.RELEASE/spring-beans-4.3.18.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="org.springframework:spring-core:4.3.18.RELEASE" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.springframework:spring-core:4.3.18.RELEASE" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-core/4.3.18.RELEASE/spring-core-4.3.18.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="org.springframework:spring-context:4.3.18.RELEASE" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.springframework:spring-context:4.3.18.RELEASE" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-context/4.3.18.RELEASE/spring-context-4.3.18.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="intellij.json" />
+    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
+    <orderEntry type="module" module-name="intellij.microservices" />
+    <orderEntry type="module" module-name="intellij.microservices.uast" />
+    <orderEntry type="library" name="StreamEx" level="project" />
   </component>
 </module>

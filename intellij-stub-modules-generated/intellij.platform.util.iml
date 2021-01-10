@@ -15,9 +15,17 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
     <orderEntry type="library" exported="" name="jetbrains-annotations" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.rt" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.classLoader" exported="" />
+    <orderEntry type="library" name="jna" level="project" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
+    <orderEntry type="library" name="lz4-java" level="project" />
+    <orderEntry type="library" name="commons-compress" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.strings" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.collections" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util.text.matching" exported="" />

@@ -14,5 +14,11 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Gradle" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="javax-inject" level="project" />
+    <orderEntry type="module" module-name="intellij.android.gradle-tooling" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
+    <orderEntry type="library" scope="TEST" name="equalsverifier" level="project" />
   </component>
 </module>

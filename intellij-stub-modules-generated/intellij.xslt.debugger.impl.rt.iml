@@ -14,5 +14,43 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.xpath.rt" />
+    <orderEntry type="module" module-name="intellij.xslt.debugger.rt" />
+    <orderEntry type="library" name="Trove4j" level="project" />
+    <orderEntry type="module-library">
+      <library name="Saxon-9HE">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/saxon9he.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Saxon-6.5.5">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/saxon.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Xalan-2.7.2" type="repository">
+        <properties maven-id="xalan:xalan:2.7.2">
+          <exclude>
+            <dependency maven-id="xml-apis:xml-apis" />
+          </exclude>
+        </properties>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/xalan/xalan/2.7.2/xalan-2.7.2.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/xalan/serializer/2.7.2/serializer-2.7.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
   </component>
 </module>

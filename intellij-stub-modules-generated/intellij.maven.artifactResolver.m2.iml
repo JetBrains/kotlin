@@ -14,6 +14,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../maven2-server-impl/lib/maven2/lib/maven-2.2.1-uber.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.maven.artifactResolver.common" exported="" />
   </component>
 </module>

@@ -15,13 +15,26 @@
     </orderEntry>
     <orderEntry type="module" module-name="intellij.java" exported="" />
     <orderEntry type="module" module-name="intellij.platform.util" exported="" />
+    <orderEntry type="library" name="JUnit4" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" name="Log4J" level="project" />
     <orderEntry type="module" module-name="intellij.platform.lang" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.compiler.impl" />
     <orderEntry type="module" module-name="intellij.java.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution.impl" exported="" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" exported="" />
     <orderEntry type="module" module-name="intellij.relaxng" exported="" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.ui" exported="" />
     <orderEntry type="module" module-name="intellij.java.debugger.impl" exported="" />
     <orderEntry type="module" module-name="intellij.java.execution" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.externalSystem.impl" scope="RUNTIME" />
+    <orderEntry type="library" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

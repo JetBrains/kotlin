@@ -15,7 +15,16 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="library" name="microba" level="project" />
     <orderEntry type="module" module-name="intellij.platform.vcs.core" exported="" />
     <orderEntry type="module" module-name="intellij.platform.diff" exported="" />
+    <orderEntry type="library" name="StreamEx" level="project" />
+    <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

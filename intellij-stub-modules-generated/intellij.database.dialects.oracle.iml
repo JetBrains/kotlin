@@ -14,5 +14,21 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.database.dialects.base" />
+    <orderEntry type="module" module-name="intellij.platform.debugger" />
+    <orderEntry type="module" module-name="intellij.platform.debugger.impl" />
+    <orderEntry type="module" module-name="intellij.platform.smRunner" />
+    <orderEntry type="module" module-name="intellij.platform.coverage" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="module-library">
+      <library name="oracle-minicat" type="repository">
+        <properties maven-id="org.jetbrains.intellij.minicat:oracle:1.32" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/oracle/1.32/oracle-1.32.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

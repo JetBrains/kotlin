@@ -14,5 +14,13 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.java.psi" />
+    <orderEntry type="module" module-name="intellij.platform.lang" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.vcs.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.usageView" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.ui" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.impl" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.platform.testRunner" scope="RUNTIME" />
   </component>
 </module>

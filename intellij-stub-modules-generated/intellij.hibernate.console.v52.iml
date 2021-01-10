@@ -13,5 +13,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.hibernate.console" />
+    <orderEntry type="library" scope="PROVIDED" name="hibernate5_2" level="project" />
   </component>
 </module>

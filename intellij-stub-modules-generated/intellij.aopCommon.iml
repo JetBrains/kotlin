@@ -15,5 +15,21 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.xml.dom" exported="" />
+    <orderEntry type="module" module-name="intellij.java.jam.impl" />
+    <orderEntry type="module" module-name="intellij.platform.commercial.verifier" />
+    <orderEntry type="module" module-name="intellij.platform.commercial" />
+    <orderEntry type="module" module-name="intellij.xml.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.xml.dom.impl" />
+    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
+    <orderEntry type="module" module-name="intellij.java.psi.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
+    <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.resources" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.spring.core" scope="RUNTIME" />
+    <orderEntry type="module" module-name="intellij.java.jam" />
+    <orderEntry type="module" module-name="intellij.xml.psi" />
+    <orderEntry type="module" module-name="intellij.java" />
+    <orderEntry type="module" module-name="intellij.database.plugin" scope="TEST" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>

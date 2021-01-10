@@ -13,5 +13,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.javaee.persistence" />
+    <orderEntry type="module" module-name="intellij.javaee.jpa" />
+    <orderEntry type="module" module-name="intellij.hibernate" />
+    <orderEntry type="module" module-name="intellij.spring" />
+    <orderEntry type="library" name="Trove4j" level="project" />
   </component>
 </module>
