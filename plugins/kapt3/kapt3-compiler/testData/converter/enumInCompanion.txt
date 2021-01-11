@@ -115,9 +115,9 @@ public final class Test4 {
 
         @kotlin.Metadata()
         public static final class Foo {
-            public static final int constProperty = 1;
             @org.jetbrains.annotations.NotNull()
             public static final Test4.Companion.Foo INSTANCE = null;
+            public static final int constProperty = 1;
 
             private Foo() {
                 super();

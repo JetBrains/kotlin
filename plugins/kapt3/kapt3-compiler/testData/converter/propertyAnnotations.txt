@@ -27,10 +27,8 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String prop = "A";
 
-    @Anno2()
-    @Anno()
-    @java.lang.Deprecated()
-    public static void getProp$annotations() {
+    public Test() {
+        super();
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -38,7 +36,9 @@ public final class Test {
         return null;
     }
 
-    public Test() {
-        super();
+    @Anno2()
+    @Anno()
+    @java.lang.Deprecated()
+    public static void getProp$annotations() {
     }
 }

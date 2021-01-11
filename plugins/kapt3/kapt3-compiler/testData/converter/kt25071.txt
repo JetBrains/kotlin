@@ -9,6 +9,10 @@ public final class StaticImport {
     private final kapt.StaticMethod<java.lang.String> m = null;
     private final int y = 0;
 
+    public StaticImport() {
+        super();
+    }
+
     public final java.util.Collection<java.lang.String> getX() {
         return null;
     }
@@ -23,10 +27,6 @@ public final class StaticImport {
 
     public final int getY() {
         return 0;
-    }
-
-    public StaticImport() {
-        super();
     }
 }
 

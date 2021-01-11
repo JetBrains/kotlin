@@ -33,6 +33,10 @@ public final class Modifiers {
     @org.jetbrains.annotations.NotNull()
     private volatile java.lang.String volatileField = "";
 
+    public Modifiers() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getTransientField() {
         return null;
@@ -51,8 +55,7 @@ public final class Modifiers {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
-    java.lang.String a, int n) {
+    public final java.lang.String overloads() {
         return null;
     }
 
@@ -63,12 +66,9 @@ public final class Modifiers {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads() {
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, int n) {
         return null;
-    }
-
-    public Modifiers() {
-        super();
     }
 }
 

@@ -10,6 +10,10 @@ public final class Test {
     public a.b.ABC abc;
     public bcd bcd;
 
+    public Test() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final Test.MyDate getDate() {
         return null;
@@ -55,13 +59,13 @@ public final class Test {
     bcd p0) {
     }
 
-    public Test() {
-        super();
-    }
-
     @kotlin.Metadata()
     public static final class MyDate {
         public Test.MyDate date2;
+
+        public MyDate() {
+            super();
+        }
 
         @org.jetbrains.annotations.NotNull()
         public final Test.MyDate getDate2() {
@@ -70,10 +74,6 @@ public final class Test {
 
         public final void setDate2(@org.jetbrains.annotations.NotNull()
         Test.MyDate p0) {
-        }
-
-        public MyDate() {
-            super();
         }
     }
 }
@@ -89,6 +89,10 @@ import a.b.ABC;
 public final class Test2 {
     public java.util.Date date;
 
+    public Test2() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.util.Date getDate() {
         return null;
@@ -96,9 +100,5 @@ public final class Test2 {
 
     public final void setDate(@org.jetbrains.annotations.NotNull()
     java.util.Date p0) {
-    }
-
-    public Test2() {
-        super();
     }
 }
