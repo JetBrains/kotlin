@@ -4974,11 +4974,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/kt14802.kt");
         }
 
-        @TestMetadata("kt15806.kt")
-        public void testKt15806() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/kt15806.kt");
-        }
-
         @TestMetadata("manyWhensWithinClass.kt")
         public void testManyWhensWithinClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/manyWhensWithinClass.kt");
