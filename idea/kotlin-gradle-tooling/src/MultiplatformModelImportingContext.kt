@@ -15,6 +15,8 @@ internal interface MultiplatformModelImportingContext {
     val targets: Collection<KotlinTarget>
     val compilations: Collection<KotlinCompilation>
 
+    val compatServices: CompatibilityLayer
+
     /**
      * All source sets in a project, including those that are created but not included into any compilations
      * (so-called "orphan" source sets). Use [isOrphanSourceSet] to get only compiled source sets
