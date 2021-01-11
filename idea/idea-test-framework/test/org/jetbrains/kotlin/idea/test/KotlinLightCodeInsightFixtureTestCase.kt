@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.COMPILER_ARGUMENTS_DIRECTIVE
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.JVM_TARGET_DIRECTIVE
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.LANGUAGE_VERSION_DIRECTIVE
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.API_VERSION_DIRECTIVE
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -245,6 +246,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
 object CompilerTestDirectives {
     const val LANGUAGE_VERSION_DIRECTIVE = "LANGUAGE_VERSION:"
+    const val API_VERSION_DIRECTIVE = "API_VERSION:"
     const val JVM_TARGET_DIRECTIVE = "JVM_TARGET:"
     const val COMPILER_ARGUMENTS_DIRECTIVE = "COMPILER_ARGUMENTS:"
 
@@ -265,6 +267,7 @@ fun <T> withCustomCompilerOptions(fileText: String, project: Project, module: Mo
 
 private fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
+    val apiVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $API_VERSION_DIRECTIVE ")
     val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
     // We can have several such directives in quickFixMultiFile tests
     // TODO: refactor such tests or add sophisticated check for the directive
@@ -274,7 +277,7 @@ private fun configureCompilerOptions(fileText: String, project: Project, module:
         configureLanguageAndApiVersion(
             project, module,
             version ?: LanguageVersion.LATEST_STABLE.versionString,
-            null
+            apiVersion
         )
 
         val facetSettings = KotlinFacet.get(module)!!.configuration.settings

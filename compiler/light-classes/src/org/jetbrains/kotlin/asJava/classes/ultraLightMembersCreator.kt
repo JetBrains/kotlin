@@ -405,7 +405,8 @@ internal class UltraLightMembersCreator(
         mutable: Boolean,
         forceStatic: Boolean,
         onlyJvmStatic: Boolean,
-        createAsAnnotationMethod: Boolean = false
+        createAsAnnotationMethod: Boolean = false,
+        isJvmRecord: Boolean = false,
     ): List<KtLightMethod> {
 
         val propertyName = declaration.name ?: return emptyList()
@@ -454,7 +455,7 @@ internal class UltraLightMembersCreator(
                 auxiliaryOriginalElement = auxiliaryOrigin
             )
 
-            val defaultGetterName = if (createAsAnnotationMethod) propertyName else JvmAbi.getterName(propertyName)
+            val defaultGetterName = if (createAsAnnotationMethod || isJvmRecord) propertyName else JvmAbi.getterName(propertyName)
             val getterName = computeMethodName(auxiliaryOrigin, defaultGetterName, MethodType.GETTER)
             val getterPrototype = lightMethod(getterName, auxiliaryOrigin, forceStatic = onlyJvmStatic || forceStatic)
             val getterWrapper = KtUltraLightMethodForSourceDeclaration(
