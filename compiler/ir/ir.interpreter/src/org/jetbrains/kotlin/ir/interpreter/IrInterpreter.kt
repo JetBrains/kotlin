@@ -189,29 +189,20 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             }
         }
 
-        val signature = CompileTimeFunction(methodName, argsType.map { it.getOnlyName() })
-
         // TODO replace unary, binary, ternary functions with vararg
         val result = withExceptionHandler {
             when (argsType.size) {
-                1 -> {
-                    val function = unaryFunctions[signature]
-                        ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in unary map")
-                    function.invoke(argsValues.first())
+                1 -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
+                2 -> when (methodName) {
+                    "rangeTo" -> return calculateRangeTo(irFunction.returnType)
+                    else -> interpretBinaryFunction(
+                        methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsValues[0], argsValues[1]
+                    )
                 }
-                2 -> {
-                    val function = binaryFunctions[signature]
-                        ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in binary map")
-                    when (methodName) {
-                        "rangeTo" -> return calculateRangeTo(irFunction.returnType)
-                        else -> function.invoke(argsValues[0], argsValues[1])
-                    }
-                }
-                3 -> {
-                    val function = ternaryFunctions[signature]
-                        ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in ternary map")
-                    function.invoke(argsValues[0], argsValues[1], argsValues[2])
-                }
+                3 -> interpretTernaryFunction(
+                    methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsType[2].getOnlyName(),
+                    argsValues[0], argsValues[1], argsValues[2]
+                )
                 else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
             }
         }
@@ -222,14 +213,14 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
     private fun calculateRangeTo(type: IrType): ExecutionResult {
         val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+        val constructorValueParameters = constructor.valueParameters.map { it.symbol }
 
         val primitiveValueParameters = stack.getAll().map { it.state as Primitive<*> }
         primitiveValueParameters.forEachIndexed { index, primitive ->
-            constructorCall.putValueArgument(index, primitive.value.toIrConst(primitive.type))
+            constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
         }
 
-        val constructorValueParameters = constructor.valueParameters.map { it.symbol }.zip(primitiveValueParameters)
-        return stack.newFrame(initPool = constructorValueParameters.map { Variable(it.first, it.second) }) {
+        return stack.newFrame(initPool = constructorValueParameters.zip(primitiveValueParameters).map { Variable(it.first, it.second) }) {
             constructorCall.interpret()
         }
     }

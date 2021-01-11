@@ -104,8 +104,11 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffse
     }
 }
 
-internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> {
-    return Primitive(this.value, this.type)
+@Suppress("UNCHECKED_CAST")
+internal fun <T> IrConst<T>.toPrimitive(): Primitive<T> = when {
+    type.isByte() -> Primitive((value as Number).toByte() as T, type)
+    type.isShort() -> Primitive((value as Number).toShort() as T, type)
+    else -> Primitive(value, type)
 }
 
 fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {

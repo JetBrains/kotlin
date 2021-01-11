@@ -10,28 +10,3 @@ import org.jetbrains.kotlin.name.FqName
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
 val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 val contractsDslAnnotation = FqName("kotlin.internal.ContractsDsl")
-
-data class CompileTimeFunction(val methodName: String, val args: List<String>)
-
-@Suppress("UNCHECKED_CAST")
-fun <T> unaryOperation(
-    methodName: String, receiverType: String, function: (T) -> Any?
-): Pair<CompileTimeFunction, Function1<Any?, Any?>> {
-    return CompileTimeFunction(methodName, listOf(receiverType)) to function as Function1<Any?, Any?>
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T, E> binaryOperation(
-    methodName: String, receiverType: String, parameterType: String, function: (T, E) -> Any?
-): Pair<CompileTimeFunction, Function2<Any?, Any?, Any?>> {
-    return CompileTimeFunction(methodName, listOfNotNull(receiverType, parameterType)) to function as Function2<Any?, Any?, Any?>
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T, E, R> ternaryOperation(
-    methodName: String, receiverType: String, firstParameterType: String, secondParameterType: String, function: (T, E, R) -> Any?
-): Pair<CompileTimeFunction, Function3<Any?, Any?, Any?, Any?>> {
-    return CompileTimeFunction(
-        methodName, listOfNotNull(receiverType, firstParameterType, secondParameterType)
-    ) to function as Function3<Any?, Any?, Any?, Any?>
-}
