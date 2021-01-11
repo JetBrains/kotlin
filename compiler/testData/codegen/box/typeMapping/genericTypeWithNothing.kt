@@ -57,28 +57,28 @@ fun testAllDeclaredMembers(klass: KClass<*>, expectedIsRaw: Boolean): String? {
     val clazz = klass.java
 
     for (it in clazz.declaredFields) {
-        if ((it.type == it.genericType) == expectedIsRaw) return "failed on field '${clazz.simpleName}::${it.name}'"
+        if ((it.type == it.genericType) != expectedIsRaw) return "failed on field '${clazz.simpleName}::${it.name}'"
     }
 
     for (m in clazz.declaredMethods) {
         for (i in m.parameterTypes.indices) {
-            if ((m.parameterTypes[i] == m.genericParameterTypes[i]) == expectedIsRaw) return "failed on type of param#$i of method '${clazz.simpleName}::${m.name}'"
+            if ((m.parameterTypes[i] == m.genericParameterTypes[i]) != expectedIsRaw) return "failed on type of param#$i of method '${clazz.simpleName}::${m.name}'"
         }
-        if (m.returnType != Void.TYPE && (m.returnType == m.genericReturnType) == expectedIsRaw) return "failed on return type of method '${clazz.simpleName}::${m.name}'"
+        if (m.returnType != Void.TYPE && (m.returnType == m.genericReturnType) != expectedIsRaw) return "failed on return type of method '${clazz.simpleName}::${m.name}'"
     }
 
     return null
 }
 
 fun box(): String {
-    testAllDeclaredMembers(TestRaw::class, expectedIsRaw = true) ?:
+    testAllDeclaredMembers(TestRaw::class, expectedIsRaw = true)?.let { return it }
     testAllDeclaredMembers(TestNotRaw::class, expectedIsRaw = false)?.let { return it }
 
     if (C1::class.java.superclass != C1::class.java.genericSuperclass) return "failed on C1 superclass"
 
     if (C2::class.java.superclass == C2::class.java.genericSuperclass) return "failed on C2 superclass"
 
-    testAllDeclaredMembers(C1::class, expectedIsRaw = true) ?:
+    testAllDeclaredMembers(C1::class, expectedIsRaw = true)?.let { return it }
     testAllDeclaredMembers(C2::class, expectedIsRaw = false)?.let { return it }
 
     return "OK"
