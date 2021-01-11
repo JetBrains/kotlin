@@ -410,6 +410,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/inheritingFromAbstractMutableList.kt");
         }
 
+        @TestMetadata("kt44233.kt")
+        public void testKt44233() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/kt44233.kt");
+        }
+
         @TestMetadata("mapOfPrimitivesFullJdk.kt")
         public void testMapOfPrimitivesFullJdk() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/mapOfPrimitivesFullJdk.kt");

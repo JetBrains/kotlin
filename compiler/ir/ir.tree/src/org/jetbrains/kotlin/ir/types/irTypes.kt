@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -30,18 +29,20 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun IrType.withHasQuestionMark(newHasQuestionMark: Boolean): IrType =
     when (this) {
-        is IrSimpleType ->
-            if (this.hasQuestionMark == newHasQuestionMark)
-                this
-            else
-                buildSimpleType {
-                    hasQuestionMark = newHasQuestionMark
-                    kotlinType = originalKotlinType?.run {
-                        if (newHasQuestionMark) makeNullable() else makeNotNullable()
-                    }
-                }
+        is IrSimpleType -> withHasQuestionMark(newHasQuestionMark)
         else -> this
     }
+
+fun IrSimpleType.withHasQuestionMark(newHasQuestionMark: Boolean): IrSimpleType =
+    if (this.hasQuestionMark == newHasQuestionMark)
+        this
+    else
+        buildSimpleType {
+            hasQuestionMark = newHasQuestionMark
+            kotlinType = originalKotlinType?.run {
+                if (newHasQuestionMark) makeNullable() else makeNotNullable()
+            }
+        }
 
 fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
     if (newAnnotations.isEmpty())
