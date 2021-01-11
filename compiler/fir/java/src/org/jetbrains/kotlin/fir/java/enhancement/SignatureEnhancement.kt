@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -323,7 +323,7 @@ class FirSignatureEnhancement(
         )
         val firResolvedTypeRef = signatureParts.type
         val defaultValueExpression = when (val defaultValue = ownerParameter.getDefaultValueFromAnnotation()) {
-            NullDefaultValue -> buildConstExpression(null, FirConstKind.Null, null)
+            NullDefaultValue -> buildConstExpression(null, ConstantValueKind.Null, null)
             is StringDefaultValue -> firResolvedTypeRef.type.lexicalCastFrom(session, defaultValue.value)
             null -> null
         }

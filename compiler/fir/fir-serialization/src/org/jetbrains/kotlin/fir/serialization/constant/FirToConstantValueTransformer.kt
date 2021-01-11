@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal fun FirExpression.toConstantValue(): ConstantValue<*>? = accept(FirToConstantValueTransformer, null)
 
@@ -30,20 +31,20 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
     ): ConstantValue<*>? {
         val value = constExpression.value
         return when (constExpression.kind) {
-            FirConstKind.Boolean -> BooleanValue(value as Boolean)
-            FirConstKind.Char -> CharValue(value as Char)
-            FirConstKind.Byte -> ByteValue(value as Byte)
-            FirConstKind.UnsignedByte -> UByteValue(value as Byte)
-            FirConstKind.Short -> ShortValue(value as Short)
-            FirConstKind.UnsignedShort -> UShortValue(value as Short)
-            FirConstKind.Int -> IntValue(value as Int)
-            FirConstKind.UnsignedInt -> UIntValue(value as Int)
-            FirConstKind.Long -> LongValue(value as Long)
-            FirConstKind.UnsignedLong -> ULongValue(value as Long)
-            FirConstKind.String -> StringValue(value as String)
-            FirConstKind.Float -> FloatValue(value as Float)
-            FirConstKind.Double -> DoubleValue(value as Double)
-            FirConstKind.Null -> NullValue
+            ConstantValueKind.Boolean -> BooleanValue(value as Boolean)
+            ConstantValueKind.Char -> CharValue(value as Char)
+            ConstantValueKind.Byte -> ByteValue(value as Byte)
+            ConstantValueKind.UnsignedByte -> UByteValue(value as Byte)
+            ConstantValueKind.Short -> ShortValue(value as Short)
+            ConstantValueKind.UnsignedShort -> UShortValue(value as Short)
+            ConstantValueKind.Int -> IntValue(value as Int)
+            ConstantValueKind.UnsignedInt -> UIntValue(value as Int)
+            ConstantValueKind.Long -> LongValue(value as Long)
+            ConstantValueKind.UnsignedLong -> ULongValue(value as Long)
+            ConstantValueKind.String -> StringValue(value as String)
+            ConstantValueKind.Float -> FloatValue(value as Float)
+            ConstantValueKind.Double -> DoubleValue(value as Double)
+            ConstantValueKind.Null -> NullValue
             else -> null
         }
     }

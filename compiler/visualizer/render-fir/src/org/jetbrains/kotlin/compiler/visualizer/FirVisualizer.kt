@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private typealias Stack = MutableList<Pair<String, MutableList<String>>>
@@ -444,7 +445,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StringBuilder) {
-            if (constExpression.kind != FirConstKind.String) {
+            if (constExpression.kind != ConstantValueKind.String) {
                 data.append(constExpression.kind)
             }
         }

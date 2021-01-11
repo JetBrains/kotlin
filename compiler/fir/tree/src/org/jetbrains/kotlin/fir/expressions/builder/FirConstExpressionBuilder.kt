@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.fir.expressions.builder
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 fun <T> buildConstExpression(
     source: FirSourceElement?,
-    kind: FirConstKind<T>,
+    kind: ConstantValueKind<T>,
     value: T,
     annotations: MutableList<FirAnnotationCall> = mutableListOf(),
 ): FirConstExpression<T> {

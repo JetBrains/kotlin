@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1839,14 +1840,18 @@ class RawFirBuilder(
 
                     val receiver = argument.toFirExpression("No operand")
                     if (operationToken == PLUS || operationToken == MINUS) {
-                        if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                        if (receiver is FirConstExpression<*> && receiver.kind == ConstantValueKind.IntegerLiteral) {
                             val value = receiver.value as Long
                             val convertedValue = when (operationToken) {
                                 MINUS -> -value
                                 PLUS -> value
                                 else -> error("Should not be here")
                             }
-                            return buildConstExpression(expression.toFirPsiSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                            return buildConstExpression(
+                                expression.toFirPsiSourceElement(),
+                                ConstantValueKind.IntegerLiteral,
+                                convertedValue
+                            )
                         }
                     }
                     buildFunctionCall {

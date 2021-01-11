@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -326,7 +327,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     boundSymbol = this@generateAccessorsByDelegate.symbol
                 }
             }
-            else -> buildConstExpression(null, FirConstKind.Null, null)
+            else -> buildConstExpression(null, ConstantValueKind.Null, null)
         }
 
     fun delegateAccess() = buildQualifiedAccessExpression {

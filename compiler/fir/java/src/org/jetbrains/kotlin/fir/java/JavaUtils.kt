@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -542,7 +543,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
             }
             JAVA_RETENTION_CLASS_ID -> arguments.singleOrNull()?.mapJavaRetentionArgument(session)?.let(::buildUnaryArgumentList)
             JAVA_DEPRECATED_CLASS_ID ->
-                buildUnaryArgumentList(buildConstExpression(null, FirConstKind.String, "Deprecated in Java").setProperType(session))
+                buildUnaryArgumentList(buildConstExpression(null, ConstantValueKind.String, "Deprecated in Java").setProperType(session))
             null -> null
             else -> buildArgumentMapping(session, javaTypeParameterStack, lookupTag!!, arguments)
         } ?: buildArgumentList {
@@ -641,7 +642,7 @@ private fun JavaAnnotationArgument.toFirExpression(
 }
 
 // TODO: use kind here
-private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED_PARAMETER") kind: FirConstKind<T>): FirArrayOfCall {
+private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED_PARAMETER") kind: ConstantValueKind<T>): FirArrayOfCall {
     return buildArrayOfCall {
         argumentList = buildArgumentList {
             for (element in this@createArrayOfCall) {
@@ -662,24 +663,24 @@ internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
 
 internal fun Any?.createConstantIfAny(session: FirSession): FirExpression? {
     return when (this) {
-        is Byte -> buildConstExpression(null, FirConstKind.Byte, this).setProperType(session)
-        is Short -> buildConstExpression(null, FirConstKind.Short, this).setProperType(session)
-        is Int -> buildConstExpression(null, FirConstKind.Int, this).setProperType(session)
-        is Long -> buildConstExpression(null, FirConstKind.Long, this).setProperType(session)
-        is Char -> buildConstExpression(null, FirConstKind.Char, this).setProperType(session)
-        is Float -> buildConstExpression(null, FirConstKind.Float, this).setProperType(session)
-        is Double -> buildConstExpression(null, FirConstKind.Double, this).setProperType(session)
-        is Boolean -> buildConstExpression(null, FirConstKind.Boolean, this).setProperType(session)
-        is String -> buildConstExpression(null, FirConstKind.String, this).setProperType(session)
-        is ByteArray -> toList().createArrayOfCall(session, FirConstKind.Byte)
-        is ShortArray -> toList().createArrayOfCall(session, FirConstKind.Short)
-        is IntArray -> toList().createArrayOfCall(session, FirConstKind.Int)
-        is LongArray -> toList().createArrayOfCall(session, FirConstKind.Long)
-        is CharArray -> toList().createArrayOfCall(session, FirConstKind.Char)
-        is FloatArray -> toList().createArrayOfCall(session, FirConstKind.Float)
-        is DoubleArray -> toList().createArrayOfCall(session, FirConstKind.Double)
-        is BooleanArray -> toList().createArrayOfCall(session, FirConstKind.Boolean)
-        null -> buildConstExpression(null, FirConstKind.Null, null).setProperType(session)
+        is Byte -> buildConstExpression(null, ConstantValueKind.Byte, this).setProperType(session)
+        is Short -> buildConstExpression(null, ConstantValueKind.Short, this).setProperType(session)
+        is Int -> buildConstExpression(null, ConstantValueKind.Int, this).setProperType(session)
+        is Long -> buildConstExpression(null, ConstantValueKind.Long, this).setProperType(session)
+        is Char -> buildConstExpression(null, ConstantValueKind.Char, this).setProperType(session)
+        is Float -> buildConstExpression(null, ConstantValueKind.Float, this).setProperType(session)
+        is Double -> buildConstExpression(null, ConstantValueKind.Double, this).setProperType(session)
+        is Boolean -> buildConstExpression(null, ConstantValueKind.Boolean, this).setProperType(session)
+        is String -> buildConstExpression(null, ConstantValueKind.String, this).setProperType(session)
+        is ByteArray -> toList().createArrayOfCall(session, ConstantValueKind.Byte)
+        is ShortArray -> toList().createArrayOfCall(session, ConstantValueKind.Short)
+        is IntArray -> toList().createArrayOfCall(session, ConstantValueKind.Int)
+        is LongArray -> toList().createArrayOfCall(session, ConstantValueKind.Long)
+        is CharArray -> toList().createArrayOfCall(session, ConstantValueKind.Char)
+        is FloatArray -> toList().createArrayOfCall(session, ConstantValueKind.Float)
+        is DoubleArray -> toList().createArrayOfCall(session, ConstantValueKind.Double)
+        is BooleanArray -> toList().createArrayOfCall(session, ConstantValueKind.Boolean)
+        null -> buildConstExpression(null, ConstantValueKind.Null, null).setProperType(session)
 
         else -> null
     }
