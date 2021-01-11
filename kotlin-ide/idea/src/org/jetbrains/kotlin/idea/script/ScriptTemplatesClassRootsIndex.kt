@@ -50,6 +50,5 @@ class ScriptTemplatesClassRootsIndex :
         val parent = file.parent ?: return false
         return parent.isDirectory
                 && parent.path.endsWith(suffix)
-                && file.path.endsWith(SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT)
     }
 }
