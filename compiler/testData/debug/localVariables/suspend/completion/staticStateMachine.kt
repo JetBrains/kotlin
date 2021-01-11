@@ -17,7 +17,6 @@ suspend fun box() {
 // LOCAL VARIABLES
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
 // test.kt:5 foo1:
-// CoroutineUtil.kt:28 getContext:
 
 // LOCAL VARIABLES JVM
 // test.kt:-1 <init>:

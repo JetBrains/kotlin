@@ -13,7 +13,6 @@ suspend fun box() {
 // LINENUMBERS
 // test.kt:8 box
 // test.kt:4 foo
-// CoroutineUtil.kt:28 getContext
 // test.kt:-1 <init>
 // test.kt:-1 create
 // test.kt:-1 invoke
