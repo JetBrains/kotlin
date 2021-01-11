@@ -71,6 +71,9 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
         keep += fqn
     }
 
+    @Input
+    var jvmArgs = mutableListOf<String>()
+
     @TaskAction
     fun performDce() {
         val inputFiles = (listOf(source) + classpath
@@ -91,7 +94,8 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
             K2JSDce::class.java.name,
             computedCompilerClasspath,
             log,
-            project.buildDir
+            project.buildDir,
+            jvmArgs
         )
         throwGradleExceptionIfError(exitCode)
 
