@@ -239,6 +239,8 @@ class KotlinToResolvedCallTransformer(
     }
 
     fun runCallCheckers(resolvedCall: ResolvedCall<*>, callCheckerContext: CallCheckerContext) {
+        if (!callCheckerContext.trace.wantsDiagnostics()) return // Optimization.
+
         val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
             resolvedCall.variableCall.call.calleeExpression
         else
