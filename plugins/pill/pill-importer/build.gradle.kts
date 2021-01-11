@@ -47,3 +47,9 @@ val unpill by tasks.creating {
     dependsOn(jar)
     doLast { runPillTask("unpill") }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xskip-runtime-version-check"
+    }
+}
