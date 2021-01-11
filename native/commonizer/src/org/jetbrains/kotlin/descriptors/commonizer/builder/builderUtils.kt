@@ -120,7 +120,7 @@ internal fun CirSimpleType.buildType(
          Steps to reproduce:
          - Install kotlin snapshot
          - checkout https://github.com/sellmair/mpp-issue-bootstrap/tree/ddol/kt-40975/
-         - Debug ./gradlew clean compileNativeMainKotlinMetadata -Dorg.gradle.debug=true
+         - Debug ./gradlew clean && ./gradlew compileNativeMainKotlinMetadata -Dorg.gradle.debug=true
          Exception: java.lang.IllegalStateException: Classifier platform/posix/size_t not found for [linux_x64, macos_x64]
 
           Also: Why would the following line even work?!
