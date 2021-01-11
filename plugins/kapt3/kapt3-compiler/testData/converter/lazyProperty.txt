@@ -7,6 +7,10 @@ public final class Foo {
     private final kotlin.Lazy baz$delegate = null;
     private final kotlin.Lazy generic1$delegate = null;
 
+    public Foo() {
+        super();
+    }
+
     private final java.lang.Runnable getFoo() {
         return null;
     }
@@ -21,10 +25,6 @@ public final class Foo {
 
     private final GenericIntf<java.lang.CharSequence> getGeneric1() {
         return null;
-    }
-
-    public Foo() {
-        super();
     }
 }
 

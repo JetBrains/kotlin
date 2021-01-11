@@ -12,6 +12,8 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class NonExistentType {
+    @org.jetbrains.annotations.NotNull()
+    public static final NonExistentType INSTANCE = null;
     @org.jetbrains.annotations.Nullable()
     private static final error.NonExistentClass a = null;
     @org.jetbrains.annotations.Nullable()
@@ -26,8 +28,10 @@ public final class NonExistentType {
     public static error.NonExistentClass coocoo21;
     public static error.NonExistentClass coocoo3;
     public static error.NonExistentClass coocoo31;
-    @org.jetbrains.annotations.NotNull()
-    public static final NonExistentType INSTANCE = null;
+
+    private NonExistentType() {
+        super();
+    }
 
     @org.jetbrains.annotations.Nullable()
     public final error.NonExistentClass getA() {
@@ -114,10 +118,6 @@ public final class NonExistentType {
     public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull()
     java.lang.String s) {
         return null;
-    }
-
-    private NonExistentType() {
-        super();
     }
 }
 

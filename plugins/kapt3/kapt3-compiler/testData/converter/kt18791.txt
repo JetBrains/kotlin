@@ -90,9 +90,13 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class JJ {
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String b = null;
-    @org.jetbrains.annotations.NotNull()
     public static final app.JJ INSTANCE = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String b = null;
+
+    private JJ() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getB() {
@@ -102,10 +106,6 @@ public final class JJ {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String c() {
         return null;
-    }
-
-    private JJ() {
-        super();
     }
 }
 
@@ -136,9 +136,8 @@ public final class MyActivity {
     public int propE = app.B.id.textView;
     private final int propF = 0;
 
-    @Bind(id = lib.R.id.textView)
-    @java.lang.Deprecated()
-    public static void getA$annotations() {
+    public MyActivity() {
+        super();
     }
 
     public final int getA() {
@@ -147,16 +146,16 @@ public final class MyActivity {
 
     @Bind(id = lib.R.id.textView)
     @java.lang.Deprecated()
-    public static void getB$annotations() {
+    public static void getA$annotations() {
     }
 
     public final int getB() {
         return 0;
     }
 
-    @Bind(id = app.R.layout.mainActivity)
+    @Bind(id = lib.R.id.textView)
     @java.lang.Deprecated()
-    public static void getC$annotations() {
+    public static void getB$annotations() {
     }
 
     public final int getC() {
@@ -165,10 +164,19 @@ public final class MyActivity {
 
     @Bind(id = app.R.layout.mainActivity)
     @java.lang.Deprecated()
-    public static void getD$annotations() {
+    public static void getC$annotations() {
     }
 
     public final int getD() {
+        return 0;
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    @java.lang.Deprecated()
+    public static void getD$annotations() {
+    }
+
+    public final int getE() {
         return 0;
     }
 
@@ -178,17 +186,13 @@ public final class MyActivity {
     public static void getE$annotations() {
     }
 
-    public final int getE() {
+    public final int getF() {
         return 0;
     }
 
     @Bind(id = app.B.id.textView)
     @java.lang.Deprecated()
     public static void getF$annotations() {
-    }
-
-    public final int getF() {
-        return 0;
     }
 
     @Bind(id = lib.R.id.textView)
@@ -229,10 +233,6 @@ public final class MyActivity {
 
     public final int getPropF() {
         return 0;
-    }
-
-    public MyActivity() {
-        super();
     }
 }
 

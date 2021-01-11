@@ -3,15 +3,15 @@ import java.lang.System;
 @kotlin.Metadata()
 public abstract class Base {
 
+    public Base() {
+        super();
+    }
+
     protected abstract void doJob(@org.jetbrains.annotations.NotNull()
     java.lang.String job, int delay);
 
     protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
     T job, int delay);
-
-    public Base() {
-        super();
-    }
 }
 
 ////////////////////
@@ -22,6 +22,10 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Impl extends Base {
 
+    public Impl() {
+        super();
+    }
+
     @java.lang.Override()
     protected void doJob(@org.jetbrains.annotations.NotNull()
     java.lang.String job, int delay) {
@@ -30,9 +34,5 @@ public final class Impl extends Base {
     @java.lang.Override()
     protected <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
     T job, int delay) {
-    }
-
-    public Impl() {
-        super();
     }
 }

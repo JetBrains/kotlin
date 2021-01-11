@@ -28,14 +28,14 @@ public final class KBox implements androidx.annotation.Box {
     @org.jetbrains.annotations.NotNull()
     private final androidx.annotation.Box delegate = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public final androidx.annotation.Box getDelegate() {
-        return null;
-    }
-
     public KBox(@org.jetbrains.annotations.NotNull()
     androidx.annotation.Box delegate) {
         super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.annotation.Box getDelegate() {
+        return null;
     }
 
     @androidx.annotation.RecentlyNullable()

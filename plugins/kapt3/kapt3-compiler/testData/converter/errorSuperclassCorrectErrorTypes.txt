@@ -10,18 +10,13 @@ public final class Child extends kotlin.collections.AbstractList<java.lang.Strin
     }
 
     @java.lang.Override()
-    public boolean contains(java.lang.String p0) {
-        return false;
-    }
-
-    @java.lang.Override()
     public final boolean contains(java.lang.Object p0) {
         return false;
     }
 
     @java.lang.Override()
-    public int indexOf(java.lang.String p0) {
-        return 0;
+    public boolean contains(java.lang.String p0) {
+        return false;
     }
 
     @java.lang.Override()
@@ -30,12 +25,17 @@ public final class Child extends kotlin.collections.AbstractList<java.lang.Strin
     }
 
     @java.lang.Override()
-    public int lastIndexOf(java.lang.String p0) {
+    public int indexOf(java.lang.String p0) {
         return 0;
     }
 
     @java.lang.Override()
     public final int lastIndexOf(java.lang.Object p0) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int lastIndexOf(java.lang.String p0) {
         return 0;
     }
 }
@@ -115,6 +115,10 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
 
+    public MappedList() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
     public java.lang.Void get(int index) {
@@ -124,10 +128,6 @@ public final class MappedList<R extends java.lang.Object> extends kotlin.collect
     @java.lang.Override()
     public int getSize() {
         return 0;
-    }
-
-    public MappedList() {
-        super();
     }
 }
 
@@ -180,14 +180,14 @@ public final class TFooBar extends Foo implements test.Intf, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public final X getA() {
-        return null;
-    }
-
     public TFooBar(@org.jetbrains.annotations.NotNull()
     X a) {
         super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final X getA() {
+        return null;
     }
 }
 
@@ -202,14 +202,14 @@ public final class TFooBar2 implements Foo, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public final X getA() {
-        return null;
-    }
-
     public TFooBar2(@org.jetbrains.annotations.NotNull()
     X a) {
         super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final X getA() {
+        return null;
     }
 }
 
