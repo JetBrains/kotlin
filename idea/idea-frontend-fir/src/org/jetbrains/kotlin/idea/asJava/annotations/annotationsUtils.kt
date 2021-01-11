@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
-import org.jetbrains.kotlin.psi.KtFile
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
@@ -36,7 +34,7 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
     }
 
     return annotation?.let {
-        (it.arguments.firstOrNull()?.expression as? KtSimpleConstantValue<*>)?.constant as? String
+        (it.arguments.firstOrNull()?.expression as? KtSimpleConstantValue<*>)?.value as? String
     }
 }
 
