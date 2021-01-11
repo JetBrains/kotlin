@@ -11,9 +11,9 @@ class WholeProjectPerformanceComparisonFE10ImplTest : AbstractWholeProjectPerfor
     override val testPrefix: String = "FE10"
     override fun getWarmUpProject(): WarmUpProject = warmUpProject
 
-    fun testRustPlugin() {
-        doTestRustPlugin()
-    }
+    fun testRustPluginHighlighting() = doTestRustPluginHighlighting()
+    fun testRustPluginCompletion() = doTestRustPluginCompletion()
+
 
     companion object {
         private val hwStats: Stats = Stats("FE10 warmup project")

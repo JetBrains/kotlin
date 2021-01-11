@@ -19,18 +19,56 @@ abstract class AbstractWholeProjectPerformanceComparisonTest : AbstractPerforman
         getWarmUpProject().warmUp(this)
     }
 
-    protected fun doTestRustPlugin() {
-        TeamCity.suite("$testPrefix Rust plugin") {
-            Stats("$testPrefix Rust plugin").use {
-                perfOpenRustPluginProject(it)
+    protected fun doTestRustPluginHighlighting() {
+        TeamCity.suite("$testPrefix highlighting in Rust plugin") {
+            Stats("$testPrefix highlighting in Rust plugin").use { stat ->
+                perfOpenRustPluginProject(stat)
 
                 val filesToHighlight = arrayOf(
                     "src/main/kotlin/org/rust/ide/inspections/RsExternalLinterInspection.kt",
                     "src/main/kotlin/org/rust/ide/injected/RsDoctestLanguageInjector.kt",
-                    "src/main/kotlin/org/rust/cargo/runconfig/filters/RegexpFileLinkFilter.kt",
+                    FILE_NAMES.REGEXP_FILE_LINK_FILTER,
+                    "src/main/kotlin/org/rust/cargo/util/CargoOptions.kt",
+                    "src/main/kotlin/org/rust/lang/core/macros/MacroExpansionManager.kt",
+                    FILE_NAMES.NAME_RESOLUTION
                 )
 
-                filesToHighlight.forEach { file -> perfHighlightFile(file, stats = it) }
+                filesToHighlight.forEach { file -> perfHighlightFileEmptyProfile(file, stats = stat) }
+            }
+        }
+    }
+
+    protected fun doTestRustPluginCompletion() {
+        TeamCity.suite("$testPrefix completion in Rust plugin") {
+            Stats("$testPrefix completion in Rust plugin").use { stat ->
+                perfOpenRustPluginProject(stat)
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = FILE_NAMES.REGEXP_FILE_LINK_FILTER,
+                    marker = "fun applyFilter(line: String, entireLength: Int): Filter.Result? {",
+                    insertString = "val a = l",
+                    lookupElements = listOf("line"),
+                    note = "in-method completion"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = FILE_NAMES.NAME_RESOLUTION,
+                    marker = "private data class ImplicitStdlibCrate(val name: String, val crateRoot: RsFile)",
+                    insertString = "\nval a = ",
+                    lookupElements = listOf("processAssocTypeVariants"),
+                    note = "top-level completion"
+                )
+
+                perfTypeAndAutocomplete(
+                    stat,
+                    fileName = FILE_NAMES.NAME_RESOLUTION,
+                    marker = "testAssert { cameFrom.context == scope }",
+                    insertString = "\nval a = s",
+                    lookupElements = listOf("scope"),
+                    note = "in big method in big file completion"
+                )
             }
         }
     }
@@ -44,6 +82,11 @@ abstract class AbstractWholeProjectPerformanceComparisonTest : AbstractPerforman
             openAction = ProjectOpenAction.GRADLE_PROJECT,
             fast = true
         )
+    }
+
+    private object FILE_NAMES {
+        const val NAME_RESOLUTION = "src/main/kotlin/org/rust/lang/core/resolve/NameResolution.kt"
+        const val REGEXP_FILE_LINK_FILTER = "src/main/kotlin/org/rust/cargo/runconfig/filters/RegexpFileLinkFilter.kt"
     }
 }
 
