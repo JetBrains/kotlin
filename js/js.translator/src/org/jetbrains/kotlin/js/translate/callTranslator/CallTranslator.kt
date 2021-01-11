@@ -157,7 +157,7 @@ private fun translateFunctionCall(
             source = resolvedCall.call.callElement
         }))
         context.currentBlock.statements += statement
-        return context.createCoroutineResult(resolvedCall)
+        callExpression = context.createCoroutineResult(resolvedCall)
     }
     else {
         callExpression = callInfo.constructSafeCallIfNeeded(callExpression)
