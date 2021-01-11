@@ -462,7 +462,9 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
             return if (position1 != null && position1.path == classSource.path) {
                 if (position2 != null && position2.path == classSource.path) {
-                    position1.pos.compareTo(position2.pos)
+                    val positionCompare = position1.pos.compareTo(position2.pos)
+                    if (positionCompare != 0) positionCompare
+                    else compareDescriptors(data1, data2)
                 } else {
                     -1
                 }
