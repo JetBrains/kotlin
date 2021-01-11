@@ -35,43 +35,37 @@ public class VersionMatcher {
   }
 
   public boolean isVersionMatch(@Nullable TargetVersions targetVersions) {
-    if (targetVersions == null) return true;
-    return isVersionMatch(targetVersions.value(), targetVersions.checkBaseVersions());
-  }
+    if (targetVersions == null || targetVersions.value().isEmpty()) return true;
 
-  public boolean isVersionMatch(@Nullable String targetVersions, boolean checkBaseVersions) {
-    if (targetVersions == null || targetVersions.isEmpty()) return true;
+    final GradleVersion current = adjust(myGradleVersion, targetVersions.checkBaseVersions());
 
-    final GradleVersion current = adjust(myGradleVersion, checkBaseVersions);
-
-    if (targetVersions.endsWith("+")) {
-      String minVersion = targetVersions.substring(0, targetVersions.length() - 1);
-      return compare(current, minVersion, checkBaseVersions) >= 0;
+    if (targetVersions.value().endsWith("+")) {
+      String minVersion = targetVersions.value().substring(0, targetVersions.value().length() - 1);
+      return compare(current, minVersion, targetVersions.checkBaseVersions()) >= 0;
     }
-    else if (targetVersions.startsWith("<")) {
-      if (targetVersions.startsWith("<=")) {
-        String maxVersion = targetVersions.substring(2);
-        return compare(current, maxVersion, checkBaseVersions) <= 0;
+    else if (targetVersions.value().startsWith("<")) {
+      if (targetVersions.value().startsWith("<=")) {
+        String maxVersion = targetVersions.value().substring(2);
+        return compare(current, maxVersion, targetVersions.checkBaseVersions()) <= 0;
       }
       else {
-        String maxVersion = targetVersions.substring(1);
-        return compare(current, maxVersion, checkBaseVersions) < 0;
+        String maxVersion = targetVersions.value().substring(1);
+        return compare(current, maxVersion, targetVersions.checkBaseVersions()) < 0;
       }
     }
     else {
-      final int rangeIndex = targetVersions.indexOf(RANGE_TOKEN);
+      final int rangeIndex = targetVersions.value().indexOf(RANGE_TOKEN);
       if (rangeIndex != -1) {
-        String minVersion = targetVersions.substring(0, rangeIndex);
-        String maxVersion = targetVersions.substring(rangeIndex + RANGE_TOKEN.length());
-        return compare(current, minVersion, checkBaseVersions) >= 0 &&
-          compare(current, maxVersion, checkBaseVersions) <= 0;
+        String minVersion = targetVersions.value().substring(0, rangeIndex);
+        String maxVersion = targetVersions.value().substring(rangeIndex + RANGE_TOKEN.length());
+        return compare(current, minVersion, targetVersions.checkBaseVersions()) >= 0 &&
+               compare(current, maxVersion, targetVersions.checkBaseVersions()) <= 0;
       }
       else {
-        return compare(current, targetVersions, checkBaseVersions) == 0;
+        return compare(current, targetVersions.value(), targetVersions.checkBaseVersions()) == 0;
       }
     }
   }
-
 
   private static int compare(@NotNull GradleVersion gradleVersion, @NotNull String otherGradleVersion, boolean checkBaseVersions) {
     return gradleVersion.compareTo(adjust(GradleVersion.version(otherGradleVersion), checkBaseVersions));
