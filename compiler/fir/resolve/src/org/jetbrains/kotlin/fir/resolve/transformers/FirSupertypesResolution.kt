@@ -282,7 +282,7 @@ private class FirSupertypeResolverVisitor(
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
-            supertypeRefs.mapTo(mutableListOf()) {
+            ArrayList(supertypeRefs).mapTo(mutableListOf()) {
                 val superTypeRef = transformer.transformTypeRef(it, scope).single
 
                 if (superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null)
