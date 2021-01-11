@@ -60,9 +60,11 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
         val actualLineNumbers = compressRunsWithoutLinenumber(loggedItems as List<LocatableEvent>, LocatableEvent::location)
             .filter {
                 val location = it.location()
-                // Ignore synthetic code with no line number information
-                // unless force step into behavior is requested.
-                forceStepInto || !location.method().isSynthetic
+                // Ignore:
+                //   - synthetic code with no line number information
+                //     unless force step into behavior is requested.
+                //   - helper code from the test infrastructure
+                (forceStepInto || !location.method().isSynthetic) && !location.isInDebugTestInfrastructure
             }
             .map { "// ${it.location().formatAsExpectation()}" }
         val actualLineNumbersIterator = actualLineNumbers.iterator()

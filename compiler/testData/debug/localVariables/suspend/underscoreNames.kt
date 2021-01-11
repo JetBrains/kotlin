@@ -21,7 +21,6 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:4 <init>:
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
 // test.kt:10 foo: a:A=A, block:kotlin.jvm.functions.Function2=TestKt$box$2, $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
-// CoroutineUtil.kt:28 getContext:
 
 // LOCAL VARIABLES JVM
 // test.kt:-1 <init>:
