@@ -322,7 +322,7 @@ private fun escapeString(str: String): String = buildString {
 }
 
 private fun KtSimpleConstantValue<*>.asStringForPsiLiteral(): String =
-    when (val value = this.constant) {
+    when (val value = this.value) {
         is String -> "\"${escapeString(value)}\""
         is Long -> "${value}L"
         is Float -> "${value}f"
