@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.perf.UltraLightChecker.checkByJavaFile
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker.checkDescriptorsLeak
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -24,24 +25,26 @@ abstract class AbstractUltraLightClassLoadingTest : KotlinLightCodeInsightFixtur
 
     open fun doTest(testDataPath: String) {
         val sourceText = File(testDataPath).readText()
-        val file = myFixture.addFileToProject(testDataPath, sourceText) as KtFile
+        withCustomCompilerOptions(sourceText, project, module) {
+            val file = myFixture.addFileToProject(testDataPath, sourceText) as KtFile
 
-        UltraLightChecker.checkForReleaseCoroutine(sourceText, module)
+            UltraLightChecker.checkForReleaseCoroutine(sourceText, module)
 
-        val checkByJavaFile = InTextDirectivesUtils.isDirectiveDefined(sourceText, "CHECK_BY_JAVA_FILE")
+            val checkByJavaFile = InTextDirectivesUtils.isDirectiveDefined(sourceText, "CHECK_BY_JAVA_FILE")
 
-        val ktClassOrObjects = UltraLightChecker.allClasses(file)
+            val ktClassOrObjects = UltraLightChecker.allClasses(file)
 
-        if (checkByJavaFile) {
-            val classFabric = LightClassGenerationSupport.getInstance(project)
-            val classList = ktClassOrObjects.mapNotNull { classFabric.createUltraLightClass(it) }
-            checkByJavaFile(testDataPath, classList)
-            classList.forEach { checkDescriptorsLeak(it) }
-        } else {
-            for (ktClass in ktClassOrObjects) {
-                val ultraLightClass = UltraLightChecker.checkClassEquivalence(ktClass)
-                if (ultraLightClass != null) {
-                    checkDescriptorsLeak(ultraLightClass)
+            if (checkByJavaFile) {
+                val classFabric = LightClassGenerationSupport.getInstance(project)
+                val classList = ktClassOrObjects.mapNotNull { classFabric.createUltraLightClass(it) }
+                checkByJavaFile(testDataPath, classList)
+                classList.forEach { checkDescriptorsLeak(it) }
+            } else {
+                for (ktClass in ktClassOrObjects) {
+                    val ultraLightClass = UltraLightChecker.checkClassEquivalence(ktClass)
+                    if (ultraLightClass != null) {
+                        checkDescriptorsLeak(ultraLightClass)
+                    }
                 }
             }
         }
