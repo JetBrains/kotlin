@@ -36,4 +36,11 @@ public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement, D ex
     protected boolean isValid(ParametrizedDiagnostic<E> diagnostic) {
         return positioningStrategy.isValid(diagnostic.getPsiElement());
     }
+
+    @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
+    @Deprecated
+    // ABI-compatibility only (used in Android plugin)
+    public D cast(Diagnostic d) {
+        return super.cast(d);
+    }
 }
