@@ -25,6 +25,7 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
         if (alreadyDumped || FirDiagnosticsDirectives.DUMP_CFG !in module.directives) return
         val file = info.firFiles.values.first()
         file.accept(FirControlFlowGraphRenderVisitor(builder))
+        alreadyDumped = true
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
