@@ -226,12 +226,8 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     importProject();
   }
 
-  protected void importProject() {
-    importProject((Boolean)null);
-  }
-
   @Override
-  protected void importProject(Boolean skipIndexing) {
+  protected void importProject() {
     ExternalSystemApiUtil.subscribe(myProject, GradleConstants.SYSTEM_ID, new ExternalSystemSettingsListenerAdapter() {
       @Override
       public void onProjectsLinked(@NotNull Collection settings) {
@@ -242,27 +238,18 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
         }
       }
     });
-    super.importProject(skipIndexing);
-  }
-
-  protected void importProjectUsingSingeModulePerGradleProject(@NonNls @Language("Groovy") String config, Boolean skipIndexing)
-    throws IOException {
-    getCurrentExternalProjectSettings().setResolveModulePerSourceSet(false);
-    importProject(config, skipIndexing);
+    super.importProject();
   }
 
   protected void importProjectUsingSingeModulePerGradleProject(@NonNls @Language("Groovy") String config) throws IOException {
-    importProjectUsingSingeModulePerGradleProject(config, null);
+    getCurrentExternalProjectSettings().setResolveModulePerSourceSet(false);
+    importProject(config);
   }
 
   @Override
-  protected void importProject(@NonNls @Language("Groovy") String config, Boolean skipIndexing) throws IOException {
-    config = injectRepo(config);
-    super.importProject(config, skipIndexing);
-  }
-
   protected void importProject(@NonNls @Language("Groovy") String config) throws IOException {
-    importProject(config, null);
+    config = injectRepo(config);
+    super.importProject(config);
   }
 
   @Override
