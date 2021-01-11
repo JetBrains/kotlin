@@ -445,4 +445,14 @@ class Strings {
         assertPrints(emptyString.lastOrNull(), "null")
         assertFails { emptyString.last() }
     }
+  
+    @Sample
+    fun replaceAfter() {
+        val inputString = "Lieutenant, set phasers to stun."
+
+        assertPrints(inputString.replaceAfter(',', " open a coms channel."), "Lieutenant, open a coms channel.")
+        assertPrints(inputString.replaceAfter("to", " kill."), "Lieutenant, set phasers to kill.")
+        
+        assertPrints(inputString.replaceAfter("kill.", " Fire!"), "Lieutenant, set phasers to stun.")
+    }
 }
