@@ -43,20 +43,24 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         val ktFiles = info.classFileFactory.inputFiles
         val reportProblems = module.targetBackend !in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
-        for (ktFile in ktFiles) {
-            val className = ktFile.getFacadeFqName() ?: continue
-            val clazz = classLoader.getGeneratedClass(className)
-            val method = clazz.getBoxMethodOrNull() ?: continue
-            boxMethodFound = true
-            callBoxMethodAndCheckResultWithCleanup(
-                info.classFileFactory,
-                classLoader,
-                clazz,
-                method,
-                unexpectedBehaviour = false,
-                reportProblems = reportProblems
-            )
-            return
+        try {
+            for (ktFile in ktFiles) {
+                val className = ktFile.getFacadeFqName() ?: continue
+                val clazz = classLoader.getGeneratedClass(className)
+                val method = clazz.getBoxMethodOrNull() ?: continue
+                boxMethodFound = true
+                callBoxMethodAndCheckResultWithCleanup(
+                    info.classFileFactory,
+                    classLoader,
+                    clazz,
+                    method,
+                    unexpectedBehaviour = false,
+                    reportProblems = reportProblems
+                )
+                return
+            }
+        } finally {
+            classLoader.dispose()
         }
     }
 
