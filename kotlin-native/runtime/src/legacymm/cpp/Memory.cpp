@@ -798,7 +798,6 @@ namespace {
 void freeContainer(ContainerHeader* header) NO_INLINE;
 #if USE_GC
 void garbageCollect(MemoryState* state, bool force) NO_INLINE;
-void cyclicGarbageCollect() NO_INLINE;
 void rememberNewContainer(ContainerHeader* container);
 #endif  // USE_GC
 
@@ -1015,10 +1014,6 @@ inline void traverseContainerReferredObjects(ContainerHeader* container, func pr
 
 inline FrameOverlay* asFrameOverlay(ObjHeader** slot) {
   return reinterpret_cast<FrameOverlay*>(slot);
-}
-
-inline bool isRefCounted(KConstRef object) {
-  return isFreeable(containerFor(object));
 }
 
 inline void lock(KInt* spinlock) {
@@ -1698,6 +1693,7 @@ void collectWhite(MemoryState* state, ContainerHeader* start) {
 }
 #endif
 
+#if COLLECT_STATISTIC
 inline bool needAtomicAccess(ContainerHeader* container) {
   return container->shareable();
 }
@@ -1707,6 +1703,7 @@ inline bool canBeCyclic(ContainerHeader* container) {
   if (container->color() == CONTAINER_TAG_GC_GREEN) return false;
   return true;
 }
+#endif
 
 inline void addHeapRef(ContainerHeader* container) {
   MEMORY_LOG("AddHeapRef %p: rc=%d\n", container, container->refCount())
@@ -1774,6 +1771,11 @@ inline void releaseHeapRef(const ObjHeader* header) {
     releaseHeapRef<Strict, CanCollect>(const_cast<ContainerHeader*>(container));
 }
 
+
+// TODO: Consider removing this unused stuff.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+
 // We use first slot as place to store frame-local arena container.
 // TODO: create ArenaContainer object on the stack, so that we don't
 // do two allocations per frame (ArenaContainer + actual container).
@@ -1799,6 +1801,8 @@ inline size_t containerSize(const ContainerHeader* container) {
   }
   return result;
 }
+
+#pragma clang diagnostic pop
 
 #if USE_GC
 void incrementStack(MemoryState* state) {

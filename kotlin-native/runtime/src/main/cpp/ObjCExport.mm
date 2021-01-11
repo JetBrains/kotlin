@@ -124,7 +124,6 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
 }
 
 static Class getOrCreateClass(const TypeInfo* typeInfo);
-static void initializeClass(Class clazz);
 
 extern "C" id objc_retainAutoreleaseReturnValue(id self);
 
@@ -763,16 +762,6 @@ static KStdVector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
         free(protocols);
       }
     }
-  }
-
-  return result;
-}
-
-static const TypeInfo* getMostSpecificKotlinClass(const TypeInfo* typeInfo) {
-  const TypeInfo* result = typeInfo;
-  while (getTypeAdapter(result) == nullptr) {
-    result = result->superType_;
-    RuntimeAssert(result != nullptr, "");
   }
 
   return result;

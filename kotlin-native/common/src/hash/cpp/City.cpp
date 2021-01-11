@@ -57,11 +57,6 @@ uint32_t Fetch32(const char *p) {
   return uint32_in_expected_order(UNALIGNED_LOAD32(p));
 }
 
-uint32_t Rotate32(uint32_t val, int shift) {
-  // Avoid shifting by 32: doing so yields an undefined result.
-  return shift == 0 ? val : ((val >> shift) | (val << (32 - shift)));
-}
-
 // Bitwise right rotate.  Normally this will compile to a single
 // instruction, especially if the shift is a manifest constant.
 uint64_t Rotate(uint64_t val, int shift) {

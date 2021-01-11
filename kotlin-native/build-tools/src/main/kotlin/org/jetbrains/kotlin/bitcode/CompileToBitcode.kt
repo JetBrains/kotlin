@@ -71,7 +71,6 @@ open class CompileToBitcode @Inject constructor(
                     listOfNotNull("-std=c++14", "-Werror", "-O2",
                             "-Wall", "-Wextra",
                             "-Wno-unused-parameter",  // False positives with polymorphic functions.
-                            "-Wno-unused-function",  // TODO: Enable this warning when we have C++ runtime tests.
                             "-fPIC".takeIf { !HostManager().targetByName(target).isMINGW })
             }
             return commonFlags + languageFlags + compilerArgs
