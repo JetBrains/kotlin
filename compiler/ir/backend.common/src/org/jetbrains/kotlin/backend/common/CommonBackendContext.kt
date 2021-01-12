@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 interface LoggingContext {
@@ -40,6 +41,7 @@ interface CommonBackendContext : BackendContext, LoggingContext {
 
     // Adjust internal structures after a deep copy of some declarations.
     fun handleDeepCopy(
+        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
         classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
         functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
     ) {}

@@ -155,9 +155,18 @@ class JvmBackendContext(
         }
 
     override fun handleDeepCopy(
+        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
         classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
         functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
     ) {
+        for ((oldFileSymbol, newFileSymbol) in fileSymbolMap) {
+            val psiFileEntry = psiSourceManager.getFileEntry(oldFileSymbol.owner) as? PsiSourceManager.PsiFileEntry ?: continue
+            psiSourceManager.putFileEntry(
+                newFileSymbol.owner,
+                psiFileEntry
+            )
+        }
+
         val oldClassesWithNameOverride = classNameOverride.keys.toList()
         for (klass in oldClassesWithNameOverride) {
             classSymbolMap[klass.symbol]?.let { newSymbol ->
@@ -170,7 +179,29 @@ class JvmBackendContext(
             multifileFacade.setValue(newPartClasses.toMutableList())
         }
 
-        super.handleDeepCopy(classSymbolMap, functionSymbolMap)
+        for ((staticReplacement, original) in inlineClassReplacements.originalFunctionForStaticReplacement) {
+            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
+            val newStaticReplacement = inlineClassReplacements.getReplacementFunction(newOriginal) ?: continue
+            staticReplacement as IrSimpleFunction
+            functionSymbolMap[staticReplacement.symbol] = newStaticReplacement.symbol
+        }
+
+        for ((original, suspendView) in suspendFunctionOriginalToView) {
+            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
+            val newSuspendView = suspendFunctionOriginalToView[newOriginal] ?: continue
+            suspendView as? IrSimpleFunction ?: continue
+            newSuspendView as? IrSimpleFunction ?: continue
+            functionSymbolMap[suspendView.symbol] = newSuspendView.symbol
+        }
+
+        for ((nonStaticDefaultSymbol, staticDefault) in staticDefaultStubs) {
+            val staticDefaultSymbol = staticDefault.symbol
+            val newNonStaticDefaultSymbol = functionSymbolMap[nonStaticDefaultSymbol] ?: continue
+            val newStaticDefaultSymbol = staticDefaultStubs[newNonStaticDefaultSymbol]?.symbol ?: continue
+            functionSymbolMap[staticDefaultSymbol] = newStaticDefaultSymbol
+        }
+
+        super.handleDeepCopy(fileSymbolMap, classSymbolMap, functionSymbolMap)
     }
 
     inner class JvmIr(

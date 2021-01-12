@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
@@ -166,12 +168,13 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         // We can only report one exception through ISE
         val thrownFromThread = AtomicReference<Pair<Throwable, IrFile>?>(null)
 
+        val remappedFiles = mutableMapOf<IrFileSymbol, IrFileSymbol>()
         val remappedFunctions = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
         val remappedClasses = mutableMapOf<IrClassSymbol, IrClassSymbol>()
 
         // Each thread needs its own copy of phaserState.alreadyDone
         val filesAndStates = input.files.map {
-            it.copySavingMappings(remappedFunctions, remappedClasses) to phaserState.copyOf()
+            it.copySavingMappings(remappedFiles, remappedFunctions, remappedClasses) to phaserState.copyOf()
         }
 
         val executor = Executors.newFixedThreadPool(nThreads)
@@ -201,8 +204,8 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         input.files.addAll(filesAndStates.map { (irFile, _) -> irFile }.toMutableList())
 
         adjustDefaultArgumentStubs(context, remappedFunctions)
+        context.handleDeepCopy(remappedFiles, remappedClasses, remappedFunctions)
         input.transformChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
-        context.handleDeepCopy(remappedClasses, remappedFunctions)
 
         // TODO: no guarantee that module identity is preserved by `lower`
         return input
@@ -283,6 +286,7 @@ fun <Context : CommonBackendContext, OldData, NewData> transform(op: (OldData) -
 // We need to remap inline function calls after lowering files
 
 fun IrFile.copySavingMappings(
+    remappedFiles: MutableMap<IrFileSymbol, IrFileSymbol>,
     remappedFunctions: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>,
     remappedClasses: MutableMap<IrClassSymbol, IrClassSymbol>,
 ): IrFile {
@@ -296,6 +300,8 @@ fun IrFile.copySavingMappings(
     for (klass in symbolRemapper.declaredClasses) {
         remappedClasses[klass] = symbolRemapper.getReferencedClass(klass)
     }
+
+    remappedFiles[symbol] = newIrFile.symbol
 
     return newIrFile
 }
@@ -331,6 +337,12 @@ fun adjustDefaultArgumentStubs(
 private class CrossFileCallAdjuster(
     val remappedFunctions: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
 ) : IrElementTransformerVoid() {
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+        declaration.overriddenSymbols = declaration.overriddenSymbols.map { remappedFunctions[it] ?: it }
+        return super.visitSimpleFunction(declaration)
+    }
+
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
         return remappedFunctions[expression.symbol]?.let { newSymbol ->
