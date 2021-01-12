@@ -1478,11 +1478,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testSuspendMain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain.kt");
         }
-
-        @TestMetadata("suspendMain_before.kt")
-        public void testSuspendMain_before() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain_before.kt");
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/multiplatform")
