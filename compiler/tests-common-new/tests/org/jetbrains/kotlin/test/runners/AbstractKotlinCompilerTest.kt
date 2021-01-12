@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
+import org.jetbrains.kotlin.test.services.KotlinTestInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 
 abstract class AbstractKotlinCompilerTest {
     companion object {
@@ -43,8 +46,27 @@ abstract class AbstractKotlinCompilerTest {
     }
 
     abstract fun TestConfigurationBuilder.configuration()
+    private lateinit var testInfo: KotlinTestInfo
+
+    @BeforeEach
+    fun initTestInfo(testInfo: TestInfo) {
+        initTestInfo(
+            KotlinTestInfo(
+                className = testInfo.testClass.orElseGet(null)?.name ?: "_undefined_",
+                methodName = testInfo.testMethod.orElseGet(null)?.name ?: "_testUndefined_",
+                tags = testInfo.tags
+            )
+        )
+    }
+
+    fun initTestInfo(testInfo: KotlinTestInfo) {
+        this.testInfo = testInfo
+    }
 
     open fun configure(builder: TestConfigurationBuilder) {
+        with(builder) {
+            testInfo = this@AbstractKotlinCompilerTest.testInfo
+        }
         builder.configuration()
     }
 
