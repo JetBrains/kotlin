@@ -324,6 +324,9 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     }
 }
 
+fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
+    isStable || this == KOTLIN_1_5
+
 interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State
 
