@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.konan.target.*
 
 open class CompileNativeTest @Inject constructor(
         @InputFile val inputFile: File,
-        @Input val target: String
+        @Input val target: KonanTarget,
 ) : DefaultTask() {
     @OutputFile
-    var outputFile = project.buildDir.resolve("bin/test/$target/${inputFile.nameWithoutExtension}.o")
+    var outputFile = project.buildDir.resolve("bin/test/${target.name}/${inputFile.nameWithoutExtension}.o")
 
     @Input
     val clangArgs = mutableListOf<String>()
@@ -28,9 +28,16 @@ open class CompileNativeTest @Inject constructor(
     @TaskAction
     fun compile() {
         val plugin = project.convention.getPlugin(ExecClang::class.java)
-        plugin.execBareClang {
-            it.executable = "clang++"
-            it.args = clangArgs + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
+        if (target.family.isAppleFamily) {
+            plugin.execToolchainClang(target) {
+                it.executable = "clang++"
+                it.args = clangArgs + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
+            }
+        } else {
+            plugin.execBareClang {
+                it.executable = "clang++"
+                it.args = clangArgs + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
+            }
         }
     }
 }
@@ -218,7 +225,7 @@ fun createTestTask(
             "${testTaskName}Compile",
             CompileNativeTest::class.java,
             llvmLinkTask.outputFile,
-            target
+            konanTarget,
     ).apply {
         dependsOn(llvmLinkTask)
         clangArgs.addAll(clangFlags.clangFlags)
