@@ -311,7 +311,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractAntTaskTest> {
-                model("integration/ant/jvm", extension = null, recursive = false, excludeParentDirs = true)
+                model("integration/ant/jvm", extension = null, recursive = false)
             }
 
             testClass<AbstractControlFlowTest> {
