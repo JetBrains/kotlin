@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 open class FirJvmMangleComputer(
@@ -210,7 +211,7 @@ open class FirJvmMangleComputer(
                             is ConeStarProjection -> appendSignature(MangleConstant.STAR_MARK)
                             is ConeKotlinTypeProjection -> {
                                 if (arg.kind != ProjectionKind.INVARIANT) {
-                                    appendSignature(arg.kind.name.toLowerCase())
+                                    appendSignature(arg.kind.name.toLowerCaseAsciiOnly())
                                     appendSignature(MangleConstant.VARIANCE_SEPARATOR)
                                 }
 

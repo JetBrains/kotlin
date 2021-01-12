@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -177,6 +177,56 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
         @TestMetadata("underscoreNames.kt")
         public void testUnderscoreNames() throws Exception {
             runTest("compiler/testData/debug/localVariables/suspend/underscoreNames.kt");
+        }
+
+        @TestMetadata("compiler/testData/debug/localVariables/suspend/completion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(BlockJUnit4ClassRunner.class)
+        public static class Completion extends AbstractLocalVariableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            @Test
+            public void testAllFilesPresentInCompletion() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend/completion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("nonStaticSimple.kt")
+            public void testNonStaticSimple() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticSimple.kt");
+            }
+
+            @Test
+            @TestMetadata("nonStaticStateMachine.kt")
+            public void testNonStaticStateMachine() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticStateMachine.kt");
+            }
+
+            @Test
+            @TestMetadata("staticSimple.kt")
+            public void testStaticSimple() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticSimple.kt");
+            }
+
+            @Test
+            @TestMetadata("staticSimpleReceiver.kt")
+            public void testStaticSimpleReceiver() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticSimpleReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("staticStateMachine.kt")
+            public void testStaticStateMachine() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticStateMachine.kt");
+            }
+
+            @Test
+            @TestMetadata("staticStateMachineReceiver.kt")
+            public void testStaticStateMachineReceiver() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticStateMachineReceiver.kt");
+            }
         }
     }
 }

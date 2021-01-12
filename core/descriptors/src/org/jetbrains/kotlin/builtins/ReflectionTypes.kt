@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import kotlin.reflect.KProperty
 
 class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
@@ -35,7 +36,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
     private class ClassLookup(val numberOfTypeParameters: Int) {
         operator fun getValue(types: ReflectionTypes, property: KProperty<*>): ClassDescriptor {
-            return types.find(property.name.capitalize(), numberOfTypeParameters)
+            return types.find(property.name.capitalizeAsciiOnly(), numberOfTypeParameters)
         }
     }
 

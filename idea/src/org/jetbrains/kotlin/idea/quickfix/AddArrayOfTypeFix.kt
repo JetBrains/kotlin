@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
+import java.util.*
 
 class AddArrayOfTypeFix(expression: KtExpression, expectedType: KotlinType) : KotlinQuickFixAction<KtExpression>(expression) {
 
@@ -22,7 +23,7 @@ class AddArrayOfTypeFix(expression: KtExpression, expectedType: KotlinType) : Ko
         "arrayOf"
     } else {
         val typeName = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(expectedType)
-        "${typeName.decapitalize()}Of"
+        "${typeName.decapitalize(Locale.US)}Of"
 
     }
 

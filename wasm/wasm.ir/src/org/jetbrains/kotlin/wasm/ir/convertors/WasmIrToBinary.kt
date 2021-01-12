@@ -138,7 +138,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
             is WasmImmediate.TypeIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.MemoryIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.DataIdx -> b.writeVarUInt32(x.value)
-            is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value)
+            is WasmImmediate.TableIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.LabelIdx -> b.writeVarUInt32(x.value)
             is WasmImmediate.LabelIdxVector -> {
                 b.writeVarUInt32(x.value.size)
@@ -243,7 +243,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
             b.writeByte(1)
         }
 
-        b.writeVarInt7(table.elementType.code)
+        appendType(table.elementType)
         appendLimits(table.limits)
     }
 
@@ -286,7 +286,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
     }
 
     private fun appendElement(element: WasmElement) {
-        val isFuncIndices = element.values.all { it is WasmTable.Value.Function }
+        val isFuncIndices = element.values.all { it is WasmTable.Value.Function } && element.type == WasmFuncRef
 
         val funcIndices = if (isFuncIndices) {
             element.values.map { (it as WasmTable.Value.Function).function.owner.id!! }

@@ -82,11 +82,14 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.CALL, WasmImmediate.FuncIdx(symbol))
     }
 
-    fun buildCallIndirect(symbol: WasmSymbol<WasmFunctionType>) {
+    fun buildCallIndirect(
+        symbol: WasmSymbol<WasmFunctionType>,
+        tableIdx: WasmSymbolReadOnly<Int> = WasmSymbol(0),
+    ) {
         buildInstr(
             WasmOp.CALL_INDIRECT,
             WasmImmediate.TypeIdx(symbol),
-            WasmImmediate.TableIdx(0)
+            WasmImmediate.TableIdx(tableIdx)
         )
     }
 

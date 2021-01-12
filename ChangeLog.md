@@ -2387,7 +2387,7 @@
 
 
 ## Recent ChangeLogs:
-### [ChangeLog-1.3.X](ChangeLog-1.3.X.md)
-### [ChangeLog-1.2.X](ChangeLog-1.2.X.md)
-### [ChangeLog-1.1.X](ChangeLog-1.1.X.md)
-### [ChangeLog-1.0.X](ChangeLog-1.0.X.md)
+### [ChangeLog-1.3.X](docs/changelogs/ChangeLog-1.3.X.md)
+### [ChangeLog-1.2.X](docs/changelogs/ChangeLog-1.2.X.md)
+### [ChangeLog-1.1.X](docs/changelogs/ChangeLog-1.1.X.md)
+### [ChangeLog-1.0.X](docs/changelogs/ChangeLog-1.0.X.md)

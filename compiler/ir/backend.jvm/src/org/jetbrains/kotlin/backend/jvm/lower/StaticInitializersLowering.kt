@@ -30,10 +30,11 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
         if (staticInitializerStatements.isNotEmpty()) {
             staticInitializerStatements.sortBy {
                 when ((it as? IrSetField)?.symbol?.owner?.origin) {
-                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 1
-                    IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 2
-                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 3
-                    else -> 4
+                    JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE -> 1
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 2
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 3
+                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 4
+                    else -> 5
                 }
             }
             irClass.addFunction {

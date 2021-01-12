@@ -58,7 +58,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             withAssertionCatching { handler.processAfterAllModules(failedAssertions.isNotEmpty()) }
         }
         if (testConfiguration.metaInfoHandlerEnabled) {
-            withAssertionCatching {
+            withAssertionCatching(insertExceptionInStart = true) {
                 globalMetadataInfoHandler.compareAllMetaDataInfos()
             }
         }
@@ -124,11 +124,15 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
     }
 
-    private inline fun withAssertionCatching(block: () -> Unit) {
+    private inline fun withAssertionCatching(insertExceptionInStart: Boolean = false, block: () -> Unit) {
         try {
             block()
         } catch (e: AssertionError) {
-            failedAssertions += e
+            if (insertExceptionInStart) {
+                failedAssertions.add(0, e)
+            } else {
+                failedAssertions += e
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.test.mutes
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import khttp.DEFAULT_TIMEOUT
 import khttp.responses.Response
 import khttp.structures.authorization.Authorization
 
@@ -12,7 +11,7 @@ private val headers = mapOf("Content-type" to "application/json", "Accept" to "a
 private val authUser = object : Authorization {
     override val header = "Authorization" to "Bearer ${getMandatoryProperty("org.jetbrains.kotlin.test.mutes.teamcity.server.token")}"
 }
-private const val customTimeout = DEFAULT_TIMEOUT * 4
+private const val requestTimeoutSec = 120.0
 
 
 internal fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<MuteTestJson> {
@@ -34,7 +33,7 @@ private fun traverseAll(requestHref: String, requestParams: Map<String, String>)
     val jsonResponses = mutableListOf<JsonNode>()
 
     fun request(url: String, params: Map<String, String>): String {
-        val currentResponse = khttp.get(url, headers, params, auth = authUser, timeout = customTimeout)
+        val currentResponse = khttp.get(url, headers, params, auth = authUser, timeout = requestTimeoutSec)
         checkResponseAndLog(currentResponse)
         val currentJsonResponse = jsonObjectMapper.readTree(currentResponse.text)
         jsonResponses.add(currentJsonResponse)
@@ -56,7 +55,7 @@ internal fun uploadMutedTests(uploadMap: Map<String, MuteTestJson>) {
             headers = headers,
             data = jsonObjectMapper.writeValueAsString(muteTestJson),
             auth = authUser,
-            timeout = customTimeout
+            timeout = requestTimeoutSec
         )
         checkResponseAndLog(response)
     }
@@ -68,7 +67,7 @@ internal fun deleteMutedTests(deleteMap: Map<String, MuteTestJson>) {
             "$buildServerUrl/app/rest/mutes/id:${muteTestJson.id}",
             headers = headers,
             auth = authUser,
-            timeout = customTimeout
+            timeout = requestTimeoutSec
         )
         try {
             checkResponseAndLog(response)

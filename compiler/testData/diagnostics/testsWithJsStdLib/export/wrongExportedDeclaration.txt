@@ -30,4 +30,16 @@ package foo {
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): foo.EnumClass
         public final /*synthesized*/ fun values(): kotlin.Array<foo.EnumClass>
     }
+
+    @kotlin.js.JsExport public external interface GoodInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.js.JsExport public interface SomeInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

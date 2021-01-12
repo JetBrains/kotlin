@@ -9,9 +9,10 @@ package kotlin.wasm.internal
 
 internal const val TYPE_INFO_ELEMENT_SIZE = 4
 
-internal const val TYPE_INFO_VTABLE_OFFSET = 2 * TYPE_INFO_ELEMENT_SIZE
-internal const val TYPE_INFO_VTABLE_LENGTH_OFFSET = TYPE_INFO_ELEMENT_SIZE
-internal const val SUPER_CLASS_ID_OFFSET = 0
+
+internal const val TYPE_INFO_ITABLE_PTR_OFFSET = 0
+internal const val TYPE_INFO_VTABLE_LENGTH_OFFSET = TYPE_INFO_ITABLE_PTR_OFFSET + TYPE_INFO_ELEMENT_SIZE
+internal const val TYPE_INFO_VTABLE_OFFSET = TYPE_INFO_VTABLE_LENGTH_OFFSET + TYPE_INFO_ELEMENT_SIZE
 
 internal fun getVtablePtr(obj: Any): Int =
     obj.typeInfo + TYPE_INFO_VTABLE_OFFSET
@@ -19,11 +20,11 @@ internal fun getVtablePtr(obj: Any): Int =
 internal fun getVtableLength(obj: Any): Int =
     wasm_i32_load(obj.typeInfo + TYPE_INFO_VTABLE_LENGTH_OFFSET)
 
-internal fun getInterfaceListLength(obj: Any): Int =
-    wasm_i32_load(obj.typeInfo + TYPE_INFO_VTABLE_LENGTH_OFFSET)
+internal fun getItablePtr(obj: Any): Int =
+    wasm_i32_load(obj.typeInfo + TYPE_INFO_ITABLE_PTR_OFFSET)
 
-internal fun getSuperClassId(obj: Any): Int =
-    wasm_i32_load(obj.typeInfo + SUPER_CLASS_ID_OFFSET)
+internal fun getInterfaceListLength(itablePtr: Int): Int =
+    wasm_i32_load(itablePtr + TYPE_INFO_VTABLE_LENGTH_OFFSET)
 
 internal fun getVirtualMethodId(obj: Any, virtualFunctionSlot: Int): Int {
     val vtablePtr = getVtablePtr(obj)
@@ -31,34 +32,9 @@ internal fun getVirtualMethodId(obj: Any, virtualFunctionSlot: Int): Int {
     return wasm_i32_load(methodIdPtr)
 }
 
-internal fun getInterfaceMethodId(obj: Any, methodSignatureId: Int): Int {
-    val vtableLength = getVtableLength(obj)
-    val vtableSignatures = getVtablePtr(obj) + vtableLength * TYPE_INFO_ELEMENT_SIZE
-    var virtualFunctionSlot = 0
-    while (virtualFunctionSlot < vtableLength) {
-        if (wasm_i32_load(vtableSignatures + virtualFunctionSlot * TYPE_INFO_ELEMENT_SIZE) == methodSignatureId) {
-            return getVirtualMethodId(obj, virtualFunctionSlot)
-        }
-        virtualFunctionSlot++
-    }
-    wasm_unreachable()
-}
-
-
-internal fun isSubClassOfImpl(currentClassId: Int, otherClassId: Int): Boolean {
-    if (currentClassId == otherClassId) return true
-    val anyClassId = wasmClassId<Any>()
-    if (currentClassId == anyClassId && otherClassId != anyClassId) return false
-    return isSubClassOfImpl(wasm_i32_load(currentClassId + SUPER_CLASS_ID_OFFSET), otherClassId)
-}
-
-internal fun isSubClass(obj: Any, classId: Int): Boolean {
-    return isSubClassOfImpl(obj.typeInfo, classId)
-}
-
-internal fun isInterface(obj: Any, interfaceId: Int): Boolean {
-    val vtableLength = getVtableLength(obj)
-    val interfaceListSizePtr = getVtablePtr(obj) + 2 * vtableLength * TYPE_INFO_ELEMENT_SIZE
+// Returns -1 if obj does not implement interface
+internal fun getInterfaceImplId(obj: Any, interfaceId: Int): Int {
+    val interfaceListSizePtr = getItablePtr(obj)
     val interfaceListPtr = interfaceListSizePtr + TYPE_INFO_ELEMENT_SIZE
     val interfaceListSize = wasm_i32_load(interfaceListSizePtr)
 
@@ -66,12 +42,16 @@ internal fun isInterface(obj: Any, interfaceId: Int): Boolean {
     while (interfaceSlot < interfaceListSize) {
         val supportedInterface = wasm_i32_load(interfaceListPtr + interfaceSlot * TYPE_INFO_ELEMENT_SIZE)
         if (supportedInterface == interfaceId) {
-            return true
+            return wasm_i32_load(interfaceListPtr + interfaceListSize * TYPE_INFO_ELEMENT_SIZE + interfaceSlot * TYPE_INFO_ELEMENT_SIZE)
         }
         interfaceSlot++
     }
 
-    return false
+    return -1
+}
+
+internal fun isInterface(obj: Any, interfaceId: Int): Boolean {
+    return getInterfaceImplId(obj, interfaceId) != -1
 }
 
 @ExcludedFromCodegen

@@ -811,9 +811,37 @@ class ExpressionCodegen(
             is Float -> mv.fconst(value)
             is Double -> mv.dconst(value)
             is Number -> mv.iconst(value.toInt())
+            is String -> generateStringConstant(value)
             else -> if (expression.kind == IrConstKind.Null) return nullConstant else mv.aconst(value)
         }
         return expression.onStack
+    }
+
+    private fun generateStringConstant(value: String) {
+        val length = value.length
+
+        // Strings in constant pool contain at most 2^16-1 = 65535 bytes.
+        // Non-BMP characters in UTF8 require at most 4 bytes.
+        val maxPartLength = 65535 / 4
+
+        if (length <= maxPartLength) {
+            mv.aconst(value)
+        } else {
+            // Split strings into parts, each of which satisfies JVM class file constant pool constraints.
+            // Note that even if we split surrogate pairs between parts, they will be joined on concatenation.
+            mv.anew(Type.getObjectType("java/lang/StringBuilder"))
+            mv.dup()
+            mv.iconst(length)
+            mv.invokespecial("java/lang/StringBuilder", "<init>", "(I)V", false)
+            var i = 0
+            while (i < length) {
+                val j = minOf(i + maxPartLength, length)
+                mv.aconst(value.substring(i, j))
+                mv.invokevirtual("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)
+                i += maxPartLength
+            }
+            mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
+        }
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: BlockInfo) =

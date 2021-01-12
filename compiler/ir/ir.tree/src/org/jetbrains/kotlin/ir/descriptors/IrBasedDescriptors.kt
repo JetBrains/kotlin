@@ -89,16 +89,15 @@ abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : D
         }
     }
 
-    override fun getContainingDeclaration() = getContainingDeclaration(owner)
+    override fun getContainingDeclaration(): DeclarationDescriptor =
+        getContainingDeclaration(owner)
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is IrBasedDeclarationDescriptor<*>) return false
-        return owner == other.owner
-    }
+    override fun equals(other: Any?): Boolean =
+        other is IrBasedDeclarationDescriptor<*> && owner == other.owner
 
-    override fun hashCode(): Int {
-        return owner.hashCode()
-    }
+    override fun hashCode(): Int = owner.hashCode()
+
+    override fun toString(): String = javaClass.simpleName + ": " + owner.render()
 }
 
 fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -219,16 +218,19 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 generateExpression(call.dispatchReceiver!!)
                 body.buildConstI32(vfSlot)
                 body.buildCall(context.referenceFunction(wasmSymbols.getVirtualMethodId))
+                body.buildCallIndirect(
+                    symbol = context.referenceFunctionType(function.symbol)
+                )
             } else {
-                val signatureId = context.referenceSignatureId(function.wasmSignature(backendContext.irBuiltIns))
                 generateExpression(call.dispatchReceiver!!)
-                body.buildConstI32Symbol(signatureId)
-                body.buildCall(context.referenceFunction(wasmSymbols.getInterfaceMethodId))
+                body.buildConstI32Symbol(context.referenceInterfaceId(klass.symbol))
+                body.buildCall(context.referenceFunction(wasmSymbols.getInterfaceImplId))
+                body.buildCallIndirect(
+                    tableIdx = WasmSymbolIntWrapper(context.referenceInterfaceTable(function.symbol)),
+                    symbol = context.referenceFunctionType(function.symbol)
+                )
             }
 
-            body.buildCallIndirect(
-                symbol = context.referenceFunctionType(function.symbol)
-            )
         } else {
             // Static function call
             body.buildCall(context.referenceFunction(function.symbol))
@@ -256,7 +258,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         call: IrFunctionAccessExpression,
         function: IrFunction
     ): Boolean {
-        if (tryToGenerateWasmOpIntrinsicCall(function)) {
+        if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
         }
 
@@ -487,7 +489,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     // Return true if function is recognized as intrinsic.
-    fun tryToGenerateWasmOpIntrinsicCall(function: IrFunction): Boolean {
+    fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
         if (function.hasWasmReinterpretAnnotation()) {
             return true
         }
@@ -510,6 +512,25 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                                 error("Immediate $imm is unsupported")
                         }
                     )
+                }
+                2 -> {
+                    when (op) {
+                        WasmOp.REF_TEST -> {
+                            val fromIrType = call.getValueArgument(0)!!.type
+                            val fromWasmType = context.transformBoxedType(fromIrType)
+                            val toIrType = call.getTypeArgument(0)!!
+                            val toWasmType = context.transformBoxedType(toIrType)
+                            immediates = arrayOf(
+                                WasmImmediate.HeapType(fromWasmType),
+                                WasmImmediate.HeapType(toWasmType),
+                            )
+
+                            // ref.test takes RTT as a second operand
+                            generateTypeRTT(toIrType)
+                        }
+                        else ->
+                            error("Op $opString is unsupported")
+                    }
                 }
                 else ->
                     error("Op $opString is unsupported")

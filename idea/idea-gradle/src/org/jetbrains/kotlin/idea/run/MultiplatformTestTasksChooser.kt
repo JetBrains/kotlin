@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.ExternalSystemRunTask
 import org.jetbrains.kotlin.config.ExternalSystemTestRunTask
 import org.jetbrains.kotlin.idea.facet.externalSystemTestRunTasks
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.plugins.gradle.execution.test.runner.*
 import org.jetbrains.plugins.gradle.util.TasksToRun
 import java.util.*
@@ -56,7 +57,7 @@ class MultiplatformTestTasksChooser : TestTasksChooser() {
             return { it.targetName == targetName }
         }
 
-        val taskPrefix = targetName + parts[1].capitalize()
+        val taskPrefix = targetName + parts[1].capitalizeAsciiOnly()
 
         return { it.targetName == targetName && it.taskName.startsWith(taskPrefix) }
     }
@@ -119,7 +120,7 @@ class MultiplatformTestTasksChooser : TestTasksChooser() {
     }
 
     private fun getTaskNames(task: ExternalSystemRunTask): List<String> {
-        return listOf("clean" + task.taskName.capitalize(), task.taskName)
+        return listOf("clean" + task.taskName.capitalizeAsciiOnly(), task.taskName)
     }
 }
 

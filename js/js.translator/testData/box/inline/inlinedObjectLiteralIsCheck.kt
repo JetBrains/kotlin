@@ -1,6 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1282
 
-@JsExport
 interface I {
     fun ok(): String
 }

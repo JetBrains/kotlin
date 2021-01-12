@@ -449,9 +449,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("name", "Name.identifier(\"value\")")
         }
 
-        impl(simpleFunction) {
-            kind = OpenClass
-        }
+        impl(simpleFunction)
 
         impl(safeCallExpression) {
             useTypes(safeCallCheckedSubjectType)

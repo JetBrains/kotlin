@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -5171,6 +5171,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("dataClass.kt")
         public void testDataClass() throws Exception {
             runTest("js/js.translator/testData/box/jsExport/dataClass.kt");
+        }
+
+        @TestMetadata("exportedDefaultStub.kt")
+        public void testExportedDefaultStub() throws Exception {
+            runTest("js/js.translator/testData/box/jsExport/exportedDefaultStub.kt");
         }
 
         @TestMetadata("jsExportInClass.kt")

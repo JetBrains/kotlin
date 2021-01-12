@@ -107,14 +107,18 @@ object JsExportDeclarationChecker : DeclarationChecker {
                     checkTypeParameter(typeParameter)
                 }
 
-                if (descriptor.kind == ENUM_CLASS) {
-                    reportWrongExportedDeclaration("enum class")
+                val wrongDeclaration: String? = when (descriptor.kind) {
+                    ENUM_CLASS -> "enum class"
+                    INTERFACE -> if (descriptor.isExternal) null else "interface"
+                    ANNOTATION_CLASS -> "annotation class"
+                    else -> null
+                }
+
+                if (wrongDeclaration != null) {
+                    reportWrongExportedDeclaration(wrongDeclaration)
                     return
                 }
-                if (descriptor.kind == ANNOTATION_CLASS) {
-                    reportWrongExportedDeclaration("annotation class")
-                    return
-                }
+
                 if (descriptor.kind == ENUM_ENTRY) {
                     // Covered by ENUM_CLASS
                     return

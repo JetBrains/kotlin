@@ -108,7 +108,7 @@ class GenerationState private constructor(
         fun wantsDiagnostics(v: Boolean) =
             apply { wantsDiagnostics = v }
 
-        var jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module); private set
+        private var jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module)
         fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
             apply { jvmBackendClassResolver = v }
 
@@ -153,8 +153,10 @@ class GenerationState private constructor(
     val deserializationConfiguration: DeserializationConfiguration =
         CompilerDeserializationConfiguration(configuration.languageVersionSettings)
 
-    val deprecationProvider =
-        DeprecationResolver(LockBasedStorageManager.NO_LOCKS, configuration.languageVersionSettings, CoroutineCompatibilitySupport.ENABLED, JavaDeprecationSettings)
+    val deprecationProvider = DeprecationResolver(
+        LockBasedStorageManager.NO_LOCKS, configuration.languageVersionSettings, CoroutineCompatibilitySupport.ENABLED,
+        JavaDeprecationSettings
+    )
 
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
@@ -250,6 +252,7 @@ class GenerationState private constructor(
     class ForScript {
         // quite a mess, this one is an input from repl interpreter
         var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
+
         // and the rest is an output from the codegen
         var resultFieldName: String? = null
         var resultTypeString: String? = null
@@ -346,7 +349,7 @@ class GenerationState private constructor(
     fun beforeCompile() {
         markUsed()
 
-        if (!isIrBackend || languageVersionSettings.getFlag(JvmAnalysisFlags.irCheckLocalNames)) {
+        if (!isIrBackend) {
             CodegenBinding.initTrace(this)
         }
     }

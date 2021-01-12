@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -906,9 +906,24 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inline/InlineReifiedPropertyMultifile.kt");
         }
 
+        @TestMetadata("inlineReifiedPropertyVisibility.kt")
+        public void testInlineReifiedPropertyVisibility() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/inlineReifiedPropertyVisibility.kt");
+        }
+
+        @TestMetadata("inlineReifiedVisibility.kt")
+        public void testInlineReifiedVisibility() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/inlineReifiedVisibility.kt");
+        }
+
         @TestMetadata("simpleNamed.kt")
         public void testSimpleNamed() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inline/simpleNamed.kt");
+        }
+
+        @TestMetadata("suspendInlineReified.kt")
+        public void testSuspendInlineReified() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inline/suspendInlineReified.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeListing/inline/enclosingInfo")

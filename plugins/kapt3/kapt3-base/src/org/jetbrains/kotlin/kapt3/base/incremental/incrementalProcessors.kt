@@ -9,6 +9,7 @@ import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import java.io.File
 import java.net.URI
+import java.util.*
 import javax.annotation.processing.Filer
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -49,7 +50,7 @@ class IncrementalProcessor(private val processor: Processor, private val kind: D
             if (fromOptions == null) {
                 RuntimeProcType.NON_INCREMENTAL
             } else {
-                val declaredType = fromOptions.drop("org.gradle.annotation.processing.".length).toUpperCase()
+                val declaredType = fromOptions.drop("org.gradle.annotation.processing.".length).toUpperCase(Locale.US)
                 if (ALLOWED_RUNTIME_TYPES.contains(declaredType)) {
                     enumValueOf(declaredType)
                 } else {

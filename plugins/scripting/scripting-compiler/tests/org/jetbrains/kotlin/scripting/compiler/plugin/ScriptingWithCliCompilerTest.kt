@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 
 class ScriptingWithCliCompilerTest {
 
@@ -60,6 +61,85 @@ class ScriptingWithCliCompilerTest {
                 "there"
             ),
             listOf("42", "hi", "there")
+        )
+    }
+
+    @Test
+    fun testExpressionAsMainKts() {
+        // testing that without specifying default to .main.kts, the annotation is unresolved
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-expression",
+                "\\@file:CompilerOptions(\"-Xunknown1\")"
+            ),
+            listOf(""),
+            expectedExitCode = 1,
+            expectedSomeErrPatterns = listOf(
+                "unresolved reference: CompilerOptions"
+            )
+        )
+        // it seems not possible to make a one-liner with the annotation, and
+        // annotation is the easiest available distinguishing factor for the .main.kts script
+        // so, considering "expecting an element" error as a success here
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-Xdefault-script-extension=.main.kts",
+                "-expression",
+                "\\@file:CompilerOptions(\"-Xunknown1\")"
+            ),
+            listOf(""),
+            expectedExitCode = 1,
+            expectedSomeErrPatterns = listOf(
+                "expecting an element"
+            )
+        )
+    }
+
+    @Test
+    fun testScriptAsMainKts() {
+        val scriptFile = Files.createTempFile("someScript", "").toFile()
+        scriptFile.writeText("@file:CompilerOptions(\"-abracadabra\")\n42")
+
+        // testing that without specifying default to .main.kts the script with extension .txt is not recognized
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-script",
+                scriptFile.path
+            ),
+            listOf(""),
+            expectedExitCode = 1,
+            expectedSomeErrPatterns = listOf(
+                "unrecognized script type: someScript.+"
+            )
+        )
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-Xdefault-script-extension=.main.kts",
+                "-script",
+                scriptFile.path
+            ),
+            listOf(""),
+            expectedExitCode = 1,
+            expectedSomeErrPatterns = listOf(
+                "error: invalid argument: -abracadabra"
+            )
+        )
+        runWithK2JVMCompiler(
+            arrayOf(
+                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-Xdefault-script-extension=main.kts",
+                "-script",
+                scriptFile.path
+            ),
+            listOf(""),
+            expectedExitCode = 1,
+            expectedSomeErrPatterns = listOf(
+                "error: invalid argument: -abracadabra"
+            )
         )
     }
 

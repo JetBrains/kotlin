@@ -5,8 +5,8 @@
 
 package kotlin.random
 
-import kotlin.UnsupportedOperationException
-import kotlin.internal.*
+import kotlin.internal.IMPLEMENTATIONS
+import kotlin.internal.InlineOnly
 
 /**
  * Creates a [java.util.Random][java.util.Random] instance that uses the specified Kotlin [Random] generator as a randomness source.
@@ -49,15 +49,18 @@ internal abstract class AbstractPlatformRandom : Random() {
 
 internal class FallbackThreadLocalRandom : AbstractPlatformRandom() {
     private val implStorage = object : ThreadLocal<java.util.Random>() {
-        override fun initialValue(): java.util.Random {
-            return java.util.Random()
-        }
+        override fun initialValue(): java.util.Random = java.util.Random()
     }
+
     override val impl: java.util.Random
         get() = implStorage.get()
 }
 
-private class PlatformRandom(override val impl: java.util.Random) : AbstractPlatformRandom()
+private class PlatformRandom(override val impl: java.util.Random) : AbstractPlatformRandom(), Serializable {
+    private companion object {
+        private const val serialVersionUID: Long = 0L
+    }
+}
 
 private class KotlinRandom(val impl: Random) : java.util.Random() {
     override fun next(bits: Int): Int = impl.nextBits(bits)
@@ -73,6 +76,7 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
     }
 
     private var seedInitialized: Boolean = false
+
     override fun setSeed(seed: Long) {
         if (!seedInitialized) {
             // ignore seed value from constructor
@@ -80,5 +84,9 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
         } else {
             throw UnsupportedOperationException("Setting seed is not supported.")
         }
+    }
+
+    private companion object {
+        private const val serialVersionUID: Long = 0L
     }
 }

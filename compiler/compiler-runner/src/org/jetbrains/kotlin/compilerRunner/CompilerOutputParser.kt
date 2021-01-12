@@ -30,6 +30,7 @@ import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import java.io.IOException
 import java.io.Reader
+import java.util.*
 import javax.xml.parsers.SAXParserFactory
 
 object CompilerOutputParser {
@@ -124,7 +125,7 @@ object CompilerOutputParser {
                 // We're directly inside the root tag: <MESSAGES>
                 return
             }
-            val qNameLowerCase = qName.toLowerCase()
+            val qNameLowerCase = qName.toLowerCase(Locale.US)
             var category: CompilerMessageSeverity? = CATEGORIES[qNameLowerCase]
             if (category == null) {
                 messageCollector.report(ERROR, "Unknown compiler message tag: $qName")

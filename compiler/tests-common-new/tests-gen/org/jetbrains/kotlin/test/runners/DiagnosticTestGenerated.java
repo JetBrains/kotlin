@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -6964,12 +6964,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("kt37796.kt")
-            public void testKt37796() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt37796.kt");
-            }
-
-            @Test
             @TestMetadata("kt4640.kt")
             public void testKt4640() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/kt4640.kt");
@@ -12430,6 +12424,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("capturedTypeWithTypeVariableSubtyping.kt")
                 public void testCapturedTypeWithTypeVariableSubtyping() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeWithTypeVariableSubtyping.kt");
+                }
+
+                @Test
+                @TestMetadata("capturedTypesSubstitutionIntoAbbreviation.kt")
+                public void testCapturedTypesSubstitutionIntoAbbreviation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypesSubstitutionIntoAbbreviation.kt");
                 }
 
                 @Test

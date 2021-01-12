@@ -178,7 +178,6 @@ class JavaSymbolProvider(
                 javaTypeParameterStack.addStack(parentStack)
             }
         }
-        val methodMap = mutableMapOf<JavaMethod, FirJavaMethod>()
         val firJavaClass = buildJavaClass {
             source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
             session = this@JavaSymbolProvider.session
@@ -201,7 +200,7 @@ class JavaSymbolProvider(
                 }
             }
 
-            val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol } )
+            val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
 
             status = FirResolvedDeclarationStatusImpl(
                 javaClass.visibility,
@@ -230,9 +229,7 @@ class JavaSymbolProvider(
                     classIsAnnotation,
                     valueParametersForAnnotationConstructor,
                     dispatchReceiver
-                ).apply {
-                    methodMap[javaMethod] = this
-                }
+                )
             }
             val javaClassDeclaredConstructors = javaClass.constructors
             val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
@@ -283,10 +280,6 @@ class JavaSymbolProvider(
             }
         )
         firJavaClass.addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
-        // NB: this is done here to unbind possible annotation cycle
-        for ((javaMethod, firJavaMethod) in methodMap) {
-            firJavaMethod.annotations.addAnnotationsFrom(session, javaMethod, javaTypeParameterStack)
-        }
         return firJavaClass
     }
 
@@ -340,7 +333,7 @@ class JavaSymbolProvider(
                 returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
-                addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+                annotationBuilder = { javaField.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
                 initializer = convertJavaInitializerToFir(javaField.initializerValue)
 
                 if (!javaField.isStatic) {
@@ -386,6 +379,7 @@ class JavaSymbolProvider(
                     this@JavaSymbolProvider.session, index, javaTypeParameterStack,
                 )
             }
+            annotationBuilder = { javaMethod.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
             status = FirResolvedDeclarationStatusImpl(
                 javaMethod.visibility,
                 javaMethod.modality
@@ -466,12 +460,14 @@ class JavaSymbolProvider(
 
             if (javaConstructor != null) {
                 this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
-                addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor, javaTypeParameterStack)
+                annotationBuilder = { javaConstructor.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) } }
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
                     valueParameters += valueParameter.toFirValueParameter(
                         this@JavaSymbolProvider.session, index, javaTypeParameterStack,
                     )
                 }
+            } else {
+                annotationBuilder = { emptyList() }
             }
         }.apply {
             containingClassAttr = ownerClassBuilder.symbol.toLookupTag()
@@ -495,6 +491,7 @@ class JavaSymbolProvider(
             visibility = Visibilities.Public
             isInner = false
             isPrimary = true
+            annotationBuilder = { emptyList() }
         }.apply {
             containingClassAttr = ownerClassBuilder.symbol.toLookupTag()
         }

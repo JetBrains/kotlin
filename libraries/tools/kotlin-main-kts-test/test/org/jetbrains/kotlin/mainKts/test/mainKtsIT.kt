@@ -113,7 +113,7 @@ fun runWithKotlincAndMainKts(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    cacheDir: File? = null
+    cacheDir: Path? = null
 ) {
     val paths = PathUtil.kotlinPathsForDistDirectory
     runWithKotlinc(
@@ -123,7 +123,7 @@ fun runWithKotlincAndMainKts(
                 Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
             }
         ),
-        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.absolutePath ?: ""))
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: ""))
     )
 }
 
@@ -143,9 +143,9 @@ fun runWithK2JVMCompilerAndMainKts(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    cacheDir: File? = null
+    cacheDir: Path? = null
 ) {
-    withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
+    withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.toAbsolutePath()?.toString() ?: "") {
         runWithK2JVMCompiler(
             scriptPath, expectedOutPatterns, expectedExitCode,
             classpath = listOf(

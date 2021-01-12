@@ -75,7 +75,7 @@ FILE: RedundantExplicitTypeChecker.kt
     public final fun test(boolean: R|kotlin/Boolean|): R|kotlin/Unit| {
         lval expectedLong: R|kotlin/Long| = when () {
             R|<local>/boolean| ->  {
-                Int(42)
+                Long(42)
             }
             else ->  {
                 ^test Unit

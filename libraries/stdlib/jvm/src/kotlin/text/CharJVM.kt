@@ -8,6 +8,8 @@
 
 package kotlin.text
 
+import java.util.Locale
+
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
  */
@@ -86,18 +88,104 @@ public inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
 public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
 
 /**
- * Converts this character to uppercase.
- * @sample samples.text.Chars.toUpperCase
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
+@OptIn(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-public actual inline fun Char.toUpperCase(): Char = Character.toUpperCase(this)
+public actual inline fun Char.toUpperCase(): Char = uppercaseChar()
 
 /**
- * Converts this character to lowercase.
- * @sample samples.text.Chars.toLowerCase
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [uppercase] function.
+ * If this character has no mapping equivalent, the character itself is returned.
+ *
+ * @sample samples.text.Chars.uppercase
  */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public actual inline fun Char.toLowerCase(): Char = Character.toLowerCase(this)
+public actual inline fun Char.uppercaseChar(): Char = Character.toUpperCase(this)
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.uppercase()` returns `"\u0046\u0046"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no upper case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.uppercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Char.uppercase(): String = toString().uppercase()
+
+/**
+ * Converts this character to upper case using Unicode mapping rules of the specified [locale].
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.uppercase(Locale.US)` returns `"\u0046\u0046"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no upper case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.uppercaseLocale
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Char.uppercase(locale: Locale): String = toString().uppercase(locale)
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ */
+@OptIn(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun Char.toLowerCase(): Char = lowercaseChar()
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [lowercase] function.
+ * If this character has no mapping equivalent, the character itself is returned.
+ *
+ * @sample samples.text.Chars.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Char.lowercaseChar(): Char = Character.toLowerCase(this)
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\u0130'.lowercase()` returns `"\u0069\u0307"`,
+ * where `'\u0130'` is the LATIN CAPITAL LETTER I WITH DOT ABOVE character (`İ`).
+ * If this character has no lower case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.lowercase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public actual inline fun Char.lowercase(): String = toString().lowercase()
+
+/**
+ * Converts this character to lower case using Unicode mapping rules of the specified [locale].
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\u0130'.lowercase(Locale.US)` returns `"\u0069\u0307"`,
+ * where `'\u0130'` is the LATIN CAPITAL LETTER I WITH DOT ABOVE character (`İ`).
+ * If this character has no lower case mapping, the result of `toString()` of this char is returned.
+ *
+ * @sample samples.text.Chars.lowercaseLocale
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Char.lowercase(locale: Locale): String = toString().lowercase(locale)
 
 /**
  * Returns `true` if this character is a titlecase character.
@@ -107,13 +195,70 @@ public actual inline fun Char.toLowerCase(): Char = Character.toLowerCase(this)
 public inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
 
 /**
- * Converts this character to titlecase.
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
  *
  * @see Character.toTitleCase
- * @sample samples.text.Chars.toTitleCase
  */
+@OptIn(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
-public inline fun Char.toTitleCase(): Char = Character.toTitleCase(this)
+public inline fun Char.toTitleCase(): Char = titlecaseChar()
+
+/**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [titlecase] function.
+ * If this character has no mapping equivalent, the result of calling [uppercaseChar] is returned.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this)
+
+/**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.titlecase()` returns `"\u0046\u0066"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no title case mapping, the result of [uppercase] is returned instead.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Char.titlecase(): String {
+    val uppercase = uppercase()
+    if (uppercase.length > 1) {
+        return if (this == '\u0149') uppercase else uppercase[0] + uppercase.substring(1).lowercase()
+    }
+    return titlecaseChar().toString()
+}
+
+/**
+ * Converts this character to title case using Unicode mapping rules of the specified [locale].
+ *
+ * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
+ * For example, `'\uFB00'.titlecase(Locale.US)` returns `"\u0046\u0066"`,
+ * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
+ * If this character has no title case mapping, the result of `uppercase(locale)` is returned instead.
+ *
+ * @sample samples.text.Chars.titlecaseLocale
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public fun Char.titlecase(locale: Locale): String {
+    val localizedUppercase = uppercase(locale)
+    if (localizedUppercase.length > 1) {
+        return if (this == '\u0149') localizedUppercase else localizedUppercase[0] + localizedUppercase.substring(1).lowercase()
+    }
+    if (localizedUppercase != uppercase()) {
+        return localizedUppercase
+    }
+    return titlecaseChar().toString()
+}
 
 /**
  * Returns a value indicating a character's general category.

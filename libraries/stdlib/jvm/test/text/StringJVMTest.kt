@@ -75,53 +75,67 @@ class StringJVMTest {
     }
 
     @Test fun capitalize() {
+        fun testCapitalize(expected: String, string: String) {
+            assertEquals(expected, string.capitalize())
+            assertEquals(expected, string.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+        }
         // Case mapping that results in multiple characters (validating Character.toUpperCase was not used).
         assertEquals("SSßß", "ßßß".capitalize())
+        assertEquals("Ssßß", "ßßß".replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() })
 
         // Case mapping where title case is different than uppercase and so Character.toTitleCase is preferred.
-        assertEquals("ǲǳǳ", "ǳǳǳ".capitalize())
-        assertEquals("ǱǱǱ", "ǱǱǱ".capitalize())
+        testCapitalize("ǲǳǳ", "ǳǳǳ")
+        testCapitalize("ǱǱǱ", "ǱǱǱ")
     }
 
     @Test fun decapitalize() {
-        assertEquals("aBC", "ABC".decapitalize())
-        assertEquals("abc", "Abc".decapitalize())
-        assertEquals("abc", "abc".decapitalize())
-
+        fun testDecapitalize(expected: String, string: String) {
+            assertEquals(expected, string.decapitalize())
+            assertEquals(expected, string.replaceFirstChar { it.lowercase(Locale.getDefault()) })
+        }
         // Case mapping where title case is different than uppercase.
-        assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize())
-        assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize())
+        testDecapitalize("ǳǳǳ", "Ǳǳǳ")
+        testDecapitalize("ǳǳǳ", "ǲǳǳ")
     }
 
     @Test fun capitalizeLocale() {
-        assertEquals("ABC", "ABC".capitalize(Locale.US))
-        assertEquals("Abc", "Abc".capitalize(Locale.US))
-        assertEquals("Abc", "abc".capitalize(Locale.US))
+        fun testCapitalizeLocale(expected: String, string: String, locale: Locale) {
+            assertEquals(expected, string.capitalize(locale))
+            assertEquals(expected, string.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() })
+        }
+        testCapitalizeLocale("ABC", "ABC", Locale.US)
+        testCapitalizeLocale("Abc", "Abc", Locale.US)
+        testCapitalizeLocale("Abc", "abc", Locale.US)
 
         // Locale-specific case mappings.
-        assertEquals("İii", "iii".capitalize(Locale("tr", "TR")))
-        assertEquals("Iii", "iii".capitalize(Locale.US))
+        testCapitalizeLocale("İii", "iii", Locale("tr", "TR"))
+        testCapitalizeLocale("Iii", "iii", Locale.US)
 
         // Case mapping that results in multiple characters (validating Character.toUpperCase was not used).
         assertEquals("SSßß", "ßßß".capitalize(Locale.US))
+        assertEquals("Ssßß", "ßßß".replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString() })
 
         // Case mapping where title case is different than uppercase and so Character.toTitleCase is preferred.
-        assertEquals("ǲǳǳ", "ǳǳǳ".capitalize(Locale.US))
-        assertEquals("ǱǱǱ", "ǱǱǱ".capitalize(Locale.US))
+        testCapitalizeLocale("ǲǳǳ", "ǳǳǳ", Locale.US)
+        testCapitalizeLocale("ǱǱǱ", "ǱǱǱ", Locale.US)
     }
 
     @Test fun decapitalizeLocale() {
-        assertEquals("aBC", "ABC".decapitalize(Locale.US))
-        assertEquals("abc", "Abc".decapitalize(Locale.US))
-        assertEquals("abc", "abc".decapitalize(Locale.US))
+        fun testDecapitalizeLocale(expected: String, string: String, locale: Locale) {
+            assertEquals(expected, string.decapitalize(locale))
+            assertEquals(expected, string.replaceFirstChar { it.lowercase(locale) })
+        }
+        testDecapitalizeLocale("aBC", "ABC", Locale.US)
+        testDecapitalizeLocale("abc", "Abc", Locale.US)
+        testDecapitalizeLocale("abc", "abc", Locale.US)
 
         // Locale-specific case mappings.
-        assertEquals("ıII", "III".decapitalize(Locale("tr", "TR")))
-        assertEquals("iII", "III".decapitalize(Locale.US))
+        testDecapitalizeLocale("ıII", "III", Locale("tr", "TR"))
+        testDecapitalizeLocale("iII", "III", Locale.US)
 
         // Case mapping where title case is different than uppercase.
-        assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize(Locale.US))
-        assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize(Locale.US))
+        testDecapitalizeLocale("ǳǳǳ", "Ǳǳǳ", Locale.US)
+        testDecapitalizeLocale("ǳǳǳ", "ǲǳǳ", Locale.US)
     }
 
     @Test
