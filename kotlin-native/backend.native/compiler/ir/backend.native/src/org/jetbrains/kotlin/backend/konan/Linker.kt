@@ -3,11 +3,8 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.target.supportsMimallocAllocator
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -169,7 +166,7 @@ internal class Linker(val context: Context) {
                         """
                         Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
                             
-                            kotlin.native.cacheKind=none
+                            kotlin.native.cacheKind.${target.presetName}=none
                             
                         Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
                         """.trimIndent()
