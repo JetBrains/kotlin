@@ -32,7 +32,7 @@
 #define CURRENT_SOURCE_LOCATION nullptr
 #endif
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message, ...);
+RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
 
 namespace internal {
 
@@ -42,7 +42,7 @@ inline RUNTIME_NORETURN void TODOImpl(const char* location) {
 
 // TODO: Support format string when `RuntimeAssertFailed` supports it.
 inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message) {
-    RuntimeAssertFailed(location, message);
+    RuntimeAssertFailed(location, "%s", message);
 }
 
 } // namespace internal
