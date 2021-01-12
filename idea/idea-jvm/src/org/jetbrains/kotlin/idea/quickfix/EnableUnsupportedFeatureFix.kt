@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.isStableOrReadyForPreview
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
@@ -104,7 +105,7 @@ sealed class EnableUnsupportedFeatureFix(
             val apiVersionOnly = sinceVersion <= languageFeatureSettings.languageVersion &&
                     feature.sinceApiVersion > languageFeatureSettings.apiVersion
 
-            if (!sinceVersion.isStable && !ApplicationManager.getApplication().isInternal) {
+            if (!sinceVersion.isStableOrReadyForPreview() && !ApplicationManager.getApplication().isInternal) {
                 return null
             }
 

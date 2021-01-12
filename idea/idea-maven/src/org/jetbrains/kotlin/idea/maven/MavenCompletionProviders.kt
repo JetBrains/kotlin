@@ -11,14 +11,15 @@ import org.jetbrains.idea.maven.plugins.api.MavenFixedValueReferenceProvider
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValues
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.isStableOrReadyForPreview
 
 class MavenLanguageVersionsCompletionProvider : MavenFixedValueReferenceProvider(
-    LanguageVersion.values().filter { it.isStable || ApplicationManager.getApplication().isInternal }.map { it.versionString }
+    LanguageVersion.values().filter { it.isStableOrReadyForPreview() || ApplicationManager.getApplication().isInternal }.map { it.versionString }
         .toTypedArray()
 )
 
 class MavenApiVersionsCompletionProvider : MavenFixedValueReferenceProvider(
-    LanguageVersion.values().filter { it.isStable || ApplicationManager.getApplication().isInternal }.map { it.versionString }
+    LanguageVersion.values().filter { it.isStableOrReadyForPreview() || ApplicationManager.getApplication().isInternal }.map { it.versionString }
         .toTypedArray()
 )
 
