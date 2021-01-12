@@ -238,15 +238,24 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         fileName: String,
         marker: String,
         insertString: String,
+        highlightFileBeforeStartTyping: Boolean = false,
         surroundItems: String = "\n",
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
         note: String = ""
     ) = perfTypeAndAutocomplete(
-        project(), stats, fileName, marker, insertString, surroundItems,
-        lookupElements = lookupElements, typeAfterMarker = typeAfterMarker,
-        revertChangesAtTheEnd = revertChangesAtTheEnd, note = note
+        project = project(),
+        stats = stats,
+        fileName = fileName,
+        marker = marker,
+        insertString = insertString,
+        highlightFileBeforeStartTyping = highlightFileBeforeStartTyping,
+        surroundItems = surroundItems,
+        lookupElements = lookupElements,
+        typeAfterMarker = typeAfterMarker,
+        revertChangesAtTheEnd = revertChangesAtTheEnd,
+        note = note
     )
 
     fun perfTypeAndAutocomplete(
@@ -255,6 +264,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         fileName: String,
         marker: String,
         insertString: String,
+        highlightFileBeforeStartTyping: Boolean = false,
         surroundItems: String = "\n",
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
@@ -272,7 +282,12 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             typeAfterMarker,
             surroundItems,
             insertString,
-            setupBlock = {},
+            setupBeforeTypingBlock = { fixture ->
+                if (highlightFileBeforeStartTyping) {
+                    fixture.doHighlighting()
+                }
+            },
+            setupAfterTypingBlock = {},
             testBlock = { fixture: Fixture ->
                 fixture.complete()
             },
@@ -308,7 +323,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             typeAfterMarker,
             surroundItems,
             insertString,
-            setupBlock = { fixture: Fixture ->
+            setupBeforeTypingBlock = {},
+            setupAfterTypingBlock = { fixture: Fixture ->
                 fileText = fixture.document.text
             },
             testBlock = { fixture: Fixture ->
@@ -333,7 +349,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         typeAfterMarker: Boolean,
         surroundItems: String,
         insertString: String,
-        setupBlock: (Fixture) -> Unit,
+        setupBeforeTypingBlock: (Fixture) -> Unit,
+        setupAfterTypingBlock: (Fixture) -> Unit,
         testBlock: (Fixture) -> V,
         tearDownCheck: (Fixture, V?) -> Unit,
         revertChangesAtTheEnd: Boolean
@@ -371,9 +388,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         }
                         editor.caretModel.moveToOffset(editor.caretModel.offset - 2)
                     }
-
+                    setupBeforeTypingBlock(fixture)
                     fixture.type(insertString)
-                    setupBlock(fixture)
+                    setupAfterTypingBlock(fixture)
                 }
                 test {
                     it.value = testBlock(fixture)
