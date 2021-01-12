@@ -203,6 +203,7 @@ class KotlinMultiplatformPlugin(
     private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
 
         val targets = project.multiplatformExtension.targets
+        val metadataTarget = project.multiplatformExtension.metadata()
         val kotlinSoftwareComponent = project.multiplatformExtension.rootSoftwareComponent
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
@@ -213,12 +214,19 @@ class KotlinMultiplatformPlugin(
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
                 kotlinSoftwareComponent.publicationDelegate = this@apply
 
-                project.multiplatformExtension.metadata {}.kotlinComponents.filterIsInstance<KotlinTargetComponentWithPublication>()
+                metadataTarget.kotlinComponents.filterIsInstance<KotlinTargetComponentWithPublication>()
                     .single().publicationDelegate = this@apply
+
+                project.whenEvaluated {
+                    if (!metadataTarget.publishable) return@whenEvaluated
+                    metadataTarget.kotlinComponents
+                        .flatMap { component -> component.sourcesArtifacts }
+                        .forEach { sourcesArtifact -> artifact(sourcesArtifact) }
+                }
             }
 
             // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
-            (targets.getByName(METADATA_TARGET_NAME) as AbstractKotlinTarget).createMavenPublications(publishing.publications)
+            metadataTarget.createMavenPublications(publishing.publications)
             targets
                 .withType(AbstractKotlinTarget::class.java).matching { it.publishable && it.name != METADATA_TARGET_NAME }
                 .all {

@@ -266,6 +266,19 @@ class HierarchicalMppIT : BaseGradleIT() {
 
             assertEquals(expectedProjectStructureMetadata, parsedProjectStructureMetadata)
         }
+
+        ZipFile(
+            project.projectDir.parentFile.resolve(
+                "repo/com/example/foo/my-lib-foo/1.0/my-lib-foo-1.0-sources.jar"
+            )
+        ).use { publishedSourcesJar ->
+            publishedSourcesJar.checkAllEntryNamesArePresent(
+                "commonMain/Foo.kt",
+                "jvmAndJsMain/FooJvmAndJs.kt",
+                "linuxAndJsMain/FooLinuxAndJs.kt",
+                "linuxX64Main/FooLinux.kt"
+            )
+        }
     }
 
     private fun checkMyLibBar(compiledProject: CompiledProject, subprojectPrefix: String?) = with(compiledProject) {
@@ -303,6 +316,19 @@ class HierarchicalMppIT : BaseGradleIT() {
             )
 
             assertEquals(expectedProjectStructureMetadata, parsedProjectStructureMetadata)
+        }
+
+        ZipFile(
+            project.projectDir.parentFile.resolve(
+                "repo/com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-sources.jar"
+            )
+        ).use { publishedSourcesJar ->
+            publishedSourcesJar.checkAllEntryNamesArePresent(
+                "commonMain/Bar.kt",
+                "jvmAndJsMain/BarJvmAndJs.kt",
+                "linuxAndJsMain/BarLinuxAndJs.kt",
+                "linuxX64Main/BarLinux.kt"
+            )
         }
 
         checkNamesOnCompileClasspath(
