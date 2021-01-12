@@ -177,7 +177,7 @@ void BackRefFromAssociatedObject::releaseRef() {
 }
 
 void BackRefFromAssociatedObject::detach() {
-  RuntimeAssert(atomicGet(&refCount) == 0, "unexpected refCount")
+  RuntimeAssert(atomicGet(&refCount) == 0, "unexpected refCount");
   obj_ = nullptr; // Handled in addRef/tryAddRef/releaseRef/ref.
 }
 

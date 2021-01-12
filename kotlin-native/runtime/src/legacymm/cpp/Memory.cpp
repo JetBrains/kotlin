@@ -1164,7 +1164,7 @@ void freeAggregatingFrozenContainer(ContainerHeader* container) {
   auto* state = memoryState;
   RuntimeAssert(isAggregatingFrozenContainer(container), "expected fictitious frozen container");
   MEMORY_LOG("%p is fictitious frozen container\n", container);
-  RuntimeAssert(!container->buffered(), "frozen objects must not participate in GC")
+  RuntimeAssert(!container->buffered(), "frozen objects must not participate in GC");
 #if USE_GC
   // Forbid finalizerQueue handling.
   ++state->finalizerQueueSuspendCount;
@@ -2056,7 +2056,7 @@ MemoryState* initMemory(bool firstRuntime) {
                 ==
                 offsetof(MetaObjHeader, typeInfo_),
                 "Layout mismatch");
-  RuntimeAssert(sizeof(FrameOverlay) % sizeof(ObjHeader**) == 0, "Frame overlay should contain only pointers")
+  RuntimeAssert(sizeof(FrameOverlay) % sizeof(ObjHeader**) == 0, "Frame overlay should contain only pointers");
   RuntimeAssert(memoryState == nullptr, "memory state must be clear");
   memoryState = konanConstructInstance<MemoryState>();
   INIT_EVENT(memoryState)
