@@ -1595,7 +1595,7 @@ internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): St
 private fun MethodBridge.ReturnValue.getObjCEncoding(context: Context): String = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> "v"
-    MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) "L" else "I"
+    MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) "Q" else "I"
     is MethodBridge.ReturnValue.Mapped -> this.bridge.objCEncoding
     MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.encoding
 
