@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -129,13 +130,21 @@ abstract class DataClassMembersGenerator(
             if (!irClass.isInline) {
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
             }
+
             +irIfThenReturnFalse(irNotIs(irOther(), irType))
             val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
-            for (property in properties) {
-                val arg1 = irGetProperty(irThis(), property)
-                val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)
-                +irIfThenReturnFalse(irNotEquals(arg1, arg2))
-            }
+
+            properties
+                .sortedBy {
+                    if (it.backingField!!.type.isPrimitiveType()) 1
+                    else 0
+                }
+                .forEach { property ->
+                    val arg1 = irGetProperty(irThis(), property)
+                    val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)
+                    +irIfThenReturnFalse(irNotEquals(arg1, arg2))
+                }
+
             +irReturnTrue()
         }
 
