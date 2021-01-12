@@ -538,7 +538,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(y: Any, %composer: Composer<*>?, %changed: Int) {
+            fun A(y: Any, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
               A(EmptyClass(), %composer, EmptyClass.%stable)
               A(SingleStableValInt(123), %composer, SingleStableValInt.%stable)
@@ -557,7 +557,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               A(NonBackingFieldUnstableVar(), %composer, NonBackingFieldUnstableVar.%stable)
               A(StableDelegateProp(), %composer, StableDelegateProp.%stable)
               A(UnstableDelegateProp(), %composer, UnstableDelegateProp.%stable)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001)
               }
             }
@@ -654,12 +654,12 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               static val %stable: Int = UnstableDelegate.%stable
             }
             @Composable
-            fun A(y: Any, %composer: Composer<*>?, %changed: Int) {
+            fun A(y: Any, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
               A(X(listOf(StableClass())), %composer, 0b1000)
               A(StableDelegateProp(), %composer, 0)
               A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001)
               }
             }
@@ -686,10 +686,10 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(y: Any, %composer: Composer<*>?, %changed: Int) {
+            fun A(y: Any, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<A(Wrap...>:Test.kt")
               A(Wrapper(Foo()), %composer, Wrapper.%stable)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, %composer, %changed or 0b0001)
               }
             }
@@ -723,7 +723,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun <V> B(value: V, %composer: Composer<*>?, %changed: Int) {
+            fun <V> B(value: V, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B)<A(Wrap...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -734,26 +734,26 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(value, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun <T> X(items: List<T>, itemContent: Function3<T, Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+            fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(X)P(1)*<itemCo...>:Test.kt")
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
                 val item = tmp0_iterator.next()
                 itemContent(item, %composer, 0b01110000 and %changed)
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 X(items, itemContent, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun C(items: List<String>, %composer: Composer<*>?, %changed: Int) {
+            fun C(items: List<String>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(C)<X(item...>:Test.kt")
-              X(items, composableLambda(%composer, <>, true, "C<A(item...>,<A(Wrap...>:Test.kt") { item: String, %composer: Composer<*>?, %changed: Int ->
+              X(items, composableLambda(%composer, <>, true, "C<A(item...>,<A(Wrap...>:Test.kt") { item: String, %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {
                   %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
@@ -765,7 +765,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                   %composer.skipToGroupEnd()
                 }
               }, %composer, 0b00111000)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 C(items, %composer, %changed or 0b0001)
               }
             }
@@ -807,17 +807,17 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               static val %stable: Int = 0
             }
             @Composable
-            fun A(y: Int, x: Any, %composer: Composer<*>?, %changed: Int) {
+            fun A(y: Int, x: Any, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)P(1)<B(x)>:Test.kt")
               B(x, %composer, 0b1000)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, x, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun B(x: Any, %composer: Composer<*>?, %changed: Int) {
+            fun B(x: Any, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B):Test.kt")
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
               }
             }
@@ -841,17 +841,17 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               static val %stable: Int = 8
             }
             @Composable
-            fun A(y: Int, x: Foo, %composer: Composer<*>?, %changed: Int) {
+            fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)P(1)<B(x)>:Test.kt")
               B(x, %composer, 0b1000)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(y, x, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun B(x: Any, %composer: Composer<*>?, %changed: Int) {
+            fun B(x: Any, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B):Test.kt")
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(x, %composer, %changed or 0b0001)
               }
             }
