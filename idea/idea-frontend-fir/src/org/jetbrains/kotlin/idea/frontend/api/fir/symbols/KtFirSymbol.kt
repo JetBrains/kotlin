@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
@@ -38,8 +39,11 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     FirDeclarationOrigin.IntersectionOverride -> KtSymbolOrigin.INTERSECTION_OVERRIDE
     FirDeclarationOrigin.Delegated -> KtSymbolOrigin.DELEGATED
     FirDeclarationOrigin.Synthetic -> {
-        if (isSyntheticFunctionalInterface()) KtSymbolOrigin.LIBRARY
-        else throw InvalidFirDeclarationOriginForSymbol(this)
+        when {
+            isSyntheticFunctionalInterface() -> KtSymbolOrigin.LIBRARY
+            this is FirSyntheticProperty -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
+            else -> throw InvalidFirDeclarationOriginForSymbol(this)
+        }
     }
 
     else -> {
