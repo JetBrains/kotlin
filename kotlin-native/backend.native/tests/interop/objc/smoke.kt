@@ -67,7 +67,7 @@ fun run() {
 
     // hashCode (directly):
     // hash() returns value of NSUInteger type.
-    val hash = if (Platform.osFamily == OsFamily.WATCHOS && Platform.cpuArchitecture != CpuArchitecture.X64) {
+    val hash = if (sizeOf<NSUIntegerVar>() == 4L) {
         // `typedef unsigned int NSInteger` on watchOS.
         foo.hash().toInt()
     } else {
