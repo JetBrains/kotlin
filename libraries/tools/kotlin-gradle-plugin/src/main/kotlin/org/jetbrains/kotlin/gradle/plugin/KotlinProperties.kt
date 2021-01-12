@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.util.*
@@ -195,10 +196,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.commonizer.jvmArgs")
 
     /**
-     * Dependencies caching strategy. The default is static.
+     * Dependencies caching strategy for all targets that support caches.
      */
-    val nativeCacheKind: NativeCacheKind
-        get() = property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) } ?: CacheBuilder.DEFAULT_CACHE_KIND
+    val nativeCacheKind: NativeCacheKind?
+        get() = property("kotlin.native.cacheKind")?.let { NativeCacheKind.byCompilerArgument(it) }
+
+    /**
+     * Dependencies caching strategy for [target].
+     */
+    fun nativeCacheKindForTarget(target: KonanTarget): NativeCacheKind? =
+        property("kotlin.native.cacheKind.${target.name}")?.let { NativeCacheKind.byCompilerArgument(it) }
 
     /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
