@@ -5,35 +5,46 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
  * This pass runs after inlining and performs the following additional transformations over some operations:
  *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
-internal class PostInlineLowering(val context: Context) : FileLoweringPass {
+internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
     private val symbols get() = context.ir.symbols
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val irFile = container.file
+        irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
+                    super.visitDeclaration(declaration,
+                            data = (declaration as? IrSymbolOwner)?.let { context.createIrBuilder(it.symbol, it.startOffset, it.endOffset) }
+                                    ?: data
+                    )
 
-            override fun visitClassReference(expression: IrClassReference): IrExpression {
-                expression.transformChildrenVoid()
+            override fun visitClassReference(expression: IrClassReference, data: IrBuilderWithScope): IrExpression {
+                expression.transformChildren(this, data)
 
-                return builder.at(expression).run {
+                return data.at(expression).run {
                     (expression.symbol as? IrClassSymbol)?.let { irKClass(this@PostInlineLowering.context, it) }
                             ?:
                             // E.g. for `T::class` in a body of an inline function itself.
@@ -41,10 +52,10 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 }
             }
 
-            override fun visitGetClass(expression: IrGetClass): IrExpression {
-                expression.transformChildrenVoid()
+            override fun visitGetClass(expression: IrGetClass, data: IrBuilderWithScope): IrExpression {
+                expression.transformChildren(this, data)
 
-                return builder.at(expression).run {
+                return data.at(expression).run {
                     irCall(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
                         val typeInfo = irCall(symbols.getObjectTypeInfo).apply {
                             putValueArgument(0, expression.argument)
@@ -55,8 +66,8 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 }
             }
 
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid(this)
+            override fun visitCall(expression: IrCall, data: IrBuilderWithScope): IrExpression {
+                expression.transformChildren(this, data)
 
                 // Function inlining is changing function symbol at callsite
                 // and unbound symbol replacement is happening later.
@@ -83,13 +94,16 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                             context.irBuiltIns.stringType,
                             IrConstKind.String, builder.toString()))
                 } else if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
-                    return with (KTypeGenerator(context, irFile, expression, needExactTypeParameters = true)) {
-                        builder.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = false)
+                    // Inline functions themselves are not called (they have been inlined at all call sites),
+                    // so it is ok not to build exact type parameters for them.
+                    val needExactTypeParameters = (container as? IrSimpleFunction)?.isInline != true
+                    return with (KTypeGenerator(context, irFile, expression, needExactTypeParameters)) {
+                        data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = false)
                     }
                 }
 
                 return expression
             }
-        })
+        }, data = context.createIrBuilder((container as IrSymbolOwner).symbol, irBody.startOffset, irBody.endOffset))
     }
 }

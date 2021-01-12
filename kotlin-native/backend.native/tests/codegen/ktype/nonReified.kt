@@ -76,3 +76,13 @@ fun test_reifiedUpperBound() {
     assertTrue((t as KTypeParameter).isReified)
     assertEquals("T", (t as KTypeParameter).name)
 }
+
+@OptIn(kotlin.ExperimentalStdlibApi::class)
+inline fun <reified T : Comparable<T>> recursionInReified() = typeOf<List<T>>()
+
+@Test
+fun test_recursionInReified() {
+    val l = recursionInReified<Int>()
+    assertEquals(List::class, l.classifier)
+    assertEquals(Int::class, l.arguments.single().type!!.classifier)
+}
