@@ -1,0 +1,112 @@
+//noinspection GrPackage
+
+project("defaultJavaModule") {
+  apply plugin: "java"
+  apply plugin: "idea"
+}
+
+project("moduleWithSourceSetDirBothAsResourceAndJava") {
+  apply plugin: "java"
+  apply plugin: "idea"
+
+  sourceSets.main.resources.srcDir 'src/main/java'
+  sourceSets.test.resources.srcDir 'src/test/java'
+}
+
+project("moduleWithSourceSetDirBothAsResourceAndGroovy") {
+  apply plugin: "groovy"
+  apply plugin: "idea"
+
+  sourceSets.main.resources.srcDir 'src/main/groovy'
+  sourceSets.test.resources.srcDir 'src/test/groovy'
+}
+
+project("moduleWithCustomSourceSet") {
+  apply plugin: "java"
+  apply plugin: "idea"
+
+  sourceSets {
+    custom
+  }
+
+  sourceSets.custom.java.srcDir 'src/custom/java'
+}
+
+project("withIntegrationTests") {
+  apply plugin: 'java'
+  apply plugin: "idea"
+
+  sourceSets {
+    integrationTest {
+      java.srcDir file('src/integration-test/java')
+      resources.srcDir file('src/integration-test/resources')
+    }
+  }
+
+  dependencies {
+    integrationTestCompile sourceSets.main.output
+    integrationTestCompile configurations.testCompile
+    integrationTestCompile sourceSets.test.output
+    integrationTestRuntime configurations.testRuntime
+  }
+
+  //noinspection GrUnresolvedAccess
+  task integrationTest(type: Test, dependsOn: jar) {
+    if (sourceSets.integrationTest.output.hasProperty("classesDir")) {
+      testClassesDir = sourceSets.integrationTest.output.classesDir
+    } else {
+      testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    }
+    classpath = sourceSets.integrationTest.runtimeClasspath
+  }
+
+  check.dependsOn integrationTest
+}
+
+project("withIdeaPluginCustomization1") {
+  apply plugin: 'java'
+  apply plugin: 'idea'
+
+  idea {
+    module {
+      testSourceDirs += file('src/intTest/java')
+      testSourceDirs += file('src/intTest/resources')
+      excludeDirs += file('some-extra-exclude-folder')
+    }
+  }
+}
+
+// see https://youtrack.jetbrains.com/issue/IDEA-119365
+project("withIdeaPluginCustomization2") {
+  apply plugin: 'java'
+  apply plugin: 'idea'
+
+  idea {
+    module {
+      sourceDirs += testSourceDirs
+      testSourceDirs = []
+    }
+  }
+}
+
+// see https://youtrack.jetbrains.com/issue/IDEA-120562
+project("withIdeaPluginCustomization3") {
+  apply plugin: 'java'
+  apply plugin: 'idea'
+
+  idea {
+    module {
+      sourceDirs += file('src/main/java')
+      testSourceDirs += file('src/awesome-test/java')
+    }
+  }
+
+  sourceSets {
+    'awesome-test' {
+      java {
+        srcDir 'src/awesome-test/java'
+      }
+      compileClasspath += sourceSets.main.runtimeClasspath
+    }
+  }
+}

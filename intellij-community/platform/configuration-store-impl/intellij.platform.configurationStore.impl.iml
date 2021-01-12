@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="com.intellij.configurationStore" />
+      <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="kotlin-stdlib-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.core" />
+    <orderEntry type="module" module-name="intellij.platform.ide" />
+    <orderEntry type="module" module-name="intellij.platform.projectModel.impl" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.platform.bootstrap" />
+    <orderEntry type="library" name="XStream" level="project" />
+    <orderEntry type="library" name="lz4-java" level="project" />
+    <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.objectSerializer" />
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="library" name="snakeyaml-engine" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
+    <orderEntry type="library" name="fastutil-min" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.diff" />
+  </component>
+</module>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.webcore.packaging.ManagePackagesDialog">
+  <grid id="a6e0d" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="49" y="40" width="451" height="540"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="64782" binding="myFilter" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="1" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="30"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <grid id="6373a" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <splitpane id="70cdc" binding="mySplitPane">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <continuousLayout value="true"/>
+              <oneTouchExpandable value="false"/>
+            </properties>
+            <border type="empty"/>
+            <children>
+              <grid id="7d113" layout-manager="GridLayoutManager" row-count="3" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <splitpane position="right"/>
+                </constraints>
+                <properties/>
+                <clientProperties>
+                  <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndentWithoutInsets"/>
+                </clientProperties>
+                <border type="none" title-resource-bundle="messages/IdeBundle" title-key="editbox.plugin.description">
+                  <size top="0" left="0" bottom="0" right="0"/>
+                </border>
+                <children>
+                  <scrollpane id="8853a" class="com.intellij.ui.components.JBScrollPane">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="300" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <verticalScrollBarPolicy value="22"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="db08a" class="javax.swing.JEditorPane" binding="myDescriptionTextArea" custom-create="true">
+                        <constraints/>
+                        <properties>
+                          <contentType value="text/html"/>
+                          <editable value="false"/>
+                          <maximumSize width="-1" height="-1"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
+                  <component id="a41c0" class="javax.swing.JCheckBox" binding="myVersionCheckBox">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="true"/>
+                      <selected value="false"/>
+                      <text resource-bundle="messages/LangBundle" key="checkbox.package.specify.version"/>
+                    </properties>
+                  </component>
+                  <component id="a5b42" class="javax.swing.JCheckBox" binding="myOptionsCheckBox" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="true"/>
+                      <selected value="false"/>
+                      <text resource-bundle="messages/LangBundle" key="checkbox.package.options"/>
+                    </properties>
+                  </component>
+                  <component id="5b85e" class="javax.swing.JTextField" binding="myOptionsField">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <enabled value="false"/>
+                    </properties>
+                  </component>
+                  <component id="518ff" class="javax.swing.JComboBox" binding="myVersionComboBox">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="false"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </splitpane>
+        </children>
+      </grid>
+      <grid id="bfefe" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="5f791" class="javax.swing.JButton" binding="myInstallButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/LangBundle" key="button.install.package"/>
+            </properties>
+          </component>
+          <hspacer id="df2ac">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <component id="49d5e" class="javax.swing.JButton" binding="myManageButton">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="messages/LangBundle" key="button.manage.repositories"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="2013f" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="bf6b9" class="javax.swing.JCheckBox" binding="myInstallToUser">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="true"/>
+              <selected value="false"/>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="a26a8" binding="myNotificationsAreaPlaceholder" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>

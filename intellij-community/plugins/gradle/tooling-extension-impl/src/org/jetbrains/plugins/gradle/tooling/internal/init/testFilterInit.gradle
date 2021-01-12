@@ -1,0 +1,60 @@
+import org.gradle.util.GradleVersion
+
+String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
+boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10")) >= 0
+boolean skipExecution
+
+gradle.addBuildListener(new BuildAdapter() {
+  void	buildFinished(BuildResult result) {
+    if(result.failure?.message?.startsWith("Task 'cleanTest' not found in") || result.failure?.message?.startsWith("Task 'test' not found in")) {
+      IJTestEventLogger.logConfigurationError(
+        "Unable to run unit tests",
+        "Unable to run unit tests, since there is no 'test' task configured in the project." +
+        "\n<br>You can add the following into the project gradle script: apply plugin: 'java'" +
+        "\n<br><br>See <a href='https://www.gradle.org/docs/current/dsl/org.gradle.api.tasks.testing.Test.html'>Gradle Test task</a> for details",
+        false
+      )
+    }
+  }
+})
+
+for (incl in ijTestIncludes) {
+  if(incl != '*' && !ijTestFilteringSupported)  {
+    skipExecution = true
+    IJTestEventLogger.logConfigurationError(
+      "Unable to configure test filtering",
+      "Unable to configure test filtering for " + GradleVersion.current() +".<br>Please, use Gradle 1.10 or above or run all tests of a module.",
+      true)
+    break;
+  }
+}
+
+Class abstractTestTaskClass = null
+try {
+  abstractTestTaskClass = Class.forName("org.gradle.api.tasks.testing.AbstractTestTask")
+} catch (ClassNotFoundException ex) {
+ // ignore, class not available
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+  taskGraph.allTasks.each { Task task ->
+    task.onlyIf { !skipExecution }
+
+    if (task instanceof Test || (abstractTestTaskClass != null && abstractTestTaskClass.isAssignableFrom(task.class))) {
+      try {
+        task.outputs.upToDateWhen { false }
+        String[] strings = ['*']
+        if(ijTestIncludes != strings && ijTestFilteringSupported) {
+          def filter = task.getFilter()
+          filter.setIncludePatterns(new String[0])
+          ijTestIncludes.each(){ filter.includeTestsMatching "${it}" }
+        }
+      }
+      catch (all) {
+        logger.error("", all)
+      }
+    }
+  }
+}
+
+

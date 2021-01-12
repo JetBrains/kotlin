@@ -1,0 +1,119 @@
+<idea-plugin>
+  <id>com.intellij.stats.completion</id>
+  <name>Machine Learning Code Completion</name>
+  <vendor>JetBrains</vendor>
+  <category>Other Tools</category>
+
+  <description><![CDATA[
+      <p>The plugin improves code completion feature by reordering of elements in the completion
+      popup by ranking more relevant items higher using machine learning.</p>
+      <br>
+      <p>Currently, ML reordering is available for Java, Kotlin and Python languages. To enable the feature for your
+      programming language, check settings in Editor | General | Code Completion | "Machine Learning Assistant Code Completion" section.</p>
+      <br>
+      <p>Notice: the plugin does not collect or send any data in stable (release) builds. But in the EAP builds
+      the plugin collects data about your usage of code completion, anonymizes and sends it to JetBrains.
+      Note, the plugin doesn't send any of your personal data or code. All it sends is just numbers
+      calculated based on your completion usage patterns. The plugin does not send more than 15MB of data per day. </p>
+    ]]></description>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensionPoints>
+    <extensionPoint name="policy" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
+      <with attribute="implementationClass" implements="com.intellij.stats.CompletionStatsPolicy"/>
+    </extensionPoint>
+  </extensionPoints>
+
+  <resource-bundle>messages.StatsCollectorBundle</resource-bundle>
+
+  <actions>
+    <action id="DumpMLCompletionFeatures"
+            class="com.intellij.completion.actions.MLCompletionFeaturesUtil$CopyFeaturesToClipboard">
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt 0"/>
+      <add-to-group group-id="MaintenanceGroup" anchor="before" relative-to-action="DumpLookupElementWeights"/>
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationInitializedListener implementation="com.intellij.stats.completion.CompletionTrackerInitializer"/>
+    <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
+
+    <applicationService serviceInterface="com.intellij.stats.completion.CompletionLoggerProvider"
+                        serviceImplementation="com.intellij.stats.completion.CompletionFileLoggerProvider"/>
+
+    <applicationService serviceInterface="com.intellij.stats.storage.FilePathProvider"
+                        serviceImplementation="com.intellij.stats.storage.PluginDirectoryFilePathProvider"
+                        testServiceImplementation="com.intellij.mocks.TestFilePathProvider"/>
+
+    <applicationService serviceInterface="com.intellij.stats.sender.StatisticSender"
+                        serviceImplementation="com.intellij.stats.sender.StatisticSenderImpl"
+                        testServiceImplementation="com.intellij.mocks.TestStatisticSender"/>
+
+    <applicationService serviceInterface="com.intellij.stats.experiment.WebServiceStatus"
+                        serviceImplementation="com.intellij.stats.experiment.WebServiceStatusProvider"/>
+
+    <applicationService serviceInterface="com.intellij.stats.network.service.RequestService"
+                        serviceImplementation="com.intellij.stats.network.service.SimpleRequestService"
+                        testServiceImplementation="com.intellij.mocks.TestRequestService"/>
+
+    <applicationService serviceInterface="com.intellij.codeInsight.completion.CompletionFinalSorter$Factory"
+                        serviceImplementation="com.intellij.completion.sorting.MLSorterFactory"/>
+
+    <applicationService serviceInterface="com.intellij.stats.completion.InstallationIdProvider"
+                        serviceImplementation="com.intellij.stats.completion.PermanentInstallationIdProvider"/>
+
+    <codeCompletionConfigurable provider="com.intellij.completion.settings.MLRankingConfigurableProvider"/>
+
+    <applicationService serviceImplementation="com.intellij.stats.personalization.impl.ApplicationUserFactorStorage"/>
+
+    <applicationService serviceInterface="com.intellij.stats.personalization.UserFactorsManager"
+                        serviceImplementation="com.intellij.stats.personalization.impl.UserFactorsManagerImpl"/>
+
+    <projectService serviceImplementation="com.intellij.stats.personalization.impl.ProjectUserFactorStorage"/>
+
+    <projectService serviceImplementation="com.intellij.completion.ngram.NGramModelRunnerManager"/>
+
+    <completion.ml.model implementation="com.jetbrains.completion.ranker.FallbackKotlinMLRankingProvider"/>
+    <completion.ml.model implementation="com.jetbrains.completion.ranker.FallbackScalaMLRankingProvider"/>
+<!--    <completion.ml.model implementation="com.jetbrains.completion.ranker.PythonMLRankingProvider"/>-->
+    <weigher key="completion" id="ml_weigh" implementationClass="com.intellij.completion.ml.MLCompletionWeigher" order="last"/>
+    <completion.contributor language="any" order="first" id="ml_context"
+                            implementationClass="com.intellij.stats.completion.ContextFeaturesContributor"/>
+
+    <registryKey key="completion.ml.reorder.only.top.items" defaultValue="true"
+                 description="Reorder only a few items on the top in the lookup to preserve a proper grouping for the items below"/>
+
+    <registryKey key="completion.stats.exit.experiment" defaultValue="false"
+                 description="Do not perform A/B experiment for code completion on this installation"/>
+
+    <registryKey key="completion.stats.send.logs" defaultValue="true"
+                 description="Send anonymous logs about completion usage in EAP builds"/>
+
+    <registryKey key="completion.stats.enable.session.factors" defaultValue="true"
+                 description="Use inside single session factors"/>
+
+    <preloadingActivity implementation="com.intellij.stats.sender.SenderPreloadingActivity"/>
+
+    <completion.ml.contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonElementLocationFeatures"/>
+
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ngram.NGramFeatureProvider"/>
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.ContextSimilarityFeatures"/>
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ml.common.RecentPlacesFeatures"/>
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.codeInsight.completion.ml.VcsFeatureProvider"/>
+
+    <lookup.usageDetails implementation="com.intellij.completion.ml.MLRankingLookupUsageDescriptor"/>
+  </extensions>
+
+  <applicationListeners>
+    <listener class="com.intellij.completion.sorting.PositionDiffArrowInitializer"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+  </applicationListeners>
+
+  <projectListeners>
+    <listener class="com.intellij.completion.ml.common.RecentPlacesFeatures$StoreRecentPlacesListener"
+              topic="com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl$RecentPlacesListener"/>
+  </projectListeners>
+</idea-plugin>

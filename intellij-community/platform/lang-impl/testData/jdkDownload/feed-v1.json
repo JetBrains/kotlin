@@ -1,0 +1,58 @@
+{
+  "jdks": [
+    {
+      "vendor": "OpenJDK",
+      "default": true,
+      "jdk_version_major": 13,
+      "jdk_version": "13.0.2",
+      "suggested_sdk_name": "openjdk-13",
+      "shared_index_aliases": [
+        "openjdk-13.0.2",
+        "openjdk-13",
+        "13.0.2",
+        "13"
+      ],
+      "packages": [
+        {
+          "os": "linux",
+          "arch": "x86_64",
+          "url": "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz",
+          "package_type": "targz",
+          "package_root_prefix": "jdk-13.0.2",
+          "package_to_java_home_prefix": "",
+          "archive_file_name": "openjdk-13.0.2_linux-x64_bin.tar.gz",
+          "install_folder_name": "openjdk-13.0.2",
+          "archive_size": 195812001,
+          "unpacked_size": 330133919,
+          "sha256": "acc7a6aabced44e62ec3b83e3b5959df2b1aa6b3d610d58ee45f0c21a7821a71"
+        },
+        {
+          "os": "windows",
+          "arch": "x86_64",
+          "url": "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_windows-x64_bin.zip",
+          "package_type": "zip",
+          "package_root_prefix": "jdk-13.0.2",
+          "package_to_java_home_prefix": "",
+          "archive_file_name": "openjdk-13.0.2_windows-x64_bin.zip",
+          "install_folder_name": "openjdk-13.0.2",
+          "archive_size": 195969512,
+          "unpacked_size": 318386730,
+          "sha256": "fab29dcfda6ca4af3a9b973ecdde61dafcd9b307cb9237c25d25b2633bb08084"
+        },
+        {
+          "os": "macOS",
+          "arch": "x86_64",
+          "url": "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_osx-x64_bin.tar.gz",
+          "package_type": "targz",
+          "package_root_prefix": "./jdk-13.0.2.jdk",
+          "package_to_java_home_prefix": "Contents/Home",
+          "archive_file_name": "openjdk-13.0.2_osx-x64_bin.tar.gz",
+          "install_folder_name": "openjdk-13.0.2",
+          "archive_size": 189969691,
+          "unpacked_size": 317326047,
+          "sha256": "08fd2db3a3ab6fb82bb9091a035f9ffe8ae56c31725f4e17d573e48c39ca10dd"
+        }
+      ]
+    }
+  ]
+}

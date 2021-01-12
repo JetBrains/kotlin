@@ -1,0 +1,197 @@
+<idea-plugin>
+  <actions>
+    <group id="ExternalSystem.Actions">
+      <action id="ExternalSystem.RefreshAllProjects"
+              class="com.intellij.openapi.externalSystem.action.RefreshAllExternalProjectsAction"
+              icon="AllIcons.Actions.Refresh"/>
+      <action id="ExternalSystem.RefreshProject"
+              class="com.intellij.openapi.externalSystem.action.RefreshExternalProjectAction"
+              icon="AllIcons.Actions.Refresh"/>
+      <action id="ExternalSystem.DetachProject"
+              class="com.intellij.openapi.externalSystem.action.DetachExternalProjectAction"
+              use-shortcut-of="$Delete"/>
+      <action id="ExternalSystem.IgnoreProject"
+              class="com.intellij.openapi.externalSystem.action.IgnoreExternalProjectAction"/>
+      <action id="ExternalSystem.OpenConfig"
+              class="com.intellij.openapi.externalSystem.action.OpenExternalConfigAction"
+              use-shortcut-of="EditSource"/>
+      <action id="ExternalSystem.ShowCommonSettings"
+              class="com.intellij.openapi.externalSystem.action.ShowCommonExternalSystemSettingsAction">
+      </action>
+      <action id="ExternalSystem.ShowSettings"
+              class="com.intellij.openapi.externalSystem.action.ShowExternalSystemSettingsAction">
+      </action>
+      <group id="ExternalSystem.ShowSettingsGroup" popup="true" icon="AllIcons.General.Settings">
+        <reference id="ExternalSystem.ShowCommonSettings"/>
+        <reference id="ExternalSystem.ShowSettings"/>
+      </group>
+      <group id="ExternalSystem.ToggleAutoReload"
+             class="com.intellij.openapi.externalSystem.autoimport.ToggleAutoReloadActionGroup">
+        <action id="ExternalSystem.ToggleAutoReload.All"
+                class="com.intellij.openapi.externalSystem.autoimport.UseAllAutoReloadTypeAction"/>
+        <action id="ExternalSystem.ToggleAutoReload.Selective"
+                class="com.intellij.openapi.externalSystem.autoimport.UseSelectiveAutoReloadTypeAction"/>
+        <action id="ExternalSystem.ToggleAutoReload.None"
+                class="com.intellij.openapi.externalSystem.autoimport.UseNoneAutoReloadTypeAction"/>
+      </group>
+      <action id="ExternalSystem.OpenTasksActivationManager"
+              class="com.intellij.openapi.externalSystem.action.OpenTasksActivationManagerAction">
+      </action>
+
+      <action id="ExternalSystem.ExpandAll" class="com.intellij.openapi.externalSystem.action.ExternalSystemTreeAction$ExpandAll"
+              icon="AllIcons.Actions.Expandall"
+              use-shortcut-of="ExpandAll"/>
+      <action id="ExternalSystem.CollapseAll" class="com.intellij.openapi.externalSystem.action.ExternalSystemTreeAction$CollapseAll"
+              icon="AllIcons.Actions.Collapseall"
+              use-shortcut-of="CollapseAll"/>
+      <action id="ExternalSystem.SelectProjectDataToImport" class="com.intellij.openapi.externalSystem.action.ExternalSystemSelectProjectDataToImportAction"
+              icon="AllIcons.Nodes.ModuleGroup"/>
+
+      <action id="ExternalSystem.RunTask"
+              class="com.intellij.openapi.externalSystem.action.task.RunExternalSystemTaskAction"
+              icon="AllIcons.Actions.Execute">
+      </action>
+      <action id="ExternalSystem.AssignShortcut"
+              class="com.intellij.openapi.externalSystem.action.task.AssignShortcutAction">
+      </action>
+      <action id="ExternalSystem.AssignRunConfigurationShortcut"
+              class="com.intellij.openapi.externalSystem.action.task.AssignRunConfigurationShortcutAction">
+      </action>
+
+      <action id="ExternalSystem.BeforeSync"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleBeforeSyncTaskAction">
+      </action>
+      <action id="ExternalSystem.AfterSync"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleAfterSyncTaskAction">
+      </action>
+      <action id="ExternalSystem.BeforeCompile"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleBeforeCompileTasksAction">
+      </action>
+      <action id="ExternalSystem.AfterCompile"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleAfterCompileTasksAction">
+      </action>
+      <action id="ExternalSystem.BeforeRebuild"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleBeforeRebuildTasksAction">
+      </action>
+      <action id="ExternalSystem.AfterRebuild"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleAfterRebuildTasksAction">
+      </action>
+      <action id="ExternalSystem.BeforeRun"
+              class="com.intellij.openapi.externalSystem.action.task.ToggleBeforeRunTaskAction">
+      </action>
+
+      <action id="ExternalSystem.GroupTasks"
+              class="com.intellij.openapi.externalSystem.action.task.GroupTasksAction">
+      </action>
+
+      <action id="ExternalSystem.GroupModules"
+              class="com.intellij.openapi.externalSystem.action.task.GroupModulesAction">
+      </action>
+      <action id="ExternalSystem.ShowInheritedTasks"
+              class="com.intellij.openapi.externalSystem.action.task.ShowInheritedTasksAction">
+      </action>
+
+      <action id="ExternalSystem.ShowIgnored"
+              class="com.intellij.openapi.externalSystem.action.task.ShowIgnoredAction">
+      </action>
+    </group>
+
+    <group id="ExternalSystemView.BaseProjectMenu">
+      <reference ref="ExternalSystem.OpenConfig"/>
+      <separator/>
+      <reference id="ExternalSystem.RefreshProject"/>
+      <separator/>
+      <reference id="ExternalSystem.DetachProject"/>
+      <reference id="ExternalSystem.IgnoreProject"/>
+    </group>
+
+    <group id="ExternalSystemView.ProjectMenu" popup="true">
+      <reference ref="ExternalSystemView.BaseProjectMenu"/>
+      <separator/>
+      <reference id="ExternalSystem.OpenTasksActivationManager"/>
+    </group>
+
+    <group id="ExternalSystemView.ModuleMenu" popup="true">
+      <reference ref="ExternalSystem.OpenConfig"/>
+      <separator/>
+      <reference id="ExternalSystem.RefreshProject"/>
+      <reference id="ExternalSystem.IgnoreProject"/>
+      <separator/>
+      <reference id="ExternalSystem.OpenTasksActivationManager"/>
+    </group>
+
+    <group id="ExternalSystemView.ActionsToolbar.LeftPanel">
+      <reference id="ExternalSystem.RefreshAllProjects"/>
+<!--      <reference id="ExternalSystem.AttachProject"/>-->
+      <reference ref="ExternalSystem.DetachProject"/>
+      <!--<reference id="ExternalSystem.Run/>-->
+    </group>
+    <group id="ExternalSystemView.ActionsToolbar.CenterPanel">
+      <separator/>
+      <reference id="ExternalSystem.ExpandAll"/>
+      <reference id="ExternalSystem.CollapseAll"/>
+      <reference id="ExternalSystem.SelectProjectDataToImport"/>
+    </group>
+    <group id="ExternalSystemView.ActionsToolbar.RightPanel">
+    </group>
+
+    <group id="ExternalSystemView.TaskActivationGroup">
+      <reference id="ExternalSystem.BeforeSync"/>
+      <reference id="ExternalSystem.AfterSync"/>
+      <reference id="ExternalSystem.BeforeCompile"/>
+      <reference id="ExternalSystem.AfterCompile"/>
+      <reference id="ExternalSystem.BeforeRebuild"/>
+      <reference id="ExternalSystem.AfterRebuild"/>
+      <!--<reference id="ExternalSystem.BeforeRun"/>-->
+    </group>
+
+    <group id="ExternalSystemView.ActionsToolbar">
+      <reference ref="ExternalSystemView.ActionsToolbar.LeftPanel"/>
+      <separator/>
+      <reference ref="ExternalSystemView.ActionsToolbar.CenterPanel"/>
+      <separator/>
+      <reference ref="ExternalSystemView.ActionsToolbar.RightPanel"/>
+      <separator/>
+      <reference id="ExternalSystem.ShowSettingsGroup"/>
+    </group>
+
+    <group id="ExternalSystemView.TaskMenu" popup="true" class="com.intellij.openapi.externalSystem.action.task.ExternalSystemTaskMenu">
+      <separator/>
+      <action id="ExternalSystem.CreateRunConfiguration" class="com.intellij.execution.actions.CreateAction"/>
+      <separator/>
+      <reference id="EditSource"/>
+      <separator/>
+      <reference ref="ExternalSystemView.TaskActivationGroup"/>
+      <separator/>
+      <reference id="ExternalSystem.AssignShortcut"/>
+    </group>
+
+    <group id="ExternalSystemView.RunConfigurationMenu" popup="true"  class="com.intellij.openapi.externalSystem.action.ExternalSystemRunConfigurationMenu">
+      <separator/>
+      <action id="ExternalSystem.EditRunConfiguration"
+              icon="AllIcons.Actions.Edit"
+              class="com.intellij.openapi.externalSystem.action.EditExternalSystemRunConfigurationAction" />
+      <action id="ExternalSystem.RemoveRunConfiguration"
+              icon="AllIcons.General.Remove"
+              class="com.intellij.openapi.externalSystem.action.RemoveExternalSystemRunConfigurationAction" />
+      <separator/>
+      <reference ref="ExternalSystemView.TaskActivationGroup"/>
+      <separator/>
+      <reference id="ExternalSystem.AssignRunConfigurationShortcut"/>
+    </group>
+
+    <group id="ExternalSystem.ProjectRefreshActionGroup" class="com.intellij.openapi.externalSystem.autoimport.ProjectRefreshActionGroup">
+      <action id="ExternalSystem.ProjectRefreshAction" class="com.intellij.openapi.externalSystem.autoimport.ProjectRefreshAction">
+        <keyboard-shortcut first-keystroke="control shift O" keymap="$default"/>
+        <keyboard-shortcut first-keystroke="control shift O" keymap="Eclipse" remove="true"/>
+        <keyboard-shortcut first-keystroke="control shift O" keymap="NetBeans 6.5" remove="true"/>
+        <keyboard-shortcut first-keystroke="control shift O" keymap="Visual Studio" remove="true"/>
+        <keyboard-shortcut first-keystroke="meta shift O" keymap="Mac OS X" replace-all="true"/>
+        <keyboard-shortcut first-keystroke="meta shift O" keymap="Eclipse (Mac OS X)" replace-all="true" remove="true"/>
+        <keyboard-shortcut first-keystroke="meta shift O" keymap="Xcode" replace-all="true" remove="true"/>
+        <keyboard-shortcut first-keystroke="meta shift I" keymap="Mac OS X 10.5+" replace-all="true"/>
+      </action>
+      <action id="ExternalSystem.HideProjectRefreshAction" class="com.intellij.openapi.externalSystem.autoimport.HideProjectRefreshAction"/>
+    </group>
+  </actions>
+</idea-plugin>

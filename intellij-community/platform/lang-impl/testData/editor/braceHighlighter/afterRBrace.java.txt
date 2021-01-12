@@ -1,0 +1,3 @@
+class Foo <brace>{</brace>
+  int field;
+<brace>}<caret></brace>

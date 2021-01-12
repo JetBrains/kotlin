@@ -1,0 +1,228 @@
+View root() {
+  adhoc() {
+    adhoc() {
+      Tasks() {
+        build setup() {
+          init()
+          wrapper()
+        }
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+    }
+    my-app() {
+      Tasks() {
+        build() {
+          assemble()
+          build()
+          buildDependents()
+          buildNeeded()
+          classes()
+          clean()
+          jar()
+          testClasses()
+        }
+        build setup() {
+          init()
+          wrapper()
+        }
+        documentation() {
+          javadoc()
+        }
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+        other() {
+          compileJava()
+          compileTestJava()
+          processResources()
+          processTestResources()
+        }
+        verification() {
+          check()
+          test()
+        }
+      }
+      Dependencies() {
+        compileClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+        runtimeClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+        testCompileClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+        testRuntimeClasspath() {
+          project number-utils()
+          project string-utils() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+      }
+    }
+    my-utils() {
+      Tasks() {
+        build() {
+          assemble()
+          build()
+          buildDependents()
+          buildNeeded()
+          classes()
+          clean()
+          jar()
+          testClasses()
+        }
+        build setup() {
+          init()
+          wrapper()
+        }
+        documentation() {
+          javadoc()
+        }
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+        other() {
+          compileJava()
+          compileTestJava()
+          processResources()
+          processTestResources()
+        }
+        verification() {
+          check()
+          test()
+        }
+      }
+      number-utils() {
+        Tasks() {
+          build() {
+            assemble()
+            build()
+            buildDependents()
+            buildNeeded()
+            classes()
+            clean()
+            jar()
+            testClasses()
+          }
+          documentation() {
+            javadoc()
+          }
+          help() {
+            buildEnvironment()
+            components()
+            dependencies()
+            dependencyInsight()
+            dependentComponents()
+            help()
+            model()
+            projects()
+            properties()
+            tasks()
+          }
+          other() {
+            compileJava()
+            compileTestJava()
+            processResources()
+            processTestResources()
+          }
+          verification() {
+            check()
+            test()
+          }
+        }
+      }
+      string-utils() {
+        Tasks() {
+          build() {
+            assemble()
+            build()
+            buildDependents()
+            buildNeeded()
+            classes()
+            clean()
+            jar()
+            testClasses()
+          }
+          documentation() {
+            javadoc()
+          }
+          help() {
+            buildEnvironment()
+            components()
+            dependencies()
+            dependencyInsight()
+            dependentComponents()
+            help()
+            model()
+            projects()
+            properties()
+            tasks()
+          }
+          other() {
+            compileJava()
+            compileTestJava()
+            processResources()
+            processTestResources()
+          }
+          verification() {
+            check()
+            test()
+          }
+        }
+        Dependencies() {
+          compileClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+          runtimeClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+          testCompileClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+          testRuntimeClasspath() {
+            org.apache.commons:commons-lang3:3.4()
+          }
+        }
+      }
+    }
+  }
+}

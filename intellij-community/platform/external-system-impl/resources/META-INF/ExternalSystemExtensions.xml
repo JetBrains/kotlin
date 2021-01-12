@@ -1,0 +1,102 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.intellij.openapi.externalSystem.service.ExternalSystemStartupActivity"/>
+
+    <keymapExtension implementation="com.intellij.openapi.externalSystem.service.project.manage.ExternalSystemKeymapExtension"/>
+
+    <!--Generic services-->
+    <applicationService serviceImplementation="com.intellij.openapi.externalSystem.service.ExternalSystemFacadeManager"/>
+    <applicationService serviceImplementation="com.intellij.openapi.externalSystem.service.RemoteExternalSystemCommunicationManager"/>
+    <applicationService serviceImplementation="com.intellij.openapi.externalSystem.service.InProcessExternalSystemCommunicationManager"/>
+    <applicationService
+        serviceInterface="com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager"
+        serviceImplementation="com.intellij.openapi.externalSystem.service.remote.ExternalSystemProgressNotificationManagerImpl"/>
+    <applicationService serviceInterface="com.intellij.openapi.externalSystem.service.project.ExternalLibraryPathTypeMapper"
+                        serviceImplementation="com.intellij.openapi.externalSystem.service.project.ExternalLibraryPathTypeMapperImpl"/>
+    <applicationService serviceImplementation="com.intellij.openapi.externalSystem.service.internal.ExternalSystemProcessingManager"/>
+    <projectService serviceImplementation="com.intellij.openapi.externalSystem.service.notification.ExternalSystemNotificationManager"/>
+    <externalSystemNotificationExtension
+        implementation="com.intellij.openapi.externalSystem.service.notification.ExternalSystemNotificationExtensionImpl"/>
+
+    <module.workingDirectoryProvider
+        implementation="com.intellij.openapi.externalSystem.service.project.ExternalSystemWorkingDirectoryProvider"/>
+    <applicationService serviceInterface="com.intellij.openapi.externalSystem.util.environment.Environment"
+                        serviceImplementation="com.intellij.openapi.externalSystem.util.environment.SystemEnvironment"/>
+
+    <!--Auto-reload-->
+    <projectService serviceInterface="com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker"
+                    serviceImplementation="com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTracker"/>
+    <projectService serviceInterface="com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTrackerSettings"
+                    serviceImplementation="com.intellij.openapi.externalSystem.autoimport.AutoImportProjectTrackerSettings"/>
+    <projectService serviceImplementation="com.intellij.openapi.externalSystem.autoimport.ProjectNotificationAware"/>
+    <editorFloatingToolbarProvider implementation="com.intellij.openapi.externalSystem.autoimport.ProjectRefreshFloatingProvider"/>
+    <projectConfigurable groupId="build" id="build.tools" groupWeight="1000"
+                         instance="com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable"/>
+    <search.optionContributor
+      implementation="com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupSearchableContributor"/>
+
+
+    <!--Project structure management services-->
+    <applicationService serviceInterface="com.intellij.openapi.externalSystem.service.project.ProjectDataManager"
+                        serviceImplementation="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl"/>
+
+    <projectService serviceInterface="com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager"
+                    serviceImplementation="com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl"/>
+    <externalSystemSettingsListener implementation="com.intellij.openapi.externalSystem.service.project.autoimport.ExternalProjectsSettingsWatcher"/>
+    <projectService serviceInterface="com.intellij.openapi.project.ExternalStorageConfigurationManager"
+                    serviceImplementation="com.intellij.openapi.project.ExternalStorageConfigurationManagerImpl"/>
+    <projectService serviceImplementation="com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage"/>
+    <cachesInvalidator implementation="com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataInvalidator"/>
+    <registryKey key="external.system.invalidate.storage" defaultValue="true"
+                 description="Invalidate caches invalidates the cache data imported from external systems"/>
+    <projectService serviceImplementation="com.intellij.openapi.externalSystem.service.project.ExternalProjectsWorkspaceImpl"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataServiceImpl"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.LibraryDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.ModuleDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.ContentRootDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.LibraryDependencyDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.ModuleDependencyDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.settings.ConfigurationDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.ProjectSdkDataService"/>
+    <externalProjectDataService implementation="com.intellij.openapi.externalSystem.service.project.manage.ModuleSdkDataService"/>
+
+    <backgroundPostStartupActivity implementation="com.intellij.openapi.externalSystem.service.project.manage.ReprocessContentRootDataActivity"/>
+
+    <externalSystemConfigurationHandler
+        implementation="com.intellij.openapi.externalSystem.service.project.settings.RunConfigurationHandler"/>
+    <externalSystemConfigurationHandler
+        implementation="com.intellij.openapi.externalSystem.service.project.settings.FacetConfigurationHandler"/>
+    <externalSystemConfigurationHandler
+        implementation="com.intellij.openapi.externalSystem.service.project.settings.EncodingConfigurationHandler"/>
+    <externalSystemConfigurationHandler
+        implementation="com.intellij.openapi.externalSystem.service.project.settings.PackagePrefixConfigurationHandler"/>
+    <externalSystemConfigurationHandler
+        implementation="com.intellij.openapi.externalSystem.service.project.settings.InspectionsProfileConfigurationHandler"/>
+    <externalSystemConfigurationHandler
+        implementation="com.intellij.openapi.externalSystem.service.project.settings.DetectionExcludesConfigImporter"/>
+
+    <!--Tool window services-->
+    <externalSystemViewContributor id="default" order="last"
+                                   implementation="com.intellij.openapi.externalSystem.view.ExternalSystemViewDefaultContributor"/>
+
+    <!--Execution-->
+    <programRunner implementation="com.intellij.openapi.externalSystem.service.execution.ExternalSystemTaskRunner"/>
+
+    <streamProviderFactory implementation="com.intellij.openapi.externalSystem.configurationStore.ExternalSystemStreamProviderFactory"/>
+
+    <moduleService serviceInterface="com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager"
+                   serviceImplementation="com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManagerImpl"/>
+
+    <applicationService serviceInterface="com.intellij.openapi.roots.ExternalProjectSystemRegistry"
+                        serviceImplementation="com.intellij.openapi.externalSystem.ExternalProjectSystemRegistryImpl" overrides="true"/>
+
+    <applicationService serviceInterface="com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider"
+                        serviceImplementation="com.intellij.openapi.externalSystem.service.execution.DefaultExternalSystemJdkProvider"/>
+
+    <statistics.projectUsagesCollector implementation="com.intellij.openapi.externalSystem.statistics.ExternalSystemUsagesCollector"/>
+    <statistics.projectUsagesCollector implementation="com.intellij.openapi.externalSystem.statistics.ExternalSystemSettingsCollector"/>
+    <statistics.counterUsagesCollector implementationClass="com.intellij.openapi.externalSystem.statistics.ExternalSystemActionsCollector"/>
+    <notificationAllowlist groupIds="Gradle Import;Unindexed maven repositories gradle detection;Build sync orphan modules;Content root duplicates"/>
+  </extensions>
+</idea-plugin>
+

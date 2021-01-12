@@ -1,0 +1,7 @@
+<component name="ArtifactManager">
+  
+  <artifact __external-system-id="test" name="imported">
+    <output-path>$PROJECT_DIR$/out/artifacts/imported</output-path>
+    <root id="archive" name="a.jar" />
+  </artifact>
+</component>

@@ -1,0 +1,15 @@
+<module>
+  <component name="DeprecatedModuleOptionManager">
+    <option key="type" value="JAVA_MODULE" />
+  </component>
+  <component name="ExternalFacetManager">
+    <facet __external-system-id="Maven" type="MockFacetId" name="imported">
+      <configuration />
+    </facet>
+  </component>
+  <component name="ExternalSystem" externalSystem="Maven" />
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

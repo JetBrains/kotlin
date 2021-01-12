@@ -1,0 +1,2 @@
+class Foo <brace>{</brace>  <caret>
+<brace>}</brace>

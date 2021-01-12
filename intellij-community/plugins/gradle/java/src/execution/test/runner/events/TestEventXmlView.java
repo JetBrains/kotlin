@@ -1,0 +1,102 @@
+/*
+ * Copyright 2000-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jetbrains.plugins.gradle.execution.test.runner.events;
+
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Created by eugene.petrenko@gmail.com
+ */
+public interface TestEventXmlView {
+  @NotNull
+  String getTestEventType() throws XmlParserException;
+
+  @NotNull
+  String getTestName() throws XmlParserException;
+
+  @NotNull
+  String getTestParentId() throws XmlParserException;
+
+  @NotNull
+  String getTestId() throws XmlParserException;
+
+  @NotNull
+  String getTestClassName() throws XmlParserException;
+
+  @NotNull
+  String getTestEventResultType() throws XmlParserException;
+
+  @NotNull
+  String getEventTitle() throws XmlParserException;
+
+  boolean isEventOpenSettings() throws XmlParserException;
+
+  @NotNull
+  String getEventMessage() throws XmlParserException;
+
+  @NotNull
+  String getTestEventTest() throws XmlParserException;
+
+  @NotNull
+  String getTestEventTestDescription() throws XmlParserException;
+
+  @NotNull
+  String getEventTestReport() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultActualFilePath() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultFilePath() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultExpected() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultActual() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultFailureType() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultStackTrace() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultErrorMsg() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultEndTime() throws XmlParserException;
+
+  @NotNull
+  String getEventTestResultStartTime() throws XmlParserException;
+
+  /**
+   * {@link XmlParserException} indicates errors during xml processing.
+   */
+  class XmlParserException extends Exception {
+    public XmlParserException(final Throwable cause) {
+      super(cause);
+    }
+
+    public XmlParserException(final String message, final Throwable cause) {
+      super(message, cause);
+    }
+
+    public XmlParserException(final String message) {
+      super(message);
+    }
+  }
+}

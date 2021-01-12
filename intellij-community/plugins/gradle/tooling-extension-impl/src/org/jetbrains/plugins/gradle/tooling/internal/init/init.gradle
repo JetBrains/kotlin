@@ -1,0 +1,70 @@
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
+import org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder
+
+import java.util.concurrent.CopyOnWriteArrayList
+
+initscript {
+  dependencies {
+    classpath files(${EXTENSIONS_JARS_PATH})
+  }
+}
+
+apply plugin: JetGradlePlugin
+
+class JetGradlePlugin implements Plugin<Gradle> {
+  void apply(Gradle gradle) {
+    def processor = new RegistryProcessor()
+    gradle.addProjectEvaluationListener(processor)
+    def projectEvaluationIsNotCalledForIncludedBuilds = GradleVersion.current() >= GradleVersion.version("3.1") &&
+                                                        GradleVersion.current() < GradleVersion.version("4.0")
+    if (projectEvaluationIsNotCalledForIncludedBuilds) {
+      gradle.rootProject {
+        it.afterEvaluate {
+          gradle.includedBuilds.each { included ->
+            // included builds should be configured by now, so calling `configuredBuild` should be safe
+            def toolingRegistry = (ToolingModelBuilderRegistry)included.configuredBuild.services.get(ToolingModelBuilderRegistry.class)
+            processor.process(toolingRegistry)
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Adds a single extra model builder instance for each root of ToolingModelBuilderRegistry hierarchy<br>
+ * Thread safe.
+ */
+class RegistryProcessor implements ProjectEvaluationListener {
+  def extraModelBuilderInstance = new ExtraModelBuilder()
+  CopyOnWriteArrayList<ToolingModelBuilderRegistry> processedRegistries = new CopyOnWriteArrayList<ToolingModelBuilderRegistry>()
+
+  @Override
+  void beforeEvaluate(Project project) {
+    def registry = (ToolingModelBuilderRegistry)((ProjectInternal)project).services.get(ToolingModelBuilderRegistry.class)
+    process(registry)
+  }
+
+  void process(ToolingModelBuilderRegistry registry) {
+    ToolingModelBuilderRegistry rootRegistry = registry
+    while (rootRegistry.hasProperty('parent') && rootRegistry.parent != null) {
+      rootRegistry = rootRegistry.parent
+    }
+
+    boolean alreadySeen = !processedRegistries.addIfAbsent(rootRegistry)
+    if (alreadySeen || extraModelBuilderIsRegistered(rootRegistry)) {
+      return
+    }
+    rootRegistry.register(extraModelBuilderInstance)
+  }
+
+  private static boolean extraModelBuilderIsRegistered(registry) {
+    registry.hasProperty('builders') && registry.builders instanceof Collection &&
+    (registry.builders as Collection).find { it instanceof ExtraModelBuilder } != null
+  }
+
+  @Override
+  void afterEvaluate(Project project, ProjectState state) {  }
+}

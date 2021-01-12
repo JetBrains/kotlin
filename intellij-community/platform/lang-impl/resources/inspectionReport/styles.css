@@ -1,0 +1,98 @@
+/*
+ * Copyright 2000-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the License);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+html {
+    font-family: \Helvetica Neue\, Helvetica, Arial, \Lucida Grande\, sans-serif;
+}
+
+body {
+    color: #4C4C4C;
+    margin: 60px 60px 0 60px;
+}
+
+p {
+    font-size: 1em;
+    margin: 0 0 1em 0;
+}
+
+.grayout {
+    opacity: 0.6;
+}
+
+body, input, select, textarea, th, td {
+    font-size: 1em;
+}
+
+li {
+    position: relative;
+    list-style: none;
+}
+
+label:hover {
+    color: #0C479D;
+    text-decoration: underline;
+}
+
+li::before {
+    content: "\23FA";
+    margin: 0;
+}
+
+li input {
+    position: absolute;
+    left: 0;
+    margin-left: 0;
+    background: none;
+    opacity: 0;
+    z-index: 2;
+    cursor: pointer;
+    height: 1em;
+    width: 1em;
+    top: 0;
+}
+
+li input + ol {
+    margin: -15px 0 0 -44px;
+    height: 1em;
+}
+
+li input + ol > li {
+    display: none;
+    margin-left: -14px !important;
+    padding-left: 1px;
+}
+
+li label {
+    padding-left: 5px;
+}
+
+li input:checked + ol {
+    margin: -20px 0 0 -44px;
+    padding: 25px 0 0 80px;
+    height: auto;
+}
+
+li input:checked + ol > li {
+    display: block;
+    margin: 0 0 2px;
+}
+
+li input:checked + ol > li:last-child {
+    margin: 0 0 1px;
+}
+
+div.location {
+    margin-left: 40px;
+}

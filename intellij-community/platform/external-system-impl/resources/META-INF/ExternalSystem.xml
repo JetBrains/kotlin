@@ -1,0 +1,11 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="ExternalSystemExtensionPoints.xml"/>
+  <xi:include href="ExternalSystemExtensions.xml"/>
+  <xi:include href="ExternalSystemActions.xml"/>
+  <project-components>
+    <component>
+      <interface-class>com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager</interface-class>
+      <implementation-class>com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManagerImpl</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>

@@ -1,0 +1,20 @@
+
+def oldVersion =  org.gradle.util.GradleVersion.current() < org.gradle.util.GradleVersion.version("6.0")
+allprojects { project ->
+  if (project.name == 'buildSrc') {
+    if (oldVersion) {
+      apply plugin: 'groovy'
+      dependencies {
+        compile gradleApi()
+        compile localGroovy()
+      }
+    } else {
+      apply plugin: 'java-library'
+      apply plugin: 'groovy'
+      dependencies {
+        api gradleApi()
+        api localGroovy()
+      }
+    }
+  }
+}

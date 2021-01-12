@@ -1,0 +1,65 @@
+//noinspection GrPackage
+
+allprojects {
+  apply plugin: 'java'
+  apply plugin: 'idea'
+
+  version = '1.0'
+
+  sourceCompatibility = 1.6
+
+  configurations {
+    provided
+  }
+
+  sourceSets {
+    main {
+      compileClasspath += configurations.provided
+    }
+  }
+
+  idea {
+    module {
+      scopes.PROVIDED.plus += [configurations.provided]
+    }
+  }
+}
+
+project(":service") {
+  dependencies {
+    compile(project(':api'))
+  }
+}
+
+project(":api") {
+  dependencies {
+    provided(project(':lib'))
+  }
+}
+
+project(":withIdeaModelCustomisations") {
+  dependencies {
+    compile files("lib/someDep.jar")
+    testCompile files("lib/someTestDep.jar")
+  }
+
+  idea {
+    module {
+      if(GradleVersion.current().compareTo(GradleVersion.version('1.11')) > 0) {
+        scopes.COMPILE.plus = [configurations['testCompile'], configurations['testRuntime']]
+      } else {
+        scopes.COMPILE.plus += scopes.TEST.plus
+      }
+      scopes.TEST.plus = []
+    }
+  }
+}
+
+project(":withIdeRepoFileDependency") {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    testCompile 'junit:junit:4.11'
+  }
+}

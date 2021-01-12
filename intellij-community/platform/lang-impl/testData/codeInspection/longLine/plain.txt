@@ -1,0 +1,5 @@
+Every aspect of IntelliJ IDEA is specifically designed to maximize developer productivity.
+
+Together, powerful static code analysis and ergonomic design make development not only productive but also an enjoyable <warning descr="Line is longer than allowed by code style (> 120 columns)">experience.</warning>
+
+After IntelliJ IDEA's indexed your source code, it offers blazing fast and intelligent experience by giving relevant sug<warning descr="Line is longer than allowed by code style (> 120 columns)">gestions in every context: instant and clever code completion, on-the-fly code analysis and reliable refactoring tools.</warning>

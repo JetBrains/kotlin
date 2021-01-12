@@ -1,0 +1,54 @@
+View root() {
+  rooot() {
+    Tasks() {
+      build setup() {
+        init()
+        wrapper()
+      }
+      help() {
+        buildEnvironment()
+        components()
+        dependencies()
+        dependencyInsight()
+        dependentComponents()
+        help()
+        model()
+        projects()
+        properties()
+        tasks()
+      }
+    }
+    child1() {
+      Tasks() {
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+    }
+    child2() {
+      Tasks() {
+        help() {
+          buildEnvironment()
+          components()
+          dependencies()
+          dependencyInsight()
+          dependentComponents()
+          help()
+          model()
+          projects()
+          properties()
+          tasks()
+        }
+      }
+    }
+  }
+}
