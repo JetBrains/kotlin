@@ -45,7 +45,7 @@ data class JetBrainsSpace(val repository: String) : CustomMavenRepository {
 }
 
 object Repositories {
-    val KTOR_BINTRAY = BintrayRepository("kotlin/ktor")
+    val KTOR = DefaultRepository.MAVEN_CENTRAL
     val KOTLINX = BintrayRepository("kotlin/kotlinx")
     val KOTLIN_JS_WRAPPERS_BINTRAY = BintrayRepository("kotlin/kotlin-js-wrappers")
     val KOTLIN_EAP_MAVEN_CENTRAL = DefaultRepository.MAVEN_CENTRAL
