@@ -5,62 +5,37 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.TargetBackend
 
 // Add the directive `// WITH_COROUTINES` to use these helpers in codegen tests (see TestFiles.java).
-fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolean, checkTailCallOptimization: Boolean): String {
-    val coroutinesPackage =
-        if (isReleaseCoroutines)
-            StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()
-        else
-            StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
-
+fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptimization: Boolean): String {
     fun continuationBody(t: String, useResult: (String) -> String) =
-        if (isReleaseCoroutines)
-            """
-                |override fun resumeWith(result: Result<$t>) {
-                |   ${useResult("result.getOrThrow()")}
-                |}
-            """.trimMargin()
-        else
-            """
-                |override fun resume(data: $t) { ${useResult("data")} }
-                |override fun resumeWithException(exception: Throwable) { throw exception }
-            """.trimMargin()
+        """
+            |override fun resumeWith(result: Result<$t>) {
+            |   ${useResult("result.getOrThrow()")}
+            |}
+        """.trimMargin()
 
     val handleExceptionContinuationBody =
-        if (isReleaseCoroutines)
-            """
-                |override fun resumeWith(result: Result<Any?>) {
-                |   result.exceptionOrNull()?.let(x)
-                |}
-            """.trimMargin()
-        else
-            """
-                |override fun resumeWithException(exception: Throwable) {
-                |   x(exception)
-                |}
-                |
-                |override fun resume(data: Any?) {}
-            """.trimMargin()
+        """
+            |override fun resumeWith(result: Result<Any?>) {
+            |   result.exceptionOrNull()?.let(x)
+            |}
+        """.trimMargin()
 
     val continuationAdapterBody =
-        if (isReleaseCoroutines)
-            """
-                |override fun resumeWith(result: Result<T>) {
-                |   if (result.isSuccess) {
-                |       resume(result.getOrThrow())
-                |   } else {
-                |       resumeWithException(result.exceptionOrNull()!!)
-                |   }
-                |}
-                |
-                |abstract fun resumeWithException(exception: Throwable)
-                |abstract fun resume(value: T)
-            """.trimMargin()
-        else
-            ""
+        """
+            |override fun resumeWith(result: Result<T>) {
+            |   if (result.isSuccess) {
+            |       resume(result.getOrThrow())
+            |   } else {
+            |       resumeWithException(result.exceptionOrNull()!!)
+            |   }
+            |}
+            |
+            |abstract fun resumeWithException(exception: Throwable)
+            |abstract fun resume(value: T)
+        """.trimMargin()
 
     val checkStateMachineString = """
     class StateMachineCheckerClass {
@@ -145,9 +120,9 @@ fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachin
 
     return """
             |package helpers
-            |import $coroutinesPackage.*
-            |import $coroutinesPackage.intrinsics.*
-            |${if (checkTailCallOptimization) "import $coroutinesPackage.jvm.internal.*" else ""}
+            |import kotlin.coroutines.*
+            |import kotlin.coroutines.intrinsics.*
+            |${if (checkTailCallOptimization) "import kotlin.coroutines.jvm.internal.*" else ""}
             |
             |fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
             |    override val context = EmptyCoroutineContext
