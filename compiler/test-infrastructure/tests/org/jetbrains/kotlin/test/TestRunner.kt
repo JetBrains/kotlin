@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import java.io.IOException
 
 class TestRunner(private val testConfiguration: TestConfiguration) {
     private val failedAssertions = mutableListOf<AssertionError>()
@@ -17,6 +18,11 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         try {
             runTestImpl(testDataFileName)
         } finally {
+            try {
+                testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
+            } catch (_: IOException) {
+                // ignored
+            }
             Disposer.dispose(testConfiguration.rootDisposable)
         }
     }

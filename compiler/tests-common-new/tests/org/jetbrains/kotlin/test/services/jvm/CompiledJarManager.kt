@@ -10,19 +10,15 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestService
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.*
 import java.io.File
-import java.nio.file.Files
 
 class CompiledJarManager(val testServices: TestServices) : TestService {
     private val jarCache = mutableMapOf<TestModule, File>()
 
     fun getCompiledJarForModule(module: TestModule): File {
         return jarCache.getOrPut(module) {
-            val outputDir = Files.createTempDirectory("module_${module.name}").toFile()
+            val outputDir = testServices.createTempDirectory("module_${module.name}")
             val classFileFactory = testServices.dependencyProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
             val outputFileCollection = SimpleOutputFileCollection(classFileFactory.currentOutput)
             val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)

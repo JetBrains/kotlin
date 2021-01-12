@@ -151,7 +151,8 @@ class TestConfigurationBuilder {
             afterAnalysisCheckers,
             metaInfoHandlerEnabled,
             directives,
-            defaultRegisteredDirectivesBuilder.build()
+            defaultRegisteredDirectivesBuilder.build(),
+            additionalServices
         )
     }
 }

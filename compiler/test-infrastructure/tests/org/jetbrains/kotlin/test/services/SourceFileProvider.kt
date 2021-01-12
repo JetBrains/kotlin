@@ -25,9 +25,9 @@ abstract class SourceFileProvider : TestService {
 
 val TestServices.sourceFileProvider: SourceFileProvider by TestServices.testServiceAccessor()
 
-class SourceFileProviderImpl(val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
-    override val kotlinSourceDirectory: File = KtTestUtil.tmpDir("kotlin-files")
-    override val javaSourceDirectory: File = KtTestUtil.tmpDir("java-files")
+class SourceFileProviderImpl(val testServices: TestServices, val preprocessors: List<SourceFilePreprocessor>) : SourceFileProvider() {
+    override val kotlinSourceDirectory: File = testServices.createTempDirectory("kotlin-files")
+    override val javaSourceDirectory: File = testServices.createTempDirectory("java-files")
 
     private val contentOfFiles = mutableMapOf<TestFile, String>()
     private val realFileMap = mutableMapOf<TestFile, File>()
