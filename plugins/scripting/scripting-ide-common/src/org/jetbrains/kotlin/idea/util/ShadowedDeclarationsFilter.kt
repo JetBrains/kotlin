@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -84,6 +85,12 @@ class ShadowedDeclarationsFilter(
         } ?: return descriptors
 
         if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
+            return listOf(first)
+        }
+
+        // Optimization: if the descriptors are structurally equivalent then there is no need to run resolve.
+        // This can happen when the classpath contains multiple copies of the same library.
+        if (descriptors.all { DescriptorEquivalenceForOverrides.areEquivalent(first, it, allowCopiesFromTheSameDeclaration = true) }) {
             return listOf(first)
         }
 
