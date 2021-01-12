@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceFilter.Companion.NO_DIAGNOSTICS
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
@@ -103,7 +104,10 @@ class ShadowedDeclarationsFilter(
 
         val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size)
 
-        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for filtering shadowed declarations")
+        val bindingTrace = DelegatingBindingTrace(
+            bindingContext, "Temporary trace for filtering shadowed declarations",
+            filter = NO_DIAGNOSTICS
+        )
         for ((expression, parameter) in dummyArgumentExpressions.zip(parameters)) {
             bindingTrace.recordType(expression, parameter.varargElementType ?: parameter.type)
             bindingTrace.record(BindingContext.PROCESSED, expression, true)
