@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.js.dce
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
+import org.jetbrains.kotlin.js.dce.Context.Node.Companion.toInt
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.array
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.index
+import java.util.*
 
 class Context {
     val globalScope = Node()
@@ -79,8 +81,7 @@ class Context {
         return if (node != null && moduleExportsNode in generateSequence(node) { it.qualifier?.parent }) {
             val path = node.pathFromRoot().drop(2)
             path.fold(currentModule.original) { n, memberName -> n.member(memberName) }
-        }
-        else {
+        } else {
             node
         }
     }
@@ -96,8 +97,7 @@ class Context {
                         nodes[name]?.original?.let { return it }
                     }
                     globalScope.member(expression.ident)
-                }
-                else {
+                } else {
                     extractNodeImpl(qualifier)?.member(expression.ident)
                 }
             }
@@ -127,21 +127,58 @@ class Context {
     }
 
     class Node private constructor(val localName: JsName?, qualifier: Qualifier?) {
-        private val dependenciesImpl = mutableSetOf<Node>()
-        private val expressionsImpl = mutableSetOf<JsExpression>()
-        private val functionsImpl = mutableSetOf<JsFunction>()
-        private var hasSideEffectsImpl = false
-        private var reachableImpl = false
-        private var declarationReachableImpl = false
-        private val membersImpl = mutableMapOf<String, Node>()
-        private val usedByAstNodesImpl = mutableSetOf<JsNode>()
+        companion object {
+            private const val HAS_SIDE_EFFECT = 1
+            private const val REACHABLE = 1 shl 1
+            private const val DECLARATION_REACHABLE = 1 shl 2
+
+            private fun Boolean.toInt() = if (this) 1 else 0
+        }
+
+        private var _dependenciesImpl: MutableSet<Node>? = null
+        private var _expressionsImpl: MutableSet<JsExpression>? = null
+        private var _functionsImpl: MutableSet<JsFunction>? = null
+        private var _membersImpl: MutableMap<String, Node>? = null
+        private var _usedByAstNodesImpl: MutableSet<JsNode>? = null
+
+        private val dependenciesImpl: MutableSet<Node>
+            get() = _dependenciesImpl ?: mutableSetOf<Node>().also { _dependenciesImpl = it }
+        private val expressionsImpl: MutableSet<JsExpression>
+            get() = _expressionsImpl ?: mutableSetOf<JsExpression>().also { _expressionsImpl = it }
+        private val functionsImpl: MutableSet<JsFunction>
+            get() = _functionsImpl ?: mutableSetOf<JsFunction>().also { _functionsImpl = it }
+        private val membersImpl: MutableMap<String, Node>
+            get() = _membersImpl ?: mutableMapOf<String, Node>().also { _membersImpl = it }
+        private val usedByAstNodesImpl: MutableSet<JsNode>
+            get() = _usedByAstNodesImpl ?: mutableSetOf<JsNode>().also { _usedByAstNodesImpl = it }
+
         private var rank = 0
+        private var flags = 0
+        private var hasSideEffectsImpl: Boolean
+            get() = checkFlag(HAS_SIDE_EFFECT)
+            set(value) = setFlag(value, HAS_SIDE_EFFECT)
+
+        private var reachableImpl
+            get() = checkFlag(REACHABLE)
+            set(value) = setFlag(value, REACHABLE)
+
+        private var declarationReachableImpl
+            get() = checkFlag(DECLARATION_REACHABLE)
+            set(value) = setFlag(value, DECLARATION_REACHABLE)
+
+        private fun checkFlag(mask: Int): Boolean = (flags and mask) != 0
+
+        private fun setFlag(value: Boolean, mask: Int) {
+            flags = flags xor ((-value.toInt() xor flags) and mask)
+        }
 
         val dependencies: MutableSet<Node> get() = original.dependenciesImpl
 
         val expressions: MutableSet<JsExpression> get() = original.expressionsImpl
 
         val functions: MutableSet<JsFunction> get() = original.functionsImpl
+
+        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
 
         var hasSideEffects: Boolean
             get() = original.hasSideEffectsImpl
@@ -162,10 +199,9 @@ class Context {
             }
 
         var qualifier: Qualifier? = qualifier
-            get
             private set
 
-        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
+        var tag: Int = -1
 
         val memberNames: MutableSet<String> get() = original.membersImpl.keys
 
@@ -191,14 +227,11 @@ class Context {
 
             if (a.qualifier == null && b.qualifier == null) {
                 a.merge(b)
-            }
-            else if (a.qualifier == null) {
+            } else if (a.qualifier == null) {
                 if (b.root() == a) a.makeDependencies(b) else b.evacuateFrom(a)
-            }
-            else if (b.qualifier == null) {
+            } else if (b.qualifier == null) {
                 if (a.root() == b) a.makeDependencies(b) else a.evacuateFrom(b)
-            }
-            else {
+            } else {
                 a.makeDependencies(b)
             }
         }
@@ -224,15 +257,23 @@ class Context {
             other.membersImpl.clear()
 
             hasSideEffectsImpl = hasSideEffectsImpl || other.hasSideEffectsImpl
-            expressionsImpl += other.expressionsImpl
-            functionsImpl += other.functionsImpl
-            dependenciesImpl += other.dependenciesImpl
-            usedByAstNodesImpl += other.usedByAstNodesImpl
+            if (!other._expressionsImpl.isNullOrEmpty()) {
+                expressionsImpl += other.expressionsImpl
+            }
+            if (!other._functionsImpl.isNullOrEmpty()) {
+                functionsImpl += other.functionsImpl
+            }
+            if (!other._dependenciesImpl.isNullOrEmpty()) {
+                dependenciesImpl += other.dependenciesImpl
+            }
+            if (!other._usedByAstNodesImpl.isNullOrEmpty()) {
+                usedByAstNodesImpl += other.usedByAstNodesImpl
+            }
 
-            other.expressionsImpl.clear()
-            other.functionsImpl.clear()
-            other.dependenciesImpl.clear()
-            other.usedByAstNodesImpl.clear()
+            other._expressionsImpl?.clear()
+            other._functionsImpl?.clear()
+            other._dependenciesImpl?.clear()
+            other._usedByAstNodesImpl?.clear()
         }
 
         private fun merge(other: Node) {
@@ -240,8 +281,7 @@ class Context {
 
             if (rank < other.rank) {
                 other.evacuateFrom(this)
-            }
-            else {
+            } else {
                 evacuateFrom(other)
             }
 
@@ -253,8 +293,8 @@ class Context {
         fun root(): Node = generateSequence(original) { it.qualifier?.parent?.original }.last()
 
         fun pathFromRoot(): List<String> =
-                generateSequence(original) { it.qualifier?.parent?.original }.mapNotNull { it.qualifier?.memberName }
-                        .toList().asReversed()
+            generateSequence(original) { it.qualifier?.parent?.original }.mapNotNull { it.qualifier?.memberName }
+                .toList().asReversed()
 
         override fun toString(): String = (root().localName?.ident ?: "<unknown>") + pathFromRoot().joinToString("") { ".$it" }
     }

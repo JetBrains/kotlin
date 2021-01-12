@@ -19,19 +19,23 @@ package org.jetbrains.kotlin.js.dce
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.dce.Context.Node
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
+import java.util.concurrent.atomic.AtomicInteger
 
 class ReachabilityTracker(
         private val context: Context,
         private val analysisResult: AnalysisResult,
+        private val collectOnlyRootNodes: Boolean,
         private val logConsumer: (DCELogLevel, String) -> Unit
 ) : RecursiveJsVisitor() {
     companion object {
         private val CALL_FUNCTIONS = setOf("call", "apply")
+        private val NODE_MARKER = AtomicInteger(0)
     }
 
     private var currentNodeWithLocation: JsNode? = null
     private var depth = 0
     private val reachableNodesImpl = mutableSetOf<Node>()
+    private val visitedTag = NODE_MARKER.getAndIncrement()
 
     val reachableNodes: Set<Node> get() = reachableNodesImpl
 
@@ -74,7 +78,7 @@ class ReachabilityTracker(
         val node = context.extractNode(x)
         if (node != null) {
             if (!node.reachable) {
-                reportAndNest("reach: referenced name $node", currentNodeWithLocation) {
+                nested {
                     reach(node)
                     currentNodeWithLocation?.let { node.usedByAstNodes += it }
                 }
@@ -134,23 +138,33 @@ class ReachabilityTracker(
 
     override fun visitContinue(x: JsContinue) { }
 
+    private fun collectReachable(node: Node) {
+        if (!collectOnlyRootNodes) {
+            reachableNodesImpl += node
+        } else {
+            node.extractRoot(visitedTag)?.let {
+                reachableNodesImpl += it
+            }
+        }
+    }
+
     fun reach(node: Node) {
         if (node.reachable) return
         node.reachable = true
-        reachableNodesImpl += node
+        collectReachable(node)
 
         reachDeclaration(node)
 
         reachDependencies(node)
         node.members.toList().forEach { (name, member) ->
             if (!member.reachable) {
-                reportAndNest("reach: member $name", null) { reach(member) }
+                nested { reach(member) }
             }
         }
 
         if (node !in analysisResult.functionsToSkip) {
             for (expr in node.functions) {
-                reportAndNest("traverse: function", expr) {
+                nested {
                     expr.collectLocalVariables().let {
                         context.addNodesForLocalVars(it)
                         context.namesOfLocalVars += it
@@ -161,7 +175,7 @@ class ReachabilityTracker(
         }
 
         for (expr in node.expressions) {
-            reportAndNest("traverse: value", expr) {
+            nested {
                 expr.accept(this)
             }
         }
@@ -175,7 +189,7 @@ class ReachabilityTracker(
                 if (current in generateSequence(ancestorDependency) { it.qualifier?.parent }) continue
                 val dependency = path.asReversed().fold(ancestorDependency) { n, memberName -> n.member(memberName) }
                 if (!dependency.reachable) {
-                    reportAndNest("reach: dependency $dependency", null) { reach(dependency) }
+                    nested { reach(dependency) }
                 }
             }
             val qualifier = current.qualifier ?: break
@@ -186,22 +200,22 @@ class ReachabilityTracker(
 
     private fun reachDeclaration(node: Node) {
         if (node.hasSideEffects && !node.reachable) {
-            reportAndNest("reach: because of side effect", null) {
+            nested {
                 reach(node)
             }
         }
         else if (!node.declarationReachable) {
             node.declarationReachable = true
-            reachableNodesImpl += node
+            collectReachable(node)
 
             node.original.qualifier?.parent?.let {
-                reportAndNest("reach-decl: parent $it", null) {
+                nested {
                     reachDeclaration(it)
                 }
             }
 
             for (expr in node.expressions) {
-                reportAndNest("traverse: value", expr) {
+                nested {
                     expr.accept(this)
                 }
             }
@@ -228,17 +242,6 @@ class ReachabilityTracker(
         }
         super.visitElement(node)
         currentNodeWithLocation = old
-    }
-
-    private fun report(message: String) {
-        logConsumer(DCELogLevel.INFO, "  ".repeat(depth) + message)
-    }
-
-    private fun reportAndNest(message: String, dueTo: JsNode?, action: () -> Unit) {
-        val location = dueTo?.extractLocation()
-        val fullMessage = if (location != null) "$message (due to ${location.asString()})" else message
-        report(fullMessage)
-        nested(action)
     }
 
     private fun nested(action: () -> Unit) {
