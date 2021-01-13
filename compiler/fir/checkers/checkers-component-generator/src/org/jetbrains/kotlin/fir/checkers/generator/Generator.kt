@@ -42,7 +42,10 @@ class Generator(
                 .forEach { println("import $it") }
             println()
             for ((kClass, alias) in configuration.aliases) {
-                println("typealias $alias = $abstractCheckerName<${kClass.simpleName}>")
+                val typeParameters =
+                    if (kClass.typeParameters.isEmpty()) ""
+                    else kClass.typeParameters.joinToString(separator = ",", prefix = "<", postfix = ">") { "*" }
+                println("typealias $alias = $abstractCheckerName<${kClass.simpleName}$typeParameters>")
             }
         }
     }
