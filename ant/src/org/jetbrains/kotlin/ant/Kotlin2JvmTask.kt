@@ -26,7 +26,7 @@ import java.io.File.separator
 class Kotlin2JvmTask : KotlinCompilerBaseTask() {
     override val compilerFqName = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 
-    var includeRuntime: Boolean = true
+    var includeRuntime: Boolean = false
     var moduleName: String? = null
 
     var noReflect: Boolean = false

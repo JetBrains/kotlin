@@ -1,0 +1,41 @@
+<project name="Ant Task Test" default="test3">
+    <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+
+    <target name="test1" description="destination is a jar and attribute includeRuntime is not specified">
+        <kotlinc src="${test.data}/test.kt" output="${temp}/test.jar"/>
+
+        <java classname="TestKt" description="check the resulting jar">
+            <classpath>
+                <pathelement location="${temp}/test.jar"/>
+                <pathelement location="${kotlin.runtime.jar}"/>
+            </classpath>
+            <arg value="${temp}/test.jar"/>
+            <arg value="false" description="if includeRuntime is specified to be true"/>
+        </java>
+    </target>
+
+    <target name="test2" description="destination is a jar and attribute includeRuntime is specified to be false" depends="test1">
+        <kotlinc src="${test.data}/test.kt" output="${temp}/test.jar" includeRuntime="false"/>
+
+        <java classname="TestKt" description="check the resulting jar">
+            <classpath>
+                <pathelement location="${temp}/test.jar"/>
+                <pathelement location="${kotlin.runtime.jar}"/>
+            </classpath>
+            <arg value="${temp}/test.jar"/>
+            <arg value="false" description="if includeRuntime is specified to be true"/>
+        </java>
+    </target>
+
+    <target name="test3" description="destination is a jar and attribute includeRuntime is specified to be true" depends="test2">
+        <kotlinc src="${test.data}/test.kt" output="${temp}/test.jar" includeRuntime="true"/>
+
+        <java classname="TestKt">
+            <classpath>
+                <pathelement location="${temp}/test.jar"/>
+            </classpath>
+            <arg value="${temp}/test.jar"/>
+            <arg value="true" description="if includeRuntime is specified to be true"/>
+        </java>
+    </target>
+</project>
