@@ -39,6 +39,11 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         runTest("compiler/testData/integration/ant/jvm/doNotFailOnError/");
     }
 
+    @TestMetadata("doNotIncludeRuntimeByDefault")
+    public void testDoNotIncludeRuntimeByDefault() throws Exception {
+        runTest("compiler/testData/integration/ant/jvm/doNotIncludeRuntimeByDefault/");
+    }
+
     @TestMetadata("failOnErrorByDefault")
     public void testFailOnErrorByDefault() throws Exception {
         runTest("compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
