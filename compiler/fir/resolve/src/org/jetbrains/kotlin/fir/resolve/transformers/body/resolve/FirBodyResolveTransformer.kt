@@ -51,6 +51,7 @@ open class FirBodyResolveTransformer(
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
         context.cleanContextForAnonymousFunction()
+        context.towerDataContextForCallableReferences.clear()
         context.cleanDataFlowContext()
         @OptIn(PrivateForInline::class)
         context.file = file

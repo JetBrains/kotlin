@@ -74,6 +74,9 @@ class PostponedArgumentsAnalyzer(
 
         val callableReferenceAccess = atom.reference
         atom.analyzed = true
+
+        resolutionContext.bodyResolveContext.towerDataContextForCallableReferences.remove(callableReferenceAccess)
+
         val (resultingCandidate, applicability) = atom.resultingCandidate
             ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 

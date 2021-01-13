@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContextsForClassParts
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataElement
@@ -53,6 +54,7 @@ class BodyResolveContext(
     var containers: PersistentList<FirDeclaration> = persistentListOf()
 
     val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
 
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
@@ -200,6 +202,7 @@ class BodyResolveContext(
     ): BodyResolveContext = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
         file = this@BodyResolveContext.file
         towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
+        towerDataContextForCallableReferences.putAll(this@BodyResolveContext.towerDataContextForCallableReferences)
         containers = this@BodyResolveContext.containers
         towerDataContext = this@BodyResolveContext.towerDataContext
         anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
