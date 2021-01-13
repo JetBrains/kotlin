@@ -36,7 +36,6 @@ buildscript {
         maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url "https://cache-redirector.jetbrains.com/maven-central" }
         mavenCentral()
-        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
         maven { url "https://cache-redirector.jetbrains.com/jcenter" }
         jcenter()
     }
@@ -102,7 +101,6 @@ allprojects {
                 url 'https://cache-redirector.jetbrains.com/jcenter'
             }
             jcenter()
-            maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
         }
     }
     if (path != ":kotlin-native:dependencies") {
@@ -116,9 +114,6 @@ allprojects {
         mavenCentral()
         maven {
             url project.bootstrapKotlinRepo
-        }
-        maven {
-            url "https://dl.bintray.com/kotlin/kotlin-dev"
         }
     }
 
