@@ -342,6 +342,13 @@ open class FirBodyResolveTransformer(
         return controlFlowStatementsTransformer.transformJump(jump, data)
     }
 
+    override fun transformReturnExpression(
+        returnExpression: FirReturnExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return controlFlowStatementsTransformer.transformReturnExpression(returnExpression, data)
+    }
+
     override fun transformThrowExpression(
         throwExpression: FirThrowExpression,
         data: ResolutionMode

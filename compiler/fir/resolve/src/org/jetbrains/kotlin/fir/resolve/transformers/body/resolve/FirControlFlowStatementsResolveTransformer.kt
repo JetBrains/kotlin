@@ -187,16 +187,28 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     // ------------------------------- Jumps -------------------------------
 
     override fun <E : FirTargetElement> transformJump(jump: FirJump<E>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        val expectedTypeRef = (jump as? FirReturnExpression)?.target?.labeledElement?.returnTypeRef
-
-        val mode = if (expectedTypeRef != null) {
-            ResolutionMode.WithExpectedType(expectedTypeRef)
-        } else {
-            ResolutionMode.ContextIndependent
-        }
-        val result = transformer.transformExpression(jump, mode).single
+        val result = transformer.transformExpression(jump, data).single
         dataFlowAnalyzer.exitJump(jump)
         return result.compose()
+    }
+
+    override fun transformReturnExpression(
+        returnExpression: FirReturnExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        val labeledElement = returnExpression.target.labeledElement
+        val expectedTypeRef = labeledElement.returnTypeRef
+        @Suppress("IntroduceWhenSubject")
+        val mode = when {
+            labeledElement.symbol in context.anonymousFunctionsAnalyzedInDependentContext -> {
+                ResolutionMode.ContextDependent
+            }
+            else -> {
+                ResolutionMode.WithExpectedType(expectedTypeRef)
+            }
+        }
+
+        return transformJump(returnExpression, mode)
     }
 
     override fun transformThrowExpression(

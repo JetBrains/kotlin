@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.sure
 
@@ -55,6 +56,8 @@ class BodyResolveContext(
 
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
+
+    val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
@@ -126,6 +129,16 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
+    inline fun <R> withLambdaBeingAnalyzedInDependentContext(lambda: FirAnonymousFunctionSymbol, l: () -> R): R {
+        anonymousFunctionsAnalyzedInDependentContext.add(lambda)
+        return try {
+            l()
+        } finally {
+            anonymousFunctionsAnalyzedInDependentContext.remove(lambda)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
     fun replaceTowerDataContext(newContext: FirTowerDataContext) {
         towerDataContext = newContext
     }
@@ -189,5 +202,6 @@ class BodyResolveContext(
         towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
         containers = this@BodyResolveContext.containers
         towerDataContext = this@BodyResolveContext.towerDataContext
+        anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
     }
 }

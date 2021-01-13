@@ -435,7 +435,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         fun transform(): FirAnonymousFunction {
             val expectedReturnType =
                 lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-            val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
+
+            val result = context.withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol) {
+                transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
+            }
+
             val body = result.body
             if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
                 result.transformReturnTypeRef(transformer, withExpectedType(body.resultType))
