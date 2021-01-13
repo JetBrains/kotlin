@@ -14,13 +14,8 @@ import static org.jetbrains.kotlin.konan.target.Architecture.*
 
 buildscript {
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        mavenCentral()
-	    maven {
-            url project.bootstrapKotlinRepo
-        }
+        maven { url 'https://cache-redirector.jetbrains.com/maven-central'}
+	    maven { url project.bootstrapKotlinRepo }
     }
     ext.useCustomDist = UtilsKt.getUseCustomDist(project)
     ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)

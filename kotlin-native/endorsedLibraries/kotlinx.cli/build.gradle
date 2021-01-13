@@ -4,13 +4,8 @@ import org.jetbrains.kotlin.*
 
 buildscript {
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
-        jcenter()
-        maven {
-            url project.bootstrapKotlinRepo
-        }
+        maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+        maven { url project.bootstrapKotlinRepo }
     }
 
 }
@@ -21,7 +16,6 @@ repositories {
     maven {
         url 'https://cache-redirector.jetbrains.com/jcenter'
     }
-    jcenter()
 }
 
 kotlin {

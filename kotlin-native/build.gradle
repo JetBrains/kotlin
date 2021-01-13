@@ -33,11 +33,9 @@ buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx" }
         maven { url "https://cache-redirector.jetbrains.com/maven-central" }
-        mavenCentral()
         maven { url "https://cache-redirector.jetbrains.com/jcenter" }
-        jcenter()
     }
 
     dependencies {
@@ -100,7 +98,6 @@ allprojects {
             maven {
                 url 'https://cache-redirector.jetbrains.com/jcenter'
             }
-            jcenter()
         }
     }
     if (path != ":kotlin-native:dependencies") {
@@ -111,7 +108,6 @@ allprojects {
         maven {
             url 'https://cache-redirector.jetbrains.com/maven-central'
         }
-        mavenCentral()
         maven {
             url project.bootstrapKotlinRepo
         }

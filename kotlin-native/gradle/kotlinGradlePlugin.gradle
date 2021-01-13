@@ -2,10 +2,7 @@ project.buildscript.repositories {
     maven {
         url project.bootstrapKotlinRepo
     }
-    maven {
-        url 'https://cache-redirector.jetbrains.com/maven-central'
-    }
-    mavenCentral()
+    maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
 }
 
 project.buildscript.dependencies {

@@ -11,7 +11,6 @@ pluginManagement {
         maven(kotlinCompilerRepo)
         maven(buildKotlinCompilerRepo)
         maven("https://cache-redirector.jetbrains.com/maven-central")
-        mavenCentral()
     }
 
     resolutionStrategy {

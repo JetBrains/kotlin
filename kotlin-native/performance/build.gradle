@@ -11,11 +11,9 @@ buildscript {
     repositories {
         maven { url 'https://cache-redirector.jetbrains.com/jcenter'}
         maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
-        mavenCentral()
         maven { url buildKotlinCompilerRepo }
         maven { url kotlinCompilerRepo }
-        jcenter()
-        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx" }
         maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
     }
 
