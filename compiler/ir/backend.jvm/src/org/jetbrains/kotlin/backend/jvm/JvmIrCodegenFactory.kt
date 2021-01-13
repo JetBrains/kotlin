@@ -177,6 +177,8 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
 
+        context.state.factory.registerSourceFiles(irModuleFragment.files.map(context.psiSourceManager::getKtFile))
+
         JvmLower(context).lower(irModuleFragment)
 
         for (generateMultifileFacade in listOf(true, false)) {

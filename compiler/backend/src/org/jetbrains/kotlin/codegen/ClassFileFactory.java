@@ -264,7 +264,7 @@ public class ClassFileFactory implements OutputFileCollection {
         return new MultifileClassCodegenImpl(state, files, facadeFqName);
     }
 
-    private void registerSourceFiles(Collection<KtFile> files) {
+    public void registerSourceFiles(@NotNull Collection<KtFile> files) {
         sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
     }
 
