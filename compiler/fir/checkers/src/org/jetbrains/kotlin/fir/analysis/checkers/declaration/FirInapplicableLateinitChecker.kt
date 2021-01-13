@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullable
 
-object FirInapplicableLateinitChecker : FirMemberDeclarationChecker() {
+object FirInapplicableLateinitChecker : FirPropertyChecker() {
     var primitives: Set<ConeKotlinType>? = null
 
     private fun getPrimitiveTypes(context: CheckerContext) = primitives ?: mutableSetOf<ConeKotlinType>().apply {
@@ -33,8 +33,8 @@ object FirInapplicableLateinitChecker : FirMemberDeclarationChecker() {
         primitives = this
     }
 
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirProperty || !declaration.isLateInit) {
+    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!declaration.isLateInit) {
             return
         }
 
