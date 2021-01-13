@@ -1,10 +1,10 @@
 sealed class Base
 
 class Derived: Base() {
-    class Derived2: <!INVISIBLE_MEMBER, SEALED_SUPERTYPE!>Base<!>()
+    class Derived2: Base()
 }
 
 fun test() {
-    class Local: <!INVISIBLE_MEMBER, SEALED_SUPERTYPE!>Base<!>()
+    class Local: <!SEALED_SUPERTYPE!>Base<!>()
 }
 

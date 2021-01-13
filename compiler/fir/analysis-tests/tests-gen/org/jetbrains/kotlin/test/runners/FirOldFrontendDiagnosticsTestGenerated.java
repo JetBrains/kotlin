@@ -24416,12 +24416,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("NeverInterface.kt")
-            public void testNeverInterface() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/sealed/NeverInterface.kt");
-            }
-
-            @Test
             @TestMetadata("NeverObject.kt")
             public void testNeverObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/NeverObject.kt");
@@ -27253,12 +27247,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("noMultiplatformProjects.kt")
             public void testNoMultiplatformProjects() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noMultiplatformProjects.kt");
-            }
-
-            @Test
-            @TestMetadata("noTopLevelSealedInheritance.kt")
-            public void testNoTopLevelSealedInheritance() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noTopLevelSealedInheritance.kt");
             }
 
             @Nested
