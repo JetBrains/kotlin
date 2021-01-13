@@ -102,7 +102,8 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-                "out"
+                "out",
+                "kotlin-native/runtime"
             )
         )
     }
