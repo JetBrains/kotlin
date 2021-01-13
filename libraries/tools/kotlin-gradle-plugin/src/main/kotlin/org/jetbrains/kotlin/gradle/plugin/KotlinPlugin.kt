@@ -855,7 +855,17 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             compileOnlyConfigurationName: String,
             runtimeOnlyConfigurationName: String
         ) {
-            project.addExtendsFromRelation(androidSourceSet.apiConfigurationName, apiConfigurationName)
+            if (project.configurations.findByName(androidSourceSet.apiConfigurationName) != null) {
+                project.addExtendsFromRelation(androidSourceSet.apiConfigurationName, apiConfigurationName)
+            } else {
+                // If any dependency is added to this configuration, report an error:
+                project.configurations.getByName(apiConfigurationName).dependencies.all { dependency ->
+                    throw InvalidUserCodeException(
+                        "API dependencies are not allowed for Android source set ${androidSourceSet.name}. " +
+                                "Please use an implementation dependency instead."
+                    )
+                }
+            }
             project.addExtendsFromRelation(androidSourceSet.implementationConfigurationName, implementationConfigurationName)
             project.addExtendsFromRelation(androidSourceSet.compileOnlyConfigurationName, compileOnlyConfigurationName)
             project.addExtendsFromRelation(androidSourceSet.runtimeOnlyConfigurationName, runtimeOnlyConfigurationName)
