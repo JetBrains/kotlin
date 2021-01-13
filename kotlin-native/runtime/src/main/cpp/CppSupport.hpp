@@ -7,7 +7,6 @@
 #define RUNTIME_CPP_SUPPORT_H
 
 #include <type_traits>
-#include <memory>
 
 // A collection of backported utilities from future C++ versions.
 
@@ -15,11 +14,6 @@ namespace kotlin {
 namespace std_support {
 
 ////////////////////////// C++14 //////////////////////////
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
 
 template <typename T>
 using make_unsigned_t = typename std::make_unsigned<T>::type;

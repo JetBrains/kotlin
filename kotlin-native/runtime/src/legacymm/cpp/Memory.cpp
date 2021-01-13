@@ -192,7 +192,7 @@ struct CycleDetectorRootset {
   KStdVector<ScopedRefHolder> heldRefs;
 };
 
-class CycleDetector : private kotlin::Pinned {
+class CycleDetector : private kotlin::Pinned, public KonanAllocatorAware {
  public:
   static void insertCandidateIfNeeded(KRef object) {
     if (canBeACandidate(object))

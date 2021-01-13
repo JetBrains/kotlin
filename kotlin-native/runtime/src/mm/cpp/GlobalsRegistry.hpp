@@ -35,7 +35,7 @@ public:
     void ProcessThread(mm::ThreadData* threadData) noexcept;
 
     // Lock registry for safe iteration.
-    // TODO: Iteration over `globals_` will be slow, because it's `std::list` collected at different times from
+    // TODO: Iteration over `globals_` will be slow, because it's `KStdList` collected at different times from
     // different threads, and so the nodes are all over the memory. Use metrics to understand how
     // much of a problem is it.
     Iterable Iter() noexcept { return globals_.Iter(); }

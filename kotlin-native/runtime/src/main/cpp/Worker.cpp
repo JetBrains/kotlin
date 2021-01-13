@@ -476,7 +476,7 @@ class State {
 
   template <typename F>
   void waitNativeWorkersTerminationUnlocked(bool checkLeaks, F waitForWorker) {
-      std::vector<std::pair<KInt, pthread_t>> workersToWait;
+      KStdVector<std::pair<KInt, pthread_t>> workersToWait;
       {
           Locker locker(&lock_);
 
