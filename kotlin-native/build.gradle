@@ -33,11 +33,16 @@ buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven { url "https://kotlin.bintray.com/kotlinx" }
-        maven { url "https://cache-redirector.jetbrains.com/maven-central" }
-        mavenCentral()
-        maven { url "https://cache-redirector.jetbrains.com/jcenter" }
-        jcenter()
+        if (UtilsKt.getCacheRedirectorEnabled(project)) {
+            maven { url "https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx" }
+            maven { url "https://cache-redirector.jetbrains.com/maven-central" }
+            maven { url "https://cache-redirector.jetbrains.com/jcenter" }
+        }
+        else {
+            maven { url "https://kotlin.bintray.com/kotlinx" }
+            mavenCentral()
+            jcenter()
+        }
     }
 
     dependencies {
@@ -97,10 +102,10 @@ ext {
 allprojects {
     buildscript {
         repositories {
-            maven {
-                url 'https://cache-redirector.jetbrains.com/jcenter'
-            }
-            jcenter()
+            if (UtilsKt.getCacheRedirectorEnabled(project))
+                maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+            else
+                jcenter()
         }
     }
     if (path != ":kotlin-native:dependencies") {
@@ -108,10 +113,10 @@ allprojects {
     }
 
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        mavenCentral()
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+        else
+            mavenCentral()
         maven {
             url project.bootstrapKotlinRepo
         }

@@ -52,6 +52,7 @@ import org.gradle.nativeplatform.toolchain.internal.tools.GccCommandLineToolConf
 import org.gradle.nativeplatform.toolchain.internal.tools.ToolSearchPath
 import org.gradle.process.internal.ExecActionFactory
 import java.io.ByteArrayOutputStream
+import java.net.URI
 
 //region Project properties.
 
@@ -81,6 +82,15 @@ val Project.testOutputFramework
 
 val Project.testOutputExternal
     get() = (findProperty("testOutputExternal") as File).toString()
+
+val Project.cacheRedirectorEnabled
+    get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
+
+fun Project.redirectIfEnabled(url: String):String = if (cacheRedirectorEnabled) {
+    val base = URL(url)
+    "https://cache-redirector.jetbrains.com/${base.host}/${base.path}"
+} else
+    url
 
 val validPropertiesNames = listOf("kotlin.native.home",
                                   "org.jetbrains.kotlin.native.home",
