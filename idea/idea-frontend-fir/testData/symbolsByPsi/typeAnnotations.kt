@@ -30,7 +30,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: Anno1
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -49,7 +48,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: Anno2
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -68,7 +66,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: Anno3
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -87,7 +84,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: Anno4
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -106,7 +102,6 @@ KtFirClassOrObjectSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
-  primaryConstructor: null
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -177,7 +172,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[Anno1()] I]
   symbolKind: TOP_LEVEL
   typeParameters: []

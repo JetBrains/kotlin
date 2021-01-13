@@ -30,7 +30,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Enum<X>]
   symbolKind: TOP_LEVEL
   typeParameters: []

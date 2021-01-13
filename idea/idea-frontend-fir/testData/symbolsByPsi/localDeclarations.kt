@@ -47,7 +47,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: F
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: LOCAL
   typeParameters: []

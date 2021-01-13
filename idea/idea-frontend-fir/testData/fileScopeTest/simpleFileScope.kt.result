@@ -67,7 +67,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: C
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -86,7 +85,6 @@ KtFirClassOrObjectSymbol:
   modality: ABSTRACT
   name: I
   origin: SOURCE
-  primaryConstructor: null
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []

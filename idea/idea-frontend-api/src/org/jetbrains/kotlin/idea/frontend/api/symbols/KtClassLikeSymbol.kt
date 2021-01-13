@@ -54,8 +54,6 @@ abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(),
 
     abstract val superTypes: List<KtTypeAndAnnotations>
 
-    abstract val primaryConstructor: KtConstructorSymbol?
-
     abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>
 }
 

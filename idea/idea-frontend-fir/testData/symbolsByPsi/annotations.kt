@@ -54,7 +54,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: Anno
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -93,7 +92,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: X
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []

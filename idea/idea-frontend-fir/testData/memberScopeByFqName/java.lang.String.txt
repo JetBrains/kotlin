@@ -1174,6 +1174,44 @@ KtFirFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 
+KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Char
+  annotations: []
+  callableIdIfNonLocal: kotlin.CharSequence.get
+  dispatchType: kotlin/CharSequence
+  isExtension: false
+  isExternal: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: get
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: MEMBER
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+  visibility: PUBLIC
+
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
+  classKind: CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: OPEN
+  name: CaseInsensitiveComparator
+  origin: JAVA
+  superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, [] java/io/Serializable]
+  symbolKind: MEMBER
+  typeParameters: []
+  visibility: PRIVATE
+
 KtFirConstructorSymbol:
   annotatedType: [] java/lang/String
   annotations: []
@@ -1377,42 +1415,3 @@ KtFirConstructorSymbol:
   typeParameters: []
   valueParameters: [KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count), KtFirConstructorValueParameterSymbol(value)]
   visibility: UNKNOWN
-
-KtFirFunctionSymbol:
-  annotatedType: [] kotlin/Char
-  annotations: []
-  callableIdIfNonLocal: kotlin.CharSequence.get
-  dispatchType: kotlin/CharSequence
-  isExtension: false
-  isExternal: false
-  isInline: false
-  isOperator: true
-  isOverride: false
-  isSuspend: false
-  modality: ABSTRACT
-  name: get
-  origin: LIBRARY
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
-  visibility: PUBLIC
-
-KtFirClassOrObjectSymbol:
-  annotations: []
-  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
-  classKind: CLASS
-  companionObject: null
-  isData: false
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: OPEN
-  name: CaseInsensitiveComparator
-  origin: JAVA
-  primaryConstructor: null
-  superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, [] java/io/Serializable]
-  symbolKind: MEMBER
-  typeParameters: []
-  visibility: PRIVATE

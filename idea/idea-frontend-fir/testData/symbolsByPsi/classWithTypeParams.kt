@@ -30,7 +30,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: A
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T), KtFirTypeParameterSymbol(R)]

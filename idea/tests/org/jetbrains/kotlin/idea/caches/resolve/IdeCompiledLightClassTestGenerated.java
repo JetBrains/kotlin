@@ -49,6 +49,11 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         runTest("compiler/testData/asJava/lightClasses/AnnotationClass.kt");
     }
 
+    @TestMetadata("Constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/Constructors.kt");
+    }
+
     @TestMetadata("DataClassWithCustomImplementedMembers.kt")
     public void testDataClassWithCustomImplementedMembers() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/DataClassWithCustomImplementedMembers.kt");
@@ -127,6 +132,11 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
     @TestMetadata("NonDataClassWithComponentFunctions.kt")
     public void testNonDataClassWithComponentFunctions() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/NonDataClassWithComponentFunctions.kt");
+    }
+
+    @TestMetadata("OnlySecondaryConstructors.kt")
+    public void testOnlySecondaryConstructors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/OnlySecondaryConstructors.kt");
     }
 
     @TestMetadata("PublishedApi.kt")

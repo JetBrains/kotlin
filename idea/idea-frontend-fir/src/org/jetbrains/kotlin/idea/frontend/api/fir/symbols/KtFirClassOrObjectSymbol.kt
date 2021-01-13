@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -60,10 +59,6 @@ internal class KtFirClassOrObjectSymbol(
 
     override val superTypes: List<KtTypeAndAnnotations> by cached {
         firRef.superTypesAndAnnotationsList(builder)
-    }
-
-    override val primaryConstructor: KtConstructorSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
-        fir.getPrimaryConstructorIfAny()?.let { builder.buildConstructorSymbol(it) }
     }
 
     override val typeParameters by firRef.withFirAndCache { fir ->

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
@@ -55,6 +56,8 @@ internal class KtFirStarImportingScope(
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
 
     // todo cache?
     @OptIn(ExperimentalStdlibApi::class)
