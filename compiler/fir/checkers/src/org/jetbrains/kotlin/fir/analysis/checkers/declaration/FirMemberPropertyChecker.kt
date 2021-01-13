@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 
 // See old FE's [DeclarationsChecker]
-object FirMemberPropertyChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirRegularClass) {
-            return
-        }
+object FirMemberPropertyChecker : FirRegularClassChecker() {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         for (member in declaration.declarations) {
             if (member is FirProperty) {
                 checkProperty(declaration, member, reporter)

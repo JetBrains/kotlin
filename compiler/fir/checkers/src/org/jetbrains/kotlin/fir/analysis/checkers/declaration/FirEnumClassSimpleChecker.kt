@@ -11,12 +11,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findNonInterfaceSupertype
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
-object FirEnumClassSimpleChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirClass<*> || declaration.classKind != ClassKind.ENUM_CLASS) {
+object FirEnumClassSimpleChecker : FirRegularClassChecker() {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.classKind != ClassKind.ENUM_CLASS) {
             return
         }
 
