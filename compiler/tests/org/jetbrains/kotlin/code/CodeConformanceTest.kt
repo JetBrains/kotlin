@@ -60,7 +60,10 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlinp/src",
                 "libraries/tools/new-project-wizard/new-project-wizard-cli/build",
-                "out"
+                "out",
+                "kotlin-native/build",
+                "kotlin-native/performance",
+                "kotlin-native/samples"
             )
         )
 
