@@ -1071,13 +1071,13 @@ class DeclarationsConverter(
         val entries = mutableListOf<FirVariable<*>>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression =
-            buildErrorExpression(null, ConeSimpleDiagnostic("Destructuring declaration without initializer", DiagnosticKind.Syntax))
+            buildErrorExpression(null, ConeSimpleDiagnostic("Initializer required for destructuring declaration", DiagnosticKind.Syntax))
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
                 else -> if (it.isExpression()) firExpression =
-                    expressionConverter.getAsFirExpression(it, "Destructuring declaration without initializer")
+                    expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
             }
         }
 
