@@ -20,7 +20,7 @@ package testsCase1
 import libPackageCase1.*
 
 fun case1() {
-    <!DEBUG_INFO_CALL("fqName: libPackageCase1.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements = arrayOf(1)<!>, body = { "" })<!>
+    <!DEBUG_INFO_CALL("fqName: libPackageCase1.listOf; typeCall: function")!>listOf(elements = arrayOf(1), body = { "" })<!>
 }
 // FILE: Lib1.kt
 package libPackageCase1
@@ -33,7 +33,7 @@ package testsCase2
 import libPackageCase2.*
 
 fun case2() {
-    <!DEBUG_INFO_CALL("fqName: libPackageCase2.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements = arrayOf(1)<!>, body = { "" })<!>
+    <!DEBUG_INFO_CALL("fqName: libPackageCase2.listOf; typeCall: function")!>listOf(elements = arrayOf(1), body = { "" })<!>
 }
 
 
@@ -55,7 +55,7 @@ package testsCase3
 import libPackageCase3.*
 
 fun case3() {
-    <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements = arrayOf(1)<!>, body = { "" })<!>
+    <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(elements = arrayOf(1), body = { "" })<!>
 }
 
 

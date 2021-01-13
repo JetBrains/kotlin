@@ -24,7 +24,7 @@ import libPackageCase1Explicit.listOf
 class Case1() {
 
     fun case1() {
-        <!DEBUG_INFO_CALL("fqName: libPackageCase1Explicit.listOf; typeCall: extension function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: libPackageCase1Explicit.listOf; typeCall: extension function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
     }
 }
 
@@ -60,7 +60,7 @@ import libPackageCase2Explicit.listOf
 class Case2() {
 
     fun case1() {
-        <!DEBUG_INFO_CALL("fqName: libPackageCase2Explicit.listOf; typeCall: extension function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: libPackageCase2Explicit.listOf; typeCall: extension function")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
     }
 }
 
@@ -103,7 +103,7 @@ import libPackageCase3Explicit.listOf
 class Case3() {
 
     fun case1() {
-        <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
+        <!DEBUG_INFO_CALL("fqName: testsCase3.A.invoke; typeCall: variable&invoke")!>listOf(elements1 = arrayOf(1), body = { "" })<!>
     }
 }
 
