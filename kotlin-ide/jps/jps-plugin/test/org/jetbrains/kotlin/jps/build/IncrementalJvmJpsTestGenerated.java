@@ -25,7 +25,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     @TestMetadata("testData/incremental/multiModule/common")
     public static class Common extends AbstractIncrementalJvmJpsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
         @TestMetadata("classAdded")
@@ -865,7 +865,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         @TestMetadata("testData/incremental/withJava/convertBetweenJavaAndKotlin")
         public static class ConvertBetweenJavaAndKotlin extends AbstractIncrementalJvmJpsTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
             @TestMetadata("javaToKotlin")
@@ -995,7 +995,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             @TestMetadata("testData/incremental/withJava/javaUsedInKotlin/samConversions")
             public static class SamConversions extends AbstractIncrementalJvmJpsTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
                 }
 
                 @TestMetadata("methodAdded")
@@ -1024,7 +1024,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
         @TestMetadata("testData/incremental/withJava/kotlinUsedInJava")
         public static class KotlinUsedInJava extends AbstractIncrementalJvmJpsTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
             @TestMetadata("addOptionalParameter")

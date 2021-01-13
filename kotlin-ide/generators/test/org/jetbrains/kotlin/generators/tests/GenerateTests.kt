@@ -1337,13 +1337,18 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
     testGroup("jps/jps-plugin") {
         testClass<AbstractIncrementalJvmJpsTest> {
-            model("incremental/multiModule/common", pattern = DIRECTORY)
+            model("incremental/multiModule/common", pattern = DIRECTORY, targetBackend = TargetBackend.JVM_IR)
             model("incremental/multiModule/jvm", pattern = DIRECTORY)
-            model("incremental/multiModule/multiplatform/custom", pattern = DIRECTORY)
-            model("incremental/pureKotlin", pattern = DIRECTORY, isRecursive = false)
-            model("incremental/withJava", pattern = DIRECTORY)
-            model("incremental/inlineFunCallSite", pattern = DIRECTORY)
-            model("incremental/classHierarchyAffected", pattern = DIRECTORY)
+            model(
+                "incremental/multiModule/multiplatform/custom", pattern = DIRECTORY, 
+                targetBackend = TargetBackend.JVM_IR
+            )
+            model("incremental/pureKotlin", pattern = DIRECTORY, isRecursive = false, targetBackend = TargetBackend.JVM_IR)
+            model("incremental/withJava", pattern = DIRECTORY, targetBackend = TargetBackend.JVM_IR)
+            model("incremental/inlineFunCallSite", pattern = DIRECTORY, targetBackend = TargetBackend.JVM_IR)
+            model(
+                "incremental/classHierarchyAffected", pattern = DIRECTORY, targetBackend = TargetBackend.JVM_IR
+            )
         }
 
         //actualizeMppJpsIncTestCaseDirs(testDataAbsoluteRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
