@@ -96,6 +96,7 @@ internal fun generateDestructuringBlock(
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
+            if (entry.nameIdentifier?.text == "_") continue
             val entrySource = entry.toFirPsiSourceElement()
             val name = entry.nameAsSafeName
             statements += buildProperty {

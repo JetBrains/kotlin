@@ -7,3 +7,7 @@ fun foo(some: Some) {
     y *= 2.0
     z = ""
 }
+
+fun bar(some: Some) {
+    val (a, _, `_`) = some
+}

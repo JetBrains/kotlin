@@ -264,6 +264,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         it.getStrictParentOfType<KtPackageDirective>() != null ||
                         it.getStrictParentOfType<KtImportDirective>() != null ||
                         (it is KtPropertyAccessor && !it.hasBody()) ||
+                        it is KtDestructuringDeclarationEntry && it.text == "_" ||
                         it is KtConstantExpression && it.parent.let { parent ->
                             parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
                         }

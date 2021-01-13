@@ -33,3 +33,8 @@ FILE: destructuring.kt
         *=(y#, Double(2.0))
         z# = String()
     }
+    public? final? fun bar(some: Some): R|kotlin/Unit| {
+        lval <destruct>: <implicit> = some#
+        lval a: <implicit> = R|<local>/<destruct>|.component1#()
+        lval _: <implicit> = R|<local>/<destruct>|.component3#()
+    }

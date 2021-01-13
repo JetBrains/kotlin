@@ -56,7 +56,6 @@ data class A {
 
 var fn: Function1<A, Int>
   field = local fun <anonymous>(<destruct>: A): Int {
-    val _: Int = <destruct>.component1()
     val y: Int = <destruct>.component2()
     return 42.plus(other = y)
   }
