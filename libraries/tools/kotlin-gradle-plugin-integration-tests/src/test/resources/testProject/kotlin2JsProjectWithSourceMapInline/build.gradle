@@ -18,7 +18,7 @@ allprojects {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     }
 
     compileKotlin2Js {
@@ -31,7 +31,7 @@ allprojects {
 
 project("app") {
     dependencies {
-        compile project(":lib")
+        implementation project(":lib")
     }
 }
 

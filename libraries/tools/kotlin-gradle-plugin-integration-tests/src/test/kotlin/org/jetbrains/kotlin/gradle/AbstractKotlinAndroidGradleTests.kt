@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -23,7 +24,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
         get() = GradleVersionRequired.AtLeast("6.0")
 
     @Test
-    fun testAndroidMppSourceSets(): Unit = with(Project("new-mpp-android-source-sets", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+    fun testAndroidMppSourceSets(): Unit = with(Project("new-mpp-android-source-sets")) {
         build("sourceSets") {
             assertSuccessful()
 
@@ -473,7 +474,6 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
                 File inputFile = null
 
                 @Override
-                @Internal
                 Iterable<String> asArguments() {
                     // Read the arguments from a file, because changing them in a build script is treated as an
                     // implementation change by Gradle:
@@ -864,52 +864,19 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testMultiplatformAndroidCompile() = with(Project("multiplatformAndroidProject")) {
-        setupWorkingDir()
-
-        if (androidGradlePluginVersion >= AGPVersion.v3_6_0) {
-
-        }
-
-        // Check that the common module is not added to the deprecated configuration 'compile' (KT-23719):
-        gradleBuildScript("libAndroid").appendText(
-            """${'\n'}
-                configurations.compile.dependencies.all { aDependencyExists ->
-                    throw GradleException("Check failed")
-                }
-                """.trimIndent()
-        )
-
-        build("build") {
-            assertSuccessful()
-            assertTasksExecuted(
-                ":lib:compileKotlinCommon",
-                ":lib:compileTestKotlinCommon",
-                ":libJvm:compileKotlin",
-                ":libJvm:compileTestKotlin",
-                ":libAndroid:compileDebugKotlin",
-                ":libAndroid:compileReleaseKotlin",
-                ":libAndroid:compileDebugUnitTestKotlin",
-                ":libAndroid:compileReleaseUnitTestKotlin"
-            )
-
-            assertFileExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
-            assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
-            assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
-            assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
-
-            assertFileExists("libAndroid/build/tmp/kotlin-classes/debug/foo/PlatformClass.class")
-            assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")
-            assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
-            assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
-        }
-    }
-
-    @Test
     fun testDetectAndroidJava8() = with(Project("AndroidProject")) {
         setupWorkingDir()
 
         val kotlinJvmTarget18Regex = Regex("Kotlin compiler args: .* -jvm-target 1.8")
+
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
+            android.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_6
+                targetCompatibility JavaVersion.VERSION_1_6
+            }
+            """.trimIndent()
+        )
 
         build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
             assertSuccessful()
