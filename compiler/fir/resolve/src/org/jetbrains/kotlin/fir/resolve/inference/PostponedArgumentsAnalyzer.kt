@@ -68,7 +68,7 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun processCallableReference(atom: ResolvedCallableReferenceAtom, candidate: Candidate) {
-        if (atom.postponed) {
+        if (atom.mightNeedAdditionalResolution) {
             callResolver.resolveCallableReference(candidate.csBuilder, atom)
         }
 

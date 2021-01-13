@@ -291,8 +291,9 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
                             postponedAtom.collectNotFixedVariables()
                         }
                         postponedAtom is ResolvedCallableReferenceAtom -> {
-                            if (postponedAtom.postponed)
+                            if (postponedAtom.mightNeedAdditionalResolution) {
                                 postponedAtom.collectNotFixedVariables()
+                            }
                         }
                     }
                 }

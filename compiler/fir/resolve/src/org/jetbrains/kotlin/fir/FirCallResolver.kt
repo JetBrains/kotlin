@@ -263,13 +263,15 @@ class FirCallResolver(
             conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
         }
 
+        resolvedCallableReferenceAtom.hasBeenResolvedOnce = true
+
         when {
             noSuccessfulCandidates -> {
                 return false
             }
             reducedCandidates.size > 1 -> {
-                if (resolvedCallableReferenceAtom.postponed) return false
-                resolvedCallableReferenceAtom.postponed = true
+                if (resolvedCallableReferenceAtom.hasBeenPostponed) return false
+                resolvedCallableReferenceAtom.hasBeenPostponed = true
                 return true
             }
         }
