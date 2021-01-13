@@ -124,7 +124,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     private fun IrSimpleFunction.isInvisibleInMultifilePart(): Boolean =
         name.asString() != "<clinit>" &&
-                (parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart &&
+                (parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart.keys &&
                 (DescriptorVisibilities.isPrivate(suspendFunctionOriginal().visibility) ||
                         originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
 

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
@@ -45,9 +46,9 @@ class MemoizedInlineClassReplacements(
     private val context: JvmBackendContext
 ) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
-    private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
+    private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
 
-    internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
+    internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
     /**
      * Get a replacement for a function or a constructor.

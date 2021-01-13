@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import java.util.concurrent.ConcurrentHashMap
 
 /*
  * Generate bridge methods to fix virtual dispatch after type erasure and to adapt Kotlin collections to
@@ -595,7 +596,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
         // For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
         // if its return type is a primitive type, and the new override's return type is an object type.
-        private val signatureCache = hashMapOf<IrFunctionSymbol, Method>()
+        private val signatureCache = ConcurrentHashMap<IrFunctionSymbol, Method>()
 
         fun computeJvmMethod(function: IrFunction): Method =
             signatureCache.getOrPut(function.symbol) { context.methodSignatureMapper.mapAsmMethod(function) }
