@@ -19,11 +19,9 @@ package org.jetbrains.kotlin.js.dce
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
-import org.jetbrains.kotlin.js.dce.Context.Node.Companion.toInt
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.array
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.index
-import java.util.*
 
 class Context {
     val globalScope = Node()
@@ -127,14 +125,6 @@ class Context {
     }
 
     class Node private constructor(val localName: JsName?, qualifier: Qualifier?) {
-        companion object {
-            private const val HAS_SIDE_EFFECT = 1
-            private const val REACHABLE = 1 shl 1
-            private const val DECLARATION_REACHABLE = 1 shl 2
-
-            private fun Boolean.toInt() = if (this) 1 else 0
-        }
-
         private var _dependenciesImpl: MutableSet<Node>? = null
         private var _expressionsImpl: MutableSet<JsExpression>? = null
         private var _functionsImpl: MutableSet<JsFunction>? = null
@@ -153,24 +143,9 @@ class Context {
             get() = _usedByAstNodesImpl ?: mutableSetOf<JsNode>().also { _usedByAstNodesImpl = it }
 
         private var rank = 0
-        private var flags = 0
-        private var hasSideEffectsImpl: Boolean
-            get() = checkFlag(HAS_SIDE_EFFECT)
-            set(value) = setFlag(value, HAS_SIDE_EFFECT)
-
-        private var reachableImpl
-            get() = checkFlag(REACHABLE)
-            set(value) = setFlag(value, REACHABLE)
-
-        private var declarationReachableImpl
-            get() = checkFlag(DECLARATION_REACHABLE)
-            set(value) = setFlag(value, DECLARATION_REACHABLE)
-
-        private fun checkFlag(mask: Int): Boolean = (flags and mask) != 0
-
-        private fun setFlag(value: Boolean, mask: Int) {
-            flags = flags xor ((-value.toInt() xor flags) and mask)
-        }
+        private var hasSideEffectsImpl = false
+        private var reachableImpl = false
+        private var declarationReachableImpl = false
 
         val dependencies: Set<Node> get() = original._dependenciesImpl ?: emptySet()
 
@@ -201,7 +176,7 @@ class Context {
         var qualifier: Qualifier? = qualifier
             private set
 
-        var tag: Int = -1
+        var visited = false
 
         val memberNames: Set<String> get() = original._membersImpl?.keys ?: emptySet()
 
@@ -219,19 +194,19 @@ class Context {
         val members: Map<String, Node> get() = original._membersImpl ?: emptyMap()
 
         fun addDependency(node: Node) {
-            dependenciesImpl += node
+            original.dependenciesImpl += node
         }
 
         fun addFunction(function: JsFunction) {
-            functionsImpl += function
+            original.functionsImpl += function
         }
 
         fun addExpression(expression: JsExpression) {
-            expressionsImpl += expression
+            original.expressionsImpl += expression
         }
 
         fun addUsedByAstNode(node: JsNode) {
-            usedByAstNodesImpl += node
+            original.usedByAstNodesImpl += node
         }
 
         fun member(name: String): Node = original.membersImpl.getOrPut(name) { Node(null, Qualifier(this, name)) }.original
@@ -286,10 +261,10 @@ class Context {
                 usedByAstNodesImpl += other.usedByAstNodesImpl
             }
 
-            other._expressionsImpl?.clear()
-            other._functionsImpl?.clear()
-            other._dependenciesImpl?.clear()
-            other._usedByAstNodesImpl?.clear()
+            other._expressionsImpl = null
+            other._functionsImpl = null
+            other._dependenciesImpl = null
+            other._usedByAstNodesImpl = null
         }
 
         private fun merge(other: Node) {

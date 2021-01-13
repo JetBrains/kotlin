@@ -73,19 +73,19 @@ fun JsLocation.asString(): String {
     return "$simpleFileName:${startLine + 1}"
 }
 
-fun Sequence<Node>.extractRoots(visitedTag: Int): Set<Node> {
-    return mapNotNull { it.original.extractRoot(visitedTag) }.toSet()
+fun Sequence<Node>.extractRoots(): Set<Node> {
+    return mapNotNull { it.original.extractRoot() }.toSet()
 }
 
-fun Node.extractRoot(visitedTag: Int): Node? {
-    if (original.tag == visitedTag) {
+fun Node.extractRoot(): Node? {
+    if (original.visited) {
         return null
     }
-    original.tag = visitedTag
+    original.visited = true
     val qualifier = original.qualifier
     return if (qualifier == null) {
         original
     } else {
-        qualifier.parent.extractRoot(visitedTag)
+        qualifier.parent.extractRoot()
     }
 }

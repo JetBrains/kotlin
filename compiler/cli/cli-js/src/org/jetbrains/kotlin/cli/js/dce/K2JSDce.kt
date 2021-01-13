@@ -78,6 +78,7 @@ class K2JSDce : CLITool<K2JSDceArguments>() {
 
         val dceResult = DeadCodeElimination.run(
             files, includedDeclarations,
+            printReachabilityInfo = arguments.printReachabilityInfo,
             collectOnlyRootNodes = true,
             logConsumer = logConsumer
         )

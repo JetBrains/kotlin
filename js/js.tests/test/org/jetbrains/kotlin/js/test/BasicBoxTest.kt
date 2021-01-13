@@ -929,7 +929,10 @@ abstract class BasicBoxTest(
             "kotlin-test.kotlin.test.DefaultAsserter"
         )
         val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
-        val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes, false) { _, _ -> }
+        val dceResult = DeadCodeElimination.run(
+            allFilesToMinify, additionalReachableNodes,
+            printReachabilityInfo = true, collectOnlyRootNodes = false
+        ) { _, _ -> }
 
         val reachableNodes = dceResult.reachableNodes
         minificationThresholdChecker(reachableNodes.count { it.reachable })

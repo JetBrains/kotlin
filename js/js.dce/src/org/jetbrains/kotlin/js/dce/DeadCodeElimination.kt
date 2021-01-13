@@ -39,6 +39,7 @@ import java.io.File
 import java.io.InputStreamReader
 
 class DeadCodeElimination(
+    private val printReachabilityInfo: Boolean,
     private val collectOnlyRootNodes: Boolean,
     private val logConsumer: (DCELogLevel, String) -> Unit
 ) {
@@ -61,7 +62,7 @@ class DeadCodeElimination(
         analyzer.moduleMapping += moduleMapping
         root.accept(analyzer)
 
-        val usageFinder = ReachabilityTracker(context, analyzer.analysisResult, collectOnlyRootNodes, logConsumer)
+        val usageFinder = ReachabilityTracker(context, analyzer.analysisResult, collectOnlyRootNodes, logConsumer.takeIf { printReachabilityInfo })
         root.accept(usageFinder)
 
         for (reachableName in reachableNames) {
@@ -78,11 +79,12 @@ class DeadCodeElimination(
         fun run(
                 inputFiles: Collection<InputFile>,
                 rootReachableNames: Set<String>,
+                printReachabilityInfo: Boolean,
                 collectOnlyRootNodes: Boolean,
                 logConsumer: (DCELogLevel, String) -> Unit
         ): DeadCodeEliminationResult {
             val program = JsProgram()
-            val dce = DeadCodeElimination(collectOnlyRootNodes, logConsumer)
+            val dce = DeadCodeElimination(printReachabilityInfo, collectOnlyRootNodes, logConsumer)
 
             var hasErrors = false
             val blocks = inputFiles.map { file ->
