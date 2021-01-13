@@ -752,19 +752,19 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 sourceSet.actualPlatforms.addSimplePlatforms(platforms)
             }
 
-            if (sourceSet.shouldCoerceToCommon(importingContext)) {
+            if (importingContext.shouldCoerceToCommon(sourceSet)) {
                 sourceSet.actualPlatforms.addSimplePlatforms(listOf(KotlinPlatform.COMMON))
             }
         }
     }
 
-    private fun KotlinSourceSetImpl.shouldCoerceToCommon(importingContext: MultiplatformModelImportingContext): Boolean {
-        val isHMPPEnabled = importingContext.getProperty(IS_HMPP_ENABLED)
-        val coerceRootSourceSetsToCommon = importingContext.getProperty(COERCE_ROOT_SOURCE_SETS_TO_COMMON)
-        val isRoot = name == COMMON_MAIN_SOURCE_SET_NAME || name == COMMON_TEST_SOURCE_SET_NAME
+    private fun MultiplatformModelImportingContext.shouldCoerceToCommon(sourceSet: KotlinSourceSetImpl): Boolean {
+        val isHMPPEnabled = getProperty(IS_HMPP_ENABLED)
+        val coerceRootSourceSetsToCommon = getProperty(COERCE_ROOT_SOURCE_SETS_TO_COMMON)
+        val isRoot = sourceSet.name == COMMON_MAIN_SOURCE_SET_NAME || sourceSet.name == COMMON_TEST_SOURCE_SET_NAME
 
         // never makes sense to coerce single-targeted source-sets
-        if (actualPlatforms.platforms.size == 1) return false
+        if (sourceSet.actualPlatforms.platforms.size == 1) return false
 
         return when {
             // pre-HMPP has only single-targeted source sets and COMMON
