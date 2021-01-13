@@ -34,6 +34,14 @@ internal interface MultiplatformModelImportingContext {
      * it anywhere (essentially this is a misconfiguration)
      */
     fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = compilationsBySourceSet(sourceSet) == null
+
+    /**
+     * "Default" source-set is a source-set which is included into compilation directly, rather
+     * through closure over dependsOn-relation.
+     *
+     * See also KDoc for [KotlinCompilation.defaultSourceSets]
+     */
+    fun isDefaultSourceSet(sourceSet: KotlinSourceSet): Boolean
 }
 
 internal fun MultiplatformModelImportingContext.getProperty(property: GradleImportProperties): Boolean = project.getProperty(property)
@@ -71,6 +79,7 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
     override lateinit var compilations: Collection<KotlinCompilation>
         private set
     private lateinit var sourceSetToParticipatedCompilations: Map<KotlinSourceSet, Set<KotlinCompilation>>
+    private lateinit var allDefaultSourceSets: Set<KotlinSourceSet>
 
 
     /** see [initializeTargets] */
@@ -102,6 +111,8 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
         }
 
         this.sourceSetToParticipatedCompilations = sourceSetToCompilations
+
+        this.allDefaultSourceSets = compilations.flatMapTo(mutableSetOf()) { it.defaultSourceSets }
     }
 
     internal fun initializeTargets(targets: Collection<KotlinTarget>) {
@@ -111,6 +122,8 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
 
     // overload for small optimization
     override fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet !in sourceSetToParticipatedCompilations.keys
+
+    override fun isDefaultSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in allDefaultSourceSets
 
     override fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? =
         sourceSetToParticipatedCompilations[sourceSet]
