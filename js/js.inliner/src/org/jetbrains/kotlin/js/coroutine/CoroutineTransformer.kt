@@ -49,7 +49,8 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
             x.body = transformCoroutineMetadataToSpecialFunctions(x.body)
         }
         if (x.coroutineMetadata != null) {
-            lastStatementLevelContext.addPrevious(CoroutineFunctionTransformer(x, functionName[x]).transform())
+            val topLevelContext = statementContexts[1]
+            topLevelContext.addPrevious(CoroutineFunctionTransformer(x, functionName[x]).transform())
             x.coroutineMetadata = null
         }
     }
