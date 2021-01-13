@@ -1,4 +1,1 @@
-compiler/testData/cli/jvm/languageVersion.kt:6:21: error: 'break' and 'continue' are not allowed in 'when' statements. Consider using labels to continue/break from the outer loop
-            true -> break
-                    ^
-COMPILATION_ERROR
+OK
