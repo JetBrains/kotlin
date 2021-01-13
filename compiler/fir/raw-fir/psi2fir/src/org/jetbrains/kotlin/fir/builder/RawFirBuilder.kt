@@ -202,10 +202,13 @@ class RawFirBuilder(
                 )
             }
 
-        private fun KtExpression?.toFirExpression(errorReason: String): FirExpression =
+        private fun KtExpression?.toFirExpression(
+            errorReason: String,
+            kind: DiagnosticKind = DiagnosticKind.ExpressionRequired,
+        ): FirExpression =
             if (stubMode) buildExpressionStub()
             else convertSafe() ?: buildErrorExpression(
-                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired),
+                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
             )
 
         private fun KtExpression.toFirStatement(errorReason: String): FirStatement =
@@ -2061,7 +2064,7 @@ class RawFirBuilder(
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Unit): FirElement {
             val baseVariable = generateTemporaryVariable(
                 baseSession, multiDeclaration.toFirSourceElement(), "destruct",
-                multiDeclaration.initializer.toFirExpression("Destructuring declaration without initializer"),
+                multiDeclaration.initializer.toFirExpression("Initializer required for destructuring declaration", DiagnosticKind.Syntax),
             )
             return generateDestructuringBlock(
                 baseSession,

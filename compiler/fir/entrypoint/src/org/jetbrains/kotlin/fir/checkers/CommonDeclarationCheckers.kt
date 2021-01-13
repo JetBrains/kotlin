@@ -41,6 +41,10 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInapplicableLateinitChecker,
     )
 
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+        FirDestructuringDeclarationInitializerChecker,
+    )
+
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
         FirTypeMismatchOnOverrideChecker,
         FirMemberPropertyChecker,
