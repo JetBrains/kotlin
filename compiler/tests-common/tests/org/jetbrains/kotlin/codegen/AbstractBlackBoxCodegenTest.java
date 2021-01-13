@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
 import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.ir.AbstractFirBlackBoxCodegenTest;
@@ -26,8 +27,7 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
-// Prefer using new test runner: org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
-@Deprecated
+@ObsoleteTestInfrastructure(replacer = "org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest")
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void doMultiFileTest(
             @NotNull File wholeFile,

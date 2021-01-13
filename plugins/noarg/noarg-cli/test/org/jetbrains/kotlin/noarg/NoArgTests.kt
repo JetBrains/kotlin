@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 
 internal val NOARG_ANNOTATIONS = listOf("NoArg", "NoArg2", "test.NoArg")
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBlackBoxCodegenTestForNoArg : AbstractBlackBoxCodegenTest() {
     override fun loadMultiFiles(files: MutableList<TestFile>) {
         NoArgComponentRegistrar.registerNoArgComponents(

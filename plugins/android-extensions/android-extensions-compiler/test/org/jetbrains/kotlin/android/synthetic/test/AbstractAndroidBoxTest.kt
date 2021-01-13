@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.android.synthetic.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
@@ -20,8 +21,8 @@ import java.io.File
 import java.net.URL
 import java.util.regex.Pattern
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
-
     private fun createAndroidAPIEnvironment(path: String) {
         return createEnvironmentForConfiguration(KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
     }

@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.TargetBackend
 
-@Deprecated("Prefer using new test runner: org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest")
+@ObsoleteTestInfrastructure("org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest")
 abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
     override val backend = TargetBackend.JVM_IR
 }

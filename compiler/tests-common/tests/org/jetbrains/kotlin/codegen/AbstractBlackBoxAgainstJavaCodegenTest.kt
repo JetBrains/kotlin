@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         javaClassesOutputDirectory = writeJavaFiles(files)!!.let { directory ->

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         super.doMultiFileTest(wholeFile, files)
