@@ -16,12 +16,11 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.dsl.copyFreeCompilerArgsToArgs
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.library.*
 import java.io.File
 import javax.inject.Inject
 
@@ -90,6 +88,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 CacheBuilder(
                     buildDir,
                     compileClasspathConfiguration,
+                    kotlinOptions,
                     libraryFilter,
                     compilerRunner,
                     { createCompilerArgs() },
@@ -114,6 +113,7 @@ abstract class KotlinJsIrLink @Inject constructor(
 internal class CacheBuilder(
     private val buildDir: File,
     private val compileClasspath: Configuration,
+    private val kotlinOptions: KotlinJsOptions,
     private val libraryFilter: (File) -> Boolean,
     private val compilerRunner: GradleCompilerRunner,
     private val compilerArgsFactory: () -> K2JSCompilerArguments,
@@ -170,14 +170,26 @@ internal class CacheBuilder(
         val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency)
         cacheDirectory.mkdirs()
 
+        val argsFile = File(cacheDirectory, "args")
+        val args = if (argsFile.exists()) {
+            argsFile.readLines().toSet()
+        } else emptySet()
+
         for (library in artifactsToAddToCache) {
-            if (cacheDirectory.listFilesOrEmpty().isNotEmpty())
+            val compilerArgs = compilerArgsFactory()
+            kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
+            compilerArgs.freeArgs = compilerArgs.freeArgs
+                .filterNot { it.startsWith(ENTRY_IR_MODULE) }
+
+            val compilerFreeArgs = compilerArgs.freeArgs.toSet()
+
+            if (cacheDirectory.listFilesOrEmpty().isNotEmpty() && args == compilerFreeArgs)
                 continue
 
-            val compilerArgs = compilerArgsFactory()
+            argsFile.writeText(compilerFreeArgs.joinToString("\n"))
+
             compilerArgs.includes = library.file.normalize().absolutePath
             compilerArgs.outputFile = cacheDirectory.resolve("${library.name}.js").normalize().absolutePath
-            compilerArgs.irProduceJs = true
             dependenciesCacheDirectories.forEach {
                 compilerArgs.freeArgs += "-Xcache-directory=${it.absolutePath}"
             }
