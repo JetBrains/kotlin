@@ -660,9 +660,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     callableReferenceAccess, data.expectedType, resolutionContext,
                 ) ?: callableReferenceAccess
 
+            dataFlowAnalyzer.exitCallableReference(resolvedReference)
             return resolvedReference.compose()
         }
 
+        dataFlowAnalyzer.exitCallableReference(callableReferenceAccessWithTransformedLHS)
         return callableReferenceAccessWithTransformedLHS.compose()
     }
 

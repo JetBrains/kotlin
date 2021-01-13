@@ -116,6 +116,8 @@ fun CFGNode<*>.render(): String =
                 is ElvisRhsEnterNode -> "Enter rhs of ?:"
                 is ElvisExitNode -> "Exit ?:"
 
+                is CallableReferenceNode -> "Callable reference: ${fir.render(CfgRenderMode)}"
+
                 is AbstractBinaryExitNode -> throw IllegalStateException()
             },
         )
