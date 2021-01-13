@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataC
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
-import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.gradle.utils.newProperty
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.properties.saveToFile
@@ -696,38 +697,10 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
         getRootCacheDirectory(File(project.konanHome), konanTarget, debuggable, konanCacheKind)
     }
 
-    private fun getAllDependencies(dependency: ResolvedDependency): Set<ResolvedDependency> {
-        val allDependencies = mutableSetOf<ResolvedDependency>()
-
-        fun traverseAllDependencies(dependency: ResolvedDependency) {
-            if (dependency in allDependencies)
-                return
-            allDependencies.add(dependency)
-            dependency.children.forEach { traverseAllDependencies(it) }
-        }
-
-        dependency.children.forEach { traverseAllDependencies(it) }
-        return allDependencies
-    }
-
-    private fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
-
-    private fun computeDependenciesHash(dependency: ResolvedDependency): String {
-        val allArtifactsPaths =
-            (dependency.moduleArtifacts + getAllDependencies(dependency).flatMap { it.moduleArtifacts })
-                .map { it.file.absolutePath }
-                .distinct()
-                .sortedBy { it }
-                .joinToString("|") { it }
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hash = digest.digest(allArtifactsPaths.toByteArray(StandardCharsets.UTF_8))
-        return hash.toHexString()
-    }
-
-    private fun getCacheDirectory(dependency: ResolvedDependency): File {
-        val moduleCacheDirectory = File(rootCacheDirectory, dependency.moduleName)
-        val versionCacheDirectory = File(moduleCacheDirectory, dependency.moduleVersion)
-        return File(versionCacheDirectory, computeDependenciesHash(dependency))
+    private fun getCacheDirectory(
+        dependency: ResolvedDependency
+    ): File {
+        return getCacheDirectory(rootCacheDirectory, dependency)
     }
 
     private fun needCache(libraryPath: String) =
@@ -742,16 +715,11 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
         val artifactsToAddToCache = dependency.moduleArtifacts.filter { needCache(it.file.absolutePath) }
         if (artifactsToAddToCache.isEmpty()) return
 
-        val dependenciesCacheDirectories = getAllDependencies(dependency)
-            .map { childDependency ->
-                val hasKlibs = childDependency.moduleArtifacts.any { it.file.absolutePath.endsWith(".klib") }
-                val cacheDirectory = getCacheDirectory(childDependency)
-                // We can only compile klib to cache if all of its dependencies are also cached.
-                if (hasKlibs && !cacheDirectory.exists())
-                    return
-                cacheDirectory
-            }
-            .filter { it.exists() }
+        val dependenciesCacheDirectories = getDependenciesCacheDirectories(
+            rootCacheDirectory,
+            dependency
+        ) ?: return
+
         val cacheDirectory = getCacheDirectory(dependency)
         cacheDirectory.mkdirs()
 
@@ -881,13 +849,6 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
             for (cacheDirectory in allCacheDirectories)
                 add("-Xcache-directory=$cacheDirectory")
         }
-    }
-
-    private class GradleLoggerAdapter(private val gradleLogger: Logger) : KLogger {
-        override fun log(message: String) = gradleLogger.info(message)
-        override fun warning(message: String) = gradleLogger.warn(message)
-        override fun error(message: String) = kotlin.error(message)
-        override fun fatal(message: String): Nothing = kotlin.error(message)
     }
 
     companion object {
