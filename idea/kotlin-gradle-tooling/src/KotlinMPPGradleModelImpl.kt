@@ -128,6 +128,7 @@ data class KotlinNativeCompilationExtensionsImpl(
 data class KotlinCompilationImpl(
     override val name: String,
     override val sourceSets: Collection<KotlinSourceSet>,
+    override val defaultSourceSets: Collection<KotlinSourceSet>,
     override val dependencies: Array<KotlinDependencyId>,
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
@@ -139,11 +140,8 @@ data class KotlinCompilationImpl(
     // create deep copy
     constructor(kotlinCompilation: KotlinCompilation, cloningCache: MutableMap<Any, Any>) : this(
         kotlinCompilation.name,
-        kotlinCompilation.sourceSets.map { initialSourceSet ->
-            (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(initialSourceSet, cloningCache).also {
-                cloningCache[initialSourceSet] = it
-            }
-        }.toList(),
+        cloneSourceSetsWithCaching(kotlinCompilation.sourceSets, cloningCache),
+        cloneSourceSetsWithCaching(kotlinCompilation.defaultSourceSets, cloningCache),
         kotlinCompilation.dependencies,
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
@@ -166,6 +164,19 @@ data class KotlinCompilationImpl(
                 || platform == KotlinPlatform.ANDROID && name.contains("Test")
 
     override fun toString() = name
+
+    companion object {
+        private fun cloneSourceSetsWithCaching(
+            sourceSets: Collection<KotlinSourceSet>,
+            cloningCache: MutableMap<Any, Any>
+        ): List<KotlinSourceSet> =
+            sourceSets.map { initialSourceSet ->
+                (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(initialSourceSet, cloningCache).also {
+                    cloningCache[initialSourceSet] = it
+                }
+            }
+
+    }
 }
 
 data class KotlinTargetJarImpl(

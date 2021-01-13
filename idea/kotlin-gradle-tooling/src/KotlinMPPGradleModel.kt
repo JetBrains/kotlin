@@ -98,7 +98,22 @@ interface KotlinNativeCompilationExtensions : Serializable {
 }
 
 interface KotlinCompilation : KotlinModule {
+    /**
+     * All source sets participated in this compilation, including those available
+     * via dependsOn.
+     */
     val sourceSets: Collection<KotlinSourceSet>
+
+    /**
+     * Only default source sets of this compilation, i.e. those which are included
+     * into compilations directly.
+     *
+     * Usually, those are automatically created source sets for automatically created
+     * compilations (like jvmMain for JVM compilations) or manually included source sets
+     * (like 'jvm().compilations["main"].source(mySourceSet)' )
+     */
+    val defaultSourceSets: Collection<KotlinSourceSet>
+
     val output: KotlinCompilationOutput
     val arguments: KotlinCompilationArguments
     val dependencyClasspath: Array<String>
