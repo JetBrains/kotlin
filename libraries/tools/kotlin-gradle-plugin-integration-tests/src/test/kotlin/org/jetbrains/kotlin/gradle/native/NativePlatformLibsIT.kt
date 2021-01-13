@@ -150,7 +150,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
             }
 
             // Change cache kind and check that platform libraries generator was executed.
-            buildWithLightDist("tasks", "-Pkotlin.native.cacheKind=static") {
+            buildWithLightDist("tasks", "-Pkotlin.native.cacheKind.ios_x64=static") {
                 assertSuccessful()
                 assertContains("Precompile platform libraries for ios_x64 (precompilation: static)")
             }
