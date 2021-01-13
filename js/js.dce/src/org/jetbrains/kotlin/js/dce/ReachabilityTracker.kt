@@ -80,7 +80,7 @@ class ReachabilityTracker(
             if (!node.reachable) {
                 nested {
                     reach(node)
-                    currentNodeWithLocation?.let { node.usedByAstNodes += it }
+                    currentNodeWithLocation?.let { node.addUsedByAstNode(it) }
                 }
             }
             return false
@@ -105,7 +105,7 @@ class ReachabilityTracker(
                 if (node != null && node.qualifier?.memberName in CALL_FUNCTIONS) {
                     val parent = node.qualifier!!.parent
                     reach(parent)
-                    currentNodeWithLocation?.let { parent.usedByAstNodes += it }
+                    currentNodeWithLocation?.let { parent.addUsedByAstNode(it) }
                 }
                 super.visitInvocation(invocation)
             }

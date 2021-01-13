@@ -172,13 +172,13 @@ class Context {
             flags = flags xor ((-value.toInt() xor flags) and mask)
         }
 
-        val dependencies: MutableSet<Node> get() = original.dependenciesImpl
+        val dependencies: Set<Node> get() = original._dependenciesImpl ?: emptySet()
 
-        val expressions: MutableSet<JsExpression> get() = original.expressionsImpl
+        val expressions: Set<JsExpression> get() = original._expressionsImpl ?: emptySet()
 
-        val functions: MutableSet<JsFunction> get() = original.functionsImpl
+        val functions: Set<JsFunction> get() = original._functionsImpl ?: emptySet()
 
-        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
+        val usedByAstNodes: Set<JsNode> get() = original._usedByAstNodesImpl ?: emptySet()
 
         var hasSideEffects: Boolean
             get() = original.hasSideEffectsImpl
@@ -203,7 +203,7 @@ class Context {
 
         var tag: Int = -1
 
-        val memberNames: MutableSet<String> get() = original.membersImpl.keys
+        val memberNames: Set<String> get() = original._membersImpl?.keys ?: emptySet()
 
         constructor(localName: JsName? = null) : this(localName, null)
 
@@ -216,7 +216,23 @@ class Context {
             }
             private set
 
-        val members: Map<String, Node> get() = original.membersImpl
+        val members: Map<String, Node> get() = original._membersImpl ?: emptyMap()
+
+        fun addDependency(node: Node) {
+            dependenciesImpl += node
+        }
+
+        fun addFunction(function: JsFunction) {
+            functionsImpl += function
+        }
+
+        fun addExpression(expression: JsExpression) {
+            expressionsImpl += expression
+        }
+
+        fun addUsedByAstNode(node: JsNode) {
+            usedByAstNodesImpl += node
+        }
 
         fun member(name: String): Node = original.membersImpl.getOrPut(name) { Node(null, Qualifier(this, name)) }.original
 

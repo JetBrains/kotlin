@@ -70,7 +70,7 @@ class Analyzer(private val context: Context) : JsVisitor() {
             }
             is JsFunction -> expression.name?.let { context.nodes[it]?.original }?.let {
                 nodeMap[x] = it
-                it.functions += expression
+                it.addFunction(expression)
             }
             is JsInvocation -> {
                 val function = expression.qualifier
@@ -237,19 +237,23 @@ class Analyzer(private val context: Context) : JsVisitor() {
                     //   - wrapFunction(function() { ... })
                     if (context.isDefineInlineFunction(function) && rhs.arguments.size == 2) {
                         tryExtractFunction(rhs.arguments[1])?.let { (inlineableFunction, additionalDeps) ->
-                            leftNode.functions += inlineableFunction
+                            leftNode.addFunction(inlineableFunction)
                             val defineInlineFunctionNode = context.extractNode(function)
                             if (defineInlineFunctionNode != null) {
-                                leftNode.dependencies += defineInlineFunctionNode
+                                leftNode.addDependency(defineInlineFunctionNode)
                             }
-                            leftNode.dependencies += additionalDeps
+                            additionalDeps.forEach {
+                                leftNode.addDependency(it)
+                            }
                             return leftNode
                         }
                     }
 
                     tryExtractFunction(rhs)?.let { (functionBody, additionalDeps) ->
-                        leftNode.functions += functionBody
-                        leftNode.dependencies += additionalDeps
+                        leftNode.addFunction(functionBody)
+                        additionalDeps.forEach {
+                            leftNode.addDependency(it)
+                        }
                         return leftNode
                     }
                 }
@@ -271,14 +275,14 @@ class Analyzer(private val context: Context) : JsVisitor() {
                 rhs is JsFunction -> {
                     // lhs = function() { ... }
                     // During reachability tracking phase: eliminate it if lhs is unreachable, traverse function otherwise
-                    leftNode.functions += rhs
+                    leftNode.addFunction(rhs)
                     return leftNode
                 }
                 leftNode.qualifier?.memberName == Namer.METADATA -> {
                     // lhs.$metadata$ = expression
                     // During reachability tracking phase: eliminate it if lhs is unreachable, traverse expression
                     // It's commonly used to supply class's metadata
-                    leftNode.expressions += rhs
+                    leftNode.addExpression(rhs)
                     return leftNode
                 }
                 rhs is JsObjectLiteral && rhs.propertyInitializers.isEmpty() -> return leftNode
@@ -323,8 +327,8 @@ class Analyzer(private val context: Context) : JsVisitor() {
         if (arg == null) return
 
         val prototypeNode = context.extractNode(arg) ?: return
-        target.dependencies += prototypeNode.original
-        target.expressions += arg
+        target.addDependency(prototypeNode.original)
+        target.addExpression(arg)
     }
 
     // Handle typeof foo === 'undefined' ? {} : foo, where foo is FQN
