@@ -5,22 +5,22 @@
     <root id="root">
       <element id="directory" name="lib">
         <element id="archive" name="android-extensions-compiler-plugin-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/android-extensions-compiler-plugin-for-ide/1.4.30-dev-local/android-extensions-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/android-extensions-compiler-plugin-for-ide/build/libs/android-extensions-compiler-plugin-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-android-extensions-runtime.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-android-extensions-runtime/1.4.30-dev-local/kotlin-android-extensions-runtime-1.4.30-dev-local.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="allopen-compiler-plugin-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/allopen-compiler-plugin-for-ide/1.4.30-dev-local/allopen-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/allopen-compiler-plugin-for-ide/build/libs/allopen-compiler-plugin-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlinx-serialization-compiler-plugin-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlinx-serialization-compiler-plugin-for-ide/1.4.30-dev-local/kotlinx-serialization-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlinx-serialization-compiler-plugin-for-ide/build/libs/kotlinx-serialization-compiler-plugin-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="sam-with-receiver-compiler-plugin-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/sam-with-receiver-compiler-plugin-for-ide/1.4.30-dev-local/sam-with-receiver-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/sam-with-receiver-compiler-plugin-for-ide/build/libs/sam-with-receiver-compiler-plugin-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="noarg-compiler-plugin-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/noarg-compiler-plugin-for-ide/1.4.30-dev-local/noarg-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/noarg-compiler-plugin-for-ide/build/libs/noarg-compiler-plugin-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-scripting-compiler-impl.jar">
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-compiler-impl/1.4.30-dev-local/kotlin-scripting-compiler-impl-1.4.30-dev-local.jar" path-in-jar="/" />
@@ -63,7 +63,7 @@
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-scripting-jvm/1.4.30-dev-local/kotlin-scripting-jvm-1.4.30-dev-local.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-gradle-statistics-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-gradle-statistics-for-ide/1.4.30-dev-local/kotlin-gradle-statistics-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-gradle-statistics-for-ide/build/libs/kotlin-gradle-statistics-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-gradle-gradle-idea.jar">
           <element id="module-output" name="kotlin.gradle.gradle-idea" />
@@ -141,7 +141,7 @@
           <element id="module-output" name="kotlin.idea" />
           <element id="directory" name="META-INF">
             <element id="directory" name="extensions">
-              <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.30-dev-local/kotlin-compiler-for-ide-1.4.30-dev-local.jar" path-in-jar="/META-INF/extensions/" />
+              <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-compiler-for-ide/build/libs/kotlin-compiler-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/META-INF/extensions/" />
             </element>
           </element>
         </element>
@@ -185,7 +185,7 @@
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.4.30-dev-local/kotlin-reflect-1.4.30-dev-local.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-plugin.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-compiler-for-ide/1.4.30-dev-local/kotlin-compiler-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-compiler-for-ide/build/libs/kotlin-compiler-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
         <element id="archive" name="kotlin-frontend-independent.jar">
           <element id="module-output" name="kotlin.fir.frontend-independent" />
@@ -206,11 +206,11 @@
           <element id="module-output" name="kotlin.compiler-plugins.parcelize" />
         </element>
         <element id="archive" name="parcelize-compiler-plugin-for-ide.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/parcelize-compiler-plugin-for-ide/1.4.30-dev-local/parcelize-compiler-plugin-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+          <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/parcelize-compiler-plugin-for-ide/build/libs/parcelize-compiler-plugin-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
         </element>
       </element>
       <element id="directory" name="kotlinc">
-        <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.30-dev-local/kotlin-dist-for-ide-1.4.30-dev-local.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/prepare/ide-plugin-dependencies/kotlin-dist-for-ide/build/libs/kotlin-dist-for-ide-1.5.255-SNAPSHOT.jar" path-in-jar="/" />
       </element>
     </root>
   </artifact>
