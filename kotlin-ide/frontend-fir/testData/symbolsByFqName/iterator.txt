@@ -14,7 +14,6 @@ KtFirClassOrObjectSymbol:
   modality: ABSTRACT
   name: Iterator
   origin: LIBRARY
-  primaryConstructor: null
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: [KtFirTypeParameterSymbol(T)]

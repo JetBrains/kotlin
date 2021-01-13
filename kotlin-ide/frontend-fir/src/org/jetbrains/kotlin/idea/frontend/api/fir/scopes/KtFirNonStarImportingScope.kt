@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.scopes.NonStarImport
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -51,6 +52,7 @@ internal class KtFirNonStarImportingScope(
         firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
 
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = emptySequence()
 
     override fun getCallableNames(): Set<Name> = withValidityAssertion {
         imports.mapNotNullTo(hashSetOf()) { it.callableName }

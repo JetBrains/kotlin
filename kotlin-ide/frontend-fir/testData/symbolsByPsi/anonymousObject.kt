@@ -94,7 +94,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: AnonymousContainer
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []

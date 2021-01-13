@@ -6,16 +6,10 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.builder.memberIndex
-import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
-import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.asJava.classes.*
-import org.jetbrains.kotlin.idea.asJava.classes.createInheritanceList
-import org.jetbrains.kotlin.idea.asJava.classes.createInnerClasses
-import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
@@ -91,8 +85,11 @@ internal class FirLightClassForSymbol(
         val result = mutableListOf<KtLightMethod>()
 
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            val callableSymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-            val visibleDeclarations = callableSymbols.applyIf(isEnum) {
+            val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
+
+            createConstructors(declaredMemberScope.getConstructors(), result)
+
+            val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
                 filterNot { function ->
                     function is KtFunctionSymbol && function.name.asString().let { it == "values" || it == "valueOf" }
                 }
@@ -104,19 +101,6 @@ internal class FirLightClassForSymbol(
 
             val suppressStatic = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
             createMethods(visibleDeclarations, result, suppressStaticForMethods = suppressStatic)
-        }
-
-        if (result.none { it.isConstructor }) {
-            classOrObjectSymbol.primaryConstructor?.let {
-                result.add(
-                    FirLightConstructorForSymbol(
-                        constructorSymbol = it,
-                        lightMemberOrigin = null,
-                        containingClass = this,
-                        methodIndex = METHOD_INDEX_FOR_DEFAULT_CTOR
-                    )
-                )
-            }
         }
 
         addMethodsFromCompanionIfNeeded(result)

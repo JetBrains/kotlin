@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -49,6 +50,10 @@ internal abstract class KtFirDelegatingScope<S>(
         firScope.getClassifierSymbols(getClassifierNames().filter(nameFilter), builder)
     }
 
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+        firScope.getConstructors(builder)
+    }
+
     override fun containsName(name: Name): Boolean = withValidityAssertion {
         name in getAllNames()
     }
@@ -70,15 +75,6 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
             }
             callables.add(symbol)
         }
-
-        if (name.isSpecial && name.asString() == "<init>") {
-            processDeclaredConstructors { firConstructor ->
-                firConstructor.fir.let { fir ->
-                    callables.add(builder.buildConstructorSymbol(fir))
-                }
-            }
-        }
-
         yieldAll(callables)
     }
 }
@@ -92,4 +88,13 @@ internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, bui
             }
             yieldAll(classifierSymbols)
         }
+    }
+
+internal fun FirScope.getConstructors(builder: KtSymbolByFirBuilder): Sequence<KtConstructorSymbol> =
+    sequence {
+        val constructorSymbols = mutableListOf<KtConstructorSymbol>()
+        processDeclaredConstructors { firSymbol ->
+            constructorSymbols.add(builder.buildConstructorSymbol(firSymbol.fir))
+        }
+        yieldAll(constructorSymbols)
     }

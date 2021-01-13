@@ -121,6 +121,23 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     return (targetField as? FirLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
 
+internal fun FirLightClassForSymbol.createConstructors(
+    declarations: Sequence<KtConstructorSymbol>,
+    result: MutableList<KtLightMethod>
+) {
+    for (declaration in declarations) {
+        if (declaration.isHiddenOrSynthetic()) continue
+        result.add(
+            FirLightConstructorForSymbol(
+                constructorSymbol = declaration,
+                lightMemberOrigin = null,
+                containingClass = this@createConstructors,
+                methodIndex = METHOD_INDEX_BASE
+            )
+        )
+    }
+}
+
 internal fun FirLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
     result: MutableList<KtLightMethod>,
@@ -166,17 +183,6 @@ internal fun FirLightClassBase.createMethods(
                         )
                     }
                 }
-            }
-            is KtConstructorSymbol -> {
-                if (declaration.isHiddenOrSynthetic()) continue
-                result.add(
-                    FirLightConstructorForSymbol(
-                        constructorSymbol = declaration,
-                        lightMemberOrigin = null,
-                        containingClass = this@createMethods,
-                        methodIndex = METHOD_INDEX_BASE
-                    )
-                )
             }
             is KtPropertySymbol -> {
 
@@ -229,6 +235,7 @@ internal fun FirLightClassBase.createMethods(
                     )
                 }
             }
+            is KtConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")
         }
     }
 }

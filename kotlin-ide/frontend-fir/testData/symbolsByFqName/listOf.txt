@@ -14,7 +14,6 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: FileWalkDirection
   origin: LIBRARY
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Enum<kotlin/io/FileWalkDirection>]
   symbolKind: TOP_LEVEL
   typeParameters: []

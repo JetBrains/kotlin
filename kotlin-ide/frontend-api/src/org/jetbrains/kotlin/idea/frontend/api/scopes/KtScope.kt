@@ -26,11 +26,13 @@ interface KtScope : ValidityTokenOwner {
         sequence {
             yieldAll(getCallableSymbols())
             yieldAll(getClassifierSymbols())
+            yieldAll(getConstructors())
         }
     }
 
     fun getCallableSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtCallableSymbol>
     fun getClassifierSymbols(nameFilter: KtScopeNameFilter = { true }): Sequence<KtClassifierSymbol>
+    fun getConstructors(): Sequence<KtConstructorSymbol>
 
     fun containsName(name: Name): Boolean = withValidityAssertion {
         name in getCallableNames() || name in getClassifierNames()
