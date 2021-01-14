@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.idea.frontend.old
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
+import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 
 interface KtSymbolBasedContext {
     val builtIns: KotlinBuiltIns
@@ -38,12 +43,21 @@ interface KtSymbolBasedContext {
 }
 
 class KtSymbolBasedContextImpl(
-    val ktElementsToAnalyze: Collection<KtElement>
-): KtSymbolBasedContext {
+    val project: Project,
+    val ktElement: KtElement
+) : KtSymbolBasedContext {
+    private val token: ValidityToken = ValidityTokenForKtSymbolBasedWrappers(project)
+
+    private val moduleInfo = ktElement.getModuleInfo()
+
+    override val ktAnalysisSession: KtAnalysisSession =
+        @OptIn(InvalidWayOfUsingAnalysisSession::class)
+        KtFirAnalysisSession.createAnalysisSessionByResolveStateWithCustomValidityToken(ktElement.getResolveState(), token)
+
+    override val moduleDescriptor: ModuleDescriptor = KtSymbolBasedModuleDescriptorImpl(this, moduleInfo)
+
     override val builtIns: KotlinBuiltIns
         get() = incorrectImplementation { DefaultBuiltIns.Instance }
-
-    val moduleInfo = ktElementsToAnalyze.first().getModuleInfo()
 
     override fun noImplementation(additionalInfo: String): Nothing =
         error("This method should not be called for wrappers. $additionalInfo")
@@ -53,6 +67,25 @@ class KtSymbolBasedContextImpl(
 
     override fun implementationPlanned(additionalInfo: String): Nothing =
         TODO("SE_to_implement. $additionalInfo")
+}
+
+private class ValidityTokenForKtSymbolBasedWrappers(val project: Project) : ValidityToken() {
+    private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
+    private val onCreatedTimeStamp = modificationTracker.modificationCount
+
+    override fun isValid(): Boolean {
+        return onCreatedTimeStamp == modificationTracker.modificationCount
+    }
+
+    override fun getInvalidationReason(): String {
+        if (onCreatedTimeStamp != modificationTracker.modificationCount) return "PSI has changed since creation"
+        error("Getting invalidation reason for valid validity token")
+    }
+
+    override fun isAccessible(): Boolean = true
+
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    override fun getInaccessibilityReason(): String =error("Getting inaccessibility reason for validity token when it is accessible")
 }
 
 private class KtSymbolBasedModuleDescriptorImpl(
@@ -72,36 +105,28 @@ private class KtSymbolBasedModuleDescriptorImpl(
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = context.noImplementation()
 
     override val allDependencyModules: List<ModuleDescriptor>
-        get() = TODO("Not yet implemented")
+        get() = context.implementationPostponed()
     override val expectedByModules: List<ModuleDescriptor>
-        get() = TODO("Not yet implemented")
+        get() = context.implementationPostponed()
     override val allExpectedByModules: Set<ModuleDescriptor>
-        get() = TODO("Not yet implemented")
+        get() = context.implementationPostponed()
 
-    override fun <T> getCapability(capability: ModuleCapability<T>): T? {
-        TODO("Not yet implemented")
-    }
+    override fun <T> getCapability(capability: ModuleCapability<T>): T? = null
 
     override val isValid: Boolean
-        get() = TODO("Not yet implemented")
+        get() = context.ktAnalysisSession.token.isValid()
 
     override fun assertValid() {
-        TODO("Not yet implemented")
+        assert(context.ktAnalysisSession.token.isValid())
     }
 
-    override fun getName(): Name {
-        TODO("Not yet implemented")
-    }
+    override fun getName(): Name = moduleInfo.name
 
-    override fun getOriginal(): DeclarationDescriptor {
-        TODO("Not yet implemented")
-    }
+    override fun getOriginal(): DeclarationDescriptor = this
 
-    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
-        TODO("Not yet implemented")
-    }
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = context.noImplementation()
 
     override val annotations: Annotations
-        get() = TODO("Not yet implemented")
+        get() = context.incorrectImplementation { Annotations.EMPTY }
 
 }

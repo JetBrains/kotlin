@@ -16,34 +16,49 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class ResolutionFacadeFirImpl(
+class KtSymbolBasedResolutionFacade(
     override val project: Project,
-    val moduleInfo: IdeaModuleInfo,
-    val platform: TargetPlatform
+    val context: KtSymbolBasedContext
 ) : ResolutionFacade {
-    override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext = FirBasedBindingContext()
+    override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext = FirBasedBindingContext(context)
 
-    override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext = FirBasedBindingContext()
+    override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext =
+        FirBasedBindingContext(context)
 
     override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult {
-        return AnalysisResult.success(FirBasedBindingContext(), StubModuleDescriptor())
+        return AnalysisResult.success(FirBasedBindingContext(context), context.moduleDescriptor)
     }
 
     override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
-        TODO("Not yet implemented")
+        val ktSymbol = with(context.ktAnalysisSession) {
+            declaration.getSymbol()
+        }
+        return when (ktSymbol) {
+            is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(ktSymbol, context)
+            is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(ktSymbol, context)
+            else -> context.implementationPlanned()
+        }
     }
 
     override val moduleDescriptor: ModuleDescriptor
-        get() = TODO("Not yet implemented")
+        get() = context.moduleDescriptor
 
     @FrontendInternals
     override fun <T : Any> getFrontendService(serviceClass: Class<T>): T {
@@ -76,27 +91,20 @@ class ResolutionFacadeFirImpl(
 }
 
 class KtSymbolBasedKotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
-    override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
-        TODO("Not yet implemented")
-    }
+    override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade =
+        KtSymbolBasedResolutionFacade(project, KtSymbolBasedContextImpl(project, elements.first()))
 
-    override fun getResolutionFacade(elements: List<KtElement>, platform: TargetPlatform): ResolutionFacade {
-        TODO("Not yet implemented")
-    }
+    // todo: platform are ignored
+    override fun getResolutionFacade(elements: List<KtElement>, platform: TargetPlatform): ResolutionFacade =
+        KtSymbolBasedResolutionFacade(project, KtSymbolBasedContextImpl(project, elements.first()))
 
-    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? {
-        TODO("Not yet implemented")
-    }
+    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? =
+        file.safeAs<KtFile>()?.let { KtSymbolBasedResolutionFacade(project, KtSymbolBasedContextImpl(project, it)) }
 
     override fun getSuppressionCache(): KotlinSuppressCache {
-        TODO("Not yet implemented")
+        return BindingContextSuppressCache(BindingContext.EMPTY)
     }
 
-    override fun getResolutionFacadeByModuleInfo(
-        moduleInfo: ModuleInfo,
-        platform: TargetPlatform
-    ): ResolutionFacade? {
-        TODO("Not yet implemented")
-    }
-
+    override fun getResolutionFacadeByModuleInfo(moduleInfo: ModuleInfo, platform: TargetPlatform): ResolutionFacade? =
+        (moduleInfo as? IdeaModuleInfo)?.let { getResolutionFacadeByModuleInfo(it, platform) }
 }
