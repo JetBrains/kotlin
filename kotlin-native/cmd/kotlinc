@@ -17,4 +17,4 @@
 DIR="${BASH_SOURCE[0]%/*}"
 : ${DIR:="."}
 
-"${DIR}"/run_konan konanc "$@"
+"${DIR}"/run_konan kotlinc "$@"
