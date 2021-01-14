@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -60,6 +61,7 @@ public class CompileEnvironmentUtil {
             OutputStream fos,
             @Nullable FqName mainClass,
             boolean includeRuntime,
+            boolean noReflect,
             boolean resetJarTimestamps
     ) {
         try {
@@ -89,6 +91,9 @@ public class CompileEnvironmentUtil {
             }
             if (includeRuntime) {
                 writeRuntimeToJar(stream, resetJarTimestamps);
+                if (!noReflect) {
+                    writeReflectToJar(stream, resetJarTimestamps);
+                }
             }
             stream.finish();
         }
@@ -98,12 +103,12 @@ public class CompileEnvironmentUtil {
     }
 
     public static void writeToJar(
-            File jarPath, boolean jarRuntime, boolean resetJarTimestamps, FqName mainClass, OutputFileCollection outputFiles
+            File jarPath, boolean jarRuntime, boolean noReflect, boolean resetJarTimestamps, FqName mainClass, OutputFileCollection outputFiles
     ) {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(jarPath);
-            doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, resetJarTimestamps);
+            doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, noReflect, resetJarTimestamps);
             outputStream.close();
         }
         catch (FileNotFoundException e) {
@@ -125,13 +130,22 @@ public class CompileEnvironmentUtil {
         copyJarImpl(stream, stdlibPath, resetJarTimestamps);
     }
 
+    private static void writeReflectToJar(JarOutputStream stream, boolean resetJarTimestamps) throws IOException {
+        File reflectPath = PathUtil.getKotlinPathsForCompiler().getReflectPath();
+        if (!reflectPath.exists()) {
+            throw new CompileEnvironmentException("Couldn't find kotlin-reflect at " + reflectPath);
+        }
+        copyJarImpl(stream, reflectPath, resetJarTimestamps);
+    }
+
     private static void copyJarImpl(JarOutputStream stream, File jarPath, boolean resetJarTimestamps) throws IOException {
         try (JarInputStream jis = new JarInputStream(new FileInputStream(jarPath))) {
             while (true) {
                 JarEntry e = jis.getNextJarEntry();
                 if (e == null) break;
 
-                if (!FileUtilRt.extensionEquals(e.getName(), "class") ||
+                if ((!FileUtilRt.extensionEquals(e.getName(), "class") &&
+                     !FileUtilRt.extensionEquals(e.getName(), BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)) ||
                     StringsKt.substringAfterLast(e.getName(), "/", e.getName()).equals("module-info.class")) {
                     continue;
                 }

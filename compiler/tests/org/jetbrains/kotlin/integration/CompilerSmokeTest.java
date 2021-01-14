@@ -187,4 +187,18 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         );
         run("buildFile.run", "-cp", tmpdir.getAbsolutePath(), "MainKt");
     }
+
+    public void testReflect() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "reflect.jar";
+        assertEquals("compilation failed", 0,
+                     runCompiler("reflect.compile", "-include-runtime", "reflect.kt", "-d", jar));
+        run("reflect.run", "-cp", jar, "reflect.ReflectKt");
+    }
+
+    public void testNoReflect() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "noReflect.jar";
+        assertEquals("compilation failed", 0,
+                     runCompiler("noReflect.compile", "-include-runtime", "-no-reflect", "noReflect.kt", "-d", jar));
+        run("noReflect.run", "-cp", jar, "noReflect.NoReflectKt");
+    }
 }
