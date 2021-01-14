@@ -134,10 +134,6 @@ fun main(args: Array<String>) {
             testClass<AbstractJsKlibBinaryCompatibilityTest> {
                 model("klibEvolution", targetBackend = TargetBackend.JS_IR)
             }
-
-            testClass<AbstractJsKlibBinaryCompatibilityErrorTest> {
-                model("klibEvolutionNegative", targetBackend = TargetBackend.JS_IR)
-            }
         }
     }
 }
