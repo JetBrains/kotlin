@@ -5,30 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
-class KlibMetadataStringTable : StringTableImpl() {
-    override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? {
-        return if (descriptor.containingDeclaration is CallableMemberDescriptor) {
-            val superClassifiers = descriptor.getAllSuperClassifiers()
-                .mapNotNull { it as ClassifierDescriptorWithTypeParameters }
-                .filter { it != descriptor }
-                .toList()
-            if (superClassifiers.size == 1) {
-                superClassifiers[0].classId
-            } else {
-                val superClass = superClassifiers.find { !DescriptorUtils.isInterface(it) }
-                superClass?.classId ?: ClassId.topLevel(StandardNames.FqNames.any.toSafe())
-            }
-        } else {
-            super.getLocalClassIdReplacement(descriptor)
-        }
-    }
-}
+typealias KlibMetadataStringTable = ApproximatingStringTable

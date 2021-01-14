@@ -725,6 +725,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         loadClassFile("SourceKt", tmpdir, library)
     }
 
+    fun testAnonymousObjectTypeMetadata() {
+        val library = compileCommonLibrary(
+            libraryName = "library",
+        )
+        compileKotlin(
+            "anonymousObjectTypeMetadata.kt",
+            tmpdir,
+            listOf(library),
+            K2MetadataCompiler(),
+        )
+    }
+
     private fun loadClassFile(className: String, dir: File, library: File) {
         val classLoader = URLClassLoader(arrayOf(dir.toURI().toURL(), library.toURI().toURL()))
         val mainClass = classLoader.loadClass(className)
