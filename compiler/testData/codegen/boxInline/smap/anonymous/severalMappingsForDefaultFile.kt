@@ -46,7 +46,6 @@ test/_1Kt
 1#1,18:1
 10#2:19
 6#2:20
-*E
 *S KotlinDebug
 *F
 + 1 2.kt
@@ -73,7 +72,6 @@ _2Kt
 10#2:20
 15#2:22
 7#3:21
-*E
 *S KotlinDebug
 *F
 + 1 1.kt

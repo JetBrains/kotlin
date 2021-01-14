@@ -26,7 +26,6 @@ A
 *L
 1#1,9:1
 4#2:10
-*E
 *S KotlinDebug
 *F
 + 1 2.kt

@@ -30,7 +30,6 @@ test/_1__aKt
 *L
 1#1,8:1
 7#2:9
-*E
 *S KotlinDebug
 *F
 + 1 2.kt

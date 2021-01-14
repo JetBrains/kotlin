@@ -25,7 +25,6 @@ Facade___1Kt
 *L
 1#1,13:1
 8#1:14
-*E
 *S KotlinDebug
 *F
 + 1 1.kt
@@ -47,7 +46,6 @@ Facade___1Kt
 *L
 1#1,5:1
 8#2:6
-*E
 *S KotlinDebug
 *F
 + 1 2.kt

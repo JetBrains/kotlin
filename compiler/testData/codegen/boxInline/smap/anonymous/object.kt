@@ -59,13 +59,12 @@ builders/_1Kt
 *L
 1#1,22:1
 7#2,5:23
-*E
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
-9#1,5:23
+9#1:23,5
 *E
 
 SMAP
