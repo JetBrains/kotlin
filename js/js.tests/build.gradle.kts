@@ -46,6 +46,7 @@ dependencies {
     testCompile(project(":js:js.dce"))
     testCompile(project(":js:js.engines"))
     testCompile(project(":compiler:incremental-compilation-impl"))
+    testCompile(projectTests(":compiler:tests-klib-binary-compatibility"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
