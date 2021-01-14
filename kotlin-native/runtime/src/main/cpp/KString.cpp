@@ -28,6 +28,8 @@
 
 #include "utf8.h"
 
+#include "polyhash/PolyHash.h"
+
 namespace {
 
 typedef std::back_insert_iterator<KStdString> KStdStringInserter;
@@ -1165,10 +1167,7 @@ KInt Kotlin_String_lastIndexOfString(KString thiz, KString other, KInt fromIndex
 
 KInt Kotlin_String_hashCode(KString thiz) {
   // TODO: consider caching strings hashes.
-  // TODO: maybe use some simpler hashing algorithm?
-  // Note that we don't use Java's string hash.
-  return CityHash64(
-    CharArrayAddressOfElementAt(thiz, 0), thiz->count_ * sizeof(KChar));
+  return polyHash(thiz->count_, CharArrayAddressOfElementAt(thiz, 0));
 }
 
 const KChar* Kotlin_String_utf16pointer(KString message) {
