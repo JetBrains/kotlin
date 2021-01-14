@@ -27,6 +27,7 @@ dependencies {
     testApi(platform("org.junit:junit-bom:5.7.0"))
     testApi("org.junit.jupiter:junit-jupiter")
     testApi("org.junit.platform:junit-platform-commons:1.7.0")
+    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))

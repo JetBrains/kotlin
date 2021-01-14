@@ -475,11 +475,19 @@ class KotlinCoreEnvironment private constructor(
 
         fun getOrCreateApplicationEnvironmentForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration
+        ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(parentDisposable, configuration, unitTestMode = false)
+
+        fun getOrCreateApplicationEnvironmentForTests(
+            parentDisposable: Disposable, configuration: CompilerConfiguration
+        ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+
+        private fun getOrCreateApplicationEnvironment(
+            parentDisposable: Disposable, configuration: CompilerConfiguration, unitTestMode: Boolean
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
                     val disposable = Disposer.newDisposable()
-                    ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode = false)
+                    ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode)
                     ourProjectCount = 0
                     Disposer.register(disposable, Disposable {
                         synchronized(APPLICATION_LOCK) {

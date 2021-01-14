@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
@@ -72,7 +73,11 @@ class CompilerConfigurationProviderImpl(
                 platform.isCommon() -> EnvironmentConfigFiles.METADATA_CONFIG_FILES
                 else -> error("Unknown platform: $platform")
             }
-            val projectEnv = KotlinCoreEnvironment.createProjectEnvironmentForTests(testRootDisposable, CompilerConfiguration())
+            val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
+                ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
+                CompilerConfiguration()
+            )
+            val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment)
             KotlinCoreEnvironment.createForTests(
                 projectEnv,
                 createCompilerConfiguration(module, projectEnv.project),
