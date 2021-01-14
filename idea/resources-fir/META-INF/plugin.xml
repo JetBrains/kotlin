@@ -238,6 +238,9 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.kotlin.idea.asJava.FirLightClassGenerationSupport"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.caches.resolve.KotlinCacheService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedKotlinCacheServiceImpl"/>
+
     <elementDescriptionProvider
         implementation="org.jetbrains.kotlin.idea.findUsages.KotlinElementDescriptionProviderBase"
         order="first"/>
