@@ -177,24 +177,11 @@ internal class CacheBuilder(
         val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency)
         cacheDirectory.mkdirs()
 
-        val argsFile = File(cacheDirectory, "args")
-        val args = if (argsFile.exists()) {
-            argsFile.readLines().toSet()
-        } else emptySet()
-
         for (library in artifactsToAddToCache) {
             val compilerArgs = compilerArgsFactory()
             kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
             compilerArgs.freeArgs = compilerArgs.freeArgs
                 .filterNot { it.startsWith(ENTRY_IR_MODULE) }
-                .filterNot { it == ENABLE_DCE }
-
-            val compilerFreeArgs = compilerArgs.freeArgs.toSet()
-
-            if (cacheDirectory.listFilesOrEmpty().isNotEmpty() && args == compilerFreeArgs)
-                continue
-
-            argsFile.writeText(compilerFreeArgs.joinToString("\n"))
 
             compilerArgs.includes = library.file.normalize().absolutePath
             compilerArgs.outputFile = cacheDirectory.resolve("${library.name}.js").normalize().absolutePath
