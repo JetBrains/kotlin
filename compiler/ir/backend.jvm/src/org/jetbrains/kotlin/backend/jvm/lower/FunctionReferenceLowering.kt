@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
+import org.jetbrains.kotlin.config.JvmSamConversions
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -21,10 +22,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -80,6 +78,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             FunctionReferenceBuilder(expression).build()
     }
 
+    private val shouldUseIndySamConversions =
+        context.state.samConversionsScheme == JvmSamConversions.INDY
+
     // Handle SAM conversions which wrap a function reference:
     //     class sam$n(private val receiver: R) : Interface { override fun method(...) = receiver.target(...) }
     //
@@ -87,20 +88,66 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     // This is actually very common, as `Interface { something }` is a local function + a SAM-conversion
     // of a reference to it into an implementation.
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-        if (expression.operator == IrTypeOperator.SAM_CONVERSION) {
-            val invokable = expression.argument
-            val reference = if (invokable is IrFunctionReference) {
-                invokable
-            } else if (invokable is IrBlock && invokable.origin.isLambda && invokable.statements.last() is IrFunctionReference) {
-                invokable.statements.dropLast(1).forEach { it.transform(this, null) }
-                invokable.statements.last() as IrFunctionReference
-            } else {
-                return super.visitTypeOperator(expression)
-            }
-            reference.transformChildrenVoid()
-            return FunctionReferenceBuilder(reference, expression.typeOperand).build()
+        if (expression.operator != IrTypeOperator.SAM_CONVERSION) {
+            return super.visitTypeOperator(expression)
         }
-        return super.visitTypeOperator(expression)
+
+        val invokable = expression.argument
+        val reference = if (invokable is IrFunctionReference) {
+            invokable
+        } else if (invokable is IrBlock && invokable.origin.isLambda && invokable.statements.last() is IrFunctionReference) {
+            invokable.statements.dropLast(1).forEach { it.transform(this, null) }
+            invokable.statements.last() as IrFunctionReference
+        } else {
+            return super.visitTypeOperator(expression)
+        }
+        reference.transformChildrenVoid()
+
+        return if (shouldUseIndySamConversions) {
+            wrapSamConversionArgumentWithIndySamConversion(expression)
+        } else {
+            FunctionReferenceBuilder(reference, expression.typeOperand).build()
+        }
+    }
+
+    private fun wrapSamConversionArgumentWithIndySamConversion(expression: IrTypeOperatorCall): IrExpression {
+        return when (val argument = expression.argument) {
+            is IrFunctionReference ->
+                wrapWithIndySamConversion(expression.typeOperand, argument)
+            is IrBlock -> {
+                val last = argument.statements.last()
+                val functionReference = last as? IrFunctionReference
+                    ?: throw AssertionError("Function reference expected: ${last.render()}")
+                argument.statements[argument.statements.size - 1] = wrapWithIndySamConversion(expression.typeOperand, functionReference)
+                return argument
+            }
+            else -> throw AssertionError("Block or function reference expected: ${expression.render()}")
+        }
+    }
+
+    private val jvmIndySamConversionIntrinsic = context.ir.symbols.indySamConversionIntrinsic
+
+    private val specialNullabilityAnnotationsFqNames =
+        setOf(
+            context.ir.symbols.flexibleNullabilityAnnotationFqName,
+            context.ir.symbols.enhancedNullabilityAnnotationFqName
+        )
+
+    private fun wrapWithIndySamConversion(samType: IrType, irFunRef: IrFunctionReference): IrCall {
+        val notNullSamType = samType.makeNotNull()
+            .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
+        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+            // We should produce the following expression:
+            //      `<jvm-indy-sam-conversion>`<samType>(method)
+            // where:
+            //  - 'samType' is a substituted SAM type;
+            //  - 'method' is a function reference to the actual method we are going to call
+            //    (note that we need an IrFunctionReference here, so that further transformations would extract closure properly).
+            irCall(jvmIndySamConversionIntrinsic, notNullSamType).apply {
+                putTypeArgument(0, notNullSamType)
+                putValueArgument(0, irFunRef)
+            }
+        }
     }
 
     private inner class FunctionReferenceBuilder(val irFunctionReference: IrFunctionReference, val samSuperType: IrType? = null) {

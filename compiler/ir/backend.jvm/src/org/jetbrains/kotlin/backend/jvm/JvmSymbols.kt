@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -50,6 +49,17 @@ class JvmSymbols(
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
     private val kotlinReflectPackage: IrPackageFragment = createPackage(FqName("kotlin.reflect"))
     private val javaLangPackage: IrPackageFragment = createPackage(FqName("java.lang"))
+
+    // Special package for functions representing dynamic symbols referenced by 'INVOKEDYNAMIC' instruction - e.g.,
+    //  'get(Ljava/lang/String;)Ljava/util/function/Supplier;'
+    // in
+    //  INVOKEDYNAMIC get(Ljava/lang/String;)Ljava/util/function/Supplier; [
+    //      H_INVOKESTATIC java/lang/invoke/LambdaMetafactory.metafactory(...)Ljava/lang/invoke/CallSite;
+    //      ...
+    //  ]
+    // Such functions don't exist as methods in the actual bytecode
+    // (they are expected to be provided at run-time by the corresponding bootstrap method).
+    val kotlinJvmInternalInvokeDynamicPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.invokeDynamic"))
 
     private val generateOptimizedCallableReferenceSuperClasses = context.state.generateOptimizedCallableReferenceSuperClasses
 
@@ -534,6 +544,82 @@ class JvmSymbols(
             addValueParameter("v", src.defaultType)
             returnType = dst.defaultType
         }.symbol
+
+    val indySamConversionIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-indy-sam-conversion>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val samType = addTypeParameter("SAM_TYPE", irBuiltIns.anyType)
+            addValueParameter("method", irBuiltIns.anyNType)
+            returnType = samType.defaultType
+        }.symbol
+
+    val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
+
+    // Intrinsic to represent INVOKEDYNAMIC calls in IR.
+    //  fun <T> `<jvm-indy>`(
+    //      dynamicCall: T,
+    //      bootstrapMethodTag: Int,
+    //      bootstrapMethodOwner: String,
+    //      bootstrapMethodName: String,
+    //      bootstrapMethodDesc: String,
+    //      vararg bootstrapMethodArgs: Any
+    //  ): T
+    // Bootstrap method handle is encoded as a bunch of constants.
+    // For example,
+    //  REF_invokeStatic java/lang/invoke/LambdaMetafactory.metafactory:(
+    //      Ljava/lang/invoke/MethodHandles$Lookup;
+    //      Ljava/lang/String;
+    //      Ljava/lang/invoke/MethodType;
+    //      Ljava/lang/invoke/MethodType;
+    //      Ljava/lang/invoke/MethodHandle;
+    //      Ljava/lang/invoke/MethodType;
+    //      )Ljava/lang/invoke/CallSite;
+    // is represented as
+    //  bootstrapMethodTag: IrConst<Int>(value = H_INVOKESTATIC)
+    //  bootstrapMethodOwner: IrConst<String>(value = "java/lang/invoke/LambdaMetafactory")
+    //  bootstrapMethodName: IrConst<String>(value = "metafactory")
+    //  bootstrapMethodDesc: IrConst<String>(value = "(...)Ljava/lang/invoke/CallSite;")
+    // Bootstrap method owner is assumed to be a class (which is true for both LambdaMetafactory and StringConcatFactory).
+    val jvmIndyIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-indy>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val t = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("dynamicCall", t.defaultType)
+            addValueParameter("bootstrapMethodTag", irBuiltIns.intType)
+            addValueParameter("bootstrapMethodOwner", irBuiltIns.stringType)
+            addValueParameter("bootstrapMethodName", irBuiltIns.stringType)
+            addValueParameter("bootstrapMethodDesc", irBuiltIns.stringType)
+            addValueParameter {
+                name = Name.identifier("bootstrapMethodArguments")
+                type = arrayOfAnyType
+                varargElementType = irBuiltIns.anyType
+            }
+            returnType = t.defaultType
+        }.symbol
+
+    // Intrinsic used to represent MethodType objects in bootstrap method arguments (see jvmInvokeDynamicIntrinsic above).
+    // Type argument is a possibly substituted method owner type (e.g., 'java.lang.function.Supplier<String>').
+    // Value argument is a raw function reference to a corresponding method (e.g., 'java.lang.function.Supplier#get').
+    val jvmMethodTypeIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-method-type>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addTypeParameter("OwnerT", irBuiltIns.anyType)
+            addValueParameter("method", irBuiltIns.anyType)
+            returnType = irBuiltIns.anyType
+        }.symbol
+
+    val flexibleNullabilityAnnotationFqName = JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME
+    val enhancedNullabilityAnnotationFqName = JvmGeneratorExtensions.ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME
+    val rawTypeAnnotationFQN = JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME
 
     private val collectionToArrayClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.CollectionToArray")) { klass ->
         klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY

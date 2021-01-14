@@ -207,6 +207,14 @@ class GenerationState private constructor(
             configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INLINE
         else JvmStringConcat.INLINE
 
+    val samConversionsScheme = run {
+        val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS) ?: JvmSamConversions.DEFAULT
+        if (target >= fromConfig.minJvmTarget)
+            fromConfig
+        else
+            JvmSamConversions.DEFAULT
+    }
+
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(

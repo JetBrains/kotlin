@@ -11,26 +11,33 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Handle
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 // After this pass runs there are only four kinds of IrTypeOperatorCalls left:
 //
@@ -93,6 +100,175 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             argument
         else ->
             builder.irAs(argument, type)
+    }
+
+    private val indySamConversionIntrinsic = context.ir.symbols.indySamConversionIntrinsic
+
+    private val indyIntrinsic = context.ir.symbols.jvmIndyIntrinsic
+
+    private fun IrBuilderWithScope.jvmInvokeDynamic(
+        dynamicCall: IrCall,
+        bootstrapMethod: Handle,
+        bootstrapMethodArguments: List<IrExpression>
+    ) =
+        irCall(indyIntrinsic, dynamicCall.type).apply {
+            putTypeArgument(0, dynamicCall.type)
+            putValueArgument(0, dynamicCall)
+            putValueArgument(1, irInt(bootstrapMethod.tag))
+            putValueArgument(2, irString(bootstrapMethod.owner))
+            putValueArgument(3, irString(bootstrapMethod.name))
+            putValueArgument(4, irString(bootstrapMethod.desc))
+            putValueArgument(5, irVararg(context.irBuiltIns.anyType, bootstrapMethodArguments))
+        }
+
+    private val methodTypeIntrinsic = context.ir.symbols.jvmMethodTypeIntrinsic
+
+    private fun IrBuilderWithScope.jvmMethodType(ownerType: IrType, methodSymbol: IrFunctionSymbol) =
+        irCall(methodTypeIntrinsic, context.irBuiltIns.anyType).apply {
+            putTypeArgument(0, ownerType)
+            putValueArgument(0, irRawFunctionReferefence(context.irBuiltIns.anyType, methodSymbol))
+        }
+
+    private val lambdaMetafactoryHandle =
+        Handle(
+            Opcodes.H_INVOKESTATIC,
+            "java/lang/invoke/LambdaMetafactory",
+            "metafactory",
+            "(" +
+                    "Ljava/lang/invoke/MethodHandles\$Lookup;" +
+                    "Ljava/lang/String;" +
+                    "Ljava/lang/invoke/MethodType;" +
+                    "Ljava/lang/invoke/MethodType;" +
+                    "Ljava/lang/invoke/MethodHandle;" +
+                    "Ljava/lang/invoke/MethodType;" +
+                    ")Ljava/lang/invoke/CallSite;",
+            false
+        )
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        return when (expression.symbol) {
+            indySamConversionIntrinsic -> updateIndySamConversionIntrinsicCall(expression)
+            else -> super.visitCall(expression)
+        }
+    }
+
+    /**
+     * @see FunctionReferenceLowering.wrapWithIndySamConversion
+     */
+    private fun updateIndySamConversionIntrinsicCall(call: IrCall): IrCall {
+        fun fail(message: String): Nothing =
+            throw AssertionError("$message, call:\n${call.dump()}")
+
+        // We expect:
+        //  `<jvm-indy-sam-conversion>`<samType>(method)
+        // where
+        //  - 'samType' is a substituted SAM type;
+        //  - 'method' is an IrFunctionReference to an actual method that should be called,
+        //    with arguments captured by closure stored as function reference arguments.
+        // We replace it with JVM INVOKEDYNAMIC intrinsic.
+
+        val startOffset = call.startOffset
+        val endOffset = call.endOffset
+
+        val samType = call.getTypeArgument(0) as? IrSimpleType
+            ?: fail("'samType' is expected to be a simple type")
+        val samClassSymbol = samType.classOrNull
+            ?: fail("'samType' is expected to be a class type: '${samType.render()}'")
+        val samMethod = samClassSymbol.owner.functions.singleOrNull { it.modality == Modality.ABSTRACT }
+            ?: fail("'${samType.render()}' is not a SAM-type")
+
+        val irFunRef = call.getValueArgument(0) as? IrFunctionReference
+            ?: fail("'method' is expected to be 'IrFunctionReference'")
+        val funSymbol = irFunRef.symbol
+
+        val erasedSamType = samClassSymbol.defaultType as IrSimpleType
+        val dynamicCall = wrapClosureInDynamicCall(erasedSamType, samMethod, irFunRef)
+
+        return context.createJvmIrBuilder(
+            funSymbol, // TODO actual symbol for outer scope
+            startOffset, endOffset
+        ).run {
+            val samMethodType = jvmMethodType(erasedSamType, samMethod.symbol)
+            val irRawFunRef = irRawFunctionReferefence(irFunRef.type, funSymbol)
+            val instanceMethodType = jvmMethodType(samType, samMethod.symbol)
+
+            jvmInvokeDynamic(
+                dynamicCall,
+                lambdaMetafactoryHandle,
+                listOf(samMethodType, irRawFunRef, instanceMethodType)
+            )
+        }
+    }
+
+    private fun wrapClosureInDynamicCall(
+        erasedSamType: IrSimpleType,
+        samMethod: IrSimpleFunction,
+        irFunRef: IrFunctionReference
+    ): IrCall {
+        fun fail(message: String): Nothing =
+            throw AssertionError("$message, irFunRef:\n${irFunRef.dump()}")
+
+        val dynamicCallArguments = ArrayList<IrExpression>()
+
+        val irDynamicCallTarget = context.irFactory.buildFun {
+            origin = JvmLoweredDeclarationOrigin.INVOVEDYNAMIC_CALL_TARGET
+            name = samMethod.name
+            returnType = erasedSamType
+        }.apply {
+            parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+
+            var syntheticParameterIndex = 0
+            val targetFun = irFunRef.symbol.owner
+
+            val targetDispatchReceiverParameter = targetFun.dispatchReceiverParameter
+            if (targetDispatchReceiverParameter != null) {
+                addValueParameter("p${syntheticParameterIndex++}", targetDispatchReceiverParameter.type)
+                val dispatchReceiver = irFunRef.dispatchReceiver
+                    ?: fail("Captured dispatch receiver is not provided")
+                dynamicCallArguments.add(dispatchReceiver)
+            }
+
+            val targetExtensionReceiverParameter = targetFun.extensionReceiverParameter
+            if (targetExtensionReceiverParameter != null) {
+                addValueParameter("p${syntheticParameterIndex++}", targetExtensionReceiverParameter.type)
+                val extensionReceiver = irFunRef.extensionReceiver
+                    ?: fail("Captured extension receiver is not provided")
+                dynamicCallArguments.add(extensionReceiver)
+            }
+
+            val samMethodValueParametersCount = samMethod.valueParameters.size
+            val targetFunValueParametersCount = targetFun.valueParameters.size
+            for (i in 0 until targetFunValueParametersCount - samMethodValueParametersCount) {
+                val targetFunValueParameter = targetFun.valueParameters[i]
+                addValueParameter("p${syntheticParameterIndex++}", targetFunValueParameter.type)
+                val capturedValueArgument = irFunRef.getValueArgument(i)
+                    ?: fail("Captured value argument #$i (${targetFunValueParameter.name} not provided")
+                dynamicCallArguments.add(capturedValueArgument)
+            }
+        }
+
+        if (dynamicCallArguments.size != irDynamicCallTarget.valueParameters.size) {
+            throw AssertionError(
+                "Dynamic call target value parameters (${irDynamicCallTarget.valueParameters.size}) " +
+                        "don't match dynamic call arguments (${dynamicCallArguments.size}):\n" +
+                        "irDynamicCallTarget:\n" +
+                        irDynamicCallTarget.dump() +
+                        "dynamicCallArguments:\n" +
+                        dynamicCallArguments
+                            .withIndex()
+                            .joinToString(separator = "\n  ", prefix = "[\n  ", postfix = "\n]") { (index, irArg) ->
+                                "#$index: ${irArg.dump()}"
+                            }
+            )
+        }
+
+        return context.createJvmIrBuilder(irDynamicCallTarget.symbol)
+            .irCall(irDynamicCallTarget.symbol)
+            .apply {
+                for (i in dynamicCallArguments.indices) {
+                    putValueArgument(i, dynamicCallArguments[i])
+                }
+            }
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression = with(builder) {

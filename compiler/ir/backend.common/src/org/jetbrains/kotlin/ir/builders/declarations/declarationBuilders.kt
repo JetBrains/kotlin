@@ -65,7 +65,11 @@ fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Descri
         visibility = fieldVisibility
     }
 
-fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE): IrField =
+fun IrClass.addField(
+    fieldName: String,
+    fieldType: IrType,
+    fieldVisibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
+): IrField =
     addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
 @PublishedApi
@@ -141,16 +145,16 @@ inline fun IrClass.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleF
     factory.addFunction(this, builder)
 
 fun IrClass.addFunction(
-        name: String,
-        returnType: IrType,
-        modality: Modality = Modality.FINAL,
-        visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
-        isStatic: Boolean = false,
-        isSuspend: Boolean = false,
-        isFakeOverride: Boolean = false,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+    name: String,
+    returnType: IrType,
+    modality: Modality = Modality.FINAL,
+    visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
+    isStatic: Boolean = false,
+    isSuspend: Boolean = false,
+    isFakeOverride: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+    startOffset: Int = UNDEFINED_OFFSET,
+    endOffset: Int = UNDEFINED_OFFSET
 ): IrSimpleFunction =
     addFunction {
         this.startOffset = startOffset
@@ -216,7 +220,7 @@ internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, par
 
 
 inline fun <D> buildValueParameter(declaration: D, builder: IrValueParameterBuilder.() -> Unit): IrValueParameter
-    where D : IrDeclaration, D : IrDeclarationParent =
+        where D : IrDeclaration, D : IrDeclarationParent =
     IrValueParameterBuilder().run {
         builder()
         declaration.factory.buildValueParameter(this, declaration)
@@ -234,8 +238,11 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
     }
 
 fun IrFunction.addValueParameter(name: String, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
+    addValueParameter(Name.identifier(name), type, origin)
+
+fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     addValueParameter {
-        this.name = Name.identifier(name)
+        this.name = name
         this.type = type
         this.origin = origin
     }
