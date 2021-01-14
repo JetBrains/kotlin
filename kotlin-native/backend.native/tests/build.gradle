@@ -220,6 +220,7 @@ def update_external_tests() {
             include 'compiler/codegen/box/**'
             include 'compiler/codegen/boxInline/**'
             include 'compiler/compileKotlinAgainstKotlin/**'
+            include 'compiler/binaryCompatibility/klibEvolution/**'
             exclude 'stdlib/**'
         }
     }
