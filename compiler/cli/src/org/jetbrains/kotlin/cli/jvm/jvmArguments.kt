@@ -21,6 +21,7 @@ import java.io.File
 
 fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArguments) {
     put(JVMConfigurationKeys.INCLUDE_RUNTIME, arguments.includeRuntime)
+    put(JVMConfigurationKeys.NO_REFLECT, arguments.noReflect)
 
     putIfNotNull(JVMConfigurationKeys.FRIEND_PATHS, arguments.friendPaths?.asList())
 

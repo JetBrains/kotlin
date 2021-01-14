@@ -146,4 +146,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_PREVIEW =
             CompilerConfigurationKey.create("Enable Java language preview features");
+
+    public static final CompilerConfigurationKey<Boolean> NO_REFLECT =
+            CompilerConfigurationKey.create("Don't automatically include kotlin-reflect.jar into the output if the output is a jar");
 }
