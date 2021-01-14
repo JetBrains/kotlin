@@ -1,5 +1,5 @@
 sealed class Expr {
-  private constructor() /* primary */ {
+  internal constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
