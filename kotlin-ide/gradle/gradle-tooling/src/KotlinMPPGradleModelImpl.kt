@@ -36,7 +36,6 @@ class KotlinSourceSetImpl(
     override val dependencies: Array<KotlinDependencyId>,
     override val dependsOnSourceSets: Set<String>,
     val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
-    val defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
     constructor(kotlinSourceSet: KotlinSourceSet, cloningCache: MutableMap<Any, Any>) : this(
@@ -46,14 +45,15 @@ class KotlinSourceSetImpl(
         HashSet(kotlinSourceSet.resourceDirs),
         kotlinSourceSet.dependencies,
         HashSet(kotlinSourceSet.dependsOnSourceSets),
-        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms),
-        kotlinSourceSet.isTestModule
-    )
+        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms)
+    ) {
+        this.isTestModule = kotlinSourceSet.isTestModule
+    }
 
     override var actualPlatforms: KotlinPlatformContainer = defaultPlatform
         internal set
 
-    override var isTestModule: Boolean = defaultIsTestModule
+    override var isTestModule: Boolean = false
         internal set
 
     override fun toString() = name

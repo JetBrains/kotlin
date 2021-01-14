@@ -785,16 +785,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 }
             }
 
-            // TODO DISCUSS AT REVIEW: can we simplify it to:
-            //      sourceSet.isTestModule = importingContext.compilationsBySourceSet(sourceSet)?.all { it.isTestModule} ?: false
-            //                                                                                                           ^
-            //                                                                                                           |
-            //                                                                                                          sic!
-            //  The difference from the current behaviour would be in case if source set is not included into any compilation AND
-            //  KotlinSourceSetImpl.defaultIsTestModule is set to 'true'. Though I don't know who and why would do that.
-            importingContext.compilationsBySourceSet(sourceSet)?.all { it.isTestModule }?.let { isTest ->
-                sourceSet.isTestModule = isTest
-            }
+            sourceSet.isTestModule = importingContext.compilationsBySourceSet(sourceSet)?.all { it.isTestModule } ?: false
 
             importingContext.compilationsBySourceSet(sourceSet)?.let { compilations ->
                 val platforms = compilations.map { it.platform }
