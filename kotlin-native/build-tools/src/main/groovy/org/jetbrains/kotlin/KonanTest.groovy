@@ -22,14 +22,13 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.utils.DFS
 
-import java.io.File
 import java.nio.file.Paths
 import java.util.function.Function
 import java.util.function.UnaryOperator
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 
-class RunExternalTestGroup extends JavaExec {
+class RunExternalTestGroup extends JavaExec implements CompilerRunner {
     def platformManager = project.rootProject.platformManager
     def target = platformManager.targetManager(project.testTarget).target
     def dist = UtilsKt.getKotlinNativeDist(project)
@@ -75,7 +74,8 @@ class RunExternalTestGroup extends JavaExec {
         // configuration part at runCompiler.
     }
 
-    protected void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
+    @Override
+    void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
         def log = new ByteArrayOutputStream()
         try {
             classpath = project.fileTree("$dist.canonicalPath/konan/lib/") {
@@ -470,59 +470,6 @@ fun runTest() {
         }
     }
 
-    class MultiModuleCompilerInvocations {
-        String executablePath
-        Map<String, TestModule> modules
-        List<String> flags
-
-        MultiModuleCompilerInvocations(String executablePath, Map<String, TestModule> modules, List<String> flags) {
-            this.executablePath = executablePath
-            this.modules = modules
-            this.flags = flags
-        }
-
-        def libs = new HashSet<String>()
-
-        String moduleToKlibName(String moduleName, Integer version) {
-            def module = modules[moduleName]
-            // TODO: cleanup
-            def versionSuffix = module.hasVersions ? "_version${version}" : ""
-            return module.hasVersions ? "${executablePath}${versionSuffix}/${moduleName}.klib" : "${executablePath}.${moduleName}.klib"
-        }
-
-        void produceLibrary(TestModule module, Integer moduleVersion, Integer dependencyVersion) {
-            def klibModulePath = moduleToKlibName(module.name, moduleVersion)
-            libs.addAll(module.dependencies)
-            def klibs = module.dependencies.collectMany { ["-l", moduleToKlibName(it, dependencyVersion)] }.toList()
-            def repos = ["-r", "${executablePath}_version${dependencyVersion}", "-r", project.file(executablePath).parentFile.absolutePath ]
-
-            def friends = module.friends ?
-                    module.friends.collectMany {
-                        ["-friend-modules", "${executablePath}.${it}.klib"]
-                    }.toList() : []
-            runCompiler(module.versionFiles(moduleVersion).collect { it.path },
-                    klibModulePath, flags + ["-p", "library"/*, "-module-name", module.name*/] + repos + klibs + friends)
-        }
-
-        void produceProgram(List<TestFile> compileList, Integer version) {
-            def compileMain = compileList.findAll {
-                it.module.isDefaultModule() || it.module == TestModule.support
-            }
-            compileMain.forEach { f ->
-                libs.addAll(f.module.dependencies)
-            }
-            def friends = compileMain.collectMany { it.module.friends }.toSet()
-            def repos = ["-r", "${executablePath}_version${version}", "-r", project.file(executablePath).parentFile.absolutePath]
-
-            if (!compileMain.empty) {
-                runCompiler(compileMain.collect { it.path }, executablePath, flags + repos +
-                        libs.collectMany { ["-l", moduleToKlibName(it, version)] }.toList() +
-                        friends.collectMany { ["-friend-modules", "${executablePath}.${it}.klib"] }.toList()
-                )
-            }
-        }
-    }
-
     @TaskAction
     void executeTest() {
         createOutputDirectory()
@@ -573,18 +520,15 @@ fun runTest() {
                     List<TestModule> orderedModules = DFS.INSTANCE.topologicalOrder(modules.values()) { module ->
                         module.dependencies.collect { modules[it] }.findAll { it != null }
                     }
-                    def compiler = new MultiModuleCompilerInvocations(executablePath(), modules, flags)
+                    def compiler = new MultiModuleCompilerInvocations(this, outputDirectory, executablePath(), modules, flags)
 
                     orderedModules.reverse().each { module ->
                         if (!module.isDefaultModule()) {
-                            compiler.produceLibrary(module, 1, 1)
-                            if (module.hasVersions) {
-                                compiler.produceLibrary(module, 2, 1)
-                            }
+                            compiler.produceLibrary(module)
                         }
                     }
 
-                    compiler.produceProgram(compileList, 2)
+                    compiler.produceProgram(compileList)
                 }
             } catch (Exception ex) {
                 project.logger.quiet("ERROR: Compilation failed for test suite: $name with exception", ex)
