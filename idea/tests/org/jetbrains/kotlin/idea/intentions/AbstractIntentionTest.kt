@@ -136,7 +136,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             }
             ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, progressIndicator)
-            return result.get(10, TimeUnit.SECONDS)
+            return result.get(1, TimeUnit.SECONDS)
         } finally {
             progressIndicator.cancel()
         }
