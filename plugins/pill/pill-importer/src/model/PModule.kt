@@ -38,5 +38,6 @@ data class PSourceRootKotlinOptions(
     val apiVersion: String?,
     val languageVersion: String?,
     val jvmTarget: String?,
-    val extraArguments: List<String>
+    val extraArguments: List<String>,
+    val pluginClasspath: List<String>
 )

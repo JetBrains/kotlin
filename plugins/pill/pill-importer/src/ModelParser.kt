@@ -228,7 +228,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
                 forTests = sourceSet.isTestSourceSet,
                 sourceDirectories = sourceDirectories,
                 resourceDirectories = resourceDirectories,
-                kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it) },
+                kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it, project) },
                 compileClasspathConfigurationName = sourceSet.compileClasspathConfigurationName,
                 runtimeClasspathConfigurationName = sourceSet.runtimeClasspathConfigurationName
             )
@@ -257,7 +257,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         return roots
     }
 
-    private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? {
+    private fun getKotlinOptions(kotlinCompileTask: Any, project: Project): PSourceRootKotlinOptions {
         val compileArguments = run {
             val method = kotlinCompileTask::class.java.getMethod("getSerializedCompilerArguments")
             method.isAccessible = true
@@ -270,6 +270,12 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
 
         val extraArguments = compileArguments.filter { it.startsWith("-X") && !it.startsWith("-Xplugin=") }
 
+        val pluginClasspath = mutableListOf<String>()
+
+        if (project.plugins.hasPlugin("org.jetbrains.kotlin.plugin.serialization")) {
+            pluginClasspath += "\$KOTLIN_BUNDLED\$/lib/kotlinx-serialization-compiler-plugin.jar"
+        }
+
         return PSourceRootKotlinOptions(
             parseBoolean("no-stdlib"),
             parseBoolean("no-reflect"),
@@ -277,7 +283,8 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
             parseString("api-version"),
             parseString("language-version"),
             parseString("jvm-target"),
-            extraArguments
+            extraArguments,
+            pluginClasspath
         )
     }
 

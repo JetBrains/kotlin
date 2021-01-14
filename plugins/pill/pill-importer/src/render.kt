@@ -88,7 +88,13 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                             kotlinCompileOptions.apiVersion.option("apiVersion")
 
                             xml("option", "name" to "pluginOptions") { xml("array") }
-                            xml("option", "name" to "pluginClasspaths") { xml("array") }
+                            xml("option", "name" to "pluginClasspaths") {
+                                xml("array") {
+                                    for (path in kotlinCompileOptions.pluginClasspath) {
+                                        xml("option", "value" to path)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
