@@ -8248,21 +8248,6 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        @TestMetadata("conversionPerArgumentDisabled1.kt")
-        public void testConversionPerArgumentDisabled1() throws Exception {
-            runTest("testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentDisabled1.kt");
-        }
-
-        @TestMetadata("conversionPerArgumentDisabled2.kt")
-        public void testConversionPerArgumentDisabled2() throws Exception {
-            runTest("testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentDisabled2.kt");
-        }
-
-        @TestMetadata("conversionPerArgumentDisabled3.kt")
-        public void testConversionPerArgumentDisabled3() throws Exception {
-            runTest("testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentDisabled3.kt");
-        }
-
         @TestMetadata("conversionPerArgumentEnabled1.kt")
         public void testConversionPerArgumentEnabled1() throws Exception {
             runTest("testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentEnabled1.kt");
@@ -9118,11 +9103,6 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             runTest("testData/inspectionsLocal/removeRedundantBackticks/property.kt");
-        }
-
-        @TestMetadata("underscore.kt")
-        public void testUnderscore() throws Exception {
-            runTest("testData/inspectionsLocal/removeRedundantBackticks/underscore.kt");
         }
 
         @TestMetadata("underscores.kt")
