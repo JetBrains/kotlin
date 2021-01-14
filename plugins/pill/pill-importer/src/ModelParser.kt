@@ -268,13 +268,7 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
         fun parseBoolean(name: String) = compileArguments.contains("-$name")
         fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
 
-        fun isOptionForScriptingCompilerPlugin(option: String): Boolean {
-            return option.startsWith("-Xplugin=") && option.contains("kotlin-scripting-compiler-embeddable")
-        }
-
-        val extraArguments = compileArguments.filter {
-            it.startsWith("-X") && !isOptionForScriptingCompilerPlugin(it)
-        }
+        val extraArguments = compileArguments.filter { it.startsWith("-X") && !it.startsWith("-Xplugin=") }
 
         return PSourceRootKotlinOptions(
             parseBoolean("no-stdlib"),
