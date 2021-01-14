@@ -16,8 +16,7 @@ FILE: RedundantModalityModifierChecker.kt
 
         public abstract fun foo(): R|kotlin/Unit|
 
-        private final fun bar(): R|kotlin/Unit| {
-        }
+        private final fun bar(): R|kotlin/Unit|
 
         public open fun goo(): R|kotlin/Unit| {
         }

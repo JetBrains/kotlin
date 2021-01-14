@@ -9,14 +9,14 @@ interface Interface {
         get() = 42<!>
     <!REDUNDANT_MODALITY_MODIFIER{LT}!>// Redundant
     <!REDUNDANT_MODALITY_MODIFIER{PSI}!>abstract<!> fun foo()<!>
-    // error
-    private final fun bar() {}
+    <!PRIVATE_FUNCTION_WITH_NO_BODY{LT}!>// error
+    <!PRIVATE_FUNCTION_WITH_NO_BODY{PSI}!>private<!> final fun bar()<!>
 
     <!REDUNDANT_MODALITY_MODIFIER{LT}!><!REDUNDANT_MODALITY_MODIFIER{PSI}!>open<!> fun goo() {}<!>
     <!REDUNDANT_MODALITY_MODIFIER{LT}!><!REDUNDANT_MODALITY_MODIFIER{PSI}!>abstract<!> fun tar()<!>
 
-    // error
-    abstract fun too() {}
+    <!ABSTRACT_FUNCTION_WITH_BODY{LT}!>// error
+    <!ABSTRACT_FUNCTION_WITH_BODY{PSI}!>abstract<!> fun too() {}<!>
 }
 interface B {
     <!REDUNDANT_MODALITY_MODIFIER{LT}!><!REDUNDANT_MODALITY_MODIFIER{PSI}!>abstract<!> var bar: Unit<!>

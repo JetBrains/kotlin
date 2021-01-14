@@ -26,7 +26,7 @@ interface MyTrait {
     fun f()
     fun g() {}
     abstract fun h()
-    abstract fun j() {}
+    <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
     var i: Int                       abstract get  abstract set

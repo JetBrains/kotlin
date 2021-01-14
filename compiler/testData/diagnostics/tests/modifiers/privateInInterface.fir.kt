@@ -6,7 +6,7 @@ interface My {
     final val y: Int
     final val yy: Int
         get() = 1
-    private fun foo(): Int
+    <!PRIVATE_FUNCTION_WITH_NO_BODY!>private<!> fun foo(): Int
     // ok
     private fun bar() = 42
 }

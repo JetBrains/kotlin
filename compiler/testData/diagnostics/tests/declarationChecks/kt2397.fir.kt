@@ -13,5 +13,5 @@ interface T {
 }
 
 class A {
-    final fun foo()
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>final fun foo()<!>
 }
