@@ -105,17 +105,15 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             reportUnexpectedDescriptor(descriptor)
     }
 
-    private val composer by lazy { createSignatureBuilder() }
-
     override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? {
         return if (mangler.run { descriptor.isExported() }) {
-            composer.buildSignature(descriptor)
+            createSignatureBuilder().buildSignature(descriptor)
         } else null
     }
 
     override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? {
         return if (mangler.run { descriptor.isExportEnumEntry() }) {
-            composer.buildSignature(descriptor)
+            createSignatureBuilder().buildSignature(descriptor)
         } else null
     }
 }

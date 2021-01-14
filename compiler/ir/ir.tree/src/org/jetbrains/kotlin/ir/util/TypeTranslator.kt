@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -30,10 +31,12 @@ class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
     builtIns: KotlinBuiltIns,
-    private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
+    typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     private val enterTableScope: Boolean = false,
     private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
+
+    private val typeParametersResolver by threadLocal { typeParametersResolverBuilder() }
 
     private val erasureStack = Stack<PropertyDescriptor>()
 

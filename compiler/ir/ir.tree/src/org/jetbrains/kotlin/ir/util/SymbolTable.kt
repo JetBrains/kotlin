@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.utils.threadLocal
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
@@ -327,13 +328,21 @@ class SymbolTable(
     private val typeAliasSymbolTable = FlatSymbolTable<TypeAliasDescriptor, IrTypeAlias, IrTypeAliasSymbol>()
 
     private val globalTypeParameterSymbolTable = FlatSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
-    private val scopedTypeParameterSymbolTable = ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
-    private val valueParameterSymbolTable = ScopedSymbolTable<ParameterDescriptor, IrValueParameter, IrValueParameterSymbol>()
-    private val variableSymbolTable = ScopedSymbolTable<VariableDescriptor, IrVariable, IrVariableSymbol>()
-    private val localDelegatedPropertySymbolTable =
+    private val scopedTypeParameterSymbolTable by threadLocal {
+        ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
+    }
+    private val valueParameterSymbolTable by threadLocal {
+        ScopedSymbolTable<ParameterDescriptor, IrValueParameter, IrValueParameterSymbol>()
+    }
+    private val variableSymbolTable by threadLocal {
+        ScopedSymbolTable<VariableDescriptor, IrVariable, IrVariableSymbol>()
+    }
+    private val localDelegatedPropertySymbolTable by threadLocal {
         ScopedSymbolTable<VariableDescriptorWithAccessors, IrLocalDelegatedProperty, IrLocalDelegatedPropertySymbol>()
-    private val scopedSymbolTables =
+    }
+    private val scopedSymbolTables by threadLocal {
         listOf(valueParameterSymbolTable, variableSymbolTable, scopedTypeParameterSymbolTable, localDelegatedPropertySymbolTable)
+    }
 
     fun referenceExternalPackageFragment(descriptor: PackageFragmentDescriptor) =
         externalPackageFragmentTable.referenced(descriptor) { IrExternalPackageFragmentSymbolImpl(descriptor) }
