@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.SourceRoots
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 import javax.inject.Inject
 
@@ -78,6 +80,23 @@ abstract class KotlinJsIrLink @Inject constructor(
         return !entryModule.get().asFile.exists()
     }
 
+    override fun callCompilerAsync(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+        val cacheArgs = CacheBuilder(
+            buildDir,
+            compileClasspathConfiguration,
+            kotlinOptions,
+            libraryFilter,
+            compilerRunner,
+            { createCompilerArgs() },
+            computedCompilerClasspath,
+            logger,
+            objects.fileCollection(),
+            reportingSettings
+        ).buildCompilerArgs()
+        args.freeArgs += cacheArgs
+        super.callCompilerAsync(args, sourceRoots, changedFiles)
+    }
+
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         when (mode) {
             PRODUCTION -> {
@@ -85,18 +104,6 @@ abstract class KotlinJsIrLink @Inject constructor(
             }
             DEVELOPMENT -> {
                 kotlinOptions.configureOptions(GENERATE_D_TS)
-                CacheBuilder(
-                    buildDir,
-                    compileClasspathConfiguration,
-                    kotlinOptions,
-                    libraryFilter,
-                    compilerRunner,
-                    { createCompilerArgs() },
-                    computedCompilerClasspath,
-                    logger,
-                    objects.fileCollection(),
-                    reportingSettings
-                ).buildCompilerArgs()
             }
         }
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
@@ -180,6 +187,7 @@ internal class CacheBuilder(
             kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
             compilerArgs.freeArgs = compilerArgs.freeArgs
                 .filterNot { it.startsWith(ENTRY_IR_MODULE) }
+                .filterNot { it == ENABLE_DCE }
 
             val compilerFreeArgs = compilerArgs.freeArgs.toSet()
 
