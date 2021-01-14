@@ -23,16 +23,22 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         for (member in declaration.declarations) {
             if (member is FirProperty) {
-                checkProperty(declaration, member, reporter)
+                checkProperty(declaration, member, context, reporter)
             }
         }
     }
 
-    private fun checkProperty(containingDeclaration: FirRegularClass, property: FirProperty, reporter: DiagnosticReporter) {
+    private fun checkProperty(
+        containingDeclaration: FirRegularClass,
+        property: FirProperty,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { property.source.getModifierList() }
-        val isAbstract = property.isAbstract || modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
+        val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
+        val isAbstract = property.isAbstract || hasAbstractModifier
         if (containingDeclaration.isInterface &&
             Visibilities.isPrivate(property.visibility) &&
             !isAbstract &&
@@ -75,7 +81,18 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
 
         checkPropertyInitializer(containingDeclaration, property, isAbstract, reporter)
 
-        val isOpen = property.isOpen || modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        if (hasOpenModifier &&
+            containingDeclaration.isInterface &&
+            !hasAbstractModifier &&
+            property.isAbstract &&
+            !isInsideExpectClass(containingDeclaration, context)
+        ) {
+            property.source?.let {
+                reporter.report(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
+            }
+        }
+        val isOpen = property.isOpen || hasOpenModifier
         if (isOpen) {
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {

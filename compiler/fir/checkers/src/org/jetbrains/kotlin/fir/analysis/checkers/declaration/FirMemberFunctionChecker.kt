@@ -35,7 +35,8 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { source.getModifierList() }
-        val isAbstract = function.isAbstract || modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
+        val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
+        val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
                 reporter.report(source, FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS)
@@ -45,25 +46,20 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
-        val isOpen = function.isOpen || modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
         val isExternal = function.isExternal || modifierList?.modifiers?.any { it.token == KtTokens.EXTERNAL_KEYWORD } == true
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
                     reporter.report(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY)
                 }
-                if (!isInsideExpectClass && !isAbstract && isOpen) {
+                if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
                     reporter.report(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
                 }
-            } else if (!isInsideExpectClass && !isAbstract && !isExternal) {
-                // TODO: we need to check if modifiers of the function already get some errors, e.g., INCOMPATIBLE_MODIFIERS
+            } else if (!isInsideExpectClass && !hasAbstractModifier && !isExternal) {
                 reporter.report(FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(source, function.symbol))
             }
         }
     }
-
-    private fun isInsideExpectClass(containingDeclaration: FirRegularClass, context: CheckerContext): Boolean =
-        // Note that the class that contains the currently visiting function is *not* in the context's containing declarations *yet*.
-        containingDeclaration.isExpect || context.containingDeclarations.asReversed().any { it is FirRegularClass && it.isExpect }
 
 }
