@@ -1,6 +1,6 @@
 abstract class Base(val fn: () -> String)
 
-interface Host {
+class Host {
     companion object : Base(run { { Host.ok() } }) {
         fun ok() = "OK"
     }

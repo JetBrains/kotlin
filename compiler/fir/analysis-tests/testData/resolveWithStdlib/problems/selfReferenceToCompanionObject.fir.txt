@@ -1,0 +1,36 @@
+FILE: selfReferenceToCompanionObject.kt
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(fn: R|() -> kotlin/String|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val fn: R|() -> kotlin/String| = R|<local>/fn|
+            public get(): R|() -> kotlin/String|
+
+    }
+    public final class Host : R|kotlin/Any| {
+        public constructor(): R|Host| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|Base| {
+            private constructor(): R|Host.Companion| {
+                super<R|Base|>(R|kotlin/run|<R|() -> kotlin/String|>(<L> = run@fun <anonymous>(): R|() -> kotlin/String| <kind=EXACTLY_ONCE>  {
+                    ^ run@fun <anonymous>(): R|kotlin/String| {
+                        ^ Q|Host|.R|/Host.Companion.ok|()
+                    }
+
+                }
+                ))
+            }
+
+            public final fun ok(): R|kotlin/String| {
+                ^ok String(OK)
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box Q|Host.Companion|.R|/Base.fn|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+    }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class S(val a: Any, val b: Any, val c: Any) {}
 
 interface A {

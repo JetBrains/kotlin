@@ -4890,6 +4890,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("selfReferenceToCompanionObject.kt")
+            public void testSelfReferenceToCompanionObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/selfReferenceToCompanionObject.kt");
+            }
+
+            @Test
             @TestMetadata("SpecialCallsWithLambdas.kt")
             public void testSpecialCallsWithLambdas() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/SpecialCallsWithLambdas.kt");

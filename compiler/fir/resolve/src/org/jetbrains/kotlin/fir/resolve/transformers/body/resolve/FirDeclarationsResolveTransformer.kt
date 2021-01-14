@@ -348,7 +348,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return context.withTowerDataCleanup {
             if (!regularClass.isInner && context.containerIfAny is FirRegularClass) {
                 context.replaceTowerDataContext(
-                    context.getTowerDataContextForStaticNestedClassesUnsafe()
+                    if (regularClass.isCompanion) {
+                        context.getTowerDataContextForCompanionUnsafe()
+                    } else {
+                        context.getTowerDataContextForStaticNestedClassesUnsafe()
+                    }
                 )
             }
 
@@ -816,17 +820,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): T = context.withTowerDataCleanup {
         val towerElementsForClass = components.collectTowerDataElementsForClass(owner, type)
 
-        val staticsAndCompanion =
-            context.towerDataContext
-                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .run {
-                    if (towerElementsForClass.companionReceiver != null)
-                        addReceiver(null, towerElementsForClass.companionReceiver)
-                    else
-                        this
-                }
-                .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-                .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+        val base = context.towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+
+        val companionReceiver = towerElementsForClass.companionReceiver
+        val staticsAndCompanion = if (companionReceiver == null) statics else base
+            .addReceiver(null, companionReceiver)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
         val typeParameterScope = (owner as? FirRegularClass)?.let(this::createTypeParameterScope)
 
@@ -856,6 +859,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         val newContexts = FirTowerDataContextsForClassParts(
             newTowerDataContextForStaticNestedClasses,
+            statics,
             scopeForConstructorHeader,
             primaryConstructorPureParametersScope,
             primaryConstructorAllParametersScope
