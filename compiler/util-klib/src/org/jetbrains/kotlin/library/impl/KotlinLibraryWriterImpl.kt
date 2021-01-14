@@ -34,7 +34,7 @@ open class BaseWriterImpl(
     val shortName: String? = null
 ) : BaseWriter {
 
-    val klibFile = libraryLayout.libFile
+    val klibFile = libraryLayout.libFile.canonicalFile
     val manifestProperties = Properties()
     override val versions: KotlinLibraryVersioning = _versions
 
