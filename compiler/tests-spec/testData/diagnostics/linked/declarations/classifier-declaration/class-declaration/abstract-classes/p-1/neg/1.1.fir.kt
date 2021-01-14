@@ -5,8 +5,8 @@
 // TESTCASE NUMBER: 1
 
 abstract class Base() {
-    abstract fun foo() = {}
-    fun boo() : Unit
+    <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun foo() = {}
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun boo() : Unit<!>
     abstract val a = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>""<!>
     val b
     var d
