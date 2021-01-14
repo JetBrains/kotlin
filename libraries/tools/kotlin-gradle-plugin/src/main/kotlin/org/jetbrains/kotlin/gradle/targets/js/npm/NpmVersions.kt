@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.github.gundy.hidden.antlr.v4.runtime.ANTLRInputStream
+import com.github.gundy.hidden.antlr.v4.runtime.CommonTokenStream
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionLexer
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
-import org.antlr.v4.runtime.ANTLRInputStream
-import org.antlr.v4.runtime.CommonTokenStream
 import org.gradle.api.InvalidUserDataException
 
 fun versionToNpmRanges(version: String): Set<NpmRange> {

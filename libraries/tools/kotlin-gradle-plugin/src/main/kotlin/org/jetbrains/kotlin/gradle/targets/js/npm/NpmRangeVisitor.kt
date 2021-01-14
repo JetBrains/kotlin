@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.github.gundy.hidden.antlr.v4.runtime.tree.TerminalNode
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionBaseVisitor
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
-import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
 class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<Set<NpmRange>>() {
