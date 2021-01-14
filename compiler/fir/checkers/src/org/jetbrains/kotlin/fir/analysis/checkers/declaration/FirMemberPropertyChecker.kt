@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -32,27 +31,27 @@ object FirMemberPropertyChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkProperty(containingDeclaration: FirRegularClass, property: FirProperty, reporter: DiagnosticReporter) {
-        if (inInterface(containingDeclaration) &&
-            property.visibility == Visibilities.Private &&
+        if (containingDeclaration.isInterface &&
+            Visibilities.isPrivate(property.visibility) &&
             !property.isAbstract &&
             (property.getter == null || property.getter is FirDefaultPropertyAccessor)
         ) {
-            property.source?.let { source ->
-                reporter.report(source, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE)
+            property.source?.let {
+                reporter.report(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE)
             }
         }
 
         if (property.isAbstract) {
-            if (!containingDeclaration.isAbstract && !containingDeclaration.isSealed && !inEnumClass(containingDeclaration)) {
-                property.source?.let { source ->
-                    reporter.report(source, FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS)
+            if (!containingDeclaration.canHaveAbstractDeclaration) {
+                property.source?.let {
+                    reporter.report(it, FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS)
                     return
                 }
             }
 
             if (property.delegate != null) {
                 property.delegate!!.source?.let {
-                    if (inInterface(containingDeclaration)) {
+                    if (containingDeclaration.isInterface) {
                         reporter.report(FirErrors.DELEGATED_PROPERTY_IN_INTERFACE.on(it, property.delegate!!))
                     } else {
                         reporter.report(FirErrors.ABSTRACT_DELEGATED_PROPERTY.on(it, property.delegate!!))
@@ -87,7 +86,7 @@ object FirMemberPropertyChecker : FirBasicDeclarationChecker() {
         property.initializer?.source?.let {
             if (property.isAbstract) {
                 reporter.report(FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER.on(it, property.initializer!!))
-            } else if (inInterface(containingDeclaration)) {
+            } else if (containingDeclaration.isInterface) {
                 reporter.report(FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE.on(it, property.initializer!!))
             }
         }
@@ -112,9 +111,4 @@ object FirMemberPropertyChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun inInterface(containingDeclaration: FirRegularClass): Boolean =
-        containingDeclaration.classKind == ClassKind.INTERFACE
-
-    private fun inEnumClass(containingDeclaration: FirRegularClass): Boolean =
-        containingDeclaration.classKind == ClassKind.ENUM_CLASS
 }
