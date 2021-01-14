@@ -1,8 +1,14 @@
+import org.jetbrains.kotlin.pill.PillExtension
+
 description = "Kotlin metadata manipulation library"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+}
+
+pill {
+    variant = PillExtension.Variant.FULL
 }
 
 jvmTarget = "1.6"
