@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
@@ -90,9 +89,20 @@ private constructor(
         }
 
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
-        internal fun createAnalysisSessionByResolveState(firResolveState: FirModuleResolveState): KtFirAnalysisSession {
+        internal fun createAnalysisSessionByResolveState(firResolveState: FirModuleResolveState): KtFirAnalysisSession =
+            @OptIn(InvalidWayOfUsingAnalysisSession::class)
+            createAnalysisSessionByResolveStateWithCustomValidityToken(
+                firResolveState,
+                ReadActionConfinementValidityToken(firResolveState.project)
+            )
+
+        @InvalidWayOfUsingAnalysisSession
+        @Deprecated("This method should be used ONLY for old FE wrappers")
+        internal fun createAnalysisSessionByResolveStateWithCustomValidityToken(
+            firResolveState: FirModuleResolveState,
+            token: ValidityToken
+        ): KtFirAnalysisSession {
             val project = firResolveState.project
-            val token = ReadActionConfinementValidityToken(project)
             val firSymbolBuilder = KtSymbolByFirBuilder(
                 firResolveState,
                 project,
