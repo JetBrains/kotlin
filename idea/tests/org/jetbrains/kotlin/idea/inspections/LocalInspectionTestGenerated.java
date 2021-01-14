@@ -8739,21 +8739,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/redundantSamConstructor"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
-        @TestMetadata("conversionPerArgumentDisabled1.kt")
-        public void testConversionPerArgumentDisabled1() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentDisabled1.kt");
-        }
-
-        @TestMetadata("conversionPerArgumentDisabled2.kt")
-        public void testConversionPerArgumentDisabled2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentDisabled2.kt");
-        }
-
-        @TestMetadata("conversionPerArgumentDisabled3.kt")
-        public void testConversionPerArgumentDisabled3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentDisabled3.kt");
-        }
-
         @TestMetadata("conversionPerArgumentEnabled1.kt")
         public void testConversionPerArgumentEnabled1() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSamConstructor/conversionPerArgumentEnabled1.kt");
@@ -9654,11 +9639,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/property.kt");
-        }
-
-        @TestMetadata("underscore.kt")
-        public void testUnderscore() throws Exception {
-            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/underscore.kt");
         }
 
         @TestMetadata("underscores.kt")
