@@ -9,10 +9,10 @@
 #include <algorithm>
 #include <memory>
 #include <mutex>
+#include <type_traits>
 
 #include "Alignment.hpp"
 #include "Alloc.h"
-#include "CppSupport.hpp"
 #include "Memory.h"
 #include "Mutex.hpp"
 #include "Types.h"
@@ -106,7 +106,7 @@ public:
         template <typename T, typename... Args>
         Node& Insert(Args&&... args) noexcept {
             static_assert(alignof(T) <= DataAlignment, "Cannot insert type with alignment bigger than DataAlignment");
-            static_assert(std_support::is_trivially_destructible_v<T>, "Type must be trivially destructible");
+            static_assert(std::is_trivially_destructible_v<T>, "Type must be trivially destructible");
             auto& node = Insert(sizeof(T));
             new (node.Data()) T(std::forward<Args>(args)...);
             return node;

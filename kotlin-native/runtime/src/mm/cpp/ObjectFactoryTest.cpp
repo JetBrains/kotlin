@@ -7,11 +7,11 @@
 
 #include <atomic>
 #include <thread>
+#include <type_traits>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "CppSupport.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 

@@ -37,7 +37,7 @@ model {
         binaries.withType(StaticLibraryBinarySpec) { binary ->
           if (!project.parent.convention.plugins.platformInfo.isWindows())
              cppCompiler.args "-fPIC"
-          cppCompiler.args "--std=c++14", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
+          cppCompiler.args "--std=c++17", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
           if (isMac()) {
             cppCompiler.args "-DKONAN_MACOS=1"
           } else if (isWindows()) {

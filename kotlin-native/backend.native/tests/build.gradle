@@ -3723,7 +3723,7 @@ createInterop("concurrentTerminate") {
     it.headers "$projectDir/interop/concurrentTerminate/async.h"
     // TODO: Using `-Xcompile-source` does not imply dependency on that source, so the task will no re-run when the source is updated.
     it.extraOpts "-Xcompile-source", "$projectDir/interop/concurrentTerminate/async.cpp"
-    it.extraOpts "-Xsource-compiler-option", "-std=c++11"
+    it.extraOpts "-Xsource-compiler-option", "-std=c++17"
 }
 
 createInterop("incomplete_types") {

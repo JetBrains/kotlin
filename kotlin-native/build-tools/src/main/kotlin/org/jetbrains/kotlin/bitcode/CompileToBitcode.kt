@@ -68,7 +68,7 @@ open class CompileToBitcode @Inject constructor(
                     // Used flags provided by original build of allocator C code.
                     listOf("-std=gnu11", "-O3", "-Wall", "-Wextra", "-Werror")
                 Language.CPP ->
-                    listOfNotNull("-std=c++14", "-Werror", "-O2",
+                    listOfNotNull("-std=c++17", "-Werror", "-O2",
                             "-Wall", "-Wextra",
                             "-Wno-unused-parameter",  // False positives with polymorphic functions.
                             "-fPIC".takeIf { !HostManager().targetByName(target).isMINGW })
