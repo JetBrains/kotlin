@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
 object FirMemberPropertyChecker : FirRegularClassChecker() {
@@ -28,9 +29,13 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
     }
 
     private fun checkProperty(containingDeclaration: FirRegularClass, property: FirProperty, reporter: DiagnosticReporter) {
+        // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
+        // So, our source of truth should be the full modifier list retrieved from the source.
+        val modifierList = with(FirModifierList) { property.source.getModifierList() }
+        val isAbstract = property.isAbstract || modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
         if (containingDeclaration.isInterface &&
             Visibilities.isPrivate(property.visibility) &&
-            !property.isAbstract &&
+            !isAbstract &&
             (property.getter == null || property.getter is FirDefaultPropertyAccessor)
         ) {
             property.source?.let {
@@ -38,7 +43,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             }
         }
 
-        if (property.isAbstract) {
+        if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
                 property.source?.let {
                     reporter.report(it, FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS)
@@ -68,9 +73,10 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             }
         }
 
-        checkPropertyInitializer(containingDeclaration, property, reporter)
+        checkPropertyInitializer(containingDeclaration, property, isAbstract, reporter)
 
-        if (property.isOpen) {
+        val isOpen = property.isOpen || modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        if (isOpen) {
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
                     reporter.report(FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY.on(src, symbol))
@@ -79,15 +85,20 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
         }
     }
 
-    private fun checkPropertyInitializer(containingDeclaration: FirRegularClass, property: FirProperty, reporter: DiagnosticReporter) {
+    private fun checkPropertyInitializer(
+        containingDeclaration: FirRegularClass,
+        property: FirProperty,
+        propertyIsAbstract: Boolean,
+        reporter: DiagnosticReporter
+    ) {
         property.initializer?.source?.let {
-            if (property.isAbstract) {
+            if (propertyIsAbstract) {
                 reporter.report(FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER.on(it, property.initializer!!))
             } else if (containingDeclaration.isInterface) {
                 reporter.report(FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE.on(it, property.initializer!!))
             }
         }
-        if (property.isAbstract) {
+        if (propertyIsAbstract) {
             if (property.initializer == null && property.delegate == null && property.returnTypeRef is FirImplicitTypeRef) {
                 property.source?.let {
                     reporter.report(FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(it, property.symbol))
