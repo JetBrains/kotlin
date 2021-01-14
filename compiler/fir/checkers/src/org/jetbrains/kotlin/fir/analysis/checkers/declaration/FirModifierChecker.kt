@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.lang.ASTNode
-import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.TokenSet
-import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -19,8 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 object FirModifierChecker : FirBasicDeclarationChecker() {
 
@@ -200,68 +193,5 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
     ) {
         report(FirErrors.INCOMPATIBLE_MODIFIERS.on(modifier.source, firstKeyword, secondKeyword))
-    }
-
-    private sealed class FirModifierList {
-        abstract val modifiers: List<FirModifier<*>>
-
-        class FirPsiModifierList(val modifierList: KtModifierList) : FirModifierList() {
-            override val modifiers: List<FirModifier.FirPsiModifier>
-                get() = modifierList.node.getChildren(MODIFIER_KEYWORD_SET).map { node ->
-                    FirModifier.FirPsiModifier(node, node.elementType as KtModifierKeywordToken)
-                }
-
-        }
-
-        class FirLightModifierList(
-            val modifierList: LighterASTNode,
-            val tree: FlyweightCapableTreeStructure<LighterASTNode>
-        ) : FirModifierList() {
-            override val modifiers: List<FirModifier.FirLightModifier>
-                get() {
-                    val modifierNodes = modifierList.getChildren(tree)
-                    return modifierNodes.filterNotNull()
-                        .filter { it.tokenType is KtModifierKeywordToken }
-                        .map { FirModifier.FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree) }
-                }
-        }
-
-        companion object {
-            fun FirSourceElement?.getModifierList(): FirModifierList? {
-                return when (this) {
-                    null -> null
-                    is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
-                    is FirLightSourceElement -> {
-                        val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtNodeTypes.MODIFIER_LIST }
-                            ?: return null
-                        FirLightModifierList(modifierListNode, treeStructure)
-                    }
-                }
-            }
-        }
-    }
-
-    private val MODIFIER_KEYWORD_SET = TokenSet.orSet(SOFT_KEYWORDS, TokenSet.create(IN_KEYWORD, FUN_KEYWORD))
-
-    sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken) {
-
-        class FirPsiModifier(
-            node: ASTNode,
-            token: KtModifierKeywordToken
-        ) : FirModifier<ASTNode>(node, token) {
-            override val source: FirSourceElement
-                get() = node.psi.toFirPsiSourceElement()
-        }
-
-        class FirLightModifier(
-            node: LighterASTNode,
-            token: KtModifierKeywordToken,
-            val tree: FlyweightCapableTreeStructure<LighterASTNode>
-        ) : FirModifier<LighterASTNode>(node, token) {
-            override val source: FirSourceElement
-                get() = node.toFirLightSourceElement(tree)
-        }
-
-        abstract val source: FirSourceElement
     }
 }
