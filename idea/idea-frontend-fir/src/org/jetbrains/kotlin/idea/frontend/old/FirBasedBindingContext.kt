@@ -21,9 +21,11 @@ interface FirBindingContextValueProviders {
 }
 
 class FirBasedBindingContext(val context: KtSymbolBasedContext) : BindingContext {
-    private val callAndResolverCallWrappers = CallAndResolverCallWrappers(context)
+    private val valueProviders = listOf<FirBindingContextValueProviders>(
+        CallAndResolverCallWrappers(context),
+        ToDescriptorBindingContextValueProviders(context)
+    )
 
-    private val valueProviders = listOf<FirBindingContextValueProviders>(callAndResolverCallWrappers)
     override fun getDiagnostics(): Diagnostics {
         return Diagnostics.EMPTY
     }

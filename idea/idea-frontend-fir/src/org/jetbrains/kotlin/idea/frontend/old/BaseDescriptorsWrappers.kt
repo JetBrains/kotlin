@@ -299,6 +299,7 @@ abstract class KtSymbolBasedFunctionLikeDescriptor(context: KtSymbolBasedContext
 
 class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol, context: KtSymbolBasedContext) :
     KtSymbolBasedFunctionLikeDescriptor(context),
+    SimpleFunctionDescriptor,
     KtSymbolBasedNamed {
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = getDispatchReceiverParameter(ktSymbol)
@@ -332,6 +333,19 @@ class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol, c
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> =
         ktSymbol.typeParameters.map { KtSymbolBasedTypeParameterDescriptor(it, context) }
+
+    override fun copy(
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
+    ): SimpleFunctionDescriptor = context.noImplementation()
+
+    override fun getOriginal(): SimpleFunctionDescriptor = context.incorrectImplementation { this }
+
+    override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out SimpleFunctionDescriptor> =
+        context.noImplementation()
 }
 
 class KtSymbolBasedConstructorDescriptor(
