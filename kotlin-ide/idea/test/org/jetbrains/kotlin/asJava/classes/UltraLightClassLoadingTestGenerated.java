@@ -133,7 +133,7 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
 
     @TestMetadata("jvmRecord.kt")
     public void testJvmRecord() throws Exception {
-        runTest("compiler/testData/asJava/ultraLightClasses/jvmRecord.kt");
+        runTest("testData/compiler/asJava/ultraLightClasses/jvmRecord.kt");
     }
 
     @TestMetadata("jvmSynthetic.kt")

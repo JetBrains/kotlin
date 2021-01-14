@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
  */
 @SuppressWarnings("all")
 @TestRoot("fir")
+@TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("../compiler/testData/compiler/asJava/ultraLightClasses")
 public abstract class FirClassLoadingTestGenerated extends AbstractFirClassLoadingTest {
