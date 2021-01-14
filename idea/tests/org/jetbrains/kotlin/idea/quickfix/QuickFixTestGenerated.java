@@ -12509,11 +12509,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForInvalidSealedClass.kt");
         }
 
-        @TestMetadata("addParenthesisForInvalidSealedClass2.kt")
-        public void testAddParenthesisForInvalidSealedClass2() throws Exception {
-            runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForInvalidSealedClass2.kt");
-        }
-
         @TestMetadata("addParenthesisForLocalClass.kt")
         public void testAddParenthesisForLocalClass() throws Exception {
             runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForLocalClass.kt");
@@ -12527,6 +12522,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addParenthesisForSealedClass.kt")
         public void testAddParenthesisForSealedClass() throws Exception {
             runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForSealedClass.kt");
+        }
+
+        @TestMetadata("addParenthesisForSealedClass2.kt")
+        public void testAddParenthesisForSealedClass2() throws Exception {
+            runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForSealedClass2.kt");
         }
 
         public void testAllFilesPresentInSupertypeInitialization() throws Exception {

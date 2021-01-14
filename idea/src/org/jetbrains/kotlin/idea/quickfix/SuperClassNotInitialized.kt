@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -52,10 +53,10 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
         val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
         val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
-        val containingPackage = superClass.containingDeclaration as? PackageFragmentDescriptor
-        val inSameFile = containingPackage == classDescriptor.containingDeclaration
+        val containingPackage = superClass.classId?.packageFqName
+        val inSamePackage = containingPackage != null && containingPackage == classDescriptor.classId?.packageFqName
         val constructors = superClass.constructors.filter {
-            it.isVisible(classDescriptor) || (superClass.modality == Modality.SEALED && inSameFile)
+            it.isVisible(classDescriptor) && (superClass.modality != Modality.SEALED || inSamePackage && classDescriptor.visibility != DescriptorVisibilities.LOCAL)
         }
         if (constructors.isEmpty() && (!superClass.isExpect || superClass.kind != ClassKind.CLASS)) {
             return emptyList() // no accessible constructor
