@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 class CoroutineTransformer : JsVisitorWithContextImpl() {
 
     val functionName = mutableMapOf<JsFunction, String?>()
+    val extraNewDeclarations = mutableListOf<JsStatement>()
 
     override fun visit(x: JsExpressionStatement, ctx: JsContext<*>): Boolean {
         val expression = x.expression
@@ -49,8 +50,14 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
             x.body = transformCoroutineMetadataToSpecialFunctions(x.body)
         }
         if (x.coroutineMetadata != null) {
-            val topLevelContext = statementContexts[1]
-            topLevelContext.addPrevious(CoroutineFunctionTransformer(x, functionName[x]).transform())
+            val newStatements = CoroutineFunctionTransformer(x, functionName[x]).transform()
+            if (statementContexts.size > 2) {
+                // For nested suspend functions add generated statements to extraStatements which
+                // will be added to top-level later instead of adding it to lastStatementLevelContext
+                extraNewDeclarations += newStatements
+            } else {
+                lastStatementLevelContext.addPrevious(newStatements)
+            }
             x.coroutineMetadata = null
         }
     }
@@ -69,8 +76,10 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
 fun transformCoroutines(fragments: Iterable<JsProgramFragment>) {
     val coroutineTransformer = CoroutineTransformer()
     for (fragment in fragments) {
+        coroutineTransformer.extraNewDeclarations.clear()
         ImportIntoFragmentInliningScope.process(fragment) { scope ->
             coroutineTransformer.accept(scope.allCode)
         }
+        fragment.declarationBlock.statements.addAll(coroutineTransformer.extraNewDeclarations)
     }
 }
