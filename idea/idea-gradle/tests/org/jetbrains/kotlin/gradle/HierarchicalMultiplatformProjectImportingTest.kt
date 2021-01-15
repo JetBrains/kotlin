@@ -568,6 +568,27 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         }
     }
 
+    @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testCommonMainIsSingleBackend() {
+        configureByFiles()
+        importProject()
+
+        val macosX64 = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.MACOS_X64)
+        val linuxX64 = NativePlatforms.nativePlatformBySingleTarget(KonanTarget.LINUX_X64)
+
+        checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+            module("my-app.commonMain") { targetPlatform(macosX64, linuxX64) }
+            module("my-app.commonTest") { targetPlatform(macosX64, linuxX64) }
+
+            module("my-app.linuxX64Main") { targetPlatform(linuxX64) }
+            module("my-app.linuxX64Test") { targetPlatform(linuxX64) }
+
+            module("my-app.macosX64Test") { targetPlatform(macosX64) }
+            module("my-app.macosX64Main") { targetPlatform(macosX64) }
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
