@@ -1,5 +1,6 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Test.java
 
 public interface Test {
@@ -9,7 +10,6 @@ public interface Test {
 }
 
 // FILE: test.kt
-// JVM_TARGET: 1.8
 interface KInterface : Test {
 
 }

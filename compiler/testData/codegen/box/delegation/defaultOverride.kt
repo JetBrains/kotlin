@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Base.java
 
 public interface Base {
@@ -10,7 +11,6 @@ public interface Base {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
 
 public interface BaseKotlin : Base {
     override fun getValue() = "OK"

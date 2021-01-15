@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
@@ -12,17 +13,20 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = """
             Dumps control flow graphs of all declarations to `testName.dot` file
             This directive may be applied only to all modules
-        """.trimIndent()
+        """.trimIndent(),
+        applicability = Global
     )
 
     val FIR_DUMP by directive(
         description = """
             Dumps resulting fir to `testName.fir` file
-        """.trimIndent()
+        """.trimIndent(),
+        applicability = Global
     )
 
     val FIR_IDENTICAL by directive(
-        description = "Contents of fir test data file and FE 1.0 are identical"
+        description = "Contents of fir test data file and FE 1.0 are identical",
+        applicability = Global
     )
 
     val USE_LIGHT_TREE by directive(
@@ -33,7 +37,8 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = """
             Enable comparing diagnostics between PSI and light tree modes
             For enabling light tree mode use $USE_LIGHT_TREE directive
-        """.trimIndent()
+        """.trimIndent(),
+        applicability = Global
     )
 
     val WITH_EXTENDED_CHECKERS by directive(

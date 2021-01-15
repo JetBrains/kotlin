@@ -1,9 +1,9 @@
 // !JVM_DEFAULT_MODE: disable
 // JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
-// FILE: main.kt
 // WITH_RUNTIME
 // FULL_JDK
+// FILE: main.kt
 var result = ""
 
 interface A<K, V> : MutableMap<K, V>

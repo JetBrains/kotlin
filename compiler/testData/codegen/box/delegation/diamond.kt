@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Base.java
 
 public interface Base {
@@ -18,7 +19,6 @@ public interface Base2 extends Base {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
 
 interface KBase : Base
 

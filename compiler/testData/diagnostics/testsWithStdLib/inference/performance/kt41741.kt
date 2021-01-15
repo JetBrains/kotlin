@@ -1,8 +1,8 @@
 // FIR_IDENTICAL
-// FILE: Simple.java
 // FULL_JDK
 // WITH_RUNTIME
 // !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS -UNUSED_VARIABLE
+// FILE: Simple.java
 
 import java.util.*;
 import java.util.function.Supplier;

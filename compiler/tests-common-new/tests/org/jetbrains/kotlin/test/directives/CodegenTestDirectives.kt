@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object CodegenTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_BACKEND by enumDirective<TargetBackend>(
-        description = "Ignore failures of test on target backend"
+        description = "Ignore failures of test on target backend",
+        applicability = Global
     )
 
     val IGNORE_BACKEND_FIR by enumDirective<TargetBackend>(
-        description = "Ignore specific backend if test uses FIR"
+        description = "Ignore specific backend if test uses FIR",
+        applicability = Global
     )
 
     val JAVAC_OPTIONS by stringDirective(
@@ -29,7 +33,8 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     val CHECK_BYTECODE_LISTING by directive(
-        description = "Dump resulting bytecode to .txt or _ir.txt file"
+        description = "Dump resulting bytecode to .txt or _ir.txt file",
+        applicability = Global
     )
 
     val RUN_DEX_CHECKER by directive(

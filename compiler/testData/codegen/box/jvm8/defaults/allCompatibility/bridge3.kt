@@ -1,5 +1,7 @@
 // !JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
+// WITH_RUNTIME
 // FILE: Simple.java
 
 public interface Simple extends KInterface3 {
@@ -16,8 +18,6 @@ public class Foo implements Simple {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
-// WITH_RUNTIME
 
 interface KInterface<T>  {
     fun test2(p: T): T {

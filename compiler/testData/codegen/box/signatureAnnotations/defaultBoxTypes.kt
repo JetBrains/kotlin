@@ -1,9 +1,9 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
+// ANDROID_ANNOTATIONS
 
 // FILE: A.java
-// ANDROID_ANNOTATIONS
 
 import kotlin.annotations.jvm.internal.*;
 

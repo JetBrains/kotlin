@@ -18,9 +18,9 @@ suspend fun <R> notInlined(
 ): R = block()
 
 // MODULE: main(lib, support)
-// FILE: main.kt
 // WITH_COROUTINES
 // WITH_RUNTIME
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

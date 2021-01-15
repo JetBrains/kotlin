@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.backend.handlers.JvmBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_JAVAC
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Any
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object DiagnosticsDirectives : SimpleDirectivesContainer() {

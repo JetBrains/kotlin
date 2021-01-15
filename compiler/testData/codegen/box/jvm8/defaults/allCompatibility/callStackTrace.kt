@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_RUNTIME
+// JVM_TARGET: 1.8
 // FILE: Simple.java
 
 public interface Simple extends KInterface {
@@ -16,8 +17,6 @@ public class Foo implements Simple {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
-// WITH_RUNTIME
 
 interface KInterface  {
     fun call(): List<String> {
