@@ -140,7 +140,7 @@ internal fun createInitialConfigurations(
         createInitialCompilerConfiguration(
             scriptCompilationConfiguration, hostConfiguration, messageCollector, ignoredOptionsReportingState
         )
-
+    kotlinCompilerConfiguration.put(JVMConfigurationKeys.IR, false)
     val initialScriptCompilationConfiguration =
         scriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration)
 
@@ -298,11 +298,12 @@ private fun CompilerConfiguration.updateWithRefinedConfigurations(
     messageCollector: ScriptDiagnosticsMessageCollector
 ) {
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
-    val updatedCompilerOptions = sourceFiles.flatMap {
+    val updatedCompilerOptions = sourceFiles.flatMapTo(mutableListOf<String>()) {
         dependenciesProvider?.getScriptConfiguration(it)?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         ) ?: emptyList()
     }
+    updatedCompilerOptions += "-Xuse-old-backend"
     if (updatedCompilerOptions.isNotEmpty() &&
         updatedCompilerOptions != context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
     ) {
