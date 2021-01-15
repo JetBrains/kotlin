@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.old.binding.KtSymbolBasedBindingContext
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -37,13 +38,13 @@ class KtSymbolBasedResolutionFacade(
     override val project: Project,
     val context: KtSymbolBasedContext
 ) : ResolutionFacade {
-    override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext = FirBasedBindingContext(context)
+    override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext = KtSymbolBasedBindingContext(context)
 
     override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext =
-        FirBasedBindingContext(context)
+        KtSymbolBasedBindingContext(context)
 
     override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult {
-        return AnalysisResult.success(FirBasedBindingContext(context), context.moduleDescriptor)
+        return AnalysisResult.success(KtSymbolBasedBindingContext(context), context.moduleDescriptor)
     }
 
     override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {

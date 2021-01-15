@@ -3,17 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.old
+package org.jetbrains.kotlin.idea.frontend.old.binding
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtFunctionCall
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedContext
+import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirWrapperCall(val ktCall: KtCall, val context: KtSymbolBasedContext) : Call {
@@ -129,18 +129,16 @@ class FirWrapperResolvedCall(val firWrapperCall: FirWrapperCall) : ResolvedCall<
 
 }
 
-class CallAndResolverCallWrappers(val context: KtSymbolBasedContext) : FirBindingContextValueProviders {
-    override fun <K : Any?, V : Any?> getIfPossible(slice: ReadOnlySlice<K, V>?, key: K): V? {
-        val result: Any? = when (slice) {
-            BindingContext.CALL -> getCall(key as KtElement)
-            BindingContext.RESOLVED_CALL -> getResolvedCall(key as Call)
-            else -> null
-        }
-        return result as V
+class CallAndResolverCallWrappers(bindingContext: KtSymbolBasedBindingContext) {
+    private val context = bindingContext.context
+
+    init {
+        bindingContext.registerGetterByKey(BindingContext.CALL, this::getCall)
+        bindingContext.registerGetterByKey(BindingContext.RESOLVED_CALL, this::getResolvedCall)
     }
 
     private fun getCall(element: KtElement): Call {
-        analyze(element) {
+        with(context.ktAnalysisSession) {
             element.parent?.safeAs<KtCallExpression>()?.resolveCall()?.let { return FirWrapperCall(it, context) }
         }
         TODO("Not implemented case")
