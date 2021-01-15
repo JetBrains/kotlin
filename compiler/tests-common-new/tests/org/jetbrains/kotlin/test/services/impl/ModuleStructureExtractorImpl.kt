@@ -25,6 +25,14 @@ import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 
+/*
+ * Rules of directives resolving:
+ * - If no `MODULE` or `FILE` was declared in test then all directives belongs to module
+ * - If `FILE` is declared, then all directives after it will belong to
+ *   file until next `FILE` or `MODULE` directive will be declared
+ * - All directives between `MODULE` and `FILE` directives belongs to module
+ * - All directives before first `MODULE` are global and belongs to each declared module
+ */
 class ModuleStructureExtractorImpl(
     testServices: TestServices,
     additionalSourceProviders: List<AdditionalSourceProvider>,
@@ -32,6 +40,7 @@ class ModuleStructureExtractorImpl(
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
+
         /*
          * ([\w-]+) module name
          * \((.*?)\) module dependencies
@@ -82,12 +91,14 @@ class ModuleStructureExtractorImpl(
         private var startLineNumberOfCurrentFile = 0
 
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
+        private var moduleDirectivesBuilder: RegisteredDirectivesParser = directivesBuilder
+        private var fileDirectivesBuilder: RegisteredDirectivesParser? = null
 
         private var globalDirectives: RegisteredDirectives? = null
 
         private val modules = mutableListOf<TestModule>()
 
-        private val moduleDirectiveBuilder = RegisteredDirectivesParser(ModuleStructureDirectives, assertions)
+        private val moduleStructureDirectiveBuilder = RegisteredDirectivesParser(ModuleStructureDirectives, assertions)
 
         fun splitTestDataByModules(): TestModuleStructure {
             for (testDataFile in testDataFiles) {
@@ -143,7 +154,7 @@ class ModuleStructureExtractorImpl(
          */
         private fun tryParseStructureDirective(rawDirective: RegisteredDirectivesParser.RawDirective?, lineNumber: Int): Boolean {
             if (rawDirective == null) return false
-            val (directive, values) = moduleDirectiveBuilder.convertToRegisteredDirective(rawDirective) ?: return false
+            val (directive, values) = moduleStructureDirectiveBuilder.convertToRegisteredDirective(rawDirective) ?: return false
             when (directive) {
                 ModuleStructureDirectives.MODULE -> {
                     /*
@@ -236,7 +247,7 @@ class ModuleStructureExtractorImpl(
 
         private fun finishModule() {
             finishFile()
-            val moduleDirectives = directivesBuilder.build() + testServices.defaultDirectives + globalDirectives
+            val moduleDirectives = moduleDirectivesBuilder.build() + testServices.defaultDirectives + globalDirectives
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators)
             val moduleName = currentModuleName ?: defaultModuleName
             val testModule = TestModule(
@@ -293,7 +304,8 @@ class ModuleStructureExtractorImpl(
                     originalContent = linesOfCurrentFile.joinToString(separator = "\n", postfix = "\n"),
                     originalFile = currentTestDataFile,
                     startLineNumberInOriginalFile = startLineNumberOfCurrentFile,
-                    isAdditional = false
+                    isAdditional = false,
+                    directives = fileDirectivesBuilder?.build() ?: RegisteredDirectives.Empty
                 )
             )
             firstFileInModule = false
@@ -310,15 +322,23 @@ class ModuleStructureExtractorImpl(
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()
             friendsOfCurrentModule = mutableListOf()
+            resetDirectivesBuilder()
+            moduleDirectivesBuilder = directivesBuilder
+        }
+
+        private fun resetDirectivesBuilder() {
             directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         }
 
         private fun resetFileCaches() {
             if (!firstFileInModule) {
                 linesOfCurrentFile = mutableListOf()
+                moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
             startLineNumberOfCurrentFile = 0
+            resetDirectivesBuilder()
+            fileDirectivesBuilder = directivesBuilder
         }
 
         private fun tryParseRegularDirective(rawDirective: RegisteredDirectivesParser.RawDirective?) {

@@ -43,7 +43,8 @@ class TestFile(
      * isAdditional means that this file provided as addition to sources of testdata
      *   and there is no need to apply any handlers or preprocessors over it
      */
-    val isAdditional: Boolean
+    val isAdditional: Boolean,
+    val directives: RegisteredDirectives
 ) {
     val name: String = relativePath.split("/").last()
 }
