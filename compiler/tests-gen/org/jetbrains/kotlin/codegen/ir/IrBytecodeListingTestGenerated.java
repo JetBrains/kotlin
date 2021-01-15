@@ -230,6 +230,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
     }
 
+    @TestMetadata("sealedClassConstructorWithDefaultParams.kt")
+    public void testSealedClassConstructorWithDefaultParams() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/sealedClassConstructorWithDefaultParams.kt");
+    }
+
     @TestMetadata("strictfpFlag.kt")
     public void testStrictfpFlag() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/strictfpFlag.kt");
