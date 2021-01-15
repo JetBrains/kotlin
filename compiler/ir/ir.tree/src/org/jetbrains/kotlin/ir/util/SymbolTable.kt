@@ -76,101 +76,113 @@ class SymbolTable(
         abstract fun get(sig: IdSignature): S?
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            synchronized(this) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(d0)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    unboundSymbols.remove(existing)
+                    existing
+                }
+                return createOwner(symbol)
             }
-            val existing = get(d0)
-            val symbol = if (existing == null) {
-                val new = createSymbol()
-                set(new)
-                new
-            } else {
-                unboundSymbols.remove(existing)
-                existing
-            }
-            return createOwner(symbol)
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         inline fun declare(sig: IdSignature, createSymbol: () -> S, createOwner: (S) -> B): B {
-            val existing = get(sig)
-            val symbol = if (existing == null) {
-                createSymbol()
-            } else {
-                unboundSymbols.remove(existing)
-                existing
+            synchronized(this) {
+                val existing = get(sig)
+                val symbol = if (existing == null) {
+                    createSymbol()
+                } else {
+                    unboundSymbols.remove(existing)
+                    existing
+                }
+                val result = createOwner(symbol)
+                // TODO: try to get rid of this
+                set(symbol)
+                return result
             }
-            val result = createOwner(symbol)
-            // TODO: try to get rid of this
-            set(symbol)
-            return result
         }
 
         inline fun declareIfNotExists(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            synchronized(this) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(d0)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    if (!existing.isBound) unboundSymbols.remove(existing)
+                    existing
+                }
+                return if (symbol.isBound) symbol.owner else createOwner(symbol)
             }
-            val existing = get(d0)
-            val symbol = if (existing == null) {
-                val new = createSymbol()
-                set(new)
-                new
-            } else {
-                if (!existing.isBound) unboundSymbols.remove(existing)
-                existing
-            }
-            return if (symbol.isBound) symbol.owner else createOwner(symbol)
         }
 
         inline fun declare(sig: IdSignature, d: D?, createSymbol: () -> S, createOwner: (S) -> B): B {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d?.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+            synchronized(this) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d?.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
+                }
+                val existing = get(sig)
+                val symbol = if (existing == null) {
+                    val new = createSymbol()
+                    set(new)
+                    new
+                } else {
+                    unboundSymbols.remove(existing)
+                    existing
+                }
+                return createOwner(symbol)
             }
-            val existing = get(sig)
-            val symbol = if (existing == null) {
-                val new = createSymbol()
-                set(new)
-                new
-            } else {
-                unboundSymbols.remove(existing)
-                existing
-            }
-            return createOwner(symbol)
         }
 
         inline fun referenced(d: D, orElse: () -> S): S {
-            @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
-            assert(d0 === d) {
-                "Non-original descriptor in declaration: $d\n\tExpected: $d0"
-            }
-            val s = get(d0)
-            if (s == null) {
-                val new = orElse()
-                assert(unboundSymbols.add(new)) {
-                    "Symbol for $new was already referenced"
+            synchronized(this) {
+                @Suppress("UNCHECKED_CAST")
+                val d0 = d.original as D
+                assert(d0 === d) {
+                    "Non-original descriptor in declaration: $d\n\tExpected: $d0"
                 }
-                set(new)
-                return new
+                val s = get(d0)
+                if (s == null) {
+                    val new = orElse()
+                    assert(unboundSymbols.add(new)) {
+                        "Symbol for $new was already referenced"
+                    }
+                    set(new)
+                    return new
+                }
+                return s
             }
-            return s
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         inline fun referenced(sig: IdSignature, orElse: () -> S): S {
-            return get(sig) ?: run {
-                val new = orElse()
-                assert(unboundSymbols.add(new)) {
-                    "Symbol for ${new.signature} was already referenced"
+            synchronized(this) {
+                return get(sig) ?: run {
+                    val new = orElse()
+                    assert(unboundSymbols.add(new)) {
+                        "Symbol for ${new.signature} was already referenced"
+                    }
+                    set(new)
+                    new
                 }
-                set(new)
-                new
             }
         }
     }
