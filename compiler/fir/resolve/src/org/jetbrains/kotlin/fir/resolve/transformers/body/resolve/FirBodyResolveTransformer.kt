@@ -250,6 +250,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformDeclarationStatus(declarationStatus, data)
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        return declarationsTransformer.transformEnumEntry(enumEntry, data)
+    }
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         return declarationsTransformer.transformProperty(property, data)
     }

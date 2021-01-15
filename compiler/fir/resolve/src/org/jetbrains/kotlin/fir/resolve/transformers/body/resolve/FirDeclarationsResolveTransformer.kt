@@ -99,6 +99,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+            return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
+        }
+    }
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         require(property !is FirSyntheticProperty) { "Synthetic properties should not be processed by body transfromers" }
 
