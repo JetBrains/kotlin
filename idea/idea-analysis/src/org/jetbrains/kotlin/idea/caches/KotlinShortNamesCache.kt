@@ -192,7 +192,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             filter,
             KtNamedFunction::class.java
         ) { ktNamedFunction ->
-            val methods = LightClassUtil.getLightClassMethods(ktNamedFunction).filter { it.name == name }
+            val methods = LightClassUtil.getLightClassMethodsByName(ktNamedFunction, name)
             return@processElements methods.all { method ->
                 processor.process(method)
             }
