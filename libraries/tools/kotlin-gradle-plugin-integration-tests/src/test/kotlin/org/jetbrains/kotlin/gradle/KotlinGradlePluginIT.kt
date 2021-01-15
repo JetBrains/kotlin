@@ -467,18 +467,18 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
         // check the arguments are always passed if specified explicitly
-        updateBuildGradle("1.2", "1.2")
+        updateBuildGradle("1.4", "1.4")
         project.build("clean", "compileKotlin") {
             assertSuccessful()
-            assertContains("-language-version 1.2")
-            assertContains("-api-version 1.2")
+            assertContains("-language-version 1.4")
+            assertContains("-api-version 1.4")
         }
 
-        updateBuildGradle("1.3", "1.3")
+        updateBuildGradle("1.5", "1.5")
         project.build("clean", "compileKotlin") {
             assertSuccessful()
-            assertContains("-language-version 1.3")
-            assertContains("-api-version 1.3")
+            assertContains("-language-version 1.5")
+            assertContains("-api-version 1.5")
         }
     }
 
