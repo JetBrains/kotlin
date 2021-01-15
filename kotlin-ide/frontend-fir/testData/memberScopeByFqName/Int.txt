@@ -1303,6 +1303,7 @@ KtFirClassOrObjectSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: kotlin/Int
   dispatchType: null

@@ -1233,6 +1233,7 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Char
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: kotlin.CharSequence.get
   dispatchType: kotlin/CharSequence
@@ -1252,6 +1253,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
