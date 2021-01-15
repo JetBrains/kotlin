@@ -759,6 +759,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     ConeSubstitutor.Empty,
                     components.returnTypeCalculator,
                     inferenceComponents.approximator,
+                    dataFlowAnalyzer,
                 )
                 lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)

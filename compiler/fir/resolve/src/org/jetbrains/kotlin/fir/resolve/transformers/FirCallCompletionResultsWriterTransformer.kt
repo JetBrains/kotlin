@@ -13,18 +13,16 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
-import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.returnType
-import org.jetbrains.kotlin.fir.resolve.propagateTypeFromQualifiedAccessAfterNullCheck
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
@@ -48,6 +46,7 @@ class FirCallCompletionResultsWriterTransformer(
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
     private val typeApproximator: AbstractTypeApproximator,
+    private val dataFlowAnalyzer: FirDataFlowAnalyzer<*>,
     private val mode: Mode = Mode.Normal
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
@@ -472,6 +471,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         val result = transformElement(anonymousFunction, null)
+
         val resultFunction = result.single
         if (resultFunction.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {
             val blockType = resultFunction.body?.typeRef?.coneTypeSafe<ConeKotlinType>()
@@ -480,7 +480,24 @@ class FirCallCompletionResultsWriterTransformer(
                 resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             )
         }
+
+        for (expression in dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(anonymousFunction)) {
+            expression.transform<FirElement, ExpectedArgumentType?>(this, null)
+        }
+
         return result
+    }
+
+    override fun transformReturnExpression(
+        returnExpression: FirReturnExpression,
+        data: ExpectedArgumentType?
+    ): CompositeTransformResult<FirStatement> {
+        val labeledElement = returnExpression.target.labeledElement
+        if (labeledElement is FirAnonymousFunction) {
+            return returnExpression.compose()
+        }
+
+        return super.transformReturnExpression(returnExpression, data)
     }
 
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {

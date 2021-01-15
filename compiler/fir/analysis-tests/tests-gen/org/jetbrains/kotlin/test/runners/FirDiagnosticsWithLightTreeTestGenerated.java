@@ -2569,6 +2569,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("lambdasReturns.kt")
+        public void testLambdasReturns() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdasReturns.kt");
+        }
+
+        @Test
         @TestMetadata("nestedExtensionFunctionType.kt")
         public void testNestedExtensionFunctionType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/nestedExtensionFunctionType.kt");
