@@ -23,4 +23,6 @@ class ClassifierCommonizationFromSourcesTest : AbstractCommonizationFromSourcesT
     fun testSupertypes() = doTestSuccessfulCommonization()
 
     fun testTypeAliases() = doTestSuccessfulCommonization()
+
+    fun testDifferentTypeAliasesInArguments() = doTestSuccessfulCommonization()
 }
