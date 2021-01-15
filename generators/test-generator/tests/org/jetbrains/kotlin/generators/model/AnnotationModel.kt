@@ -5,14 +5,34 @@
 
 package org.jetbrains.kotlin.generators.model
 
+import org.jetbrains.kotlin.generators.util.isDefaultImportedClass
 import org.jetbrains.kotlin.utils.Printer
+import kotlin.reflect.KClass
 
 class AnnotationModel(
     val annotation: Class<out Annotation>,
     val arguments: List<Any>
 ) {
     fun generate(p: Printer) {
-        val argumentsString = arguments.joinToString(separator = ",") { "\"$it\""}
+        val argumentsString = arguments.joinToString(separator = ",") {
+            when (it) {
+                is Enum<*> -> "${it.javaClass.simpleName}.${it.name}"
+                is Class<*> -> "${it.simpleName::class.java}.class"
+                else -> "\"$it\""
+            }
+        }
         p.print("@${annotation.simpleName}($argumentsString)")
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun imports(): List<Class<*>> {
+        return buildList {
+            add(annotation)
+            arguments.mapTo(this) { it.javaClass }
+        }.filterNot { it.isDefaultImportedClass() }
+    }
+}
+
+fun annotation(annotation: Class<out Annotation>, vararg arguments: Any): AnnotationModel {
+    return AnnotationModel(annotation, arguments.toList())
 }
