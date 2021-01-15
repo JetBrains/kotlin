@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.threadLocal
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
@@ -81,7 +82,7 @@ class Fir2IrDeclarationStorage(
 
     private val fieldCache = mutableMapOf<FirField, IrField>()
 
-    private val localStorage = Fir2IrLocalStorage()
+    private val localStorage by threadLocal { Fir2IrLocalStorage() }
 
     private val delegatedMemberGenerator = DelegatedMemberGenerator(components)
 
