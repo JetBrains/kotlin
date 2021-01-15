@@ -25,6 +25,11 @@ internal interface MultiplatformModelImportingContext {
     val sourceSets: Collection<KotlinSourceSetImpl>
     val sourceSetsByNames: Map<String, KotlinSourceSetImpl>
 
+    /**
+     * Platforms, which are actually used in this project (i.e. platforms, for which targets has been created)
+     */
+    val projectPlatforms: Collection<KotlinPlatform>
+
     fun sourceSetByName(name: String): KotlinSourceSet?
     fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>?
 
@@ -89,6 +94,9 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
     override lateinit var targets: Collection<KotlinTarget>
         private set
 
+    override lateinit var projectPlatforms: Collection<KotlinPlatform>
+        private set
+
     internal fun initializeSourceSets(sourceSetsByNames: Map<String, KotlinSourceSetImpl>) {
         require(!this::sourceSetsByNames.isInitialized) {
             "Attempt to re-initialize source sets for $this. Previous value: ${this.sourceSetsByNames}"
@@ -121,6 +129,7 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
     internal fun initializeTargets(targets: Collection<KotlinTarget>) {
         require(!this::targets.isInitialized) { "Attempt to re-initialize targets for $this. Previous value: ${this.targets}" }
         this.targets = targets
+        this.projectPlatforms = targets.map { it.platform }
     }
 
     // overload for small optimization

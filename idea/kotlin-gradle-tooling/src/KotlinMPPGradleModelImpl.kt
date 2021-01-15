@@ -283,6 +283,8 @@ class KotlinPlatformContainerImpl() : KotlinPlatformContainer {
     private val defaultCommonPlatform = setOf(KotlinPlatform.COMMON)
     private var myPlatforms: MutableSet<KotlinPlatform>? = null
 
+    override val arePlatformsInitialized: Boolean
+        get() = myPlatforms != null
 
     constructor(platform: KotlinPlatformContainer) : this() {
         myPlatforms = HashSet<KotlinPlatform>(platform.platforms)

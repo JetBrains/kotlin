@@ -142,6 +142,7 @@ enum class KotlinPlatform(val id: String) {
 
 interface KotlinPlatformContainer : Serializable {
     val platforms: Collection<KotlinPlatform>
+    val arePlatformsInitialized: Boolean
 
     fun supports(simplePlatform: KotlinPlatform): Boolean
 
