@@ -181,13 +181,20 @@ internal class CacheBuilder(
             val compilerArgs = compilerArgsFactory()
             kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
             compilerArgs.freeArgs = compilerArgs.freeArgs
-                .filterNot { it.startsWith(ENTRY_IR_MODULE) }
+                .filterNot { arg ->
+                    IGNORED_ARGS.any {
+                        arg.startsWith(it)
+                    }
+                }
 
             compilerArgs.includes = library.file.normalize().absolutePath
             compilerArgs.outputFile = cacheDirectory.resolve("${library.name}.js").normalize().absolutePath
             dependenciesCacheDirectories.forEach {
                 compilerArgs.freeArgs += "-Xcache-directory=${it.absolutePath}"
             }
+
+            // Change it for produce caches
+            compilerArgs.irProduceJs = true
 
             compilerArgs.libraries = getAllDependencies(dependency)
                 .flatMap { it.moduleArtifacts }
@@ -214,5 +221,15 @@ internal class CacheBuilder(
                     environment
                 )
         }
+    }
+
+    companion object {
+        private val IGNORED_ARGS = listOf(
+            ENTRY_IR_MODULE,
+            PRODUCE_JS,
+            PRODUCE_UNZIPPED_KLIB,
+            ENABLE_DCE,
+            GENERATE_D_TS
+        )
     }
 }
