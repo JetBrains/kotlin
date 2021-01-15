@@ -50,7 +50,8 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
                 usageSource.path,
                 "-classpath", tmpdir.path,
-                "-d", tmpdir.path
+                "-d", tmpdir.path,
+                "-Xuse-old-backend"
         ))
 
         assertEquals("Compilation error expected", ExitCode.COMPILATION_ERROR, exitCode)
