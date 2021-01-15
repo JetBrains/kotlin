@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.threadLocal
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
@@ -61,26 +62,26 @@ class Fir2IrDeclarationStorage(
 
     private val firProvider = session.firProvider
 
-    private val fragmentCache = mutableMapOf<FqName, IrExternalPackageFragment>()
+    private val fragmentCache = ConcurrentHashMap<FqName, IrExternalPackageFragment>()
 
-    private val builtInsFragmentCache = mutableMapOf<FqName, IrExternalPackageFragment>()
+    private val builtInsFragmentCache = ConcurrentHashMap<FqName, IrExternalPackageFragment>()
 
-    private val fileCache = mutableMapOf<FirFile, IrFile>()
+    private val fileCache = ConcurrentHashMap<FirFile, IrFile>()
 
-    private val functionCache = mutableMapOf<FirFunction<*>, IrSimpleFunction>()
+    private val functionCache = ConcurrentHashMap<FirFunction<*>, IrSimpleFunction>()
 
-    private val constructorCache = mutableMapOf<FirConstructor, IrConstructor>()
+    private val constructorCache = ConcurrentHashMap<FirConstructor, IrConstructor>()
 
-    private val initializerCache = mutableMapOf<FirAnonymousInitializer, IrAnonymousInitializer>()
+    private val initializerCache = ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer>()
 
-    private val propertyCache = mutableMapOf<FirProperty, IrProperty>()
+    private val propertyCache = ConcurrentHashMap<FirProperty, IrProperty>()
 
     // For pure fields (from Java) only
-    private val fieldToPropertyCache = mutableMapOf<FirField, IrProperty>()
+    private val fieldToPropertyCache = ConcurrentHashMap<FirField, IrProperty>()
 
-    private val delegatedReverseCache = mutableMapOf<IrDeclaration, FirDeclaration>()
+    private val delegatedReverseCache = ConcurrentHashMap<IrDeclaration, FirDeclaration>()
 
-    private val fieldCache = mutableMapOf<FirField, IrField>()
+    private val fieldCache = ConcurrentHashMap<FirField, IrField>()
 
     private val localStorage by threadLocal { Fir2IrLocalStorage() }
 
