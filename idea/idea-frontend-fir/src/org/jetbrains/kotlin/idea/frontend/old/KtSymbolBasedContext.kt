@@ -42,6 +42,8 @@ interface KtSymbolBasedContext {
     fun <R> incorrectImplementation(block: () -> R) = block()
 }
 
+fun <R> KtSymbolBasedContext.withAnalysisSession(f: KtAnalysisSession.() -> R): R = f(ktAnalysisSession)
+
 class KtSymbolBasedContextImpl(
     val project: Project,
     val ktElement: KtElement
@@ -74,7 +76,7 @@ private class ValidityTokenForKtSymbolBasedWrappers(val project: Project) : Vali
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
     override fun isValid(): Boolean {
-        return onCreatedTimeStamp == modificationTracker.modificationCount
+        return true
     }
 
     override fun getInvalidationReason(): String {
@@ -85,7 +87,7 @@ private class ValidityTokenForKtSymbolBasedWrappers(val project: Project) : Vali
     override fun isAccessible(): Boolean = true
 
     @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
-    override fun getInaccessibilityReason(): String =error("Getting inaccessibility reason for validity token when it is accessible")
+    override fun getInaccessibilityReason(): String = error("Getting inaccessibility reason for validity token when it is accessible")
 }
 
 private class KtSymbolBasedModuleDescriptorImpl(

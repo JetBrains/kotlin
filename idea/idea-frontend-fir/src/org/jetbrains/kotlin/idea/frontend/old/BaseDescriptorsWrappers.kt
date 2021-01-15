@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -80,6 +83,7 @@ private fun KtClassKind.toDescriptorKlassKind(): ClassKind =
         KtClassKind.INTERFACE -> ClassKind.INTERFACE
     }
 
+
 abstract class KtSymbolBasedDeclarationDescriptor(val context: KtSymbolBasedContext) : DeclarationDescriptorWithSource {
     abstract val ktSymbol: KtSymbol
     override val annotations: Annotations
@@ -89,6 +93,24 @@ abstract class KtSymbolBasedDeclarationDescriptor(val context: KtSymbolBasedCont
         }
 
     override fun getSource(): SourceElement = ktSymbol.psi.safeAs<KtPureElement>().toSourceElement()
+
+    private fun KtSymbol.toSignature(): IdSignature = (this as KtFirSymbol<*>).firRef.withFir { it.createSignature() }
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is KtSymbolBasedDeclarationDescriptor) return false
+
+        ktSymbol.psi?.let {
+            return other.ktSymbol.psi == it
+        }
+
+        return ktSymbol.toSignature() == other.ktSymbol.toSignature()
+    }
+
+    override fun hashCode(): Int {
+        ktSymbol.psi?.let { return it.hashCode() }
+        return ktSymbol.toSignature().hashCode()
+    }
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R = noImplementation()
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?): Unit = noImplementation()

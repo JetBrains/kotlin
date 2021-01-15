@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.idea.frontend.old.binding
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedClassDescriptor
-import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedContext
-import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedFunctionDescriptor
+import org.jetbrains.kotlin.idea.frontend.old.*
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -35,26 +33,44 @@ internal class ToDescriptorBindingContextValueProviders(bindingContext: KtSymbol
 
     init {
         bindingContext.registerDeclarationToDescriptorByKey(BindingContext.CLASS, this::getClass)
+        bindingContext.registerDeclarationToDescriptorByKey(BindingContext.TYPE_PARAMETER, this::getTypeParameter)
         bindingContext.registerDeclarationToDescriptorByKey(BindingContext.FUNCTION, this::getFunction)
+        bindingContext.registerDeclarationToDescriptorByKey(BindingContext.CONSTRUCTOR, this::getConstructor)
 
 
         bindingContext.registerGetterByKey(BindingContext.DECLARATION_TO_DESCRIPTOR, this::getDeclarationToDescriptor)
     }
 
-    private fun getClass(key: PsiElement): ClassDescriptor? {
-        val ktClassSymbol = with(context.ktAnalysisSession) {
-            key.safeAs<KtDeclaration>()?.getSymbol().safeAs<KtClassOrObjectSymbol>() ?: return null
+    private inline fun <reified T : Any> PsiElement.getKtSymbolOfTypeOrNull(): T? =
+        this@ToDescriptorBindingContextValueProviders.context.withAnalysisSession {
+            this@getKtSymbolOfTypeOrNull.safeAs<KtDeclaration>()?.getSymbol().safeAs<T>()
         }
+
+    private fun getClass(key: PsiElement): ClassDescriptor? {
+        val ktClassSymbol = key.getKtSymbolOfTypeOrNull<KtClassOrObjectSymbol>() ?: return null
 
         return KtSymbolBasedClassDescriptor(ktClassSymbol, context)
     }
 
+    private fun getTypeParameter(key: KtTypeParameter): TypeParameterDescriptor {
+        val ktTypeParameterSymbol = context.withAnalysisSession { key.getTypeParameterSymbol() }
+        return KtSymbolBasedTypeParameterDescriptor(ktTypeParameterSymbol, context)
+    }
+
     private fun getFunction(key: PsiElement): SimpleFunctionDescriptor? {
-        val ktFunctionSymbol = with(context.ktAnalysisSession) {
-            key.safeAs<KtDeclaration>()?.getSymbol().safeAs<KtFunctionSymbol>() ?: return null
-        }
+        val ktFunctionSymbol = key.getKtSymbolOfTypeOrNull<KtFunctionSymbol>() ?: return null
 
         return KtSymbolBasedFunctionDescriptor(ktFunctionSymbol, context)
+    }
+
+    private fun getConstructor(key: PsiElement): ConstructorDescriptor? {
+        val ktConstructorSymbol = key.getKtSymbolOfTypeOrNull<KtConstructorSymbol>() ?: return null
+        val containerClass = context.withAnalysisSession { ktConstructorSymbol.getContainingSymbol() }
+        check(containerClass is KtClassOrObjectSymbol) {
+            "Unexpected contained for Constructor symbol: $containerClass, ktConstructorSymbol = $ktConstructorSymbol"
+        }
+
+        return KtSymbolBasedConstructorDescriptor(ktConstructorSymbol, KtSymbolBasedClassDescriptor(containerClass, context))
     }
 
     private fun getDeclarationToDescriptor(key: PsiElement): DeclarationDescriptor? {
