@@ -1,5 +1,181 @@
 # CHANGELOG
 
+## 1.4.30-RC
+
+### Info about particular features
+- JVM IR backend reaches Beta
+- Inline classes improvements
+- JVM records preview with **-language-version 1.5** and **-Xjvm-enable-preview**
+- Sealed interfaces preview with **-language-version 1.5**
+
+#### New Features
+
+- [`KT-41265`](https://youtrack.jetbrains.com/issue/KT-41265) Support noarg compiler plugin for JVM IR
+- [`KT-43592`](https://youtrack.jetbrains.com/issue/KT-43592) Promote JVM IR compiler backend to Beta
+- [`KT-43919`](https://youtrack.jetbrains.com/issue/KT-43919) Support loading Java annotations on base classes and implementing interfaces'  type arguments
+- [`KT-44021`](https://youtrack.jetbrains.com/issue/KT-44021) Enable JVM IR backend by default in 1.5
+
+#### Fixes
+
+- [`KT-11454`](https://youtrack.jetbrains.com/issue/KT-11454) Load annotations on TYPE_USE/TYPE_PARAMETER positions from Java class-files
+- [`KT-11732`](https://youtrack.jetbrains.com/issue/KT-11732) Verify error for generic interface method invocation with default parameters
+- [`KT-14612`](https://youtrack.jetbrains.com/issue/KT-14612) "ISE: Recursive call in a lazy value" during processing of a (weakly) recursive type alias
+- [`KT-18344`](https://youtrack.jetbrains.com/issue/KT-18344) Upper bound of a typealias type parameter is not reported correctly if it contains the typealias itself
+- [`KT-18768`](https://youtrack.jetbrains.com/issue/KT-18768) @Notnull annotation from Java does not work with varargs
+- [`KT-20548`](https://youtrack.jetbrains.com/issue/KT-20548) java.lang.IllegalStateException: Illegal class container on simple Java code parsing
+- [`KT-23816`](https://youtrack.jetbrains.com/issue/KT-23816) Inline classes: constants and annotations
+- [`KT-24158`](https://youtrack.jetbrains.com/issue/KT-24158) AE: No receiver found on incomplete code with $-signs
+- [`KT-24392`](https://youtrack.jetbrains.com/issue/KT-24392) Nullability of Java arrays is read incorrectly if @Nullable annotation has both targets TYPE_USE and VALUE_PARAMETER
+- [`KT-29735`](https://youtrack.jetbrains.com/issue/KT-29735) KNPE at `KtEnumEntrySuperclassReferenceExpression.getReferencedElement` with explicit type argument inside enum member constructor
+- [`KT-31389`](https://youtrack.jetbrains.com/issue/KT-31389) ClassFormatError with companion object in annotation with @JvmStatic
+- [`KT-31907`](https://youtrack.jetbrains.com/issue/KT-31907) ISE: UNIT_EXPECTED_TYPE on parsing array literal inside lambda with Unit return type
+- [`KT-36399`](https://youtrack.jetbrains.com/issue/KT-36399) Gradually support TYPE_USE nullability annotations read from class-files
+- [`KT-41163`](https://youtrack.jetbrains.com/issue/KT-41163) Double wrapped value in Result class after map operation
+- [`KT-41284`](https://youtrack.jetbrains.com/issue/KT-41284) Spring CGLIB proxies break auto-generated data class componentN and copy methods when using JVM IR
+- [`KT-41911`](https://youtrack.jetbrains.com/issue/KT-41911) JVM IR: nested big-arity function calls are not lowered
+- [`KT-42001`](https://youtrack.jetbrains.com/issue/KT-42001) Cannot resolve symbol: AssertionError: Module <sdk 1.8> is not contained in his own dependencies
+- [`KT-42036`](https://youtrack.jetbrains.com/issue/KT-42036) IR: "AssertionError: TypeAliasDescriptor expected: deserialized  class Nothing" when referencing typealias with @UnsafeVariance
+- [`KT-42530`](https://youtrack.jetbrains.com/issue/KT-42530) "AssertionError: No type for resolved lambda argument" on attempting to assign a Pair to a couple of values in a scratch file
+- [`KT-42622`](https://youtrack.jetbrains.com/issue/KT-42622) NI: IllegalStateException for if expression with method reference inside flow
+- [`KT-43051`](https://youtrack.jetbrains.com/issue/KT-43051) JVM IR: extraneous methods overridding default (Java 8) collection methods in inline class that extends MutableList
+- [`KT-43067`](https://youtrack.jetbrains.com/issue/KT-43067) Inner class declaration inside inline class should be prohibited
+- [`KT-43225`](https://youtrack.jetbrains.com/issue/KT-43225) Confusing message of warning NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER
+- [`KT-43459`](https://youtrack.jetbrains.com/issue/KT-43459) JVM_IR. Wrong signature for synthetic $annotations method for extension property on nullable primitive
+- [`KT-43478`](https://youtrack.jetbrains.com/issue/KT-43478) NI: "IndexOutOfBoundsException: Index: 3, Size: 3" caused by `is` check with raw type inside `if` condition with `when` inside
+- [`KT-43519`](https://youtrack.jetbrains.com/issue/KT-43519) JVM_IR. External functions generated differently in multi file facades
+- [`KT-43524`](https://youtrack.jetbrains.com/issue/KT-43524) JVM_IR. Missed deprecation flag on companion @JvmStatic property accessor
+- [`KT-43536`](https://youtrack.jetbrains.com/issue/KT-43536) JVM IR: IllegalStateException is not caught by runCatching under Deferred.await() with kotlinx.coroutines
+- [`KT-43587`](https://youtrack.jetbrains.com/issue/KT-43587) Invalid default parameter value in expect actual declaration on jvm
+- [`KT-43630`](https://youtrack.jetbrains.com/issue/KT-43630) "AssertionError: Number of arguments should not be less than number of parameters" during capturing intersection raw type with star projection
+- [`KT-43698`](https://youtrack.jetbrains.com/issue/KT-43698) NoSuchMethodError for inline class implementing interface with @JvmDefault methods, -Xjvm-default=enable
+- [`KT-43741`](https://youtrack.jetbrains.com/issue/KT-43741) Report error on inline class implementing 'kotlin.Cloneable'
+- [`KT-43845`](https://youtrack.jetbrains.com/issue/KT-43845) org.jetbrains.kotlin.codegen.CompilationException: Back-end (JVM) Internal error: Failed to generate expression: KtBlockExpression
+- [`KT-43956`](https://youtrack.jetbrains.com/issue/KT-43956) NI: "Error type encountered – UninferredParameterTypeConstructor" on "try" and other constructs with code block as a value
+- [`KT-44055`](https://youtrack.jetbrains.com/issue/KT-44055) Left uninferred type parameter for callable references inside special calls
+- [`KT-44113`](https://youtrack.jetbrains.com/issue/KT-44113) Compiler frontend exception: Number of arguments should not be less than number of parameters, but: parameters=2, args=1
+- [`KT-44145`](https://youtrack.jetbrains.com/issue/KT-44145) No highlighting for not initialized base constructor and NoSuchMethodError in Android plugin
+
+### IDE
+
+#### New Features
+
+- [`KT-44075`](https://youtrack.jetbrains.com/issue/KT-44075) Sealed interfaces: New Kotlin Class/File menu update
+
+#### Fixes
+
+- [`KT-29454`](https://youtrack.jetbrains.com/issue/KT-29454) Light class with unexpected name when using obfuscated library
+- [`KT-42194`](https://youtrack.jetbrains.com/issue/KT-42194) OOME: Java heap space from incremental compilation
+- [`KT-44116`](https://youtrack.jetbrains.com/issue/KT-44116) Add language version 1.5 to the compiler configuration preferences
+
+### IDE. Android
+
+
+### IDE. Completion
+
+- [`KT-44016`](https://youtrack.jetbrains.com/issue/KT-44016) Code completion: support for "sealed interface"
+
+### IDE. Gradle. Script
+
+- [`KT-39105`](https://youtrack.jetbrains.com/issue/KT-39105) AE “JvmBuiltins has not been initialized properly” after creating new Gradle/Kotlin-based project via old Project Wizard
+
+### IDE. Inspections and Intentions
+
+#### New Features
+
+- [`KT-44017`](https://youtrack.jetbrains.com/issue/KT-44017) Sealed interfaces: Java side Inspection "implementation of Kotlin sealed interface is forbidden"
+- [`KT-43941`](https://youtrack.jetbrains.com/issue/KT-43941) Sealed interfaces: intention to extend class/interface
+
+### IDE. Misc
+
+- [`KT-44018`](https://youtrack.jetbrains.com/issue/KT-44018) Sealed interfaces: IDE side implementation for hierarchy provider
+
+### IDE. Multiplatform
+
+- [`KT-40814`](https://youtrack.jetbrains.com/issue/KT-40814) MISSING_DEPENDENCY_CLASS when consuming native-shared library in a source-set with fewer targets than library has
+
+### IDE. Run Configurations
+
+- [`KT-34535`](https://youtrack.jetbrains.com/issue/KT-34535) Unable to run common tests on Android via gutter icon in a multiplatform project
+
+### IDE. Scratch
+
+- [`KT-25038`](https://youtrack.jetbrains.com/issue/KT-25038) Scratch: Destructuring declaration produces an unresolved reference
+
+### IDE. Script
+
+- [`KT-44117`](https://youtrack.jetbrains.com/issue/KT-44117) IDE / Scripts: custom kotlin script definitions aren't loaded
+
+### JavaScript
+
+#### Fixes
+
+- [`KT-41076`](https://youtrack.jetbrains.com/issue/KT-41076) KJS / IR: "AssertionError: Assertion failed" caused by overridden extensiion function in child class
+- [`KT-42357`](https://youtrack.jetbrains.com/issue/KT-42357) KotlinJS - external class constructor with vararg does not correctly handle spread operator.
+- [`KT-43212`](https://youtrack.jetbrains.com/issue/KT-43212) JS IR: support `init` blocks inside inline classes
+- [`KT-43901`](https://youtrack.jetbrains.com/issue/KT-43901) Call to enum values() method from enum companion object leads to non-initialized enum instances
+
+### Libraries
+
+- [`KT-41278`](https://youtrack.jetbrains.com/issue/KT-41278) map.entries.contains can return false if the argument is not MutableEntry
+
+### Middle-end. IR
+
+- [`KT-41765`](https://youtrack.jetbrains.com/issue/KT-41765) [Native/IR]  Could not resolveFakeOverride()
+- [`KT-42054`](https://youtrack.jetbrains.com/issue/KT-42054) Psi2ir: "RuntimeException: IrSimpleFunctionSymbolImpl is already bound" when using result of function with overload resolution by lambda return type
+
+### Native
+
+- [`KT-44271`](https://youtrack.jetbrains.com/issue/KT-44271) [Kotlin/Native] Incorrect linking when targeting linux_x64 from mingw_x64 host
+- [`KT-44219`](https://youtrack.jetbrains.com/issue/KT-44219) 1.4.30-M1: Non-reified type parameters with recursive bounds are not supported yet
+
+### Native. ObjC Export
+
+- [`KT-43599`](https://youtrack.jetbrains.com/issue/KT-43599) K/N: Unbound symbols not allowed
+
+### Native. Stdlib
+
+- [`KT-42172`](https://youtrack.jetbrains.com/issue/KT-42172) Kotlin/Native: StableRef.dispose race condition on Kotlin deinitRuntime
+- [`KT-42482`](https://youtrack.jetbrains.com/issue/KT-42482) Kotlin subclasses of Obj-C classes are incompatible with ISA swizzling (it causes crashes)
+
+### Tools. CLI
+
+- [`KT-43294`](https://youtrack.jetbrains.com/issue/KT-43294) Support `-no-stdlib` option for the `kotlin` runner
+
+### Tools. Compiler Plugins
+
+- [`KT-43725`](https://youtrack.jetbrains.com/issue/KT-43725) Prohibit inner and local classes in kotlin-noarg
+
+### Tools. Gradle
+
+- [`KT-43740`](https://youtrack.jetbrains.com/issue/KT-43740) Gradle out-of-process runner fails with unclear diagnostics if build directory does not exist
+- [`KT-43895`](https://youtrack.jetbrains.com/issue/KT-43895) Fix cacheability warnings for the Kotlin plugins
+
+### Tools. Gradle. JS
+
+- [`KT-43668`](https://youtrack.jetbrains.com/issue/KT-43668) PackageJson task use file dependencies as is (files and directories), but only files necessary
+- [`KT-43793`](https://youtrack.jetbrains.com/issue/KT-43793) nodeArgs in NodeJsExec task
+- [`KT-43842`](https://youtrack.jetbrains.com/issue/KT-43842) KJS: Invalid `output.library` support for `null` value
+- [`KT-44104`](https://youtrack.jetbrains.com/issue/KT-44104) KJS / Gradle: An ability to pass jvm args to K2JSDce process
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-44298`](https://youtrack.jetbrains.com/issue/KT-44298) Kotlin 1.4.20+ MPP "root" module publication does not include the source JAR that used to be published in the -metadata modules
+
+### Tools. Incremental Compile
+
+- [`KT-42937`](https://youtrack.jetbrains.com/issue/KT-42937) another compilation fail (problem with compilation caches?)
+
+### Tools. Kapt
+
+- [`KT-44130`](https://youtrack.jetbrains.com/issue/KT-44130) KAPT changes field order in 1.4.30-M1
+
+### Tools. Scripts
+
+- [`KT-43534`](https://youtrack.jetbrains.com/issue/KT-43534) Allow running "main.kts" script that does not end in a "main.kts" filename (would allow kotlin scripting on GitHub Actions)
+- [`KT-43176`](https://youtrack.jetbrains.com/issue/KT-43176) NoSuchMethodError: 'int Script.access$getAValue$p(Script) for not-inlined functions
+- [`KT-43294`](https://youtrack.jetbrains.com/issue/KT-43294) Support `-no-stdlib` option for the `kotlin` runner
+
+
 ## 1.4.20
 
 ### Android
