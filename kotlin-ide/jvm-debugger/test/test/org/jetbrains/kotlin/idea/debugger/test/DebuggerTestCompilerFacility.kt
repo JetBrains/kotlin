@@ -91,8 +91,8 @@ class DebuggerTestCompilerFacility(
 
         val options = mutableListOf("-jvm-target", jvmTarget.description)
 
-        if (useIrBackend) {
-            options.add("-Xuse-ir")
+        if (!useIrBackend) {
+            options.add("-Xuse-old-backend")
         }
 
         if (kotlin.isNotEmpty()) {
