@@ -305,6 +305,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         dependencyMapper: KotlinDependencyMapper
     ): KotlinTarget? {
         val targetClass = gradleTarget.javaClass
+
+        val metadataTargetClass = targetClass.classLoader.loadClass("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget")
+        if (metadataTargetClass.isInstance(gradleTarget)) return null
+
         val getPlatformType = targetClass.getMethodOrNull("getPlatformType") ?: return null
         val getDisambiguationClassifier = targetClass.getMethodOrNull("getDisambiguationClassifier") ?: return null
         val platformId = (getPlatformType.invoke(gradleTarget) as? Named)?.name ?: return null
@@ -740,6 +744,18 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun MultiplatformModelImportingContext.computeSourceSetPlatforms(sourceSet: KotlinSourceSetImpl) {
+        require(!sourceSet.actualPlatforms.arePlatformsInitialized) {
+            "Attempt to re-initialize platforms for source set ${sourceSet}. Already present platforms: ${sourceSet.actualPlatforms}"
+        }
+
+        if (isOrphanSourceSet(sourceSet)) {
+            // Explicitly set platform of orphan source-sets to only used platforms, not all supported platforms
+            // Otherwise, the tooling might be upset after trying to provide some support for a target which actually
+            // doesn't exist in this project (e.g. after trying to draw gutters, while test tasks do not exist)
+            sourceSet.actualPlatforms.addSimplePlatforms(projectPlatforms)
+            return
+        }
+
         if (shouldCoerceToCommon(sourceSet)) {
             sourceSet.actualPlatforms.addSimplePlatforms(listOf(KotlinPlatform.COMMON))
             return

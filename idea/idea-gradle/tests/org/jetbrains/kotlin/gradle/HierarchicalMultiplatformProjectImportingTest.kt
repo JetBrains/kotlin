@@ -360,7 +360,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 targetPlatform(jvm)
             }
 
-            module("my-app.commonMain") { targetPlatform(jvm, anyNative, js) }
+            module("my-app.commonMain") { targetPlatform(jvm, anyNative) }
             module("my-app.commonTest") { targetPlatform(jvm, anyNative) }
 
             module("my-app.jvmAndLinuxMain") { targetPlatform(jvm, anyNative) }
@@ -395,7 +395,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 targetPlatform(jvm)
             }
 
-            module("my-app.commonMain") { targetPlatform(jvm, anyNative, js) } // :( should be (jvm, anyNative)
+            module("my-app.commonMain") { targetPlatform(jvm, anyNative) }
             module("my-app.commonTest") { targetPlatform(jvm, anyNative) }
 
             module("my-app.jvmAndLinuxMain") { targetPlatform(jvm, anyNative) }
@@ -414,7 +414,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             // submodule
             module("my-app.submodule") { targetPlatform(jvm) }
 
-            module("my-app.submodule.commonMain") { targetPlatform(js, jvm, anyNative) } // :( should be (js, jvm)
+            module("my-app.submodule.commonMain") { targetPlatform(js, jvm) }
             module("my-app.submodule.commonTest") { targetPlatform(js, jvm) }
 
             module("my-app.submodule.jvmMain") { targetPlatform(jvm) }
@@ -438,11 +438,11 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.commonMain") {
                 // must not be (jvm, js, native)
-                targetPlatform(jvm, js, native)
+                targetPlatform(jvm, js)
             }
 
             module("my-app.orphan") {
-                targetPlatform(jvm, js, native)
+                targetPlatform(jvm, js)
             }
             module("my-app") {
                 assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(1)
@@ -462,7 +462,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.commonMain") {
-                targetPlatform(jvm, js, native) // must not be (jvm, js, native)
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
             }
 
             module("my-app.includedIntoJvm") {
@@ -487,7 +487,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
             module("my-app.commonMain") {
-                targetPlatform(jvm, js, native) // must not be (jvm, js, native)
+                targetPlatform(jvm, js) // must not be (jvm, js, native)
             }
 
             module("my-app.intermediateBetweenJsAndCommon") {
@@ -542,19 +542,19 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
             // (jvm, js, native) is highly undesirable
             module("my-app.danglingOnJvm") {
-                targetPlatform(jvm, js, native)
+                targetPlatform(jvm, js)
             }
 
             module("my-app.commonMain") {
-                targetPlatform(jvm, js, native)
+                targetPlatform(jvm, js)
             }
 
             module("my-app.danglingOnCommon") {
-                targetPlatform(jvm, js, native)
+                targetPlatform(jvm, js)
             }
 
             module("my-app.danglingOnJvmAndJs") {
-                targetPlatform(jvm, js, native)
+                targetPlatform(jvm, js)
             }
         }
     }
