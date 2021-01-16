@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.name.ClassId
 
-object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirRegularClass) return
+object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ANNOTATION_CLASS) return
         if (declaration.isLocal) reporter.report(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR)
 
