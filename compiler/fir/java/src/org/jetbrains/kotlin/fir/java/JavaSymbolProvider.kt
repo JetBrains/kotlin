@@ -186,109 +186,123 @@ class JavaSymbolProvider(
                 javaTypeParameterStack.addStack(parentStack)
             }
         }
-        val firJavaClass = buildJavaClass {
-            source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
-            session = this@JavaSymbolProvider.session
-            symbol = classSymbol
-            name = javaClass.name
-            visibility = javaClass.visibility
-            modality = javaClass.modality
-            classKind = javaClass.classKind
-            this.isTopLevel = outerClassId == null
-            isStatic = javaClass.isStatic
-            this.javaTypeParameterStack = javaTypeParameterStack
-            parentClassTypeParameterStackCache[classSymbol] = javaTypeParameterStack
-            existingNestedClassifierNames += javaClass.innerClassNames
-            scopeProvider = this@JavaSymbolProvider.scopeProvider
-            val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
-            typeParameters += classTypeParameters
-            if (!isStatic && parentClassSymbol != null) {
-                typeParameters += parentClassSymbol.fir.typeParameters.map {
-                    buildOuterClassTypeParameterRef { symbol = it.symbol }
-                }
-            }
-
-            val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
-
-            status = FirResolvedDeclarationStatusImpl(
-                javaClass.visibility,
-                javaClass.modality
-            ).apply {
-                this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
-                isCompanion = false
-                isData = false
-                isInline = false
-                isFun = classKind == ClassKind.INTERFACE
-            }
-            // TODO: may be we can process fields & methods later.
-            // However, they should be built up to override resolve stage
-            for (javaField in javaClass.fields) {
-                declarations += convertJavaFieldToFir(javaField, classId, javaTypeParameterStack, dispatchReceiver)
-            }
-            val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
-            val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
-
-            for (javaMethod in javaClass.methods) {
-                if (javaMethod.isObjectMethodInInterface()) continue
-                declarations += convertJavaMethodToFir(
-                    javaMethod,
-                    classId,
-                    javaTypeParameterStack,
-                    classIsAnnotation,
-                    valueParametersForAnnotationConstructor,
-                    dispatchReceiver
-                )
-            }
-            val javaClassDeclaredConstructors = javaClass.constructors
-            val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
-
-            if (javaClassDeclaredConstructors.isEmpty()
-                && javaClass.classKind == ClassKind.CLASS
-                && javaClass.hasDefaultConstructor()
-            ) {
-                declarations += convertJavaConstructorToFir(
-                    javaConstructor = null,
-                    constructorId,
-                    javaClass,
-                    ownerClassBuilder = this,
-                    classTypeParameters,
-                    javaTypeParameterStack
-                )
-            }
-            for (javaConstructor in javaClassDeclaredConstructors) {
-                declarations += convertJavaConstructorToFir(
-                    javaConstructor,
-                    constructorId,
-                    javaClass,
-                    ownerClassBuilder = this,
-                    classTypeParameters,
-                    javaTypeParameterStack,
-                )
-            }
-
-            if (classKind == ClassKind.ENUM_CLASS) {
-                generateValuesFunction(
-                    session,
-                    classId.packageFqName,
-                    classId.relativeClassName
-                )
-                generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
-            }
-            if (classIsAnnotation) {
-                declarations +=
-                    buildConstructorForAnnotationClass(constructorId, this, valueParametersForAnnotationConstructor)
-            }
-            parentClassTypeParameterStackCache.remove(classSymbol)
-        }
-        firJavaClass.replaceSuperTypeRefs(
-            javaClass.supertypes.map { supertype ->
-                supertype.toFirResolvedTypeRef(
-                    this@JavaSymbolProvider.session, javaTypeParameterStack, isForSupertypes = true, forTypeParameterBounds = false
-                )
-            }
-        )
+        parentClassTypeParameterStackCache[classSymbol] = javaTypeParameterStack
+        val firJavaClass = createFirJavaClass(javaClass, classSymbol, outerClassId, parentClassSymbol, classId, javaTypeParameterStack)
+        parentClassTypeParameterStackCache.remove(classSymbol)
+        firJavaClass.convertSuperTypes(javaClass, javaTypeParameterStack)
         firJavaClass.addAnnotationsFrom(this@JavaSymbolProvider.session, javaClass, javaTypeParameterStack)
         return firJavaClass
+    }
+
+    private fun FirJavaClass.convertSuperTypes(
+        javaClass: JavaClass,
+        javaTypeParameterStack: JavaTypeParameterStack
+    ) {
+        replaceSuperTypeRefs(
+            javaClass.supertypes.map { supertype ->
+                supertype.toFirResolvedTypeRef(session, javaTypeParameterStack, isForSupertypes = true, forTypeParameterBounds = false)
+            }
+        )
+    }
+
+    private fun createFirJavaClass(
+        javaClass: JavaClass,
+        classSymbol: FirRegularClassSymbol,
+        outerClassId: ClassId?,
+        parentClassSymbol: FirRegularClassSymbol?,
+        classId: ClassId,
+        javaTypeParameterStack: JavaTypeParameterStack,
+    ): FirJavaClass = buildJavaClass {
+        source = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
+        session = this@JavaSymbolProvider.session
+        symbol = classSymbol
+        name = javaClass.name
+        visibility = javaClass.visibility
+        modality = javaClass.modality
+        classKind = javaClass.classKind
+        this.isTopLevel = outerClassId == null
+        isStatic = javaClass.isStatic
+        this.javaTypeParameterStack = javaTypeParameterStack
+        existingNestedClassifierNames += javaClass.innerClassNames
+        scopeProvider = this@JavaSymbolProvider.scopeProvider
+        val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
+        typeParameters += classTypeParameters
+        if (!isStatic && parentClassSymbol != null) {
+            typeParameters += parentClassSymbol.fir.typeParameters.map {
+                buildOuterClassTypeParameterRef { symbol = it.symbol }
+            }
+        }
+
+        val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol })
+
+        status = FirResolvedDeclarationStatusImpl(
+            javaClass.visibility,
+            javaClass.modality
+        ).apply {
+            this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
+            isCompanion = false
+            isData = false
+            isInline = false
+            isFun = classKind == ClassKind.INTERFACE
+        }
+        // TODO: may be we can process fields & methods later.
+        // However, they should be built up to override resolve stage
+        for (javaField in javaClass.fields) {
+            declarations += convertJavaFieldToFir(javaField, classId, javaTypeParameterStack, dispatchReceiver)
+        }
+        val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
+        val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
+
+        for (javaMethod in javaClass.methods) {
+            if (javaMethod.isObjectMethodInInterface()) continue
+            declarations += convertJavaMethodToFir(
+                javaMethod,
+                classId,
+                javaTypeParameterStack,
+                classIsAnnotation,
+                valueParametersForAnnotationConstructor,
+                dispatchReceiver
+            )
+        }
+        val javaClassDeclaredConstructors = javaClass.constructors
+        val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
+
+        if (javaClassDeclaredConstructors.isEmpty()
+            && javaClass.classKind == ClassKind.CLASS
+            && javaClass.hasDefaultConstructor()
+        ) {
+            declarations += convertJavaConstructorToFir(
+                javaConstructor = null,
+                constructorId,
+                javaClass,
+                ownerClassBuilder = this,
+                classTypeParameters,
+                javaTypeParameterStack
+            )
+        }
+        for (javaConstructor in javaClassDeclaredConstructors) {
+            declarations += convertJavaConstructorToFir(
+                javaConstructor,
+                constructorId,
+                javaClass,
+                ownerClassBuilder = this,
+                classTypeParameters,
+                javaTypeParameterStack,
+            )
+        }
+
+        if (classKind == ClassKind.ENUM_CLASS) {
+            generateValuesFunction(
+                session,
+                classId.packageFqName,
+                classId.relativeClassName
+            )
+            generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
+        }
+        if (classIsAnnotation) {
+            declarations +=
+                buildConstructorForAnnotationClass(constructorId, this, valueParametersForAnnotationConstructor)
+        }
     }
 
     private fun convertJavaFieldToFir(
