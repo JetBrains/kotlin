@@ -63,6 +63,6 @@ fun mest()
 
 class mest
 
-fun() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
-private fun() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>private fun()<!> {}

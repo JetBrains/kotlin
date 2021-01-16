@@ -1,9 +1,9 @@
 // !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
-fun () {
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
 
 }
 
-fun Outer.() {
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun Outer.()<!> {
 
 }
 
@@ -30,7 +30,7 @@ annotation class<!SYNTAX!><!> {
 }
 
 class Outer {
-    fun () {
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
 
     }
 
