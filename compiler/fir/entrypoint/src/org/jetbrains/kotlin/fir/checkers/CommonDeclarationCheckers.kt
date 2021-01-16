@@ -28,6 +28,10 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirSealedSupertypeChecker,
     )
 
+    override val functionCheckers: Set<FirFunctionChecker> = setOf(
+        FirFunctionNameChecker,
+    )
+
     override val propertyCheckers: Set<FirPropertyChecker> = setOf(
         FirInapplicableLateinitChecker,
         FirDestructuringDeclarationInitializerChecker,
