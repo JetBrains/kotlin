@@ -46,7 +46,13 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
         )
 
     private val renderer: DescriptorRenderer by lazy {
-        DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+        DescriptorRenderer.withOptions {
+            defaultDecompilerRendererOptions()
+            annotationFilter = { annotation ->
+                // Omit internal cinterop annotation because they are useless for end-users.
+                annotation.fqName?.asString()?.startsWith("kotlinx.cinterop.internal") == false
+            }
+        }
     }
 
     protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
