@@ -268,6 +268,7 @@ private data class MemberAnnotations(val memberAnnotations: MutableMap<MemberSig
 // TODO: better to be in KotlinDeserializedJvmSymbolsProvider?
 private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryClass, byteContent: ByteArray?): MemberAnnotations {
     val memberAnnotations = hashMapOf<MemberSignature, MutableList<FirAnnotationCall>>()
+    val annotationsLoader = AnnotationsLoader(this)
 
     kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
         override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
@@ -296,7 +297,7 @@ private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryC
                     result = arrayListOf()
                     memberAnnotations[paramSignature] = result
                 }
-                return loadAnnotationIfNotSpecial(classId, result)
+                return annotationsLoader.loadAnnotationIfNotSpecial(classId, result)
             }
         }
 
@@ -304,7 +305,7 @@ private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryC
             private val result = arrayListOf<FirAnnotationCall>()
 
             override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                return loadAnnotationIfNotSpecial(classId, result)
+                return annotationsLoader.loadAnnotationIfNotSpecial(classId, result)
             }
 
             override fun visitEnd() {
@@ -317,14 +318,3 @@ private fun FirSession.loadMemberAnnotations(kotlinBinaryClass: KotlinJvmBinaryC
 
     return MemberAnnotations(memberAnnotations)
 }
-
-// TODO: Or, better to migrate annotation deserialization in KotlinDeserializedJvmSymbolsProvider to here?
-private fun FirSession.loadAnnotationIfNotSpecial(
-    annotationClassId: ClassId,
-    result: MutableList<FirAnnotationCall>
-): KotlinJvmBinaryClass.AnnotationArgumentVisitor? =
-    (firSymbolProvider as? FirCompositeSymbolProvider)
-        ?.providers
-        ?.filterIsInstance<KotlinDeserializedJvmSymbolsProvider>()
-        ?.singleOrNull()
-        ?.loadAnnotationIfNotSpecial(annotationClassId, result)
