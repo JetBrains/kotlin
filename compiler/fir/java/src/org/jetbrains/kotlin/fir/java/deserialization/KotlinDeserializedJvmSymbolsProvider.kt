@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
@@ -66,6 +67,8 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val typeAliasCache = SymbolProviderCache<ClassId, FirTypeAliasSymbol>()
     private val packagePartsCache = SymbolProviderCache<FqName, Collection<PackagePartsCacheData>>()
 
+    private val knownNameInPackageCache = KnownNameInPackageCache(session, javaClassFinder)
+
     // TODO: implement thread safety for this property
     private val handledByJava = HashSet<ClassId>()
 
@@ -87,22 +90,12 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    private val knownClassNamesInPackage = mutableMapOf<FqName, Set<String>?>()
-
-    // This function returns true if we are sure that no top-level class with this id is available
-    // If it returns false, it means we can say nothing about this id
-    private fun hasNoTopLevelClassOf(classId: ClassId): Boolean {
-        val knownNames = knownClassNamesInPackage.getOrPut(classId.packageFqName) {
-            javaClassFinder.knownClassNamesInPackage(classId.packageFqName)
-        } ?: return false
-        return classId.relativeClassName.topLevelName() !in knownNames
-    }
 
     private fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
 
         return packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
             val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
-            if (hasNoTopLevelClassOf(classId)) return@mapNotNull null
+            if (knownNameInPackageCache.hasNoTopLevelClassOf(classId)) return@mapNotNull null
             val (kotlinJvmBinaryClass, byteContent) =
                 kotlinClassFinder.findKotlinClassOrContent(classId) as? KotlinClassFinder.Result.KotlinClass ?: return@mapNotNull null
 
@@ -308,7 +301,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {
-        if (hasNoTopLevelClassOf(classId)) return null
+        if (knownNameInPackageCache.hasNoTopLevelClassOf(classId)) return null
         if (classId in classCache) return classCache[classId]
 
         if (classId in handledByJava) return null
@@ -409,4 +402,17 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? = null
+}
+
+private class KnownNameInPackageCache(session: FirSession, private val javaClassFinder: JavaClassFinder) {
+    private val knownClassNamesInPackage = session.firCachesFactory.createCache(javaClassFinder::knownClassNamesInPackage)
+
+    /**
+     * This function returns true if we are sure that no top-level class with this id is available
+     * If it returns false, it means we can say nothing about this id
+     */
+    fun hasNoTopLevelClassOf(classId: ClassId): Boolean {
+        val knownNames = knownClassNamesInPackage.getValue(classId.packageFqName) ?: return false
+        return classId.relativeClassName.topLevelName() !in knownNames
+    }
 }
