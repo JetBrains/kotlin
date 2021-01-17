@@ -217,10 +217,19 @@ public value class ULong @PublishedApi internal constructor(@PublishedApi intern
     @kotlin.internal.InlineOnly
     public inline fun mod(other: ULong): ULong = rem(other)
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun inc(): ULong = ULong(data.inc())
-    /** Decrements this value. */
+
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun dec(): ULong = ULong(data.dec())
 

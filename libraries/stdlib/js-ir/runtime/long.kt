@@ -201,10 +201,18 @@ public class Long internal constructor(
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Double): Double = toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public operator fun inc(): Long = this + 1L
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public operator fun dec(): Long = this - 1L
 
     /** Returns this value. */

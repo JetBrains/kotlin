@@ -43,11 +43,19 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
     public inline operator fun minus(other: Int): Char =
         (this.toInt() - other).toChar()
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public inline operator fun inc(): Char =
         (this.toInt() + 1).toChar()
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public inline operator fun dec(): Char =
         (this.toInt() - 1).toChar()
 

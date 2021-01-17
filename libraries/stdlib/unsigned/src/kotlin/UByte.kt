@@ -217,10 +217,19 @@ public value class UByte @PublishedApi internal constructor(@PublishedApi intern
     @kotlin.internal.InlineOnly
     public inline fun mod(other: ULong): ULong = this.toULong().mod(other)
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun inc(): UByte = UByte(data.inc())
-    /** Decrements this value. */
+
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun dec(): UByte = UByte(data.dec())
 

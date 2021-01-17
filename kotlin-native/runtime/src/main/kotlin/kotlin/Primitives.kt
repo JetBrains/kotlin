@@ -179,10 +179,18 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     public inline operator fun rem(other: Double): Double =
             this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Byte
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Byte
     /** Returns this value. */
@@ -450,10 +458,18 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     public inline operator fun rem(other: Double): Double =
             this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Short
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Short
     /** Returns this value. */
@@ -720,10 +736,18 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     public inline operator fun rem(other: Double): Double =
             this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Int
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Int
     /** Returns this value. */
@@ -1014,10 +1038,18 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     public inline operator fun rem(other: Double): Double =
             this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Long
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Long
     /** Returns this value. */
@@ -1334,10 +1366,18 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     public inline operator fun rem(other: Double): Double =
             this.toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Float
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Float
     /** Returns this value. */
@@ -1612,10 +1652,18 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @TypedIntrinsic(IntrinsicType.SIGNED_REM)
     external public operator fun rem(other: Double): Double
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Double
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Double
     /** Returns this value. */

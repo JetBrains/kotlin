@@ -32,10 +32,18 @@ public class Char private constructor() : Comparable<Char> {
     public inline operator fun minus(other: Int): Char =
             (this.code - other).toChar()
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Char
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     @TypedIntrinsic(IntrinsicType.DEC)
     external public operator fun dec(): Char
 

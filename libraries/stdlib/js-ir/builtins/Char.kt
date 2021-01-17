@@ -32,9 +32,18 @@ constructor(code: UShort) : Comparable<Char> {
     /** Subtracts the other Int value from this value resulting a Char. */
     public operator fun minus(other: Int): Char = (value - other).toChar()
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public operator fun inc(): Char = (value + 1).toChar()
-    /** Decrements this value. */
+
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public operator fun dec(): Char = (value - 1).toChar()
 
     /** Creates a range from this value to the specified [other] value. */
