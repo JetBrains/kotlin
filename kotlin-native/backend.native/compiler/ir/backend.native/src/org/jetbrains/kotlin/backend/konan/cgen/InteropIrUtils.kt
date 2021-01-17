@@ -33,7 +33,7 @@ internal fun IrType.isCEnumType(): Boolean {
 private val cCall = RuntimeNames.cCall
 
 // Make sure external stubs always get proper annotaions.
-private fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
+fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
                 // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
                 || this.descriptor.annotations.hasAnnotation(cCall.child(Name.identifier(name)))

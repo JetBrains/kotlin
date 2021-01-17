@@ -4,10 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
-import org.jetbrains.kotlin.native.interop.indexer.GlobalDecl
-import org.jetbrains.kotlin.native.interop.indexer.VoidType
-import org.jetbrains.kotlin.native.interop.indexer.unwrapTypedefs
+import org.jetbrains.kotlin.native.interop.indexer.*
 
 internal data class CCalleeWrapper(val lines: List<String>)
 
@@ -26,10 +23,18 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         return "${packageName}_${functionName}_wrapper${currentFunctionWrapperId++}"
     }
 
-    private fun bindSymbolToFunction(symbol: String, function: String): List<String> = listOf(
-            "const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
-            "const void* $symbol = &$function;"
-    )
+    private fun bindSymbolToFunction(symbol: String, function: String): List<String> =
+        if (context.configuration.library.language == Language.CPP) {
+            listOf(
+                "extern \"C\" const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
+                "extern \"C\" const void* $symbol = (const void*)&$function;"
+            )
+        } else {
+            listOf(
+                "const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
+                "const void* $symbol = &$function;"
+            )
+        }
 
     private data class Parameter(val type: String, val name: String)
 
@@ -42,7 +47,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
     ): List<String> = listOf(
             "__attribute__((always_inline))",
             "$returnType $wrapperName(${parameters.joinToString { "${it.type} ${it.name}" }}) {",
-            body,
+            "\t$body",
             "}",
             *bindSymbolToFunction(symbolName, wrapperName).toTypedArray()
     )
@@ -54,16 +59,77 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
                 val wrapperName = generateFunctionWrapperName(function.name)
 
                 val returnType = function.returnType.getStringRepresentation()
-                val parameters = function.parameters.mapIndexed { index, parameter ->
-                    Parameter(parameter.type.getStringRepresentation(), "p$index")
+                val unwrappedReturnType = function.returnType.unwrapTypedefs()
+                val returnTypePrefix =
+                    if (unwrappedReturnType is PointerType && unwrappedReturnType.isLVReference) "&" else ""
+                val returnTypePostfix =
+                    if (unwrappedReturnType is ManagedType) ".release()" else ""
+
+                val signatureParameters = function.parameters.mapIndexed { index, parameter ->
+                    val type = parameter.type.getStringRepresentation()
+                    val forcePointer = if (parameter.type.unwrapTypedefs() is RecordType) "*" else ""
+                    Parameter(type+forcePointer, "p$index")
                 }
-                val callExpression = "${function.name}(${parameters.joinToString { it.name }});"
+                val bodyParameters = function.parameters.mapIndexed { index, parameter ->
+
+                    val parameterTypeText = parameter.type.getStringRepresentation()
+                    val type = parameter.type
+                    val unwrappedType = type.unwrapTypedefs()
+
+                    val typeExpression = if (context.configuration.library.language == Language.CPP) {
+                        val cppRefTypePrefix =
+                            if (unwrappedType is PointerType && unwrappedType.isLVReference) "*" else ""
+                        when {
+                            type is Typedef ->
+                                "(${type.def.name})"
+                            type is PointerType && type.spelling != null ->
+                                "(${type.spelling})$cppRefTypePrefix"
+                            unwrappedType is EnumType ->
+                                "(${unwrappedType.def.spelling})"
+                            unwrappedType is RecordType ->
+                                "*(${unwrappedType.decl.spelling}*)"
+                            unwrappedType is ManagedType -> {
+                                "sk_ref_sp<${unwrappedType.decl.stripSkiaSharedPointer}>"
+                        }
+                        else ->
+                                "$cppRefTypePrefix($parameterTypeText)"
+                        }
+                    } else "($parameterTypeText)"
+
+                    Parameter(typeExpression, "p$index")
+                }
+
+                // val callExpression = "${function.name}(${parameters.joinToString { it.name }});"
+                val callExpression = with (function) {
+                    when  {
+                        isCxxInstanceMethod -> {
+                            val parametersPart = bodyParameters.drop(1).joinToString {
+                                "${it.type}${it.name}"
+                            }
+                            "(${bodyParameters[0].name})->${name}($parametersPart)"
+                        }
+                        isCxxConstructor -> {
+                            val parametersPart = bodyParameters.drop(1).joinToString {
+                                "${it.type}${it.name}"
+                            }
+                            "new(${bodyParameters[0].name}) ${cxxReceiverClass!!.spelling}($parametersPart)"
+                        }
+                        isCxxDestructor ->
+                            "(${bodyParameters[0].name})->~${cxxReceiverClass!!.spelling.substringAfterLast(':')}()"
+                        else ->
+                            if (context.configuration.library.language == Language.CPP)
+                                "${fullName}(${bodyParameters.joinToString {"${it.type}(${it.name})"}})"
+                            else
+                                "${fullName}(${bodyParameters.joinToString {it.name}})"
+                    }
+                }
+
                 val wrapperBody = if (function.returnType.unwrapTypedefs() is VoidType) {
-                    callExpression
+                    "$callExpression;"
                 } else {
-                    "return $callExpression"
+                    "return (${returnType})$returnTypePrefix($callExpression)${returnTypePostfix};"
                 }
-                val wrapper = createWrapper(symbolName, wrapperName, returnType, parameters, wrapperBody)
+                val wrapper = createWrapper(symbolName, wrapperName, returnType, signatureParameters, wrapperBody)
                 CCalleeWrapper(wrapper)
             }
 

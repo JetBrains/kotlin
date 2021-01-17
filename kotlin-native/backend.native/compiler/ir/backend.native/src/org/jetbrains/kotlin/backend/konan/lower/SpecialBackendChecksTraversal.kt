@@ -322,7 +322,9 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
             )
         }
 
-        if (callee.returnType.isNativePointed(symbols))
+        if (callee.returnType.isNativePointed(symbols)
+            // TODO: this should be in Skia plugin.
+            && !callee.hasCCallAnnotation("SkiaClassConstructor"))
             reportError(expression, "Native interop types constructors must not be called directly")
     }
 

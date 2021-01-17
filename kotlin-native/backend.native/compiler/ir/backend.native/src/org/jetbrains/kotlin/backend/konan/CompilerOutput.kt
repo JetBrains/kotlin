@@ -48,7 +48,8 @@ val CompilerOutputKind.isCache: Boolean
 
 internal fun produceCStubs(context: Context) {
     val llvmModule = context.llvmModule!!
-    context.cStubsManager.compile(context.config.clang, context.messageCollector, context.inVerbosePhase)?.let {
+    context.cStubsManager.
+    compile(context.config.clang, context.messageCollector, context.inVerbosePhase).forEach {
         parseAndLinkBitcodeFile(llvmModule, it.absolutePath)
     }
 }

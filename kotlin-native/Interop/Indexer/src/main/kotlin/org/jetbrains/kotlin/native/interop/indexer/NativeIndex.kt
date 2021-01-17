@@ -62,7 +62,6 @@ data class CompilationWithPCH(
         override val compilerArgs: List<String>,
         override val language: Language
 ) : Compilation {
-
     constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
             : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
 
@@ -323,6 +322,8 @@ data class VectorType(val elementType: Type, val elementCount: Int, val spelling
 object VoidType : Type
 
 data class RecordType(val decl: StructDecl) : Type
+
+data class ManagedType(val decl: StructDecl) : Type
 
 data class EnumType(val def: EnumDef) : Type
 

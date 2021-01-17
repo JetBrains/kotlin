@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 internal class InteropLowering(context: Context) : FileLoweringPass {
     // TODO: merge these lowerings.
@@ -83,12 +84,20 @@ private abstract class BaseInteropIrTransformer(private val context: Context) : 
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.ir.symbols
 
+            val klib: KonanLibrary? get() {
+                val expression = element ?: builder.scope.scopeOwnerSymbol.owner as? IrDeclaration
+                return (expression as? IrCall)?.symbol?.owner?.konanLibrary as? KonanLibrary
+            }
+
+            override val language: String
+                get() = klib?.manifestProperties?.getProperty("language") ?: ""
+
             override fun addKotlin(declaration: IrDeclaration) {
                 addTopLevel(declaration)
             }
 
             override fun addC(lines: List<String>) {
-                context.cStubsManager.addStub(location, lines)
+                context.cStubsManager.addStub(location, lines, klib)
             }
 
             override fun getUniqueCName(prefix: String) =
@@ -763,6 +772,8 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         expression.transformChildrenVoid(this)
 
+        if (expression.symbol.owner.hasCCallAnnotation("SkiaClassConstructor")) return expression
+
         val callee = expression.symbol.owner
         val inlinedClass = callee.returnType.getInlinedClassNative()
         require(inlinedClass?.descriptor != interop.cPointer) { renderCompilerError(expression) }
@@ -862,7 +873,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             val exceptionMode = ForeignExceptionMode.byValue(
                     function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
             )
-            return generateWithStubs { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
+            return generateWithStubs(expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
         }
 
         val failCompilation = { msg: String -> error(irFile, expression, msg) }

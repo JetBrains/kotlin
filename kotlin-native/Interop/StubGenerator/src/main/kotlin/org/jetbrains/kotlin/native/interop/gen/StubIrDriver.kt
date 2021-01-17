@@ -25,6 +25,7 @@ class StubIrContext(
             includes = mutableListOf<String>().apply {
                 add("stdint.h")
                 add("string.h")
+                add("stdbool.h")
                 if (platform == KotlinPlatform.JVM) {
                     add("jni.h")
                 }
@@ -127,6 +128,11 @@ class StubIrDriver(
         outCFile.bufferedWriter().use {
             emitCFile(context, it, entryPoint, bridgeBuilderResult.nativeBridges)
         }
+
+        println("GENERATED KOTLIN: ${bridgeBuilderResult.nativeBridges.kotlinLines.toList().size}")
+        bridgeBuilderResult.nativeBridges.kotlinLines.forEach { println(it) }
+        println("GENERATED NATIVE: ${bridgeBuilderResult.nativeBridges.nativeLines.toList().size}")
+        bridgeBuilderResult.nativeBridges.nativeLines.forEach { println(it) }
 
         return when (context.generationMode) {
             GenerationMode.SOURCE_CODE -> {
