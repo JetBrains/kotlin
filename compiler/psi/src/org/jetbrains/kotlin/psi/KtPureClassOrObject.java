@@ -60,7 +60,7 @@ public interface KtPureClassOrObject extends KtPureElement, KtDeclarationContain
 
     @NotNull
     @ReadOnly
-    List<KtTypeReference> getContextReceiverTypeReferences();
+    List<KtContextReceiver> getContextReceivers();
 
     @Nullable
     KtClassBody getBody();

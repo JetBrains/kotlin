@@ -10625,6 +10625,42 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("superWithContext.kt")
+                public void testSuperWithContext() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/superWithContext.kt");
+                }
+
+                @Test
+                @TestMetadata("thisIdentifierInfo.kt")
+                public void testThisIdentifierInfo() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisIdentifierInfo.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithCustomLabel.kt")
+                public void testThisWithCustomLabel() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithCustomLabel.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithReceiverLabelsClasses.kt")
+                public void testThisWithReceiverLabelsClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithReceiverLabelsClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithReceiverLabelsFunctions.kt")
+                public void testThisWithReceiverLabelsFunctions() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithReceiverLabelsFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("thisWithReceiverLabelsProperties.kt")
+                public void testThisWithReceiverLabelsProperties() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisWithReceiverLabelsProperties.kt");
+                }
+
+                @Test
                 @TestMetadata("typeParameterized.kt")
                 public void testTypeParameterized() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/typeParameterized.kt");

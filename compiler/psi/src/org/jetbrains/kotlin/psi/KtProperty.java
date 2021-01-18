@@ -116,12 +116,12 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @NotNull
     @Override
-    public List<KtTypeReference> getContextReceiverTypeReferences() {
+    public List<KtContextReceiver> getContextReceivers() {
         KotlinPropertyStub stub = getStub();
         if (stub != null) {
-            KtContextReceiver contextReceiver = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER);
+            KtContextReceiverList contextReceiver = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
             if (contextReceiver != null) {
-                return contextReceiver.typeReferences();
+                return contextReceiver.contextReceivers();
             } else {
                 return Collections.emptyList();
             }
@@ -130,16 +130,16 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     }
 
     @NotNull
-    private List<KtTypeReference> getContextReceiverTypeRefsByTree() {
+    private List<KtContextReceiver> getContextReceiverTypeRefsByTree() {
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
             IElementType tt = node.getElementType();
             if (tt == KtTokens.COLON) {
                 break;
             }
-            if (tt == KtNodeTypes.CONTEXT_RECEIVER) {
-                KtContextReceiver contextReceiver = (KtContextReceiver) node.getPsi();
-                return contextReceiver.typeReferences();
+            if (tt == KtNodeTypes.CONTEXT_RECEIVER_LIST) {
+                KtContextReceiverList contextReceiver = (KtContextReceiverList) node.getPsi();
+                return contextReceiver.contextReceivers();
             }
             node = node.getTreeNext();
         }

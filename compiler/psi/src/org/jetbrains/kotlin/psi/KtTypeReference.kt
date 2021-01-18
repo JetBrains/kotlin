@@ -55,4 +55,6 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
     fun hasParentheses(): Boolean {
         return findChildByType<PsiElement>(KtTokens.LPAR) != null && findChildByType<PsiElement>(KtTokens.RPAR) != null
     }
+
+    fun nameForReceiverLabel() = (typeElement as? KtUserType)?.referencedName
 }

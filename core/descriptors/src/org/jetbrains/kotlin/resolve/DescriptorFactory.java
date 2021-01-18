@@ -189,8 +189,18 @@ public class DescriptorFactory {
             @Nullable KotlinType receiverParameterType,
             @NotNull Annotations annotations
     ) {
+        return createExtensionReceiverParameterForCallable(owner, receiverParameterType, annotations, false);
+    }
+
+    @Nullable
+    public static ReceiverParameterDescriptor createExtensionReceiverParameterForCallable(
+            @NotNull CallableDescriptor owner,
+            @Nullable KotlinType receiverParameterType,
+            @NotNull Annotations annotations,
+            boolean isContextReceiver
+    ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null), annotations);
+               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null, isContextReceiver), annotations);
     }
 }

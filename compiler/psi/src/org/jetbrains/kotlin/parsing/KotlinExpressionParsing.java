@@ -597,7 +597,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
     }
 
-    private boolean isAtLabelDefinitionOrMissingIdentifier() {
+    boolean isAtLabelDefinitionOrMissingIdentifier() {
         return (at(IDENTIFIER) && myBuilder.rawLookup(1) == AT) || at(AT);
     }
 
@@ -1690,7 +1690,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * IDENTIFIER "@"
      */
-    private void parseLabelDefinition() {
+    void parseLabelDefinition() {
         PsiBuilder.Marker labelWrap = mark();
         PsiBuilder.Marker mark = mark();
 

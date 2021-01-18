@@ -185,12 +185,12 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @NotNull
     @Override
-    public List<KtTypeReference> getContextReceiverTypeReferences() {
+    public List<KtContextReceiver> getContextReceivers() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
-            List<KtContextReceiver> childContextReceivers = getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER);
+            List<KtContextReceiverList> childContextReceivers = getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
             if (!childContextReceivers.isEmpty()) {
-                return childContextReceivers.get(0).typeReferences();
+                return childContextReceivers.get(0).contextReceivers();
             }
             else {
                 return Collections.emptyList();
@@ -200,13 +200,13 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     }
 
     @NotNull
-    private List<KtTypeReference> getContextReceiverTypeRefsByTree() {
+    private List<KtContextReceiver> getContextReceiverTypeRefsByTree() {
         PsiElement child = getFirstChild();
         while (child != null) {
             IElementType tt = child.getNode().getElementType();
             if (tt == KtTokens.LPAR || tt == KtTokens.COLON) break;
-            if (child instanceof KtContextReceiver) {
-                return ((KtContextReceiver) child).typeReferences();
+            if (child instanceof KtContextReceiverList) {
+                return ((KtContextReceiverList) child).contextReceivers();
             }
             child = child.getNextSibling();
         }

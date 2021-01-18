@@ -77,7 +77,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @NotNull
     @Override
-    public List<KtTypeReference> getContextReceiverTypeReferences() {
+    public List<KtContextReceiver> getContextReceivers() {
         return Collections.emptyList();
     }
 

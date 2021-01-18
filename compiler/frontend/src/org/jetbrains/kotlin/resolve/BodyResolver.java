@@ -1023,7 +1023,8 @@ public class BodyResolver {
         );
 
         // Synthetic "field" creation
-        if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null) {
+        if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null
+            && functionDescriptor.getContextReceiverParameters().isEmpty()) {
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
             KtProperty property = (KtProperty) function.getParent();
             SourceElement propertySourceElement = KotlinSourceElementKt.toSourceElement(property);
