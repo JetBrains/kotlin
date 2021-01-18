@@ -143,6 +143,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return graphBuilder.returnExpressionsOfAnonymousFunction(function)
     }
 
+    fun isThereControlFlowInfoForAnonymousFunction(function: FirAnonymousFunction): Boolean =
+        graphBuilder.isThereControlFlowInfoForAnonymousFunction(function)
+
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         graphBuilder.dropSubgraphFromCall(call)
     }

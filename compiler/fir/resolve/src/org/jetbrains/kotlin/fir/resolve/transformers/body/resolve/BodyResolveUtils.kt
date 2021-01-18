@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -83,7 +85,6 @@ internal fun remapArgumentsWithVararg(
 
 fun FirBlock.writeResultType(session: FirSession) {
     val resultExpression = when (val statement = statements.lastOrNull()) {
-        is FirReturnExpression -> statement.result
         is FirExpression -> statement
         else -> null
     }

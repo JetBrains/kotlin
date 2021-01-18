@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -442,7 +443,23 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
             val body = result.body
             if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-                result.transformReturnTypeRef(transformer, withExpectedType(body.resultType))
+                // TODO: This part seems unnecessary because for lambdas in dependent context will be completed and their type
+                //  should be replaced there properly
+                val returnType =
+                    dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
+                        .firstNotNullResult { (it as? FirExpression)?.resultType?.coneTypeSafe() }
+
+                if (returnType != null) {
+                    result.transformReturnTypeRef(transformer, withExpectedType(returnType))
+                } else {
+                    result.transformReturnTypeRef(
+                        transformer,
+                        withExpectedType(buildErrorTypeRef {
+                            diagnostic =
+                                ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
+                        })
+                    )
+                }
             }
             return result
         }
@@ -506,11 +523,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
-            if (body != null) {
+            val returnExpression = (body?.statements?.single() as? FirReturnExpression)?.result
+            if (returnExpression != null && returnExpression.typeRef is FirResolvedTypeRef) {
                 result.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
-                        body.resultType.approximatedIfNeededOrSelf(
+                        returnExpression.resultType.approximatedIfNeededOrSelf(
                             inferenceComponents.approximator, simpleFunction?.visibility, simpleFunction?.isInline == true
                         )
                     )

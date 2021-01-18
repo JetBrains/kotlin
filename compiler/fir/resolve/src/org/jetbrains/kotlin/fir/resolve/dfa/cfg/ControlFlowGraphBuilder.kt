@@ -120,6 +120,11 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Public API -----------------------------------
 
+    fun isThereControlFlowInfoForAnonymousFunction(function: FirAnonymousFunction): Boolean =
+        function.controlFlowGraphReference?.controlFlowGraph != null ||
+                exitsOfAnonymousFunctions.containsKey(function.symbol)
+
+    // This function might throw exception if !isThereControlFlowInfoForAnonymousFunction(function)
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirStatement> {
         fun FirElement.extractArgument(): FirElement = when {
             this is FirReturnExpression && target.labeledElement.symbol == function.symbol -> result.extractArgument()

@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
-import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
-import org.jetbrains.kotlin.fir.resolve.inference.returnType
+import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
@@ -340,14 +337,22 @@ class FirCallCompletionResultsWriterTransformer(
             .let { finalSubstitutor.substituteOrSelf(it) }
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
-        return argumentMapping?.map { (argument, valueParameter) ->
+        val lambdasReturnType = postponedAtoms.filterIsInstance<ResolvedLambdaAtom>().associate {
+            Pair(it.atom, finalSubstitutor.substituteOrSelf(substitutor.substituteOrSelf(it.returnType)))
+        }
+
+        val arguments = argumentMapping?.map { (argument, valueParameter) ->
             val expectedType = if (valueParameter.isVararg) {
                 valueParameter.returnTypeRef.substitute(this).varargElementType()
             } else {
                 valueParameter.returnTypeRef.substitute(this)
             }
             argument.unwrapArgument() to expectedType
-        }?.toMap()?.toExpectedType()
+        }?.toMap()
+
+
+        if (lambdasReturnType.isEmpty() && arguments.isNullOrEmpty()) return null
+        return ExpectedArgumentType.ArgumentsMap(arguments ?: emptyMap(), lambdasReturnType)
     }
 
     override fun transformDelegatedConstructorCall(
@@ -425,6 +430,13 @@ class FirCallCompletionResultsWriterTransformer(
         anonymousFunction: FirAnonymousFunction,
         data: ExpectedArgumentType?,
     ): CompositeTransformResult<FirStatement> {
+        // This case is not common, and happens when there are anonymous function arguments that aren't mapped to any parameter in the call
+        // So, we don't run body resolve transformation for them, thus there's no control flow info either
+        // Control flow info is necessary prerequisite because we collect return expressions in that function
+        //
+        // Example: second lambda in the call like list.filter({}, {})
+        if (!dataFlowAnalyzer.isThereControlFlowInfoForAnonymousFunction(anonymousFunction)) return anonymousFunction.compose()
+
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
             // From the argument mapping, the expected type of this anonymous function would be:
             when {
@@ -455,10 +467,13 @@ class FirCallCompletionResultsWriterTransformer(
             needUpdateLambdaType = true
         }
 
-        val expectedReturnType = expectedType?.returnType(session) as? ConeClassLikeType
         val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        if (initialType != null) {
-            val finalType = expectedReturnType ?: finalSubstitutor.substituteOrNull(initialType)
+        val finalType =
+            expectedType?.returnType(session) as? ConeClassLikeType
+                ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
+                ?: initialType?.let(finalSubstitutor::substituteOrSelf)
+
+        if (finalType != null) {
             val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
             anonymousFunction.transformReturnTypeRef(StoreType, resultType)
             needUpdateLambdaType = true
@@ -472,17 +487,22 @@ class FirCallCompletionResultsWriterTransformer(
 
         val result = transformElement(anonymousFunction, null)
 
+        val returnExpressionsOfAnonymousFunction: Collection<FirStatement> =
+            dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(anonymousFunction)
+        for (expression in returnExpressionsOfAnonymousFunction) {
+            expression.transform<FirElement, ExpectedArgumentType?>(this, finalType?.toExpectedType())
+        }
+
         val resultFunction = result.single
         if (resultFunction.returnTypeRef.coneTypeSafe<ConeIntegerLiteralType>() != null) {
-            val blockType = resultFunction.body?.typeRef?.coneTypeSafe<ConeKotlinType>()
-            resultFunction.replaceReturnTypeRef(resultFunction.returnTypeRef.withReplacedConeType(blockType))
+            val lastExpressionType =
+                (returnExpressionsOfAnonymousFunction.lastOrNull() as? FirExpression)
+                    ?.typeRef?.coneTypeSafe<ConeKotlinType>()
+
+            resultFunction.replaceReturnTypeRef(resultFunction.returnTypeRef.withReplacedConeType(lastExpressionType))
             resultFunction.replaceTypeRef(
                 resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
             )
-        }
-
-        for (expression in dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(anonymousFunction)) {
-            expression.transform<FirElement, ExpectedArgumentType?>(this, null)
         }
 
         return result
@@ -622,7 +642,11 @@ class FirCallCompletionResultsWriterTransformer(
 }
 
 sealed class ExpectedArgumentType {
-    class ArgumentsMap(val map: Map<FirExpression, ConeKotlinType>) : ExpectedArgumentType()
+    class ArgumentsMap(
+        val map: Map<FirExpression, ConeKotlinType>,
+        val lambdasReturnTypes: Map<FirAnonymousFunction, ConeKotlinType>
+    ) : ExpectedArgumentType()
+
     class ExpectedType(val type: ConeKotlinType) : ExpectedArgumentType()
     object NoApproximation : ExpectedArgumentType()
 }
@@ -633,7 +657,6 @@ private fun ExpectedArgumentType.getExpectedType(argument: FirExpression): ConeK
     ExpectedArgumentType.NoApproximation -> null
 }
 
-private fun Map<FirExpression, ConeKotlinType>.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ArgumentsMap(this)
 fun ConeKotlinType.toExpectedType(): ExpectedArgumentType = ExpectedArgumentType.ExpectedType(this)
 
 private fun FirExpression.unwrapArgument(): FirExpression = when (this) {
