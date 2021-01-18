@@ -18,6 +18,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
@@ -53,11 +54,6 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         internal fun transformGranularMetadataTaskName(sourceSetName: String) =
             lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
-
-        internal fun dependsOnWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
-            sourceSet.dependsOn.toMutableSet().apply {
-                addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
-            }
     }
 
     override fun configureTarget(target: KotlinMetadataTarget) {
@@ -292,11 +288,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
         val compilationName = sourceSet.name
 
-        val platformCompilations = compilationsBySourceSets(project).getValue(sourceSet)
+        val platformCompilations = compilationsBySourceSets(project)
+            .getValue(sourceSet).filter { it.target.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
 
-        val isNativeSourceSet = platformCompilations.all { compilation ->
-            compilation.target is KotlinNativeTarget || compilation is KotlinSharedNativeCompilation
-        }
+        val isNativeSourceSet = isSharedNativeSourceSet(project, sourceSet)
 
         val compilationFactory: KotlinCompilationFactory<out AbstractKotlinCompilation<*>> = when {
             isNativeSourceSet -> KotlinSharedNativeCompilationFactory(
@@ -362,20 +357,12 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         isSourceSetPublished: Boolean
     ) {
         KotlinDependencyScope.values().forEach { scope ->
-            val allMetadataConfiguration = project.configurations.getByName(
-                when (scope) {
-                    KotlinDependencyScope.RUNTIME_ONLY_SCOPE -> ALL_RUNTIME_METADATA_CONFIGURATION_NAME
-                    else -> ALL_COMPILE_METADATA_CONFIGURATION_NAME
-                }
-            )
-
             val granularMetadataTransformation = GranularMetadataTransformation(
                 project,
                 sourceSet,
                 listOf(scope),
-                allMetadataConfiguration,
                 lazy {
-                    dependsOnWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
+                    dependsOnClosureWithInterCompilationDependencies(project, sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                         .map { checkNotNull(it.dependencyTransformations[scope]) }
                 }
             )
@@ -564,6 +551,20 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
         }
 }
+
+internal fun isSharedNativeSourceSet(project: Project, sourceSet: KotlinSourceSet): Boolean {
+    val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project)[sourceSet].orEmpty()
+    return compilations.isNotEmpty() && compilations.all {
+        it.platformType == KotlinPlatformType.common || it.platformType == KotlinPlatformType.native
+    }
+}
+
+internal fun dependsOnClosureWithInterCompilationDependencies(project: Project, sourceSet: KotlinSourceSet): Set<KotlinSourceSet> =
+    sourceSet.getSourceSetHierarchy().toMutableSet().apply {
+        /** exclude self from the results of [getSourceSetHierarchy] */
+        remove(sourceSet)
+        addAll(getVisibleSourceSetsFromAssociateCompilations(project, sourceSet))
+    }
 
 /**
  * @return All common source sets that can potentially be published. Right now, not all combinations of platforms actually

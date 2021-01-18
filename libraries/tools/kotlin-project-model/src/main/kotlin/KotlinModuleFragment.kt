@@ -14,10 +14,8 @@ interface KotlinModuleFragment {
     val fragmentName: String
     val directRefinesDependencies: Iterable<KotlinModuleFragment>
 
-    val declaredContainingModuleFragmentDependencies: Iterable<KotlinModuleFragment>
-
     // TODO: scopes
-    val declaredModuleDependencies: Iterable<ModuleDependency>
+    val declaredModuleDependencies: Iterable<KotlinModuleDependency>
 
     val kotlinSourceRoots: Iterable<File>
 }
@@ -54,8 +52,7 @@ open class BasicKotlinModuleFragment(
 
     override val directRefinesDependencies: MutableSet<BasicKotlinModuleFragment> = mutableSetOf()
 
-    override val declaredContainingModuleFragmentDependencies: MutableSet<BasicKotlinModuleFragment> = mutableSetOf()
-    override val declaredModuleDependencies: MutableSet<ModuleDependency> = mutableSetOf()
+    override val declaredModuleDependencies: MutableSet<KotlinModuleDependency> = mutableSetOf()
 
     override var kotlinSourceRoots: Iterable<File> = emptyList()
     override fun toString(): String = "fragment $fragmentName"

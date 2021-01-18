@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.project.model
 // TODO think about state management: unresolved -> (known dependency graph?) ... -> completely resolved
 //      it seems to be important to learn whether or not the model is final
 interface ModuleDependencyResolver {
-    fun resolveDependency(moduleDependency: ModuleDependency): KotlinModule?
+    fun resolveDependency(moduleDependency: KotlinModuleDependency): KotlinModule?
 }
 
 // TODO merge with ModuleDependencyResolver?
@@ -17,5 +17,21 @@ interface ModuleDependencyResolver {
 interface DependencyDiscovery {
     // TODO return dependency graph rather than just iterable?
     // TODO make this a partial function, too
-    fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<ModuleDependency>
+    fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<KotlinModuleDependency>
 }
+
+interface KotlinDependencyGraphResolver {
+    // TODO add explicit dependency consistency scopes if we decide to keep non-production code in the same variant
+    fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution
+}
+
+sealed class DependencyGraphResolution(val requestingModule: KotlinModule) {
+    class Unknown(requestingModule: KotlinModule) : DependencyGraphResolution(requestingModule)
+    class DependencyGraph(requestingModule: KotlinModule, val root: DependencyGraphNode): DependencyGraphResolution(requestingModule)
+}
+
+// TODO: should this be a single graph for all dependency scopes as well, not just for all fragments?
+class DependencyGraphNode(
+    val module: KotlinModule,
+    val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<DependencyGraphNode>>
+)

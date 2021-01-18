@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
+import org.jetbrains.kotlin.gradle.targets.metadata.isSharedNativeSourceSet
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -114,14 +116,19 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
              * published as API dependencies of the metadata module to get into the resolution result, see
              * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
              */
-            val isNativeSharedSourceSet = sourceSetsWithMetadataCompilations[sourceSet] is KotlinSharedNativeCompilation
-            val sourceSetExportedDependencies = when {
-                isNativeSharedSourceSet -> sourceSet.withAllDependsOnSourceSets().flatMap { hierarchySourceSet ->
-                    listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE).flatMap { scope ->
-                        project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
-                    }
-                }.distinct()
-                else -> project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies
+            val isNativeSharedSourceSet = isSharedNativeSourceSet(project, sourceSet)
+            val scopes = listOfNotNull(
+                KotlinDependencyScope.API_SCOPE,
+                KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
+            )
+            val sourceSetsToIncludeDependencies =
+                if (isNativeSharedSourceSet)
+                    dependsOnClosureWithInterCompilationDependencies(project, sourceSet).plus(sourceSet)
+                else listOf(sourceSet)
+            val sourceSetExportedDependencies = scopes.flatMap { scope ->
+                sourceSetsToIncludeDependencies.flatMap { hierarchySourceSet ->
+                    project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
+                }
             }
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },

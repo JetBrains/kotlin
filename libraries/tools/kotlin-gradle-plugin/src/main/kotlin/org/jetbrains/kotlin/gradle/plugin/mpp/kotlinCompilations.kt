@@ -338,6 +338,10 @@ internal object CompilationSourceSetUtil {
         return ext.get(EXT_NAME) as Property<CompilationsBySourceSet>
     }
 
+    // FIXME: the results include the compilations of the metadata target; the callers should care about filtering them out
+    //        if they need only the platform compilations
+    // TODO: create a separate util function: `platformCompilationsBySourceSets`
+    // TODO: visit all call sites, check if they handle the metadata compilations correctly
     fun compilationsBySourceSets(project: Project): CompilationsBySourceSet {
         val compilationNamesBySourceSetName = getOrCreateProperty(project) {
             var shouldFinalizeValue = false
