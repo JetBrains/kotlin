@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.test.backend.handlers
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.codegen.CodegenTestUtil
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.codegen.clearReflectionCache
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -23,7 +21,9 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.io.File
 import java.lang.reflect.Method
+import java.net.URL
 import java.net.URLClassLoader
 
 class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices, doNotRunIfThereWerePreviousFailures = true) {
@@ -54,6 +54,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
                 val method = clazz.getBoxMethodOrNull() ?: continue
                 boxMethodFound = true
                 callBoxMethodAndCheckResultWithCleanup(
+                    module,
                     info.classFileFactory,
                     classLoader,
                     clazz,
@@ -69,19 +70,20 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
     }
 
     private fun callBoxMethodAndCheckResultWithCleanup(
-        factory: ClassFileFactory,
+        module: TestModule,
+        classFileFactory: ClassFileFactory,
         classLoader: URLClassLoader,
-        clazz: Class<*>?,
+        clazz: Class<*>,
         method: Method,
         unexpectedBehaviour: Boolean,
         reportProblems: Boolean
     ) {
         try {
-            callBoxMethodAndCheckResult(classLoader, clazz, method, unexpectedBehaviour)
+            callBoxMethodAndCheckResult(module, classFileFactory, classLoader, clazz, method, unexpectedBehaviour)
         } catch (e: Throwable) {
             if (reportProblems) {
                 try {
-                    println(factory.createText())
+                    println(classFileFactory.createText())
                 } catch (_: Throwable) {
                     // In FIR we have factory which can't print bytecode
                     //   and it throws exception otherwise. So we need
@@ -96,14 +98,15 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
     }
 
     private fun callBoxMethodAndCheckResult(
+        module: TestModule,
+        classFileFactory: ClassFileFactory,
         classLoader: URLClassLoader,
-        @Suppress("UNUSED_PARAMETER") clazz: Class<*>?,
+        clazz: Class<*>,
         method: Method,
         unexpectedBehaviour: Boolean
     ) {
         val result = if (BOX_IN_SEPARATE_PROCESS_PORT != null) {
-            TODO()
-//            result = invokeBoxInSeparateProcess(classLoader, clazz)
+            invokeBoxInSeparateProcess(module, classFileFactory, classLoader, clazz)
         } else {
             val savedClassLoader = Thread.currentThread().contextClassLoader
             if (savedClassLoader !== classLoader) {
@@ -124,6 +127,27 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
             assertions.assertEquals("OK", result)
         }
     }
+
+    private fun invokeBoxInSeparateProcess(
+        module: TestModule,
+        classFileFactory: ClassFileFactory,
+        classLoader: URLClassLoader,
+        clazz: Class<*>
+    ): String {
+        val classPath = classLoader.extractUrls().toMutableList()
+        if (classLoader is GeneratedClassLoader) {
+            val javaPath = testServices.compiledClassesManager.getCompiledJavaDirForModule(module)?.url
+            if (javaPath != null) {
+                classPath.add(0, javaPath)
+            }
+            classPath.add(0, testServices.compiledClassesManager.getCompiledKotlinDirForModule(module, classFileFactory).url)
+        }
+        val proxy = TestProxy(Integer.valueOf(BOX_IN_SEPARATE_PROCESS_PORT), clazz.canonicalName, classPath)
+        return proxy.runTest()
+    }
+
+    private val File.url: URL
+        get() = toURI().toURL()
 
     private fun createAndVerifyClassLoader(
         module: TestModule,
