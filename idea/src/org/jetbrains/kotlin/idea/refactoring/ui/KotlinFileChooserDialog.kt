@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.refactoring.ui
 
 import com.intellij.ide.util.AbstractTreeClassChooserDialog
-import com.intellij.ide.util.TreeChooser
 import com.intellij.ide.util.gotoByName.GotoFileModel
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.FilenameIndex
@@ -20,15 +19,13 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 class KotlinFileChooserDialog(
     title: String,
-    project: Project,
-    searchScope: GlobalSearchScope?,
-    packageName: String?
+    project: Project
 ) : AbstractTreeClassChooserDialog<KtFile>(
     title,
     project,
-    searchScope ?: project.projectScope().restrictToKotlinSources(),
+    project.projectScope().restrictToKotlinSources(),
     KtFile::class.java,
-    ScopeAwareClassFilter(searchScope, packageName),
+    null,
     null,
     null,
     false,
@@ -48,20 +45,4 @@ class KotlinFileChooserDialog(
     }
 
     override fun createChooseByNameModel() = GotoFileModel(this.project)
-
-    /**
-     * Base class [AbstractTreeClassChooserDialog] unfortunately doesn't filter the file tree according to the provided "scope".
-     * As a workaround we use filter preventing wrong file selection.
-     */
-    private class ScopeAwareClassFilter(val searchScope: GlobalSearchScope?, val packageName: String?) : TreeChooser.Filter<KtFile> {
-        override fun isAccepted(element: KtFile?): Boolean {
-            if (element == null) return false
-            if (searchScope == null && packageName == null) return true
-
-            val matchesSearchScope = searchScope?.accept(element.virtualFile) ?: true
-            val matchesPackage = packageName?.let { element.packageFqName.asString() == it } ?: true
-
-            return matchesSearchScope && matchesPackage
-        }
-    }
 }

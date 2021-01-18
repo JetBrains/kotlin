@@ -155,7 +155,6 @@ class ExtractDeclarationFromCurrentFileIntention : SelfTargetingRangeIntention<K
                 packageName.asString(),
                 directory,
                 targetFile as? KtFile,
-                /* freezeTargets */ false,
                 /* moveToPackage = */ true,
                 /* searchInComments = */ true,
                 /* searchForTextOccurrences = */ true,

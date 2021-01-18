@@ -30,7 +30,6 @@ internal interface MoveKotlinDeclarationsHandlerActions {
         targetPackageName: String,
         targetDirectory: PsiDirectory?,
         targetFile: KtFile?,
-        freezeTargets: Boolean,
         moveToPackage: Boolean,
         moveCallback: MoveCallback?
     )
