@@ -10054,6 +10054,28 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                     runTest("compiler/testData/diagnostics/tests/functionLiterals/return/unresolvedReferenceInReturnBlock.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/functionLiterals/suspend")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Suspend extends AbstractFirDiagnosticTest {
+                @Test
+                public void testAllFilesPresentInSuspend() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/functionLiterals/suspend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("disabled.kt")
+                public void testDisabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/functionLiterals/suspend/disabled.kt");
+                }
+
+                @Test
+                @TestMetadata("enabled.kt")
+                public void testEnabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/functionLiterals/suspend/enabled.kt");
+                }
+            }
         }
 
         @Nested
