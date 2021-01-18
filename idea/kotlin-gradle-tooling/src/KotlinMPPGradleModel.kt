@@ -102,7 +102,7 @@ interface KotlinCompilation : KotlinModule {
      * All source sets participated in this compilation, including those available
      * via dependsOn.
      */
-    val sourceSets: Collection<KotlinSourceSet>
+    val allSourceSets: Collection<KotlinSourceSet>
 
     /**
      * Only default source sets of this compilation, i.e. those which are included

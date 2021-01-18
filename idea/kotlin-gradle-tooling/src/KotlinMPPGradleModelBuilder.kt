@@ -372,12 +372,12 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun KotlinCompilationImpl.addDependsOnSourceSetsToCompilation(
         importingContext: MultiplatformModelImportingContext
     ): KotlinCompilationImpl {
-        val dependsOnSourceSets = this.sourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { importingContext.sourceSetByName(it) }
+        val dependsOnSourceSets = this.allSourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { importingContext.sourceSetByName(it) }
 
         return KotlinCompilationImpl(
             this.name,
-            this.sourceSets.union(dependsOnSourceSets),
-            this.sourceSets,
+            this.allSourceSets.union(dependsOnSourceSets),
+            this.allSourceSets,
             this.dependencies,
             this.output,
             this.arguments,
