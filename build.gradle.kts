@@ -503,7 +503,7 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { !isTestDistributionEnabled() }
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
     }
 
     normalization {
