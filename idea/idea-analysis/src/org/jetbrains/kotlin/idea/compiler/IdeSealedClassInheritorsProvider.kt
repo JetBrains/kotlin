@@ -31,7 +31,7 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
             val module = sealedKtClass.module ?: return emptyList()
             val moduleSourceScope = GlobalSearchScope.moduleScope(module)
             val containingPackage = sealedClass.containingPackage() ?: return emptyList()
-            val psiPackage = JavaDirectoryService.getInstance().getPackage(sealedKtClass.containingFile.containingDirectory)
+            val psiPackage = getPackageViaDirectoryService(sealedKtClass)
                 ?: JavaPsiFacade.getInstance(sealedKtClass.project).findPackage(containingPackage.asString())
                 ?: return emptyList()
             val packageScope = PackageScope(psiPackage, false, false)
@@ -49,5 +49,10 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
                 it.resolveToDescriptor(resolutionFacade)
             }.filterNotNull()
             .sortedBy(ClassDescriptor::getName) // order needs to be stable (at least for tests)
+    }
+
+    private fun getPackageViaDirectoryService(ktClass: KtClass): PsiPackage? {
+        val directory = ktClass.containingFile.containingDirectory ?: return null
+        return JavaDirectoryService.getInstance().getPackage(directory)
     }
 }
