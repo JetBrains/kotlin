@@ -621,7 +621,7 @@ public class KotlinTestUtils {
                     }
                 }
 
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
+                throw new AssertionError(String.format("Looks like this test can be unmuted. Remove \"%s%s\" directive.", ignoreDirective, targetBackend));
             }
         };
     }
