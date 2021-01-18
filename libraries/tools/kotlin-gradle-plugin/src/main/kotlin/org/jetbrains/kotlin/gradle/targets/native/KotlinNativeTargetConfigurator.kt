@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
@@ -140,48 +143,94 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         }
 
         if (binary is Framework) {
-            val configuration = configurations.create(configurationName(binary.target.name, binary.buildType.name.toLowerCase()) + binary.baseName) {
+            createFrameworkArtifact(binary, result)
+        }
+    }
+
+    private fun Project.createFrameworkArtifact(
+        binary: Framework,
+        linkTask: TaskProvider<KotlinNativeLink>
+    ) {
+        fun <T: Task> Configuration.configureConfiguration(fat: Boolean, taskProvider: TaskProvider<T>) {
+            usesPlatformOf(binary.target)
+            project.afterEvaluate {
+                val task = taskProvider.get()
+                val artifactFile = when (task) {
+                    is FatFrameworkTask -> task.fatFrameworkDir
+                    else -> binary.outputFile
+                }
+                val linkArtifact = project.artifacts.add(name, artifactFile) { artifact ->
+                    artifact.name = name
+                    artifact.extension = "framework"
+                    artifact.type = "binary"
+                    artifact.classifier = "framework"
+                    artifact.builtBy(task)
+                }
+                project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
+                    .addCandidate(linkArtifact)
+                artifacts.add(linkArtifact)
+                attributes.attribute(
+                    org.gradle.api.internal.artifacts.ArtifactAttributes.ARTIFACT_FORMAT,
+                    org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK
+                )
+                attributes.attribute(
+                    org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.konanBuildTypeAttribute,
+                    binary.buildType.name
+                )
+                // capture type parameter T
+                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
+                    to.attribute(key, from.getAttribute(key)!!)
+                }
+                binary.target.getAttributes().keySet().forEach {
+                    copyAttribute(it, binary.target.getAttributes(), this.attributes)
+                }
+                if (fat) {
+                    attributes.attribute(KotlinNativeTarget.konanTargetAttribute, "fat")
+                    // else is already set to real konan target
+                }
+                binary.attributes.keySet().forEach {
+                    copyAttribute(it, binary.attributes, this.attributes)
+                }
+            }
+        }
+
+        configurations.create(frameworkConfigurationName(binary.target.name, binary.buildType.name.toLowerCase()) + binary.baseName) {
+            it.isCanBeConsumed = true
+            it.isCanBeResolved = false
+            it.configureConfiguration(false, linkTask)
+        }
+
+        val fatFrameworkConfigurationName = frameworkConfigurationName(binary.baseName, binary.buildType.name.toLowerCase() + "Fat")
+        val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalize()}"
+
+        val fatFrameworkTask = try {
+            tasks.named(fatFrameworkTaskName, FatFrameworkTask::class.java)
+        } catch (e: UnknownDomainObjectException) {
+            tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
+                it.baseName = binary.baseName
+                it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCase())
+            }
+        }
+
+        fatFrameworkTask.configure {
+            try {
+                it.from(binary)
+            } catch (e: Exception) {
+                logger.warn("Cannot add binary ${binary.name} dependency to fat framework", e)
+            }
+        }
+
+        if (configurations.findByName(fatFrameworkConfigurationName) == null) {
+            configurations.create(fatFrameworkConfigurationName) {
                 it.isCanBeConsumed = true
                 it.isCanBeResolved = false
-            }
-            with(configuration) {
-                usesPlatformOf(binary.target)
-                project.afterEvaluate {
-                    val linkArtifact = project.artifacts.add(name, binary.outputFile) { artifact ->
-                        artifact.name = name
-                        artifact.extension = "framework"
-                        artifact.type = "binary"
-                        artifact.classifier = "framework"
-                        artifact.builtBy(result)
-                    }
-                    project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
-                        .addCandidate(linkArtifact)
-                    artifacts.add(linkArtifact)
-                    attributes.attribute(
-                        ArtifactAttributes.ARTIFACT_FORMAT,
-                        NativeArtifactFormat.FRAMEWORK
-                    )
-                    attributes.attribute(
-                        KotlinNativeTarget.konanBuildTypeAttribute,
-                        binary.buildType.name
-                    )
-                    // capture type parameter T
-                    fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                        to.attribute(key, from.getAttribute(key)!!)
-                    }
-                    binary.target.getAttributes().keySet().forEach {
-                        copyAttribute(it, binary.target.getAttributes(), this.attributes)
-                    }
-                    binary.attributes.keySet().forEach {
-                        copyAttribute(it, binary.attributes, this.attributes)
-                    }
-                }
+                it.configureConfiguration(true, fatFrameworkTask)
             }
         }
     }
 
-    private fun configurationName(name: String, type: String): String =
-        listOf(name, type, "frameworks").joinToString("") { it.capitalize() }.decapitalize()
+    private fun frameworkConfigurationName(name: String, type: String): String =
+        listOf(name, type, "framework").joinToString("") { it.capitalize() }.decapitalize()
 
     private fun Project.createRunTask(binary: Executable) {
         val taskName = binary.runTaskName ?: return
