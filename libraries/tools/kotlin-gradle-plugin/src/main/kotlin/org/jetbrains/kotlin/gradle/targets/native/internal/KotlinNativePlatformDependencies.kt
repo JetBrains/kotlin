@@ -285,16 +285,16 @@ private fun Project.findSourceSetsToAddCommonizedPlatformDependencies(): Map<Kot
                  * Why? Consider this example: There is `watchos()` shortcut in Gradle DSL that creates few native targets
                  * in HMPP project with the corresponding source set hierarchy:
                  *
-                 *                    watchosMain [commonized targets: watchosX86, watchosArm32, watchosArm64]
+                 *                    watchosMain [commonized targets: watchosX64, watchosArm32, watchosArm64]
                  *                   /           \
-                 *     watchosX86Main             watchosDeviceMain [commonized targets: watchosArm32, watchosArm64]
+                 *     watchosX64Main             watchosDeviceMain [commonized targets: watchosArm32, watchosArm64]
                  *                               /                 \
                  *               watchosArm32Main                   watchosArm64Main
                  *
                  * There are two common native source sets that participate in commonization process:
                  *
                  * 1. `watchosMain`. This source set is included into three native compilations for different native targets.
-                 *    Thus, it has three commonized targets: watchosX86, watchosArm32 and watchosArm64.
+                 *    Thus, it has three commonized targets: watchosX64, watchosArm32 and watchosArm64.
                  *
                  * 2. `watchosDeviceMain`. Two native compilations -> two commonized targets: watchosArm32 and watchosArm64.
                  *
@@ -302,7 +302,7 @@ private fun Project.findSourceSetsToAddCommonizedPlatformDependencies(): Map<Kot
                  *
                  * - When `watchosArm64Main` is processed with `watchosMain`, the dependencies are evaluated from `watchosMain`
                  *   viewpoint. This means the following: the leaf source set should get the libraries with `actual` declarations
-                 *   produced as a result of commonization of the three targets: watchosX86, watchosArm32 and watchosArm64.
+                 *   produced as a result of commonization of the three targets: watchosX64, watchosArm32 and watchosArm64.
                  *
                  * - When `watchosArm64Main` is processed with `watchosDeviceMain`, which is immediate parent according to the hierarchy,
                  *   the dependencies are evaluated from `watchosDeviceMain` viewpoint. Assuming libraries with `actual` declarations

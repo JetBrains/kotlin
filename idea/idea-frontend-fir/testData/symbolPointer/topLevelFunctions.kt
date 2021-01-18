@@ -3,8 +3,11 @@ fun y() {}
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: x
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false
@@ -16,14 +19,16 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: y
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false
@@ -35,7 +40,6 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC

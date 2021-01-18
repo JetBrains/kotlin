@@ -44,17 +44,66 @@ public val Path.extension: String
     get() = fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
 /**
- * Returns this path as a [String] using the invariant separator '/' to
- * separate the names in the name sequence.
+ * Returns the string representation of this path.
+ *
+ * The returned path string uses the default name [separator][FileSystem.getSeparator]
+ * to separate names in the path.
+ *
+ * This property is a synonym to [Path.toString] function.
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public val Path.invariantSeparatorsPath: String
+@kotlin.internal.InlineOnly
+public inline val Path.pathString: String
+    get() = toString()
+
+/**
+ * Returns the string representation of this path using the invariant separator '/'
+ * to separate names in the path.
+ */
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+public val Path.invariantSeparatorsPathString: String
     get() {
         val separator = fileSystem.separator
         return if (separator != "/") toString().replace(separator, "/") else toString()
     }
 
+// TODO: raise deprecation level and make inline-only
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+@Deprecated("Use invariantSeparatorsPathString property instead.", ReplaceWith("invariantSeparatorsPathString"))
+public inline val Path.invariantSeparatorsPath: String
+    get() = invariantSeparatorsPathString
+
+/**
+ * Converts this possibly relative path to an absolute path.
+ *
+ * If this path is already [absolute][Path.isAbsolute], returns this path unchanged.
+ * Otherwise, resolves this path, usually against the default directory of the file system.
+ *
+ * May throw an exception if the file system is inaccessible or getting the default directory path is prohibited.
+ *
+ * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
+ */
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+@kotlin.internal.InlineOnly
+public inline fun Path.absolute(): Path = toAbsolutePath()
+
+/**
+ * Converts this possibly relative path to an absolute path and returns its string representation.
+ *
+ * Basically, this method is a combination of calling [absolute] and [pathString].
+ *
+ * May throw an exception if the file system is inaccessible or getting the default directory path is prohibited.
+ *
+ * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
+ */
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+@kotlin.internal.InlineOnly
+public inline fun Path.absolutePathString(): String = toAbsolutePath().toString()
 
 /**
  * Calculates the relative path for this path from a [base] path.
@@ -785,7 +834,7 @@ public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
  * @param attributes an optional list of file attributes to set atomically when creating the file.
  * @return the path to the newly created file that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the file.
  *
  * @see Files.createTempFile
@@ -800,19 +849,23 @@ public inline fun createTempFile(prefix: String? = null, suffix: String? = null,
  * Creates an empty file in the specified [directory], using
  * the given [prefix] and [suffix] to generate its name.
  *
+ * @param directory the parent directory in which to create a new file.
+ *   It can be `null`, in that case the new file is created in the default temp directory.
  * @param attributes an optional list of file attributes to set atomically when creating the file.
  * @return the path to the newly created file that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the file.
  *
  * @see Files.createTempFile
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-@kotlin.internal.InlineOnly
-public inline fun createTempFile(directory: Path, prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
-    Files.createTempFile(directory, prefix, suffix, *attributes)
+public fun createTempFile(directory: Path?, prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
+    if (directory != null)
+        Files.createTempFile(directory, prefix, suffix, *attributes)
+    else
+        Files.createTempFile(prefix, suffix, *attributes)
 
 /**
  * Creates a new directory in the default temp directory, using the given [prefix] to generate its name.
@@ -820,7 +873,7 @@ public inline fun createTempFile(directory: Path, prefix: String? = null, suffix
  * @param attributes an optional list of file attributes to set atomically when creating the directory.
  * @return the path to the newly created directory that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the directory.
  *
  * @see Files.createTempDirectory
@@ -834,19 +887,23 @@ public inline fun createTempDirectory(prefix: String? = null, vararg attributes:
 /**
  * Creates a new directory in the specified [directory], using the given [prefix] to generate its name.
  *
+ * @param directory the parent directory in which to create a new directory.
+ *   It can be `null`, in that case the new directory is created in the default temp directory.
  * @param attributes an optional list of file attributes to set atomically when creating the directory.
  * @return the path to the newly created directory that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the directory.
  *
  * @see Files.createTempDirectory
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-@kotlin.internal.InlineOnly
-public inline fun createTempDirectory(directory: Path, prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
-    Files.createTempDirectory(directory, prefix, *attributes)
+public fun createTempDirectory(directory: Path?, prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
+    if (directory != null)
+        Files.createTempDirectory(directory, prefix, *attributes)
+    else
+        Files.createTempDirectory(prefix, *attributes)
 
 /**
  * Resolves the given [other] path against this path.

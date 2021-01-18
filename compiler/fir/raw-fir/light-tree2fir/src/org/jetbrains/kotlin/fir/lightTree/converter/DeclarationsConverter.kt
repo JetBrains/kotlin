@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolv
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -65,8 +66,22 @@ class DeclarationsConverter(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     offset: Int = 0,
     context: Context<LighterASTNode> = Context()
-) : BaseConverter(session, tree, offset, context) {
-    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, offset + 1, context)
+) : BaseConverter(session, tree, context) {
+    @set:PrivateForInline
+    override var offset: Int = offset
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withOffset(newOffset: Int, block: () -> R): R {
+        val oldOffset = offset
+        offset = newOffset
+        return try {
+            block()
+        } finally {
+            offset = oldOffset
+        }
+    }
+
+    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -1053,16 +1068,16 @@ class DeclarationsConverter(
      */
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
-        val entries = mutableListOf<FirVariable<*>>()
+        val entries = mutableListOf<FirVariable<*>?>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression =
-            buildErrorExpression(null, ConeSimpleDiagnostic("Destructuring declaration without initializer", DiagnosticKind.Syntax))
+            buildErrorExpression(null, ConeSimpleDiagnostic("Initializer required for destructuring declaration", DiagnosticKind.Syntax))
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
                 else -> if (it.isExpression()) firExpression =
-                    expressionConverter.getAsFirExpression(it, "Destructuring declaration without initializer")
+                    expressionConverter.getAsFirExpression(it, "Initializer required for destructuring declaration")
             }
         }
 
@@ -1072,7 +1087,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable<*> {
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable<*>? {
         var modifiers = Modifier()
         var identifier: String? = null
         var firType: FirTypeRef? = null
@@ -1084,6 +1099,7 @@ class DeclarationsConverter(
             }
         }
 
+        if (identifier == "_") return null
         val name = identifier.nameAsSafeName()
         return buildProperty {
             source = entry.toFirSourceElement()
@@ -1396,7 +1412,7 @@ class DeclarationsConverter(
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
             return DeclarationsConverter(
-                baseSession, baseScopeProvider, stubMode, blockTree, offset = tree.getStartOffset(block), context
+                baseSession, baseScopeProvider, stubMode, blockTree, offset = offset + tree.getStartOffset(block), context
             ).convertBlockExpression(blockTree.root)
         } else {
             val firExpression = buildExpressionStub()
@@ -1526,7 +1542,7 @@ class DeclarationsConverter(
                 origin = FirDeclarationOrigin.Synthetic
                 name = delegateName
                 returnTypeRef = firTypeRef
-                symbol = FirFieldSymbol(CallableId(name))
+                symbol = FirFieldSymbol(@OptIn(LocalCallableIdConstructor::class) CallableId(name))
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
             }

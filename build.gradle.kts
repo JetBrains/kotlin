@@ -188,13 +188,14 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4.30-dev-17200"
+    extra["versions.kotlin-native"] = "1.5-dev-17775"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
 val effectSystemEnabled by extra(project.getBooleanProperty("kotlin.compiler.effectSystemEnabled") ?: false)
 val newInferenceEnabled by extra(project.getBooleanProperty("kotlin.compiler.newInferenceEnabled") ?: false)
 val useJvmIrBackend by extra(project.kotlinBuildProperties.useIR)
+val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
 
@@ -293,6 +294,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:checkers",
     ":compiler:fir:entrypoint",
     ":compiler:fir:analysis-tests",
+    ":compiler:fir:analysis-tests:legacy-fir-tests",
     ":wasm:wasm.ir"
 )
 
@@ -318,6 +320,23 @@ extra["compilerModulesForJps"] = listOf(
     ":core:util.runtime",
     ":compiler:compiler.version"
 )
+
+// TODO: fix remaining warnings and remove this property.
+extra["tasksWithWarnings"] = listOf(
+    ":kotlin-stdlib:compileTestKotlin",
+    ":kotlin-stdlib-jdk7:compileTestKotlin",
+    ":kotlin-stdlib-jdk8:compileTestKotlin",
+    ":compiler:frontend:compileKotlin",
+    ":compiler:fir:tree:compileKotlin",
+    ":compiler:fir:resolve:compileKotlin",
+    ":compiler:fir:checkers:compileKotlin",
+    ":compiler:fir:java:compileKotlin",
+    ":plugins:uast-kotlin:compileKotlin",
+    ":plugins:uast-kotlin:compileTestKotlin",
+    ":plugins:uast-kotlin-idea:compileKotlin"
+)
+
+val tasksWithWarnings: List<String> by extra
 
 val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
@@ -407,7 +426,6 @@ allprojects {
         jcenter()
         maven(protobufRepo)
         maven(intellijRepo)
-        maven("https://dl.bintray.com/kotlin/ktor")
         maven("https://kotlin.bintray.com/kotlin-dependencies")
         maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
@@ -444,7 +462,25 @@ allprojects {
 
             if (useJvmIrBackend) {
                 useIR = true
-                freeCompilerArgs += "-Xir-binary-with-stable-abi"
+            }
+
+            if (useJvmFir) {
+                freeCompilerArgs += "-Xuse-fir"
+            }
+        }
+    }
+
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && !kotlinBuildProperties.useFir) {
+        // For compiler and stdlib, allWarningsAsErrors is configured in the corresponding "root" projects
+        // (compiler/build.gradle.kts and libraries/commonConfiguration.gradle).
+        val projectsWithWarningsAsErrors = listOf("core", "plugins").map { File(it).absoluteFile }
+        if (projectsWithWarningsAsErrors.any(projectDir::startsWith)) {
+            tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
+                if (path !in tasksWithWarnings) {
+                    kotlinOptions {
+                        allWarningsAsErrors = true
+                    }
+                }
             }
         }
     }
@@ -467,7 +503,7 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { !isTestDistributionEnabled() }
     }
 
     normalization {
@@ -551,10 +587,11 @@ gradle.taskGraph.whenReady {
 
     val proguardMessage = "proguard is ${kotlinBuildProperties.proguard.toOnOff()}"
     val jarCompressionMessage = "jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()}"
-                val profileMessage = "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
-            "Use -Pteamcity=<true|false> to reproduce CI/local build"
 
-    logger.warn("\n\n$profileMessage")
+    logger.warn(
+        "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
+                "Use -Pteamcity=<true|false> to reproduce CI/local build"
+    )
 
     allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
         task.entryCompression = if (kotlinBuildProperties.jarCompression)
@@ -569,7 +606,7 @@ val dist = tasks.register("dist") {
 }
 
 val syncMutedTests = tasks.register("syncMutedTests") {
-    dependsOn(":compiler:tests-mutes:run")
+    dependsOn(":compiler:tests-mutes:tc-integration:run")
 }
 
 val copyCompilerToIdeaPlugin by task<Copy> {
@@ -630,6 +667,7 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":compiler:test",
+            ":compiler:tests-common-new:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
             ":compiler:tests-spec:test",
@@ -666,6 +704,7 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
+        dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
     }
 
@@ -675,6 +714,7 @@ tasks {
             ":compiler:fir:raw-fir:psi2fir:test",
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
+            ":compiler:fir:analysis-tests:legacy-fir-tests:test",
             ":compiler:fir:fir2ir:test",
             ":plugins:fir:fir-plugin-prototype:test"
         )
@@ -710,7 +750,6 @@ tasks {
     }
 
     register("miscCompilerTest") {
-        dependsOn("wasmCompilerTest")
         dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
@@ -775,7 +814,6 @@ tasks {
 
     if (Ide.IJ()) {
         register("idea-new-project-wizard-tests") {
-            dependsOn("dist")
             dependsOn(
                 ":libraries:tools:new-project-wizard:test",
                 ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
@@ -848,12 +886,24 @@ tasks {
             ":generators:test"
         )
         if (Ide.IJ()) {
-            dependsOn("idea-new-project-wizard-tests")
+            dependsOn(
+                ":libraries:tools:new-project-wizard:test",
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
+                ":idea:idea-new-project-wizard:test" // Temporary here. Remove after enabling builds for ideaIntegrationsTests
+            )
+        }
+    }
+
+    register("ideaIntegrationsTests") {
+        if (Ide.IJ()) {
+            dependsOn(":idea:idea-new-project-wizard:test")
         }
     }
 
     register("kaptIdeTest") {
         dependsOn(":kotlin-annotation-processing:test")
+        dependsOn(":kotlin-annotation-processing-base:test")
+        dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
     register("gradleIdeTest") {
@@ -868,6 +918,7 @@ tasks {
             ":idea:idea-gradle:test",
             ":idea:test",
             ":compiler:test",
+            ":compiler:container:test",
             ":js:js.tests:test"
         )
 

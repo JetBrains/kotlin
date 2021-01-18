@@ -45,10 +45,10 @@ private val DOC_AND_COMMENT_TOKENS = setOf(
 private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
     if (node.tokenType == TokenType.ERROR_ELEMENT) return true
 
-    val childrenRef = Ref<Array<LighterASTNode>>()
+    val childrenRef = Ref<Array<LighterASTNode?>?>()
     tree.getChildren(node, childrenRef)
-    val children = childrenRef.get()
-    return children.lastOrNull {
+    val children = childrenRef.get() ?: return false
+    return children.filterNotNull().lastOrNull {
         val tokenType = it.tokenType
         tokenType !is KtSingleValueToken && tokenType !in DOC_AND_COMMENT_TOKENS
     }?.let { hasSyntaxErrors(it, tree) } == true

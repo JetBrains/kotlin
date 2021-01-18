@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.kotlin.builtins.StandardNames.*;
@@ -122,7 +122,9 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeFqName, "toString", 0, TO_STRING);
 
             intrinsicsMap.registerIntrinsic(
-                    BUILT_INS_PACKAGE_FQ_NAME, null, StringsKt.decapitalize(type.getArrayTypeName().asString()) + "Of", 1, new ArrayOf()
+                    BUILT_INS_PACKAGE_FQ_NAME, null,
+                    CapitalizeDecapitalizeKt.decapitalizeAsciiOnly(type.getArrayTypeName().asString()) + "Of",
+                    1, new ArrayOf()
             );
         }
 

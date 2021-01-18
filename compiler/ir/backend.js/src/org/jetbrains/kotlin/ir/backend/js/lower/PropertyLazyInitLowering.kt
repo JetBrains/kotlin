@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isPure
+import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -47,11 +47,15 @@ class PropertyLazyInitLowering(
             return
         }
 
-        if (container !is IrSimpleFunction && container !is IrField && container !is IrProperty)
+        if (container !is IrField && container !is IrSimpleFunction && container !is IrProperty)
             return
+
+        if (!container.isCompatibleDeclaration()) return
 
         val file = container.parent as? IrFile
             ?: return
+
+        container.assertCompatibleDeclaration()
 
         val initFun = (when {
             file in fileToInitializationFuns -> fileToInitializationFuns[file]
@@ -224,6 +228,8 @@ class RemoveInitializersForLazyProperties(
 
         if (declaration !is IrField) return null
 
+        if (!declaration.isCompatibleDeclaration()) return null
+
         val file = declaration.parent as? IrFile ?: return null
 
         if (fileToInitializerPureness[file] == true) return null
@@ -238,7 +244,10 @@ class RemoveInitializersForLazyProperties(
         declaration.correspondingProperty
             ?.takeIf { it.isForLazyInit() }
             ?.backingField
-            ?.let { it.initializer = null }
+            ?.let {
+                it.assertCompatibleDeclaration()
+                it.initializer = null
+            }
 
         return null
     }
@@ -257,6 +266,7 @@ class RemoveInitializersForLazyProperties(
 private fun calculateFieldToExpression(declarations: Collection<IrDeclaration>): Map<IrField, IrExpression> =
     declarations
         .asSequence()
+        .filter { it.isCompatibleDeclaration() }
         .map { it.correspondingProperty }
         .filterNotNull()
         .filter { it.isForLazyInit() }
@@ -289,3 +299,18 @@ private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.()
     if (((this as? PersistentIrElementBase<*>)?.createdOn ?: 0) <= stageController.currentStage) {
         transform()
     } else null
+
+private fun IrDeclaration.isCompatibleDeclaration() =
+    origin in compatibleOrigins
+
+private fun IrDeclaration.assertCompatibleDeclaration() {
+    assert((this as? PersistentIrElementBase<*>)?.createdOn?.let { it == 0 } != false)
+}
+
+private val compatibleOrigins = listOf(
+    IrDeclarationOrigin.DEFINED,
+    IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
+    IrDeclarationOrigin.PROPERTY_DELEGATE,
+    IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
+    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+)

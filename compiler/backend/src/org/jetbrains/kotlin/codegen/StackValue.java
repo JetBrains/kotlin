@@ -775,7 +775,8 @@ public abstract class StackValue {
     ) {
         // Coerce 'this' for the case when it is smart cast.
         // Do not coerce for other cases due to the 'protected' access issues (JVMS 7, 4.9.2 Structural Constraints).
-        boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || descriptor.isInline() || (castReceiver && !isSuper);
+        boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || InlineClassesUtilsKt.isInlineClass(descriptor) ||
+                             (castReceiver && !isSuper);
         return new ThisOuter(codegen, descriptor, isSuper, coerceType);
     }
 

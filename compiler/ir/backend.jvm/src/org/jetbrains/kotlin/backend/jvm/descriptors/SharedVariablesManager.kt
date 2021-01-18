@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -95,14 +94,12 @@ class JvmSharedVariablesManager(
             typeArguments.forEachIndexed(::putTypeArgument)
         }
         return with(originalDeclaration) {
-            val descriptor = WrappedVariableDescriptor()
             IrVariableImpl(
-                startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), name, refType,
+                startOffset, endOffset, origin, IrVariableSymbolImpl(), name, refType,
                 isVar = false, // writes are remapped to field stores
                 isConst = false, // const vals could not possibly require ref wrappers
                 isLateinit = false
             ).apply {
-                descriptor.bind(this)
                 initializer = refConstructorCall
             }
         }

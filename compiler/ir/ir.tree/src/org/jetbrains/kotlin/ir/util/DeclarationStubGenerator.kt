@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -73,10 +74,12 @@ class DeclarationStubGenerator(
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         // Special case: generating field for an already generated property.
-        if (symbol is IrFieldSymbol && (symbol.descriptor as? WrappedPropertyDescriptor)?.isBound() == true) {
-            return generateStubBySymbol(symbol, symbol.descriptor)
-        }
-        val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*>)
+        // -- this used to be done via a trick (ab)using WrappedDescriptors. Not clear if this code should ever be invoked,
+        // and if so, how it can be reproduced without them.
+//        if (symbol is IrFieldSymbol && (symbol.descriptor as? WrappedPropertyDescriptor)?.isBound() == true) {
+//            return generateStubBySymbol(symbol, symbol.descriptor)
+//        }
+        val descriptor = if (!symbol.hasDescriptor)
             findDescriptorBySignature(
                 symbol.signature
                     ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
@@ -84,9 +87,7 @@ class DeclarationStubGenerator(
         else
             symbol.descriptor
         if (descriptor == null) return null
-        return generateStubBySymbol(symbol, descriptor).also {
-            symbol.descriptor.bind(it)
-        }
+        return generateStubBySymbol(symbol, descriptor)
     }
 
     fun generateOrGetEmptyExternalPackageFragmentStub(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
@@ -245,7 +246,7 @@ class DeclarationStubGenerator(
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         symbolTable.irFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
-            varargElementType?.toIrType(), isCrossinline, isNoinline, false
+            varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false
         ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue =
@@ -274,7 +275,7 @@ class DeclarationStubGenerator(
                 isInner = descriptor.isInner,
                 isData = descriptor.isData,
                 isExternal = descriptor.isEffectivelyExternal(),
-                isInline = descriptor.isInline,
+                isInline = descriptor.isInlineClass(),
                 isExpect = descriptor.isExpect,
                 isFun = descriptor.isFun,
                 stubGenerator = this,
@@ -375,23 +376,5 @@ class DeclarationStubGenerator(
             }
         }
         return candidates.firstOrNull { symbolTable.signaturer.composeSignature(it) == signature }
-    }
-
-    private fun DeclarationDescriptor.bind(declaration: IrDeclaration) {
-        when (this) {
-            is WrappedValueParameterDescriptor -> bind(declaration as IrValueParameter)
-            is WrappedReceiverParameterDescriptor -> bind(declaration as IrValueParameter)
-            is WrappedTypeParameterDescriptor -> bind(declaration as IrTypeParameter)
-            is WrappedVariableDescriptor -> bind(declaration as IrVariable)
-            is WrappedVariableDescriptorWithAccessor -> bind(declaration as IrLocalDelegatedProperty)
-            is WrappedSimpleFunctionDescriptor -> bind(declaration as IrSimpleFunction)
-            is WrappedClassConstructorDescriptor -> bind(declaration as IrConstructor)
-            is WrappedClassDescriptor -> bind(declaration as IrClass)
-            is WrappedEnumEntryDescriptor -> bind(declaration as IrEnumEntry)
-            is WrappedPropertyDescriptor -> (declaration as? IrProperty)?.let { bind(it) }
-            is WrappedTypeAliasDescriptor -> bind(declaration as IrTypeAlias)
-            is WrappedFieldDescriptor -> bind(declaration as IrField)
-            else -> {}
-        }
     }
 }

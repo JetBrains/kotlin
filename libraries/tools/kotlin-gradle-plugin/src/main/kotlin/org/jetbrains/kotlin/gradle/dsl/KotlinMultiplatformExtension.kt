@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
-open class KotlinMultiplatformExtension :
-    KotlinProjectExtension(),
+open class KotlinMultiplatformExtension(project: Project) :
+    KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
@@ -50,7 +51,7 @@ open class KotlinMultiplatformExtension :
     fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
-        KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
+        KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)
     }
 }
 

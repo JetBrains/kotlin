@@ -107,20 +107,6 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
     }
 }
 
-abstract class AbstractHierarchicalExpectActualTest : AbstractMultiModuleIdeResolveTest() {
-    override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/hierarchicalExpectActual"
-
-    override fun setUp() {
-        super.setUp()
-        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.COMPOSITE)
-    }
-
-    override fun tearDown() {
-        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.SEPARATE)
-        super.tearDown()
-    }
-}
-
 abstract class AbstractMultiplatformAnalysisTest : AbstractDiagnosticCodeMetaInfoTest() {
     override fun getTestDataPath(): String = "${PluginTestCaseBase.getTestDataPathBase()}/multiplatform"
 

@@ -135,15 +135,38 @@ enum class LanguageFeature(
     ProperArrayConventionSetterWithDefaultCalls(KOTLIN_1_5, kind = OTHER),
     DisableCompatibilityModeForNewInference(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
     AdaptedCallableReferenceAgainstReflectiveType(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_5, kind = BUG_FIX),
     InferenceCompatibility(KOTLIN_1_5, kind = BUG_FIX),
     RequiredPrimaryConstructorDelegationCallInEnums(KOTLIN_1_5, kind = BUG_FIX),
     ForbidAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
     ForbidReferencingToUnderscoreNamedParameterOfCatchBlock(KOTLIN_1_5, kind = BUG_FIX),
     UseCorrectExecutionOrderForVarargArguments(KOTLIN_1_5, kind = BUG_FIX),
+    JvmRecordSupport(KOTLIN_1_5),
+
+    AllowSealedInheritorsInDifferentFilesOfSamePackage(KOTLIN_1_5),
+    SealedInterfaces(KOTLIN_1_5),
+    JvmIrEnabledByDefault(KOTLIN_1_5),
+    // Disabled until the breaking change is approved by the committee, see KT-10884.
+    PackagePrivateFileClassesWithAllPrivateMembers(KOTLIN_1_5, defaultState = State.DISABLED),
+
+    /*
+     * Improvements include the following:
+     *  - taking into account for type enhancement freshly supported type use annotations: KT-11454
+     *  - use annotations in the type parameter position to enhance corresponding types: KT-11454
+     *  - proper support of the type enhancement of the annotated java arrays: KT-24392
+     *  - proper support of the type enhancement of the annotated java varargs' elements: KT-18768
+     *  - type enhancement based on annotated bounds of type parameters
+     *  - type enhancement within type arguments of the base classes and interfaces
+     *  - support type enhancement based on type use annotations on java fields
+     *  - preference of a type use annotation to annotation of another type: KT-24392
+     *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
+     */
+    ImprovementsAroundTypeEnhancement(KOTLIN_1_6),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
+
+    // Looks like we can't enable it until KT-26245 is fixed because otherwise some use cases become broken because of overrides
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = null, kind = BUG_FIX),
 
     // Experimental features
 
@@ -156,6 +179,7 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
     NewInference(sinceVersion = KOTLIN_1_4),
+
     // In the next block, features can be enabled only along with new inference
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_4),
     SamConversionPerArgument(sinceVersion = KOTLIN_1_4),
@@ -173,6 +197,7 @@ enum class LanguageFeature(
     // Next features can be enabled regardless of new inference
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
+    JvmInlineValueClasses(sinceVersion = KOTLIN_1_5, defaultState = State.ENABLED, kind = OTHER),
     ;
 
     val presentableName: String
@@ -257,6 +282,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     KOTLIN_1_3(1, 3),
     KOTLIN_1_4(1, 4),
     KOTLIN_1_5(1, 5),
+    KOTLIN_1_6(1, 6),
     ;
 
     val isStable: Boolean
@@ -299,6 +325,9 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         val LATEST_STABLE = KOTLIN_1_4
     }
 }
+
+fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
+    isStable || this == KOTLIN_1_5
 
 interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State

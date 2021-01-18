@@ -5,4 +5,7 @@
 
 package kotlin.js
 
+// DON'T USE! Use `K::class.js` instead.
+// The declaration kept only for backward compatibility with older compilers
+// TODO remove, but when?
 internal external fun <T : Any> jsClass(): JsClass<T>

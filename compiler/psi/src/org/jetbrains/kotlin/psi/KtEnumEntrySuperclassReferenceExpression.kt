@@ -36,8 +36,8 @@ class KtEnumEntrySuperclassReferenceExpression :
             super(stub, KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION)
 
     // It is the owner enum class (not an enum entry but the whole enum)
-    private val referencedElement: KtClass
-        get() = calcReferencedElement()!!
+    private val referencedElement: KtClass?
+        get() = calcReferencedElement()
 
     private fun calcReferencedElement(): KtClass? {
         val owner = this.getStrictParentOfType<KtEnumEntry>()
@@ -54,15 +54,15 @@ class KtEnumEntrySuperclassReferenceExpression :
     }
 
     override fun getReferencedNameAsName(): Name {
-        return referencedElement.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
+        return referencedElement?.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
     }
 
     override fun getReferencedNameElement(): PsiElement {
-        return referencedElement
+        return referencedElement!!
     }
 
     override fun getIdentifier(): PsiElement? {
-        return referencedElement.nameIdentifier
+        return referencedElement?.nameIdentifier
     }
 
     override fun getReferencedNameElementType(): IElementType {

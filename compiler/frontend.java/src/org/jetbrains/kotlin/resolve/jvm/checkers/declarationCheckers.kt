@@ -59,7 +59,7 @@ class LocalFunInlineChecker : DeclarationChecker {
 }
 
 class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
-    private val isLessJVM18 = jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion
+    private val isLessJVM18 = jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion
 
     private val supportJvmStaticInInterface = languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
 
@@ -152,10 +152,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         if (descriptor is CallableMemberDescriptor) {
             if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
-            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling() ||
-                requiresFunctionNameManglingForParameterTypes(descriptor) ||
-                requiresFunctionNameManglingForReturnType(descriptor)
-            ) {
+            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling()) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }

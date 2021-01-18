@@ -31,7 +31,7 @@ dependencies {
     testCompile(projectTests(":idea"))
     testCompile(project(":idea:idea-fir"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:analysis-tests"))
+    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
@@ -44,10 +44,13 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (kotlinBuildProperties.useFirIdeaPlugin) {
-    projectTest {
-        dependsOn(":dist")
-        workingDir = rootDir
+projectTest {
+    dependsOn(":dist")
+    workingDir = rootDir
+    doFirst {
+        if (!kotlinBuildProperties.useFirIdeaPlugin) {
+            error("Test task in the module should be executed with -Pidea.fir.plugin=true")
+        }
     }
 }
 

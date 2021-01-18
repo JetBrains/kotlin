@@ -58,11 +58,11 @@ object DebugSymbolRenderer {
             }
             "${value::class.simpleName!!}($symbolTag)"
         }
-        is KtSimpleConstantValue<*> -> renderValue(value.constant)
+        is KtSimpleConstantValue<*> -> renderValue(value.value)
         is KtNamedConstantValue -> "${renderValue(value.name)} = ${renderValue(value.expression)}"
         is KtAnnotationCall ->
             "${renderValue(value.classId)}${value.arguments.joinToString(prefix = "(", postfix = ")") { renderValue(it) }}"
-
+        is KtTypeAndAnnotations -> "${renderValue(value.annotations)} ${renderValue(value.type)}"
         else -> value::class.simpleName!!
     }
 

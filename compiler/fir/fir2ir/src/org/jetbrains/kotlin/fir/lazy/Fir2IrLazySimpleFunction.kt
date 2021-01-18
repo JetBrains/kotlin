@@ -67,6 +67,11 @@ class Fir2IrLazySimpleFunction(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
+        val parent = parent
+        if (isFakeOverride && parent is Fir2IrLazyClass) {
+            parent.declarations
+            fakeOverrideGenerator.getOverriddenSymbols(this)?.let { return@lazyVar it }
+        }
         fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage)
     }
 

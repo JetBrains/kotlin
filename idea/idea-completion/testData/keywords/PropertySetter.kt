@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 class Some {
     var a : Int
         get() = 0
@@ -30,9 +32,11 @@ class Some {
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
+// EXIST:  sealed interface
 // EXIST:  lateinit var
 // EXIST:  data class
 // EXIST:  inline
+// EXIST:  value
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class

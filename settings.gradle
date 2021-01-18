@@ -115,10 +115,13 @@ include ":benchmarks",
         ":compiler:cli-js-klib",
         ":compiler:incremental-compilation-impl",
         ":compiler:android-tests",
+        ":compiler:tests-compiler-utils",
         ":compiler:tests-common",
         ":compiler:tests-mutes",
+        ":compiler:tests-mutes:tc-integration",
         ":compiler:tests-common-jvm6",
         ":compiler:tests-against-klib",
+        ":compiler:tests-for-compiler-generator",
         ":dukat",
         ":js:js.ast",
         ":js:js.serializer",
@@ -224,6 +227,7 @@ include ":benchmarks",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:idea-plugin",
+        ":prepare:kotlin-compiler-internal-test-framework",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
         ":kotlin-compiler-client-embeddable",
@@ -323,7 +327,12 @@ include ":compiler:fir:cones",
         ":compiler:fir:checkers",
         ":compiler:fir:checkers:checkers-component-generator",
         ":compiler:fir:entrypoint",
-        ":compiler:fir:analysis-tests"
+        ":compiler:fir:analysis-tests",
+        ":compiler:fir:analysis-tests:legacy-fir-tests"
+
+include ":compiler:test-infrastructure",
+        ":compiler:test-infrastructure-utils",
+        ":compiler:tests-common-new"
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 include ":idea:idea-fir-performance-tests"

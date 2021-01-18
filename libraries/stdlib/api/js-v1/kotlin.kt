@@ -1,3 +1,8 @@
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.internal.InlineOnly
+public val kotlin.Char.code: kotlin.Int { get; }
+
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
 public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
@@ -5,7 +10,17 @@ public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
 @kotlin.internal.InlineOnly
+public inline fun Char(code: kotlin.Int): kotlin.Char
+
+/*∆*/ @kotlin.ExperimentalStdlibApi
+/*∆*/ @kotlin.SinceKotlin(version = "1.4")
+@kotlin.internal.InlineOnly
+/*∆*/ public inline fun Char(code: kotlin.UShort): kotlin.Char
+/*∆*/ 
+/*∆*/ @kotlin.internal.InlineOnly
 public inline fun TODO(): kotlin.Nothing
 
 @kotlin.internal.InlineOnly

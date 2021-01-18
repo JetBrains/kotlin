@@ -1,3 +1,3 @@
 package foo
 
-expect fun foo(): Int
+expect fun <!LINE_MARKER("descr='Has actuals in common'")!>foo<!>(): Int

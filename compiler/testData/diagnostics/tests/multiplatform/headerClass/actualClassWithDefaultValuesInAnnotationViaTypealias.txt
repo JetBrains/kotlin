@@ -49,7 +49,6 @@ public final expect annotation class Foo7 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -107,3 +106,4 @@ public final actual annotation class Foo6 : kotlin.Annotation {
 public actual typealias Foo1 = Bar1
 public actual typealias Foo4 = Bar2
 public actual typealias Foo7 = Bar2
+

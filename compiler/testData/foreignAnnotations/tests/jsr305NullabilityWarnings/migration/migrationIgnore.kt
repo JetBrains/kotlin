@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// JSR305_GLOBAL_REPORT strict
-// JSR305_MIGRATION_REPORT ignore
-// JSR305_SPECIAL_REPORT MyNullable:warn, MyMigrationNonnull:strict
+// JSR305_GLOBAL_REPORT: strict
+// JSR305_MIGRATION_REPORT: ignore
+// JSR305_SPECIAL_REPORT: MyNullable:warn, MyMigrationNonnull:strict
 
 // FILE: A.java
 

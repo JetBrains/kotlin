@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
-import com.intellij.util.containers.LinkedMultiMap
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
@@ -49,7 +48,7 @@ abstract class SignatureCollectingClassBuilderFactory(
 
         private lateinit var classInternalName: String
 
-        private val signatures = LinkedMultiMap<RawSignature, JvmDeclarationOrigin>()
+        private val signatures = MultiMap.createLinked<RawSignature, JvmDeclarationOrigin>()
 
         override fun defineClass(origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>) {
             classInternalName = name

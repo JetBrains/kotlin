@@ -92,7 +92,7 @@ class RawStatsCollector(
         var isLiftedUp = !lastIsNull
         for (index in 0 until result.size - 1) {
             statsRow.platform += when {
-                result[index] == null -> PlatformDeclarationStatus.ABSENT
+                result[index] == null -> PlatformDeclarationStatus.MISSING
                 lastIsNull -> PlatformDeclarationStatus.ORIGINAL
                 else -> {
                     isLiftedUp = false
@@ -103,7 +103,7 @@ class RawStatsCollector(
 
         statsRow.common = when {
             isLiftedUp -> CommonDeclarationStatus.LIFTED_UP
-            lastIsNull -> CommonDeclarationStatus.ABSENT
+            lastIsNull -> CommonDeclarationStatus.MISSING
             else -> CommonDeclarationStatus.EXPECT
         }
 
@@ -157,12 +157,12 @@ class RawStatsCollector(
     enum class CommonDeclarationStatus(val alias: Char) {
         LIFTED_UP('L'),
         EXPECT('E'),
-        ABSENT('-')
+        MISSING('-')
     }
 
     enum class PlatformDeclarationStatus(val alias: Char) {
         ACTUAL('A'),
         ORIGINAL('O'),
-        ABSENT('-')
+        MISSING('-')
     }
 }

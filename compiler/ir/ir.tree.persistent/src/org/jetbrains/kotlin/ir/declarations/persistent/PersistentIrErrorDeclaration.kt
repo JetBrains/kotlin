@@ -24,14 +24,18 @@ import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ErrorCarrier
 import org.jetbrains.kotlin.ir.declarations.stageController
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class PersistentIrErrorDeclaration(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val descriptor: DeclarationDescriptor
+    private val _descriptor: DeclarationDescriptor?
 ) : PersistentIrDeclarationBase<ErrorCarrier>, IrErrorDeclaration(), ErrorCarrier {
+    override val descriptor: DeclarationDescriptor
+        get() = _descriptor ?: this.toIrBasedDescriptor()
+
     override var lastModified: Int = stageController.currentStage
     override var loweredUpTo: Int = stageController.currentStage
     override var values: Array<Carrier>? = null

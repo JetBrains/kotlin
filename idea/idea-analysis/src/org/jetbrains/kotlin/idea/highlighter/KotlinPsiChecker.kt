@@ -17,6 +17,7 @@ import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -192,7 +193,7 @@ private class ElementAnnotator(
         val factory = diagnostic.factory
 
         // hack till the root cause #KT-21246 is fixed
-        if (isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic)) return
+        if (isUnstableAbiClassDiagnosticForModulesWithEnabledUnstableAbi(diagnostic)) return
 
         assert(diagnostics.all { it.psiElement == element && it.factory == factory })
 
@@ -272,16 +273,23 @@ private class ElementAnnotator(
         data.processDiagnostics(holder, diagnostics, fixesMap)
     }
 
-    private fun isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic: Diagnostic): Boolean {
-        if (diagnostic.factory != Errors.IR_COMPILED_CLASS) return false
+    private fun isUnstableAbiClassDiagnosticForModulesWithEnabledUnstableAbi(diagnostic: Diagnostic): Boolean {
+        val factory = diagnostic.factory
+        if (factory != Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS && factory != Errors.FIR_COMPILED_CLASS) return false
+
         val module = element.module ?: return false
         val moduleFacetSettings = KotlinFacetSettingsProvider.getInstance(element.project)?.getSettings(module) ?: return false
-        return moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useIR)
-                || moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::allowJvmIrDependencies)
+        return when (factory) {
+            Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS ->
+                moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useIR) &&
+                        !moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useOldBackend)
+            Errors.FIR_COMPILED_CLASS ->
+                moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useFir)
+            else -> error(factory)
+        }
     }
 
     companion object {
         val LOG = Logger.getInstance(ElementAnnotator::class.java)
     }
 }
-

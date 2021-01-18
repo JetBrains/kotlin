@@ -2,11 +2,11 @@
 // AssertionError for nested ifs with lambdas and Nothing as results
 // NI_EXPECTED_FILE
 
-val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>fn<!> = if (true) {
-    <!OI;TYPE_MISMATCH!>{ true }<!>
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE{OI}!>fn<!> = if (true) {
+    <!TYPE_MISMATCH{OI}!>{ true }<!>
 } 
 else if (true) {
-    <!OI;TYPE_MISMATCH!>{ true }<!>
+    <!TYPE_MISMATCH{OI}!>{ true }<!>
 }
 else {
     null!!

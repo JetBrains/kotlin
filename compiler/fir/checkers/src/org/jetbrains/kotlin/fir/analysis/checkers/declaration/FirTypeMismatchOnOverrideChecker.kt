@@ -51,7 +51,7 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
     private fun FirTypeScope.retrieveDirectOverriddenOf(function: FirSimpleFunction): List<FirFunctionSymbol<*>> {
         processFunctionsByName(function.name) {}
 
-        return getDirectOverriddenFunctions(function.symbol as FirNamedFunctionSymbol)
+        return getDirectOverriddenFunctions(function.symbol)
     }
 
     private fun FirTypeScope.retrieveDirectOverriddenOf(property: FirProperty): List<FirPropertySymbol> {

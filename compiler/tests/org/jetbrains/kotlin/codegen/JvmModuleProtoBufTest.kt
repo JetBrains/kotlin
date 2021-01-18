@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class JvmModuleProtoBufTest : KtUsefulTestCase() {
@@ -35,8 +36,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
         extraOptions: List<String> = emptyList()
     ) {
-        val directory = KotlinTestUtils.getTestDataPathBase() + relativeDirectory
-        val tmpdir = KotlinTestUtils.tmpDir(this::class.simpleName)
+        val directory = KtTestUtil.getTestDataPathBase() + relativeDirectory
+        val tmpdir = KtTestUtil.tmpDir(this::class.simpleName)
 
         val moduleName = "main"
         CompilerTestUtil.executeCompilerAssertSuccessful(

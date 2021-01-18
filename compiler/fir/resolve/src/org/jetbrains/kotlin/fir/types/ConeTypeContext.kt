@@ -221,7 +221,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is FirAnonymousObjectSymbol -> symbol.fir.typeParameters[index].symbol.toLookupTag()
             is FirRegularClassSymbol -> symbol.fir.typeParameters[index].symbol.toLookupTag()
             is FirTypeAliasSymbol -> symbol.fir.typeParameters[index].symbol.toLookupTag()
-            else -> error("?!:12")
+            else -> error("Unexpected FirClassLikeSymbol $symbol for ${this::class}, with classId ${(this as? ConeClassLikeLookupTag)?.classId}")
         }
     }
 
@@ -584,7 +584,7 @@ class ConeTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
     ): AbstractTypeCheckerContext =
-        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
+        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything && this.isStubTypeEqualsToAnything == stubTypesEqualToAnything)
             this
         else
             ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)

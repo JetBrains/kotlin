@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
@@ -66,7 +67,7 @@ abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCase() {
     }
 
     private fun getClassFileToDecompile(sourcePath: String, isUseStringTable: Boolean, classFileName: String?): VirtualFile {
-        val outDir = KotlinTestUtils.tmpDir("libForStubTest-" + sourcePath)
+        val outDir = KtTestUtil.tmpDir("libForStubTest-" + sourcePath)
 
         val extraOptions = ArrayList<String>()
         extraOptions.add("-Xallow-kotlin-package")

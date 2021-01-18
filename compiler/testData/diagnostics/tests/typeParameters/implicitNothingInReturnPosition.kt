@@ -40,7 +40,7 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut1(typeFrom: Context<out T>): T {
-    return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: <!OI;TYPE_MISMATCH!>kotlin.Unit<!><!>
+    return <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: <!TYPE_MISMATCH{OI}!>kotlin.Unit<!><!>
 }
 
 fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {

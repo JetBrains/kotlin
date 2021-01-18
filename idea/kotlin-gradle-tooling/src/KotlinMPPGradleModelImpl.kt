@@ -17,15 +17,31 @@ class KotlinSourceSetProto(
     val dependsOnSourceSets: Set<String>
 ) {
 
-    fun buildKotlinSourceSetImpl(doBuildDependencies: Boolean) = KotlinSourceSetImpl(
+    fun buildKotlinSourceSetImpl(
+        doBuildDependencies: Boolean,
+        allSourceSetsProtosByNames: Map<String, KotlinSourceSetProto>,
+        dependsOnCache: HashMap<String, Set<String>>
+    ) = KotlinSourceSetImpl(
         name,
         languageSettings,
         sourceDirs,
         resourceDirs,
         if (doBuildDependencies) dependencies.invoke() else emptyArray(),
-        dependsOnSourceSets
+        calculateDependsOnClosure(this, allSourceSetsProtosByNames, dependsOnCache)
     )
 
+    private fun calculateDependsOnClosure(
+        currentSourceSetProto: KotlinSourceSetProto,
+        sourceSetsMap: Map<String, KotlinSourceSetProto>,
+        cache: MutableMap<String, Set<String>>
+    ): Set<String> {
+        return cache.computeIfAbsent(currentSourceSetProto.name) {
+            currentSourceSetProto.dependsOnSourceSets.flatMap { name ->
+                val nextSourceSet = sourceSetsMap[name] ?: error("Source set $name is not found in map $sourceSetsMap")
+                calculateDependsOnClosure(nextSourceSet, sourceSetsMap, cache).union(setOf(name))
+            }.toSet()
+        }
+    }
 }
 
 class KotlinSourceSetImpl(
@@ -36,7 +52,6 @@ class KotlinSourceSetImpl(
     override val dependencies: Array<KotlinDependencyId>,
     override val dependsOnSourceSets: Set<String>,
     val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
-    val defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
     constructor(kotlinSourceSet: KotlinSourceSet, cloningCache: MutableMap<Any, Any>) : this(
@@ -46,14 +61,15 @@ class KotlinSourceSetImpl(
         HashSet(kotlinSourceSet.resourceDirs),
         kotlinSourceSet.dependencies,
         HashSet(kotlinSourceSet.dependsOnSourceSets),
-        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms),
-        kotlinSourceSet.isTestModule
-    )
+        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms)
+    ) {
+        this.isTestModule = kotlinSourceSet.isTestModule
+    }
 
     override var actualPlatforms: KotlinPlatformContainer = defaultPlatform
         internal set
 
-    override var isTestModule: Boolean = defaultIsTestModule
+    override var isTestModule: Boolean = false
         internal set
 
     override fun toString() = name

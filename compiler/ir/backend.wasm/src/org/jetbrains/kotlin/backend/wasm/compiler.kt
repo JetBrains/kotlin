@@ -128,23 +128,7 @@ fun WasmCompiledModuleFragment.generateJs(): String {
         Char_toString(char) {
             return String.fromCharCode(char)
         },
-
-        JsArray_new(size) {
-            return new Array(size);
-        },
-
-        JsArray_get(array, index) {
-            return array[index];
-        },
-
-        JsArray_set(array, index, value) {
-            array[index] = value;
-        },
-
-        JsArray_getSize(array) {
-            return array.length;
-        },
-
+ 
         identity(x) {
             return x;
         },

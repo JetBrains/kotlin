@@ -15,7 +15,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
 
     val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
-    val structs: MutableList<WasmStructDeclaration> = mutableListOf()
+    val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
 
     val importsInOrder: MutableList<WasmNamedModuleField> = mutableListOf()
     val importedFunctions: MutableList<WasmFunction.Imported> = mutableListOf()
@@ -80,7 +80,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                 is WasmFunctionType ->
                                     functionTypes += type
                                 is WasmStructDeclaration ->
-                                    structs += type
+                                    gcTypes += type
                             }
                         }
                     }
@@ -313,7 +313,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return WasmModule(
             functionTypes = functionTypes,
-            structs = structs,
+            gcTypes = gcTypes,
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
@@ -411,6 +411,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.STRUCT_FIELD_IDX -> TODO()
                 WasmImmediateKind.TYPE_IMM -> TODO()
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
+                WasmImmediateKind.LOCAL_DEFS -> TODO()
             }
         }
 

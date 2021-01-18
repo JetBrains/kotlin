@@ -4,6 +4,7 @@ public interface StrS {
     public abstract method getS(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z1 {
     // source: 'memberExtensionProperty.kt'
@@ -23,6 +24,7 @@ public final class Z1 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z2 {
     // source: 'memberExtensionProperty.kt'
@@ -42,6 +44,7 @@ public final class Z2 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z3 {
     // source: 'memberExtensionProperty.kt'

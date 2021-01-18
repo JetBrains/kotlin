@@ -595,13 +595,19 @@ internal class MapBuilderValues<V> internal constructor(
     }
 }
 
+// intermediate abstract class to workaround KT-43321
+internal abstract class AbstractMapBuilderEntrySet<E : Map.Entry<K, V>, K, V> : AbstractMutableSet<E>() {
+    final override fun contains(element: E): Boolean = containsEntry(element)
+    abstract fun containsEntry(element: Map.Entry<K, V>): Boolean
+}
+
 internal class MapBuilderEntries<K, V> internal constructor(
     val backing: MapBuilder<K, V>
-) : MutableSet<MutableMap.MutableEntry<K, V>>, AbstractMutableSet<MutableMap.MutableEntry<K, V>>() {
+) : AbstractMapBuilderEntrySet<MutableMap.MutableEntry<K, V>, K, V>() {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
-    override fun contains(element: MutableMap.MutableEntry<K, V>): Boolean = backing.containsEntry(element)
+    override fun containsEntry(element: Map.Entry<K, V>): Boolean = backing.containsEntry(element)
     override fun clear() = backing.clear()
     override fun add(element: MutableMap.MutableEntry<K, V>): Boolean = throw UnsupportedOperationException()
     override fun addAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean = throw UnsupportedOperationException()

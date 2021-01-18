@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -90,12 +90,31 @@ class Kapt3Android34IT : Kapt3AndroidIT() {
         get() = GradleVersionRequired.Until("5.4.1")
 }
 
+class Kapt3Android42IT : Kapt3BaseIT() {
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("6.7")
+
+    override fun defaultBuildOptions(): BuildOptions =
+        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
+
+    /** Regression test for https://youtrack.jetbrains.com/issue/KT-44020. */
+    @Test
+    fun testDatabindingWithAndroidX() {
+        val project = Project("android-databinding-androidX", directoryPrefix = "kapt2")
+
+        project.build("kaptDebugKotlin") {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+    }
+}
+
 abstract class Kapt3AndroidIT : Kapt3BaseIT() {
     protected abstract val androidGradlePluginVersion: AGPVersion
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion
         )
 

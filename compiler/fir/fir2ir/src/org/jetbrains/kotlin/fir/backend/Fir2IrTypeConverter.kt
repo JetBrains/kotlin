@@ -88,9 +88,7 @@ class Fir2IrTypeConverter(
                     val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
                     firSymbol.toSymbol(session, classifierStorage, typeContext)
                 }
-                val typeAnnotations: MutableList<IrConstructorCall> =
-                    if (!isExtensionFunctionType) mutableListOf()
-                    else mutableListOf(builtIns.extensionFunctionTypeAnnotationConstructorCall())
+                val typeAnnotations: MutableList<IrConstructorCall> = mutableListOf()
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
                 if (hasEnhancedNullability) {
                     builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {

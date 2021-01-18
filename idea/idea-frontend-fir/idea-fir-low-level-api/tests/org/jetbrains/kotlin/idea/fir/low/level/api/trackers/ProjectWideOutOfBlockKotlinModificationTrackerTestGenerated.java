@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.trackers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,12 @@ public class ProjectWideOutOfBlockKotlinModificationTrackerTestGenerated extends
     }
 
     public void testAllFilesPresentInOutOfBlockProjectWide() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @TestMetadata("funInCompanionObject.kt")
+    public void testFunInCompanionObject() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/funInCompanionObject.kt");
     }
 
     @TestMetadata("localFun.kt")
@@ -51,6 +57,41 @@ public class ProjectWideOutOfBlockKotlinModificationTrackerTestGenerated extends
     @TestMetadata("topLevelUnitFun.kt")
     public void testTopLevelUnitFun() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topLevelUnitFun.kt");
+    }
+
+    @TestMetadata("topPropertyWithTypeInGetter.kt")
+    public void testTopPropertyWithTypeInGetter() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInGetter.kt");
+    }
+
+    @TestMetadata("topPropertyWithTypeInGetterOnNextLine.kt")
+    public void testTopPropertyWithTypeInGetterOnNextLine() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInGetterOnNextLine.kt");
+    }
+
+    @TestMetadata("topPropertyWithTypeInInititalzer.kt")
+    public void testTopPropertyWithTypeInInititalzer() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInInititalzer.kt");
+    }
+
+    @TestMetadata("topPropertyWithTypeInSetter.kt")
+    public void testTopPropertyWithTypeInSetter() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInSetter.kt");
+    }
+
+    @TestMetadata("topPropertyWithoutTypeInGetter.kt")
+    public void testTopPropertyWithoutTypeInGetter() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithoutTypeInGetter.kt");
+    }
+
+    @TestMetadata("topPropertyWithoutTypeInInititalzer.kt")
+    public void testTopPropertyWithoutTypeInInititalzer() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithoutTypeInInititalzer.kt");
+    }
+
+    @TestMetadata("topPropertyWithoutTypeInSetter.kt")
+    public void testTopPropertyWithoutTypeInSetter() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithoutTypeInSetter.kt");
     }
 
     @TestMetadata("typeInFunctionAnnotation.kt")

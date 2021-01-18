@@ -33,7 +33,16 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
-    override fun KotlinTypeMarker.asFlexibleType() = this as? IrDynamicType
+    override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? {
+        if (this is FlexibleTypeMarker) return this
+
+        if (this is IrType) {
+            val jvmFlexibleType = this.asJvmFlexibleType()
+            if (jvmFlexibleType != null) return jvmFlexibleType
+        }
+
+        return null
+    }
 
     override fun KotlinTypeMarker.isError() = this is IrErrorType
 
@@ -44,13 +53,19 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? = null
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
-        require(this is IrDynamicType)
-        return irBuiltIns.anyNType as IrSimpleType
+        return when (this) {
+            is IrDynamicType -> irBuiltIns.anyNType as IrSimpleType
+            is IrJvmFlexibleType -> this.upperBound
+            else -> error("Unexpected flexible type ${this::class.java.simpleName}: $this")
+        }
     }
 
     override fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker {
-        require(this is IrDynamicType)
-        return irBuiltIns.nothingType as IrSimpleType
+        return when (this) {
+            is IrDynamicType -> irBuiltIns.nothingType as IrSimpleType
+            is IrJvmFlexibleType -> this.lowerBound
+            else -> error("Unexpected flexible type ${this::class.java.simpleName}: $this")
+        }
     }
 
     override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? = null
@@ -390,9 +405,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 }
 
-fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
+fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
-    var current: IrDeclarationParent? = klass
+    var current: IrDeclarationParent? = parent
     while (current != null) {
         (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
         current =
@@ -404,9 +419,11 @@ fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass
-                is IrFunction -> if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null) {
-                    current.parent
-                } else null
+                is IrFunction ->
+                    if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                        current.parent
+                    else
+                        null
                 else -> null
             }
     }

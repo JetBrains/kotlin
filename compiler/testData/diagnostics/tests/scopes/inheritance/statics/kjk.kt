@@ -14,7 +14,7 @@ class D extends K {
     static void bar() {}
 }
 
-// FILE: K.kt
+// FILE: K2.kt
 
 class K2 {
     companion object {

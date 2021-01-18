@@ -82,6 +82,9 @@ class BodyResolveContext(
     fun getTowerDataContextForStaticNestedClassesUnsafe(): FirTowerDataContext =
         firTowerDataContextsForClassParts().forNestedClasses
 
+    fun getTowerDataContextForCompanionUnsafe(): FirTowerDataContext =
+        firTowerDataContextsForClassParts().forCompanionObject
+
     fun getTowerDataContextForConstructorResolution(): FirTowerDataContext =
         firTowerDataContextsForClassParts().forConstructorHeaders
 

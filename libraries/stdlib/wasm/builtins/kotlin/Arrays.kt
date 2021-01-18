@@ -8,27 +8,21 @@ package kotlin
 import kotlin.wasm.internal.*
 
 public class ByteArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Byte(jsArray, size) { 0 }
-    }
+    private var storage = WasmByteArray(size)
 
     public constructor(size: Int, init: (Int) -> Byte) : this(size) {
-        jsArray = JsArray_new(size)
-        JsArray_fill_Byte(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     public operator fun get(index: Int): Byte =
-        JsArray_get_Byte(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Byte) {
-        JsArray_set_Byte(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
-
+        get() = storage.len()
 
     public operator fun iterator(): ByteIterator = byteArrayIterator(this)
 }
@@ -41,26 +35,21 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
 
 
 public class CharArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Char(jsArray, size) { 0.toChar() }
-    }
+    private var storage = WasmCharArray(size)
 
     public constructor(size: Int, init: (Int) -> Char) : this(size) {
-        jsArray = JsArray_new(size)
-        JsArray_fill_Char(jsArray, size, init)
+        storage.fill(size) { init(it) }
     }
 
     public operator fun get(index: Int): Char =
-        JsArray_get_Char(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Char) {
-        JsArray_set_Char(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
+        get() = storage.len()
 
 
     public operator fun iterator(): CharIterator = charArrayIterator(this)
@@ -74,25 +63,21 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
 
 
 public class ShortArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Short(jsArray, size) { 0 }
-    }
+    private var storage = WasmShortArray(size)
 
     public constructor(size: Int, init: (Int) -> Short) : this(size) {
-        JsArray_fill_Short(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     public operator fun get(index: Int): Short =
-        JsArray_get_Short(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Short) {
-        JsArray_set_Short(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
+        get() = storage.len()
 
 
     public operator fun iterator(): ShortIterator = shortArrayIterator(this)
@@ -106,25 +91,21 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
 
 
 public class IntArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Int(jsArray, size) { 0 }
-    }
+    private var storage = WasmIntArray(size)
 
     public constructor(size: Int, init: (Int) -> Int) : this(size) {
-        JsArray_fill_Int(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     public operator fun get(index: Int): Int =
-        JsArray_get_Int(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Int) {
-        JsArray_set_Int(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
+        get() = storage.len()
 
 
     public operator fun iterator(): IntIterator = intArrayIterator(this)
@@ -138,26 +119,21 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
 
 
 public class LongArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Long(jsArray, size) { 0L }
-    }
+    private var storage = WasmLongArray (size)
 
     public constructor(size: Int, init: (Int) -> Long) : this(size) {
-        JsArray_fill_Long(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     public operator fun get(index: Int): Long =
-        JsArray_get_Long(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Long) {
-        JsArray_set_Long(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
-
+        get() = storage.len()
 
     public operator fun iterator(): LongIterator = longArrayIterator(this)
 }
@@ -170,26 +146,21 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
 
 
 public class FloatArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Float(jsArray, size) { 0.0f }
-    }
+    private var storage = WasmFloatArray(size)
 
     public constructor(size: Int, init: (Int) -> Float) : this(size) {
-        JsArray_fill_Float(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     public operator fun get(index: Int): Float =
-        JsArray_get_Float(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Float) {
-        JsArray_set_Float(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
-
+        get() = storage.len()
 
     public operator fun iterator(): FloatIterator = floatArrayIterator(this)
 }
@@ -202,26 +173,21 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
 
 
 public class DoubleArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Double(jsArray, size) { 0.0 }
-    }
+    private var storage = WasmDoubleArray(size)
 
     public constructor(size: Int, init: (Int) -> Double) : this(size) {
-        JsArray_fill_Double(jsArray, size, init)
+        storage.fill(size, init)
     }
 
     public operator fun get(index: Int): Double =
-        JsArray_get_Double(jsArray, index)
+        storage.get(index)
 
     public operator fun set(index: Int, value: Double) {
-        JsArray_set_Double(jsArray, index, value)
+        storage.set(index, value)
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
-
+        get() = storage.len()
 
     public operator fun iterator(): DoubleIterator = doubleArrayIterator(this)
 }
@@ -234,26 +200,21 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
 
 
 public class BooleanArray(size: Int) {
-    private var jsArray: WasmExternRef = JsArray_new(size)
-
-    init {
-        JsArray_fill_Boolean(jsArray, size) { false }
-    }
+    private var storage = WasmByteArray(size)
 
     public constructor(size: Int, init: (Int) -> Boolean) : this(size) {
-        JsArray_fill_Boolean(jsArray, size, init)
+        storage.fill(size) { init(it).toInt().reinterpretAsByte() }
     }
 
     public operator fun get(index: Int): Boolean =
-        JsArray_get_Boolean(jsArray, index)
+        storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
 
     public operator fun set(index: Int, value: Boolean) {
-        JsArray_set_Boolean(jsArray, index, value)
+        storage.set(index, value.toInt().reinterpretAsByte())
     }
 
     public val size: Int
-        get() = JsArray_getSize(jsArray)
-
+        get() = storage.len()
 
     public operator fun iterator(): BooleanIterator = booleanArrayIterator(this)
 }

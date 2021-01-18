@@ -1,0 +1,15 @@
+FILE: usedInAnnotationArguments.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Int|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/Int| = R|<local>/value|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun foo(): R|kotlin/Int| {
+        lval x: R|kotlin/Int| = Int(3)
+        @R|Ann|(R|<local>/x|) lval y: R|kotlin/Int| = Int(5)
+        ^foo R|<local>/y|
+    }

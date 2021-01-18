@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -168,7 +169,32 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         if (declaration.isAnnotationClass) return
         val symbol = declaration.symbol
 
+
+        // Handle arrays
+        declaration.getWasmArrayAnnotation()?.let { wasmArrayAnnotation ->
+            val nameStr = declaration.fqNameWhenAvailable.toString()
+            val wasmArrayDeclaration = WasmArrayDeclaration(
+                nameStr,
+                WasmStructFieldDeclaration(
+                    name = "field",
+                    type = context.transformFieldType(wasmArrayAnnotation.type),
+                    isMutable = true
+                )
+            )
+
+            context.defineGcType(symbol, wasmArrayDeclaration)
+            return
+        }
+
         if (declaration.isInterface) {
+            val metadata = InterfaceMetadata(declaration, irBuiltIns)
+            for (method in metadata.methods) {
+                val methodSymbol = method.function.symbol
+                val table = WasmTable(
+                    elementType = WasmRefNullType(WasmHeapType.Type(context.referenceFunctionType(methodSymbol)))
+                )
+                context.defineInterfaceMethodTable(methodSymbol, table)
+            }
             context.registerInterface(symbol)
         } else {
             val nameStr = declaration.fqNameWhenAvailable.toString()
@@ -177,13 +203,13 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 fields = declaration.allFields(irBuiltIns).map {
                     WasmStructFieldDeclaration(
                         name = it.name.toString(),
-                        type = context.transformType(it.type),
+                        type = context.transformFieldType(it.type),
                         isMutable = true
                     )
                 }
             )
 
-            context.defineStructType(symbol, structType)
+            context.defineGcType(symbol, structType)
 
             var depth = 2
             val metadata = context.getClassMetadata(symbol)
@@ -218,6 +244,28 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             context.defineRTT(symbol, rtt)
             context.registerClass(symbol)
             context.generateTypeInfo(symbol, binaryDataStruct(metadata))
+
+            // New type info model
+            if (declaration.modality != Modality.ABSTRACT) {
+                context.generateInterfaceTable(symbol, interfaceTable(metadata))
+                for (i in metadata.interfaces) {
+                    val interfaceImplementation = InterfaceImplementation(i.symbol, declaration.symbol)
+                    // TODO: Cache it
+                    val interfaceMetadata = InterfaceMetadata(i, irBuiltIns)
+                    val table = interfaceMetadata.methods.associate { method ->
+                        val classMethod: VirtualMethodMetadata =
+                            metadata.virtualMethods
+                                .find { it.signature == method.signature }  // TODO: Use map
+                                ?: error("Cannot find class implementation of method ${method.signature} in class ${declaration.fqNameWhenAvailable}")
+
+                        method.function.symbol as IrFunctionSymbol to context.referenceFunction(classMethod.function.symbol)
+                    }
+                    context.registerInterfaceImplementationMethod(
+                        interfaceImplementation,
+                        table
+                    )
+                }
+            }
         }
 
         for (member in declaration.declarations) {
@@ -227,28 +275,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
         val invalidIndex = -1
-        val superClass = classMetadata.superClass?.klass
-
-        val superClassSymbol: WasmSymbol<Int> =
-            superClass?.let { context.referenceClassId(it.symbol) } ?: WasmSymbol(invalidIndex)
-
-        val superTypeField =
-            ConstantDataIntField("Super class", superClassSymbol)
-
-        val interfacesArray = ConstantDataIntArray(
-            "data",
-            classMetadata.interfaces.map { context.referenceInterfaceId(it.symbol) }
-        )
-        val interfacesArraySize = ConstantDataIntField(
-            "size",
-            interfacesArray.value.size
-        )
-
-        val implementedInterfacesArrayWithSize = ConstantDataStruct(
-            "Implemented interfaces array",
-            listOf(interfacesArraySize, interfacesArray)
-        )
-
         val vtableSizeField = ConstantDataIntField(
             "V-table length",
             classMetadata.virtualMethods.size
@@ -265,28 +291,46 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             }
         )
 
-        val signaturesArray = ConstantDataIntArray(
-            "Signatures",
-            classMetadata.virtualMethods.map {
-                if (it.function.modality == Modality.ABSTRACT) {
-                    WasmSymbol(invalidIndex)
-                } else {
-                    context.referenceSignatureId(it.signature)
-                }
-            }
+        val interfaceTablePtr = ConstantDataIntField(
+            "interfaceTablePtr",
+            context.referenceInterfaceTableAddress(classMetadata.klass.symbol)
         )
 
         return ConstantDataStruct(
             "Class TypeInfo: ${classMetadata.klass.fqNameWhenAvailable} ",
             listOf(
-                superTypeField,
+                interfaceTablePtr,
                 vtableSizeField,
                 vtableArray,
-                signaturesArray,
-                implementedInterfacesArrayWithSize,
             )
         )
     }
+
+
+    private fun interfaceTable(classMetadata: ClassMetadata): ConstantDataStruct {
+        val interfaces = classMetadata.interfaces
+        val size = ConstantDataIntField("size", interfaces.size)
+        val interfaceIds = ConstantDataIntArray(
+            "interfaceIds",
+            interfaces.map { context.referenceInterfaceId(it.symbol) },
+        )
+        val interfaceImplementationIds = ConstantDataIntArray(
+            "interfaceImplementationId",
+            interfaces.map {
+                context.referenceInterfaceImplementationId(InterfaceImplementation(it.symbol, classMetadata.klass.symbol))
+            },
+        )
+
+        return ConstantDataStruct(
+            "Class interface table: ${classMetadata.klass.fqNameWhenAvailable} ",
+            listOf(
+                size,
+                interfaceIds,
+                interfaceImplementationIds,
+            )
+        )
+    }
+
 
     override fun visitField(declaration: IrField) {
         // Member fields are generated as part of struct type
@@ -313,7 +357,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
     WasmI32 -> g.buildConstI32(0)
-    WasmI1 -> g.buildConstI32(0)
     WasmI64 -> g.buildConstI64(0)
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 /**
  * Unlike [Commonizer] which commonizes only single elements, this [AbstractListCommonizer] commonizes lists of elements using
@@ -22,7 +23,7 @@ abstract class AbstractListCommonizer<T, R>(
     private var error = false
 
     final override val result: List<R>
-        get() = checkState(commonizers, error).map { it.result }
+        get() = checkState(commonizers, error).compactMap { it.result }
 
     final override fun commonizeWith(next: List<T>): Boolean {
         if (error)

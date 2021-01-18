@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jps.build;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
     }
 
     public void testAllFilesPresentInCommon() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
     @TestMetadata("classAdded")
@@ -157,7 +158,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInClassAdded() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/classAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/classAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -170,7 +171,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInClassRemoved() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/classRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/classRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -183,7 +184,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInConstantValueChanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/constantValueChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/constantValueChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -196,7 +197,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInCopyFileToAnotherModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -209,7 +210,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDefaultArgumentInConstructorRemoved() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -222,7 +223,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDefaultParameterAdded() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -235,7 +236,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDefaultParameterAddedForTopLevelFun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -248,7 +249,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDefaultParameterRemoved() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -261,7 +262,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDefaultParameterRemovedForTopLevelFun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -274,7 +275,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDefaultValueInConstructorRemoved() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -287,7 +288,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInDuplicatedClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/duplicatedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/duplicatedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -300,7 +301,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInExportedDependency() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/exportedDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -313,7 +314,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInFunctionFromDifferentPackageChanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -326,7 +327,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInInlineFunctionInlined() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -339,7 +340,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInInlineFunctionTwoPackageParts() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -352,7 +353,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInMoveFileToAnotherModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -365,7 +366,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInSimple() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -378,7 +379,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInSimpleDependency() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -391,7 +392,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal1() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -404,7 +405,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInSimpleDependencyErrorOnAccessToInternal2() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -417,7 +418,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInSimpleDependencyUnchanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -430,7 +431,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInTransitiveDependency() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/transitiveDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/transitiveDependency"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -443,7 +444,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInTransitiveInlining() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/transitiveInlining"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/transitiveInlining"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -456,7 +457,7 @@ public class IncrementalJsJpsTestGenerated extends AbstractIncrementalJsJpsTest 
         }
 
         public void testAllFilesPresentInTwoDependants() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/twoDependants"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/common/twoDependants"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 }

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -27,9 +27,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private val times = mutableListOf<Long>()
 
-    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
-        val project = environment.project
-
+    private fun runAnalysis(environment: KotlinCoreEnvironment) {
         val time = measureNanoTime {
             try {
                 KotlinToJVMBytecodeCompiler.analyze(environment)
@@ -98,7 +96,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         })
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        runAnalysis(moduleData, environment)
+        runAnalysis(environment)
 
         Disposer.dispose(disposable)
         return ProcessorAction.NEXT

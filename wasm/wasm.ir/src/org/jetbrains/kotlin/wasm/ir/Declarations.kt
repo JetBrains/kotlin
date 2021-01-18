@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.ir
 
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
-    val structs: List<WasmStructDeclaration> = emptyList(),
+    val gcTypes: List<WasmTypeDeclaration> = emptyList(),
 
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
@@ -76,7 +76,7 @@ class WasmData(
 ) : WasmNamedModuleField()
 
 class WasmTable(
-    val limits: WasmLimits = WasmLimits(1u, null),
+    var limits: WasmLimits = WasmLimits(1u, null),
     val elementType: WasmType,
     val importPair: WasmImportPair? = null
 ) : WasmNamedModuleField() {
@@ -143,6 +143,11 @@ class WasmFunctionType(
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>
+) : WasmTypeDeclaration(name)
+
+class WasmArrayDeclaration(
+    name: String,
+    val field: WasmStructFieldDeclaration
 ) : WasmTypeDeclaration(name)
 
 class WasmStructFieldDeclaration(

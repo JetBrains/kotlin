@@ -123,9 +123,11 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
     override fun getNavigationElement() = script
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
-        another is PsiClass && Comparing.equal(another.qualifiedName, qualifiedName)
+        equals(another) ||
+                (another is KtLightClassForScript && fqName == another.fqName)
 
-    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
+    override fun getElementIcon(flags: Int): Icon? =
+        throw UnsupportedOperationException("This should be done by JetIconProvider")
 
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
 
@@ -174,7 +176,7 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
             return false
         }
 
-        val lightClass = other as KtLightClassForScript
+        val lightClass = other as? KtLightClassForScript ?: return false
         if (this === other) return true
 
         if (this.hashCode != lightClass.hashCode) return false

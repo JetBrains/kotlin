@@ -5,8 +5,6 @@
 
 package kotlin.text
 
-import kotlin.internal.LowPriorityInOverloadResolution
-
 expect class Regex {
     constructor(pattern: String)
     constructor(pattern: String, option: RegexOption)
@@ -66,8 +64,6 @@ expect enum class RegexOption {
 // From char.kt
 
 expect fun Char.isWhitespace(): Boolean
-expect fun Char.toLowerCase(): Char
-expect fun Char.toUpperCase(): Char
 expect fun Char.isHighSurrogate(): Boolean
 expect fun Char.isLowSurrogate(): Boolean
 
@@ -195,50 +191,21 @@ internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 public expect fun String.substring(startIndex: Int): String
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
-/**
- * Returns a copy of this string converted to upper case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toUpperCase
- */
-public expect fun String.toUpperCase(): String
-
-/**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toLowerCase
- */
-public expect fun String.toLowerCase(): String
-
-/**
- * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
- * or the original string if it's empty or already starts with a title case letter.
- *
- * The title case of a character is usually the same as its upper case with several exceptions.
- * The particular list of characters with the special title case form depends on the underlying platform.
- *
- * @sample samples.text.Strings.capitalize
- */
-public expect fun String.capitalize(): String
-
-/**
- * Returns a copy of this string having its first letter lowercased using the rules of the default locale,
- * or the original string if it's empty or already starts with a lower case letter.
- *
- * @sample samples.text.Strings.decapitalize
- */
-public expect fun String.decapitalize(): String
-
 public expect fun CharSequence.repeat(n: Int): String
 
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ * 
+ * @sample samples.text.Strings.replace
  */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
  */
 expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 

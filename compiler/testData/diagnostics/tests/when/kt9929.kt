@@ -1,8 +1,8 @@
 // !WITH_NEW_INFERENCE
-val test: Int = if (true) <!NI;TYPE_MISMATCH!>{
+val test: Int = if (true) <!TYPE_MISMATCH{NI}!>{
     when (2) {
         1 -> 1
-        else -> <!OI;NULL_FOR_NONNULL_TYPE!>null<!>
+        else -> <!NULL_FOR_NONNULL_TYPE{OI}!>null<!>
     }
 }<!>
 else {

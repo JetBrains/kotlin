@@ -119,15 +119,17 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             TestCase.assertEquals("IR dump mismatch after deep copy with symbols", actualTrees, copiedTrees)
             verify(irFileCopy)
 
-            val kotlinLikeDump = irFile.dumpKotlinLike(
-                KotlinLikeDumpOptions(
-                    printFileName = false,
-                    printFilePath = false,
-                    printFakeOverridesStrategy = FakeOverridesStrategy.NONE
+            if (!testFile.directives.contains("SKIP_KT_DUMP")) {
+                val kotlinLikeDump = irFile.dumpKotlinLike(
+                    KotlinLikeDumpOptions(
+                        printFileName = false,
+                        printFilePath = false,
+                        printFakeOverridesStrategy = FakeOverridesStrategy.NONE
+                    )
                 )
-            )
-            val kotlinLikeDumpExpectedFile = irTreeFileLabel.expectedTextFile.withReplacedExtensionOrNull(".txt", ".kt.txt")!!
-            KotlinTestUtils.assertEqualsToFile(kotlinLikeDumpExpectedFile, kotlinLikeDump)
+                val kotlinLikeDumpExpectedFile = irTreeFileLabel.expectedTextFile.withReplacedExtensionOrNull(".txt", ".kt.txt")!!
+                KotlinTestUtils.assertEqualsToFile(kotlinLikeDumpExpectedFile, kotlinLikeDump)
+            }
         }
 
         try {
@@ -182,12 +184,10 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrSymbolOwner) {
-                declaration.symbol.checkBinding("decl", declaration)
+            declaration.symbol.checkBinding("decl", declaration)
 
-                require(declaration.symbol.owner == declaration) {
-                    "Symbol is not bound to declaration: ${declaration.render()}"
-                }
+            require(declaration.symbol.owner == declaration) {
+                "Symbol is not bound to declaration: ${declaration.render()}"
             }
 
             val containingDeclarationDescriptor = declaration.descriptor.containingDeclaration

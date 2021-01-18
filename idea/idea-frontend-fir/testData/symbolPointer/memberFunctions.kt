@@ -5,8 +5,11 @@ class A {
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: A.x
+  dispatchType: A
   isExtension: false
   isExternal: false
   isInline: false
@@ -18,14 +21,16 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: A.y
+  dispatchType: A
   isExtension: false
   isExternal: false
   isInline: false
@@ -37,22 +42,25 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: A
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC

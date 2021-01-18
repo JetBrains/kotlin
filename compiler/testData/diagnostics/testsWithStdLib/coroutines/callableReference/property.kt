@@ -1,7 +1,5 @@
 // SKIP_TXT
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.coroutineContext
+import kotlin.coroutines.coroutineContext
 
 val c = ::<!UNSUPPORTED!>coroutineContext<!>
 

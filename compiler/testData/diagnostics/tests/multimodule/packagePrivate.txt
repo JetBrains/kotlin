@@ -6,10 +6,10 @@ package p {
     public val b: kotlin.Int = 1
 }
 
-
 // -- Module: <m2> --
 package
 
 package p {
     public val c: kotlin.Int = 1
 }
+

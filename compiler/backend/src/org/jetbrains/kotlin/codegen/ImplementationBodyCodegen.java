@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -221,6 +222,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             access |= ACC_ENUM;
         }
 
+        if (JvmAnnotationUtilKt.isJvmRecord(descriptor)) {
+            access |= VersionIndependentOpcodes.ACC_RECORD;
+        }
+
         v.defineClass(
                 myClass.getPsiOrParent(),
                 state.getClassFileVersion(),
@@ -260,7 +265,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateErasedInlineClassIfNeeded() {
         if (!(myClass instanceof KtClass)) return;
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
 
         ClassContext erasedInlineClassContext = context.intoWrapperForErasedInlineClass(descriptor, state);
         new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, v, state, this).generate();
@@ -269,7 +274,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateUnboxMethodForInlineClass() {
         if (!(myClass instanceof KtClass)) return;
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
 
         Type ownerType = typeMapper.mapClass(descriptor);
         ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
@@ -450,7 +455,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, superClassAsmType);
-            if (!descriptor.isInline() && !(descriptor instanceof SyntheticClassOrObjectDescriptor)) {
+            if (!InlineClassesUtilsKt.isInlineClass(descriptor) && !(descriptor instanceof SyntheticClassOrObjectDescriptor)) {
                 // Synthetic classes does not have declarations for secondary constructors
                 for (ClassConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
                     constructorCodegen.generateSecondaryConstructor(secondaryConstructor, superClassAsmType);
@@ -552,7 +557,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFunctionsFromAnyForInlineClasses() {
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
         if (!(myClass instanceof KtClassOrObject)) return;
         new FunctionsFromAnyGeneratorImpl(
                 (KtClassOrObject) myClass, bindingContext, descriptor, classAsmType, context, v, state

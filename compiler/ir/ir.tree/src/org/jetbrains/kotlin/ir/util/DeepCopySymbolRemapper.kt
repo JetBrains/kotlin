@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopySymbolRemapper(
-    private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
+    private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
 ) : IrElementVisitorVoid, SymbolRemapper {
 
     private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
@@ -159,7 +159,7 @@ open class DeepCopySymbolRemapper(
     override fun visitBlock(expression: IrBlock) {
         if (expression is IrReturnableBlock) {
             remapSymbol(returnableBlocks, expression) {
-                IrReturnableBlockSymbolImpl(expression.descriptor)
+                IrReturnableBlockSymbolImpl()
             }
         }
         expression.acceptChildrenVoid(this)

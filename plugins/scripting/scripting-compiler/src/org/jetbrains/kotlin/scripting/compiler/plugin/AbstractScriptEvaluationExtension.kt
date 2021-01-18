@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import java.io.File
+import java.io.Serializable
 import java.util.*
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.StringScriptSource
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.util.renderError
@@ -53,23 +55,21 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
         setupScriptConfiguration(configuration)
 
+        val defaultScriptExtension =
+            (arguments as? K2JVMCompilerArguments)?.defaultScriptExtension?.let { if (it.startsWith('.')) it else ".$it" }
+
         val script = when {
             arguments is K2JVMCompilerArguments && arguments.expression != null -> {
-                StringScriptSource(arguments.expression!!, "script.kts")
+                StringScriptSource(arguments.expression!!, "script${defaultScriptExtension ?: ".kts"}")
             }
             arguments.script -> {
-                val scriptFile = File(arguments.freeArgs.first())
-                val script = scriptFile.toScriptSource()
+                val scriptFile = File(arguments.freeArgs.first()).normalize()
 
-                val error = when {
-                    !scriptFile.exists() -> "Script file not found: ${arguments.freeArgs.first()}"
-                    scriptFile.isDirectory  -> "Script argument points to a directory: ${arguments.freeArgs.first()}"
-                    !scriptDefinitionProvider.isScript(script) -> "Unrecognized script file: ${arguments.freeArgs.first()}"
-                    else -> null
-                }
-                if (error != null) {
+                fun invalidScript(error: String): ExitCode {
                     val extensionHint =
-                        if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
+                        if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+                                ?.let { it.size == 1 && it.first().isDefault } == true
+                        ) " (.kts)"
                         else ""
                     messageCollector.report(
                         CompilerMessageSeverity.ERROR,
@@ -77,7 +77,22 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                     )
                     return ExitCode.COMPILATION_ERROR
                 }
-                script
+
+                if (!scriptFile.exists()) return invalidScript("Script file not found: $scriptFile")
+
+                if (scriptFile.isDirectory) return invalidScript("Script argument points to a directory: $scriptFile")
+
+                var script = scriptFile.toScriptSource().takeIf {
+                    scriptDefinitionProvider.isScript(it)
+                }
+                if (script == null && defaultScriptExtension != null) {
+                    script = ExplicitlyNamedFileScriptSource(
+                        scriptFile.nameWithoutExtension + defaultScriptExtension, scriptFile
+                    ).takeIf {
+                        scriptDefinitionProvider.isScript(it)
+                    }
+                }
+                script ?: return invalidScript("Unrecognized script type: ${scriptFile.name}")
             }
             else -> {
                 messageCollector.report(
@@ -157,3 +172,12 @@ fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeveri
         ScriptDiagnostic.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
 
+open class ExplicitlyNamedFileScriptSource(
+    override val name: String, file: File, preloadedText: String? = null
+) : FileScriptSource(file, preloadedText), Serializable {
+
+    companion object {
+        @JvmStatic
+        private val serialVersionUID = 0L
+    }
+}

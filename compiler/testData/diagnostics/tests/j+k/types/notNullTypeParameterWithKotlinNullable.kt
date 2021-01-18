@@ -1,3 +1,4 @@
+// !SKIP_JAVAC
 // FILE: SLRUMap.java
 // !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 

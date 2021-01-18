@@ -69,5 +69,5 @@ fun gau(flag: Boolean, arg: String?) {
         }
     }
 
-    <!NI;DEBUG_INFO_SMARTCAST!>x<!><!OI;UNSAFE_CALL!>.<!>hashCode()
+    <!DEBUG_INFO_SMARTCAST{NI}!>x<!><!UNSAFE_CALL{OI}!>.<!>hashCode()
 }

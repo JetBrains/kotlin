@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'kt43459.kt'
+    public method <init>(): void
+    public synthetic deprecated static @Anno method getA$annotations(p0: java.lang.Integer): void
+    public final @org.jetbrains.annotations.NotNull method getA(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.String
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Anno {
+    // source: 'kt43459.kt'
+}
+
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class TypeAnno {
+    // source: 'kt43459.kt'
+}

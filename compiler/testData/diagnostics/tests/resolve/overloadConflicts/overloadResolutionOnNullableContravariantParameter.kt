@@ -20,5 +20,5 @@ import a.*
 import b.*
 
 fun main() {
-    <!OI;OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!><String> {  }
+    <!OVERLOAD_RESOLUTION_AMBIGUITY{OI}!>foo<!><String> {  }
 }

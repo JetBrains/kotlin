@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
@@ -95,7 +95,7 @@ object LowLevelFirApiFacadeForCompletion {
         originalFunction: FirSimpleFunction,
         state: FirModuleResolveState
     ): FirSimpleFunction {
-        val builtFunction = firIdeProvider.buildFunctionWithBody(element)
+        val builtFunction = firIdeProvider.buildFunctionWithBody(element, originalFunction)
 
         // right now we can't resolve builtFunction header properly, as it built right in air,
         // without file, which is now required for running stages other then body resolve, so we
@@ -106,9 +106,8 @@ object LowLevelFirApiFacadeForCompletion {
             resolvePhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
             source = builtFunction.source
             session = state.rootModuleSession
-        }
+        }.apply { reassignAllReturnTargets (builtFunction) }
     }
-
 
     private fun buildPropertyCopyForCompletion(
         firIdeProvider: FirIdeProvider,
@@ -116,7 +115,7 @@ object LowLevelFirApiFacadeForCompletion {
         originalProperty: FirProperty,
         state: FirModuleResolveState
     ): FirProperty {
-        val builtProperty = firIdeProvider.buildPropertyWithBody(element)
+        val builtProperty = firIdeProvider.buildPropertyWithBody(element, originalProperty)
 
         val originalSetter = originalProperty.setter
         val builtSetter = builtProperty.setter
@@ -129,7 +128,7 @@ object LowLevelFirApiFacadeForCompletion {
                 resolvePhase = minOf(builtSetter.resolvePhase, FirResolvePhase.DECLARATIONS)
                 source = builtSetter.source
                 session = state.rootModuleSession
-            }
+            }.apply { reassignAllReturnTargets(builtSetter) }
         } else {
             builtSetter
         }
@@ -145,5 +144,17 @@ object LowLevelFirApiFacadeForCompletion {
             source = builtProperty.source
             session = state.rootModuleSession
         }
+    }
+
+
+    private fun FirFunction<*>.reassignAllReturnTargets(from: FirFunction<*>) {
+        this.accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                if (element is FirReturnExpression && element.target.labeledElement == from) {
+                    element.target.bind(this@reassignAllReturnTargets)
+                }
+                element.acceptChildren(this)
+            }
+        })
     }
 }

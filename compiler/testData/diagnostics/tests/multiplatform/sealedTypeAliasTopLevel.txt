@@ -19,7 +19,6 @@ public sealed expect class Presence {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -44,3 +43,4 @@ public sealed class P {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public actual typealias Presence = P
+

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import java.util.*
 
 private operator fun <T> Pair<T, *>?.component1() = this?.first
 private operator fun <T> Pair<*, T>?.component2() = this?.second
@@ -117,7 +119,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
 
     if (type.typeArguments.isEmpty()) return samConstructorForClass
 
-    val namedSymbol = samConstructorForClass.symbol as? FirNamedFunctionSymbol ?: return null
+    val namedSymbol = samConstructorForClass.symbol
 
     val substitutor = prepareSubstitutorForTypeAliasConstructors(
         type,
@@ -184,10 +186,13 @@ private fun processConstructors(
                         )
                     } else basicScope
                 }
-                is FirClassSymbol ->
-                    (matchedSymbol.fir as FirClass<*>).scopeForClass(
+                is FirClassSymbol -> {
+                    val firClass = matchedSymbol.fir as FirClass<*>
+                    if (firClass.classKind == ClassKind.INTERFACE) null
+                    else firClass.scopeForClass(
                         substitutor, session, bodyResolveComponents.scopeSession
                     )
+                }
             }
 
             //TODO: why don't we use declared member scope at this point?

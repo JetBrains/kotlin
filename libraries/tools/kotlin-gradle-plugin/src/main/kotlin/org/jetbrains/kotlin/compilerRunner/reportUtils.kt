@@ -90,14 +90,22 @@ internal fun runToolInSeparateProcess(
     compilerClassName: String,
     classpath: List<File>,
     logger: KotlinLogger,
-    buildDir: File
+    buildDir: File,
+    jvmArgs: List<String> = emptyList()
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.map { it.absolutePath }.joinToString(separator = File.pathSeparator)
 
     val compilerOptions = writeArgumentsToFile(buildDir, argsArray)
 
-    val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, "@${compilerOptions.absolutePath}")
+    val builder = ProcessBuilder(
+        javaBin,
+        *(jvmArgs.toTypedArray()),
+        "-cp",
+        classpathString,
+        compilerClassName,
+        "@${compilerOptions.absolutePath}"
+    )
     val messageCollector = createLoggingMessageCollector(logger)
     val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 
@@ -126,8 +134,12 @@ internal fun runToolInSeparateProcess(
 }
 
 private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
-    val compilerOptions =
-        Files.createTempFile(directory.toPath(), LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options").toFile()
+    val prefix = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_"
+    val suffix = ".compiler.options"
+    val compilerOptions = if (directory.exists())
+        Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
+    else
+        Files.createTempFile(prefix, suffix).toFile()
     compilerOptions.deleteOnExit()
     compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
     return compilerOptions

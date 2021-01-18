@@ -1,9 +1,9 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
-// JAVAC_SKIP
+// SKIP_JAVAC
 // FULL_JDK
 
-// FILE: f.kt
+// FILE: a.kt
 
 import java.*
 import java.util.*
@@ -53,6 +53,6 @@ fun test(l : java.util.List<Int>) {
 }
 
 
-// FILE: f.kt
+// FILE: b.kt
 package xxx
   import java.lang.Class;

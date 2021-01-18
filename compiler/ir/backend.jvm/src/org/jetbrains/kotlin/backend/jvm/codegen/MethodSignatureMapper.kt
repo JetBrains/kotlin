@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -83,8 +84,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
-            if (propertyParent.isAnnotationClass)
-                return propertyName
+            if (propertyParent.isAnnotationClass || propertyParent.superTypes.any { it.isJavaLangRecord() }) return propertyName
 
             // The enum property getters <get-name> and <get-ordinal> have special names which also
             // apply to their fake overrides. Unfortunately, getJvmMethodNameIfSpecial does not handle
@@ -100,6 +100,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         return mangleMemberNameIfRequired(function.name.asString(), function)
     }
+
+    private fun IrType.isJavaLangRecord() = getClass()!!.hasEqualFqName(JAVA_LANG_RECORD_FQ_NAME)
 
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
@@ -127,10 +129,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                         originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
 
     private fun IrSimpleFunction.getInternalFunctionForManglingIfNeeded(): IrSimpleFunction? {
-        if (origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
-            visibility == DescriptorVisibilities.INTERNAL &&
-            !isPublishedApi() &&
-            !isSyntheticMethodForProperty
+        if (visibility == DescriptorVisibilities.INTERNAL &&
+            origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+            origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+            !isPublishedApi()
         ) {
             return this
         }
@@ -193,7 +195,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
-        isBoxMethodForInlineClass(function) || forceFoxedReturnTypeOnOverride(function) || forceBoxedReturnTypeOnDefaultImplFun(function)
+        isBoxMethodForInlineClass(function) || forceFoxedReturnTypeOnOverride(function) || forceBoxedReturnTypeOnDefaultImplFun(function) ||
+                function.isFromJava() && function.returnType.isInlined()
 
     private fun forceFoxedReturnTypeOnOverride(function: IrFunction) =
         function is IrSimpleFunction &&
@@ -318,7 +321,11 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration) {
         if (sw.skipGenericSignature()) {
-            typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
+            if (type.isInlined() && declaration.isFromJava()) {
+                typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw)
+            } else {
+                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
+            }
             return
         }
 

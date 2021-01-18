@@ -73,6 +73,7 @@ fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
         components.scopeSession,
         implicitBodyResolveComputationSession,
         designationMap,
+        createTransformer = components.returnTypeCalculator.getTransformerCreator()
     )
 
     val newContext = components.context.createSnapshotForLocalClasses(returnTypeCalculator, targetedClasses)
@@ -96,6 +97,11 @@ fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
     return this.transform<F, ResolutionMode>(transformer, resolutionMode).single.also {
         graphBuilder.cleanAfterForLocalClassMembers(members)
     }
+}
+
+private fun ReturnTypeCalculator.getTransformerCreator() = when (this) {
+    is ReturnTypeCalculatorWithJump -> createTransformer
+    else -> ::FirDesignatedBodyResolveTransformerForReturnTypeCalculator
 }
 
 fun createReturnTypeCalculatorForIDE(
@@ -178,7 +184,7 @@ private class ReturnTypeCalculatorWithJump(
     private val scopeSession: ScopeSession,
     val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
     val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> = mapOf(),
-    private val createTransformer: (
+    val createTransformer: (
         designation: Iterator<FirElement>,
         session: FirSession,
         scopeSession: ScopeSession,

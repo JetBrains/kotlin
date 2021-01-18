@@ -19,8 +19,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.frontend.api.types.render
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
@@ -36,7 +34,7 @@ internal class KotlinFirLookupElementFactory {
     fun KtAnalysisSession.createLookupElement(symbol: KtNamedSymbol): LookupElement? {
         val elementBuilder = when (symbol) {
             is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol) }
-            is KtVariableLikeSymbol -> variableLookupElementFactory.createLookup(symbol)
+            is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol) }
             is KtClassLikeSymbol -> classLookupElementFactory.createLookup(symbol)
             is KtTypeParameterSymbol -> typeParameterLookupElementFactory.createLookup(symbol)
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
@@ -66,11 +64,25 @@ private class TypeParameterLookupElementFactory {
 }
 
 private class VariableLookupElementFactory {
-    fun createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
+    fun KtAnalysisSession.createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
-            .withTypeText(ShortNamesRenderer.renderType(symbol.type))
+            .withTypeText(symbol.annotatedType.type.render())
+            .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(createInsertHandler(symbol))
     }
+
+    private fun LookupElementBuilder.markIfSyntheticJavaProperty(symbol: KtVariableLikeSymbol): LookupElementBuilder = when (symbol) {
+        is KtSyntheticJavaPropertySymbol -> {
+            val getterName = symbol.javaGetterName.asString()
+            val setterName = symbol.javaSetterName?.asString()
+            this.withTailText((" (from ${buildSyntheticPropertyTailText(getterName, setterName)})"))
+                .withLookupStrings(listOfNotNull(getterName, setterName))
+        }
+        else -> this
+    }
+
+    private fun buildSyntheticPropertyTailText(getterName: String, setterName: String?): String =
+        if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
         return QuotedNamesAwareInsertionHandler(symbol.name)
@@ -82,7 +94,7 @@ private class FunctionLookupElementFactory {
         return try {
             LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
-                .withTypeText(ShortNamesRenderer.renderType(symbol.type))
+                .withTypeText(symbol.annotatedType.type.render())
                 .withInsertHandler(createInsertHandler(symbol))
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
@@ -92,12 +104,12 @@ private class FunctionLookupElementFactory {
     }
 
     private fun KtAnalysisSession.getTailText(symbol: KtFunctionSymbol): String {
-        return if (insertLambdaBraces(symbol)) " {...}" else ShortNamesRenderer.renderFunctionParameters(symbol)
+        return if (insertLambdaBraces(symbol)) " {...}" else with(ShortNamesRenderer) { renderFunctionParameters(symbol) }
     }
 
     private fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
         val singleParam = symbol.valueParameters.singleOrNull()
-        return singleParam != null && !singleParam.hasDefaultValue && singleParam.type.isBuiltInFunctionalType()
+        return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type.isBuiltInFunctionalType()
     }
 
     private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
@@ -215,13 +227,11 @@ private open class QuotedNamesAwareInsertionHandler(private val name: Name) : In
 
 
 private object ShortNamesRenderer {
-    fun renderFunctionParameters(function: KtFunctionSymbol): String =
+    fun KtAnalysisSession.renderFunctionParameters(function: KtFunctionSymbol): String =
         function.valueParameters.joinToString(", ", "(", ")") { renderFunctionParameter(it) }
 
-    fun renderType(ktType: KtType): String = ktType.render()
-
-    private fun renderFunctionParameter(param: KtFunctionParameterSymbol): String =
-        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${renderType(param.type)}"
+    private fun KtAnalysisSession.renderFunctionParameter(param: KtFunctionParameterSymbol): String =
+        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${param.annotatedType.type.render()}"
 }
 
 private fun Document.isTextAt(offset: Int, text: String) =

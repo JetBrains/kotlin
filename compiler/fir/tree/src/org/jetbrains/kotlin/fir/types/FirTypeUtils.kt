@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.ConstantValueKind
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -23,7 +24,9 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     return (this as? FirResolvedTypeRef)?.type as? T
 }
 
-inline val FirTypeRef.coneType: ConeKotlinType get() = coneTypeUnsafe()
+inline val FirTypeRef.coneType: ConeKotlinType
+    get() = coneTypeSafe()
+        ?: error("Expected FirResolvedTypeRef with ConeKotlinType but was ${this::class.simpleName} ${render()}")
 
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
 val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
@@ -74,16 +77,16 @@ fun List<FirAnnotationCall>.dropExtensionFunctionAnnotation(): List<FirAnnotatio
     return filterNot { it.isExtensionFunctionAnnotationCall }
 }
 
-fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId) {
-    StandardClassIds.Byte -> FirConstKind.Byte
-    StandardClassIds.Short -> FirConstKind.Short
-    StandardClassIds.Int -> FirConstKind.Int
-    StandardClassIds.Long -> FirConstKind.Long
+fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.classId) {
+    StandardClassIds.Byte -> ConstantValueKind.Byte
+    StandardClassIds.Short -> ConstantValueKind.Short
+    StandardClassIds.Int -> ConstantValueKind.Int
+    StandardClassIds.Long -> ConstantValueKind.Long
 
-    StandardClassIds.UInt -> FirConstKind.UnsignedInt
-    StandardClassIds.ULong -> FirConstKind.UnsignedLong
-    StandardClassIds.UShort -> FirConstKind.UnsignedShort
-    StandardClassIds.UByte -> FirConstKind.UnsignedByte
+    StandardClassIds.UInt -> ConstantValueKind.UnsignedInt
+    StandardClassIds.ULong -> ConstantValueKind.UnsignedLong
+    StandardClassIds.UShort -> ConstantValueKind.UnsignedShort
+    StandardClassIds.UByte -> ConstantValueKind.UnsignedByte
     else -> null
 }
 

@@ -9,8 +9,8 @@ interface D : A {
     fun foo_D()
 }
 
-actual typealias B = D
-actual typealias C = D
+actual typealias <!LINE_MARKER("descr='Has declaration in common module'")!>B<!> = D
+actual typealias <!LINE_MARKER("descr='Has declaration in common module'")!>C<!> = D
 
 fun take0(x: D): Unit = null!!
 

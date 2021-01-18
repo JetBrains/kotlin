@@ -441,10 +441,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.setApiVersion(apiVersion);
         arguments.setMultiPlatform(multiPlatform);
 
-        if (experimentalCoroutines != null) {
-            arguments.setCoroutinesState(experimentalCoroutines);
-        }
-
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
         try {

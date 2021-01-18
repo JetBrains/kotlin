@@ -25,7 +25,3 @@ fun box(): String {
 
     return "OK"
 }
-
-fun main() {
-    box().let { if (it != "OK") throw AssertionError(it) }
-}

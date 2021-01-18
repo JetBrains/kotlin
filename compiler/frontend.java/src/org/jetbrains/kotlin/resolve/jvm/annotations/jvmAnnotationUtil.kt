@@ -23,6 +23,7 @@ val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
 
 @JvmField
 val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
+val JVM_RECORD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmRecord")
 
 @JvmField
 val SYNCHRONIZED_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Synchronized")
@@ -92,3 +93,5 @@ fun DeclarationDescriptor.findStrictfpAnnotation(): AnnotationDescriptor? =
 
 fun DeclarationDescriptor.findSynchronizedAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
+
+fun ClassDescriptor.isJvmRecord(): Boolean = annotations.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME)

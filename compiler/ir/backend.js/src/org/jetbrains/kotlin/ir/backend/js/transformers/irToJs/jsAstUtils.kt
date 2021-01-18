@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -120,7 +121,7 @@ fun translateCall(
         return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
     }
 
-    val varargParameterIndex = function.valueParameters.indexOfFirst { it.varargElementType != null }
+    val varargParameterIndex = function.varargParameterIndex()
     val isExternalVararg = function.isEffectivelyExternal() && varargParameterIndex != -1
 
     val symbolName = when (jsDispatchReceiver) {
@@ -134,28 +135,12 @@ fun translateCall(
     }
 
     return if (isExternalVararg) {
-
-        // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
-        // We are using `Function.prototype.apply` function to pass all arguments as a single array.
-        // For this purpose are concatenating non-vararg arguments with vararg.
         // TODO: Don't use `Function.prototype.apply` when number of arguments is known at compile time (e.g. there are no spread operators)
-        val arrayConcat = JsNameRef("concat", JsArrayLiteral())
-        val arraySliceCall = JsNameRef("call", JsNameRef("slice", JsArrayLiteral()))
 
-        val argumentsAsSingleArray = JsInvocation(
-            arrayConcat,
-            listOfNotNull(jsExtensionReceiver) + arguments.mapIndexed { index, argument ->
-                when (index) {
-
-                    // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
-                    // TODO: Optimize for proper arrays
-                    varargParameterIndex -> JsInvocation(arraySliceCall, argument)
-
-                    // TODO: Don't wrap non-array-like arguments with array literal
-                    // TODO: Wrap adjacent non-vararg arguments in a single array literal
-                    else -> JsArrayLiteral(listOf(argument))
-                }
-            }
+        val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
+            jsExtensionReceiver,
+            arguments,
+            varargParameterIndex
         )
 
         if (jsDispatchReceiver != null) {
@@ -198,12 +183,65 @@ fun translateCall(
     }
 }
 
+fun argumentsWithVarargAsSingleArray(
+    additionalReceiver: JsExpression?,
+    arguments: List<JsExpression>,
+    varargParameterIndex: Int,
+): JsExpression {
+    // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
+    // We are using `Function.prototype.apply` function to pass all arguments as a single array.
+    // For this purpose are concatenating non-vararg arguments with vararg.
+    var arraysForConcat: MutableList<JsExpression> = mutableListOf<JsExpression>().apply {
+        additionalReceiver?.let { add(it) }
+    }
+    val concatElements: MutableList<JsExpression> = mutableListOf()
+
+    arguments
+        .forEachIndexed { index, argument ->
+            when (index) {
+
+                // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
+                varargParameterIndex -> {
+                    concatElements.add(JsArrayLiteral(arraysForConcat))
+                    arraysForConcat = mutableListOf()
+
+                    val varargArgument = if (argument is JsArrayLiteral) {
+                        argument
+                    } else {
+                        val arraySliceCall = JsNameRef("call", JsNameRef("slice", JsArrayLiteral()))
+                        JsInvocation(arraySliceCall, argument)
+                    }
+
+                    concatElements.add(varargArgument)
+                }
+
+                else -> {
+                    arraysForConcat.add(argument)
+                }
+            }
+        }
+
+    if (arraysForConcat.isNotEmpty() || concatElements.isEmpty()) {
+        concatElements.add(JsArrayLiteral(arraysForConcat))
+    }
+
+    return concatElements.singleOrNull()
+        ?: JsInvocation(
+            JsNameRef("concat", concatElements.first()),
+            concatElements.drop(1)
+        )
+}
+
+fun IrFunction.varargParameterIndex() = valueParameters.indexOfFirst { it.varargElementType != null }
+
 fun translateCallArguments(
-    expression: IrMemberAccessExpression<*>,
+    expression: IrMemberAccessExpression<IrFunctionSymbol>,
     context: JsGenerationContext,
     transformer: IrElementToJsExpressionTransformer,
 ): List<JsExpression> {
     val size = expression.valueArgumentsCount
+
+    val varargParameterIndex = expression.symbol.owner.realOverrideTarget.varargParameterIndex()
 
     val validWithNullArgs = expression.validWithNullArgs()
     val arguments = (0 until size)
@@ -215,6 +253,16 @@ fun translateCallArguments(
             if (result == null) {
                 assert(validWithNullArgs)
             }
+        }
+        .mapIndexed { index, result ->
+            val isEmptyExternalVararg = validWithNullArgs &&
+                    varargParameterIndex == index &&
+                    result is JsArrayLiteral &&
+                    result.expressions.isEmpty()
+
+            if (isEmptyExternalVararg) {
+                null
+            } else result
         }
         .dropLastWhile { it == null }
         .map { it ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1)) }

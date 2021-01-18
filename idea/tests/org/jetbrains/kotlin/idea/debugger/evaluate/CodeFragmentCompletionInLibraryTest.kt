@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.runner.RunWith
 import java.io.File
 
 private val LIBRARY_SRC_PATH =
-    KotlinTestUtils.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
+    KtTestUtil.getHomeDirectory() + "/idea/idea-completion/testData/codeFragmentInLibrarySource/customLibrary/"
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {

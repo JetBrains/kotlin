@@ -39,6 +39,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public abstract class KotlinBuiltIns {
     private ModuleDescriptorImpl builtInsModule;
+    private NotNullLazyValue<ModuleDescriptorImpl> postponedBuiltInsModule;
 
     private final NotNullLazyValue<Primitives> primitives;
     private final NotNullLazyValue<Collection<PackageViewDescriptor>> builtInPackagesImportedByDefault;
@@ -56,10 +57,10 @@ public abstract class KotlinBuiltIns {
             @Override
             public Collection<PackageViewDescriptor> invoke() {
                 return Arrays.asList(
-                    builtInsModule.getPackage(BUILT_INS_PACKAGE_FQ_NAME),
-                    builtInsModule.getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
-                    builtInsModule.getPackage(RANGES_PACKAGE_FQ_NAME),
-                    builtInsModule.getPackage(ANNOTATION_PACKAGE_FQ_NAME)
+                    getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME),
+                    getBuiltInsModule().getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
+                    getBuiltInsModule().getPackage(RANGES_PACKAGE_FQ_NAME),
+                    getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME)
                 );
             }
         });
@@ -123,6 +124,10 @@ public abstract class KotlinBuiltIns {
         });
     }
 
+    public void setPostponedBuiltinsModuleComputation(@NotNull Function0<ModuleDescriptorImpl> computation) {
+        postponedBuiltInsModule = storageManager.createLazyValue(computation);
+    }
+
     @NotNull
     protected AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
         return AdditionalClassPartsProvider.None.INSTANCE;
@@ -135,7 +140,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     protected Iterable<ClassDescriptorFactory> getClassDescriptorFactories() {
-        return Collections.<ClassDescriptorFactory>singletonList(new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule));
+        return Collections.<ClassDescriptorFactory>singletonList(
+                new BuiltInFictitiousFunctionClassFactory(storageManager, getBuiltInsModule()));
     }
 
     @NotNull
@@ -161,6 +167,10 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ModuleDescriptorImpl getBuiltInsModule() {
+        assert builtInsModule != null || postponedBuiltInsModule != null : "Uninitialized built-ins module";
+        if (builtInsModule == null) {
+            builtInsModule = postponedBuiltInsModule.invoke();
+        }
         return builtInsModule;
     }
 
@@ -198,12 +208,12 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public MemberScope getBuiltInsPackageScope() {
-        return builtInsModule.getPackage(BUILT_INS_PACKAGE_FQ_NAME).getMemberScope();
+        return getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME).getMemberScope();
     }
 
     @NotNull
     public ClassDescriptor getBuiltInClassByFqName(@NotNull FqName fqName) {
-        ClassDescriptor descriptor = DescriptorUtilKt.resolveClassByFqName(builtInsModule, fqName, NoLookupLocation.FROM_BUILTINS);
+        ClassDescriptor descriptor = DescriptorUtilKt.resolveClassByFqName(getBuiltInsModule(), fqName, NoLookupLocation.FROM_BUILTINS);
         assert descriptor != null : "Can't find built-in class " + fqName;
         return descriptor;
     }
@@ -653,9 +663,14 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument, @NotNull Annotations annotations) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(Annotations.Companion.getEMPTY(), getArray(), types);
+        return KotlinTypeFactory.simpleNotNullType(annotations, getArray(), types);
+    }
+
+    @NotNull
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+        return getArrayType(projectionType, argument, Annotations.Companion.getEMPTY());
     }
 
     @NotNull
@@ -817,6 +832,26 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isULong(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongFqName.toUnsafe());
+    }
+
+    public static boolean isUByteArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uByteArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUShortArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uShortArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUIntArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uIntArrayFqName.toUnsafe());
+    }
+
+    public static boolean isULongArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUnsignedArrayType(@NotNull KotlinType type) {
+        return isUByteArray(type) || isUShortArray(type) || isUIntArray(type) || isULongArray(type);
     }
 
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {

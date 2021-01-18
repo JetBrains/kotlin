@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.checkers
 
 import com.google.common.collect.Lists
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import java.io.File
 import kotlin.test.assertEquals
@@ -106,14 +107,14 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
         DiagnosticData(7, 6, "TOO_MANY_ARGUMENTS", 164, 166)
     )
 
-    private fun getTestDataPath() = KotlinTestUtils.getTestDataPathBase() + "/diagnostics/checkerTestUtil"
+    private fun getTestDataPath() = KtTestUtil.getTestDataPathBase() + "/diagnostics/checkerTestUtil"
 
     override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     private fun doTest(test: Test) = test.test(
         TestCheckerUtil.createCheckAndReturnPsiFile(
             "test.kt",
-            KotlinTestUtils.doLoadFile(getTestDataPath(), "test.kt"),
+            KtTestUtil.doLoadFile(getTestDataPath(), "test.kt"),
             project
         ),
         environment
@@ -202,6 +203,7 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
     }
 
     fun testAbstractJetDiagnosticsTest() {
+        @OptIn(ObsoleteTestInfrastructure::class)
         val test = object : AbstractDiagnosticsTest() {
             init {
                 setUp()
@@ -225,8 +227,8 @@ class CheckerTestUtilTest : KotlinTestWithEnvironment() {
 
         private fun missing(data: DiagnosticData) = missing(data.name, data.startOffset, data.endOffset)
 
-        private fun asTextDiagnostic(diagnosticData: DiagnosticData, vararg params: String) =
-            diagnosticData.name + "(" + StringUtil.join(params, "; ") + ")"
+        private fun asTextDiagnostic(diagnosticData: DiagnosticData, vararg params: String): String =
+            params.joinToString(prefix = diagnosticData.name + "(", postfix = ")", separator = "; ")
 
         private fun asDiagnosticRange(diagnosticData: DiagnosticData, vararg textDiagnostics: String): DiagnosedRange {
             val range = DiagnosedRange(diagnosticData.startOffset)

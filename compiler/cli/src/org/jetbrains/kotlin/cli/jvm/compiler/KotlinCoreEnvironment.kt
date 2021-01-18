@@ -25,19 +25,21 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.JavaClassSupersImpl
@@ -249,6 +251,8 @@ class KotlinCoreEnvironment private constructor(
         project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, fun(roots: List<File>) {
             updateClasspath(roots.map { JavaSourceRoot(it, null) })
         })
+
+        project.setupHighestLanguageLevel()
     }
 
     private fun collectAdditionalSources(project: MockProject) {
@@ -453,16 +457,38 @@ class KotlinCoreEnvironment private constructor(
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
 
+        @TestOnly
+        @JvmStatic
+        fun createForTests(
+            projectEnvironment: ProjectEnvironment, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+        ): KotlinCoreEnvironment {
+            return KotlinCoreEnvironment(projectEnvironment, initialConfiguration, extensionConfigs)
+        }
+
+        @TestOnly
+        fun createProjectEnvironmentForTests(parentDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
+            val appEnv = createApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+            return ProjectEnvironment(parentDisposable, appEnv)
+        }
+
         // used in the daemon for jar cache cleanup
         val applicationEnvironment: KotlinCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         fun getOrCreateApplicationEnvironmentForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration
+        ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(parentDisposable, configuration, unitTestMode = false)
+
+        fun getOrCreateApplicationEnvironmentForTests(
+            parentDisposable: Disposable, configuration: CompilerConfiguration
+        ): KotlinCoreApplicationEnvironment = getOrCreateApplicationEnvironment(parentDisposable, configuration, unitTestMode = true)
+
+        private fun getOrCreateApplicationEnvironment(
+            parentDisposable: Disposable, configuration: CompilerConfiguration, unitTestMode: Boolean
         ): KotlinCoreApplicationEnvironment {
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
                     val disposable = Disposer.newDisposable()
-                    ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode = false)
+                    ourApplicationEnvironment = createApplicationEnvironment(disposable, configuration, unitTestMode)
                     ourProjectCount = 0
                     Disposer.register(disposable, Disposable {
                         synchronized(APPLICATION_LOCK) {
@@ -509,6 +535,11 @@ class KotlinCoreEnvironment private constructor(
             val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, unitTestMode)
 
             registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
+            // FIX ME WHEN BUNCH 202 REMOVED: this code is required to support compiler bundled to both 202 and 203.
+            // Please, remove "com.intellij.psi.classFileDecompiler" EP registration once 202 is no longer supported by the compiler
+            if (!ApplicationManager.getApplication().extensionArea.hasExtensionPoint("com.intellij.psi.classFileDecompiler")) {
+                registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/core.xml")
+            }
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)
@@ -540,7 +571,7 @@ class KotlinCoreEnvironment private constructor(
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(
                 FileSystems.getDefault().getPath(pluginRoot.path),
                 configFilePath,
-                Extensions.getRootArea()
+                ApplicationManager.getApplication().extensionArea
             )
         }
 

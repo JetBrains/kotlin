@@ -10,11 +10,10 @@ import com.intellij.codeInsight.runner.JavaMainMethodProvider;
 import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.lang.MetaLanguage;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.FileContextProvider;
 import com.intellij.psi.augment.PsiAugmentProvider;
-import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.meta.MetaDataContributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,11 +39,10 @@ public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnviron
         registerApplicationExtensionPoint(JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider.class);
 
         registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider.class);
-        registerApplicationExtensionPoint(ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler.class);
 
         registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
 
-        IdeaExtensionPoints.INSTANCE.registerVersionSpecificAppExtensionPoints(Extensions.getRootArea());
+        IdeaExtensionPoints.INSTANCE.registerVersionSpecificAppExtensionPoints(ApplicationManager.getApplication().getExtensionArea());
     }
 
     @Nullable

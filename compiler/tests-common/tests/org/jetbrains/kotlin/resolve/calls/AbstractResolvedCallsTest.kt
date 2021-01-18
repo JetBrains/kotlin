@@ -43,13 +43,14 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractResolvedCallsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     fun doTest(filePath: String) {
-        val originalText = KotlinTestUtils.doLoadFile(File(filePath))!!
+        val originalText = KtTestUtil.doLoadFile(File(filePath))!!
         val (text, carets) = extractCarets(originalText)
 
         setupLanguageVersionSettingsForCompilerTests(originalText, environment)

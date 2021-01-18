@@ -63,7 +63,7 @@ private class JvmStaticInCompanionLowering(val context: JvmBackendContext) : IrE
             .filter {
                 it.isJvmStaticDeclaration() &&
                         it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-                        it.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
+                        it.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
             }
             .forEach { declaration ->
                 val jvmStaticFunction = declaration as IrSimpleFunction
@@ -171,4 +171,5 @@ private class MakeCallsStatic(val context: JvmBackendContext) : IrElementTransfo
 
 private fun IrDeclaration.isJvmStaticDeclaration(): Boolean =
     hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
-            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true ||
+            (this as? IrProperty)?.getter?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true

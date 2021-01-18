@@ -8,15 +8,18 @@ fun yyy() {
 // SYMBOLS:
 /*
 KtFirLocalVariableSymbol:
+  annotatedType: [] kotlin/Int
   isVal: true
   name: q
   origin: SOURCE
   symbolKind: LOCAL
-  type: kotlin/Int
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: null
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false
@@ -28,29 +31,35 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: LOCAL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: LOCAL
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: null
   classKind: CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: F
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Any]
+  superTypes: [[] kotlin/Any]
   symbolKind: LOCAL
   typeParameters: []
   visibility: LOCAL
 
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Unit
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: yyy
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false
@@ -62,7 +71,6 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Unit
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC

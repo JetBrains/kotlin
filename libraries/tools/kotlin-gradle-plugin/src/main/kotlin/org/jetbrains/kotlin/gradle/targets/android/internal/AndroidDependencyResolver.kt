@@ -22,6 +22,7 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
+import java.nio.file.Path
 
 data class AndroidDependency(
     val name: String? = null,
@@ -34,16 +35,34 @@ data class AndroidDependency(
 
 @Suppress("unused")
 object AndroidDependencyResolver {
-    private fun getAndroidSdkJar(project: Project): AndroidDependency? {
+    private fun getAndroidSdkJar(project: Project, versions: List<String>): AndroidDependency? {
         val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
-        val sdkHandler = AndroidSdkHandler.getInstance(androidExtension.sdkDirectory)
+        val useNioPath = versions[0].toInt() >= 7
+
+        val sdkHandler = if (useNioPath) {
+            val getInstance = AndroidSdkHandler::class.java.getMethodOrNull("getInstance", Path::class.java) ?: return null
+            getInstance(null, androidExtension.sdkDirectory.toPath()) as AndroidSdkHandler
+        } else {
+            AndroidSdkHandler.getInstance(androidExtension.sdkDirectory)
+        }
         val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
         val androidTarget =
             sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger) ?: return null
+
+        val jar: File
+        val sources: File
+        if (useNioPath) {
+            val getPath = IAndroidTarget::class.java.getMethodOrNull("getPath", Int::class.java) ?: return null
+            jar = (getPath(androidTarget, IAndroidTarget.ANDROID_JAR) as Path).toFile()
+            sources = (getPath(androidTarget, IAndroidTarget.SOURCES) as Path).toFile()
+        } else {
+            jar = File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR))
+            sources = File(androidTarget.getPath(IAndroidTarget.SOURCES))
+        }
         return AndroidDependency(
             androidTarget.fullName,
-            File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR)),
-            File(androidTarget.getPath(IAndroidTarget.SOURCES))
+            jar,
+            sources
         )
     }
 
@@ -61,24 +80,28 @@ object AndroidDependencyResolver {
             null
         }
 
-    private fun isAndroidPluginCompatible(): Boolean {
+    private fun getAndroidPluginVersions(): List<String>? {
         val version = getClassOrNull("com.android.Version")?.let {
             try {
                 it.getField("ANDROID_GRADLE_PLUGIN_VERSION").get(null) as String
             } catch (e: Exception) {
-                return false
+                return null
             }
-        } ?: return false
-        val versions = version.split('.')
-        return versions[0].toInt() >= 3 && versions[1].toInt() >= 6
+        } ?: return null
+        return version.split('.')
+    }
+
+    private fun isAndroidPluginCompatible(versions: List<String>): Boolean {
+        return versions[0].toInt() >= 4 || versions[0].toInt() >= 3 && versions[1].toInt() >= 6
     }
 
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
-        if (!isAndroidPluginCompatible()) return emptyMap()
+        val androidPluginVersions = getAndroidPluginVersions() ?: return emptyMap()
+        if (!isAndroidPluginCompatible(androidPluginVersions)) return emptyMap()
 
         data class SourceSetConfigs(val implConfig: Configuration, val compileConfig: Configuration)
 
-        val androidSdkJar = getAndroidSdkJar(project) ?: return emptyMap()
+        val androidSdkJar = getAndroidSdkJar(project, androidPluginVersions) ?: return emptyMap()
         val sourceSet2Impl = HashMap<String, SourceSetConfigs>()
         val allImplConfigs = HashSet<Configuration>()
 

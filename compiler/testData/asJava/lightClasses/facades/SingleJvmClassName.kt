@@ -5,3 +5,5 @@
 fun foo() {
 
 }
+
+// FIR_COMPARISON

@@ -31,7 +31,7 @@ public class KotlinLintTestGenerated extends AbstractKotlinLintTest {
     }
 
     public void testAllFilesPresentInLint() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lint"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lint"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("apiCheck.kt")

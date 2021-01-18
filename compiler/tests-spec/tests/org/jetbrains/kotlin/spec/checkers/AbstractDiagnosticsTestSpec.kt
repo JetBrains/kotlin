@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.spec.checkers
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -18,11 +19,12 @@ import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.validators.DiagnosticTestTypeValidator
 import org.jetbrains.kotlin.spec.utils.validators.SpecTestValidationException
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
 import java.util.regex.Matcher
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest() {
     companion object {
         private val withoutDescriptorsTestGroups = listOf(
@@ -41,7 +43,7 @@ abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.Abstr
                 val helperContent = FileUtil.loadFile(File("$HELPERS_PATH/$filename"), true)
 
 
-                KotlinTestUtils.createFile(filename, helperContent, project)
+                KtTestUtil.createFile(filename, helperContent, project)
             }
         }
     }

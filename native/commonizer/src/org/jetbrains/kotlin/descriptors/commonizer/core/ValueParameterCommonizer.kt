@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isNull
 import org.jetbrains.kotlin.name.Name
 
-class ValueParameterCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirValueParameter, CirValueParameter>() {
+class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirValueParameter, CirValueParameter>() {
     private lateinit var name: Name
-    private val returnType = TypeCommonizer(cache)
+    private val returnType = TypeCommonizer(classifiers)
     private var varargElementType: CirType? = null
     private var isCrossinline = true
     private var isNoinline = true

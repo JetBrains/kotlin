@@ -24,7 +24,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
         delegate.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         delegate.processFunctionsByName(name) {
             updateReturnType(it.fir)
             processor(it)
@@ -47,8 +47,8 @@ class FirScopeWithFakeOverrideTypeCalculator(
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
         return delegate.processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { symbol, scope ->
             updateReturnType(symbol.fir)

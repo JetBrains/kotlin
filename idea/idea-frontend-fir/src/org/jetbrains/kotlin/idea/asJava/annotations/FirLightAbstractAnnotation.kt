@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.PsiImplUtil
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.*
 
 internal abstract class FirLightAbstractAnnotation(parent: PsiElement) :

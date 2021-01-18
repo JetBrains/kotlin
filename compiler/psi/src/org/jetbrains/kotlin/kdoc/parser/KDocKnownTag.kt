@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.kdoc.parser
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+
 enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Boolean) {
     AUTHOR(false, false),
     THROWS(true, false),
@@ -37,7 +39,7 @@ enum class KDocKnownTag(val isReferenceRequired: Boolean, val isSectionStart: Bo
                 tagName.subSequence(1, tagName.length)
             } else tagName
             try {
-                return valueOf(name.toString().toUpperCase())
+                return valueOf(name.toString().toUpperCaseAsciiOnly())
             } catch (ignored: IllegalArgumentException) {
             }
 

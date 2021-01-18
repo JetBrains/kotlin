@@ -1,0 +1,24 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+premain:
+    [javac] Compiling 1 source file to [Temp]
+      [jar] Building jar: [Temp]/premain.jar
+
+build:
+  [kotlinc] Compiling [[TestData]] => [[Temp]/fork.jar]
+  [kotlinc] -Xms64m
+  [kotlinc] -Xmx128m
+  [kotlinc] error: warnings found and -Werror specified
+  [kotlinc] [TestData]/test.kt:4:15: warning: this cast can never succeed
+  [kotlinc]     println(0 as String)
+  [kotlinc]               ^
+
+ERR:
+
+BUILD FAILED
+[TestData]/build.xml:18: Compile failed; see the compiler error output for details.
+
+Total time: [time]
+
+Return code: 1

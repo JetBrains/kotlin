@@ -14,5 +14,7 @@ private const val BUNDLE = "messages.KotlinParcelizeBundle"
 
 object KotlinParcelizeBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
-    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
+    fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        getMessage(key, *params)
 }

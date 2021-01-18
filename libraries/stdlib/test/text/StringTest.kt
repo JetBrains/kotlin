@@ -8,9 +8,9 @@ package test.text
 import kotlin.test.*
 import test.*
 import test.collections.behaviors.iteratorBehavior
-import test.collections.behaviors.setBehavior
 import test.collections.compare
 import kotlin.math.sign
+import kotlin.native.concurrent.SharedImmutable
 import kotlin.random.Random
 
 
@@ -18,6 +18,7 @@ fun createString(content: String): CharSequence = content
 fun createStringBuilder(content: String): CharSequence = StringBuilder((content as Any).toString()) // required for Rhino JS
 
 
+@SharedImmutable
 val charSequenceBuilders = listOf(::createString, ::createStringBuilder)
 
 fun withOneCharSequenceArg(f: ((String) -> CharSequence) -> Unit) {
@@ -288,18 +289,26 @@ class StringTest {
     }
 
     @Test fun capitalize() {
-        assertEquals("A", "A".capitalize())
-        assertEquals("A", "a".capitalize())
-        assertEquals("Abcd", "abcd".capitalize())
-        assertEquals("Abcd", "Abcd".capitalize())
+        fun testCapitalize(expected: String, string: String) {
+            assertEquals(expected, string.capitalize())
+            assertEquals(expected, string.replaceFirstChar { it.uppercase() })
+        }
+        testCapitalize("A", "A")
+        testCapitalize("A", "a")
+        testCapitalize("Abcd", "abcd")
+        testCapitalize("Abcd", "Abcd")
     }
 
     @Test fun decapitalize() {
-        assertEquals("a", "A".decapitalize())
-        assertEquals("a", "a".decapitalize())
-        assertEquals("abcd", "abcd".decapitalize())
-        assertEquals("abcd", "Abcd".decapitalize())
-        assertEquals("uRL", "URL".decapitalize())
+        fun testDecapitalize(expected: String, string: String) {
+            assertEquals(expected, string.decapitalize())
+            assertEquals(expected, string.replaceFirstChar { it.lowercase() })
+        }
+        testDecapitalize("a", "A")
+        testDecapitalize("a", "a")
+        testDecapitalize("abcd", "abcd")
+        testDecapitalize("abcd", "Abcd")
+        testDecapitalize("uRL", "URL")
     }
 
     @Test fun slice() {
@@ -896,6 +905,22 @@ class StringTest {
 
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
         assertEquals("-a-b-b-A-b-", input.replace("", "-", ignoreCase = true))
+
+        fun testIgnoreCase(chars: String) {
+            for ((i, c) in chars.withIndex()) {
+                val message = "Char: $c (${c.code})"
+                val expectOneReplaced = chars.replaceRange(i..i, "_")
+                val expectAllReplaced = "_".repeat(chars.length)
+                assertEquals(expectOneReplaced, chars.replace(c, '_'), message)
+                assertEquals(expectAllReplaced, chars.replace(c, '_', ignoreCase = true), "$message, ignoreCase")
+                assertEquals(expectOneReplaced, chars.replace(c.toString(), "_"), "$message, as string")
+                assertEquals(expectAllReplaced, chars.replace(c.toString(), "_", ignoreCase = true), "$message, as string, ignoreCase")
+            }
+        }
+
+        testIgnoreCase("üÜ")
+        testIgnoreCase("öÖ")
+        testIgnoreCase("äÄ")
     }
 
     @Test fun replaceFirst() {
@@ -1213,7 +1238,7 @@ class StringTest {
 
         assertEquals(listOf<Boolean>(), arg1("").map { it.isAsciiUpperCase() })
 
-        assertEquals(listOf(97, 98, 99), arg1("abc").map { it.toInt() })
+        assertEquals(listOf(97, 98, 99), arg1("abc").map { it.code })
     }
 
     @Test fun mapTo() = withOneCharSequenceArg { arg1 ->
@@ -1233,7 +1258,7 @@ class StringTest {
         assertEquals(arrayListOf<Boolean>(), result3)
 
         val result4 = arrayListOf<Int>()
-        val return4 = arg1("abc").mapTo(result4, { it.toInt() })
+        val return4 = arg1("abc").mapTo(result4, { it.code })
         assertEquals(result4, return4)
         assertEquals(arrayListOf(97, 98, 99), result4)
     }
@@ -1391,18 +1416,18 @@ class StringTest {
     @Test
     fun runningReduce() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            val expected = listOf(0, 1, 3, 6).take(size).map { it.toChar() }
-            val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
-            assertEquals(expected, source.runningReduce { acc, e -> acc + e.toInt() })
+            val expected = listOf(0, 1, 3, 6).take(size).map { Char(it) }
+            val source = arg1((Char(0) until Char(size)).joinToString(separator = ""))
+            assertEquals(expected, source.runningReduce { acc, e -> acc + e.code })
         }
     }
 
     @Test
     fun runningReduceIndexed() = withOneCharSequenceArg { arg1 ->
         for (size in 0 until 4) {
-            val expected = listOf(0, 1, 6, 27).take(size).map { it.toChar() }
-            val source = arg1((0.toChar() until size.toChar()).joinToString(separator = ""))
-            assertEquals(expected, source.runningReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() })
+            val expected = listOf(0, 1, 6, 27).take(size).map { Char(it) }
+            val source = arg1((Char(0) until Char(size)).joinToString(separator = ""))
+            assertEquals(expected, source.runningReduceIndexed { index, acc, e -> Char(index * (acc.code + e.code)) })
         }
     }
 
@@ -1432,7 +1457,7 @@ class StringTest {
         assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
 
         val data3 = "a1/b".toList()
-        val result3 = data3.joinToString() { it.toUpperCase().toString() }
+        val result3 = data3.joinToString() { it.uppercase() }
         assertEquals("A, 1, /, B", result3)
     }
 

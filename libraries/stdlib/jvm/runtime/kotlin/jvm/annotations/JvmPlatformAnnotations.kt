@@ -140,8 +140,19 @@ public actual annotation class JvmWildcard
  * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
  * in their signature are mangled.
  */
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmInline
+
+/**
+ * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ */
+@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.5")
+public actual annotation class JvmRecord

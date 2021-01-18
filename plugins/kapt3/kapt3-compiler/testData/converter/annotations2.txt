@@ -23,10 +23,10 @@ public final class AnnotationsTest {
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int $this$topLevelVal) {
-        return null;
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "top-level-fun-receiver")
+    java.lang.String $this$topLevelFun) {
     }
 
     @Anno(value = "top-level-val")
@@ -34,10 +34,10 @@ public final class AnnotationsTest {
     public static void getTopLevelVal$annotations(int p0) {
     }
 
-    @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "top-level-fun-receiver")
-    java.lang.String $this$topLevelFun) {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int $this$topLevelVal) {
+        return null;
     }
 }
 
@@ -86,18 +86,6 @@ public abstract class Test {
     }
 
     @org.jetbrains.annotations.NotNull()
-    @Anno(value = "abstract-method")
-    public abstract java.lang.String abstractMethod();
-
-    @org.jetbrains.annotations.NotNull()
-    public abstract java.lang.String getAbstractVal();
-
-    @Anno(value = "abstract-val")
-    @java.lang.Deprecated()
-    public static void getAbstractVal$annotations() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
     @Anno(value = "v-get")
     public final java.lang.String getV() {
         return null;
@@ -112,5 +100,17 @@ public abstract class Test {
     public final void setV(@org.jetbrains.annotations.NotNull()
     @Anno(value = "v-setparam")
     java.lang.String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    @Anno(value = "abstract-method")
+    public abstract java.lang.String abstractMethod();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String getAbstractVal();
+
+    @Anno(value = "abstract-val")
+    @java.lang.Deprecated()
+    public static void getAbstractVal$annotations() {
     }
 }

@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -318,14 +318,7 @@ class Fir2IrConverter(
 
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             val stubGenerator = irProviders.filterIsInstance<DeclarationStubGenerator>().first()
-            for (descriptor in symbolTable.wrappedTopLevelCallableDescriptors()) {
-                val parentClass = stubGenerator.generateOrGetFacadeClass(descriptor as WrappedDeclarationDescriptor<*>)
-                val owner = descriptor.owner
-                owner.parent = parentClass ?: continue
-                if (owner is IrProperty) {
-                    owner.backingField?.parent = parentClass
-                }
-            }
+            irModuleFragment.acceptVoid(ExternalPackageParentPatcher(stubGenerator))
 
             evaluateConstants(irModuleFragment)
 

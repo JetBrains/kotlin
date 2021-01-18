@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -36,13 +35,15 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal fun MethodNode.acceptWithStateMachine(
     irFunction: IrFunction,
     classCodegen: ClassCodegen,
     methodVisitor: MethodVisitor,
-    obtainContinuationClassBuilder: () -> ClassBuilder
+    varsCountByType: Map<Type, Int>,
+    obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
     val state = classCodegen.context.state
     val languageVersionSettings = state.languageVersionSettings
@@ -83,7 +84,8 @@ internal fun MethodNode.acceptWithStateMachine(
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
         },
-        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
+        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS),
+        initialVarsCountByType = varsCountByType,
     )
     accept(visitor)
 }
@@ -96,8 +98,10 @@ internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
     ) return null
     return parentAsClass.declarations.find {
-        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId &&
-                it.name.asString() + FOR_INLINE_SUFFIX == name.asString()
+        // The function may not be named `it.name.asString() + FOR_INLINE_SUFFIX` due to name mangling,
+        // e.g., for internal declarations. We check for a function with the same `attributeOwnerId` instead.
+        // This is copied in `AddContinuationLowering`.
+        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId
     } as IrSimpleFunction?
 }
 
@@ -146,10 +150,7 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC &&
+        origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -19,7 +19,7 @@ class KotlinSpecificDependenciesIT : BaseGradleIT() {
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0, androidHome = KotlinTestUtils.findAndroidSdk())
+        super.defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0, androidHome = KtTestUtil.findAndroidSdk())
 
     private fun Project.prepare() { // call this when reusing a project after a test, too, in order to remove any added dependencies
         setupWorkingDir()

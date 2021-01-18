@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.kotlinp
 
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
+import java.util.*
 
 private object SpecialCharacters {
     const val TYPE_ALIAS_MARKER = '^'
@@ -309,7 +310,7 @@ private fun printType(flags: Flags, output: (String) -> Unit): KmTypeVisitor =
             printType(flags) { argumentTypeString ->
                 arguments += buildString {
                     if (variance != KmVariance.INVARIANT) {
-                        append(variance.name.toLowerCase()).append(" ")
+                        append(variance.name.toLowerCase(Locale.US)).append(" ")
                     }
                     append(argumentTypeString)
                 }
@@ -399,7 +400,7 @@ private fun printTypeParameter(
                     append("@").append(renderAnnotation(annotation)).append(" ")
                 }
                 if (variance != KmVariance.INVARIANT) {
-                    append(variance.name.toLowerCase()).append(" ")
+                    append(variance.name.toLowerCase(Locale.US)).append(" ")
                 }
                 append("T#$id")
                 if (settings.isVerbose) {

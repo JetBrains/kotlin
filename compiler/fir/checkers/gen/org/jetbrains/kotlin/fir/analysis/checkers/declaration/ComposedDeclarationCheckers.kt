@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,8 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _basicDeclarationCheckers
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker>
         get() = _memberDeclarationCheckers
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = _propertyCheckers
     override val regularClassCheckers: Set<FirRegularClassChecker>
         get() = _regularClassCheckers
     override val constructorCheckers: Set<FirConstructorChecker>
@@ -32,6 +34,7 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
 
     private val _basicDeclarationCheckers: MutableSet<FirBasicDeclarationChecker> = mutableSetOf()
     private val _memberDeclarationCheckers: MutableSet<FirMemberDeclarationChecker> = mutableSetOf()
+    private val _propertyCheckers: MutableSet<FirPropertyChecker> = mutableSetOf()
     private val _regularClassCheckers: MutableSet<FirRegularClassChecker> = mutableSetOf()
     private val _constructorCheckers: MutableSet<FirConstructorChecker> = mutableSetOf()
     private val _fileCheckers: MutableSet<FirFileChecker> = mutableSetOf()
@@ -42,6 +45,7 @@ internal class ComposedDeclarationCheckers : DeclarationCheckers() {
     internal fun register(checkers: DeclarationCheckers) {
         _basicDeclarationCheckers += checkers.allBasicDeclarationCheckers
         _memberDeclarationCheckers += checkers.allMemberDeclarationCheckers
+        _propertyCheckers += checkers.allPropertyCheckers
         _regularClassCheckers += checkers.allRegularClassCheckers
         _constructorCheckers += checkers.allConstructorCheckers
         _fileCheckers += checkers.allFileCheckers

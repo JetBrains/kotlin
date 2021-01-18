@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.*
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //T can be either PsiElement, or LighterASTNode
@@ -116,7 +118,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         else
                             result.child(Name.identifier(firFunctionTarget.labelName!!))
                     }
-                CallableId(name, pathFqName)
+                @OptIn(LocalCallableIdConstructor::class) CallableId(name, pathFqName)
             }
             context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
             context.className.shortName() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
@@ -148,7 +150,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
     }
 
-    fun FirExpression.toReturn(baseSource: FirSourceElement? = source, labelName: String? = null): FirReturnExpression {
+    fun FirExpression.toReturn(
+        baseSource: FirSourceElement? = source,
+        labelName: String? = null,
+        fromKtReturnExpression: Boolean = false
+    ): FirReturnExpression {
         return buildReturnExpression {
             fun FirFunctionTarget.bindToErrorFunction(message: String, kind: DiagnosticKind) {
                 bind(
@@ -162,7 +168,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 )
             }
 
-            source = baseSource?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
+            source =
+                if (fromKtReturnExpression) baseSource?.realElement()
+                else baseSource?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
             result = this@toReturn
             if (labelName == null) {
                 target = context.firFunctionTargets.lastOrNull { !it.isLambda } ?: FirFunctionTarget(labelName, isLambda = false).apply {
@@ -278,17 +286,17 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     convertedText !is Long -> return reportIncorrectConstant(DiagnosticKind.IllegalConstExpression)
 
                     hasUnsignedLongSuffix(text) -> {
-                        FirConstKind.UnsignedLong
+                        ConstantValueKind.UnsignedLong
                     }
                     hasLongSuffix(text) -> {
-                        FirConstKind.Long
+                        ConstantValueKind.Long
                     }
                     hasUnsignedSuffix(text) -> {
-                        FirConstKind.UnsignedIntegerLiteral
+                        ConstantValueKind.UnsignedIntegerLiteral
                     }
 
                     else -> {
-                        FirConstKind.IntegerLiteral
+                        ConstantValueKind.IntegerLiteral
                     }
                 }
 
@@ -303,14 +311,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 if (convertedText is Float) {
                     buildConstOrErrorExpression(
                         sourceElement,
-                        FirConstKind.Float,
+                        ConstantValueKind.Float,
                         convertedText,
                         ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.IllegalConstExpression)
                     )
                 } else {
                     buildConstOrErrorExpression(
                         sourceElement,
-                        FirConstKind.Double,
+                        ConstantValueKind.Double,
                         convertedText as? Double,
                         ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.IllegalConstExpression)
                     )
@@ -318,20 +326,20 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             CHARACTER_CONSTANT ->
                 buildConstOrErrorExpression(
                     sourceElement,
-                    FirConstKind.Char,
+                    ConstantValueKind.Char,
                     text.parseCharacter(),
                     ConeSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.IllegalConstExpression)
                 )
             BOOLEAN_CONSTANT ->
                 buildConstExpression(
                     sourceElement,
-                    FirConstKind.Boolean,
+                    ConstantValueKind.Boolean,
                     convertedText as Boolean
                 )
             NULL ->
                 buildConstExpression(
                     sourceElement,
-                    FirConstKind.Null,
+                    ConstantValueKind.Null,
                     null
                 )
             else ->
@@ -354,11 +362,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
-                            buildConstExpression(entry.toFirSourceElement(), FirConstKind.String, entry.asText)
+                            buildConstExpression(entry.toFirSourceElement(), ConstantValueKind.String, entry.asText)
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.unescapedValue)
-                            buildConstExpression(entry.toFirSourceElement(), FirConstKind.String, entry.unescapedValue)
+                            buildConstExpression(entry.toFirSourceElement(), ConstantValueKind.String, entry.unescapedValue)
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
@@ -385,7 +393,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
             source = base?.toFirSourceElement()
             // Fast-pass if there is no non-const string expressions
-            if (!hasExpressions) return buildConstExpression(source, FirConstKind.String, sb.toString())
+            if (!hasExpressions) return buildConstExpression(source, ConstantValueKind.String, sb.toString())
         }
     }
 
@@ -865,8 +873,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             return buildAssignmentOperatorStatement {
                 source = baseSource
                 this.operation = operation
-                // TODO: take good psi
-                leftArgument = this@generateAssignment?.convert() ?: buildErrorExpression {
+                leftArgument = withDefaultSourceElementKind(FirFakeSourceElementKind.DesugaredCompoundAssignment) {
+                    this@generateAssignment?.convert()
+                } ?: buildErrorExpression {
                     source = null
                     diagnostic = ConeSimpleDiagnostic(
                         "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionRequired

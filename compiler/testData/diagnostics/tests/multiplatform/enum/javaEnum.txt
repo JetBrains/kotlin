@@ -31,7 +31,6 @@ public final expect enum class _TimeUnit : kotlin.Enum<_TimeUnit> {
     public final /*synthesized*/ fun values(): kotlin.Array<_TimeUnit>
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -57,3 +56,4 @@ public final enum class FooImpl : kotlin.Enum<FooImpl!> {
 }
 public actual typealias Foo = FooImpl
 public actual typealias _TimeUnit = java.util.concurrent.TimeUnit
+

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
@@ -30,7 +31,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(
         if (irFunction.getEvaluateIntrinsicValue()?.isEmpty() == true) return null // this method will handle IntrinsicEvaluator
         // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
         val propertyName = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asString()
-        val propertyCall = listOfNotNull(propertyName, "get${propertyName?.capitalize()}")
+        val propertyCall = listOfNotNull(propertyName, "get${propertyName?.capitalizeAsciiOnly()}")
             .firstOrNull { receiverClass.methods.any { method -> method.name == it } }
 
         val intrinsicName = getJavaOriginalName(irFunction)

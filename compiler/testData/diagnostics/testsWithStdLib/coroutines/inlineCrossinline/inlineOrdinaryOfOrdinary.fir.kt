@@ -1,9 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// COMMON_COROUTINES_TEST
 // SKIP_TXT
 // WITH_COROUTINES
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 // Function is NOT suspend
@@ -22,7 +21,7 @@ inline fun test(c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE!>startCoroutine<!>(EmptyContinuation)
+    c.startCoroutine(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {

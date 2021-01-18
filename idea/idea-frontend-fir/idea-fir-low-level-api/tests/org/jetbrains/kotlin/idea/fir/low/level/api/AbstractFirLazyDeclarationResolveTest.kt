@@ -10,7 +10,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -34,8 +34,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : KotlinLightCodeInsightFix
         val declarationToResolve = lazyDeclarations.firstOrNull { it.name?.toLowerCase() == "resolveme" }
             ?: error("declaration with name `resolveMe` was not found")
         resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            val rendered = LowLevelFirApiFacade.withFirDeclaration(
-                declarationToResolve,
+            val rendered = declarationToResolve.withFirDeclaration(
                 firModuleResolveState,
                 FirResolvePhase.BODY_RESOLVE
             ) @Suppress("UNUSED_ANONYMOUS_PARAMETER") { firDeclaration ->

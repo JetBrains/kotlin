@@ -31,6 +31,5 @@ object B {
 fun B.test() {
   val <destruct>: A = A
   val x: Int = (<this>, <destruct>).component1()
-  val _: Int = (<this>, <destruct>).component2()
   val z: Int = (<this>, <destruct>).component3()
 }

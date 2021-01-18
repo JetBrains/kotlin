@@ -263,7 +263,7 @@ fun case_16() {
 // TESTCASE NUMBER: 17
 val case_17 = if (nullableIntProperty == null == true == false) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>nullableIntProperty<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>nullableIntProperty<!>.java
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>nullableIntProperty<!>.<!UNRESOLVED_REFERENCE!>java<!>
 }
 
 //TESTCASE NUMBER: 18

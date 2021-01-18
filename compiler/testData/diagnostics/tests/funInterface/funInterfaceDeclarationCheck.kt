@@ -101,3 +101,4 @@ interface BaseWithDefaultValue {
 }
 
 <!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>fun<!> interface DeriveDefault : BaseWithDefaultValue
+

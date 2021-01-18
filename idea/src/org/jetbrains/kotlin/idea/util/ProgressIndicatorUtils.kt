@@ -23,12 +23,15 @@ import java.util.concurrent.TimeoutException
  * Copied from [com.intellij.openapi.progress.util.ProgressIndicatorUtils]
  */
 object ProgressIndicatorUtils {
+    @Suppress("ObjectLiteralToLambda") // Workaround for KT-43812.
     @JvmStatic
     fun <T> underModalProgress(
         project: Project,
         @Nls progressTitle: String,
         computable: () -> T
-    ): T = com.intellij.openapi.actionSystem.ex.ActionUtil.underModalProgress(project, progressTitle, computable)
+    ): T = com.intellij.openapi.actionSystem.ex.ActionUtil.underModalProgress(project, progressTitle, object : Computable<T> {
+        override fun compute(): T = computable()
+    })
 
     fun <T> runUnderDisposeAwareIndicator(
         parent: Disposable,

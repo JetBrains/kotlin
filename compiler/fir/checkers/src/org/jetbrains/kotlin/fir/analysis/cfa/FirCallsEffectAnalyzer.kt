@@ -80,7 +80,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        val invocationData = graph.collectPathAwareDataForNode(
+        val invocationData = graph.collectDataForNode(
             TraverseDirection.Forward,
             PathAwareLambdaInvocationInfo.EMPTY,
             InvocationDataCollector(functionalTypeEffects.keys.filterTo(mutableSetOf()) { it !in leakedSymbols })
@@ -89,9 +89,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         for ((symbol, effectDeclaration) in functionalTypeEffects) {
             graph.exitNode.previousCfgNodes.forEach { node ->
                 val requiredRange = effectDeclaration.kind
-                val info = invocationData.getValue(node)
-                for (label in info.keys) {
-                    if (investigate(info.getValue(label), symbol, requiredRange, function, reporter)) {
+                val pathAwareInfo = invocationData.getValue(node)
+                for (info in pathAwareInfo.values) {
+                    if (investigate(info, symbol, requiredRange, function, reporter)) {
                         // To avoid duplicate reports, stop investigating remaining paths once reported.
                         break
                     }

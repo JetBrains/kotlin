@@ -12,7 +12,6 @@ package p1 {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -26,7 +25,6 @@ package p2 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
-
 
 // -- Module: <m3> --
 package
@@ -42,9 +40,9 @@ package p3 {
     }
 }
 
-
 // -- Module: <m4> --
 package
 
 public fun test(/*0*/ a: [ERROR : A]): kotlin.Unit
 public fun test(/*0*/ a: p2.A): kotlin.Unit
+

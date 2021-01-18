@@ -57,7 +57,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): CompositeTransformResult<FirDeclaration> {
         transformer.onBeforeDeclarationContentResolve(declaration)
         return context.withContainer(declaration) {
-            declaration.replaceResolvePhase(transformerPhase)
+            transformer.replaceDeclarationResolvePhaseIfNeeded(declaration, transformerPhase)
             transformer.transformDeclarationContent(declaration, data)
         }
     }
@@ -84,7 +84,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (declaration.typeParameters.isEmpty()) return null
 
         for (typeParameter in declaration.typeParameters) {
-            (typeParameter as? FirTypeParameter)?.replaceResolvePhase(FirResolvePhase.STATUS)
+            (typeParameter as? FirTypeParameter)?.let { transformer.replaceDeclarationResolvePhaseIfNeeded(it, FirResolvePhase.STATUS) }
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
 
@@ -96,6 +96,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return context.withTowerDataCleanup {
             scope?.let { context.addNonLocalTowerDataElement(it.asTowerDataElement(isLocal = false)) }
             l()
+        }
+    }
+
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+            return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
         }
     }
 
@@ -115,7 +121,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return@withTypeParametersOf property.compose()
             if (property.resolvePhase == transformerPhase) return@withTypeParametersOf property.compose()
             if (property.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
-                property.replaceResolvePhase(transformerPhase)
+                transformer.replaceDeclarationResolvePhaseIfNeeded(property, transformerPhase)
                 return@withTypeParametersOf property.compose()
             }
             dataFlowAnalyzer.enterProperty(property)
@@ -142,7 +148,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             }
                         }
                     }
-                    property.replaceResolvePhase(transformerPhase)
+                    transformer.replaceDeclarationResolvePhaseIfNeeded(property, transformerPhase)
                     dataFlowAnalyzer.exitProperty(property)?.let {
                         property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
                     }
@@ -267,7 +273,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             variable.transformAccessors()
         }
         context.storeVariable(variable)
-        variable.replaceResolvePhase(transformerPhase)
+        transformer.replaceDeclarationResolvePhaseIfNeeded(variable, transformerPhase)
         dataFlowAnalyzer.exitLocalVariableDeclaration(variable)
         return variable.compose()
     }
@@ -348,7 +354,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return context.withTowerDataCleanup {
             if (!regularClass.isInner && context.containerIfAny is FirRegularClass) {
                 context.replaceTowerDataContext(
-                    context.getTowerDataContextForStaticNestedClassesUnsafe()
+                    if (regularClass.isCompanion) {
+                        context.getTowerDataContextForCompanionUnsafe()
+                    } else {
+                        context.getTowerDataContextForStaticNestedClassesUnsafe()
+                    }
                 )
             }
 
@@ -449,7 +459,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): CompositeTransformResult<FirSimpleFunction> {
         if (simpleFunction.resolvePhase == transformerPhase) return simpleFunction.compose()
         if (simpleFunction.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
-            simpleFunction.replaceResolvePhase(transformerPhase)
+            transformer.replaceDeclarationResolvePhaseIfNeeded(simpleFunction, transformerPhase)
             return simpleFunction.compose()
         }
         val returnTypeRef = simpleFunction.returnTypeRef
@@ -546,7 +556,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirConstructor> {
         return context.withContainer(constructor) {
-            constructor.replaceResolvePhase(transformerPhase)
+            transformer.replaceDeclarationResolvePhaseIfNeeded(constructor, transformerPhase)
             dataFlowAnalyzer.enterFunction(constructor)
 
             constructor.transformTypeParameters(transformer, data)
@@ -640,7 +650,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         context.storeVariable(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-            valueParameter.replaceResolvePhase(transformerPhase)
+            transformer.replaceDeclarationResolvePhaseIfNeeded(valueParameter, transformerPhase)
             return valueParameter.compose()
         }
 
@@ -692,6 +702,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
                                 val name = Name.identifier("it")
                                 val itParam = buildValueParameter {
+                                    source = lambda.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
                                     session = this@FirDeclarationsResolveTransformer.session
                                     origin = FirDeclarationOrigin.Source
                                     returnTypeRef = buildResolvedTypeRef { type = singleParameterType }
@@ -815,17 +826,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): T = context.withTowerDataCleanup {
         val towerElementsForClass = components.collectTowerDataElementsForClass(owner, type)
 
-        val staticsAndCompanion =
-            context.towerDataContext
-                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .run {
-                    if (towerElementsForClass.companionReceiver != null)
-                        addReceiver(null, towerElementsForClass.companionReceiver)
-                    else
-                        this
-                }
-                .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-                .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+        val base = context.towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+
+        val companionReceiver = towerElementsForClass.companionReceiver
+        val staticsAndCompanion = if (companionReceiver == null) statics else base
+            .addReceiver(null, companionReceiver)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
         val typeParameterScope = (owner as? FirRegularClass)?.let(this::createTypeParameterScope)
 
@@ -855,6 +865,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         val newContexts = FirTowerDataContextsForClassParts(
             newTowerDataContextForStaticNestedClasses,
+            statics,
             scopeForConstructorHeader,
             primaryConstructorPureParametersScope,
             primaryConstructorAllParametersScope

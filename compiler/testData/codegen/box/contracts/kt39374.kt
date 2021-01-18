@@ -1,11 +1,10 @@
+// IGNORE_FIR_DIAGNOSTICS
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 import kotlin.contracts.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 @ExperimentalContracts

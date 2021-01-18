@@ -28,15 +28,15 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -355,7 +355,7 @@ internal class InsertImplicitCasts(
             valueType.hasEnhancedNullability() && !expectedType.acceptsNullValues() ->
                 implicitNonNull(valueType, expectedType)
 
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.toNonIrBased(), expectedType.toNonIrBased().makeNullable()) ->
                 this
 
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
@@ -484,5 +484,24 @@ internal class InsertImplicitCasts(
                 irBuiltIns.unitType,
                 this
             )
+    }
+
+    // KotlinType subtype checking fails when one of the types uses IR-based descriptors, the other one regular descriptors.
+    // This is a kludge to remove IR-based descriptors where possible.
+    private fun KotlinType.toNonIrBased(): KotlinType {
+        if (this !is SimpleType) return this
+        val newDescriptor = constructor.declarationDescriptor?.let {
+            if (it is IrBasedDeclarationDescriptor<*> && it.owner.symbol.hasDescriptor)
+                it.owner.symbol.descriptor as ClassifierDescriptor
+            else
+                it
+        } ?: return this
+        val newArguments = arguments.mapIndexed { index, it ->
+            if (it.isStarProjection)
+                StarProjectionImpl((newDescriptor as ClassDescriptor).typeConstructor.parameters[index])
+            else
+                TypeProjectionImpl(it.projectionKind, it.type.toNonIrBased())
+        }
+        return newDescriptor.defaultType.replace(newArguments = newArguments).makeNullableAsSpecified(isMarkedNullable)
     }
 }

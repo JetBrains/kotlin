@@ -3,8 +3,11 @@ fun foo(): Int = 10
 // SYMBOLS:
 /*
 KtFirFunctionSymbol:
+  annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: foo
+  dispatchType: null
   isExtension: false
   isExternal: false
   isInline: false
@@ -16,7 +19,6 @@ KtFirFunctionSymbol:
   origin: SOURCE
   receiverType: null
   symbolKind: TOP_LEVEL
-  type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC

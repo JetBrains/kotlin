@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsSyntheticScope
@@ -52,7 +52,11 @@ class JavaSyntheticScopes(
             languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
                     languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 
-        val javaSyntheticPropertiesScope = JavaSyntheticPropertiesScope(storageManager, lookupTracker)
+        val javaSyntheticPropertiesScope =
+            JavaSyntheticPropertiesScope(
+                storageManager, lookupTracker,
+                supportJavaRecords = languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport)
+            )
         val scopesFromExtensions = SyntheticScopeProviderExtension
             .getInstances(project)
             .flatMap { it.getScopes(moduleDescriptor, javaSyntheticPropertiesScope) }

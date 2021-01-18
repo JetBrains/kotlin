@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
+import org.jetbrains.kotlin.idea.invalidateCaches
 import org.jetbrains.kotlin.idea.shouldBeRethrown
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
 
@@ -17,6 +19,11 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
+    override fun tearDown() {
+        project.invalidateCaches(myFixture.file as? KtFile)
+        super.tearDown()
+    }
 
     override fun doTest(path: String) {
         assert(path.endsWith(".kt")) { path }

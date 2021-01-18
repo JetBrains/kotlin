@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptorWithContainerSource
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -22,7 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
@@ -46,23 +42,19 @@ interface ReferenceSymbolTable {
 
     fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol
 
-    fun referenceClassFromLinker(descriptor: ClassDescriptor, sig: IdSignature): IrClassSymbol
-    fun referenceConstructorFromLinker(descriptor: ClassConstructorDescriptor, sig: IdSignature): IrConstructorSymbol
-    fun referenceEnumEntryFromLinker(descriptor: ClassDescriptor, sig: IdSignature): IrEnumEntrySymbol
-    fun referenceFieldFromLinker(descriptor: PropertyDescriptor, sig: IdSignature): IrFieldSymbol
-    fun referencePropertyFromLinker(descriptor: PropertyDescriptor, sig: IdSignature): IrPropertySymbol
-    fun referenceSimpleFunctionFromLinker(descriptor: FunctionDescriptor, sig: IdSignature): IrSimpleFunctionSymbol
-    fun referenceTypeParameterFromLinker(classifier: TypeParameterDescriptor, sig: IdSignature): IrTypeParameterSymbol
-    fun referenceTypeAliasFromLinker(descriptor: TypeAliasDescriptor, sig: IdSignature): IrTypeAliasSymbol
+    fun referenceClassFromLinker(sig: IdSignature): IrClassSymbol
+    fun referenceConstructorFromLinker(sig: IdSignature): IrConstructorSymbol
+    fun referenceEnumEntryFromLinker(sig: IdSignature): IrEnumEntrySymbol
+    fun referenceFieldFromLinker(sig: IdSignature): IrFieldSymbol
+    fun referencePropertyFromLinker(sig: IdSignature): IrPropertySymbol
+    fun referenceSimpleFunctionFromLinker(sig: IdSignature): IrSimpleFunctionSymbol
+    fun referenceTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol
+    fun referenceTypeAliasFromLinker(sig: IdSignature): IrTypeAliasSymbol
 
-    @ObsoleteDescriptorBasedAPI
-    fun enterScope(owner: DeclarationDescriptor)
-
+    fun enterScope(owner: IrSymbol)
     fun enterScope(owner: IrDeclaration)
 
-    @ObsoleteDescriptorBasedAPI
-    fun leaveScope(owner: DeclarationDescriptor)
-
+    fun leaveScope(owner: IrSymbol)
     fun leaveScope(owner: IrDeclaration)
 }
 
@@ -79,7 +71,7 @@ class SymbolTable(
         val unboundSymbols = linkedSetOf<S>()
 
         abstract fun get(d: D): S?
-        abstract fun set(d: D, s: S)
+        abstract fun set(s: S)
         abstract fun get(sig: IdSignature): S?
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
@@ -91,7 +83,7 @@ class SymbolTable(
             val existing = get(d0)
             val symbol = if (existing == null) {
                 val new = createSymbol()
-                set(d0, new)
+                set(new)
                 new
             } else {
                 unboundSymbols.remove(existing)
@@ -106,11 +98,12 @@ class SymbolTable(
             val symbol = if (existing == null) {
                 createSymbol()
             } else {
-                throw AssertionError("Symbol for $sig already exists")
+                unboundSymbols.remove(existing)
+                existing
             }
             val result = createOwner(symbol)
             // TODO: try to get rid of this
-            set(symbol.descriptor, symbol)
+            set(symbol)
             return result
         }
 
@@ -123,7 +116,7 @@ class SymbolTable(
             val existing = get(d0)
             val symbol = if (existing == null) {
                 val new = createSymbol()
-                set(d0, new)
+                set(new)
                 new
             } else {
                 if (!existing.isBound) unboundSymbols.remove(existing)
@@ -132,16 +125,16 @@ class SymbolTable(
             return if (symbol.isBound) symbol.owner else createOwner(symbol)
         }
 
-        inline fun declare(sig: IdSignature, d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
+        inline fun declare(sig: IdSignature, d: D?, createSymbol: () -> S, createOwner: (S) -> B): B {
             @Suppress("UNCHECKED_CAST")
-            val d0 = d.original as D
+            val d0 = d?.original as D
             assert(d0 === d) {
                 "Non-original descriptor in declaration: $d\n\tExpected: $d0"
             }
             val existing = get(sig)
             val symbol = if (existing == null) {
                 val new = createSymbol()
-                set(d0, new)
+                set(new)
                 new
             } else {
                 unboundSymbols.remove(existing)
@@ -162,7 +155,7 @@ class SymbolTable(
                 assert(unboundSymbols.add(new)) {
                     "Symbol for $new was already referenced"
                 }
-                set(d0, new)
+                set(new)
                 return new
             }
             return s
@@ -175,7 +168,7 @@ class SymbolTable(
                 assert(unboundSymbols.add(new)) {
                     "Symbol for ${new.signature} was already referenced"
                 }
-                set(new.descriptor, new)
+                set(new)
                 new
             }
         }
@@ -189,29 +182,20 @@ class SymbolTable(
         protected open fun signature(descriptor: D): IdSignature? = signaturer.composeSignature(descriptor)
 
         override fun get(d: D): S? {
-            return if (d !is WrappedDeclarationDescriptor<*>) {
-                val sig = signature(d)
-                if (sig != null) {
-                    idSigToSymbol[sig]
-                } else {
-                    descriptorToSymbol[d]
-                }
+            val sig = signature(d)
+            return if (sig != null) {
+                idSigToSymbol[sig]
             } else {
-                if (d.isBound()) {
-                    val result = (d.owner as? IrSymbolDeclaration<*>)?.symbol ?: descriptorToSymbol[d]
-                    @Suppress("UNCHECKED_CAST")
-                    result as S?
-                } else {
-                    descriptorToSymbol[d]
-                }
+                descriptorToSymbol[d]
             }
         }
 
-        override fun set(d: D, s: S) {
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        override fun set(s: S) {
             s.signature?.let {
                 idSigToSymbol[it] = s
-            } ?: run {
-                descriptorToSymbol[d] = s
+            } ?: if (s.hasDescriptor) {
+                descriptorToSymbol[s.descriptor] = s
             }
         }
 
@@ -228,7 +212,7 @@ class SymbolTable(
 
     private inner class ScopedSymbolTable<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>>
         : SymbolTableBase<D, B, S>() {
-        inner class Scope(val owner: DeclarationDescriptor, val parent: Scope?) {
+        inner class Scope(val owner: IrSymbol, val parent: Scope?) {
             private val descriptorToSymbol = linkedMapOf<D, S>()
             private val idSigToSymbol = linkedMapOf<IdSignature, S>()
 
@@ -241,13 +225,9 @@ class SymbolTable(
             }
 
             operator fun get(d: D): S? {
-                return if (d !is WrappedDeclarationDescriptor<*>) {
-                    val sig = signaturer.composeSignature(d)
-                    if (sig != null) {
-                        getByIdSignature(sig)
-                    } else {
-                        getByDescriptor(d)
-                    }
+                val sig = signaturer.composeSignature(d)
+                return if (sig != null) {
+                    getByIdSignature(sig)
                 } else {
                     getByDescriptor(d)
                 }
@@ -255,12 +235,14 @@ class SymbolTable(
 
             fun getLocal(d: D) = descriptorToSymbol[d]
 
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
             operator fun set(d: D, s: S) {
                 s.signature?.let {
                     require(d is TypeParameterDescriptor)
                     idSigToSymbol[it] = s
                 } ?: run {
-                    descriptorToSymbol[d] = s
+                    assert(s.hasDescriptor)
+                    descriptorToSymbol[s.descriptor] = s
                 }
             }
 
@@ -286,9 +268,10 @@ class SymbolTable(
             return scope[d]
         }
 
-        override fun set(d: D, s: S) {
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        override fun set(s: S) {
             val scope = currentScope ?: throw AssertionError("No active scope")
-            scope[d] = s
+            scope[s.descriptor] = s
         }
 
         override fun get(sig: IdSignature): S? {
@@ -310,13 +293,11 @@ class SymbolTable(
             scope[descriptor] = symbol
         }
 
-        @ObsoleteDescriptorBasedAPI
-        fun enterScope(owner: DeclarationDescriptor) {
+        fun enterScope(owner: IrSymbol) {
             currentScope = Scope(owner, currentScope)
         }
 
-        @ObsoleteDescriptorBasedAPI
-        fun leaveScope(owner: DeclarationDescriptor) {
+        fun leaveScope(owner: IrSymbol) {
             currentScope?.owner.let {
                 assert(it == owner) { "Unexpected leaveScope: owner=$owner, currentScope.owner=$it" }
             }
@@ -324,6 +305,7 @@ class SymbolTable(
             currentScope = currentScope?.parent
 
             if (currentScope != null && unboundSymbols.isNotEmpty()) {
+                @OptIn(ObsoleteDescriptorBasedAPI::class)
                 throw AssertionError("Local scope contains unbound symbols: ${unboundSymbols.joinToString { it.descriptor.toString() }}")
             }
         }
@@ -406,7 +388,7 @@ class SymbolTable(
     }
 
     private fun createClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
-        return signaturer.composeSignature(descriptor)?.let { IrClassPublicSymbolImpl(descriptor, it) } ?: IrClassSymbolImpl(descriptor)
+        return signaturer.composeSignature(descriptor)?.let { IrClassPublicSymbolImpl(it, descriptor) } ?: IrClassSymbolImpl(descriptor)
     }
 
     fun declareClass(
@@ -439,7 +421,7 @@ class SymbolTable(
     fun declareClassFromLinker(descriptor: ClassDescriptor, sig: IdSignature, factory: (IrClassSymbol) -> IrClass): IrClass {
         return classSymbolTable.run {
             if (sig.isPublic) {
-                declare(sig, descriptor, { IrClassPublicSymbolImpl(descriptor, sig) }, factory)
+                declare(sig, descriptor, { IrClassPublicSymbolImpl(sig, descriptor) }, factory)
             } else {
                 declare(descriptor, { IrClassSymbolImpl(descriptor) }, factory)
             }
@@ -452,16 +434,16 @@ class SymbolTable(
     fun referenceClassIfAny(sig: IdSignature): IrClassSymbol? =
         classSymbolTable.get(sig)
 
-    override fun referenceClassFromLinker(descriptor: ClassDescriptor, sig: IdSignature): IrClassSymbol =
+    override fun referenceClassFromLinker(sig: IdSignature): IrClassSymbol =
         classSymbolTable.run {
-            if (sig.isPublic) referenced(sig) { IrClassPublicSymbolImpl(descriptor, sig) }
-            else referenced(descriptor) { IrClassSymbolImpl(descriptor) }
+            if (sig.isPublic) referenced(sig) { IrClassPublicSymbolImpl(sig) }
+            else IrClassSymbolImpl()
         }
 
     val unboundClasses: Set<IrClassSymbol> get() = classSymbolTable.unboundSymbols
 
     private fun createConstructorSymbol(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
-        return signaturer.composeSignature(descriptor)?.let { IrConstructorPublicSymbolImpl(descriptor, it) } ?: IrConstructorSymbolImpl(
+        return signaturer.composeSignature(descriptor)?.let { IrConstructorPublicSymbolImpl(it, descriptor) } ?: IrConstructorSymbolImpl(
             descriptor
         )
     }
@@ -508,23 +490,23 @@ class SymbolTable(
     ): IrConstructor {
         return constructorSymbolTable.run {
             if (sig.isPublic) {
-                declare(sig, descriptor, { IrConstructorPublicSymbolImpl(descriptor, sig) }, constructorFactory)
+                declare(sig, descriptor, { IrConstructorPublicSymbolImpl(sig, descriptor) }, constructorFactory)
             } else {
                 declare(descriptor, { IrConstructorSymbolImpl(descriptor) }, constructorFactory)
             }
         }
     }
 
-    override fun referenceConstructorFromLinker(descriptor: ClassConstructorDescriptor, sig: IdSignature): IrConstructorSymbol =
+    override fun referenceConstructorFromLinker(sig: IdSignature): IrConstructorSymbol =
         constructorSymbolTable.run {
-            if (sig.isPublic) referenced(sig) { IrConstructorPublicSymbolImpl(descriptor, sig) }
-            else referenced(descriptor) { IrConstructorSymbolImpl(descriptor) }
+            if (sig.isPublic) referenced(sig) { IrConstructorPublicSymbolImpl(sig) }
+            else IrConstructorSymbolImpl()
         }
 
     val unboundConstructors: Set<IrConstructorSymbol> get() = constructorSymbolTable.unboundSymbols
 
     private fun createEnumEntrySymbol(descriptor: ClassDescriptor): IrEnumEntrySymbol {
-        return signaturer.composeEnumEntrySignature(descriptor)?.let { IrEnumEntryPublicSymbolImpl(descriptor, it) }
+        return signaturer.composeEnumEntrySignature(descriptor)?.let { IrEnumEntryPublicSymbolImpl(it, descriptor) }
             ?: IrEnumEntrySymbolImpl(descriptor)
     }
 
@@ -557,7 +539,7 @@ class SymbolTable(
     ): IrEnumEntry {
         return enumEntrySymbolTable.run {
             if (sig.isPublic) {
-                declare(sig, descriptor, { IrEnumEntryPublicSymbolImpl(descriptor, sig) }, factory)
+                declare(sig, descriptor, { IrEnumEntryPublicSymbolImpl(sig, descriptor) }, factory)
             } else {
                 declare(descriptor, { IrEnumEntrySymbolImpl(descriptor) }, factory)
             }
@@ -567,10 +549,10 @@ class SymbolTable(
     override fun referenceEnumEntry(descriptor: ClassDescriptor) =
         enumEntrySymbolTable.referenced(descriptor) { createEnumEntrySymbol(descriptor) }
 
-    override fun referenceEnumEntryFromLinker(descriptor: ClassDescriptor, sig: IdSignature) =
+    override fun referenceEnumEntryFromLinker(sig: IdSignature) =
         enumEntrySymbolTable.run {
-            if (sig.isPublic) referenced(sig) { IrEnumEntryPublicSymbolImpl(descriptor, sig) } else
-                referenced(descriptor) { IrEnumEntrySymbolImpl(descriptor) }
+            if (sig.isPublic) referenced(sig) { IrEnumEntryPublicSymbolImpl(sig) }
+            else IrEnumEntrySymbolImpl()
         }
 
     val unboundEnumEntries: Set<IrEnumEntrySymbol> get() = enumEntrySymbolTable.unboundSymbols
@@ -615,6 +597,18 @@ class SymbolTable(
             initializer = irInitializer
         }
 
+    fun declareField(
+        sig: IdSignature,
+        symbolFactory: () -> IrFieldSymbol,
+        propertyFactory: (IrFieldSymbol) -> IrField
+    ): IrField {
+        return fieldSymbolTable.declare(
+            sig,
+            symbolFactory,
+            propertyFactory
+        )
+    }
+
     fun declareFieldFromLinker(descriptor: PropertyDescriptor, sig: IdSignature, factory: (IrFieldSymbol) -> IrField): IrField {
         return fieldSymbolTable.run {
             require(sig.isLocal)
@@ -625,10 +619,10 @@ class SymbolTable(
     override fun referenceField(descriptor: PropertyDescriptor) =
         fieldSymbolTable.referenced(descriptor) { createFieldSymbol(descriptor) }
 
-    override fun referenceFieldFromLinker(descriptor: PropertyDescriptor, sig: IdSignature) =
+    override fun referenceFieldFromLinker(sig: IdSignature) =
         fieldSymbolTable.run {
             require(sig.isLocal)
-            referenced(descriptor) { IrFieldSymbolImpl(descriptor) }
+            IrFieldSymbolImpl()
         }
 
     val unboundFields: Set<IrFieldSymbol> get() = fieldSymbolTable.unboundSymbols
@@ -641,7 +635,7 @@ class SymbolTable(
         propertyTable.getOrPut(descriptor, generate)
 
     private fun createPropertySymbol(descriptor: PropertyDescriptor): IrPropertySymbol {
-        return signaturer.composeSignature(descriptor)?.let { IrPropertyPublicSymbolImpl(descriptor, it) } ?: IrPropertySymbolImpl(
+        return signaturer.composeSignature(descriptor)?.let { IrPropertyPublicSymbolImpl(it, descriptor) } ?: IrPropertySymbolImpl(
             descriptor
         )
 
@@ -694,7 +688,7 @@ class SymbolTable(
     fun declarePropertyFromLinker(descriptor: PropertyDescriptor, sig: IdSignature, factory: (IrPropertySymbol) -> IrProperty): IrProperty {
         return propertySymbolTable.run {
             if (sig.isPublic) {
-                declare(sig, descriptor, { IrPropertyPublicSymbolImpl(descriptor, sig) }, factory)
+                declare(sig, descriptor, { IrPropertyPublicSymbolImpl(sig, descriptor) }, factory)
             } else {
                 declare(descriptor, { IrPropertySymbolImpl(descriptor) }, factory)
             }
@@ -707,16 +701,16 @@ class SymbolTable(
     fun referencePropertyIfAny(sig: IdSignature): IrPropertySymbol? =
         propertySymbolTable.get(sig)
 
-    override fun referencePropertyFromLinker(descriptor: PropertyDescriptor, sig: IdSignature): IrPropertySymbol =
+    override fun referencePropertyFromLinker(sig: IdSignature): IrPropertySymbol =
         propertySymbolTable.run {
-            if (sig.isPublic) referenced(sig) { IrPropertyPublicSymbolImpl(descriptor, sig) }
-            else referenced(descriptor) { IrPropertySymbolImpl(descriptor) }
+            if (sig.isPublic) referenced(sig) { IrPropertyPublicSymbolImpl(sig) }
+            else IrPropertySymbolImpl()
         }
 
     val unboundProperties: Set<IrPropertySymbol> get() = propertySymbolTable.unboundSymbols
 
     private fun createTypeAliasSymbol(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
-        return signaturer.composeSignature(descriptor)?.let { IrTypeAliasPublicSymbolImpl(descriptor, it) } ?: IrTypeAliasSymbolImpl(
+        return signaturer.composeSignature(descriptor)?.let { IrTypeAliasPublicSymbolImpl(it, descriptor) } ?: IrTypeAliasSymbolImpl(
             descriptor
         )
     }
@@ -731,17 +725,17 @@ class SymbolTable(
     ): IrTypeAlias {
         return typeAliasSymbolTable.run {
             if (sig.isPublic) {
-                declare(sig, descriptor, { IrTypeAliasPublicSymbolImpl(descriptor, sig) }, factory)
+                declare(sig, descriptor, { IrTypeAliasPublicSymbolImpl(sig, descriptor) }, factory)
             } else {
                 declare(descriptor, { IrTypeAliasSymbolImpl(descriptor) }, factory)
             }
         }
     }
 
-    override fun referenceTypeAliasFromLinker(descriptor: TypeAliasDescriptor, sig: IdSignature) =
+    override fun referenceTypeAliasFromLinker(sig: IdSignature) =
         typeAliasSymbolTable.run {
-            if (sig.isPublic) referenced(sig) { IrTypeAliasPublicSymbolImpl(descriptor, sig) } else
-                referenced(descriptor) { IrTypeAliasSymbolImpl(descriptor) }
+            if (sig.isPublic) referenced(sig) { IrTypeAliasPublicSymbolImpl(sig) }
+            else IrTypeAliasSymbolImpl()
         }
 
     fun declareTypeAlias(descriptor: TypeAliasDescriptor, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias =
@@ -761,7 +755,7 @@ class SymbolTable(
     val unboundTypeAliases: Set<IrTypeAliasSymbol> get() = typeAliasSymbolTable.unboundSymbols
 
     private fun createSimpleFunctionSymbol(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
-        return signaturer.composeSignature(descriptor)?.let { IrSimpleFunctionPublicSymbolImpl(descriptor, it) }
+        return signaturer.composeSignature(descriptor)?.let { IrSimpleFunctionPublicSymbolImpl(it, descriptor) }
             ?: IrSimpleFunctionSymbolImpl(descriptor)
     }
 
@@ -796,15 +790,15 @@ class SymbolTable(
     }
 
     fun declareSimpleFunctionFromLinker(
-        descriptor: FunctionDescriptor,
+        descriptor: FunctionDescriptor?,
         sig: IdSignature,
         functionFactory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction {
         return simpleFunctionSymbolTable.run {
             if (sig.isPublic) {
-                declare(sig, descriptor, { IrSimpleFunctionPublicSymbolImpl(descriptor, sig) }, functionFactory)
+                declare(sig, descriptor, { IrSimpleFunctionPublicSymbolImpl(sig, descriptor) }, functionFactory)
             } else {
-                declare(descriptor, { IrSimpleFunctionSymbolImpl(descriptor) }, functionFactory)
+                declare(descriptor!!, { IrSimpleFunctionSymbolImpl(descriptor) }, functionFactory)
             }
         }
     }
@@ -815,10 +809,10 @@ class SymbolTable(
     fun referenceSimpleFunctionIfAny(sig: IdSignature): IrSimpleFunctionSymbol? =
         simpleFunctionSymbolTable.get(sig)
 
-    override fun referenceSimpleFunctionFromLinker(descriptor: FunctionDescriptor, sig: IdSignature): IrSimpleFunctionSymbol {
+    override fun referenceSimpleFunctionFromLinker(sig: IdSignature): IrSimpleFunctionSymbol {
         return simpleFunctionSymbolTable.run {
-            if (sig.isPublic) referenced(sig) { IrSimpleFunctionPublicSymbolImpl(descriptor, sig) } else
-                referenced(descriptor) { IrSimpleFunctionSymbolImpl(descriptor) }
+            if (sig.isPublic) referenced(sig) { IrSimpleFunctionPublicSymbolImpl(sig) }
+            else IrSimpleFunctionSymbolImpl()
         }
     }
 
@@ -850,6 +844,15 @@ class SymbolTable(
             typeParameterFactory
         )
 
+    fun declareGlobalTypeParameter(
+        sig: IdSignature,
+        symbolFactory: () -> IrTypeParameterSymbol,
+        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter
+    ): IrTypeParameter {
+        require(sig.isLocal)
+        return globalTypeParameterSymbolTable.declare(sig, symbolFactory, typeParameterFactory)
+    }
+
     fun declareGlobalTypeParameterFromLinker(
         descriptor: TypeParameterDescriptor,
         sig: IdSignature,
@@ -878,6 +881,15 @@ class SymbolTable(
             typeParameterFactory
         )
 
+    fun declareScopedTypeParameter(
+        sig: IdSignature,
+        symbolFactory: () -> IrTypeParameterSymbol,
+        typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter
+    ): IrTypeParameter {
+        require(sig.isLocal)
+        return typeParameterFactory(symbolFactory())
+    }
+
     fun declareScopedTypeParameterFromLinker(
         descriptor: TypeParameterDescriptor,
         sig: IdSignature,
@@ -901,7 +913,8 @@ class SymbolTable(
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
                 startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
-                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline, false
+                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline,
+                isHidden = false, isAssignable = false
             )
         }
     ): IrValueParameter =
@@ -926,10 +939,9 @@ class SymbolTable(
             createTypeParameterSymbol(classifier)
         }
 
-    override fun referenceTypeParameterFromLinker(classifier: TypeParameterDescriptor, sig: IdSignature): IrTypeParameterSymbol {
+    override fun referenceTypeParameterFromLinker(sig: IdSignature): IrTypeParameterSymbol {
         require(sig.isLocal)
-        return scopedTypeParameterSymbolTable.get(classifier)
-            ?: globalTypeParameterSymbolTable.referenced(classifier) { IrTypeParameterSymbolImpl(classifier) }
+        return IrTypeParameterSymbolImpl()
     }
 
     fun declareVariable(
@@ -991,24 +1003,20 @@ class SymbolTable(
             throw AssertionError("Undefined local delegated property referenced: $descriptor")
         }
 
-    @ObsoleteDescriptorBasedAPI
-    override fun enterScope(owner: DeclarationDescriptor) {
+    override fun enterScope(owner: IrSymbol) {
         scopedSymbolTables.forEach { it.enterScope(owner) }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun enterScope(owner: IrDeclaration) {
-        enterScope(owner.descriptor)
+        enterScope(owner.symbol)
     }
 
-    @ObsoleteDescriptorBasedAPI
-    override fun leaveScope(owner: DeclarationDescriptor) {
+    override fun leaveScope(owner: IrSymbol) {
         scopedSymbolTables.forEach { it.leaveScope(owner) }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun leaveScope(owner: IrDeclaration) {
-        leaveScope(owner.descriptor)
+        leaveScope(owner.symbol)
     }
 
     fun referenceValue(value: ValueDescriptor): IrValueSymbol =
@@ -1020,34 +1028,6 @@ class SymbolTable(
             else ->
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
-        val result = mutableSetOf<DescriptorWithContainerSource>()
-        for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
-                result.add(descriptor)
-            }
-        }
-        for (symbol in simpleFunctionSymbolTable.idSigToSymbol.values) {
-            val descriptor = symbol.descriptor
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
-                result.add(descriptor)
-            }
-        }
-        for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedPropertyDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
-                result.add(descriptor)
-            }
-        }
-        for (symbol in propertySymbolTable.idSigToSymbol.values) {
-            val descriptor = symbol.descriptor
-            if (descriptor is WrappedPropertyDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
-                result.add(descriptor)
-            }
-        }
-        return result
-    }
 
     private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachPublicSymbolImpl(
         block: (IrSymbol) -> Unit
@@ -1069,32 +1049,31 @@ class SymbolTable(
     }
 }
 
+inline fun <T> SymbolTable.withScope(owner: IrSymbol, block: SymbolTable.() -> T): T {
+    enterScope(owner)
+    val result = block()
+    leaveScope(owner)
+    return result
+}
+
+inline fun <T> SymbolTable.withScope(owner: IrDeclaration, block: SymbolTable.() -> T): T {
+    enterScope(owner)
+    val result = block()
+    leaveScope(owner)
+    return result
+}
+
 @ObsoleteDescriptorBasedAPI
-inline fun <T, D : DeclarationDescriptor> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {
+inline fun <T> ReferenceSymbolTable.withReferenceScope(owner: IrSymbol, block: ReferenceSymbolTable.() -> T): T {
     enterScope(owner)
-    val result = block(owner)
+    val result = block()
     leaveScope(owner)
     return result
 }
 
-inline fun <T, D : IrDeclaration> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {
+inline fun <T> ReferenceSymbolTable.withReferenceScope(owner: IrDeclaration, block: ReferenceSymbolTable.() -> T): T {
     enterScope(owner)
-    val result = block(owner)
-    leaveScope(owner)
-    return result
-}
-
-@ObsoleteDescriptorBasedAPI
-inline fun <T, D : DeclarationDescriptor> ReferenceSymbolTable.withReferenceScope(owner: D, block: ReferenceSymbolTable.(D) -> T): T {
-    enterScope(owner)
-    val result = block(owner)
-    leaveScope(owner)
-    return result
-}
-
-inline fun <T, D : IrDeclaration> ReferenceSymbolTable.withReferenceScope(owner: D, block: ReferenceSymbolTable.(D) -> T): T {
-    enterScope(owner)
-    val result = block(owner)
+    val result = block()
     leaveScope(owner)
     return result
 }
@@ -1118,7 +1097,7 @@ fun SymbolTable.noUnboundLeft(message: String) {
     assert(unbound.isEmpty()) {
         "$message\n" +
                 unbound.joinToString("\n") {
-                    "$it ${it.signature?.toString() ?: "NON-PUBLIC API $it"}"
+                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}"
                 }
     }
 }

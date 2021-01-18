@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.4.255-SNAPSHOT</version>
+        <version>1.5.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -72,6 +72,10 @@
                         <goals> <goal>compile</goal> </goals>
                     </execution>
                 </executions>
+
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

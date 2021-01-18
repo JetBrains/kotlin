@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 
 @NoMutableState
 class InferenceComponents(val session: FirSession) : FirSessionComponent {
-    val ctx: ConeTypeCheckerContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
+    val ctx: ConeTypeCheckerContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = true, session)
 
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)

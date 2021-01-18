@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -235,7 +234,7 @@ private fun generate(
     sourceFiles,
     kotlinCompilerConfiguration
 ).codegenFactory(
-    if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR) || kotlinCompilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR))
+    if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
         JvmIrCodegenFactory(
             kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
         ) else DefaultCodegenFactory

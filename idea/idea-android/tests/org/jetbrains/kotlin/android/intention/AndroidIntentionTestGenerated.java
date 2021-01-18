@@ -26,7 +26,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
     }
 
     public void testAllFilesPresentInIntention() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("idea/testData/android/intention/addActivityToManifest")
@@ -43,7 +43,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         }
 
         public void testAllFilesPresentInAddActivityToManifest() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addActivityToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addActivityToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("alreadyExists.kt")
@@ -106,7 +106,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         }
 
         public void testAllFilesPresentInAddBroadcastReceiverToManifest() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addBroadcastReceiverToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addBroadcastReceiverToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("alreadyExists.kt")
@@ -169,7 +169,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         }
 
         public void testAllFilesPresentInAddServiceToManifest() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addServiceToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/addServiceToManifest"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("alreadyExists.kt")
@@ -227,7 +227,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         }
 
         public void testAllFilesPresentInImplementParcelable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/implementParcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/implementParcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("allNullableTypes.kt")
@@ -290,7 +290,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         }
 
         public void testAllFilesPresentInRedoParcelable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/redoParcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/redoParcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("indirectParcelable.kt")
@@ -343,7 +343,7 @@ public class AndroidIntentionTestGenerated extends AbstractAndroidIntentionTest 
         }
 
         public void testAllFilesPresentInRemoveParcelable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/removeParcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/intention/removeParcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("inderectParcelable.kt")

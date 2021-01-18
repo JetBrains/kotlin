@@ -26,6 +26,7 @@ class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>(storageF
     override fun dumpValue(value: FileSnapshot): String =
         value.toString()
 
+    @Synchronized
     fun compareAndUpdate(newFiles: Iterable<File>): ChangedFiles.Known {
         val snapshotProvider = SimpleFileSnapshotProviderImpl()
         val newOrModified = ArrayList<File>()

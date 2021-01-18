@@ -135,6 +135,7 @@ inline fun <reified T : PsiElement, reified V : PsiElement, reified U : PsiEleme
 }
 
 inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean, vararg stopAt: Class<out PsiElement>): T? {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     return PsiTreeUtil.getParentOfType(this, T::class.java, strict, *stopAt)
 }
 
@@ -451,6 +452,8 @@ fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || h
 fun KtModifierList.hasSuspendModifier() = hasModifier(KtTokens.SUSPEND_KEYWORD)
 
 fun KtModifierList.hasFunModifier() = hasModifier(KtTokens.FUN_KEYWORD)
+
+fun KtModifierList.hasValueModifier() = hasModifier(KtTokens.VALUE_KEYWORD)
 
 fun ASTNode.children() = generateSequence(firstChildNode) { node -> node.treeNext }
 fun ASTNode.parents() = generateSequence(treeParent) { node -> node.treeParent }

@@ -1,7 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER")
 package sample
 
-expect interface C : A {
+expect interface <!LINE_MARKER("descr='Has actuals in JVM'")!>C<!> : A {
     fun foo_C_1()
 }
 

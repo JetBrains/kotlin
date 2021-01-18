@@ -1,19 +1,19 @@
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
-// FILE: f.kt
+// FILE: a.kt
 package a
     val foo = bar()
 
     fun bar() = foo
 
-// FILE: f.kt
+// FILE: b.kt
 package b
     fun foo() = bar()
 
     fun bar() = foo()
 
-// FILE: f.kt
+// FILE: c.kt
 package c
     fun bazz() = bar()
 
@@ -21,14 +21,14 @@ package c
 
     fun bar() = foo()
 
-// FILE: f.kt
+// FILE: d.kt
 
     package ok.a
         val foo = bar()
 
         fun bar() : Int = foo
 
-// FILE: f.kt
+// FILE: e.kt
     package ok.b
         fun foo() : Int = bar()
 

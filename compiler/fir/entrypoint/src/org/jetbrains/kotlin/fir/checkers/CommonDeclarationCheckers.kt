@@ -17,9 +17,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirAnnotationArgumentChecker,
         FirAnnotationClassDeclarationChecker,
         FirModifierChecker,
-        FirManyCompanionObjectsChecker,
-        FirLocalEntityNotAllowedChecker,
-        FirTypeParametersInObjectChecker,
         FirConflictsChecker,
         FirConstructorInInterfaceChecker,
         FirConflictingProjectionChecker,
@@ -28,21 +25,30 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
-        FirCommonConstructorDelegationIssuesChecker,
-        FirSupertypeInitializedWithoutPrimaryConstructor,
-        FirDelegationSuperCallInEnumConstructorChecker,
-        FirPrimaryConstructorRequiredForDataClassChecker,
-        FirMethodOfAnyImplementedInInterfaceChecker,
-        FirSupertypeInitializedInInterfaceChecker,
-        FirDelegationInInterfaceChecker,
-        FirInterfaceWithSuperclassChecker,
-        FirEnumClassSimpleChecker,
         FirSealedSupertypeChecker,
+    )
+
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
         FirInapplicableLateinitChecker,
+        FirDestructuringDeclarationInitializerChecker,
     )
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
+        FirCommonConstructorDelegationIssuesChecker,
+        FirDelegationSuperCallInEnumConstructorChecker,
+        FirDelegationInInterfaceChecker,
+        FirEnumClassSimpleChecker,
+        FirInterfaceWithSuperclassChecker,
+        FirLocalEntityNotAllowedChecker,
+        FirManyCompanionObjectsChecker,
+        FirMethodOfAnyImplementedInInterfaceChecker,
+        FirPrimaryConstructorRequiredForDataClassChecker,
+        FirSupertypeInitializedInInterfaceChecker,
+        FirSupertypeInitializedWithoutPrimaryConstructor,
+        FirTypeParametersInObjectChecker,
         FirTypeMismatchOnOverrideChecker,
+        FirMemberFunctionChecker,
+        FirMemberPropertyChecker,
     )
 
     override val constructorCheckers: Set<FirConstructorChecker> = setOf(

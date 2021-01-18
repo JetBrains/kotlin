@@ -10,13 +10,13 @@ fun test_1(e: JavaEnum) {
     val a = when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
     val b = when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         is String -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
     val c = when (e) {
         JavaEnum.A -> 1
@@ -35,7 +35,7 @@ fun test_2(e: JavaEnum?) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
-    }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
+    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
     val a = when (e) {
         JavaEnum.A -> 1

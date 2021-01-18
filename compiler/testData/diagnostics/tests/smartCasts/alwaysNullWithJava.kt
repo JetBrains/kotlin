@@ -11,7 +11,7 @@ public class My {
 fun test() {
     val my = My.create()
     if (my == null) {
-        <!OI;DEBUG_INFO_CONSTANT!>my<!><!UNSAFE_CALL!>.<!>foo()
+        <!DEBUG_INFO_CONSTANT{OI}!>my<!><!UNSAFE_CALL!>.<!>foo()
     }
 }
 

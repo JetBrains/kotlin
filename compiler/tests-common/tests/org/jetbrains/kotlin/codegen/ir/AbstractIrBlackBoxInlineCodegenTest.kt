@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.TargetBackend
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractIrBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     override val backend = TargetBackend.JVM_IR
 }

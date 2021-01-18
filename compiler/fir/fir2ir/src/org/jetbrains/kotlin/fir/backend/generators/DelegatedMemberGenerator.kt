@@ -42,8 +42,6 @@ internal class DelegatedMemberGenerator(
 
         val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         subClassScope.processAllFunctions { functionSymbol ->
-            if (functionSymbol !is FirNamedFunctionSymbol) return@processAllFunctions
-
             val unwrapped =
                 functionSymbol
                     .unwrapDelegateTarget(subClassLookupTag, subClassScope::getDirectOverriddenFunctions, firField, firSubClass)

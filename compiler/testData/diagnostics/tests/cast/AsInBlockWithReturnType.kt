@@ -6,7 +6,7 @@ fun runWithoutReturn(r: () -> Unit) = r()
 fun testRun() {
     run {
         1 <!USELESS_CAST!>as Any<!>
-        1 <!NI;USELESS_CAST!>as Any<!>
+        1 <!USELESS_CAST{NI}!>as Any<!>
     }
 
     run<Any> {
@@ -17,11 +17,11 @@ fun testRun() {
     fun foo(): Int = 1
 
     run {
-        foo() <!NI;USELESS_CAST!>as Any<!>
+        foo() <!USELESS_CAST{NI}!>as Any<!>
     }
 
     run {
-        (if (true) 1 else 2) <!NI;USELESS_CAST!>as Any<!>
+        (if (true) 1 else 2) <!USELESS_CAST{NI}!>as Any<!>
     }
 
     run<Int?> {
@@ -36,17 +36,17 @@ fun testRun() {
 }
 
 fun testReturn(): Number {
-    run { 1 <!NI;USELESS_CAST!>as Number<!> }
+    run { 1 <!USELESS_CAST{NI}!>as Number<!> }
     return run { 1 <!USELESS_CAST!>as Number<!> }
 }
 
 fun <T> testDependent() {
     listOf(1).map {
         it <!USELESS_CAST!>as Any<!>
-        it <!NI;USELESS_CAST!>as Any<!>
+        it <!USELESS_CAST{NI}!>as Any<!>
     }
 
-    listOf<T>().map { it <!NI;USELESS_CAST!>as Any?<!> }
+    listOf<T>().map { it <!USELESS_CAST{NI}!>as Any?<!> }
 }
 
 fun <T> listOf(vararg elements: T): List<T> = TODO()

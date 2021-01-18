@@ -10,40 +10,36 @@ import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import org.jetbrains.annotations.NotNull
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer.isSupertypeOf
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.isPrimitiveType
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.typeCheckerContext
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import java.text.StringCharacterIterator
+import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for fir light classes! Qualified name: ${javaClass.name}")
@@ -53,18 +49,18 @@ private fun PsiElement.nonExistentType() = JavaPsiFacade.getElementFactory(proje
     .createTypeFromText("error.NonExistentClass", this)
 
 internal fun KtTypedSymbol.asPsiType(parent: PsiElement, phase: FirResolvePhase): PsiType =
-    type.asPsiType(this, parent, phase)
+    annotatedType.asPsiType(this, parent, phase)
 
-internal fun KtType.asPsiType(
+internal fun KtTypeAndAnnotations.asPsiType(
     context: KtSymbol,
     parent: PsiElement,
     phase: FirResolvePhase
 ): PsiType {
-    require(this is KtFirType)
+    val type = this.type
+    require(type is KtFirType)
     require(context is KtFirSymbol<*>)
-
     val session = context.firRef.withFir(phase) { it.session }
-    return coneType.asPsiType(session, TypeMappingMode.DEFAULT, parent)
+    return type.coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
 internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
@@ -76,29 +72,62 @@ internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): P
             isNullable = false
         )
     }
-    return type.asPsiType(session, TypeMappingMode.DEFAULT, psiElement)
+    return type.asPsiType(session, this.firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
 }
+
+private class AnonymousTypesSubstitutor(private val session: FirSession, private val state: FirModuleResolveState) :
+    AbstractConeSubstitutor() {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+
+        if (type !is ConeClassLikeType) return null
+
+        val isAnonymous = type.classId.let { it?.shortClassName?.asString() == SpecialNames.ANONYMOUS }
+        if (!isAnonymous) return null
+
+        fun ConeClassLikeType.isNotInterface(): Boolean {
+            val firClassNode = lookupTag.toSymbol(session)?.fir as? FirClass ?: return false
+            return firClassNode.withFirDeclaration(state) { firSuperClass ->
+                firSuperClass.classKind != ClassKind.INTERFACE
+            }
+        }
+
+        val firClassNode = (type.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
+        if (firClassNode != null) {
+            val superTypesCones = firClassNode.withFirDeclaration(state, FirResolvePhase.SUPER_TYPES) {
+                (it as? FirClass)?.superConeTypes
+            }
+            val superClass = superTypesCones?.firstOrNull { it.isNotInterface() }
+            if (superClass != null) return superClass
+        }
+
+        return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.type
+        else session.builtinTypes.anyType.type
+    }
+}
+
 
 private fun ConeKotlinType.asPsiType(
     session: FirSession,
+    state: FirModuleResolveState,
     mode: TypeMappingMode,
     psiContext: PsiElement,
 ): PsiType {
 
     if (this is ConeClassErrorType || this !is SimpleTypeMarker) return psiContext.nonExistentType()
     if (this.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
-    if (this is ConeClassLikeType) {
-        val classId = classId
-        if (classId != null && classId.shortClassName.asString() == SpecialNames.ANONYMOUS) return PsiType.NULL
-    }
+
+    val correctedType = AnonymousTypesSubstitutor(session, state).substituteOrSelf(this)
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
+
     //TODO Check thread safety
-    session.jvmTypeMapper.mapType(this, mode, signatureWriter)
+    session.jvmTypeMapper.mapType(correctedType, mode, signatureWriter)
 
     val canonicalSignature = signatureWriter.toString()
 
-    if (canonicalSignature == "[L<error>;") return psiContext.nonExistentType()
+    if (canonicalSignature.contains("L<error>")) return psiContext.nonExistentType()
+    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS))
+
     val signature = StringCharacterIterator(canonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
@@ -108,19 +137,33 @@ private fun ConeKotlinType.asPsiType(
     return typeElement.type
 }
 
-private fun mapSupertype(psiContext: PsiElement, session: FirSession, supertype: ConeKotlinType, kotlinCollectionAsIs: Boolean = false) =
+private fun mapSupertype(
+    psiContext: PsiElement,
+    session: FirSession,
+    firResolvePhase: FirModuleResolveState,
+    supertype: ConeKotlinType,
+    kotlinCollectionAsIs: Boolean = false
+) =
     supertype.asPsiType(
         session,
+        firResolvePhase,
         if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE,
         psiContext
     ) as? PsiClassType
 
-internal fun KtClassType.mapSupertype(
+internal fun KtTypeAndAnnotations.mapSupertype(
     psiContext: PsiElement,
     kotlinCollectionAsIs: Boolean = false
+): PsiClassType? = type.mapSupertype(psiContext, kotlinCollectionAsIs, emptyList())
+
+internal fun KtType.mapSupertype(
+    psiContext: PsiElement,
+    kotlinCollectionAsIs: Boolean = false,
+    annotations: List<KtAnnotationCall>
 ): PsiClassType? {
+    if (this !is KtClassType) return null
     require(this is KtFirClassType)
-    val contextSymbol = this.classSymbol
+    val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
 
     val session = contextSymbol.firRef.withFir { it.session }
@@ -128,7 +171,8 @@ internal fun KtClassType.mapSupertype(
     return mapSupertype(
         psiContext,
         session,
-        this.coneType,
+        contextSymbol.firRef.resolveState,
+        coneType,
         kotlinCollectionAsIs,
     )
 }
@@ -167,56 +211,44 @@ internal fun KtSymbolWithModality<*>.computeSimpleModality(): String? = when (mo
     else -> throw NotImplementedError()
 }
 
-internal fun FirMemberDeclaration.computeModalityForMethod(isTopLevel: Boolean): Set<String> {
-    require(this !is FirConstructor)
-
-    val simpleModifier = computeSimpleModality()
-
-    val withNative = if (isExternal) simpleModifier + PsiModifier.NATIVE else simpleModifier
-    val withTopLevelStatic = if (isTopLevel) withNative + PsiModifier.STATIC else withNative
-
-    return withTopLevelStatic
-}
-
-internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(isTopLevel: Boolean, isOverride: Boolean): Set<String> {
+internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(
+    isTopLevel: Boolean,
+    suppressFinal: Boolean,
+    result: MutableSet<String>
+) {
     require(this !is KtClassLikeSymbol)
 
-    val modality = mutableSetOf<String>()
-
     computeSimpleModality()?.run {
-        if (this != PsiModifier.FINAL || !isOverride) {
-            modality.add(this)
+        if (this != PsiModifier.FINAL || !suppressFinal) {
+            result.add(this)
         }
     }
 
     if (this is KtFunctionSymbol && isExternal) {
-        modality.add(PsiModifier.NATIVE)
+        result.add(PsiModifier.NATIVE)
     }
     if (isTopLevel) {
-        modality.add(PsiModifier.STATIC)
-    }
-
-    return modality
-}
-
-internal fun FirMemberDeclaration.computeVisibility(isTopLevel: Boolean): String {
-    return when (this.visibility) {
-        // Top-level private class has PACKAGE_LOCAL visibility in Java
-        // Nested private class has PRIVATE visibility
-        Visibilities.Private -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-        Visibilities.Protected -> PsiModifier.PROTECTED
-        else -> PsiModifier.PUBLIC
+        result.add(PsiModifier.STATIC)
     }
 }
 
-internal fun KtSymbolWithVisibility.computeVisibility(isTopLevel: Boolean): String {
-    return when (this.visibility) {
-        // Top-level private class has PACKAGE_LOCAL visibility in Java
-        // Nested private class has PRIVATE visibility
-        KtSymbolVisibility.PRIVATE -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-        KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
-        else -> PsiModifier.PUBLIC
-    }
+
+internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel, forClass = false)
+
+internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel, forClass = true)
+
+internal fun KtSymbolVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+    toPsiVisibility(isTopLevel, forClass = false)
+
+private fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
+    // Top-level private class has PACKAGE_LOCAL visibility in Java
+    // Nested private class has PRIVATE visibility
+    KtSymbolVisibility.PRIVATE, KtSymbolVisibility.PRIVATE_TO_THIS ->
+        if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+    KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+    else -> PsiModifier.PUBLIC
 }
 
 internal fun basicIsEquivalentTo(`this`: PsiElement?, that: PsiElement?): Boolean {
@@ -275,8 +307,40 @@ internal fun KtType.getTypeNullability(context: KtSymbol, phase: FirResolvePhase
     return if (isNotPrimitiveType) NullabilityType.NotNull else NullabilityType.Unknown
 }
 
-internal fun <T> Set<T>.add(what: T, `if`: Boolean): Set<T> =
-    applyIf(`if`) { this + what }
+
+private fun escapeString(str: String): String = buildString {
+    str.forEach { char ->
+        val escaped = when (char) {
+            '\n' -> "\\n"
+            '\r' -> "\\r"
+            '\t' -> "\\t"
+            '\"' -> "\\\""
+            '\\' -> "\\\\"
+            else -> "$char"
+        }
+        append(escaped)
+    }
+}
+
+private fun KtSimpleConstantValue<*>.asStringForPsiLiteral(): String =
+    when (val value = this.value) {
+        is String -> "\"${escapeString(value)}\""
+        is Long -> "${value}L"
+        is Float -> "${value}f"
+        else -> value?.toString() ?: "null"
+    }
+
+internal fun KtSimpleConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiLiteral()
+    val instance = PsiElementFactory.getInstance(parent.project)
+    return try {
+        instance.createExpressionFromText(asString, parent)
+    } catch (_: IncorrectOperationException) {
+        null
+    }
+}
 
 internal inline fun <T> T.applyIf(`if`: Boolean, body: T.() -> T): T =
     if (`if`) body() else this
+
+internal fun BitSet.copy(): BitSet = clone() as BitSet

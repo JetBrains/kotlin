@@ -3250,6 +3250,9 @@ public abstract interface annotation class kotlin/jvm/JvmName : java/lang/annota
 public abstract interface annotation class kotlin/jvm/JvmOverloads : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/JvmRecord : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmStatic : java/lang/annotation/Annotation {
 }
 
@@ -4229,7 +4232,7 @@ public abstract class kotlin/random/Random {
 	public fun nextLong (JJ)J
 }
 
-public final class kotlin/random/Random$Default : kotlin/random/Random {
+public final class kotlin/random/Random$Default : kotlin/random/Random, java/io/Serializable {
 	public fun nextBits (I)I
 	public fun nextBoolean ()Z
 	public fun nextBytes (I)[B
@@ -5104,12 +5107,22 @@ public final class kotlin/text/CharDirectionality$Companion {
 
 public final class kotlin/text/CharsKt {
 	public static final fun checkRadix (I)I
+	public static final fun digitToChar (I)C
+	public static final fun digitToChar (II)C
+	public static final fun digitToInt (C)I
+	public static final fun digitToInt (CI)I
+	public static final fun digitToIntOrNull (C)Ljava/lang/Integer;
+	public static final fun digitToIntOrNull (CI)Ljava/lang/Integer;
 	public static final fun equals (CCZ)Z
 	public static synthetic fun equals$default (CCZILjava/lang/Object;)Z
 	public static final fun getCategory (C)Lkotlin/text/CharCategory;
 	public static final fun getDirectionality (C)Lkotlin/text/CharDirectionality;
 	public static final fun isSurrogate (C)Z
 	public static final fun isWhitespace (C)Z
+	public static final fun lowercase (CLjava/util/Locale;)Ljava/lang/String;
+	public static final fun titlecase (C)Ljava/lang/String;
+	public static final fun titlecase (CLjava/util/Locale;)Ljava/lang/String;
+	public static final fun uppercase (CLjava/util/Locale;)Ljava/lang/String;
 }
 
 public final class kotlin/text/Charsets {

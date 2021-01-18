@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
 
-class JvmBuiltIns(storageManager: StorageManager, kind: Kind) : KotlinBuiltIns(storageManager) {
+class JvmBuiltIns(storageManager: StorageManager, val kind: Kind) : KotlinBuiltIns(storageManager) {
     /**
      * Where built-ins should be loaded from.
      */
@@ -53,25 +53,35 @@ class JvmBuiltIns(storageManager: StorageManager, kind: Kind) : KotlinBuiltIns(s
         FALLBACK,
     }
 
-    // Module containing JDK classes or having them among dependencies
-    private var ownerModuleDescriptor: ModuleDescriptor? = null
-    private var isAdditionalBuiltInsFeatureSupported: Boolean = true
+    class Settings(
+        // Module containing JDK classes or having them among dependencies
+        val ownerModuleDescriptor: ModuleDescriptor,
+        val isAdditionalBuiltInsFeatureSupported: Boolean,
+    )
 
-    fun initialize(moduleDescriptor: ModuleDescriptor, isAdditionalBuiltInsFeatureSupported: Boolean) {
-        assert(ownerModuleDescriptor == null) { "JvmBuiltins repeated initialization" }
-        this.ownerModuleDescriptor = moduleDescriptor
-        this.isAdditionalBuiltInsFeatureSupported = isAdditionalBuiltInsFeatureSupported
+    private var settingsComputation: (() -> Settings)? = null
+
+    fun setPostponedSettingsComputation(computation: () -> Settings) {
+        assert(settingsComputation == null) { "JvmBuiltins repeated initialization" }
+        settingsComputation = computation
     }
 
-    val settings: JvmBuiltInsSettings by storageManager.createLazyValue {
-        JvmBuiltInsSettings(
-            builtInsModule, storageManager,
-            { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } },
-            {
-                ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" }
-                isAdditionalBuiltInsFeatureSupported
-            }
-        )
+    fun initialize(moduleDescriptor: ModuleDescriptor, isAdditionalBuiltInsFeatureSupported: Boolean) {
+        setPostponedSettingsComputation {
+            Settings(moduleDescriptor, isAdditionalBuiltInsFeatureSupported)
+        }
+    }
+
+    val customizer: JvmBuiltInsCustomizer by storageManager.createLazyValue {
+        JvmBuiltInsCustomizer(
+            builtInsModule, storageManager
+        ) {
+            settingsComputation
+                .sure { "JvmBuiltins instance has not been initialized properly" }
+                .invoke().also {
+                    settingsComputation = null
+                }
+        }
     }
 
     init {
@@ -83,9 +93,9 @@ class JvmBuiltIns(storageManager: StorageManager, kind: Kind) : KotlinBuiltIns(s
         }
     }
 
-    override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter = settings
+    override fun getPlatformDependentDeclarationFilter(): PlatformDependentDeclarationFilter = customizer
 
-    override fun getAdditionalClassPartsProvider(): AdditionalClassPartsProvider = settings
+    override fun getAdditionalClassPartsProvider(): AdditionalClassPartsProvider = customizer
 
     override fun getClassDescriptorFactories() =
         super.getClassDescriptorFactories() + JvmBuiltInClassDescriptorFactory(storageManager, builtInsModule)

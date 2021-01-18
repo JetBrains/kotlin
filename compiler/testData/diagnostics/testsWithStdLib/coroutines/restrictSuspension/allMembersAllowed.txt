@@ -5,7 +5,7 @@ public fun generate2(/*0*/ f: suspend RestrictedController.() -> kotlin.Unit): k
 public fun generate3(/*0*/ f: suspend SubClass.() -> kotlin.Unit): kotlin.Unit
 public fun kotlin.String.test(): kotlin.Unit
 
-@COROUTINES_PACKAGE.RestrictsSuspension public open class RestrictedController : SuperInterface {
+@kotlin.coroutines.RestrictsSuspension public open class RestrictedController : SuperInterface {
     public constructor RestrictedController()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

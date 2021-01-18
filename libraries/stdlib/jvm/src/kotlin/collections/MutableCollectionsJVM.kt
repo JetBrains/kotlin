@@ -11,7 +11,7 @@ package kotlin.collections
 
 @Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "EXTENSION_SHADOWED_BY_MEMBER")
 public inline fun <T> MutableList<T>.sort(comparator: Comparator<in T>): Unit = throw NotImplementedError()
 
 @Deprecated("Use sortWith(Comparator(comparison)) instead.", ReplaceWith("this.sortWith(Comparator(comparison))"), level = DeprecationLevel.ERROR)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -212,6 +212,42 @@ abstract class AbstractReplTestRunner : TestCase() {
             """
         )
         Assert.assertEquals("10#$@123456_81goo", compileAndEval(lines))
+    }
+
+    @Test
+    fun testFunctionReference() {
+        val lines = listOf(
+            """
+            fun foo(k: String) = "O" + k
+            val f = ::foo
+            f("K")
+            """
+        )
+
+        Assert.assertEquals("OK", compileAndEval(lines))
+    }
+
+    @Test
+    fun testPropertyReference() {
+        val lines = listOf(
+            """
+            var r = ""
+            val o = "O"
+            val ro = ::o
+            r += ro.get()
+            r += ro()
+            
+            var k = "k"
+            var rk = ::k
+            r += rk.get()
+            rk.set("y")
+            r += rk()
+            
+            r
+            """
+        )
+
+        Assert.assertEquals("OOky", compileAndEval(lines))
     }
 
     private fun compileAndEval(lines: List<String>): Any? {

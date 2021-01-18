@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,12 +26,17 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
     }
 
     public void testAllFilesPresentInFileStructure() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("class.kt")
     public void testClass() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/class.kt");
+    }
+
+    @TestMetadata("classMemberProperty.kt")
+    public void testClassMemberProperty() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/classMemberProperty.kt");
     }
 
     @TestMetadata("localClass.kt")
@@ -41,6 +47,11 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/localFun.kt");
+    }
+
+    @TestMetadata("localProperty.kt")
+    public void testLocalProperty() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/localProperty.kt");
     }
 
     @TestMetadata("nestedClasses.kt")
@@ -61,6 +72,11 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
     @TestMetadata("topLevelFunWithType.kt")
     public void testTopLevelFunWithType() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/topLevelFunWithType.kt");
+    }
+
+    @TestMetadata("topLevelProperty.kt")
+    public void testTopLevelProperty() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/topLevelProperty.kt");
     }
 
     @TestMetadata("topLevelUnitFun.kt")

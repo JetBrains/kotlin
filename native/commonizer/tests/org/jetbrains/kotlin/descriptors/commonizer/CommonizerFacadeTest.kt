@@ -52,7 +52,7 @@ class CommonizerFacadeTest {
     )
 
     @Test
-    fun commonizedWithAbsentModules() = doTestSuccessfulCommonization(
+    fun commonizedWithMissingModules() = doTestSuccessfulCommonization(
         mapOf(
             "target1" to listOf("foo", "bar"),
             "target2" to listOf("foo", "qix")
@@ -60,14 +60,15 @@ class CommonizerFacadeTest {
     )
 
     companion object {
-        private fun Map<String, List<String>>.toCommonizationParameters() = Parameters().also {
+        private fun Map<String, List<String>>.toCommonizationParameters() = CommonizerParameters().also {
             forEach { (targetName, moduleNames) ->
                 it.addTarget(
                     TargetProvider(
-                        target = InputTarget(targetName),
+                        target = LeafTarget(targetName),
                         builtInsClass = DefaultBuiltIns::class.java,
                         builtInsProvider = BuiltInsProvider.defaultBuiltInsProvider,
-                        modulesProvider = MockModulesProvider(moduleNames)
+                        modulesProvider = MockModulesProvider.create(moduleNames),
+                        dependeeModulesProvider = null
                     )
                 )
             }
@@ -75,7 +76,7 @@ class CommonizerFacadeTest {
 
         private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
             val result = runCommonization(originalModules.toCommonizationParameters())
-            assertEquals(Result.NothingToCommonize, result)
+            assertEquals(CommonizerResult.NothingToDo, result)
         }
 
         private fun doTestSuccessfulCommonization(originalModules: Map<String, List<String>>) {
@@ -91,17 +92,17 @@ class CommonizerFacadeTest {
             }
             assertModulesMatch(
                 expectedCommonizedModuleNames = expectedCommonModuleNames,
-                expectedAbsentModuleNames = emptySet(),
+                expectedMissingModuleNames = emptySet(),
                 actualModuleResults = result.modulesByTargets.getValue(result.sharedTarget)
             )
 
             result.leafTargets.forEach { target ->
                 val allModuleNames = originalModules.getValue(target.name).toSet()
-                val expectedAbsentModuleNames = allModuleNames - expectedCommonModuleNames
+                val expectedMissingModuleNames = allModuleNames - expectedCommonModuleNames
 
                 assertModulesMatch(
                     expectedCommonizedModuleNames = expectedCommonModuleNames,
-                    expectedAbsentModuleNames = expectedAbsentModuleNames,
+                    expectedMissingModuleNames = expectedMissingModuleNames,
                     actualModuleResults = result.modulesByTargets.getValue(target)
                 )
             }
@@ -109,27 +110,27 @@ class CommonizerFacadeTest {
 
         private fun assertModulesMatch(
             expectedCommonizedModuleNames: Set<String>,
-            expectedAbsentModuleNames: Set<String>,
+            expectedMissingModuleNames: Set<String>,
             actualModuleResults: Collection<ModuleResult>
         ) {
-            assertEquals(expectedCommonizedModuleNames.size + expectedAbsentModuleNames.size, actualModuleResults.size)
+            assertEquals(expectedCommonizedModuleNames.size + expectedMissingModuleNames.size, actualModuleResults.size)
 
             val actualCommonizedModuleNames = mutableSetOf<String>()
-            val actualAbsentModuleNames = mutableSetOf<String>()
+            val actualMissingModuleNames = mutableSetOf<String>()
 
             actualModuleResults.forEach { moduleResult ->
                 when (moduleResult) {
                     is ModuleResult.Commonized -> {
                         actualCommonizedModuleNames += moduleResult.module.name.asString().removeSurrounding("<", ">")
                     }
-                    is ModuleResult.Absent -> {
-                        actualAbsentModuleNames += moduleResult.originalLocation.name
+                    is ModuleResult.Missing -> {
+                        actualMissingModuleNames += moduleResult.originalLocation.name
                     }
                 }
             }
 
             assertEquals(expectedCommonizedModuleNames, actualCommonizedModuleNames)
-            assertEquals(expectedAbsentModuleNames, actualAbsentModuleNames)
+            assertEquals(expectedMissingModuleNames, actualMissingModuleNames)
         }
     }
 }

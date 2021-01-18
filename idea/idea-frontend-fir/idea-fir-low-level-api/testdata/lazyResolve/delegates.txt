@@ -7,7 +7,7 @@ FILE: delegates.kt
     }
     public final [STATUS] fun receive(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
-        private constructor(): R|<anonymous>| {
+        private [BODY_RESOLVE] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 

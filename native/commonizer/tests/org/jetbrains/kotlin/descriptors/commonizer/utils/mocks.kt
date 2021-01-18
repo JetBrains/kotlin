@@ -10,14 +10,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
-import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.builder.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -44,10 +42,9 @@ internal fun mockClassType(
 
     val targetComponents = TargetDeclarationsBuilderComponents(
         storageManager = LockBasedStorageManager.NO_LOCKS,
-        target = InputTarget("Arbitrary target"),
+        target = LeafTarget("Arbitrary target"),
         builtIns = DefaultBuiltIns.Instance,
-        lazyModulesLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { mutableMapOf() },
-        isCommon = false,
+        lazyClassifierLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { LazyClassifierLookupTable(emptyMap()) },
         index = 0,
         cache = DeclarationsBuilderCache(1)
     )
@@ -123,57 +120,69 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
         override fun toString() = "package $name"
     }
 
-internal val MOCK_CLASSIFIERS_CACHE = object : CirClassifiersCache {
-    private val MOCK_CLASS_NODE = CirClassNode(
-        CommonizedGroup(0),
-        LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
-            CirClassFactory.create(
-                annotations = emptyList(),
-                name = Name.identifier("kotlin.Any"),
-                typeParameters = emptyList(),
-                visibility = DescriptorVisibilities.PUBLIC,
-                modality = Modality.OPEN,
-                kind = ClassKind.CLASS,
-                companion = null,
-                isCompanion = false,
-                isData = false,
-                isInline = false,
-                isInner = false,
-                isExternal = false
-            )
-        },
-        ClassId.fromString("kotlin/Any")
-    )
+internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
+    commonized = object : CirCommonizedClassifiers {
+        private val MOCK_CLASS_NODE = CirClassNode(
+            CommonizedGroup(0),
+            LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
+                CirClassFactory.create(
+                    annotations = emptyList(),
+                    name = Name.identifier("kotlin.Any"),
+                    typeParameters = emptyList(),
+                    visibility = DescriptorVisibilities.PUBLIC,
+                    modality = Modality.OPEN,
+                    kind = ClassKind.CLASS,
+                    companion = null,
+                    isCompanion = false,
+                    isData = false,
+                    isInline = false,
+                    isInner = false,
+                    isExternal = false
+                )
+            },
+            ClassId.fromString("kotlin/Any")
+        )
 
-    override fun isExportedForwardDeclaration(classId: ClassId) = false
-    override fun classNode(classId: ClassId) = MOCK_CLASS_NODE
-    override fun typeAliasNode(typeAliasId: ClassId) = error("This method should not be called")
-    override fun addExportedForwardDeclaration(classId: ClassId) = error("This method should not be called")
-    override fun addClassNode(classId: ClassId, node: CirClassNode) = error("This method should not be called")
-    override fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode) = error("This method should not be called")
-}
+        override fun classNode(classId: ClassId) = MOCK_CLASS_NODE
+        override fun typeAliasNode(typeAliasId: ClassId) = error("This method should not be called")
+        override fun addClassNode(classId: ClassId, node: CirClassNode) = error("This method should not be called")
+        override fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode) = error("This method should not be called")
+    },
+    forwardDeclarations = object : CirForwardDeclarations {
+        override fun isExportedForwardDeclaration(classId: ClassId) = false
+        override fun addExportedForwardDeclaration(classId: ClassId) = error("This method should not be called")
+    },
+    dependeeLibraries = emptyMap()
+)
 
 internal class MockBuiltInsProvider(private val builtIns: KotlinBuiltIns) : BuiltInsProvider {
     override fun loadBuiltIns() = builtIns
 }
 
-internal class MockModulesProvider : ModulesProvider {
-    private val moduleInfos: Map<String, ModuleInfo>
-    private val modules: Map<String, ModuleDescriptor>
-
-    constructor(moduleNames: Collection<String>) {
-        moduleInfos = moduleNames.associateWith { name -> fakeModuleInfo(name) }
-        modules = moduleNames.associateWith { name -> mockEmptyModule("<$name>") }
-    }
-
-    constructor(module: ModuleDescriptor) {
-        val name = module.name.asString().removeSurrounding("<", ">")
-        moduleInfos = mapOf(name to fakeModuleInfo(name))
-        modules = mapOf(name to module)
-    }
+internal class MockModulesProvider private constructor(
+    private val modules: Map<String, ModuleDescriptor>,
+) : ModulesProvider {
+    private val moduleInfos: Map<String, ModuleInfo> = modules.mapValues { (name, _) -> fakeModuleInfo(name) }
 
     override fun loadModuleInfos() = moduleInfos
-    override fun loadModules() = modules
+    override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> = modules
 
     private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
+
+    companion object {
+        @JvmName("createByModuleNames")
+        fun create(moduleNames: List<String>) = MockModulesProvider(
+            moduleNames.associateWith { name -> mockEmptyModule("<$name>") }
+        )
+
+        @JvmName("createByModules")
+        fun create(modules: List<ModuleDescriptor>) = MockModulesProvider(
+            modules.associateBy { module -> module.name.strip() }
+        )
+
+        @JvmName("createBySingleModule")
+        fun create(module: ModuleDescriptor) = MockModulesProvider(
+            mapOf(module.name.strip() to module)
+        )
+    }
 }

@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // TARGET_BACKEND: JVM
 
 // FILE: test.kt
@@ -11,8 +10,8 @@
 package test
 
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun foo(): String = bar("OK")
 

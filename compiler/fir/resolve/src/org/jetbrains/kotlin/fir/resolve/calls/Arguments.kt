@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun Candidate.resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,
@@ -247,36 +249,30 @@ private fun argumentTypeWithSuspendConversion(
 ): ConeKotlinType? {
     // TODO: should refer to LanguageVersionSettings.SuspendConversion
 
-    // To avoid any remaining exotic types, e.g., intersection type, like it(FunctionN..., SuspendFunctionN...)
-    if (argumentType !is ConeClassLikeType) {
-        return null
-    }
-
-    // Expect the expected type to be a suspend functional type, and the argument type is not a suspend functional type.
-    if (!expectedType.isSuspendFunctionType(session) || argumentType.isSuspendFunctionType(session)) {
+    // Expect the expected type to be a suspend functional type.
+    if (!expectedType.isSuspendFunctionType(session)) {
         return null
     }
 
     // We want to check the argument type against non-suspend functional type.
     val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
-    if (argumentType.isSubtypeOfFunctionalType(session, expectedFunctionalType)) {
-        return argumentType.findContributedInvokeSymbol(
-            session,
-            scopeSession,
-            expectedFunctionalType,
-            shouldCalculateReturnTypesOfFakeOverrides = false
-        )?.let { invokeSymbol ->
-            createFunctionalType(
-                invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
-                null,
-                invokeSymbol.fir.returnTypeRef.coneType,
-                isSuspend = true,
-                isKFunctionType = argumentType.isKFunctionType(session)
-            )
-        }
-    }
 
-    return null
+    val argumentTypeWithInvoke = argumentType.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType)
+
+    return argumentTypeWithInvoke?.findContributedInvokeSymbol(
+        session,
+        scopeSession,
+        expectedFunctionalType,
+        shouldCalculateReturnTypesOfFakeOverrides = false
+    )?.let { invokeSymbol ->
+        createFunctionalType(
+            invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
+            null,
+            invokeSymbol.fir.returnTypeRef.coneType,
+            isSuspend = true,
+            isKFunctionType = argumentType.isKFunctionType(session)
+        )
+    }
 }
 
 fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
@@ -342,10 +338,9 @@ internal fun Candidate.resolveArgument(
     sink: CheckerSink,
     context: ResolutionContext
 ) {
-
     argument.resultType.ensureResolvedTypeDeclaration(context.session)
 
-    val expectedType = prepareExpectedType(context.session, argument, parameter, context)
+    val expectedType = prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, argument, parameter, context)
     resolveArgumentExpression(
         this.system.getBuilder(),
         argument,
@@ -360,18 +355,20 @@ internal fun Candidate.resolveArgument(
 
 private fun Candidate.prepareExpectedType(
     session: FirSession,
+    scopeSession: ScopeSession,
     argument: FirExpression,
     parameter: FirValueParameter?,
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
     val basicExpectedType = argument.getExpectedTypeForSAMConversion(parameter/*, LanguageVersionSettings*/)
-    val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType, context) ?: basicExpectedType
+    val expectedType = getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
 
 private fun Candidate.getExpectedTypeWithSAMConversion(
     session: FirSession,
+    scopeSession: ScopeSession,
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType,
     context: ResolutionContext
@@ -381,20 +378,70 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     val firFunction = symbol.fir as? FirFunction<*> ?: return null
     if (!context.bodyResolveComponents.samResolver.shouldRunSamConversionForFunction(firFunction)) return null
 
-    if (!argument.isFunctional(session)) return null
-
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
-    return context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType).apply {
-        usesSAM = true
+    val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType)) {
+        expectedFunctionType.apply {
+            // Even though the `expectedFunctionalType` could be `null`, we should mark the flag to indicate that the argument is a
+            // functional type. That will help avoid ambiguous `invoke` resolutions. See KT-39824
+            usesSAM = true
+        }
     }
 }
 
-fun FirExpression.isFunctional(session: FirSession): Boolean =
+fun FirExpression.isFunctional(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    expectedFunctionType: ConeKotlinType?,
+): Boolean {
     when ((this as? FirWrappedArgumentExpression)?.expression ?: this) {
-        is FirAnonymousFunction, is FirCallableReferenceAccess -> true
-        else -> typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
+        is FirAnonymousFunction, is FirCallableReferenceAccess -> return true
+        else -> {
+            // Either a functional type or a subtype of a class that has a contributed `invoke`.
+            val coneType = typeRef.coneTypeSafe<ConeKotlinType>() ?: return false
+            if (coneType.isBuiltinFunctionalType(session)) {
+                return true
+            }
+            val classLikeExpectedFunctionType = expectedFunctionType?.lowerBoundIfFlexible() as? ConeClassLikeType
+            if (classLikeExpectedFunctionType == null || coneType is ConeIntegerLiteralType) {
+                return false
+            }
+            val invokeSymbol =
+                coneType.findContributedInvokeSymbol(
+                    session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
+                ) ?: return false
+            // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
+            val expectedReturnType = classLikeExpectedFunctionType.returnType(session)!!.lowerBoundIfFlexible()
+            val returnTypeCompatible =
+                expectedReturnType is ConeTypeParameterType ||
+                        AbstractTypeChecker.isSubtypeOf(
+                            session.inferenceComponents.ctx,
+                            invokeSymbol.fir.returnTypeRef.coneType,
+                            expectedReturnType,
+                            isFromNullabilityConstraint = false
+                        )
+            if (!returnTypeCompatible) {
+                return false
+            }
+            if (invokeSymbol.fir.valueParameters.size != classLikeExpectedFunctionType.typeArguments.size - 1) {
+                return false
+            }
+            val parameterPairs =
+                invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
+            return parameterPairs.all { (invokeParameter, expectedParameter) ->
+                val expectedParameterType = expectedParameter!!.lowerBoundIfFlexible()
+                expectedParameterType is ConeTypeParameterType ||
+                        AbstractTypeChecker.isSubtypeOf(
+                            session.inferenceComponents.ctx,
+                            invokeParameter.returnTypeRef.coneType,
+                            expectedParameterType,
+                            isFromNullabilityConstraint = false
+                        )
+            }
+        }
     }
+}
 
 fun FirExpression.getExpectedTypeForSAMConversion(
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/

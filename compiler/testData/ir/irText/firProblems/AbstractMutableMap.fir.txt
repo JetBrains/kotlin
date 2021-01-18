@@ -65,6 +65,55 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         overridden:
           public abstract fun <get-values> (): kotlin.collections.MutableCollection<V of kotlin.collections.MutableMap> declared in kotlin.collections.MutableMap
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableMap<K of kotlin.collections.MutableMap, V of kotlin.collections.MutableMap>
+    FUN FAKE_OVERRIDE name:replaceAll visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:@[FlexibleNullability] java.util.function.BiFunction<in K of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun replaceAll (p0: @[FlexibleNullability] java.util.function.BiFunction<in K of java.util.Map?, in V of java.util.Map?, out V of java.util.Map?>): kotlin.Unit declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.BiFunction<in K of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>
+    FUN FAKE_OVERRIDE name:merge visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap, p1:V of <root>.MyMap, p2:@[FlexibleNullability] java.util.function.BiFunction<in V of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>) returnType:V of <root>.MyMap? [fake_override]
+      overridden:
+        public open fun merge (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] V of java.util.Map, p2: @[FlexibleNullability] java.util.function.BiFunction<in V of java.util.Map?, in V of java.util.Map?, out V of java.util.Map?>): @[FlexibleNullability] V of java.util.Map? declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap
+      VALUE_PARAMETER name:p1 index:1 type:V of <root>.MyMap
+      VALUE_PARAMETER name:p2 index:2 type:@[FlexibleNullability] java.util.function.BiFunction<in V of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>
+    FUN FAKE_OVERRIDE name:computeIfPresent visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap, p1:@[FlexibleNullability] java.util.function.BiFunction<in K of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>) returnType:V of <root>.MyMap? [fake_override]
+      overridden:
+        public open fun computeIfPresent (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] java.util.function.BiFunction<in K of java.util.Map?, in V of java.util.Map?, out V of java.util.Map?>): @[FlexibleNullability] V of java.util.Map? declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap
+      VALUE_PARAMETER name:p1 index:1 type:@[FlexibleNullability] java.util.function.BiFunction<in K of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>
+    FUN FAKE_OVERRIDE name:putIfAbsent visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap, p1:V of <root>.MyMap) returnType:V of <root>.MyMap? [fake_override]
+      overridden:
+        public open fun putIfAbsent (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] V of java.util.Map): @[FlexibleNullability] V of java.util.Map? declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap
+      VALUE_PARAMETER name:p1 index:1 type:V of <root>.MyMap
+    FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap?, p1:V of <root>.MyMap?, p2:V of <root>.MyMap?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun replace (p0: K of java.util.Map?, p1: V of java.util.Map?, p2: V of java.util.Map?): kotlin.Boolean declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap?
+      VALUE_PARAMETER name:p1 index:1 type:V of <root>.MyMap?
+      VALUE_PARAMETER name:p2 index:2 type:V of <root>.MyMap?
+    FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap, p1:V of <root>.MyMap) returnType:V of <root>.MyMap? [fake_override]
+      overridden:
+        public open fun replace (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] V of java.util.Map): @[FlexibleNullability] V of java.util.Map? declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap
+      VALUE_PARAMETER name:p1 index:1 type:V of <root>.MyMap
+    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap, p1:@[FlexibleNullability] java.util.function.Function<in K of <root>.MyMap?, out V of <root>.MyMap?>) returnType:V of <root>.MyMap [fake_override]
+      overridden:
+        public open fun computeIfAbsent (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] java.util.function.Function<in K of java.util.Map?, out V of java.util.Map?>): @[FlexibleNullability] V of java.util.Map declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap
+      VALUE_PARAMETER name:p1 index:1 type:@[FlexibleNullability] java.util.function.Function<in K of <root>.MyMap?, out V of <root>.MyMap?>
+    FUN FAKE_OVERRIDE name:compute visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:K of <root>.MyMap, p1:@[FlexibleNullability] java.util.function.BiFunction<in K of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>) returnType:V of <root>.MyMap? [fake_override]
+      overridden:
+        public open fun compute (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] java.util.function.BiFunction<in K of java.util.Map?, in V of java.util.Map?, out V of java.util.Map?>): @[FlexibleNullability] V of java.util.Map? declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:K of <root>.MyMap
+      VALUE_PARAMETER name:p1 index:1 type:@[FlexibleNullability] java.util.function.BiFunction<in K of <root>.MyMap?, in V of <root>.MyMap?, out V of <root>.MyMap?>
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K of kotlin.collections.Map, V of kotlin.collections.Map>, key:K of <root>.MyMap) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun containsKey (key: K of kotlin.collections.Map): kotlin.Boolean declared in kotlin.collections.Map
@@ -101,6 +150,11 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.Map
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Map<K of kotlin.collections.Map, V of kotlin.collections.Map>
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:java.util.Map<K of java.util.Map, V of java.util.Map>, p0:@[FlexibleNullability] java.util.function.BiConsumer<in K of <root>.MyMap?, in V of <root>.MyMap?>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.BiConsumer<in K of java.util.Map?, in V of java.util.Map?>): kotlin.Unit declared in java.util.Map
+      $this: VALUE_PARAMETER name:<this> type:java.util.Map<K of java.util.Map, V of java.util.Map>
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.BiConsumer<in K of <root>.MyMap?, in V of <root>.MyMap?>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

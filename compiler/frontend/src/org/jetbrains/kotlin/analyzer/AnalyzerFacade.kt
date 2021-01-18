@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import java.util.*
@@ -119,14 +121,15 @@ abstract class ResolverForModuleFactory {
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        sealedInheritorsProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
     ): ResolverForModule
 }
 
 class LazyModuleDependencies<M : ModuleInfo>(
     storageManager: StorageManager,
     private val module: M,
-    firstDependency: M? = null,
+    firstDependency: M?,
     private val resolverForProject: AbstractResolverForProject<M>
 ) : ModuleDependencies {
 
@@ -197,8 +200,7 @@ interface PackageOracleFactory {
 interface LanguageSettingsProvider {
     fun getLanguageVersionSettings(
         moduleInfo: ModuleInfo,
-        project: Project,
-        isReleaseCoroutines: Boolean? = null
+        project: Project
     ): LanguageVersionSettings
 
     fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
@@ -206,8 +208,7 @@ interface LanguageSettingsProvider {
     object Default : LanguageSettingsProvider {
         override fun getLanguageVersionSettings(
             moduleInfo: ModuleInfo,
-            project: Project,
-            isReleaseCoroutines: Boolean?
+            project: Project
         ) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion = TargetPlatformVersion.NoVersion

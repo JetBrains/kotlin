@@ -28,13 +28,12 @@ import com.intellij.util.PathUtil
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
-import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
+import org.jetbrains.kotlin.idea.quickfix.AbstractChangeFeatureSupportLevelFix
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -244,25 +243,6 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
     }
 
-    override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
-        val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
-
-        if (runtimeUpdateRequired) {
-            Messages.showErrorDialog(
-                module.project,
-                KotlinIdeaGradleBundle.message("error.text.coroutines.support.requires.version.1.1.or.later.of.the.kotlin.runtime.library"),
-                ChangeCoroutineSupportFix.getFixText(state)
-            )
-            return
-        }
-
-        val element = changeCoroutineConfiguration(module, CoroutineSupport.getCompilerArgument(state))
-        if (element != null) {
-            OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
-        }
-    }
-
     override fun changeGeneralFeatureConfiguration(
         module: Module,
         feature: LanguageFeature,
@@ -275,7 +255,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             Messages.showErrorDialog(
                 module.project,
                 KotlinIdeaGradleBundle.message("error.text.support.requires.version", feature.presentableName, sinceVersion),
-                ChangeCoroutineSupportFix.getFixText(state)
+                AbstractChangeFeatureSupportLevelFix.getFixText(state, feature.presentableName)
             )
             return
         }
@@ -343,10 +323,6 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                     .addMessage(KotlinIdeaGradleBundle.message("text.was.modified", it.path))
                     .showNotification()
             }
-        }
-
-        fun changeCoroutineConfiguration(module: Module, coroutineOption: String): PsiElement? = changeBuildGradle(module) {
-            getManipulator(it).changeCoroutineConfiguration(coroutineOption)
         }
 
         fun changeFeatureConfiguration(

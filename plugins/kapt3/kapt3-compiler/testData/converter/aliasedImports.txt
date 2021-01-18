@@ -4,24 +4,14 @@ import a.b.ABC;
 
 @kotlin.Metadata()
 public final class Test {
+    public Test.MyDate date;
+    public java.util.concurrent.TimeUnit timeUnit;
+    public java.util.concurrent.TimeUnit microseconds;
     public a.b.ABC abc;
     public bcd bcd;
-    public Test.MyDate date;
-    public java.util.concurrent.TimeUnit microseconds;
-    public java.util.concurrent.TimeUnit timeUnit;
 
     public Test() {
         super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final a.b.ABC getAbc() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final bcd getBcd() {
-        return null;
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -29,9 +19,8 @@ public final class Test {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.concurrent.TimeUnit getMicroseconds() {
-        return null;
+    public final void setDate(@org.jetbrains.annotations.NotNull()
+    Test.MyDate p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -39,24 +28,35 @@ public final class Test {
         return null;
     }
 
-    public final void setAbc(@org.jetbrains.annotations.NotNull()
-    a.b.ABC p0) {
+    public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
+    java.util.concurrent.TimeUnit p0) {
     }
 
-    public final void setBcd(@org.jetbrains.annotations.NotNull()
-    bcd p0) {
-    }
-
-    public final void setDate(@org.jetbrains.annotations.NotNull()
-    Test.MyDate p0) {
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.concurrent.TimeUnit getMicroseconds() {
+        return null;
     }
 
     public final void setMicroseconds(@org.jetbrains.annotations.NotNull()
     java.util.concurrent.TimeUnit p0) {
     }
 
-    public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
-    java.util.concurrent.TimeUnit p0) {
+    @org.jetbrains.annotations.NotNull()
+    public final a.b.ABC getAbc() {
+        return null;
+    }
+
+    public final void setAbc(@org.jetbrains.annotations.NotNull()
+    a.b.ABC p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final bcd getBcd() {
+        return null;
+    }
+
+    public final void setBcd(@org.jetbrains.annotations.NotNull()
+    bcd p0) {
     }
 
     @kotlin.Metadata()

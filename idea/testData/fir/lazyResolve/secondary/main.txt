@@ -1,6 +1,6 @@
 FILE: main.kt
     public final [STATUS] class My : R|kotlin/Any| {
-        public constructor(): R|My| {
+        public [STATUS] constructor(): R|My| {
             super<R|kotlin/Any|>()
         }
 

@@ -183,11 +183,9 @@ class KotlinMultiplatformPlugin(
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
             val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MINGW_X64)
-            val nativeTargetsWithSimulatorTests = setOf(IOS_X64, WATCHOS_X86, TVOS_X64)
-            val disabledNativeTargets = setOf(WATCHOS_X64)
+            val nativeTargetsWithSimulatorTests = setOf(IOS_X64, WATCHOS_X86, WATCHOS_X64, TVOS_X64)
 
             HostManager().targets
-                .filter { (_, konanTarget) -> konanTarget !in disabledNativeTargets }
                 .forEach { (_, konanTarget) ->
                     val targetToAdd = when (konanTarget) {
                         in nativeTargetsWithHostTests ->
@@ -202,108 +200,6 @@ class KotlinMultiplatformPlugin(
         }
     }
 
-    private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
-
-        val targets = project.multiplatformExtension.targets
-        val kotlinSoftwareComponent = project.multiplatformExtension.rootSoftwareComponent
-
-        project.extensions.configure(PublishingExtension::class.java) { publishing ->
-
-            // The root publication that references the platform specific publications as its variants:
-            publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
-                from(kotlinSoftwareComponent)
-                (this as MavenPublicationInternal).publishWithOriginalFileName()
-                kotlinSoftwareComponent.publicationDelegate = this@apply
-
-                project.multiplatformExtension.metadata {}.kotlinComponents.filterIsInstance<KotlinTargetComponentWithPublication>()
-                    .single().publicationDelegate = this@apply
-            }
-
-            // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
-            (targets.getByName(METADATA_TARGET_NAME) as AbstractKotlinTarget).createMavenPublications(publishing.publications)
-            targets
-                .withType(AbstractKotlinTarget::class.java).matching { it.publishable && it.name != METADATA_TARGET_NAME }
-                .all {
-                    if (it is KotlinAndroidTarget || it is KotlinMetadataTarget)
-                    // Android targets have their variants created in afterEvaluate; TODO handle this better?
-                    // Kotlin Metadata targets rely on complete source sets hierearchy and cannot be inspected for publication earlier
-                        project.whenEvaluated { it.createMavenPublications(publishing.publications) }
-                    else
-                        it.createMavenPublications(publishing.publications)
-                }
-        }
-
-        project.components.add(kotlinSoftwareComponent)
-    }
-
-    private fun rewritePom(
-        pom: MavenPom,
-        pomRewriter: PomDependenciesRewriter,
-        shouldRewritePomDependencies: Provider<Boolean>,
-        includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>?
-    ) {
-        pom.withXml { xml ->
-            if (shouldRewritePomDependencies.get())
-                pomRewriter.rewritePomMppDependenciesToActualTargetModules(xml, includeOnlySpecifiedDependencies)
-        }
-    }
-
-    private fun AbstractKotlinTarget.createMavenPublications(publications: PublicationContainer) {
-        components
-            .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
-            .filter { (_, kotlinComponent) -> kotlinComponent.publishable }
-            .forEach { (gradleComponent, kotlinComponent) ->
-                val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
-                    // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
-                    project.whenEvaluated {
-                        from(gradleComponent)
-                        kotlinComponent.sourcesArtifacts.forEach { sourceArtifact ->
-                            artifact(sourceArtifact)
-                        }
-                    }
-                    (this as MavenPublicationInternal).publishWithOriginalFileName()
-                    artifactId = kotlinComponent.defaultArtifactId
-
-                    val pomRewriter = PomDependenciesRewriter(project, kotlinComponent)
-                    val shouldRewritePomDependencies =
-                        project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
-
-                    rewritePom(
-                        pom,
-                        pomRewriter,
-                        shouldRewritePomDependencies,
-                        dependenciesForPomRewriting(this@createMavenPublications)
-                    )
-                }
-
-                (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
-                publicationConfigureActions.all { it.execute(componentPublication) }
-            }
-    }
-
-    /**
-     * The metadata targets need their POMs to only include the dependencies from the commonMain API configuration.
-     * The actual apiElements configurations of metadata targets now contain dependencies from all source sets, but, as the consumers who
-     * can't read Gradle module metadata won't resolve a dependency on an MPP to the granular metadata variant and won't then choose the
-     * right dependencies for each source set, we put only the dependencies of the legacy common variant into the POM, i.e. commonMain API.
-     */
-    private fun dependenciesForPomRewriting(target: AbstractKotlinTarget): Provider<Set<ModuleCoordinates>>? =
-        if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled)
-            null
-        else {
-            val commonMain = target.project.kotlinExtension.sourceSets.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-            if (commonMain == null)
-                null
-            else
-                target.project.provider {
-                    val project = target.project
-
-                    // Only the commonMain API dependencies can be published for consumers who can't read Gradle project metadata
-                    val commonMainApi = project.sourceSetDependencyConfigurationByScope(commonMain, KotlinDependencyScope.API_SCOPE)
-                    val commonMainDependencies = commonMainApi.allDependencies
-                    commonMainDependencies.map { ModuleCoordinates(it.group, it.name, it.version) }.toSet()
-                }
-        }
 
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)

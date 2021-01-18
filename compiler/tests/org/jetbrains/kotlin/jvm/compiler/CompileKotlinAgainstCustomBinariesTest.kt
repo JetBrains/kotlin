@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -526,43 +526,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
-    fun testObsoleteInlineSuspend() {
-        val version = intArrayOf(1, 0, 1) // legacy coroutines metadata
-        val options = listOf("-language-version", "1.2", "-Xcoroutines=enable")
-        val library = transformJar(
-            compileLibrary(
-                "library",
-                additionalOptions = options,
-                extraClassPath = listOf(ForTestCompileRuntime.coroutinesCompatForTests()),
-                checkKotlinOutput = { actual ->
-                    KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "library.output.txt"), actual)
-                }
-            ),
-            { _, bytes ->
-                val (resultBytes, removedCounter) = stripSuspensionMarksToImitateLegacyCompiler(
-                    WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { name, _ ->
-                        if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
-                    })
-                // we expect 4 instructions to be removed in this test library
-                assertEquals(4, removedCounter)
-                resultBytes
-            })
-        compileKotlin(
-            "source.kt", tmpdir, listOf(library, ForTestCompileRuntime.coroutinesCompatForTests()), K2JVMCompiler(),
-            additionalOptions = options
-        )
-        val classLoader = URLClassLoader(
-            arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL(), ForTestCompileRuntime.coroutinesCompatForTests().toURI().toURL()),
-            ForTestCompileRuntime.runtimeJarClassLoader()
-        )
-        @Suppress("UNCHECKED_CAST")
-        val result = classLoader
-            .loadClass("SourceKt")
-            .getDeclaredMethod("run")
-            .invoke(null) as Array<String>
-        assertEquals(result[0], result[1])
-    }
-
     fun testInlineFunctionsWithMatchingJvmSignatures() {
         val library = compileLibrary(
             "library",
@@ -626,6 +589,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}"))
     }
 
+    fun testInternalFromFriendModuleFir() {
+        val library = compileLibrary("library")
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}", "-Xuse-fir"))
+    }
+
     fun testJvmDefaultClashWithOld() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all"))
@@ -669,29 +637,57 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         classLoader.loadClass("SourceKt").getDeclaredMethod("main").invoke(null)
     }
 
-    fun testJvmIrAgainstJvmIr() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-ir"))
+    fun testFirAgainstFir() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-fir"))
     }
 
-    fun testJvmIrAgainstOld() {
+    fun testFirAgainstOldJvm() {
         val library = compileLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-ir"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-fir"))
     }
 
-    fun testOldAgainstJvmIr() {
+    fun testOldJvmAgainstJvmIr() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
+
+        val library2 = compileLibrary("library", additionalOptions = listOf("-Xuse-ir", "-Xabi-stability=stable"))
+        compileKotlin("source.kt", tmpdir, listOf(library2))
+    }
+
+    fun testOldJvmAgainstFir() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
+
+        val library2 = compileLibrary("library", additionalOptions = listOf("-Xuse-fir", "-Xabi-stability=unstable"))
+        compileKotlin("source.kt", tmpdir, listOf(library2))
+    }
+
+    fun testOldJvmAgainstJvmIrWithUnstableAbi() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir", "-Xabi-stability=unstable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testOldAgainstJvmIrWithStableAbi() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir", "-Xir-binary-with-stable-abi"))
+    fun testOldJvmAgainstFirWithStableAbi() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir", "-Xabi-stability=stable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testOldAgainstJvmIrWithAllowIrDependencies() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-jvm-ir-dependencies"))
+    fun testOldJvmAgainstFirWithAllowUnstableDependencies() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-unstable-dependencies"))
+    }
+
+    fun testSealedClassesAndInterfaces() {
+        val features = listOf("-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage", "-XXLanguage:+SealedInterfaces")
+        val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
+        compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
+    }
+
+    fun testSealedInheritorInDifferentModule() {
+        val features = listOf("-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage", "-XXLanguage:+SealedInterfaces")
+        val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
+        compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
     }
 
     // If this test fails, then bootstrap compiler most likely should be advanced

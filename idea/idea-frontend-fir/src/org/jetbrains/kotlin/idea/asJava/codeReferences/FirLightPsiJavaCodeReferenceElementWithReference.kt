@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.util.IncorrectOperationException
 
 internal class FirLightPsiJavaCodeReferenceElementWithReference(private val ktElement: PsiElement, reference: PsiReference):
     FirLightPsiJavaCodeReferenceElementBase(ktElement),

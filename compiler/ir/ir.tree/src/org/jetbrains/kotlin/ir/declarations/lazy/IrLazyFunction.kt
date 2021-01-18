@@ -66,7 +66,7 @@ class IrLazyFunction(
 
     override var typeParameters: List<IrTypeParameter> by lazyVar {
         typeTranslator.buildWithScope(this) {
-            stubGenerator.symbolTable.withScope(descriptor) {
+            stubGenerator.symbolTable.withScope(this) {
                 val propertyIfAccessor = descriptor.propertyIfAccessor
                 propertyIfAccessor.typeParameters.mapTo(arrayListOf()) { typeParameterDescriptor ->
                     if (descriptor != propertyIfAccessor) {

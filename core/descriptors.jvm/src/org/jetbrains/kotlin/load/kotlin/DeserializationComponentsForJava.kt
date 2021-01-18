@@ -53,8 +53,8 @@ class DeserializationComponentsForJava(
             storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
             LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, JavaFlexibleTypeDeserializer,
             emptyList(), notFoundClasses, contractDeserializer,
-            additionalClassPartsProvider = jvmBuiltIns?.settings ?: AdditionalClassPartsProvider.None,
-            platformDependentDeclarationFilter = jvmBuiltIns?.settings ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
+            additionalClassPartsProvider = jvmBuiltIns?.customizer ?: AdditionalClassPartsProvider.None,
+            platformDependentDeclarationFilter = jvmBuiltIns?.customizer ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
             extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
             kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList())
         )

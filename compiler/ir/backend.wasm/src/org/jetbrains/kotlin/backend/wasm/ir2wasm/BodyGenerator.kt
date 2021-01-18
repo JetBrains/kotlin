@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -39,6 +38,11 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall) {
+        require(expression.operator == IrTypeOperator.REINTERPRET_CAST) { "Other types of casts must be lowered" }
+        generateExpression(expression.argument)
     }
 
     override fun <T> visitConst(expression: IrConst<T>) {
@@ -77,9 +81,22 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     private fun generateInstanceFieldAccess(field: IrField) {
-        body.buildStructGet(
-            context.referenceStructType(field.parentAsClass.symbol),
-            context.getStructFieldRef(field)
+        val opcode = when (field.type) {
+            irBuiltIns.charType ->
+                WasmOp.STRUCT_GET_U
+
+            irBuiltIns.booleanType,
+            irBuiltIns.byteType,
+            irBuiltIns.shortType ->
+                WasmOp.STRUCT_GET_S
+
+            else -> WasmOp.STRUCT_GET
+        }
+
+        body.buildInstr(
+            opcode,
+            WasmImmediate.GcType(context.referenceGcType(field.parentAsClass.symbol)),
+            WasmImmediate.StructFieldIdx(context.getStructFieldRef(field))
         )
     }
 
@@ -91,7 +108,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             generateExpression(receiver)
             generateExpression(expression.value)
             body.buildStructSet(
-                struct = context.referenceStructType(field.parentAsClass.symbol),
+                struct = context.referenceGcType(field.parentAsClass.symbol),
                 fieldId = context.getStructFieldRef(field),
             )
         } else {
@@ -116,13 +133,23 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     override fun visitConstructorCall(expression: IrConstructorCall) {
         val klass: IrClass = expression.symbol.owner.parentAsClass
 
-        if (backendContext.inlineClassesUtils.isClassInlineLike(klass)) {
-            // Unboxed instance is just a constructor argument.
+        require(!backendContext.inlineClassesUtils.isClassInlineLike(klass)) {
+            "All inline class constructor calls must be lowered to static function calls"
+        }
+
+        val wasmGcType: WasmSymbol<WasmTypeDeclaration> = context.referenceGcType(klass.symbol)
+
+        if (klass.getWasmArrayAnnotation() != null) {
+            require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
             generateExpression(expression.getValueArgument(0)!!)
+            body.buildRttCanon(context.transformType(klass.defaultType))
+            body.buildInstr(
+                WasmOp.ARRAY_NEW_DEFAULT_WITH_RTT,
+                WasmImmediate.GcType(wasmGcType)
+            )
             return
         }
 
-        val wasmStruct: WasmSymbol<WasmStructDeclaration> = context.referenceStructType(klass.symbol)
         val wasmClassId = context.referenceClassId(klass.symbol)
 
         val irFields: List<IrField> = klass.allFields(backendContext.irBuiltIns)
@@ -135,7 +162,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
 
         body.buildGetGlobal(context.referenceClassRTT(klass.symbol))
-        body.buildStructNew(wasmStruct)
+        body.buildStructNew(wasmGcType)
         generateCall(expression)
     }
 
@@ -157,7 +184,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         if (call.symbol == wasmSymbols.boxIntrinsic) {
             val toType = call.getTypeArgument(0)!!
             val klass = toType.erasedUpperBound!!
-            val structTypeName = context.referenceStructType(klass.symbol)
+            val structTypeName = context.referenceGcType(klass.symbol)
             val klassId = context.referenceClassId(klass.symbol)
 
             body.buildConstI32Symbol(klassId)
@@ -191,16 +218,19 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 generateExpression(call.dispatchReceiver!!)
                 body.buildConstI32(vfSlot)
                 body.buildCall(context.referenceFunction(wasmSymbols.getVirtualMethodId))
+                body.buildCallIndirect(
+                    symbol = context.referenceFunctionType(function.symbol)
+                )
             } else {
-                val signatureId = context.referenceSignatureId(function.wasmSignature(backendContext.irBuiltIns))
                 generateExpression(call.dispatchReceiver!!)
-                body.buildConstI32Symbol(signatureId)
-                body.buildCall(context.referenceFunction(wasmSymbols.getInterfaceMethodId))
+                body.buildConstI32Symbol(context.referenceInterfaceId(klass.symbol))
+                body.buildCall(context.referenceFunction(wasmSymbols.getInterfaceImplId))
+                body.buildCallIndirect(
+                    tableIdx = WasmSymbolIntWrapper(context.referenceInterfaceTable(function.symbol)),
+                    symbol = context.referenceFunctionType(function.symbol)
+                )
             }
 
-            body.buildCallIndirect(
-                symbol = context.referenceFunctionType(function.symbol)
-            )
         } else {
             // Static function call
             body.buildCall(context.referenceFunction(function.symbol))
@@ -228,7 +258,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         call: IrFunctionAccessExpression,
         function: IrFunction
     ): Boolean {
-        if (tryToGenerateWasmOpIntrinsicCall(function)) {
+        if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
         }
 
@@ -459,7 +489,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     // Return true if function is recognized as intrinsic.
-    fun tryToGenerateWasmOpIntrinsicCall(function: IrFunction): Boolean {
+    fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
         if (function.hasWasmReinterpretAnnotation()) {
             return true
         }
@@ -472,11 +502,34 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 0 -> {
                 }
                 1 -> {
-                    when (val imm = op.immediates[0]) {
-                        WasmImmediateKind.MEM_ARG ->
-                            immediates = arrayOf(WasmImmediate.MemArg(0u, 0u))
+                    immediates = arrayOf(
+                        when (val imm = op.immediates[0]) {
+                            WasmImmediateKind.MEM_ARG ->
+                                WasmImmediate.MemArg(0u, 0u)
+                            WasmImmediateKind.STRUCT_TYPE_IDX ->
+                                WasmImmediate.GcType(context.referenceGcType(function.dispatchReceiverParameter!!.type.classOrNull!!))
+                            else ->
+                                error("Immediate $imm is unsupported")
+                        }
+                    )
+                }
+                2 -> {
+                    when (op) {
+                        WasmOp.REF_TEST -> {
+                            val fromIrType = call.getValueArgument(0)!!.type
+                            val fromWasmType = context.transformBoxedType(fromIrType)
+                            val toIrType = call.getTypeArgument(0)!!
+                            val toWasmType = context.transformBoxedType(toIrType)
+                            immediates = arrayOf(
+                                WasmImmediate.HeapType(fromWasmType),
+                                WasmImmediate.HeapType(toWasmType),
+                            )
+
+                            // ref.test takes RTT as a second operand
+                            generateTypeRTT(toIrType)
+                        }
                         else ->
-                            error("Immediate $imm is unsupported")
+                            error("Op $opString is unsupported")
                     }
                 }
                 else ->

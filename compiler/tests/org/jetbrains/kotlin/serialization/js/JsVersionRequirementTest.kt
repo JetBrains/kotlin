@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.serialization.AbstractVersionRequirementTest
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class JsVersionRequirementTest : AbstractVersionRequirementTest() {
@@ -37,7 +38,13 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         analysisFlags: Map<AnalysisFlag<*>, Any?>
     ) {
         val environment = createEnvironment(languageVersion)
-        val ktFiles = files.map { file -> KotlinTestUtils.createFile(file.name, file.readText(), environment.project) }
+        val ktFiles = files.map { file ->
+            KtTestUtil.createFile(
+                file.name,
+                file.readText(),
+                environment.project
+            )
+        }
         val trace = BindingTraceContext()
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
             ktFiles, trace, createModule(environment), environment.configuration

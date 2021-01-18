@@ -44,11 +44,11 @@ fun test6(a: Any) {
 
 fun test7(a: Function1<Int, Int>) {
   a as Function0<Unit> /*~> Unit */
-  error("") /* ErrorCallExpression */a /*as Function0<Unit> */;
+  J().run1(r = a /*as Function0<Unit> */ /*-> Runnable? */)
 }
 
 fun test8(a: Function0<Unit>) {
-  error("") /* ErrorCallExpression */id<Function0<Unit>?>(x = a);
+  J().run1(r = id<Function0<Unit>?>(x = a) /*-> Runnable? */)
 }
 
 fun test9() {

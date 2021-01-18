@@ -40,7 +40,7 @@ class FirTypeIntersectionScope private constructor(
 
     private val intersectionOverrides: MutableMap<FirCallableSymbol<*>, MemberWithBaseScope<out FirCallableSymbol<*>>> = mutableMapOf()
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
             super.processFunctionsByName(name, processor)
         }
@@ -105,13 +105,14 @@ class FirTypeIntersectionScope private constructor(
                 val intersectionOverride = intersectionOverrides.getOrPut(mostSpecific) {
                     val newModality = chooseIntersectionOverrideModality(extractedOverrides)
                     val newVisibility = chooseIntersectionVisibility(extractedOverrides)
+                    val extractedOverridesSymbols = extractedOverrides.map { it.member }
                     @Suppress("UNCHECKED_CAST")
                     when (mostSpecific) {
                         is FirNamedFunctionSymbol -> {
-                            createIntersectionOverride(mostSpecific, newModality, newVisibility)
+                            createIntersectionOverride(mostSpecific, extractedOverridesSymbols, newModality, newVisibility)
                         }
                         is FirPropertySymbol -> {
-                            createIntersectionOverride(mostSpecific, newModality, newVisibility)
+                            createIntersectionOverride(mostSpecific, extractedOverridesSymbols, newModality, newVisibility)
                         }
                         else -> {
                             throw IllegalStateException("Should not be here")
@@ -255,16 +256,18 @@ class FirTypeIntersectionScope private constructor(
 
     private fun createIntersectionOverride(
         mostSpecific: FirNamedFunctionSymbol,
+        overrides: Collection<FirCallableSymbol<*>>,
         newModality: Modality,
         newVisibility: Visibility,
     ): FirNamedFunctionSymbol {
 
         val newSymbol =
-            FirNamedFunctionSymbol(
+            FirIntersectionOverrideFunctionSymbol(
                 CallableId(
                     dispatchReceiverType.classId ?: mostSpecific.dispatchReceiverClassOrNull()?.classId!!,
                     mostSpecific.fir.name
-                )
+                ),
+                overrides
             )
         val mostSpecificFunction = mostSpecific.fir
         FirFakeOverrideGenerator.createCopyForFirFunction(
@@ -282,10 +285,11 @@ class FirTypeIntersectionScope private constructor(
 
     private fun createIntersectionOverride(
         mostSpecific: FirPropertySymbol,
+        overrides: Collection<FirCallableSymbol<*>>,
         newModality: Modality,
         newVisibility: Visibility,
     ): FirPropertySymbol {
-        val newSymbol = FirPropertySymbol(mostSpecific.callableId)
+        val newSymbol = FirIntersectionOverridePropertySymbol(mostSpecific.callableId, overrides)
         val mostSpecificProperty = mostSpecific.fir
         FirFakeOverrideGenerator.createCopyForFirProperty(
             newSymbol, mostSpecificProperty, mostSpecificProperty.session, FirDeclarationOrigin.IntersectionOverride,
@@ -444,8 +448,8 @@ class FirTypeIntersectionScope private constructor(
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
         processDirectOverriddenCallablesWithBaseScope(
             functionSymbol, processor,

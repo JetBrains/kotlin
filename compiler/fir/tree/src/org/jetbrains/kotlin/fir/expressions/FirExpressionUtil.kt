@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
     get() = ((annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)
@@ -28,7 +29,7 @@ inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
 inline val FirAnnotationCall.classId: ClassId?
     get() = coneClassLikeType?.lookupTag?.classId
 
-fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
+fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: ConstantValueKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
         buildConstExpression(source, kind, it)
     } ?: buildErrorExpression {
@@ -44,6 +45,7 @@ inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParamet
     get() = (argumentList as? FirResolvedArgumentList)?.mapping
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
+    if (this is FirWrappedArgumentExpression) return expression.toResolvedCallableReference()
     return (this as? FirResolvable)?.calleeReference as? FirResolvedNamedReference
 }
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 abstract class IrFunction :
     IrDeclarationBase(),
     IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget,
+    IrMemberWithContainerSource,
     IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
@@ -48,8 +49,6 @@ abstract class IrFunction :
     abstract var valueParameters: List<IrValueParameter>
 
     abstract var body: IrBody?
-
-    abstract val containerSource: DeserializedContainerSource?
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

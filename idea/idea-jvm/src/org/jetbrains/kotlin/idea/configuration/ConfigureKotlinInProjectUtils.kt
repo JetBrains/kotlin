@@ -49,7 +49,7 @@ private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.configuration.C
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
-const val LAST_SNAPSHOT_VERSION = "1.4.255-SNAPSHOT"
+const val LAST_SNAPSHOT_VERSION = "1.5.255-SNAPSHOT"
 
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
     "sonatype.oss.snapshots",
@@ -57,14 +57,6 @@ val SNAPSHOT_REPOSITORY = RepositoryDescription(
     "https://oss.sonatype.org/content/repositories/snapshots",
     null,
     isSnapshot = true
-)
-
-val EAP_REPOSITORY = RepositoryDescription(
-    "bintray.kotlin.eap",
-    "Bintray Kotlin EAP Repository",
-    "https://dl.bintray.com/kotlin/kotlin-eap",
-    "https://bintray.com/kotlin/kotlin-eap/kotlin/",
-    isSnapshot = false
 )
 
 val DEFAULT_GRADLE_PLUGIN_REPOSITORY = RepositoryDescription(
@@ -113,7 +105,6 @@ fun RepositoryDescription.toKotlinRepositorySnippet() = "maven(\"$url\")"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
-    isEap(version) -> EAP_REPOSITORY
     isDev(version) -> devRepository(version)
     else -> null
 }

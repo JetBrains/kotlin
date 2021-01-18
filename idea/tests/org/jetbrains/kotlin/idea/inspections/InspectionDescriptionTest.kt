@@ -53,7 +53,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
     private fun loadKotlinInspections(): List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>> {
         return InspectionToolRegistrar.getInstance().createTools().filter {
             it.extension.pluginDescriptor.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID
-        }
+        } as List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>>
     }
 
     private fun loadKotlinInspectionExtensions() =

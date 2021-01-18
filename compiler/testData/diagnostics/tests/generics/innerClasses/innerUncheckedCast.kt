@@ -15,7 +15,7 @@ class Outer<E> {
         if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) return
 
         if (z is Inner) {
-            <!OI;DEBUG_INFO_SMARTCAST!>z<!>.prop.checkType { _<Any?>() }
+            <!DEBUG_INFO_SMARTCAST{OI}!>z<!>.prop.checkType { _<Any?>() }
             return
         }
 

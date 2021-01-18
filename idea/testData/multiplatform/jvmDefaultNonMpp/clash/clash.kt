@@ -1,7 +1,7 @@
 import base.*
 
-interface SubCheck : Check {
-    override fun test(): String {
+interface <!LINE_MARKER("descr='Is implemented by SubCheckClass'")!>SubCheck<!> : Check {
+    override fun <!LINE_MARKER("descr='Overrides function in 'Check''")!>test<!>(): String {
         return "OK"
     }
 }

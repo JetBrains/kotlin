@@ -33,3 +33,10 @@ class WasmSymbol<out T : Any>(owner: T? = null) : WasmSymbolReadOnly<T> {
     override fun toString(): String =
         _owner?.toString() ?: "UNBOUND-WASM-SYMBOL"
 }
+
+class WasmSymbolIntWrapper(val symbol: WasmSymbol<WasmNamedModuleField>) : WasmSymbolReadOnly<Int> {
+    override val owner: Int
+        get() = symbol.owner.id!!
+
+    override fun toString() = owner.toString()
+}

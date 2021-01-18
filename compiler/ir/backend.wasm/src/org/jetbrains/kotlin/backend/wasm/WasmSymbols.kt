@@ -113,6 +113,7 @@ class WasmSymbols(
     val booleanAnd = getInternalFunction("wasm_i32_and")
     val refEq = getInternalFunction("wasm_ref_eq")
     val refIsNull = getInternalFunction("wasm_ref_is_null")
+    val refTest = getInternalFunction("wasm_ref_test")
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 
     val wasmRefCast = getInternalFunction("wasm_ref_cast")
@@ -126,9 +127,8 @@ class WasmSymbols(
     val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
 
     val getVirtualMethodId = getInternalFunction("getVirtualMethodId")
-    val getInterfaceMethodId = getInternalFunction("getInterfaceMethodId")
+    val getInterfaceImplId = getInternalFunction("getInterfaceImplId")
 
-    val isSubClass = getInternalFunction("isSubClass")
     val isInterface = getInternalFunction("isInterface")
 
     val nullableEquals = getInternalFunction("nullableEquals")

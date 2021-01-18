@@ -68,9 +68,9 @@ class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
 
     private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
-                testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable,
+            KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).apply {
             // Activate Kotlin light class finder
             JvmResolveUtil.analyze(this)

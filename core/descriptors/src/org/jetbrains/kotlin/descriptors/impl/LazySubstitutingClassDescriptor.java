@@ -249,6 +249,11 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
     }
 
     @Override
+    public boolean isValue() {
+        return original.isValue();
+    }
+
+    @Override
     public boolean isExternal() {
         return original.isExternal();
     }

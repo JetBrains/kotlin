@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -15,13 +14,14 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.wasm.ir.*
 
 interface WasmBaseCodegenContext {
     val backendContext: WasmBackendContext
 
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction>
     fun referenceGlobal(irField: IrFieldSymbol): WasmSymbol<WasmGlobal>
-    fun referenceStructType(irClass: IrClassSymbol): WasmSymbol<WasmStructDeclaration>
+    fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration>
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType>
 
     fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int>
@@ -31,9 +31,13 @@ interface WasmBaseCodegenContext {
 
     fun referenceSignatureId(signature: WasmSignature): WasmSymbol<Int>
 
+    fun referenceInterfaceTable(irFunction: IrFunctionSymbol): WasmSymbol<WasmTable>
+
     fun referenceStringLiteral(string: String): WasmSymbol<Int>
 
     fun transformType(irType: IrType): WasmType
+    fun transformFieldType(irType: IrType): WasmType
+
     fun transformBoxedType(irType: IrType): WasmType
     fun transformValueParameterType(irValueParameter: IrValueParameter): WasmType
     fun transformResultType(irType: IrType): WasmType?

@@ -1,4 +1,4 @@
-// JAVAC_SKIP
+// SKIP_JAVAC
 // FILE: p/Nameless.java
 
 package p;

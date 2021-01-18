@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.name.Name
 
 class FirDefaultStarImportingScope(
     session: FirSession,
@@ -32,5 +35,25 @@ class FirDefaultStarImportingScope(
                     packageFqName = it.fqName
                 }
             } ?: emptyList()
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        if (name.isSpecial || name.identifier.isNotEmpty()) {
+            for (import in starImports) {
+                for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
+                    processor(symbol)
+                }
+            }
+        }
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        if (name.isSpecial || name.identifier.isNotEmpty()) {
+            for (import in starImports) {
+                for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, name)) {
+                    processor(symbol)
+                }
+            }
+        }
     }
 }

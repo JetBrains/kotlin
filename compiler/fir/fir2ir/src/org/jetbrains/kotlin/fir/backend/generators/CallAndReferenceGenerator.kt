@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -16,10 +15,13 @@ import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -46,6 +49,7 @@ class CallAndReferenceGenerator(
 
     private val approximator = object : AbstractTypeApproximator(session.typeContext) {}
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
+    private val samResolver = FirSamResolverImpl(session, scopeSession)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -166,7 +170,7 @@ class CallAndReferenceGenerator(
         return null
     }
 
-    private fun FirExpression.superQualifierSymbol(callSymbol: IrSymbol?): IrClassSymbol? {
+    private fun FirExpression.superQualifierSymbol(): IrClassSymbol? {
         if (this !is FirQualifiedAccess) {
             return null
         }
@@ -216,7 +220,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = symbol.owner.typeParameters.size,
                             valueArgumentsCount = symbol.owner.valueParameters.size,
                             origin = qualifiedAccess.calleeReference.statementOrigin(),
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
                     }
                     is IrLocalDelegatedPropertySymbol -> {
@@ -225,7 +229,7 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = symbol.owner.getter.typeParameters.size,
                             valueArgumentsCount = 0,
                             origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
-                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                         )
                     }
                     is IrPropertySymbol -> {
@@ -237,11 +241,11 @@ class CallAndReferenceGenerator(
                                 typeArgumentsCount = getter.typeParameters.size,
                                 valueArgumentsCount = 0,
                                 origin = IrStatementOrigin.GET_PROPERTY,
-                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                             )
                             backingField != null -> IrGetFieldImpl(
                                 startOffset, endOffset, backingField.symbol, type,
-                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                                superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                             )
                             else -> IrErrorCallExpressionImpl(
                                 startOffset, endOffset, type,
@@ -252,7 +256,7 @@ class CallAndReferenceGenerator(
                     is IrFieldSymbol -> IrGetFieldImpl(
                         startOffset, endOffset, symbol, type,
                         origin = IrStatementOrigin.GET_PROPERTY.takeIf { qualifiedAccess.calleeReference !is FirDelegateFieldReference },
-                        superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
+                        superQualifierSymbol = dispatchReceiver.superQualifierSymbol()
                     )
                     is IrValueSymbol -> IrGetValueImpl(
                         startOffset, endOffset, type, symbol,
@@ -293,7 +297,7 @@ class CallAndReferenceGenerator(
                                 typeArgumentsCount = setter.typeParameters.size,
                                 valueArgumentsCount = 1,
                                 origin = origin,
-                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
                                 putValueArgument(0, assignedValue)
                             }
@@ -310,14 +314,14 @@ class CallAndReferenceGenerator(
                                 typeArgumentsCount = setter.typeParameters.size,
                                 valueArgumentsCount = 1,
                                 origin = origin,
-                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
                                 putValueArgument(0, assignedValue)
                             }
                             backingField != null -> IrSetFieldImpl(
                                 startOffset, endOffset, backingField.symbol, type,
                                 origin = null, // NB: to be consistent with PSI2IR, origin should be null here
-                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
                                 value = assignedValue
                             }
@@ -445,8 +449,14 @@ class CallAndReferenceGenerator(
                             is FirDelegatedConstructorCall -> call.calleeReference
                             is FirAnnotationCall -> call.calleeReference
                             else -> null
-                        } as? FirResolvedNamedReference
-                        val function = (calleeReference?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+                        }
+                        val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {
+                            val coneClassLikeType = (call as FirAnnotationCall).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+                            val firClass = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol)?.fir
+                            firClass?.declarations?.filterIsInstance<FirConstructor>()?.firstOrNull()
+                        } else {
+                            ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+                        }
                         val valueParameters = function?.valueParameters
                         val argumentMapping = call.argumentMapping
                         if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
@@ -559,11 +569,13 @@ class CallAndReferenceGenerator(
             }
         }
         with(adapterGenerator) {
-            irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameter)
+            if (parameter?.returnTypeRef is FirResolvedTypeRef) {
+                // Java type case (from annotations)
+                irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameter)
+                irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
+            }
         }
-        return irArgument
-            .applySamConversionIfNeeded(argument, parameter)
-            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+        return irArgument.applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
     }
 
     private fun IrExpression.applySamConversionIfNeeded(
@@ -605,13 +617,25 @@ class CallAndReferenceGenerator(
     }
 
     private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
+        // If the type of the argument is already an explicitly subtype of the type of the parameter, we don't need SAM conversion.
+        if (argument.typeRef !is FirResolvedTypeRef ||
+            AbstractTypeChecker.isSubtypeOf(
+                session.inferenceComponents.ctx,
+                argument.typeRef.coneType,
+                parameter.returnTypeRef.coneType,
+                isFromNullabilityConstraint = true
+            )
+        ) {
+            return false
+        }
         // If the expected type is a built-in functional type, we don't need SAM conversion.
         val expectedType = argument.getExpectedTypeForSAMConversion(parameter)
         if (expectedType is ConeTypeParameterType || expectedType.isBuiltinFunctionalType(session)) {
             return false
         }
-        // On the other hand, the actual type should be a functional type.
-        return argument.isFunctional(session)
+        // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
+        val expectedFunctionType = samResolver.getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
+        return argument.isFunctional(session, scopeSession, expectedFunctionType)
     }
 
     private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(
@@ -648,7 +672,7 @@ class CallAndReferenceGenerator(
                             val typeParameter = access.findTypeParameter(index)
                             val argumentFirType = (argument as FirTypeProjectionWithVariance).typeRef
                             val argumentIrType = if (typeParameter?.isReified == true) {
-                                argumentFirType.approximatedIfNeededOrSelf(approximator, Visibilities.Public).toIrType()
+                                argumentFirType.approximatedForPublicPosition(approximator).toIrType()
                             } else {
                                 argumentFirType.toIrType()
                             }
@@ -711,7 +735,18 @@ class CallAndReferenceGenerator(
                     dispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }
                 if (ownerFunction?.extensionReceiverParameter != null) {
-                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)
+                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {
+                        ((qualifiedAccess.calleeReference as FirResolvedNamedReference)
+                            .resolvedSymbol.fir as? FirCallableMemberDeclaration)?.receiverTypeRef?.let { receiverType ->
+                            with(visitor.implicitCastInserter) {
+                                it.cast(
+                                    qualifiedAccess.extensionReceiver,
+                                    qualifiedAccess.extensionReceiver.typeRef,
+                                    receiverType
+                                )
+                            }
+                        } ?: it
+                    }
                 }
                 this
             }

@@ -262,8 +262,8 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         is FirRegularClassSymbol -> buildResolvedQualifierForClass(symbol, sourceElement = null)
         is FirTypeAliasSymbol -> {
             val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-            val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass
-            buildResolvedQualifierForClass(expansionRegularClass!!.symbol, sourceElement = symbol.fir.source)
+            val expansionRegularClassSymbol = type.lookupTag.toSymbolOrError(session)
+            buildResolvedQualifierForClass(expansionRegularClassSymbol, sourceElement = symbol.fir.source)
         }
         else -> throw AssertionError()
     }

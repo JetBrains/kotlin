@@ -76,6 +76,9 @@ internal class KtUltraLightFieldForSourceDeclaration(
     override fun getContainingFile(): PsiFile = parent.containingFile
     override fun getPresentation(): ItemPresentation? = kotlinOrigin.let { ItemPresentationProviders.getItemPresentation(it) }
     override fun findElementAt(offset: Int): PsiElement? = kotlinOrigin.findElementAt(offset)
+
+    // Workaround for KT-42137 until we update the bootstrap compiler.
+    override val kotlinOrigin: KtNamedDeclaration get() = super.kotlinOrigin
 }
 
 internal open class KtUltraLightFieldImpl protected constructor(

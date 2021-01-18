@@ -2,8 +2,8 @@
 
 package sample
 
-expect interface A {
-    fun common_1_A()
+expect interface <!LINE_MARKER("descr='Is subclassed by B [common-1] B [jvm]'"), LINE_MARKER("descr='Has actuals in common'")!>A<!> {
+    fun <!LINE_MARKER("descr='Has actuals in common'")!>common_1_A<!>()
 }
 
 expect interface B : A {

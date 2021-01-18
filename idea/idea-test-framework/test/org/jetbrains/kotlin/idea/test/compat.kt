@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupManager
 
-// FIX ME WHEN BUNCH 201 REMOVED
 fun runPostStartupActivitiesOnce(project: Project) {
-    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivitiesRegisteredDynamically()
 }

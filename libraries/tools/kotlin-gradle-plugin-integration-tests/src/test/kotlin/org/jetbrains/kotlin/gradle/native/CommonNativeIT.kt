@@ -66,8 +66,8 @@ class CommonNativeIT : BaseGradleIT() {
     fun testCommonWatchos() {
         doCommonNativeTest(
             "common-watchos",
-            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX86"),
-            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX86")
+            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
+            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64")
         )
     }
 

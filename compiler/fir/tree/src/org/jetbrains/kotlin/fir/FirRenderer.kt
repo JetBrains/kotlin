@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -226,7 +227,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     private fun FirMemberDeclaration.modalityAsString(): String {
-        return modality?.name?.toLowerCase() ?: run {
+        return modality?.name?.toLowerCaseAsciiOnly() ?: run {
             if (this is FirCallableMemberDeclaration<*> && this.isOverride) {
                 "open?"
             } else {
@@ -340,12 +341,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
-        if (mode.renderDeclarationResolvePhase) {
-            print("[${declaration.resolvePhase}] ")
-        }
+        declaration.renderPhaseIfNeeded()
         print(
             when (declaration) {
-                is FirRegularClass -> declaration.classKind.name.toLowerCase().replace("_", " ")
+                is FirRegularClass -> declaration.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")
                 is FirTypeAlias -> "typealias"
                 is FirSimpleFunction -> "fun"
                 is FirProperty -> {
@@ -357,6 +356,12 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
                 else -> "unknown"
             }
         )
+    }
+
+    private fun FirDeclaration.renderPhaseIfNeeded() {
+        if (mode.renderDeclarationResolvePhase) {
+            print("[${resolvePhase}] ")
+        }
     }
 
     private fun List<FirDeclaration>.renderDeclarations() {
@@ -458,6 +463,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (constructor.isActual) {
             print("actual ")
         }
+        constructor.renderPhaseIfNeeded()
         print("constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()

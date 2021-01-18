@@ -1,0 +1,1 @@
+val foo = <!HIDDEN!>UInt<!>()

@@ -3,7 +3,6 @@
 // IGNORE_LIGHT_ANALYSIS
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun box(): String {
     var result = 0u

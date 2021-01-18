@@ -15,6 +15,15 @@ import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.frontend.api.isValid
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.idea.util.ifTrue
+import org.jetbrains.kotlin.idea.util.module
 
 internal abstract class FirLightMethod(
     lightMemberOrigin: LightMemberOrigin?,
@@ -64,14 +73,32 @@ internal abstract class FirLightMethod(
 
     override val isMangled: Boolean = false
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray() //TODO
-
-    override fun hasTypeParameters(): Boolean = false //TODO
-
-    override fun getTypeParameterList(): PsiTypeParameterList? = null //TODO
+    abstract override fun getTypeParameters(): Array<PsiTypeParameter>
+    abstract override fun hasTypeParameters(): Boolean
+    abstract override fun getTypeParameterList(): PsiTypeParameterList?
 
     override fun getThrowsList(): PsiReferenceList =
         KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) //TODO()
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null //TODO()
+
+    protected fun <T> T.computeJvmMethodName(
+        defaultName: String,
+        containingClass: FirLightClassBase,
+        annotationUseSiteTarget: AnnotationUseSiteTarget? = null
+    ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
+        getJvmNameFromAnnotation(annotationUseSiteTarget)?.let { return it }
+
+        val effectiveVisibilityIfNotInternal = (visibility != KtSymbolVisibility.INTERNAL).ifTrue {
+            (containingClass as? FirLightClassForSymbol)?.tryGetEffectiveVisibility(this)
+        } ?: this.visibility
+
+        if (effectiveVisibilityIfNotInternal != KtSymbolVisibility.INTERNAL) return defaultName
+
+        val moduleName = module?.name ?: return defaultName
+
+        if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
+
+        return KotlinTypeMapper.InternalNameMapper.mangleInternalName(defaultName, moduleName)
+    }
 }

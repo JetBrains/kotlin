@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import com.intellij.util.containers.WeakInterner
-
 class Interner<T : Any> {
-    private val pool = WeakInterner<T>()
+    private val pool = com.intellij.util.containers.Interner.createWeakInterner<T>()
 
     fun intern(value: T): T = pool.intern(value)
 }

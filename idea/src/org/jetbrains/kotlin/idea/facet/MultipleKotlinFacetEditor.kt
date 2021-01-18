@@ -45,7 +45,6 @@ class MultipleKotlinFacetEditor(
                 helper.bind(scriptTemplatesClasspathField, editors) { it.compilerConfigurable.scriptTemplatesClasspathField }
                 helper.bind(languageVersionComboBox, editors) { it.compilerConfigurable.languageVersionComboBox }
                 helper.bind(apiVersionComboBox, editors) { it.compilerConfigurable.apiVersionComboBox }
-                helper.bind(coroutineSupportComboBox, editors) { it.compilerConfigurable.coroutineSupportComboBox }
             }
         }
     }

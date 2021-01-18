@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
+import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -156,27 +157,9 @@ class JvmCachedDeclarations(
             //
             // is supposed to allow using `I2.DefaultImpls.f` as if it was inherited from `I1.DefaultImpls`.
             // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
-            val defaultImplsOrigin = when {
-                !forCompatibilityMode && !interfaceFun.isFakeOverride ->
-                    when {
-                        interfaceFun.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ->
-                            interfaceFun.origin
-                        interfaceFun.origin.isSynthetic ->
-                            JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC
-                        else ->
-                            JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS
-                    }
-                interfaceFun.resolveFakeOverride()!!.origin.isSynthetic ->
-                    if (forCompatibilityMode)
-                        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
-                    else
-                        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
-                else ->
-                    if (forCompatibilityMode)
-                        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY
-                    else
-                        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
-            }
+            val defaultImplsOrigin =
+                if (!forCompatibilityMode && !interfaceFun.isFakeOverride) interfaceFun.origin
+                else interfaceFun.resolveFakeOverride()!!.origin
 
             // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.
             // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
@@ -198,11 +181,12 @@ class JvmCachedDeclarations(
                 typeParametersFromContext = parent.typeParameters
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
-                if (it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
-                    !it.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)
-                ) {
+
+                if (forCompatibilityMode && !interfaceFun.resolveFakeOverride()!!.origin.isSynthetic) {
                     context.createJvmIrBuilder(it.symbol).run {
-                        it.annotations += irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                        it.annotations = it.annotations
+                            .filterNot { it.annotationClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }
+                            .plus(irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag))
                     }
                 }
 
@@ -232,7 +216,7 @@ class JvmCachedDeclarations(
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
             context.irFactory.buildFun {
-                origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
+                origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
                 name = fakeOverride.name
                 visibility = fakeOverride.visibility
                 modality = fakeOverride.modality

@@ -1,3 +1,4 @@
+// IGNORE_FIR_DIAGNOSTICS
 open abstract class B {
     abstract fun foo2(arg: Int = 239) : Int
 }

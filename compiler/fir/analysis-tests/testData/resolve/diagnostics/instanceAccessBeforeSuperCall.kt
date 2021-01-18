@@ -1,5 +1,5 @@
 class A {
-    constructor(x: Int = <!UNRESOLVED_REFERENCE!>getSomeInt<!>(), other: A = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>, header: String = <!UNRESOLVED_REFERENCE!>keker<!>) {}
+    constructor(x: Int = <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>getSomeInt<!>()<!>, other: A = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>, header: String = <!UNRESOLVED_REFERENCE!>keker<!>) {}
     fun getSomeInt() = 10
     var keker = "test"
 }
@@ -7,10 +7,10 @@ class A {
 class B(other: B = <!NO_THIS!>this<!>)
 
 class C() {
-    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>this<!>({
+    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>this<!>({
         val a = 10
         <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
-    }) {}
+    })<!> {}
 }
 
 class D {

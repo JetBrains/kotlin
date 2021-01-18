@@ -76,6 +76,7 @@ fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
     shortenTempRootName: Boolean = false,
+    jUnit5Enabled: Boolean = false,
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> = getOrCreateTask(taskName) {
     doFirst {
@@ -109,12 +110,29 @@ fun Project.projectTest(
                 }
             }
 
-            include {
-                val path = it.path
-                if (it.isDirectory) {
+            val parentNames = if (jUnit5Enabled) {
+                /*
+                 * If we run test from inner test class with junit 5 we need
+                 *   to include all containing classes of our class
+                 */
+                val nestedNames = classFileNameWithoutExtension.split("$")
+                mutableListOf(nestedNames.first()).also {
+                    for (s in nestedNames.subList(1, nestedNames.size)) {
+                        it += "${it.last()}\$$s"
+                    }
+                }
+            } else emptyList()
+
+            include { treeElement ->
+                val path = treeElement.path
+                if (treeElement.isDirectory) {
                     classFileNameWithoutExtension.startsWith(path)
                 } else {
-                    path == classFileName || (path.endsWith(".class") && path.startsWith("$classFileNameWithoutExtension$"))
+                    if (jUnit5Enabled) {
+                        path == classFileName || (path.endsWith(".class") && parentNames.any { path.startsWith(it) })
+                    } else {
+                        path == classFileName || (path.endsWith(".class") && path.startsWith("$classFileNameWithoutExtension$"))
+                    }
                 }
             }
         }

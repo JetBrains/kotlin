@@ -20,6 +20,10 @@ open class RootPackageJsonTask : DefaultTask() {
         outputs.upToDateWhen {
             false
         }
+
+        onlyIf {
+            resolutionManager.isConfiguringState()
+        }
     }
 
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)

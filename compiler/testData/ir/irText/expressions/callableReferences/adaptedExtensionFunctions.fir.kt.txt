@@ -1,4 +1,4 @@
-fun use(f: @ExtensionFunctionType @ExtensionFunctionType Function2<C, Int, Unit>) {
+fun use(f: @ExtensionFunctionType Function2<C, Int, Unit>) {
 }
 
 class C {

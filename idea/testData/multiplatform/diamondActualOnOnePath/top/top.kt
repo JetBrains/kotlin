@@ -1,4 +1,4 @@
 package sample
 
-expect class ActualizedInLeft
-expect class ActualizedInRight
+expect class <!LINE_MARKER("descr='Has actuals in common'")!>ActualizedInLeft<!>
+expect class <!LINE_MARKER("descr='Has actuals in common'")!>ActualizedInRight<!>

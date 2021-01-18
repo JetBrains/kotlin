@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
@@ -26,8 +25,8 @@ import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.io.StringWriter
 
 fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
@@ -129,12 +127,7 @@ fun IrValueParameter.copyTo(
     isNoinline: Boolean = this.isNoinline,
     isAssignable: Boolean = this.isAssignable
 ): IrValueParameter {
-    val descriptor = if (index < 0) {
-        WrappedReceiverParameterDescriptor()
-    } else {
-        WrappedValueParameterDescriptor()
-    }
-    val symbol = IrValueParameterSymbolImpl(descriptor)
+    val symbol = IrValueParameterSymbolImpl()
     val defaultValueCopy = defaultValue?.let { originalDefault ->
         factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
             expression = originalDefault.expression.deepCopyWithVariables().also {
@@ -144,9 +137,9 @@ fun IrValueParameter.copyTo(
     }
     return factory.createValueParameter(
         startOffset, endOffset, origin, symbol,
-        name, index, type, varargElementType, isCrossinline, isNoinline, isAssignable = isAssignable
+        name, index, type, varargElementType, isCrossinline = isCrossinline,
+        isNoinline = isNoinline, isHidden = false, isAssignable = isAssignable
     ).also {
-        descriptor.bind(it)
         it.parent = irFunction
         it.defaultValue = defaultValueCopy
         it.copyAnnotationsFrom(this)
@@ -166,17 +159,16 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
 
 fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
-        val newDescriptor = WrappedReceiverParameterDescriptor()
         factory.createValueParameter(
             startOffset, endOffset, origin,
-            IrValueParameterSymbolImpl(newDescriptor),
+            IrValueParameterSymbolImpl(),
             name, index,
             type.substitute(substitutionMap),
             varargElementType?.substitute(substitutionMap),
-            isCrossinline, isNoinline
+            isCrossinline, isNoinline,
+            isHidden, isAssignable
         ).also { parameter ->
             parameter.parent = this@copyReceiverParametersFrom
-            newDescriptor.bind(this)
         }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
@@ -233,8 +225,16 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     }
 }
 
+fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> {
+    return annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
+}
+
+fun IrAnnotationContainer.copyAnnotationsWhen(filter: IrConstructorCall.() -> Boolean): List<IrConstructorCall> {
+    return annotations.mapNotNull { if (it.filter()) it.deepCopyWithSymbols(this as? IrDeclarationParent) else null }
+}
+
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
-    annotations += source.annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
+    annotations += source.copyAnnotations()
 }
 
 fun makeTypeParameterSubstitutionMap(
@@ -397,7 +397,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
 @Suppress("UNCHECKED_CAST")
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)
 
-fun IrSimpleFunction.isMethodOfAny() =
+fun IrFunction.isMethodOfAny() =
     ((valueParameters.size == 0 && name.asString().let { it == "hashCode" || it == "toString" }) ||
             (valueParameters.size == 1 && name.asString() == "equals" && valueParameters[0].type.isNullableAny()))
 
@@ -418,20 +418,20 @@ fun IrClass.createParameterDeclarations() {
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
-    val newDescriptor = WrappedReceiverParameterDescriptor()
     dispatchReceiverParameter = factory.createValueParameter(
         startOffset, endOffset,
         origin ?: parentAsClass.origin,
-        IrValueParameterSymbolImpl(newDescriptor),
+        IrValueParameterSymbolImpl(),
         Name.special("<this>"),
         -1,
         parentAsClass.defaultType,
         null,
         isCrossinline = false,
-        isNoinline = false
+        isNoinline = false,
+        isHidden = false,
+        isAssignable = false
     ).apply {
         parent = this@createDispatchReceiverParameter
-        newDescriptor.bind(this)
     }
 }
 
@@ -454,14 +454,14 @@ val IrFunction.allParametersCount: Int
 // This is essentially the same as FakeOverrideBuilder,
 // but it bypasses SymbolTable.
 // TODO: merge it with FakeOverrideBuilder.
-private object FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy() {
+private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy() {
 
     override fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction) {
-        declaration.acquireSymbol(IrSimpleFunctionSymbolImpl(WrappedSimpleFunctionDescriptor()))
+        declaration.acquireSymbol(IrSimpleFunctionSymbolImpl())
     }
 
     override fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty) {
-        val propertySymbol = IrPropertySymbolImpl(WrappedPropertyDescriptor())
+        val propertySymbol = IrPropertySymbolImpl()
         declaration.getter?.let { it.correspondingPropertySymbol = propertySymbol }
         declaration.setter?.let { it.correspondingPropertySymbol = propertySymbol }
 
@@ -479,12 +479,11 @@ private object FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy() {
 }
 
 fun IrClass.addFakeOverrides(irBuiltIns: IrBuiltIns, implementedMembers: List<IrOverridableMember> = emptyList()) {
-    IrOverridingUtil(irBuiltIns, FakeOverrideBuilderForLowerings)
+    IrOverridingUtil(irBuiltIns, FakeOverrideBuilderForLowerings())
         .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers)
         .forEach { addChild(it) }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFactory.createStaticFunctionWithReceivers(
         irParent: IrDeclarationParent,
         name: Name,
@@ -497,13 +496,10 @@ fun IrFactory.createStaticFunctionWithReceivers(
         copyMetadata: Boolean = true,
         typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
-    val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
-        WrappedFunctionDescriptorWithContainerSource()
-    } ?: WrappedSimpleFunctionDescriptor()
     return createFunction(
         oldFunction.startOffset, oldFunction.endOffset,
         origin,
-        IrSimpleFunctionSymbolImpl(descriptor),
+        IrSimpleFunctionSymbolImpl(),
         name,
         visibility,
         modality,
@@ -518,7 +514,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
         isInfix = oldFunction is IrSimpleFunction && oldFunction.isInfix,
         containerSource = oldFunction.containerSource,
     ).apply {
-        descriptor.bind(this)
         parent = irParent
 
         val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(

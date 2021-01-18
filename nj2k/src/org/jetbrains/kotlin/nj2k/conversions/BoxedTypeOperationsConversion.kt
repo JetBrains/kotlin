@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.nj2k.conversions
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.primitiveTypes
-
+import java.util.*
 
 class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -40,7 +40,7 @@ class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : Recursive
         if (operationType !in primitiveTypeNames) return null
         return JKCallExpressionImpl(
             symbolProvider.provideMethodSymbol(
-                "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
+                "kotlin.${primitiveTypeName.capitalize(Locale.US)}.to${operationType.capitalize(Locale.US)}"
             ),
             JKArgumentList()
         ).withFormattingFrom(methodCallExpression)

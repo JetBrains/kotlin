@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
-import org.jetbrains.kotlin.fir.analysis.checkers.source
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -112,7 +108,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         val firstToken = firstModifier.token
         val secondToken = secondModifier.token
         when (val compatibilityType = deduceCompatibilityType(firstToken, secondToken)) {
-            CompatibilityType.COMPATIBLE -> {}
+            CompatibilityType.COMPATIBLE -> {
+            }
             CompatibilityType.REPEATED ->
                 if (reportedNodes.add(secondModifier)) reporter.reportRepeatedModifier(secondModifier, secondToken)
             CompatibilityType.REDUNDANT_2_TO_1 ->
@@ -170,35 +167,31 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         if (!isDeclarationMappedToSourceCorrectly(declaration, source)) return
         if (context.containingDeclarations.last() is FirDefaultPropertyAccessor) return
 
-        val modifierList = source.getModifierList()
+        val modifierList = with(FirModifierList) { source.getModifierList() }
         modifierList?.let { checkModifiers(it, declaration, reporter) }
     }
 
     private fun DiagnosticReporter.reportRepeatedModifier(
         modifier: FirModifier<*>, keyword: KtModifierKeywordToken
     ) {
-        val source = modifier.source
-        source?.let { report(FirErrors.REPEATED_MODIFIER.on(it, keyword)) }
+        report(FirErrors.REPEATED_MODIFIER.on(modifier.source, keyword))
     }
 
     private fun DiagnosticReporter.reportRedundantModifier(
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
     ) {
-        val source = modifier.source
-        source?.let { report(FirErrors.REDUNDANT_MODIFIER.on(it, firstKeyword, secondKeyword)) }
+        report(FirErrors.REDUNDANT_MODIFIER.on(modifier.source, firstKeyword, secondKeyword))
     }
 
     private fun DiagnosticReporter.reportDeprecatedModifierPair(
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
     ) {
-        val source = modifier.source
-        source?.let { report(FirErrors.DEPRECATED_MODIFIER_PAIR.on(it, firstKeyword, secondKeyword)) }
+        report(FirErrors.DEPRECATED_MODIFIER_PAIR.on(modifier.source, firstKeyword, secondKeyword))
     }
 
     private fun DiagnosticReporter.reportIncompatibleModifiers(
         modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
     ) {
-        val source = modifier.source
-        source?.let { report(FirErrors.INCOMPATIBLE_MODIFIERS.on(it, firstKeyword, secondKeyword)) }
+        report(FirErrors.INCOMPATIBLE_MODIFIERS.on(modifier.source, firstKeyword, secondKeyword))
     }
 }

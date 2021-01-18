@@ -9,6 +9,8 @@ ext.configureJavaOnlyJvm6Project = { Project project ->
     }
 }
 
+List<String> tasksWithWarnings = (List<String>) rootProject.ext.get("tasksWithWarnings")
+
 ext.configureJvm6Project = { Project project ->
     project.configure(project) {
         configurations {
@@ -32,6 +34,14 @@ ext.configureJvm6Project = { Project project ->
 
         test {
             executable = "$JDK_16/bin/java"
+        }
+    }
+
+    project.tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile.class) { task ->
+        if (!tasksWithWarnings.contains(task.path)) {
+            task.kotlinOptions {
+                allWarningsAsErrors = true
+            }
         }
     }
 }
@@ -198,12 +208,7 @@ ext.configureLegacyPublishing = { Project project ->
 ext.configureJvmIrBackend = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {
-            if (project.kotlinBuildProperties.useIRForLibraries) {
-                useIR = true
-                freeCompilerArgs += ["-Xir-binary-with-stable-abi"]
-            } else {
-                useIR = false
-            }
+            useIR = project.kotlinBuildProperties.useIRForLibraries
         }
     }
 }

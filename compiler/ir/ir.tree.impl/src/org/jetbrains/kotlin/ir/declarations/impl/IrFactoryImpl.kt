@@ -83,7 +83,7 @@ object IrFactoryImpl : IrFactory {
     override fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
-        descriptor: DeclarationDescriptor,
+        descriptor: DeclarationDescriptor?,
     ): IrErrorDeclaration =
         IrErrorDeclarationImpl(startOffset, endOffset, descriptor)
 

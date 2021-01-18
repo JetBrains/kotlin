@@ -85,7 +85,7 @@ class RuntimeModuleData private constructor(
             // .kotlin_builtins files should be found by the same class loader that loaded stdlib classes
             val stdlibClassLoader = Unit::class.java.classLoader
             val builtinsProvider = JvmBuiltInsPackageFragmentProvider(
-                storageManager, ReflectKotlinClassFinder(stdlibClassLoader), module, notFoundClasses, builtIns.settings, builtIns.settings,
+                storageManager, ReflectKotlinClassFinder(stdlibClassLoader), module, notFoundClasses, builtIns.customizer, builtIns.customizer,
                 DeserializationConfiguration.Default, NewKotlinTypeChecker.Default, SamConversionResolverImpl(storageManager, emptyList())
             )
 

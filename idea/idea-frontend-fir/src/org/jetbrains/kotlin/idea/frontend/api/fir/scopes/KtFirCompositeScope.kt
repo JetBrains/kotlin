@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
@@ -56,6 +57,12 @@ class KtFirCompositeScope(
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
+        }
+    }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+        sequence {
+            subScopes.forEach { yieldAll(it.getConstructors()) }
         }
     }
 

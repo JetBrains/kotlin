@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 internal interface KtFirType : KtType, ValidityTokenOwner {
     val coneType: ConeKotlinType
@@ -103,5 +104,5 @@ internal class KtFirIntersectionType(
 
 internal class KtFirTypeArgumentWithVariance(
     override val type: KtType,
-    override val variance: KtTypeArgumentVariance
+    override val variance: Variance
 ) : KtTypeArgumentWithVariance()

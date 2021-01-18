@@ -12,8 +12,12 @@ interface KtSymbolWithVisibility {
 sealed class KtSymbolVisibility {
     object PUBLIC : KtSymbolVisibility()
     object PRIVATE : KtSymbolVisibility()
+    object PRIVATE_TO_THIS : KtSymbolVisibility()
     object PROTECTED : KtSymbolVisibility()
     object INTERNAL : KtSymbolVisibility()
     object UNKNOWN : KtSymbolVisibility()
     object LOCAL : KtSymbolVisibility()
 }
+
+fun KtSymbolVisibility.isPrivateOrPrivateToThis(): Boolean =
+    this == KtSymbolVisibility.PRIVATE || this == KtSymbolVisibility.PRIVATE_TO_THIS

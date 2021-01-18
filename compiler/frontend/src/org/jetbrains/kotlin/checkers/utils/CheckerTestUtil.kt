@@ -149,7 +149,7 @@ object CheckerTestUtil {
         return diagnostics
     }
 
-    private fun getDebugInfoDiagnostics(
+    fun getDebugInfoDiagnostics(
         root: PsiElement,
         bindingContext: BindingContext,
         markDynamicCalls: Boolean,

@@ -55,14 +55,19 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val callableReference = expression.dispatchReceiver as? IrCallableReference<*> ?: return expression
+        val callableReference = expression.dispatchReceiver as? IrCallableReference<*>
+            ?: return super.visitCall(expression)
 
-        //TODO rewrite checking
         val directMember = expression.symbol.owner.let {
             (it as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: it
         }
-        val irClass = directMember.parent as? IrClass ?: return expression
-        if (!irClass.isSubclassOf(lower.context.irBuiltIns.kCallableClass.owner)) return expression
+
+        val irClass = directMember.parent as? IrClass
+            ?: return super.visitCall(expression)
+        if (!irClass.isSubclassOf(lower.context.irBuiltIns.kCallableClass.owner)) {
+            return super.visitCall(expression)
+        }
+
         val name = when (directMember) {
             is IrSimpleFunction -> directMember.name
             is IrProperty -> directMember.name

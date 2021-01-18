@@ -10,12 +10,16 @@ import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.codegen.SamType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -27,11 +31,19 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
+import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
@@ -126,6 +138,28 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
                 isPrimary = true
             }
         }
+
+    override fun createCustomSuperConstructorCall(
+        ktPureClassOrObject: KtPureClassOrObject,
+        descriptor: ClassDescriptor,
+        context: GeneratorContext
+    ): IrDelegatingConstructorCall? {
+        if (!descriptor.isJvmRecord()) return null
+
+        val recordClass =
+            // We assume j.l.Record is in the classpath because otherwise it should be a compile time error
+            descriptor.module.resolveTopLevelClass(JAVA_LANG_RECORD_FQ_NAME, NoLookupLocation.FROM_BACKEND)
+                ?: error("Class not found: $JAVA_LANG_RECORD_FQ_NAME")
+
+        val recordConstructor = recordClass.constructors.single()
+        // OptIn is needed for the same as for Any constructor at BodyGenerator::generateAnySuperConstructorCall
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        return IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
+            ktPureClassOrObject.pureStartOffset, ktPureClassOrObject.pureEndOffset,
+            context.irBuiltIns.unitType,
+            context.symbolTable.referenceConstructor(recordConstructor)
+        )
+    }
 
     private val flexibleNullabilityAnnotationClass =
         createSpecialAnnotationClass(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)

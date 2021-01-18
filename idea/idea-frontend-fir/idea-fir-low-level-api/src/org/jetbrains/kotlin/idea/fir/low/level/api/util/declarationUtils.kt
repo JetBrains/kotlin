@@ -91,7 +91,12 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
                 firFile.declarations
             }
             val original = originalDeclaration
-            declarations?.first { it.psi === this || it.psi == original }
+
+            /*
+            It is possible that we will not be able to find needed declaration here when the code is invalid,
+            e.g, we have two conflicting declarations with the same name and we are searching in the wrong one
+             */
+            declarations?.firstOrNull { it.psi == this || it.psi == original }
         }
         this is KtConstructor<*> -> {
             val containingClass = containingClassOrObject
@@ -100,7 +105,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             containerClassFir.declarations.first { it.psi === this }
         }
         this is KtTypeAlias -> findFir(firSymbolProvider)
-        else -> error("Invalid container $this::class")
+        else -> error("Invalid container ${this::class}\n${getElementTextInContext()}")
     }
     return candidate?.takeIf { it.realPsi == this }
 }

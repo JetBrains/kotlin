@@ -34,10 +34,10 @@ fun test3(a: Any?, b: Any?): String {
     a !is String? -> return ""
   }
   return { // BLOCK
-    val tmp0_elvis_lhs: Any? = a
+    val tmp0_elvis_lhs: String? = a /*as String? */
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b /*as String */
-      else -> tmp0_elvis_lhs /*as String */
+      else -> tmp0_elvis_lhs
     }
   }
 }

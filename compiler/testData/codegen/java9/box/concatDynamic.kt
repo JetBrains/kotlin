@@ -8,7 +8,3 @@ fun box(): String {
 
     return if (s != "_1234_5.06.07truefalse31474836473147483648") "fail $s" else "OK"
 }
-
-fun main() {
-    box().let { if (it != "OK") throw AssertionError(it) }
-}

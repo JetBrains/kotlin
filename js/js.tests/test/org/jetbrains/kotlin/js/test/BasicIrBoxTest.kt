@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -30,14 +31,12 @@ private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false,
     targetBackend: TargetBackend = TargetBackend.JS_IR
 ) : BasicBoxTest(
     pathToTestDir,
     testGroupOutputDirPrefix,
-    pathToRootOutputDir = pathToRootOutputDir,
     typedArraysEnabled = true,
     generateSourceMap = generateSourceMap,
     generateNodeJsRunner = generateNodeJsRunner,
@@ -58,8 +57,6 @@ abstract class BasicIrBoxTest(
     val runEs6Mode: Boolean = getBoolean("kotlin.js.ir.es6", false)
 
     val perModule: Boolean = getBoolean("kotlin.js.ir.perModule")
-
-    private val osName: String = System.getProperty("os.name").toLowerCase()
 
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
@@ -122,8 +119,8 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(
                     jsPhases,
                     dumpToDirectory = dumpOutputDir.path,
-                    toDumpStateAfter = allPhasesSet,
-                    toValidateStateAfter = allPhasesSet,
+                    toDumpStateAfter = fromSysPropertyOrAll("kotlin.js.test.phasesToDumpAfter", allPhasesSet),
+                    toValidateStateAfter = fromSysPropertyOrAll("kotlin.js.test.phasesToValidateAfter", allPhasesSet),
                     dumpOnlyFqName = null
                 )
             } else {
@@ -192,6 +189,13 @@ abstract class BasicIrBoxTest(
         }
     }
 
+    private fun fromSysPropertyOrAll(key: String, all: Set<AnyNamedPhase>): Set<AnyNamedPhase> {
+        val phases = System.getProperty(key)?.split(',')?.toSet() ?: emptySet()
+        if (phases.isEmpty()) return all
+
+        return all.filter { it.name in phases }.toSet()
+    }
+
     private fun JsCode.writeTo(outputFile: File, config: JsConfig) {
         val wrappedCode =
             wrapWithModuleEmulationMarkers(mainModule, moduleId = config.moduleId, moduleKind = config.moduleKind)
@@ -207,17 +211,6 @@ abstract class BasicIrBoxTest(
         }
 
         cachedDependencies[outputFile.absolutePath] = dependencyPaths
-    }
-
-    override fun dontRunOnSpecificPlatform(targetBackend: TargetBackend): Boolean {
-        if (targetBackend != TargetBackend.JS_IR_ES6) return false
-        if (!runEs6Mode) return false
-
-        // TODO: Since j2v8 does not support ES6 on mac and windows, temporary don't run such test on those platforms.
-        if (osName.indexOf("win") >= 0) return true
-        if (osName.indexOf("mac") >= 0 || osName.indexOf("darwin") >= 0) return true
-
-        return false
     }
 
     override fun runGeneratedCode(

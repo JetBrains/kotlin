@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
-import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
@@ -52,7 +52,15 @@ internal abstract class FirLightMethodForSymbol(
         builder
     }
 
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, functionSymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
+
     override fun getParameterList(): PsiParameterList = _parametersList
 
     override val kotlinOrigin: KtDeclaration? = functionSymbol.psi as? KtDeclaration
+
+    override fun isValid(): Boolean = super.isValid() && functionSymbol.isValid()
 }

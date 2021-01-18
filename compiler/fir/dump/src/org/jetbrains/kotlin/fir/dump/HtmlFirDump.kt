@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.io.Writer
@@ -761,63 +762,64 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(expression: FirConstExpression<*>) {
         val value = expression.value
-        if (value == null && expression.kind != FirConstKind.Null) {
+        if (value == null && expression.kind != ConstantValueKind.Null) {
             return error {
                 +"null value"
             }
         }
 
+        @OptIn(ExperimentalUnsignedTypes::class)
         when (expression.kind) {
-            FirConstKind.Null -> keyword("null")
-            FirConstKind.Boolean -> keyword(value.toString())
-            FirConstKind.String, FirConstKind.Char ->
+            ConstantValueKind.Null -> keyword("null")
+            ConstantValueKind.Boolean -> keyword(value.toString())
+            ConstantValueKind.String, ConstantValueKind.Char ->
                 stringLiteral(value)
-            FirConstKind.Byte -> {
+            ConstantValueKind.Byte -> {
                 +value.toString()
                 keyword("B")
             }
-            FirConstKind.Short -> {
+            ConstantValueKind.Short -> {
                 +value.toString()
                 keyword("S")
             }
-            FirConstKind.Int -> {
+            ConstantValueKind.Int -> {
                 +value.toString()
                 keyword("I")
             }
-            FirConstKind.Long -> {
+            ConstantValueKind.Long -> {
                 +value.toString()
                 keyword("L")
             }
-            FirConstKind.UnsignedByte -> {
+            ConstantValueKind.UnsignedByte -> {
                 +(value as Long).toUByte().toString()
                 keyword("uB")
             }
-            FirConstKind.UnsignedShort -> {
+            ConstantValueKind.UnsignedShort -> {
                 +(value as Long).toUShort().toString()
                 keyword("uS")
             }
-            FirConstKind.UnsignedInt -> {
+            ConstantValueKind.UnsignedInt -> {
                 +(value as Long).toUInt().toString()
                 keyword("uI")
             }
-            FirConstKind.UnsignedLong -> {
+            ConstantValueKind.UnsignedLong -> {
                 +(value as Long).toULong().toString()
                 keyword("uL")
             }
-            FirConstKind.Float -> {
+            ConstantValueKind.Float -> {
                 +value.toString()
                 keyword("F")
             }
-            FirConstKind.Double -> {
+            ConstantValueKind.Double -> {
                 +value.toString()
                 keyword("D")
             }
-            FirConstKind.IntegerLiteral -> {
+            ConstantValueKind.IntegerLiteral -> {
                 +"IL<"
                 +value.toString()
                 +">"
             }
-            FirConstKind.UnsignedIntegerLiteral -> {
+            ConstantValueKind.UnsignedIntegerLiteral -> {
                 +"UIL<"
                 +value.toString()
                 +">"

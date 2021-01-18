@@ -347,7 +347,6 @@ class KotlinFacetEditorGeneralTab(
                 doValidate()
             }
             apiVersionComboBox.validateOnChange()
-            coroutineSupportComboBox.validateOnChange()
         }
         editor.targetPlatformSelectSingleCombobox.validateOnChange()
 

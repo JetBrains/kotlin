@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -234,8 +234,8 @@ private val copyInlineFunctionBodyLoweringPhase = makeDeclarationTransformerPhas
     prerequisite = setOf(functionInliningPhase)
 )
 
-private val removeInlineFunctionsWithReifiedTypeParametersLoweringPhase = makeDeclarationTransformerPhase(
-    { RemoveInlineFunctionsWithReifiedTypeParametersLowering() },
+private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeDeclarationTransformerPhase(
+    { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
     description = "Remove Inline functions with reified parameters from context",
     prerequisite = setOf(functionInliningPhase)
@@ -304,7 +304,7 @@ private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
     ::EnumSyntheticFunctionsLowering,
     name = "EnumSyntheticFunctionsLowering",
     description = "Implement `valueOf` and `values`",
-    prerequisite = setOf(enumClassConstructorLoweringPhase)
+    prerequisite = setOf(enumClassConstructorLoweringPhase, enumClassCreateInitializerLoweringPhase)
 )
 
 private val enumUsageLoweringPhase = makeBodyLoweringPhase(
@@ -368,6 +368,13 @@ private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
     ::PropertyAccessorInlineLowering,
     name = "PropertyAccessorInlineLowering",
     description = "[Optimization] Inline property accessors"
+)
+
+private val copyPropertyAccessorBodiesLoweringPass = makeDeclarationTransformerPhase(
+    ::CopyAccessorBodyLowerings,
+    name = "CopyAccessorBodyLowering",
+    description = "Copy accessor bodies so that ist can be safely read in PropertyAccessorInlineLowering",
+    prerequisite = setOf(propertyAccessorInlinerLoweringPhase)
 )
 
 private val foldConstantLoweringPhase = makeBodyLoweringPhase(
@@ -478,6 +485,13 @@ private val defaultParameterCleanerPhase = makeDeclarationTransformerPhase(
     description = "Clean default parameters up"
 )
 
+
+private val exportedDefaultParameterStubPhase = makeDeclarationTransformerPhase(
+    ::ExportedDefaultParameterStub,
+    name = "ExportedDefaultParameterStub",
+    description = "Generates default stub for exported entity and renames the non-default counterpart"
+)
+
 private val jsDefaultCallbackGeneratorPhase = makeBodyLoweringPhase(
     ::JsDefaultCallbackGenerator,
     name = "JsDefaultCallbackGenerator",
@@ -571,7 +585,7 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     description = "Lower IrTypeOperator with corresponding logic",
     prerequisite = setOf(
         bridgesConstructionPhase,
-        removeInlineFunctionsWithReifiedTypeParametersLoweringPhase,
+        removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
         singleAbstractMethodPhase, errorExpressionLoweringPhase
     )
 )
@@ -603,6 +617,12 @@ private val secondaryFactoryInjectorLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
+private val constLoweringPhase = makeBodyLoweringPhase(
+    ::ConstLowering,
+    name = "ConstLowering",
+    description = "Wrap Long and Char constants into constructor invocation"
+)
+
 private val inlineClassDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     { InlineClassLowering(it).inlineClassDeclarationLowering },
     name = "InlineClassDeclarationLowering",
@@ -612,7 +632,12 @@ private val inlineClassDeclarationLoweringPhase = makeDeclarationTransformerPhas
 private val inlineClassUsageLoweringPhase = makeBodyLoweringPhase(
     { InlineClassLowering(it).inlineClassUsageLowering },
     name = "InlineClassUsageLowering",
-    description = "Handle inline class usages"
+    description = "Handle inline class usages",
+    prerequisite = setOf(
+        // Const lowering generates inline class constructors for unsigned integers
+        // which should be lowered by this lowering
+        constLoweringPhase
+    )
 )
 
 private val autoboxingTransformerPhase = makeBodyLoweringPhase(
@@ -638,12 +663,6 @@ private val primitiveCompanionLoweringPhase = makeBodyLoweringPhase(
     ::PrimitiveCompanionLowering,
     name = "PrimitiveCompanionLowering",
     description = "Replace common companion object access with platform one"
-)
-
-private val constLoweringPhase = makeBodyLoweringPhase(
-    ::ConstLowering,
-    name = "ConstLowering",
-    description = "Wrap Long and Char constants into constructor invocation"
 )
 
 private val callsLoweringPhase = makeBodyLoweringPhase(
@@ -689,7 +708,7 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     description = "Clean up IR before codegen"
 )
 
-val loweringList = listOf<Lowering>(
+private val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     expectDeclarationsRemovingPhase,
@@ -704,6 +723,7 @@ val loweringList = listOf<Lowering>(
     localClassesExtractionFromInlineFunctionsPhase,
     functionInliningPhase,
     copyInlineFunctionBodyLoweringPhase,
+    removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
     createScriptFunctionsPhase,
     callableReferenceLowering,
     singleAbstractMethodPhase,
@@ -742,15 +762,16 @@ val loweringList = listOf<Lowering>(
     propertyLazyInitLoweringPhase,
     removeInitializersForLazyProperties,
     propertyAccessorInlinerLoweringPhase,
+    copyPropertyAccessorBodiesLoweringPass,
     foldConstantLoweringPhase,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
+    exportedDefaultParameterStubPhase,
     defaultArgumentStubGeneratorPhase,
     defaultArgumentPatchOverridesPhase,
     defaultParameterInjectorPhase,
     defaultParameterCleanerPhase,
     jsDefaultCallbackGeneratorPhase,
-    removeInlineFunctionsWithReifiedTypeParametersLoweringPhase,
     throwableSuccessorsLoweringPhase,
     es6AddInternalParametersToConstructorPhase,
     es6ConstructorLowering,
@@ -763,11 +784,11 @@ val loweringList = listOf<Lowering>(
     secondaryConstructorLoweringPhase,
     secondaryFactoryInjectorLoweringPhase,
     classReferenceLoweringPhase,
+    constLoweringPhase,
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,
     blockDecomposerLoweringPhase,
-    constLoweringPhase,
     objectDeclarationLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,

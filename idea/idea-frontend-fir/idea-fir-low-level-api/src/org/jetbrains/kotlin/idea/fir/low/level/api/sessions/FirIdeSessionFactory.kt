@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -55,6 +54,7 @@ internal object FirIdeSessionFactory {
         builtinTypes: BuiltinTypes,
         sessionsCache: MutableMap<ModuleSourceInfo, FirIdeSourcesSession>,
         isRootModule: Boolean,
+        librariesCache: LibrariesCache,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirIdeSourcesSession {
         sessionsCache[moduleInfo]?.let { return it }
@@ -100,7 +100,15 @@ internal object FirIdeSessionFactory {
                         JavaSymbolProvider(this@apply, project, searchScope),
                     ),
                     dependentProviders = buildList {
-                        add(createLibrarySession(moduleInfo, project, builtinsAndCloneableSession, builtinTypes).firSymbolProvider)
+                        add(
+                            createLibrarySession(
+                                moduleInfo,
+                                project,
+                                builtinsAndCloneableSession,
+                                builtinTypes,
+                                librariesCache
+                            ).firSymbolProvider
+                        )
                         dependentModules
                             .mapTo(this) {
                                 createSourcesSession(
@@ -111,7 +119,8 @@ internal object FirIdeSessionFactory {
                                     sessionInvalidator,
                                     builtinTypes,
                                     sessionsCache,
-                                    isRootModule = false
+                                    isRootModule = false,
+                                    librariesCache,
                                 ).firSymbolProvider
                             }
                     }
@@ -134,8 +143,9 @@ internal object FirIdeSessionFactory {
         project: Project,
         builtinsAndCloneableSession: FirIdeBuiltinsAndCloneableSession,
         builtinTypes: BuiltinTypes,
+        librariesCache: LibrariesCache,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-    ): FirIdeLibrariesSession {
+    ): FirIdeLibrariesSession = librariesCache.cached(moduleInfo) {
         checkCanceled()
         val searchScope = ModuleLibrariesSearchScope(moduleInfo.module)
         val javaClassFinder = JavaClassFinderImpl().apply {
@@ -145,7 +155,7 @@ internal object FirIdeSessionFactory {
         val packagePartProvider = IDEPackagePartProvider(searchScope)
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
-        return FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply {
+        FirIdeLibrariesSession(moduleInfo, project, searchScope, builtinTypes).apply {
             registerCommonComponents(languageVersionSettings)
             registerJavaSpecificResolveComponents()
             registerIdeComponents()

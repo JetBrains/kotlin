@@ -23,6 +23,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.internal.CLibrary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -130,7 +131,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             return message;
         }
 
-        return StringsKt.decapitalize(message);
+        return CapitalizeDecapitalizeKt.decapitalizeAsciiOnly(message);
     }
 
     @NotNull

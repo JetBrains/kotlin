@@ -188,8 +188,16 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 return false
 
             // We don't produce bridges for abstract functions in interfaces.
-            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode))
-                return !irFunction.parentAsClass.isJvmInterface
+            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode)) {
+                if (irFunction.parentAsClass.isJvmInterface) {
+                    // If function requires a special bridge, we should record it for generic signatures generation.
+                    if (irFunction.specialBridgeOrNull != null) {
+                        context.functionsWithSpecialBridges.add(irFunction)
+                    }
+                    return false
+                }
+                return true
+            }
 
             // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
             // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
@@ -409,31 +417,12 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
 
-    private fun getBridgeVisibility(bridge: Bridge): DescriptorVisibility {
-        // Even though kotlin.Cloneable#clone() is protected, corresponding bridge is 'public' in JVM.
-        if (bridge.overridden.name.asString() == "clone" &&
-            bridge.overridden.parentAsClass.hasEqualFqName(StandardNames.FqNames.cloneable.toSafe())
-        ) {
-            return DescriptorVisibilities.PUBLIC
-        }
-
-        val overriddenVisibility = bridge.overridden.visibility
-        // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
-        // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
-        // functions to public and use the mangled name directly.
-        return if (overriddenVisibility == DescriptorVisibilities.INTERNAL)
-            DescriptorVisibilities.PUBLIC
-        else
-            overriddenVisibility
-    }
-
     private fun IrClass.addBridge(bridge: Bridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
             startOffset = this@addBridge.startOffset
             endOffset = this@addBridge.startOffset
             modality = Modality.OPEN
             origin = IrDeclarationOrigin.BRIDGE
-            visibility = getBridgeVisibility(bridge)
             name = Name.identifier(bridge.signature.name)
             returnType = bridge.overridden.returnType.eraseTypeParameters()
             isSuspend = bridge.overridden.isSuspend

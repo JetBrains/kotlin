@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.structure
 
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import java.lang.reflect.WildcardType
 
@@ -36,4 +37,8 @@ class ReflectJavaWildcardType(override val reflectType: WildcardType) : ReflectJ
 
     override val isExtends: Boolean
         get() = reflectType.upperBounds.firstOrNull() != Any::class.java
+
+    // TODO: support type use annotations in reflection
+    override val annotations: Collection<JavaAnnotation> = emptyList()
+    override val isDeprecatedInJavaDoc = false
 }

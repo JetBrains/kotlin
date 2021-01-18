@@ -514,6 +514,7 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator(kotlinPluginVersion: Stri
         testTask.deviceId = when (target.konanTarget) {
             KonanTarget.IOS_X64 -> "iPhone 8"
             KonanTarget.WATCHOS_X86 -> "Apple Watch Series 5 - 44mm"
+            KonanTarget.WATCHOS_X64 -> "Apple Watch Series 5 - 44mm"
             KonanTarget.TVOS_X64 -> "Apple TV"
             else -> error("Simulator tests are not supported for platform ${target.konanTarget.name}")
         }

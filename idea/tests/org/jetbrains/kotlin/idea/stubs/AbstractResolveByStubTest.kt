@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import org.junit.Assert
 import java.io.File
 
@@ -46,7 +47,7 @@ abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase
 
         val fileToCompareTo = File(FileUtil.getNameWithoutExtension(path) + ".txt")
 
-        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(
             packageViewDescriptor,
             RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                 .filterRecursion(RecursiveDescriptorComparator.SKIP_BUILT_INS_PACKAGES)

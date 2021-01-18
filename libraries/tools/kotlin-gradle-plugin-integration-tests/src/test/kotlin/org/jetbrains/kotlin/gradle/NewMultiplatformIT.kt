@@ -714,16 +714,18 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
-        gradleBuildScript().appendText("\n" + """
+        gradleBuildScript().appendText(
+            "\n" + """
             kotlin.sourceSets.all {
                 it.languageSettings {
                     languageVersion = '1.3'
                     apiVersion = '1.3' 
                 }
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        listOf( "compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
+        listOf("compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
             build(it) {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
@@ -1015,15 +1017,20 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
 
             val groupDir = projectDir.resolve("repo/com/example/")
-            val targetArtifactIdAppendices = listOf("metadata", "jvm6", "nodejs", "linux64")
+            val targetArtifactIdAppendices = listOf(null, "jvm6", "nodejs", "linux64")
 
-            val sourceJarSourceRoots = targetArtifactIdAppendices.associate { artifact ->
-                val sourcesJar = JarFile(groupDir.resolve("sample-lib-$artifact/1.0/sample-lib-$artifact-1.0-sources.jar"))
+            val sourceJarSourceRoots = targetArtifactIdAppendices.associateWith { artifact ->
+                val sourcesJarPath = if (artifact != null) "sample-lib-$artifact/1.0/sample-lib-$artifact-1.0-sources.jar"
+                else "sample-lib/1.0/sample-lib-1.0-sources.jar"
+                val sourcesJar = JarFile(groupDir.resolve(sourcesJarPath))
                 val sourcesDirs = sourcesJar.entries().asSequence().map { it.name.substringBefore("/") }.toSet() - "META-INF"
-                artifact to sourcesDirs
+                sourcesDirs
             }
 
-            assertEquals(setOf("commonMain"), sourceJarSourceRoots["metadata"])
+            assertEquals(
+                setOf("commonMain", "jvm6Main", "linux64Main", "macos64Main", "mingw64Main", "mingw86Main", "nodeJsMain"),
+                sourceJarSourceRoots[null]
+            )
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
             assertEquals(setOf("commonMain", "linux64Main"), sourceJarSourceRoots["linux64"])
@@ -1368,19 +1375,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                 (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
             )
 
-            assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
-            assertEquals(
-                1,
-                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
-            )
+                assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
+                assertEquals(
+                    1,
+                    (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output)
+                        .count()
+                )
 
-            assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
-            assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
-            assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
-            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
+                assertContains(">> :app:testExplicitKotlinVersionApiDependenciesMetadata --> kotlin-reflect-1.3.0.jar")
+                assertContains(">> :app:testExplicitKotlinVersionImplementationDependenciesMetadata --> kotlin-reflect-1.2.71.jar")
+                assertContains(">> :app:testExplicitKotlinVersionCompileOnlyDependenciesMetadata --> kotlin-reflect-1.2.70.jar")
+                assertContains(">> :app:testExplicitKotlinVersionRuntimeOnlyDependenciesMetadata --> kotlin-reflect-1.2.60.jar")
 
-            assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
-        }
+                assertContains(">> :app:testProjectWithConfigurationApiDependenciesMetadata --> output.txt")
+            }
 
         testDependencies()
 

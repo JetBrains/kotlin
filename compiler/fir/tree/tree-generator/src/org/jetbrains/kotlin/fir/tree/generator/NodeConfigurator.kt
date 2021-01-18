@@ -299,7 +299,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(function, "F", simpleFunction)
             parentArg(callableMemberDeclaration, "F", simpleFunction)
             +name
-            +symbol("FirFunctionSymbol<FirSimpleFunction>")
+            +symbol("FirNamedFunctionSymbol")
             +annotations
             +typeParameters
         }

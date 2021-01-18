@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
@@ -62,6 +63,10 @@ class JsCoreScriptingCompiler(
         val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable)
         val providers = generateTypicalIrProviderList(module, psi2irContext.irBuiltIns, psi2irContext.symbolTable)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, providers, emptyList(), null) // TODO: deserializer
+
+        psi2irContext.irBuiltIns.let { irBuiltIns ->
+            irBuiltIns.functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
+        }
 
         val context = JsIrBackendContext(
             irModuleFragment.descriptor,

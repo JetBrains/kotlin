@@ -4,30 +4,34 @@ enum class X {
 
 // SYMBOLS:
 KtFirEnumEntrySymbol:
+  annotatedType: [] X
   containingEnumClassIdIfNonLocal: X
   name: Y
   origin: SOURCE
   symbolKind: MEMBER
-  type: X
 
 KtFirEnumEntrySymbol:
+  annotatedType: [] X
   containingEnumClassIdIfNonLocal: X
   name: Z
   origin: SOURCE
   symbolKind: MEMBER
-  type: X
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X
   classKind: ENUM_CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: X
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
-  superTypes: [kotlin/Enum<X>]
+  superTypes: [[] kotlin/Enum<X>]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC

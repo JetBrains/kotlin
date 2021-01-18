@@ -1,9 +1,19 @@
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.internal.InlineOnly
+public val kotlin.Char.code: kotlin.Int { get; }
+
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
 public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+@kotlin.internal.InlineOnly
+public inline fun Char(code: kotlin.Int): kotlin.Char
 
 @kotlin.internal.InlineOnly
 public inline fun TODO(): kotlin.Nothing
@@ -899,6 +909,10 @@ public final class ByteArray {
 }
 
 public final class Char : kotlin.Comparable<kotlin.Char> {
+/*∆*/     @kotlin.ExperimentalStdlibApi
+/*∆*/     @kotlin.SinceKotlin(version = "1.4")
+/*∆*/     public constructor Char(code: kotlin.UShort)
+/*∆*/ 
     public open override operator fun compareTo(other: kotlin.Char): kotlin.Int
 
     public final operator fun dec(): kotlin.Char

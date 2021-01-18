@@ -20,12 +20,12 @@ public final class Simple {
         super();
     }
 
-    public final int heavyMethod() {
-        return 0;
-    }
-
     @MyAnnotation()
     public final void myMethod() {
+    }
+
+    public final int heavyMethod() {
+        return 0;
     }
 }
 

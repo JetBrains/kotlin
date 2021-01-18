@@ -9,9 +9,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
 import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.codegen.ir.AbstractFirBlackBoxCodegenTest;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -27,6 +27,7 @@ import static org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
+@ObsoleteTestInfrastructure(replacer = "org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest")
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void doMultiFileTest(
             @NotNull File wholeFile,
@@ -68,40 +69,16 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {
         if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
 
-        String suffix =
-                (coroutinesPackage.equals(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()) || coroutinesPackage.isEmpty())
-                && InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "COMMON_COROUTINES_TEST")
-                ? "_1_2" :
-                getBackend().isIR() ? "_ir" : "";
+        String suffix = getBackend().isIR() ? "_ir" : "";
         File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + suffix + ".txt");
 
         String text =
                 BytecodeListingTextCollectingVisitor.Companion.getText(
                         classFileFactory,
-                        new BytecodeListingTextCollectingVisitor.Filter() {
-                            @Override
-                            public boolean shouldWriteClass(int access, @NotNull String name) {
-                                return !name.startsWith("helpers/");
-                            }
-
-                            @Override
-                            public boolean shouldWriteMethod(int access, @NotNull String name, @NotNull String desc) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldWriteField(int access, @NotNull String name, @NotNull String desc) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldWriteInnerClass(@NotNull String name) {
-                                return true;
-                            }
-                        }
+                        BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests.INSTANCE
                 );
 
-        assertEqualsToFile(expectedFile, text, s -> s.replace("COROUTINES_PACKAGE", coroutinesPackage));
+        assertEqualsToFile(expectedFile, text);
     }
 
     protected void blackBox(boolean reportProblems, boolean unexpectedBehaviour) {
@@ -136,7 +113,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     @Nullable
-    private static String getFacadeFqName(@NotNull KtFile file) {
+    protected static String getFacadeFqName(@NotNull KtFile file) {
         return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
                ? null
                : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();

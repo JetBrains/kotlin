@@ -11,6 +11,7 @@ import java.nio.file.Path
 
 object IgnoreTests {
     private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
+    private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
     fun runTestIfEnabledByFileDirective(
         testFile: Path,
@@ -23,6 +24,15 @@ object IgnoreTests {
             EnableOrDisableTestDirective.Enable(enableTestDirective),
             additionalFilesExtensions.toList(),
             test
+        )
+    }
+
+    fun runTestWithFixMeSupport(testFile: Path, test: () -> Unit) {
+        runTestIfEnabledByDirective(
+            testFile,
+            EnableOrDisableTestDirective.Disable(DIRECTIVES.FIX_ME),
+            additionalFilesExtensions = emptyList(),
+            test = test
         )
     }
 
@@ -46,6 +56,11 @@ object IgnoreTests {
         additionalFilesExtensions: List<String>,
         test: () -> Unit
     ) {
+        if (ALWAYS_CONSIDER_TEST_AS_PASSING) {
+            test()
+            return
+        }
+
         val testIsEnabled = directive.isEnabledInFile(testFile)
 
         try {
@@ -122,5 +137,6 @@ object IgnoreTests {
     object DIRECTIVES {
         const val FIR_COMPARISON = "// FIR_COMPARISON"
         const val IGNORE_FIR = "// IGNORE_FIR"
+        const val FIX_ME = "// FIX_ME: "
     }
 }

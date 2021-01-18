@@ -15,7 +15,7 @@ interface KtNamedSymbol : KtSymbol {
 }
 
 interface KtTypedSymbol : KtSymbol {
-    val type: KtType
+    val annotatedType: KtTypeAndAnnotations
 }
 
 interface KtSymbolWithTypeParameters {

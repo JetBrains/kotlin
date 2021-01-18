@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.IrNamer
@@ -117,7 +116,6 @@ fun buildCrossModuleReferenceInfo(modules: Iterable<IrModuleFragment>): CrossMod
     return CrossModuleReferenceInfoImpl(map)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun breakCrossModuleFieldAccess(
     context: JsIrBackendContext,
     modules: Iterable<IrModuleFragment>

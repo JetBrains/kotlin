@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -37,7 +38,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         }
 
         public void testAllFilesPresentInSingleBreakpoint() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("annotationValue.kt")
@@ -335,6 +336,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/localClass.kt");
         }
 
+        @TestMetadata("localFunctionCapturedLocalVariable.kt")
+        public void testLocalFunctionCapturedLocalVariable() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/localFunctionCapturedLocalVariable.kt");
+        }
+
         @TestMetadata("localFunctionsWithReceivers.kt")
         public void testLocalFunctionsWithReceivers() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/localFunctionsWithReceivers.kt");
@@ -524,7 +530,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInCompilingEvaluator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/compilingEvaluator"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("ceAnonymousObject.kt")
@@ -592,7 +598,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInCoroutines() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("anyUpdateInvokeStatic.kt")
@@ -603,6 +609,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("anyUpdateVariable.kt")
             public void testAnyUpdateVariable() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines/anyUpdateVariable.kt");
+            }
+
+            @TestMetadata("capturedReceiverName.kt")
+            public void testCapturedReceiverName() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/coroutines/capturedReceiverName.kt");
             }
 
             @TestMetadata("primitivesCoertion.kt")
@@ -640,7 +651,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInCreateExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/createExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("createExpressionCastToBuiltIn.kt")
@@ -668,7 +679,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInExtraVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("evBreakpointOnPropertyDeclaration.kt")
@@ -736,7 +747,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInFrame() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("capturedValues1.kt")
@@ -989,7 +1000,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInJavaContext() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/javaContext"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("jcBlock.kt")
@@ -1032,7 +1043,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInLabels() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("lCallOnLabeledObj.kt")
@@ -1070,7 +1081,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInLambdas() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("destructuringParam.kt")
@@ -1133,7 +1144,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInRenderer() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/renderer"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("toStringRenderer.kt")
@@ -1152,7 +1163,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         }
 
         public void testAllFilesPresentInMultipleBreakpoints() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("clearCache.kt")
@@ -1289,7 +1300,7 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
 
             public void testAllFilesPresentInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/multipleBreakpoints/library"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("customLibClassName.kt")

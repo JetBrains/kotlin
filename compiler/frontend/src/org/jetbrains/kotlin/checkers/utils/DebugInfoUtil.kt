@@ -205,7 +205,7 @@ object DebugInfoUtil {
     }
 
     abstract class DebugInfoReporter {
-        fun preProcessReference(expression: KtReferenceExpression) {
+        fun preProcessReference(@Suppress("UNUSED_PARAMETER") expression: KtReferenceExpression) {
             // do nothing
         }
 

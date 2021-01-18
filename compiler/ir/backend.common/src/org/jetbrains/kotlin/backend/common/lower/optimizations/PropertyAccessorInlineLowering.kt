@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower.optimizations
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -46,13 +49,25 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
             }
             if (property.isEffectivelyExternal()) return expression
 
+            val backingField = property.backingField ?: return expression
+
             if (property.isConst) {
                 val initializer =
-                    (property.backingField?.initializer ?: error("Constant property has to have a backing field with initializer"))
-                return initializer.expression.deepCopyWithSymbols()
+                    (backingField.initializer ?: error("Constant property has to have a backing field with initializer"))
+                val constExpression = initializer.expression.deepCopyWithSymbols()
+                val receiver = expression.dispatchReceiver
+                if (receiver != null && !receiver.isPure(true)) {
+                    val builder = context.createIrBuilder(expression.symbol,
+                            expression.startOffset, expression.endOffset)
+                    return builder.irBlock(expression) {
+                        +receiver
+                        +constExpression
+                    }
+                }
+                return constExpression
             }
 
-            val backingField = property.backingField ?: return expression
+
 
             if (property.getter === callee) {
                 return tryInlineSimpleGetter(expression, callee, backingField) ?: expression

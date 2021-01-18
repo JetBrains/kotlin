@@ -1,12 +1,11 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // CHECK_BYTECODE_LISTING
 // CHECK_NEW_COUNT: function=suspendHere count=0
 // CHECK_NEW_COUNT: function=complexSuspend count=0
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 inline suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(v)

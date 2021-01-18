@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.getNewWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -178,7 +177,7 @@ class FunctionInlining(
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
 
-            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(callee.getNewWrappedDescriptor())
+            val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl()
             val endOffset = callee.endOffset
             /* creates irBuilder appending to the end of the given returnable block: thus why we initialize
              * irBuilder with (..., endOffset, endOffset).

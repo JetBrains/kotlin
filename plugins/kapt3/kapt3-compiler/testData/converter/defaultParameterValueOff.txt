@@ -16,33 +16,33 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
+    private final boolean z = false;
     private final byte b = 0;
     private final char c = '\u0000';
     private final char c2 = '\u0000';
+    private final short sh = 0;
+    private final int i = 0;
+    private final long l = 0L;
+    private final float f = 0.0F;
+    private final double d = 0.0;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String s = null;
+    @org.jetbrains.annotations.NotNull()
+    private final int[] iarr = null;
+    @org.jetbrains.annotations.NotNull()
+    private final long[] larr = null;
+    @org.jetbrains.annotations.NotNull()
+    private final double[] darr = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String[] sarr = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> cl = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?>[] clarr = null;
-    private final double d = 0.0;
-    @org.jetbrains.annotations.NotNull()
-    private final double[] darr = null;
     @org.jetbrains.annotations.NotNull()
     private final Em em = null;
     @org.jetbrains.annotations.NotNull()
     private final Em[] emarr = null;
-    private final float f = 0.0F;
-    private final int i = 0;
-    @org.jetbrains.annotations.NotNull()
-    private final int[] iarr = null;
-    private final long l = 0L;
-    @org.jetbrains.annotations.NotNull()
-    private final long[] larr = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String s = null;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String[] sarr = null;
-    private final short sh = 0;
-    private final boolean z = false;
 
     public Foo() {
         super();
@@ -61,7 +61,8 @@ public final class Foo {
         super();
     }
 
-    public final void foo(int a) {
+    public final boolean getZ() {
+        return false;
     }
 
     public final byte getB() {
@@ -76,14 +77,20 @@ public final class Foo {
         return '\u0000';
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.Class<?> getCl() {
-        return null;
+    public final short getSh() {
+        return 0;
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.Class<?>[] getClarr() {
-        return null;
+    public final int getI() {
+        return 0;
+    }
+
+    public final long getL() {
+        return 0L;
+    }
+
+    public final float getF() {
+        return 0.0F;
     }
 
     public final double getD() {
@@ -91,7 +98,37 @@ public final class Foo {
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getS() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int[] getIarr() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final long[] getLarr() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final double[] getDarr() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String[] getSarr() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Class<?> getCl() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Class<?>[] getClarr() {
         return null;
     }
 
@@ -105,43 +142,6 @@ public final class Foo {
         return null;
     }
 
-    public final float getF() {
-        return 0.0F;
-    }
-
-    public final int getI() {
-        return 0;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final int[] getIarr() {
-        return null;
-    }
-
-    public final long getL() {
-        return 0L;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final long[] getLarr() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getS() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String[] getSarr() {
-        return null;
-    }
-
-    public final short getSh() {
-        return 0;
-    }
-
-    public final boolean getZ() {
-        return false;
+    public final void foo(int a) {
     }
 }

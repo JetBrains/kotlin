@@ -1081,8 +1081,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
             if (shouldOccur) {
                 wasThrown = true;
-                final String errorMessage = exceptionCase.getAssertionErrorMessage();
-                assertEquals(errorMessage, exceptionCase.getExpectedExceptionClass(), cause.getClass());
+                assertInstanceOf(cause, exceptionCase.getExpectedExceptionClass());
                 if (expectedErrorMsgPart != null) {
                     assertTrue(cause.getMessage(), cause.getMessage().contains(expectedErrorMsgPart));
                 }
@@ -1103,7 +1102,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         finally {
             if (shouldOccur && !wasThrown) {
-                fail(exceptionCase.getAssertionErrorMessage());
+                fail(exceptionCase.getExpectedExceptionClass().getName() + " must be thrown.");
             }
         }
     }

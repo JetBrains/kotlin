@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -903,7 +904,7 @@ private class ConstantExpressionEvaluatorVisitor(
         return null
     }
 
-    private class OperationArgument(val value: Any, val ctcType: CompileTimeType<*>, val expression: KtExpression)
+    private class OperationArgument(val value: Any, val ctcType: CompileTimeType, val expression: KtExpression)
 
     private fun createOperationArgumentForReceiver(resolvedCall: ResolvedCall<*>, expression: KtExpression): OperationArgument? {
         val receiverExpressionType = getReceiverExpressionType(resolvedCall) ?: return null
@@ -927,7 +928,7 @@ private class ConstantExpressionEvaluatorVisitor(
         return createOperationArgument(argumentExpression, parameter.type, argumentCompileTimeType)
     }
 
-    private fun getCompileTimeType(c: KotlinType): CompileTimeType<out Any>? =
+    private fun getCompileTimeType(c: KotlinType): CompileTimeType? =
         when (TypeUtils.makeNotNullable(c)) {
             builtIns.intType -> INT
             builtIns.byteType -> BYTE
@@ -945,7 +946,7 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun createOperationArgument(
         expression: KtExpression,
         parameterType: KotlinType,
-        compileTimeType: CompileTimeType<*>
+        compileTimeType: CompileTimeType,
     ): OperationArgument? {
         val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, parameterType) ?: return null
         if (compileTimeConstant is TypedCompileTimeConstant && !compileTimeConstant.type.isSubtypeOf(parameterType)) return null
@@ -1098,43 +1099,10 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType
     }
 }
 
-internal class CompileTimeType<T>(val name: String) {
-    override fun toString() = name
+internal enum class CompileTimeType {
+    BYTE, SHORT, INT, LONG, DOUBLE, FLOAT, CHAR, BOOLEAN,
+    STRING, ANY
 }
-
-internal val BYTE = CompileTimeType<Byte>("Byte")
-internal val SHORT = CompileTimeType<Short>("Short")
-internal val INT = CompileTimeType<Int>("Int")
-internal val LONG = CompileTimeType<Long>("Long")
-internal val DOUBLE = CompileTimeType<Double>("Double")
-internal val FLOAT = CompileTimeType<Float>("Float")
-internal val CHAR = CompileTimeType<Char>("Char")
-internal val BOOLEAN = CompileTimeType<Boolean>("Boolean")
-internal val STRING = CompileTimeType<String>("String")
-internal val ANY = CompileTimeType<Any>("Any")
-
-@Suppress("UNCHECKED_CAST")
-internal fun <A, B> binaryOperation(
-    a: CompileTimeType<A>,
-    b: CompileTimeType<B>,
-    functionName: String,
-    operation: Function2<A, B, Any>,
-    checker: Function2<BigInteger, BigInteger, BigInteger>
-) = BinaryOperationKey(a, b, functionName) to Pair(
-    operation,
-    checker
-) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>
-
-@Suppress("UNCHECKED_CAST")
-internal fun <A> unaryOperation(
-    a: CompileTimeType<A>,
-    functionName: String,
-    operation: Function1<A, Any>,
-    checker: Function1<Long, Long>
-) = UnaryOperationKey(a, functionName) to Pair(operation, checker) as Pair<Function1<Any?, Any>, Function1<Long, Long>>
-
-internal data class BinaryOperationKey<out A, out B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
-internal data class UnaryOperationKey<out A>(val f: CompileTimeType<out A>, val functionName: String)
 
 fun ConstantValue<*>.isStandaloneOnlyConstant(): Boolean {
     return this is KClassValue || this is EnumValue || this is AnnotationValue || this is ArrayValue
@@ -1156,39 +1124,28 @@ private fun isZero(value: Any?): Boolean {
 }
 
 private fun typeStrToCompileTimeType(str: String) = when (str) {
-    BYTE.name -> BYTE
-    SHORT.name -> SHORT
-    INT.name -> INT
-    LONG.name -> LONG
-    DOUBLE.name -> DOUBLE
-    FLOAT.name -> FLOAT
-    CHAR.name -> CHAR
-    BOOLEAN.name -> BOOLEAN
-    STRING.name -> STRING
-    ANY.name -> ANY
+    "Byte" -> BYTE
+    "Short" -> SHORT
+    "Int" -> INT
+    "Long" -> LONG
+    "Double" -> DOUBLE
+    "Float" -> FLOAT
+    "Char" -> CHAR
+    "Boolean" -> BOOLEAN
+    "String" -> STRING
+    "Any" -> ANY
     else -> throw IllegalArgumentException("Unsupported type: $str")
 }
 
-fun evaluateUnary(name: String, typeStr: String, value: Any): Any? {
-    return evaluateUnaryAndCheck(name, typeStrToCompileTimeType(typeStr), value)
-}
+fun evaluateUnary(name: String, typeStr: String, value: Any): Any? =
+    evalUnaryOp(name, typeStrToCompileTimeType(typeStr), value)
 
-private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType<*>, value: Any, tracer: () -> Unit = {}): Any? {
-    val functions = unaryOperations[UnaryOperationKey(type, name)] ?: return null
-
-    val (function, check) = functions
-    val result = function(value)
-    if (check == emptyUnaryFun) {
-        return result
+private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? =
+    evalUnaryOp(name, type, value).also { result ->
+        if (isIntegerType(value) && (name == "minus" || name == "unaryMinus") && value == result && !isZero(value)) {
+            reportIntegerOverflow()
+        }
     }
-    assert(isIntegerType(value)) { "Only integer constants should be checked for overflow" }
-    assert(name == "minus" || name == "unaryMinus") { "Only negation should be checked for overflow" }
-
-    if (value == result && !isZero(value)) {
-        tracer()
-    }
-    return result
-}
 
 fun evaluateBinary(
     name: String,
@@ -1200,42 +1157,35 @@ fun evaluateBinary(
     val receiverType = typeStrToCompileTimeType(receiverTypeStr)
     val parameterType = typeStrToCompileTimeType(parameterTypeStr)
 
-    return evaluateBinaryAndCheck(name, receiverType, receiverValue, parameterType, parameterValue)
+    return try {
+        evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
+    } catch (e: Exception) {
+        null
+    }
 }
 
 private fun evaluateBinaryAndCheck(
     name: String,
-    receiverType: CompileTimeType<*>,
+    receiverType: CompileTimeType,
     receiverValue: Any,
-    parameterType: CompileTimeType<*>,
+    parameterType: CompileTimeType,
     parameterValue: Any,
-    tracer: () -> Unit = {}
+    reportIntegerOverflow: () -> Unit,
 ): Any? {
-    val functions = binaryOperations[BinaryOperationKey(receiverType, parameterType, name)] ?: return null
-
-    val (function, checker) = functions
     val actualResult = try {
-        function(receiverValue, parameterValue)
+        evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
     } catch (e: Exception) {
         null
     }
-    if (checker == emptyBinaryFun) {
-        return actualResult
-    }
-    assert(isIntegerType(receiverValue) && isIntegerType(parameterValue)) { "Only integer constants should be checked for overflow" }
 
     fun toBigInteger(value: Any?) = BigInteger.valueOf((value as Number).toLong())
 
-    val refinedChecker = if (name == OperatorNameConventions.MOD.asString()) {
-        binaryOperations[BinaryOperationKey(receiverType, parameterType, OperatorNameConventions.REM.asString())]?.second ?: return null
-    } else {
-        checker
+    if (actualResult != null && isIntegerType(receiverValue) && isIntegerType(parameterValue)) {
+        val checkedResult = checkBinaryOp(name, receiverType, toBigInteger(receiverValue), parameterType, toBigInteger(parameterValue))
+        if (checkedResult != null && toBigInteger(actualResult) != checkedResult) {
+            reportIntegerOverflow()
+        }
     }
 
-    val resultInBigIntegers = refinedChecker(toBigInteger(receiverValue), toBigInteger(parameterValue))
-
-    if (toBigInteger(actualResult) != resultInBigIntegers) {
-        tracer()
-    }
     return actualResult
 }

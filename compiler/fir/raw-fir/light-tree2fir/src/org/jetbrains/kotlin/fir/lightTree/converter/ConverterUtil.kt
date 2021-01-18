@@ -112,6 +112,7 @@ fun generateDestructuringBlock(
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
+            if (entry == null) continue
             statements += buildProperty {
                 this.session = session
                 origin = FirDeclarationOrigin.Source

@@ -157,6 +157,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
 
     // Part of desugared x?.y
     object CheckedSafeCallSubject : FirFakeSourceElementKind()
+
+    // { it + 1} --> { it -> it + 1 }
+    // where `it` parameter declaration has fake source
+    object ItLambdaParameter : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {
@@ -263,6 +267,13 @@ fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceEl
         is FirPsiSourceElement<*> -> FirFakeSourceElement(psi, newKind)
     }
 }
+
+fun FirSourceElement.realElement(): FirSourceElement = when (this) {
+    is FirRealPsiSourceElement<*> -> this
+    is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, FirRealSourceElementKind)
+    is FirPsiSourceElement<*> -> FirRealPsiSourceElement(psi)
+}
+
 
 class FirLightSourceElement(
     override val lighterASTNode: LighterASTNode,

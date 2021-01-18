@@ -346,16 +346,16 @@ internal val AbstractInsnNode?.insnText: String
 internal val AbstractInsnNode?.insnOpcodeText: String
     get() = if (this == null) "null" else Printer.OPCODES[opcode]
 
-internal fun buildClassReaderByInternalName(state: GenerationState, internalName: String): ClassReader {
+internal fun loadClassBytesByInternalName(state: GenerationState, internalName: String): ByteArray {
     //try to find just compiled classes then in dependencies
-    val outputFile = state.factory.get(internalName + ".class")
+    val outputFile = state.factory.get("$internalName.class")
     if (outputFile != null) {
-        return ClassReader(outputFile.asByteArray())
+        return outputFile.asByteArray()
     }
 
-    val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for " + internalName)
+    val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for $internalName")
 
-    return ClassReader(file.contentsToByteArray())
+    return file.contentsToByteArray()
 }
 
 fun generateFinallyMarker(v: InstructionAdapter, depth: Int, start: Boolean) {

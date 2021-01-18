@@ -118,7 +118,7 @@ class FunctionCodegen(
 
     private fun shouldGenerateAnnotationsOnValueParameters(): Boolean =
         when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS ->
+            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
                 false
             irFunction is IrConstructor && irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations() ->
                 // Not generating parameter annotations for default stubs fixes KT-7892, though
@@ -146,7 +146,7 @@ class FunctionCodegen(
     private fun IrFunction.calculateMethodFlags(): Int {
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
-                    (if (isDeprecatedFunction) Opcodes.ACC_DEPRECATED else 0) or
+                    (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
                     (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
         }
 
@@ -169,11 +169,11 @@ class FunctionCodegen(
                 isReifiable() ||
                 isDeprecatedHidden()
 
-        val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
-        val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
+        val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME) && origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
+        val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME) && origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
 
         return getVisibilityAccessFlag() or modalityFlag or
-                (if (isDeprecatedFunction) Opcodes.ACC_DEPRECATED else 0) or
+                (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
                 (if (isStatic) Opcodes.ACC_STATIC else 0) or
                 (if (isVararg) Opcodes.ACC_VARARGS else 0) or
                 (if (isExternal) Opcodes.ACC_NATIVE else 0) or

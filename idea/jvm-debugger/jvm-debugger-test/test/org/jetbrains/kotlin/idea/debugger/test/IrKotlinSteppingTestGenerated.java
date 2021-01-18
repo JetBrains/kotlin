@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInStepInto() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObjectFunFromClass.kt")
@@ -120,7 +121,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInSmartStepInto() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepIntoAndSmartStepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("classObjectFunFromClass.kt")
@@ -218,7 +219,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInStepIntoOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepInto"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("continueLabel.kt")
@@ -341,7 +342,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInStepOut() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOut"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOut"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("fwBackingField.kt")
@@ -399,7 +400,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInStepOver() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("asIterableInFor.kt")
@@ -500,6 +501,16 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         @TestMetadata("lambdaToInlineMapFiltersDisabled.kt")
         public void testLambdaToInlineMapFiltersDisabled() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/lambdaToInlineMapFiltersDisabled.kt");
+        }
+
+        @TestMetadata("localFunction.kt")
+        public void testLocalFunction() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/localFunction.kt");
+        }
+
+        @TestMetadata("localFunctionWithSingleLineExpressionBody.kt")
+        public void testLocalFunctionWithSingleLineExpressionBody() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/localFunctionWithSingleLineExpressionBody.kt");
         }
 
         @TestMetadata("noParameterExtensionLambdaArgumentCallInInline.kt")
@@ -941,7 +952,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
             }
 
             public void testAllFilesPresentInCoroutines() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/stepOver/coroutines"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
             @TestMetadata("sequenceNested.kt")
@@ -975,7 +986,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInFilters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/filters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/filters"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("checkNotNull.kt")
@@ -1068,7 +1079,7 @@ public class IrKotlinSteppingTestGenerated extends AbstractIrKotlinSteppingTest 
         }
 
         public void testAllFilesPresentInCustom() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("anonymousFunAsParamDefaultValue.kt")

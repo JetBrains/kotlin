@@ -9,10 +9,16 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.declarations.visibility
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
@@ -33,6 +39,7 @@ internal fun Visibility?.getSymbolVisibility(): KtSymbolVisibility = when (this)
     Visibilities.Public -> KtSymbolVisibility.PUBLIC
     Visibilities.Protected -> KtSymbolVisibility.PROTECTED
     Visibilities.Private -> KtSymbolVisibility.PRIVATE
+    Visibilities.PrivateToThis -> KtSymbolVisibility.PRIVATE_TO_THIS
     Visibilities.Internal -> KtSymbolVisibility.INTERNAL
     Visibilities.Local -> KtSymbolVisibility.LOCAL
     Visibilities.Unknown -> KtSymbolVisibility.UNKNOWN
@@ -43,3 +50,11 @@ internal fun Visibility?.getSymbolVisibility(): KtSymbolVisibility = when (this)
 
 internal fun <F : FirMemberDeclaration> KtFirSymbol<F>.getVisibility(): KtSymbolVisibility =
     firRef.withFir(FirResolvePhase.STATUS) { it.visibility.getSymbolVisibility() }
+
+
+internal fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {
+    val firTypeAlias = lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this
+    val expandedType = firTypeAlias.fir.expandedTypeRef.coneType
+    return expandedType.fullyExpandedType(session) as? ConeClassLikeType
+        ?: return this
+}

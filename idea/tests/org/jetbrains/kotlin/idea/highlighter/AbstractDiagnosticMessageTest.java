@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -76,7 +77,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         File file = new File(filePath);
         String fileName = file.getName();
 
-        String fileData = KotlinTestUtils.doLoadFile(file);
+        String fileData = KtTestUtil.doLoadFile(file);
         Directives directives = KotlinTestUtils.parseDirectives(fileData);
         int diagnosticNumber = getDiagnosticNumber(directives);
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
@@ -86,7 +87,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         LanguageVersion version = explicitLanguageVersion == null ? null : LanguageVersion.fromVersionString(explicitLanguageVersion);
         Map<LanguageFeature, LanguageFeature.State> specificFeatures = parseLanguageFeatures(fileData);
 
-        KtFile psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName), getProject());
+        KtFile psiFile = KtTestUtil.createFile(fileName, KtTestUtil.doLoadFile(getTestDataPath(), fileName), getProject());
         AnalysisResult analysisResult = analyze(psiFile, version, specificFeatures);
         BindingContext bindingContext = analysisResult.getBindingContext();
 

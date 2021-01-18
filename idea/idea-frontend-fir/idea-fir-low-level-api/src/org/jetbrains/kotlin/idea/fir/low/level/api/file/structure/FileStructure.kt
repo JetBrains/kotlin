@@ -36,11 +36,12 @@ internal class FileStructure(
     }
 
     private fun getStructureElementForDeclaration(declaration: KtAnnotated): FileStructureElement {
+        @Suppress("CANNOT_CHECK_FOR_ERASED")
         val structureElement = structureElements.compute(declaration) { _, structureElement ->
             when {
                 structureElement == null -> createStructureElement(declaration)
-                structureElement is ReanalyzableStructureElement<*> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(declaration as KtNamedFunction, moduleFileCache, firLazyDeclarationResolver, firIdeProvider)
+                structureElement is ReanalyzableStructureElement<KtDeclaration> && !structureElement.isUpToDate() -> {
+                    structureElement.reanalyze(declaration as KtDeclaration, moduleFileCache, firLazyDeclarationResolver, firIdeProvider)
                 }
                 else -> structureElement
             }
@@ -53,16 +54,10 @@ internal class FileStructure(
     fun getAllDiagnosticsForFile(): Collection<Diagnostic> {
         val containersForStructureElement = buildList {
             add(ktFile)
-            ktFile.forEachDescendantOfType<KtDeclaration>(
-                canGoInside = { psi -> psi !is KtFunction && psi !is KtValVarKeywordOwner }
-            ) { declaration ->
-                if (FileStructureUtil.isStructureElementContainer(declaration)) {
-                    add(declaration)
-                }
-            }
+            addAll(ktFile.declarations)
         }
         val structureElements = containersForStructureElement.map(::getStructureElementFor)
-        return buildList {
+        return buildSet {
             structureElements.forEach { it.diagnostics.forEach { diagnostics -> addAll(diagnostics) } }
         }
     }

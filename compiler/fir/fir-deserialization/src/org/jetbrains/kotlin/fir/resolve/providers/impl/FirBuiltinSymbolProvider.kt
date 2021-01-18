@@ -48,7 +48,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import java.io.InputStream
 
-@NoMutableState
+//TODO make thread safe
+@ThreadSafeMutableState
 class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
 
     private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassKind, val arity: Int)
@@ -228,14 +229,6 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         }
     }
 
-    // Find the symbol for "invoke" in the function class
-    private fun FunctionClassKind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
-        val functionClass = getClassLikeSymbolByFqName(classId(arity)) ?: return null
-        val invoke =
-            functionClass.fir.declarations.find { it is FirSimpleFunction && it.name == OperatorNameConventions.INVOKE } ?: return null
-        return (invoke as FirSimpleFunction).symbol as? FirNamedFunctionSymbol
-    }
-
     private fun FunctionClassKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 
     @FirSymbolProviderInternals
@@ -243,6 +236,17 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         allPackageFragments[packageFqName]?.flatMapTo(destination) {
             it.getTopLevelCallableSymbols(name)
         }
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        allPackageFragments[packageFqName]?.flatMapTo(destination) {
+            it.getTopLevelFunctionSymbols(name)
+        }
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
     private class BuiltInsPackageFragment(
@@ -305,17 +309,13 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         }
 
         fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
+            return getTopLevelFunctionSymbols(name)
+        }
+
+        fun getTopLevelFunctionSymbols(name: Name): List<FirNamedFunctionSymbol> {
             return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
                 memberDeserializer.loadFunction(it).symbol
             }
-        }
-
-        fun getAllCallableNames(): Set<Name> {
-            return packageProto.`package`.functionList.mapTo(mutableSetOf()) { nameResolver.getName(it.name) }
-        }
-
-        fun getAllClassNames(): Set<Name> {
-            return classDataFinder.allClassIds.mapTo(mutableSetOf()) { it.shortClassName }
         }
     }
 }

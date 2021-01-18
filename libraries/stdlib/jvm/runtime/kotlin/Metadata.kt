@@ -66,11 +66,12 @@ public annotation class Metadata(
      * * 0 - this is a multi-file class facade or part, compiled with `-Xmultifile-parts-inherit`.
      * * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
      * * 2 - this class file is a compiled Kotlin script source file (.kts).
-     * * 3 - the metadata of this class file is not supposed to be read by the compiler, whose major.minor version is less than
-     *   the major.minor version of this metadata ([metadataVersion]).
-     * * 4 - this class file is compiled with the new Kotlin compiler backend introduced in Kotlin 1.4.
-     * * 5 - if the class file is compiled with the new Kotlin compiler backend, the metadata has been verified by the author and
-     *   no metadata incompatibility diagnostic should be reported at the call site.
+     * * 3 - "strict metadata version semantics". The metadata of this class file is not supposed to be read by the compiler,
+     *   whose major.minor version is less than the major.minor version of this metadata ([metadataVersion]).
+     * * 4 - this class file is compiled with the new Kotlin compiler backend (JVM IR) introduced in Kotlin 1.4.
+     * * 5 - this class file has stable metadata and ABI. This is used only for class files compiled with JVM IR (see flag #4) or FIR (#6),
+     *   and prevents metadata incompatibility diagnostics from being reported where the class is used.
+     * * 6 - this class file is compiled with the new Kotlin compiler frontend (FIR).
      */
     @SinceKotlin("1.1")
     @get:JvmName("xi")

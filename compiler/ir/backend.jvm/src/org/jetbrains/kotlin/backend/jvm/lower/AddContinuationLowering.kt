@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -208,10 +209,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
         }
     }
 
-    private fun Name.toSuspendImplementationName() = when {
-        isSpecial -> Name.special(asString() + SUSPEND_IMPL_NAME_SUFFIX)
-        else -> Name.identifier(asString() + SUSPEND_IMPL_NAME_SUFFIX)
-    }
+    private fun Name.toSuspendImplementationName(): Name =
+        Name.guessByFirstCharacter(asString() + SUSPEND_IMPL_NAME_SUFFIX)
 
     private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
         // Create static suspend impl method.
@@ -220,6 +219,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             irFunction.name.toSuspendImplementationName(),
             irFunction,
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+            modality = Modality.OPEN,
+            visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             isFakeOverride = false,
             copyMetadata = false
         )
@@ -284,7 +285,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 if (flag.capturesCrossinline || function.isInline) {
                     result += context.irFactory.buildFun {
                         containerSource = view.containerSource
-                        name = Name.identifier(view.name.asString() + FOR_INLINE_SUFFIX)
+                        name = Name.identifier(context.methodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
                         returnType = view.returnType
                         modality = view.modality
                         isSuspend = view.isSuspend
@@ -341,7 +342,7 @@ internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
     if (this is IrSimpleFunction && isSuspend &&
         !isStaticInlineClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
-        !isDefaultImplsFunction
+        parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
         attributeOwnerId as IrFunction
     else this
@@ -353,19 +354,6 @@ private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
         { it.overriddenSymbols.map { it.owner } },
         { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
     )
-
-private val defaultImplsOrigins = setOf(
-    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
-)
-
-private val IrSimpleFunction.isDefaultImplsFunction: Boolean
-    get() = origin in defaultImplsOrigins
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
@@ -385,7 +373,7 @@ private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): Ir
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
         function.copyReceiverParametersFrom(this, substitutionMap)
 
-        if (origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE) {
+        if (origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE) {
             function.overriddenSymbols +=
                 overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol }
         }

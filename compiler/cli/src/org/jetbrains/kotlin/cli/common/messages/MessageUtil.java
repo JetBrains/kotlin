@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.cli.common.messages;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.impl.jar.CoreJarVirtualFile;
-import com.intellij.openapi.vfs.local.CoreLocalVirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -53,10 +51,6 @@ public class MessageUtil {
 
     @NotNull
     public static String virtualFileToPath(@NotNull VirtualFile virtualFile) {
-        // Convert path to platform-dependent format when virtualFile is local file.
-        if (virtualFile instanceof CoreLocalVirtualFile || virtualFile instanceof CoreJarVirtualFile) {
-            return toSystemDependentName(virtualFile.getPath());
-        }
-        return virtualFile.getPath();
+        return toSystemDependentName(virtualFile.getPath());
     }
 }

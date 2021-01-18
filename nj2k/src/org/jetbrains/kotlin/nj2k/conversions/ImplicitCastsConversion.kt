@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.nj2k.types.*
 
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.*
 
 class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -138,8 +139,8 @@ class ImplicitCastsConversion(context: NewJ2kConverterContext) : RecursiveApplic
             }
         }
 
-        val initialTypeName = expressionTypeAsPrimitive.jvmPrimitiveType.javaKeywordName.capitalize()
-        val conversionFunctionName = "to${toTypeAsPrimitive.jvmPrimitiveType.javaKeywordName.capitalize()}"
+        val initialTypeName = expressionTypeAsPrimitive.jvmPrimitiveType.javaKeywordName.capitalize(Locale.US)
+        val conversionFunctionName = "to${toTypeAsPrimitive.jvmPrimitiveType.javaKeywordName.capitalize(Locale.US)}"
         return JKQualifiedExpression(
             copyTreeAndDetach().parenthesizeIfBinaryExpression(),
             JKCallExpressionImpl(

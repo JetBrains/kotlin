@@ -50,6 +50,8 @@ open class DefaultArgumentStubGenerator(
         return null
     }
 
+    protected open fun IrFunction.resolveAnnotations(): List<IrConstructorCall> = copyAnnotations()
+
     private fun lower(irFunction: IrFunction): List<IrFunction>? {
         val newIrFunction =
             irFunction.generateDefaultsFunction(
@@ -58,7 +60,8 @@ open class DefaultArgumentStubGenerator(
                 skipExternalMethods,
                 forceSetOverrideSymbols,
                 defaultArgumentStubVisibility(irFunction),
-                useConstructorMarker(irFunction)
+                useConstructorMarker(irFunction),
+                irFunction.resolveAnnotations()
             ) ?: return null
         if (newIrFunction.isFakeOverride) {
             return listOf(irFunction, newIrFunction)
@@ -377,15 +380,16 @@ open class DefaultParameterInjector(
         // in an interface does not leave an abstract method after being moved to DefaultImpls (see InterfaceLowering).
         // Calling the fake override on an implementation of that interface would then result in a call to a method
         // that does not actually exist as DefaultImpls is not part of the inheritance hierarchy.
-        val stubFunction = declaration.findBaseFunctionWithDefaultArguments(skipInline, skipExternalMethods)
-            ?.generateDefaultsFunction(
-                context,
-                skipInline,
-                skipExternalMethods,
-                forceSetOverrideSymbols,
-                defaultArgumentStubVisibility(declaration),
-                useConstructorMarker(declaration)
-            ) ?: return null
+        val baseFunction = declaration.findBaseFunctionWithDefaultArguments(skipInline, skipExternalMethods)
+        val stubFunction = baseFunction?.generateDefaultsFunction(
+            context,
+            skipInline,
+            skipExternalMethods,
+            forceSetOverrideSymbols,
+            defaultArgumentStubVisibility(declaration),
+            useConstructorMarker(declaration),
+            baseFunction.copyAnnotations()
+        ) ?: return null
 
         log { "$declaration -> $stubFunction" }
 
@@ -485,7 +489,8 @@ private fun IrFunction.generateDefaultsFunction(
     skipExternalMethods: Boolean,
     forceSetOverrideSymbols: Boolean,
     visibility: DescriptorVisibility,
-    useConstructorMarker: Boolean
+    useConstructorMarker: Boolean,
+    copiedAnnotations: List<IrConstructorCall>
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
@@ -495,7 +500,7 @@ private fun IrFunction.generateDefaultsFunction(
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         if (overriddenSymbols.any { it.owner.findBaseFunctionWithDefaultArguments(skipInlineMethods, skipExternalMethods) != null })
             return generateDefaultsFunctionImpl(
-                context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, true, useConstructorMarker
+                context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, copiedAnnotations, true, useConstructorMarker
             ).also { defaultsFunction ->
                 context.mapping.defaultArgumentsDispatchFunction[this] = defaultsFunction
                 context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = this
@@ -508,7 +513,8 @@ private fun IrFunction.generateDefaultsFunction(
                             skipExternalMethods,
                             forceSetOverrideSymbols,
                             visibility,
-                            useConstructorMarker
+                            useConstructorMarker,
+                            it.owner.copyAnnotations()
                         )?.symbol as IrSimpleFunctionSymbol?
                     }
                 }
@@ -526,7 +532,7 @@ private fun IrFunction.generateDefaultsFunction(
     // binaries, it's way too late to fix it. Hence the workaround.
     if (valueParameters.any { it.defaultValue != null }) {
         return generateDefaultsFunctionImpl(
-            context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility, false, useConstructorMarker
+            context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility, copiedAnnotations, false, useConstructorMarker
         ).also {
             context.mapping.defaultArgumentsDispatchFunction[this] = it
             context.mapping.defaultArgumentsOriginalFunction[it] = this
@@ -539,6 +545,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     context: CommonBackendContext,
     newOrigin: IrDeclarationOrigin,
     newVisibility: DescriptorVisibility,
+    copiedAnnotations: List<IrConstructorCall>,
     isFakeOverride: Boolean,
     useConstructorMarker: Boolean
 ): IrFunction {
@@ -601,7 +608,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     }
 
     // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
-    newFunction.copyAnnotationsFrom(this)
+    newFunction.annotations += copiedAnnotations
     return newFunction
 }
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization.signature
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -109,14 +108,12 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
     private val composer by lazy { createSignatureBuilder() }
 
     override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? {
-        if (descriptor is WrappedDeclarationDescriptor<*>) return null
         return if (mangler.run { descriptor.isExported() }) {
             composer.buildSignature(descriptor)
         } else null
     }
 
     override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? {
-        if (descriptor is WrappedDeclarationDescriptor<*>) return null
         return if (mangler.run { descriptor.isExportEnumEntry() }) {
             composer.buildSignature(descriptor)
         } else null

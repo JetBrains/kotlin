@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.trackers
 
-import com.intellij.openapi.components.service
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import junit.framework.Assert
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import java.io.File
 
 abstract class AbstractProjectWideOutOfBlockKotlinModificationTrackerTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -23,7 +23,7 @@ abstract class AbstractProjectWideOutOfBlockKotlinModificationTrackerTest : Kotl
         val textToType = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TYPE:") ?: DEFAULT_TEXT_TO_TYPE
         val outOfBlock = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// OUT_OF_BLOCK:")
             ?: error("Please, specify should out of block change happen or not by `// OUT_OF_BLOCK:` directive")
-        val tracker = project.service<KotlinFirOutOfBlockModificationTrackerFactory>().createProjectWideOutOfBlockModificationTracker()
+        val tracker = project.createProjectWideOutOfBlockModificationTracker()
         val initialModificationCount = tracker.modificationCount
         myFixture.type(textToType)
         PsiDocumentManager.getInstance(project).commitAllDocuments()

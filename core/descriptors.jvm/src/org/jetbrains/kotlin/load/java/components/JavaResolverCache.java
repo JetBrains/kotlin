@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.load.java.structure.JavaClass;
-import org.jetbrains.kotlin.load.java.structure.JavaElement;
-import org.jetbrains.kotlin.load.java.structure.JavaField;
-import org.jetbrains.kotlin.load.java.structure.JavaMethod;
+import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 
 public interface JavaResolverCache {
@@ -37,7 +34,7 @@ public interface JavaResolverCache {
         }
 
         @Override
-        public void recordMethod(@NotNull JavaMethod method, @NotNull SimpleFunctionDescriptor descriptor) {
+        public void recordMethod(@NotNull JavaMember member, @NotNull SimpleFunctionDescriptor descriptor) {
         }
 
         @Override
@@ -56,7 +53,8 @@ public interface JavaResolverCache {
     @Nullable
     ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName);
 
-    void recordMethod(@NotNull JavaMethod method, @NotNull SimpleFunctionDescriptor descriptor);
+    // It's a JavaMethod or JavaRecordComponent
+    void recordMethod(@NotNull JavaMember member, @NotNull SimpleFunctionDescriptor descriptor);
 
     void recordConstructor(@NotNull JavaElement element, @NotNull ConstructorDescriptor descriptor);
 

@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -98,7 +98,7 @@ class DeserializedClassDescriptor(
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
-    override fun isInline() = Flags.IS_INLINE_CLASS.get(classProto.flags)
+    override fun isInline() = Flags.IS_INLINE_CLASS.get(classProto.flags) && metadataVersion.isAtMost(1, 4, 1)
 
     override fun isExpect() = Flags.IS_EXPECT_CLASS.get(classProto.flags)
 
@@ -107,6 +107,8 @@ class DeserializedClassDescriptor(
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
     override fun isFun() = Flags.IS_FUN_INTERFACE.get(classProto.flags)
+
+    override fun isValue() = Flags.IS_INLINE_CLASS.get(classProto.flags) && metadataVersion.isAtLeast(1, 4, 2)
 
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): MemberScope =
         memberScopeHolder.getScope(kotlinTypeRefiner)
@@ -163,7 +165,7 @@ class DeserializedClassDescriptor(
         }
 
         // This is needed because classes compiled with Kotlin 1.0 did not contain the sealed_subclass_fq_name field
-        return computeSealedSubclasses(this)
+        return CliSealedClassInheritorsProvider.computeSealedSubclasses(this, allowSealedInheritorsInDifferentFilesOfSamePackage = false)
     }
 
     override fun getSealedSubclasses() = sealedSubclasses()

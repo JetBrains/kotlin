@@ -41,23 +41,18 @@ public class TestFiles {
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
-        return createTestFiles(testFileName, expectedText, factory, false, "");
-    }
-
-    @NotNull
-    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
-        return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
+        return createTestFiles(testFileName, expectedText, factory, false);
     }
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
-            boolean preserveLocations, String coroutinesPackage) {
-        return createTestFiles(testFileName, expectedText, factory, preserveLocations, coroutinesPackage, false);
+            boolean preserveLocations) {
+        return createTestFiles(testFileName, expectedText, factory, preserveLocations, false);
     }
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
-            boolean preserveLocations, String coroutinesPackage, boolean parseDirectivesPerFile) {
+            boolean preserveLocations, boolean parseDirectivesPerFile) {
         Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
         Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
@@ -127,10 +122,6 @@ public class TestFiles {
                 assert oldValue == null : "Module with name " + supportModule.name + " already present in file";
             }
 
-            boolean isReleaseCoroutines =
-                    !coroutinesPackage.contains("experimental") &&
-                    !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
-
             boolean checkStateMachine = isDirectiveDefined(expectedText, "CHECK_STATE_MACHINE");
             boolean checkTailCallOptimization = isDirectiveDefined(expectedText, "CHECK_TAIL_CALL_OPTIMIZATION");
 
@@ -138,8 +129,7 @@ public class TestFiles {
                     factory.createFile(
                             supportModule,
                             "CoroutineUtil.kt",
-                            TestHelperGeneratorKt.createTextForCoroutineHelpers(
-                                    isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
+                            TestHelperGeneratorKt.createTextForCoroutineHelpers(checkStateMachine, checkTailCallOptimization),
                             parseDirectives(commonPrefixOrWholeFile)
                     ));
         }

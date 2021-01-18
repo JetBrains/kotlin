@@ -31,7 +31,7 @@ class SpecTestsConsistencyTest : TestCase() {
 
         @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
         @JvmStatic
-        fun getTestFiles(klass: Class<*>): List<Array<String>> {
+        fun getTestFiles(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<Array<String>> {
             val testFiles = mutableListOf<Array<String>>()
 
             TestArea.values().forEach { testArea ->

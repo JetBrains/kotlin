@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -37,7 +38,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         }
 
         public void testAllFilesPresentInK2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pullUp/k2k"), Pattern.compile("^(.+)\\.kt$"), null);
+            KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pullUp/k2k"), Pattern.compile("^(.+)\\.kt$"), null);
         }
 
         @TestMetadata("clashWithSuper.kt")
@@ -325,7 +326,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         }
 
         public void testAllFilesPresentInK2J() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"), null);
+            KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"), null);
         }
 
         @TestMetadata("constructorParameterToClass.kt")
@@ -398,7 +399,7 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         }
 
         public void testAllFilesPresentInJ2K() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pullUp/j2k"), Pattern.compile("^(.+)\\.java$"), null);
+            KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/refactoring/pullUp/j2k"), Pattern.compile("^(.+)\\.java$"), null);
         }
 
         @TestMetadata("fromClassToClass.java")

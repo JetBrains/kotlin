@@ -194,20 +194,12 @@ private fun readElementsList(element: Element, rootElementName: String, elementN
     return null
 }
 
+private fun readV3Config(element: Element): KotlinFacetSettings {
+    return readV2AndLaterConfig(element)
+}
+
 private fun readV2Config(element: Element): KotlinFacetSettings {
-    return readV2AndLaterConfig(element).apply {
-        element.getChild("compilerArguments")?.children?.let { args ->
-            when {
-                args.any { arg -> arg.attributes[0].value == "coroutinesEnable" && arg.attributes[1].booleanValue } ->
-                    compilerArguments!!.coroutinesState = CommonCompilerArguments.ENABLE
-                args.any { arg -> arg.attributes[0].value == "coroutinesWarn" && arg.attributes[1].booleanValue } ->
-                    compilerArguments!!.coroutinesState = CommonCompilerArguments.WARN
-                args.any { arg -> arg.attributes[0].value == "coroutinesError" && arg.attributes[1].booleanValue } ->
-                    compilerArguments!!.coroutinesState = CommonCompilerArguments.ERROR
-                else -> compilerArguments!!.coroutinesState = CommonCompilerArguments.DEFAULT
-            }
-        }
-    }
+    return readV2AndLaterConfig(element)
 }
 
 private fun readLatestConfig(element: Element): KotlinFacetSettings {
@@ -223,6 +215,7 @@ fun deserializeFacetSettings(element: Element): KotlinFacetSettings {
     return when (version) {
         1 -> readV1Config(element)
         2 -> readV2Config(element)
+        3 -> readV3Config(element)
         KotlinFacetSettings.CURRENT_VERSION -> readLatestConfig(element)
         else -> return KotlinFacetSettings() // Reset facet configuration if versions don't match
     }.apply { this.version = version }
@@ -408,35 +401,13 @@ fun Element.dropVersionsIfNecessary(settings: CommonCompilerArguments) {
     }
 }
 
-// Special treatment of v2 may be dropped after transition to IDEA 172
-private fun KotlinFacetSettings.writeV2Config(element: Element) {
-    writeLatestConfig(element)
-    element.getChild("compilerArguments")?.let {
-        it.getOption("coroutinesState")?.detach()
-        val coroutineOption = when (compilerArguments?.coroutinesState) {
-            CommonCompilerArguments.ENABLE -> "coroutinesEnable"
-            CommonCompilerArguments.WARN -> "coroutinesWarn"
-            CommonCompilerArguments.ERROR -> "coroutinesError"
-            else -> null
-        }
-        if (coroutineOption != null) {
-            Element("option").apply {
-                setAttribute("name", coroutineOption)
-                setAttribute("value", "true")
-                it.addContent(this)
-            }
-        }
-    }
-}
-
 fun KotlinFacetSettings.serializeFacetSettings(element: Element) {
-    val versionToWrite = if (version == 2) version else KotlinFacetSettings.CURRENT_VERSION
-    element.setAttribute("version", versionToWrite.toString())
-    if (versionToWrite == 2) {
-        writeV2Config(element)
-    } else {
-        writeLatestConfig(element)
+    val versionToWrite = when (version) {
+        2, 3 -> version
+        else -> KotlinFacetSettings.CURRENT_VERSION
     }
+    element.setAttribute("version", versionToWrite.toString())
+    writeLatestConfig(element)
 }
 
 private fun TargetPlatform.serializeComponentPlatforms(): String {

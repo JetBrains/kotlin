@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.pacelize.ide.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
     }
 
     public void testAllFilesPresentInQuickfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("plugins/parcelize/parcelize-ide/testData/quickfix/addPrimaryConstructor")
@@ -37,7 +38,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInAddPrimaryConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/addPrimaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/addPrimaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("constructorWithDelegate.kt")
@@ -65,7 +66,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInCantBeInnerClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/cantBeInnerClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/cantBeInnerClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -83,7 +84,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInClassShouldBeAnnotated() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/classShouldBeAnnotated"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/classShouldBeAnnotated"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -101,7 +102,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInDeleteIncompatible() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/deleteIncompatible"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/deleteIncompatible"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("creatorField.kt")
@@ -124,7 +125,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInMigrations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/migrations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/migrations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("basic.kt")
@@ -172,7 +173,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInNoParcelableSupertype() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/noParcelableSupertype"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/noParcelableSupertype"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("alreadyHasSupertype.kt")
@@ -195,7 +196,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInPropertyWontBeSerialized() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/propertyWontBeSerialized"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/propertyWontBeSerialized"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -213,7 +214,7 @@ public class ParcelizeQuickFixTestGenerated extends AbstractParcelizeQuickFixTes
         }
 
         public void testAllFilesPresentInRemoveDuplicatingTypeParcelerAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/removeDuplicatingTypeParcelerAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/parcelize/parcelize-ide/testData/quickfix/removeDuplicatingTypeParcelerAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")

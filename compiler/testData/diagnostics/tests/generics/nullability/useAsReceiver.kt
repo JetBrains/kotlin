@@ -21,7 +21,7 @@ fun <T : String?> foo(x: T) {
     x?.bar1()
     x?.bar2()
 
-    x<!NI;UNSAFE_CALL!>.<!><!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
+    x<!UNSAFE_CALL{NI}!>.<!><!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>bar3<!>()
 
-    x?.let { it<!OI;UNSAFE_CALL!>.<!>length }
+    x?.let { it<!UNSAFE_CALL{OI}!>.<!>length }
 }

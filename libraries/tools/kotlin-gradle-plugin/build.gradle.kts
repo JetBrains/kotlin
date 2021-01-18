@@ -57,7 +57,9 @@ dependencies {
 
     compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     compile("de.undercouch:gradle-download-task:4.0.2")
-    implementation("com.github.gundy:semver4j:0.16.4")
+    implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
+        exclude(group = "*")
+    }
 
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")
@@ -190,7 +192,7 @@ pluginBundle {
     create(
         name = "kotlinAndroidPlugin",
         id = "org.jetbrains.kotlin.android",
-        display = "Android"
+        display = "Kotlin Android plugin"
     )
     create(
         name = "kotlinAndroidExtensionsPlugin",

@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -42,7 +42,7 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return KotlinTestUtils.getHomeDirectory();
+        return KtTestUtil.getHomeDirectory();
     }
 
     public AbstractParsingTest() {

@@ -17,5 +17,5 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
         CONSTRUCTOR_CALL 'public constructor <init> (jxx: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] X of <root>.C?>?) declared in <root>.C' type=<root>.C<@[FlexibleNullability] kotlin.String?> origin=null
           <class: X>: @[FlexibleNullability] kotlin.String?
           jxx: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?
-            TYPE_OP type=kotlin.Function1<@[ParameterName(name = 'x')] @[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[ParameterName(name = 'x')] @[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>
+            TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
               GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null

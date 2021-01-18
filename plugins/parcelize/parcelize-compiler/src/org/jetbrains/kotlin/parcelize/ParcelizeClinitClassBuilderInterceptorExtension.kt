@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.parcelize
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -127,6 +129,10 @@ class ParcelizeClinitClassBuilderInterceptorExtension : ClassBuilderInterceptorE
             }
 
             return super.newMethod(origin, access, name, desc, signature, exceptions)
+        }
+
+        override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor {
+            return AbstractClassBuilder.EMPTY_RECORD_VISITOR
         }
     }
 

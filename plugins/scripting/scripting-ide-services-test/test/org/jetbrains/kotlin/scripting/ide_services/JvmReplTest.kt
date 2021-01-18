@@ -327,7 +327,7 @@ class JvmIdeServicesTest : TestCase() {
         private data class CliCompilationResult(val exitCode: ExitCode, val outputJarPath: String)
 
         private fun compileFile(inputKtFileName: String, outputJarName: String): CliCompilationResult {
-            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().invariantSeparatorsPath
+            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().invariantSeparatorsPathString
 
             val compilerArgs = arrayOf(
                 "$MODULE_PATH/testData/$inputKtFileName",

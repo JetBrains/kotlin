@@ -83,6 +83,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun isExpect() = false
     override fun isActual() = false
     override fun isFun() = false
+    override fun isValue() = false
 
     override fun getCompanionObjectDescriptor(): ClassDescriptorWithResolutionScopes? = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor

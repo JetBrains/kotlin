@@ -18,6 +18,8 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import com.intellij.psi.impl.source.tree.FileElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingInBodyDeclarationWith
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileElementFactory
@@ -45,6 +47,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
         moduleModificationsState.increaseModificationCountForAllModules()
     }
 
+    @TestOnly
+    fun increaseModificationCountForModule(module: Module) {
+        moduleModificationsState.increaseModificationCountForModule(module)
+    }
+
+
     private fun subscribeForRootChanges(project: Project) {
         project.messageBus.connect(this).subscribe(
             ProjectTopics.PROJECT_ROOTS,
@@ -70,6 +78,18 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
             changedElements: Array<out ASTNode>,
             changeSet: TreeChangeEvent
         ) {
+            if (changedElements.isEmpty()) {
+                incrementModificationCountForFileChange(changeSet)
+            } else {
+                incrementModificationCountForSpecificElements(changedElements, changeSet)
+            }
+        }
+
+        private fun incrementModificationCountForSpecificElements(
+            changedElements: Array<out ASTNode>,
+            changeSet: TreeChangeEvent
+        ) {
+            require(changedElements.isNotEmpty())
             var isOutOfBlockChangeInAnyModule = false
 
             changedElements.forEach { element ->
@@ -85,6 +105,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
             }
         }
 
+        private fun incrementModificationCountForFileChange(changeSet: TreeChangeEvent) {
+            val fileElement = changeSet.rootElement as FileElement ?: return
+            incrementModificationTrackerForContainingModule(fileElement)
+            projectGlobalOutOfBlockInKotlinFilesModificationCount++
+        }
+
         private fun incrementModificationTrackerForContainingModule(element: ASTNode) {
             element.psi.module?.let { module ->
                 moduleModificationsState.increaseModificationCountForModule(module)
@@ -98,6 +124,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
 
         private fun isOutOfBlockChange(node: ASTNode): Boolean {
             val psi = node.psi ?: return true
+            if (!psi.isValid) {
+                /**
+                 * If PSI is not valid, well something bad happened, OOBM won't hurt
+                 */
+                return true
+            }
             val container = psi.getNonLocalContainingInBodyDeclarationWith() ?: return true
             return !FileElementFactory.isReanalyzableContainer(container)
         }

@@ -16,18 +16,29 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         javaClassesOutputDirectory = writeJavaFiles(files)!!.let { directory ->
             val jvmTargets = files.mapNotNullTo(mutableSetOf()) { it.directives["JVM_TARGET"]?.let((JvmTarget)::fromString) }
+            val enablePreview = files.any { it.directives.contains("ENABLE_JVM_PREVIEW") }
             check(jvmTargets.size <= 1) { "Having different JVM_TARGETs for different files is not supported in this test." }
             CodegenTestUtil.compileJava(
-                CodegenTestUtil.findJavaSourcesInDirectory(directory), emptyList(), extractJavacOptions(files, jvmTargets.firstOrNull())
+                CodegenTestUtil.findJavaSourcesInDirectory(directory),
+                emptyList(),
+                extractJavacOptions(
+                    files,
+                    jvmTargets.firstOrNull(),
+                    enablePreview,
+                ),
+                JUnit4Assertions
             )
         }
 

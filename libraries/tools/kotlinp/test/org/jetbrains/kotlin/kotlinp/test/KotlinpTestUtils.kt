@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.test.fail
 
@@ -76,7 +77,7 @@ private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOut
     AbstractLoadJavaTest.updateConfigurationWithDirectives(content, configuration)
     val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     setupLanguageVersionSettingsForCompilerTests(content, environment)
-    val ktFile = KotlinTestUtils.createFile(file.name, content, environment.project)
+    val ktFile = KtTestUtil.createFile(file.name, content, environment.project)
     GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
 
     for (outputFile in tmpdir.walkTopDown().sortedBy { it.nameWithoutExtension }) {

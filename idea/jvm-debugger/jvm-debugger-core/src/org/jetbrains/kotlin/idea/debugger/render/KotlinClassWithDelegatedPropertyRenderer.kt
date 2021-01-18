@@ -63,9 +63,10 @@ class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
     ): String? {
         val toStringRenderer = rendererSettings.toStringRenderer
         if (toStringRenderer.isEnabled && DebuggerManagerEx.getInstanceEx(evaluationContext.project).context.canRunEvaluation) {
-            if (toStringRenderer.isApplicable(descriptor.type)) {
-                return toStringRenderer.calcLabel(descriptor, evaluationContext, listener)
-            }
+            val label = toStringRenderer.isApplicableAsync(descriptor.type).thenApply { applicable: Boolean ->
+                if (applicable) toStringRenderer.calcLabel(descriptor, evaluationContext, listener) else null
+            }.get()
+            return label
         }
         return null
     }

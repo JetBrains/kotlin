@@ -80,7 +80,7 @@ fun test3() {
 }
 
 fun test4() {
-  val <destruct>: IndexedValue<P?> = listOfNotNull().withIndex<P?>().first<IndexedValue<P?>>()
+  val <destruct>: IndexedValue<P?> = listOfNotNull() /*!! List<P?> */.withIndex<P?>().first<IndexedValue<P?>>()
   val x: Int = <destruct>.component1()
   val y: P? = <destruct>.component2()
   use(x = x, y = y /*!! P */)

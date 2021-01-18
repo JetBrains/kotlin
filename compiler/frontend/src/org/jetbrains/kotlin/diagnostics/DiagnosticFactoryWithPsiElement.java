@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import kotlin.DeprecationLevel;
 
 import java.util.List;
 
@@ -35,5 +36,17 @@ public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement, D ex
 
     protected boolean isValid(ParametrizedDiagnostic<E> diagnostic) {
         return positioningStrategy.isValid(diagnostic.getPsiElement());
+    }
+
+    public PositioningStrategy<? super E> getPositioningStrategy() {
+        return positioningStrategy;
+    }
+
+    @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
+    @Deprecated
+    @kotlin.Deprecated(message = "Use `cast` from the superclass.", level = DeprecationLevel.HIDDEN)
+    // ABI-compatibility only (used in Android plugin)
+    public D cast(Diagnostic d) {
+        return super.cast(d);
     }
 }

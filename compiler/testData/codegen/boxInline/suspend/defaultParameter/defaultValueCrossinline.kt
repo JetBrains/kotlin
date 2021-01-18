@@ -1,10 +1,9 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 class Controller {
@@ -38,9 +37,7 @@ suspend inline fun test3(controller: Controller = defaultController, crossinline
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

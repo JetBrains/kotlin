@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import javax.swing.Icon
 
@@ -78,6 +79,20 @@ internal abstract class FirLightField protected constructor(
             visitor.visitField(this)
         } else {
             visitor.visitElement(this)
+        }
+    }
+
+    internal class FieldNameGenerator {
+        private val usedNames: MutableSet<String> = mutableSetOf()
+
+        fun generateUniqueFieldName(base: String): String {
+            if (usedNames.add(base)) return base
+            var i = 1
+            while (true) {
+                val suggestion = "$base$$i"
+                if (usedNames.add(suggestion)) return suggestion
+                i++
+            }
         }
     }
 }

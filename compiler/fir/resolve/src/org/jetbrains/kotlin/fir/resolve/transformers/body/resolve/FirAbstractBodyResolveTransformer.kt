@@ -60,6 +60,14 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         context.addLocalScope(localScope)
     }
 
+    protected open fun needReplacePhase(firDeclaration: FirDeclaration) = true
+
+    fun replaceDeclarationResolvePhaseIfNeeded(firDeclaration: FirDeclaration, newResolvePhase: FirResolvePhase) {
+        if (needReplacePhase(firDeclaration)) {
+            firDeclaration.replaceResolvePhase(newResolvePhase)
+        }
+    }
+
     @OptIn(PrivateForInline::class)
     internal inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {
         val shouldSwitchMode = implicitTypeOnly

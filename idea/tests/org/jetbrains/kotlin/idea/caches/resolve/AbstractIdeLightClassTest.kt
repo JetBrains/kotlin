@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.plugins.groovy.lang.psi.impl.stringValue
 import org.junit.Assert
@@ -81,8 +82,11 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
 
     private fun lazinessModeByFileText(): LightClassLazinessChecker.Mode {
         return testDataFile().readText().run {
-            val argument = substringAfter("LAZINESS:", "").substringBefore(" ")
-            LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument } ?: LightClassLazinessChecker.Mode.AllChecks
+            val argument = substringAfter("LAZINESS:", "").substringBefore('\n').substringBefore(' ')
+            if (argument == "") LightClassLazinessChecker.Mode.AllChecks
+            else requireNotNull(LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument }) {
+                "Invalid LAZINESS testdata parameter $argument"
+            }
         }
     }
 
@@ -98,13 +102,13 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testName = getTestName(false)
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
-        val filePathWithoutExtension = "${KotlinTestUtils.getTestsRoot(this::class.java)}/${getTestName(false)}"
+        val filePathWithoutExtension = "${KtTestUtil.getTestsRoot(this::class.java)}/${getTestName(false)}"
         val testFile =
             File("$filePathWithoutExtension.kt").takeIf { it.exists() } ?: File("$filePathWithoutExtension.kts").takeIf { it.exists() }
 
         Assert.assertNotNull("Test file not found!", testFile)
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(
+        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(
             testFile!!.canonicalPath, libName(),
             extraClasspath = listOf(ForTestCompileRuntime.jetbrainsAnnotationsForTests().path)
         )
@@ -151,12 +155,10 @@ fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
         return it.toLightClass()
     }
 
-    return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project)) ?: PsiTreeUtil.findChildrenOfType(
-            ktFile,
-            KtClassOrObject::class.java
-        )
-        .find { fqName.endsWith(it.nameAsName!!.asString()) }
-        ?.let { KtLightClassForSourceDeclaration.create(it) }
+    return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project))
+        ?: PsiTreeUtil.findChildrenOfType(ktFile, KtClassOrObject::class.java)
+            .find { fqName.endsWith(it.nameAsName!!.asString()) }
+            ?.toLightClass()
 }
 
 object LightClassLazinessChecker {
@@ -276,11 +278,13 @@ object LightClassLazinessChecker {
                 // see KtLightNullabilityAnnotation
                 assertTrue(
                     lightAnnotations.isNotEmpty(),
-                    "Missing $fqName annotation in '${modifierListOwner}' have only ${annotations?.joinToString(
-                        ", ",
-                        "[",
-                        "]"
-                    ) { it.toString() }}"
+                    "Missing $fqName annotation in '${modifierListOwner}' have only ${
+                        annotations?.joinToString(
+                            ", ",
+                            "[",
+                            "]"
+                        ) { it.toString() }
+                    }"
                 )
             }
             clsAnnotations.zip(lightAnnotations).forEach { (clsAnnotation, lightAnnotation) ->

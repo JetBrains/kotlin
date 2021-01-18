@@ -11,8 +11,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.CallInfo
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
@@ -20,8 +23,10 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
@@ -30,7 +35,7 @@ import kotlin.reflect.jvm.javaGetter
 
 
 abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsightTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + "/"
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory() + "/"
 
     protected fun doTest(path: String) {
         addExternalTestFiles(path)
@@ -41,13 +46,7 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
 
         val actualText = executeOnPooledThreadInReadAction {
             val callInfos = analyze(file as KtFile) {
-                elements.map { element ->
-                    when (element) {
-                        is KtCallExpression -> element.resolveCall()
-                        is KtBinaryExpression -> element.resolveCall()
-                        else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
-                    }
-                }
+                elements.map { resolveCall(it) }
             }
 
             if (callInfos.isEmpty()) {
@@ -69,6 +68,13 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
         KotlinTestUtils.assertEqualsToFile(File(path), actualText)
     }
 
+    private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCall? = when (element) {
+        is KtCallExpression -> element.resolveCall()
+        is KtBinaryExpression -> element.resolveCall()
+        is KtValueArgument -> resolveCall(element.getArgumentExpression()!!)
+        else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
+    }
+
 
     private fun getSingleSelectedElement(selection: CaretState): PsiElement {
         val selectionRange = selection.getTextRange()
@@ -86,23 +92,25 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
     )
 }
 
-private fun CallInfo.stringRepresentation(): String {
+private fun KtCall.stringRepresentation(): String {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
-    fun Any.stringValue(): String? = when (this) {
+    fun Any.stringValue(): String = when (this) {
         is KtFunctionLikeSymbol -> buildString {
             append(if (this@stringValue is KtFunctionSymbol) callableIdIfNonLocal ?: name else "<constructor>")
             append("(")
             (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<receiver>: ${receiver.render()}")
+                append("<receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
             valueParameters.joinTo(this) { parameter ->
-                "${parameter.name}: ${parameter.type.render()}"
+                "${parameter.name}: ${parameter.annotatedType.type.render()}"
             }
             append(")")
-            append(": ${type.render()}")
+            append(": ${annotatedType.type.render()}")
         }
-        is KtParameterSymbol -> "$name: ${type.render()}"
+        is KtParameterSymbol -> "$name: ${annotatedType.type.render()}"
+        is KtSuccessCallTarget -> symbol.stringValue()
+        is KtErrorCallTarget -> "ERR<${this.diagnostic.message}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()
         else -> error("unexpected parameter type ${this::class}")
     }

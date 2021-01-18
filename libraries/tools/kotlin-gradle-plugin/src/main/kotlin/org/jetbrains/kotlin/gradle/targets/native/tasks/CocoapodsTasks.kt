@@ -136,7 +136,7 @@ open class PodspecTask : DefaultTask() {
                 |    spec.pod_target_xcconfig = {
                 |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
                 |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
-                |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+                |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x64',
                 |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
                 |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
                 |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',

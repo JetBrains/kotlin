@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
@@ -39,6 +40,7 @@ class FirMetadataSerializer(
     private val context: JvmBackendContext,
     private val irClass: IrClass,
     private val serializationBindings: JvmSerializationBindings,
+    components: Fir2IrComponents,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
     private val approximator = object : AbstractTypeApproximator(session.typeContext) {
@@ -144,8 +146,10 @@ class FirMetadataSerializer(
         (it.owner.metadata as FirMetadataSource.Property).fir.copyToFreeProperty()
     } ?: emptyList()
 
-    private val serializerExtension =
-        FirJvmSerializerExtension(session, serializationBindings, context.state, irClass, localDelegatedProperties, approximator)
+    private val serializerExtension = FirJvmSerializerExtension(
+        session, serializationBindings, context.state, irClass, localDelegatedProperties, approximator,
+        context.typeMapper, components
+    )
 
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {

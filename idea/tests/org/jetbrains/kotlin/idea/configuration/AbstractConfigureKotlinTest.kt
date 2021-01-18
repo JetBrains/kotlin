@@ -22,9 +22,9 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
@@ -34,12 +34,12 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     @Throws(Exception::class)
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
         PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY)
 
         super.tearDown()
@@ -105,9 +105,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         get() = ModuleManager.getInstance(myProject).modules
 
     override fun getProjectDirOrFile(): Path {
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
-        return File(projectFilePath).toPath()
+        val projectFilePath = "$projectRoot/projectFile.ipr"
+        val file = File(projectFilePath).absoluteFile
+        TestCase.assertTrue("Project file should exists $projectFilePath", file.exists())
+        return file.toPath()
     }
 
     override fun doCreateProject(projectFile: Path): Project {
@@ -237,14 +238,14 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private val pathToNonexistentRuntimeJar: String
         get() {
             val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_STDLIB_JAR
-            myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+            myFilesToDelete.add(File(pathToTempKotlinRuntimeJar).toPath())
             return pathToTempKotlinRuntimeJar
         }
 
     private val pathToNonexistentJsJar: String
         get() {
             val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME
-            myFilesToDelete.add(File(pathToTempKotlinRuntimeJar))
+            myFilesToDelete.add(File(pathToTempKotlinRuntimeJar).toPath())
             return pathToTempKotlinRuntimeJar
         }
 

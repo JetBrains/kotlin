@@ -2,31 +2,11 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class User {
-    private final int age = 0;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
-
-    public User(@org.jetbrains.annotations.NotNull()
-    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
-    java.lang.String secondName, int age) {
-        super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String component1() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String component2() {
-        return null;
-    }
-
-    public final int component3() {
-        return 0;
-    }
+    private final int age = 0;
 
     @org.jetbrains.annotations.NotNull()
     public final User copy(@org.jetbrains.annotations.NotNull()
@@ -41,8 +21,26 @@ public final class User {
         return false;
     }
 
-    public final int getAge() {
+    @java.lang.Override()
+    public int hashCode() {
         return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    public User(@org.jetbrains.annotations.NotNull()
+    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
+    java.lang.String secondName, int age) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String component1() {
+        return null;
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -51,21 +49,23 @@ public final class User {
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final java.lang.String component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSecondName() {
         return null;
     }
 
-    @java.lang.Override()
-    public int hashCode() {
+    public final int component3() {
+        return 0;
+    }
+
+    public final int getAge() {
         return 0;
     }
 
     public final void procedure() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    @java.lang.Override()
-    public java.lang.String toString() {
-        return null;
     }
 }

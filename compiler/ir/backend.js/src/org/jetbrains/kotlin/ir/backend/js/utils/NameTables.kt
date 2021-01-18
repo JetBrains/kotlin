@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -26,24 +29,24 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
 
-fun <T> mapToKey(declaration: T): String {
+// TODO remove direct usages of [mapToKey] from [NameTable] & co and move it to scripting & REPL infrastructure. Review usages.
+private fun <T> mapToKey(declaration: T): String {
     return with(JsManglerIr) {
-        if (declaration is IrDeclaration && isPublic(declaration)) {
+        if (declaration is IrDeclaration) {
             declaration.hashedMangle.toString()
         } else if (declaration is Signature) {
             declaration.toString().hashMangle.toString()
-        } else "key_have_not_generated"
+        } else {
+            error("Key is not generated for " + declaration?.let { it::class.simpleName })
+        }
     }
 }
-
-fun JsManglerIr.isPublic(declaration: IrDeclaration) =
-    declaration.isExported() && declaration !is IrScript && declaration !is IrVariable && declaration !is IrValueParameter
 
 class NameTable<T>(
     val parent: NameTable<*>? = null,
     val reserved: MutableSet<String> = mutableSetOf(),
     val sanitizer: (String) -> String = ::sanitizeName,
-    val mappedNames: MutableMap<String, String> = mutableMapOf()
+    val mappedNames: MutableMap<String, String>? = null
 ) {
     var finished = false
     val names = mutableMapOf<T, String>()
@@ -59,7 +62,7 @@ class NameTable<T>(
         assert(!finished)
         names[declaration] = name
         reserved.add(name)
-        mappedNames[mapToKey(declaration)] = name
+        mappedNames?.set(mapToKey(declaration), name)
     }
 
     fun declareFreshName(declaration: T, suggestedName: String): String {
@@ -109,20 +112,13 @@ fun jsFunctionSignature(declaration: IrFunction): Signature {
     require(declaration.dispatchReceiverParameter != null)
 
     val declarationName = declaration.getJsNameOrKotlinName().asString()
-    val stableName = StableNameSignature(declarationName)
 
-    if (declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION) {
-        return stableName
-    }
-    if (declaration.isEffectivelyExternal()) {
-        return stableName
-    }
-    if (declaration.getJsName() != null) {
-        return stableName
-    }
-    // Handle names for special functions
-    if (declaration is IrSimpleFunction && declaration.isMethodOfAny()) {
-        return stableName
+    val needsStableName = declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
+            declaration.hasStableJsName() ||
+            (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+
+    if (needsStableName) {
+        return StableNameSignature(declarationName)
     }
 
     val nameBuilder = StringBuilder()
@@ -158,7 +154,7 @@ class NameTables(
     packages: List<IrPackageFragment>,
     reservedForGlobal: MutableSet<String> = mutableSetOf(),
     reservedForMember: MutableSet<String> = mutableSetOf(),
-    val mappedNames: MutableMap<String, String> = mutableMapOf()
+    val mappedNames: MutableMap<String, String>? = null
 ) {
     val globalNames: NameTable<IrDeclaration>
     private val memberNames: NameTable<Signature>
@@ -178,8 +174,6 @@ class NameTables(
             reserved = (stableNamesCollector.memberNames + reservedForMember).toMutableSet(),
             mappedNames = mappedNames
         )
-
-        mappedNames.addAllIfAbsent(mappedNames)
 
         val classDeclaration = mutableListOf<IrClass>()
         for (p in packages) {
@@ -256,7 +250,7 @@ class NameTables(
         this += other.filter { it.key !in this }
     }
 
-    private fun packagesAdded() = mappedNames.isEmpty()
+    private fun packagesAdded() = mappedNames.isNullOrEmpty()
 
     fun merge(files: List<IrPackageFragment>, additionalPackages: List<IrPackageFragment>) {
         val packages = mutableListOf<IrPackageFragment>().also { it.addAll(files) }
@@ -318,13 +312,17 @@ class NameTables(
             parent = parent.parent
         }
 
-        return mappedNames[mapToKey(declaration)]
-            ?: error("Can't find name for declaration ${declaration.render()}")
+
+        mappedNames?.get(mapToKey(declaration))?.let {
+            return it
+        }
+
+        error("Can't find name for declaration ${declaration.render()}")
     }
 
     fun getNameForMemberField(field: IrField): String {
         val signature = fieldSignature(field)
-        val name = memberNames.names[signature] ?: mappedNames[mapToKey(signature)]
+        val name = memberNames.names[signature] ?: mappedNames?.get(mapToKey(signature))
 
         // TODO investigate
         if (name == null) {
@@ -336,7 +334,7 @@ class NameTables(
 
     fun getNameForMemberFunction(function: IrSimpleFunction): String {
         val signature = jsFunctionSignature(function)
-        val name = memberNames.names[signature] ?: mappedNames[mapToKey(signature)]
+        val name = memberNames.names[signature] ?: mappedNames?.get(mapToKey(signature))
 
         // TODO Add a compiler flag, which enables this behaviour
         // TODO remove in DCE
@@ -375,7 +373,7 @@ class NameTables(
         }
 
         override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrDeclarationWithName && declaration is IrSymbolOwner) {
+            if (declaration is IrDeclarationWithName) {
                 table.declareFreshName(declaration, declaration.name.asString())
             }
             super.visitDeclaration(declaration)

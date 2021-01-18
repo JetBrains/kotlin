@@ -14,15 +14,15 @@ fun test1() {
     try {
         x = null
     } catch (e: Exception) {
-        <!OI;DEBUG_INFO_SMARTCAST!>x<!><!NI;UNSAFE_CALL!>.<!>length // smartcast shouldn't be allowed (OOME could happen after `x = null`)
+        <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length // smartcast shouldn't be allowed (OOME could happen after `x = null`)
         throw e
     }
     finally {
         // smartcast shouldn't be allowed, `x = null` could've happened
-        <!OI;DEBUG_INFO_SMARTCAST!>x<!><!NI;UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length
     }
     // smartcast shouldn't be allowed, `x = null` could've happened
-    <!OI;DEBUG_INFO_SMARTCAST!>x<!><!NI;UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length
 }
 
 // With old DFA of try/catch info about unsound smartcasts after try
@@ -35,7 +35,7 @@ fun test2() {
         x = null
     } catch (e: Exception) {
         // BAD
-        <!OI;DEBUG_INFO_SMARTCAST!>x<!><!NI;UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_SMARTCAST{OI}!>x<!><!UNSAFE_CALL{NI}!>.<!>length
     }
     finally {
         x<!UNSAFE_CALL!>.<!>length
@@ -51,7 +51,7 @@ fun test3() {
         } catch (e: Exception) {
             t2 = null
         }
-        <!OI;DEBUG_INFO_SMARTCAST!>t2<!><!NI;UNSAFE_CALL!>.<!>not() // wrong smartcast, NPE
+        <!DEBUG_INFO_SMARTCAST{OI}!>t2<!><!UNSAFE_CALL{NI}!>.<!>not() // wrong smartcast, NPE
     }
 }
 
@@ -61,7 +61,7 @@ fun test4() {
         try {
             t2 = null
         } finally { }
-        <!OI;DEBUG_INFO_SMARTCAST!>t2<!><!NI;UNSAFE_CALL!>.<!>not() // wrong smartcast, NPE
+        <!DEBUG_INFO_SMARTCAST{OI}!>t2<!><!UNSAFE_CALL{NI}!>.<!>not() // wrong smartcast, NPE
     }
 }
 
@@ -81,10 +81,10 @@ fun test5() {
         return
     }
     finally {
-        <!OI;DEBUG_INFO_SMARTCAST!>s1<!><!NI;UNSAFE_CALL!>.<!>length
-        <!OI;DEBUG_INFO_SMARTCAST!>s2<!><!NI;UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_SMARTCAST{OI}!>s1<!><!UNSAFE_CALL{NI}!>.<!>length
+        <!DEBUG_INFO_SMARTCAST{OI}!>s2<!><!UNSAFE_CALL{NI}!>.<!>length
     }
-    <!OI;DEBUG_INFO_SMARTCAST!>s1<!><!NI;UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_SMARTCAST{OI}!>s1<!><!UNSAFE_CALL{NI}!>.<!>length
     <!DEBUG_INFO_SMARTCAST!>s2<!>.length
 }
 
@@ -99,10 +99,10 @@ fun test6(s1: String?, s2: String?) {
         return
     }
     finally {
-        <!OI;DEBUG_INFO_SMARTCAST!>s<!><!NI;UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_SMARTCAST{OI}!>s<!><!UNSAFE_CALL{NI}!>.<!>length
         requireNotNull(s2)
     }
-    <!OI;DEBUG_INFO_SMARTCAST!>s<!><!NI;UNSAFE_CALL!>.<!>length
-    <!NI;DEBUG_INFO_SMARTCAST!>s1<!><!OI;UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_SMARTCAST{OI}!>s<!><!UNSAFE_CALL{NI}!>.<!>length
+    <!DEBUG_INFO_SMARTCAST{NI}!>s1<!><!UNSAFE_CALL{OI}!>.<!>length
     <!DEBUG_INFO_SMARTCAST!>s2<!>.length
 }

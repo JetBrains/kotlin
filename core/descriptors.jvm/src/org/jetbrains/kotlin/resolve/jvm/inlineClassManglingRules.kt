@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 fun shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor: CallableMemberDescriptor): Boolean {
     val constructorDescriptor = descriptor as? ClassConstructorDescriptor ?: return false
     if (DescriptorVisibilities.isPrivate(constructorDescriptor.visibility)) return false
-    if (constructorDescriptor.constructedClass.isInline) return false
+    if (constructorDescriptor.constructedClass.isInlineClass()) return false
     if (DescriptorUtils.isSealedClass(constructorDescriptor.constructedClass)) return false
 
     // TODO inner class in inline class
@@ -35,7 +35,7 @@ fun requiresFunctionNameManglingForParameterTypes(descriptor: CallableMemberDesc
 fun requiresFunctionNameManglingForReturnType(descriptor: CallableMemberDescriptor): Boolean {
     if (descriptor.containingDeclaration !is ClassDescriptor) return false
     val returnType = descriptor.returnType ?: return false
-    return returnType.isInlineClassType()
+    return returnType.isInlineClassType() || returnType.isTypeParameterWithUpperBoundThatRequiresMangling()
 }
 
 fun DeclarationDescriptor.isInlineClassThatRequiresMangling(): Boolean =

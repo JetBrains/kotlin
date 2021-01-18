@@ -168,7 +168,7 @@ class FirCallResolver(
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
-        qualifiedResolver.initProcessingQualifiedAccess(callee)
+        qualifiedResolver.initProcessingQualifiedAccess(callee, qualifiedAccess.typeArguments)
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
@@ -289,7 +289,7 @@ class FirCallResolver(
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         constructedType: ConeClassLikeType
-    ): FirDelegatedConstructorCall? {
+    ): FirDelegatedConstructorCall {
         val name = Name.special("<init>")
         val symbol = constructedType.lookupTag.toSymbol(components.session)
         val typeArguments =

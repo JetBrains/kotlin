@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.isInlineClass
 
 object CirClassFactory {
     fun create(source: ClassDescriptor): CirClass = create(
@@ -28,7 +29,7 @@ object CirClassFactory {
         companion = source.companionObjectDescriptor?.name?.intern(),
         isCompanion = source.isCompanionObject,
         isData = source.isData,
-        isInline = source.isInline,
+        isInline = source.isInlineClass(),
         isInner = source.isInner,
         isExternal = source.isExternal
     ).apply {

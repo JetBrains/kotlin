@@ -17,9 +17,6 @@ interface BuildMetaInfo {
     val compilerBuildVersion: String
     val languageVersionString: String
     val apiVersionString: String
-    val coroutinesEnable: Boolean
-    val coroutinesWarn: Boolean
-    val coroutinesError: Boolean
     val multiplatformEnable: Boolean
     val metadataVersionMajor: Int
     val metadataVersionMinor: Int
@@ -35,9 +32,6 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         compilerBuildVersion: String,
         languageVersionString: String,
         apiVersionString: String,
-        coroutinesEnable: Boolean,
-        coroutinesWarn: Boolean,
-        coroutinesError: Boolean,
         multiplatformEnable: Boolean,
         ownVersion: Int,
         coroutinesVersion: Int,
@@ -53,9 +47,6 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
             compilerBuildVersion = KotlinCompilerVersion.VERSION,
             languageVersionString = languageVersion.versionString,
             apiVersionString = args.apiVersion ?: languageVersion.versionString,
-            coroutinesEnable = args.coroutinesState == CommonCompilerArguments.ENABLE,
-            coroutinesWarn = args.coroutinesState == CommonCompilerArguments.WARN,
-            coroutinesError = args.coroutinesState == CommonCompilerArguments.ERROR,
             multiplatformEnable = args.multiPlatform,
             ownVersion = OWN_VERSION,
             coroutinesVersion = COROUTINES_VERSION,

@@ -12,7 +12,7 @@ public final class Foo /* Foo*/ {
 
   public  Foo();//  .ctor()
 
-  public final /* vararg */ void nullableVararg(@org.jetbrains.annotations.Nullable() java.lang.Object...);//  nullableVararg(java.lang.Object[])
+  public final /* vararg */ void nullableVararg(@org.jetbrains.annotations.NotNull() java.lang.Object...);//  nullableVararg(java.lang.Object[])
 
   public final int bar4();//  bar4()
 

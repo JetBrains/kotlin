@@ -15,16 +15,20 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
 internal class FirDesignatedContractsResolveTransformerForIDE(
-    private val designation: Iterator<FirElement>,
+    private val designation: Iterator<FirDeclaration>,
+    targetDeclaration: FirDeclaration,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : FirContractResolveTransformer(session, scopeSession) {
+    private val phaseReplaceOracle = PhaseReplaceOracle(targetDeclaration)
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        if (designation.hasNext()) {
-            designation.next().visitNoTransform(this, data)
+        if (designation.hasNext()) phaseReplaceOracle.transformDeclarationInside(designation.next()) {
+            it.visitNoTransform(this, data)
             return declaration.compose()
         }
         return super.transformDeclarationContent(declaration, data)
     }
+
+    override fun needReplacePhase(firDeclaration: FirDeclaration): Boolean = phaseReplaceOracle.needReplacePhase(firDeclaration)
 }

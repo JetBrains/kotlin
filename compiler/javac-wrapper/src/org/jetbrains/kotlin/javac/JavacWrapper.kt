@@ -274,7 +274,9 @@ class JavacWrapper(
 
     fun isDeprecated(element: Element) = elements.isDeprecated(element)
 
-    fun isDeprecated(typeMirror: TypeMirror) = isDeprecated(types.asElement(typeMirror))
+    fun isDeprecated(typeMirror: TypeMirror): Boolean {
+        return isDeprecated(types.asElement(typeMirror) ?: return false)
+    }
 
     fun resolve(tree: JCTree, compilationUnit: CompilationUnitTree, containingElement: JavaElement): JavaClassifier? =
         classifierResolver.resolve(tree, compilationUnit, containingElement)

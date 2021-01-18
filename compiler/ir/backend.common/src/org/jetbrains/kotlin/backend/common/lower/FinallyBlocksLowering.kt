@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -175,7 +174,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         currentTryScope.jumps.getOrPut(jump) {
             val type = (jump as? Return)?.target?.owner?.returnType(context) ?: value.type
             jump.toString()
-            val symbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
+            val symbol = IrReturnableBlockSymbolImpl()
             with(currentTryScope) {
                 irBuilder.run {
                     val inlinedFinally = irInlineFinally(symbol, type, expression, finallyExpression)
@@ -234,7 +233,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             using(TryScope(syntheticTry, transformedFinallyExpression, this)) {
 
                 val fallThroughType = aTry.type
-                val fallThroughSymbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
+                val fallThroughSymbol = IrReturnableBlockSymbolImpl()
                 val transformedResult = aTry.tryResult.transform(transformer, null)
                 val returnedResult = irReturn(fallThroughSymbol, transformedResult)
 

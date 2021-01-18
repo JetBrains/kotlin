@@ -155,19 +155,17 @@ enum class EdgeKind(
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
-    val visitedNodes = LinkedHashSet<CFGNode<*>>()
+    val visitedNodes = linkedSetOf<CFGNode<*>>()
     /*
      * [delayedNodes] is needed to accomplish next order contract:
      *   for each node all previous node lays before it
      */
-    val delayedNodes = LinkedHashSet<CFGNode<*>>()
     val stack = ArrayDeque<CFGNode<*>>()
     stack.addFirst(enterNode)
     while (stack.isNotEmpty()) {
         val node = stack.removeFirst()
         val previousNodes = node.previousNodes
         if (previousNodes.any { it !in visitedNodes && it.owner == this && !node.incomingEdges.getValue(it).kind.isBack }) {
-            delayedNodes.add(node)
             stack.addLast(node)
             continue
         }

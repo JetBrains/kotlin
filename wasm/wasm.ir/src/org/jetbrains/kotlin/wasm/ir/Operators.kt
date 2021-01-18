@@ -16,6 +16,7 @@ enum class WasmImmediateKind {
     MEM_ARG,
 
     BLOCK_TYPE,
+    LOCAL_DEFS,
 
     FUNC_IDX,
     LOCAL_IDX,
@@ -72,14 +73,16 @@ sealed class WasmImmediate {
     }
 
     class DataIdx(val value: Int) : WasmImmediate()
-    class TableIdx(val value: Int) : WasmImmediate()
+    class TableIdx(val value: WasmSymbolReadOnly<Int>) : WasmImmediate() {
+        constructor(value: Int) : this(WasmSymbol(value))
+    }
 
     class LabelIdx(val value: Int) : WasmImmediate()
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
 
-    class StructType(val value: WasmSymbol<WasmStructDeclaration>) : WasmImmediate() {
-        constructor(value: WasmStructDeclaration) : this(WasmSymbol(value))
+    class GcType(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
+        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
     }
 
     class StructFieldIdx(val value: WasmSymbol<Int>) : WasmImmediate()
@@ -319,18 +322,46 @@ enum class WasmOp(
     // Reference types
     REF_NULL("ref.null", 0xD0, HEAP_TYPE),
     REF_IS_NULL("ref.is_null", 0xD1),
-    REF_EQ("ref.eq", 0xD5),
     REF_FUNC("ref.func", 0xD2, FUNC_IDX),
+    REF_AS_NOT_NULL("ref.as_non_null", 0xD3),
+    BR_ON_NULL("br_on_null", 0xD4, LABEL_IDX),
+    REF_EQ("ref.eq", 0xD5),
+
+    CALL_REF("call_ref", 0x14),
+    RETURN_CALL_REF("return_call_ref", 0x15),
+    FUNC_BIND("func.bind", 0x16, FUNC_IDX),
+    LET("let", 0x17, listOf(BLOCK_TYPE, LOCAL_DEFS)),
 
     // GC
     STRUCT_NEW_WITH_RTT("struct.new_with_rtt", 0xFB_01, STRUCT_TYPE_IDX),
+    STRUCT_NEW_DEFAULT_WITH_RTT("struct.new_default_with_rtt", 0xFB_02, STRUCT_TYPE_IDX),
     STRUCT_GET("struct.get", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_GET_S("struct.get_s", 0xFB_04, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_GET_U("struct.get_u", 0xFB_05, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
     STRUCT_SET("struct.set", 0xFB_06, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
 
-    REF_CAST("ref.cast", 0xFB_41, listOf(HEAP_TYPE, HEAP_TYPE)),
-    RTT_CANON("rtt.canon", 0xFB_30, HEAP_TYPE),
-    RTT_SUB("rtt.sub", 0xFB_31, HEAP_TYPE);
+    ARRAY_NEW_WITH_RTT("array.new_with_rtt", 0xFB_11, STRUCT_TYPE_IDX),
+    ARRAY_NEW_DEFAULT_WITH_RTT("array.new_default_with_rtt", 0xFB_12, STRUCT_TYPE_IDX),
+    ARRAY_GET("array.get", 0xFB_13, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_GET_S("array.get_s", 0xFB_14, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_GET_U("array.get_u", 0xFB_15, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_SET("array.set", 0xFB_16, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_LEN("array.len", 0xFB_17, listOf(STRUCT_TYPE_IDX)),
 
+    I31_NEW("i31.new", 0xFB_20),
+    I31_GET_S("i31.get_s", 0xFB_21),
+    I31_GET_U("i31.get_u", 0xFB_22),
+
+    RTT_CANON("rtt.canon", 0xFB_30, HEAP_TYPE),
+
+    // TODO: GC spec also has "depth" and "input heap type" immediates. V8 currently implements without them.
+    RTT_SUB("rtt.sub", 0xFB_31, HEAP_TYPE),
+    REF_TEST("ref.test", 0xFB_40, listOf(HEAP_TYPE, HEAP_TYPE)),
+    REF_CAST("ref.cast", 0xFB_41, listOf(HEAP_TYPE, HEAP_TYPE)),
+
+    // TODO: GC spec also has two heap type immediates. V8 currently implements without them.
+    BR_ON_CAST("br_on_cast", 0xFB_42, listOf(LABEL_IDX)),
+    ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())
 }

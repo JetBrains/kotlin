@@ -23,3 +23,4 @@ FILE: destructuring.kt
 
     }
     public? final? fun foo(some: Some): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun bar(some: Some): R|kotlin/Unit| { LAZY_BLOCK }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -130,14 +130,13 @@ class IrFakeOverrideFunctionImpl(
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor
-        get() = _symbol?.descriptor ?: WrappedSimpleFunctionDescriptor()
+        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
         symbol.bind(this)
-        (symbol.descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
         return this
     }
 }

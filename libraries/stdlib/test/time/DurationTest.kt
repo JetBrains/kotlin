@@ -7,12 +7,14 @@
 package test.time
 
 import test.numbers.assertAlmostEquals
-import test.*
+import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.random.*
 
+@SharedImmutable
 private val expectStorageUnit = DurationUnit.NANOSECONDS
+@SharedImmutable
 private val units = DurationUnit.values()
 
 class DurationTest {
@@ -31,9 +33,7 @@ class DurationTest {
             assertEquals(expected, value.toDouble().toDuration(unit).value)
         }
 
-        todo {
-            assertFails { Double.NaN.toDuration(DurationUnit.SECONDS) }
-        }
+        assertFailsWith<IllegalArgumentException> { Double.NaN.toDuration(DurationUnit.SECONDS) }
     }
 
     @Test
@@ -217,19 +217,46 @@ class DurationTest {
         assertEquals(zero, zero.absoluteValue)
     }
 
+    @Test
+    fun negativeZero() {
+        fun equivalentToZero(value: Duration) {
+            assertEquals(Duration.ZERO, value)
+            assertEquals(Duration.ZERO, value.absoluteValue)
+            assertEquals(value, value.absoluteValue)
+            assertEquals(value, value.absoluteValue)
+            assertFalse(value.isNegative())
+            assertFalse(value.isPositive())
+            assertEquals(Duration.ZERO.toString(), value.toString())
+            assertEquals(Duration.ZERO.toIsoString(), value.toIsoString())
+            assertEquals(Duration.ZERO.inSeconds, value.inSeconds)
+            assertEquals(0, Duration.ZERO.compareTo(value))
+            assertEquals(0, Duration.ZERO.inNanoseconds.compareTo(value.inNanoseconds))
+        }
+        equivalentToZero((-0.0).seconds)
+        equivalentToZero((-0.0).toDuration(DurationUnit.DAYS))
+        equivalentToZero(-Duration.ZERO)
+        equivalentToZero((-1).seconds / Double.POSITIVE_INFINITY)
+        equivalentToZero(0.seconds / -1)
+        equivalentToZero((-1).seconds * 0.0)
+        equivalentToZero(0.seconds * -1)
+    }
+
 
     @Test
     fun addition() {
         assertEquals(1.5.hours, 1.hours + 30.minutes)
         assertEquals(0.5.days, 6.hours + 360.minutes)
         assertEquals(0.5.seconds, 200.milliseconds + 300_000.microseconds)
+
+        assertFailsWith<IllegalArgumentException> { Duration.INFINITE + (-Duration.INFINITE) }
     }
 
     @Test
     fun subtraction() {
         assertEquals(10.hours, 0.5.days - 120.minutes)
         assertEquals(850.milliseconds, 1.seconds - 150.milliseconds)
-        // TODO decide on INFINITE - INFINITE
+
+        assertFailsWith<IllegalArgumentException> { Duration.INFINITE - Duration.INFINITE }
     }
 
     @Test
@@ -241,6 +268,12 @@ class DurationTest {
         assertEquals(1.days, 2 * 12.hours)
         assertEquals(12.5.hours, 12.5 * 60.minutes)
         assertEquals(1.microseconds, 50 * 20.nanoseconds)
+
+        assertEquals(Duration.ZERO, 0 * 1.hours)
+        assertEquals(Duration.ZERO, 1.seconds * 0.0)
+
+        assertFailsWith<IllegalArgumentException> { Duration.INFINITE * 0 }
+        assertFailsWith<IllegalArgumentException> { 0 * Duration.INFINITE }
     }
 
     @Test
@@ -248,6 +281,11 @@ class DurationTest {
         assertEquals(12.hours, 1.days / 2)
         assertEquals(60.minutes, 1.days / 24.0)
         assertEquals(20.seconds, 2.minutes / 6)
+
+        assertEquals(Duration.INFINITE, 1.seconds / 0.0)
+        assertEquals(-Duration.INFINITE, -1.seconds / 0.0)
+        assertFailsWith<IllegalArgumentException> { Duration.INFINITE / Double.POSITIVE_INFINITY }
+        assertFailsWith<IllegalArgumentException> { Duration.ZERO / 0 }
     }
 
     @Test
@@ -255,6 +293,8 @@ class DurationTest {
         assertEquals(24.0, 1.days / 1.hours)
         assertEquals(0.1, 9.minutes / 1.5.hours)
         assertEquals(50.0, 1.microseconds / 20.nanoseconds)
+
+        assertTrue((Duration.INFINITE / Duration.INFINITE).isNaN())
     }
 
     @Test

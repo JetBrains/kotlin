@@ -21,20 +21,21 @@ import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.util.referenceClassifier
+import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
-import org.jetbrains.kotlin.utils.SmartList
 
 class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
@@ -313,49 +313,41 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         callBuilder: CallBuilder,
         callableReferenceType: KotlinType
     ): IrSimpleFunction {
-        val adapterFunctionDescriptor = WrappedSimpleFunctionDescriptor()
-
         val hasSuspendConversion = !adapteeDescriptor.isSuspend &&
                 callableReferenceType.isKSuspendFunctionType
 
-        return context.symbolTable.declareSimpleFunction(
-            adapterFunctionDescriptor
-        ) { irAdapterSymbol ->
-            context.irFactory.createFunction(
-                startOffset, endOffset,
-                IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
-                irAdapterSymbol,
-                adapteeDescriptor.name,
-                DescriptorVisibilities.LOCAL,
-                Modality.FINAL,
-                ktExpectedReturnType.toIrType(),
-                isInline = adapteeDescriptor.isInline, // TODO ?
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = adapteeDescriptor.isSuspend || hasSuspendConversion,
-                isOperator = adapteeDescriptor.isOperator, // TODO ?
-                isInfix = adapteeDescriptor.isInfix,
-                isExpect = false,
-                isFakeOverride = false
-            ).also { irAdapterFun ->
-                adapterFunctionDescriptor.bind(irAdapterFun)
+        return context.irFactory.createFunction(
+            startOffset, endOffset,
+            IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
+            IrSimpleFunctionSymbolImpl(),
+            adapteeDescriptor.name,
+            DescriptorVisibilities.LOCAL,
+            Modality.FINAL,
+            ktExpectedReturnType.toIrType(),
+            isInline = adapteeDescriptor.isInline, // TODO ?
+            isExternal = false,
+            isTailrec = false,
+            isSuspend = adapteeDescriptor.isSuspend || hasSuspendConversion,
+            isOperator = adapteeDescriptor.isOperator, // TODO ?
+            isInfix = adapteeDescriptor.isInfix,
+            isExpect = false,
+            isFakeOverride = false
+        ).also { irAdapterFun ->
+            context.symbolTable.withScope(irAdapterFun) {
+                irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
 
-                context.symbolTable.withScope(adapterFunctionDescriptor) {
-                    irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
+                irAdapterFun.dispatchReceiverParameter = null
 
-                    irAdapterFun.dispatchReceiverParameter = null
+                val boundReceiver = callBuilder.original.selectBoundReceiver()
+                if (boundReceiver != null) {
+                    irAdapterFun.extensionReceiverParameter =
+                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), -1, boundReceiver.type)
+                } else {
+                    irAdapterFun.extensionReceiverParameter = null
+                }
 
-                    val boundReceiver = callBuilder.original.selectBoundReceiver()
-                    if (boundReceiver != null) {
-                        irAdapterFun.extensionReceiverParameter =
-                            createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), -1, boundReceiver.type)
-                    } else {
-                        irAdapterFun.extensionReceiverParameter = null
-                    }
-
-                    irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
-                        createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), index, ktExpectedParameterType)
-                    }
+                irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
+                    createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), index, ktExpectedParameterType)
                 }
             }
         }
@@ -371,24 +363,16 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
     }
 
-    private fun createAdapterParameter(startOffset: Int, endOffset: Int, name: Name, index: Int, type: KotlinType): IrValueParameter {
-        val descriptor = WrappedValueParameterDescriptor()
-        return context.symbolTable.declareValueParameter(
-            startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE, descriptor, type.toIrType()
-        ) { irAdapterParameterSymbol ->
-            context.irFactory.createValueParameter(
-                startOffset, endOffset,
-                IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                irAdapterParameterSymbol,
-                name,
-                index,
-                type.toIrType(),
-                varargElementType = null, isCrossinline = false, isNoinline = false, isAssignable = false
-            ).also { irAdapterValueParameter ->
-                descriptor.bind(irAdapterValueParameter)
-            }
-        }
-    }
+    private fun createAdapterParameter(startOffset: Int, endOffset: Int, name: Name, index: Int, type: KotlinType): IrValueParameter =
+        context.irFactory.createValueParameter(
+            startOffset, endOffset,
+            IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+            IrValueParameterSymbolImpl(),
+            name,
+            index,
+            type.toIrType(),
+            varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+        )
 
     fun generateCallableReference(
         ktElement: KtElement,

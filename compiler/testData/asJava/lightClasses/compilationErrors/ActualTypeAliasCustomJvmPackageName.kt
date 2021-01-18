@@ -4,3 +4,5 @@
 package p
 
 actual typealias B = List<Int>
+
+// FIR_COMPARISON

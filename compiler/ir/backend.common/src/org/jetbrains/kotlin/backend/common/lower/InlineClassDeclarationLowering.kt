@@ -39,8 +39,9 @@ class InlineClassLowering(val context: CommonBackendContext) {
             }
         }
 
-        private fun transformConstructor(irConstructor: IrConstructor): List<IrDeclaration>? {
-            if (irConstructor.isPrimary) return null
+        private fun transformConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
+            if (irConstructor.isPrimary)
+                return transformPrimaryConstructor(irConstructor)
 
             // Secondary constructors are lowered into static function
             val result = getOrCreateStaticMethod(irConstructor)
@@ -65,6 +66,72 @@ class InlineClassLowering(val context: CommonBackendContext) {
                 return listOf(staticMethod)
 
             return listOf(function, staticMethod)
+        }
+
+        private fun transformPrimaryConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
+            val klass = irConstructor.parentAsClass
+            val inlineClassType = klass.defaultType
+            val initFunction = getOrCreateStaticMethod(irConstructor).also {
+                it.returnType = inlineClassType
+            }
+            var delegatingCtorCall: IrDelegatingConstructorCall? = null
+            var setMemberField: IrSetField? = null
+
+            initFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                val origParameterSymbol = irConstructor.valueParameters.single().symbol
+                statements += context.createIrBuilder(initFunction.symbol).irBlockBody(initFunction) {
+                    val builder = this
+                    fun unboxedInlineClassValue() = builder.irReinterpretCast(
+                        builder.irGet(initFunction.valueParameters.single()),
+                        type = klass.defaultType,
+                    )
+
+                    (irConstructor.body as IrBlockBody).deepCopyWithSymbols(initFunction).statements.forEach { statement ->
+                        +statement.transformStatement(object : IrElementTransformerVoid() {
+                            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                                delegatingCtorCall = expression.deepCopyWithSymbols(irConstructor)
+                                return builder.irBlock {}  // Removing delegating constructor call
+                            }
+
+                            override fun visitSetField(expression: IrSetField): IrExpression {
+                                val isMemberFieldSet = expression.symbol.owner.parent == klass
+                                if (isMemberFieldSet) {
+                                    setMemberField = expression.deepCopyWithSymbols(irConstructor)
+                                }
+                                expression.transformChildrenVoid()
+                                if (isMemberFieldSet) {
+                                    return expression.value
+                                }
+                                return expression
+                            }
+
+                            override fun visitGetField(expression: IrGetField): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.symbol.owner.parent == klass)
+                                    return builder.irGet(initFunction.valueParameters.single())
+                                return expression
+                            }
+
+                            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                                expression.transformChildrenVoid()
+                                if (expression.symbol.owner.parent == klass)
+                                    return unboxedInlineClassValue()
+                                if (expression.symbol == origParameterSymbol)
+                                    return builder.irGet(initFunction.valueParameters.single())
+                                return expression
+                            }
+                        })
+                    }
+                    +irReturn(unboxedInlineClassValue())
+                }.statements
+            }
+
+            irConstructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements += delegatingCtorCall!!
+                statements += setMemberField!!
+            }
+
+            return listOf(irConstructor, initFunction)
         }
 
         private fun transformConstructorBody(irConstructor: IrConstructor, staticMethod: IrSimpleFunction) {
@@ -232,7 +299,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                 override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                     expression.transformChildrenVoid(this)
                     val function = expression.symbol.owner
-                    if (!function.parentAsClass.isInline || function.isPrimary) {
+                    if (!function.parentAsClass.isInline) {
                         return expression
                     }
 
@@ -263,7 +330,6 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     val klass = function.parentAsClass
                     return when {
                         !klass.isInline -> expression
-                        function.isPrimary -> irConstructorCall(expression, function.symbol)
                         else -> irCall(expression, getOrCreateStaticMethod(function))
                     }
                 }

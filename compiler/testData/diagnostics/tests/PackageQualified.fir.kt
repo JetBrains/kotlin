@@ -1,5 +1,5 @@
 // !WITH_NEW_INFERENCE
-// FILE: b.kt
+// FILE: a.kt
 
 
 package foobar.a
@@ -16,14 +16,14 @@ abstract class Foo<T>() {
     abstract val x : <!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>
 }
 
-// FILE: b.kt
+// FILE: c.kt
 package foobar.a
     import java.util.*
 
     val b : List<Int>? = a
     val b1 : <!UNRESOLVED_REFERENCE!>util.List<Int>?<!> = a
 
-// FILE: b.kt
+// FILE: d.kt
 package foobar
 val x1 = <!UNRESOLVED_REFERENCE!>a<!>.<!UNRESOLVED_REFERENCE!>a<!>
 val x2 = foobar.a.a

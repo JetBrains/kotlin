@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.caches.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
     }
 
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "delegation", "script");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "delegation", "script");
     }
 
     @TestMetadata("AnnotatedParameterInEnumConstructor.kt")
@@ -46,6 +47,11 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
     @TestMetadata("AnnotationClass.kt")
     public void testAnnotationClass() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/AnnotationClass.kt");
+    }
+
+    @TestMetadata("Constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/Constructors.kt");
     }
 
     @TestMetadata("DataClassWithCustomImplementedMembers.kt")
@@ -128,6 +134,11 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         runTest("compiler/testData/asJava/lightClasses/NonDataClassWithComponentFunctions.kt");
     }
 
+    @TestMetadata("OnlySecondaryConstructors.kt")
+    public void testOnlySecondaryConstructors() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/OnlySecondaryConstructors.kt");
+    }
+
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/PublishedApi.kt");
@@ -177,7 +188,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
 
         public void testAllFilesPresentInCompilationErrors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AllInlineOnly.kt")
@@ -270,7 +281,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
 
         public void testAllFilesPresentInFacades() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/facades"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AllPrivate.kt")
@@ -303,7 +314,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
 
         public void testAllFilesPresentInIdeRegression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/ideRegression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/ideRegression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("AllOpenAnnotatedClasses.kt")
@@ -356,7 +367,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
 
         public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/nullabilityAnnotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Class.kt")
@@ -459,7 +470,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
 
         public void testAllFilesPresentInObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/object"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("SimpleObject.kt")
@@ -477,7 +488,7 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         }
 
         public void testAllFilesPresentInPublicField() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("CompanionObject.kt")
