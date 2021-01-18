@@ -98,7 +98,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         if (!frontendKind.shouldRunAnalysis) return
 
         val frontendArtifacts: ResultingArtifact.FrontendOutput<*> = testConfiguration.getFacade(SourcesKind, frontendKind)
-            .transform(module, sourcesArtifact).also { dependencyProvider.registerArtifact(module, it) }
+            .transform(module, sourcesArtifact)?.also { dependencyProvider.registerArtifact(module, it) } ?: return
         val frontendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(frontendKind)
         for (frontendHandler in frontendHandlers) {
             withAssertionCatching {
@@ -110,7 +110,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         if (!backendKind.shouldRunAnalysis) return
 
         val backendInputInfo = testConfiguration.getFacade(frontendKind, backendKind)
-            .hackyTransform(module, frontendArtifacts).also { dependencyProvider.registerArtifact(module, it) }
+            .hackyTransform(module, frontendArtifacts)?.also { dependencyProvider.registerArtifact(module, it) } ?: return
 
         val backendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(backendKind)
         for (backendHandler in backendHandlers) {
@@ -120,9 +120,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         for (artifactKind in moduleStructure.getTargetArtifactKinds(module)) {
             if (!artifactKind.shouldRunAnalysis) continue
             val binaryArtifact = testConfiguration.getFacade(backendKind, artifactKind)
-                .hackyTransform(module, backendInputInfo).also {
+                .hackyTransform(module, backendInputInfo)?.also {
                     dependencyProvider.registerArtifact(module, it)
-                }
+                } ?: return
 
             val binaryHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(artifactKind)
             for (binaryHandler in binaryHandlers) {
@@ -167,7 +167,7 @@ private fun <A : ResultingArtifact<A>> AnalysisHandler<A>.processModule(module: 
 private fun AbstractTestFacade<*, *>.hackyTransform(
     module: TestModule,
     artifact: ResultingArtifact<*>
-): ResultingArtifact<*> {
+): ResultingArtifact<*>? {
     @Suppress("UNCHECKED_CAST")
     return (this as AbstractTestFacade<ResultingArtifact.Source, ResultingArtifact.Source>)
         .transform(module, artifact as ResultingArtifact<ResultingArtifact.Source>)
@@ -176,7 +176,7 @@ private fun AbstractTestFacade<*, *>.hackyTransform(
 private fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> AbstractTestFacade<I, O>.transform(
     module: TestModule,
     inputArtifact: ResultingArtifact<I>
-): O {
+): O? {
     @Suppress("UNCHECKED_CAST")
     return transform(module, inputArtifact as I)
 }
