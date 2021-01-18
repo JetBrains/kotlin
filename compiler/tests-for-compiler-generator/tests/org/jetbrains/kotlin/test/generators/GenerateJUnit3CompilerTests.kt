@@ -144,10 +144,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/bytecodeText", targetBackend = TargetBackend.JVM)
             }
 
-            testClass<AbstractIrTextTestCase> {
-                model("ir/irText")
-            }
-
             testClass<AbstractIrJsTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
             }

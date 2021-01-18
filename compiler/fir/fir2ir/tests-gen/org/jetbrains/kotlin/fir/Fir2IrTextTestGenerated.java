@@ -1063,9 +1063,9 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
         }
 
-        @TestMetadata("javaSyntheticGenericPropretyAccess.kt")
-        public void testJavaSyntheticGenericPropretyAccess() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/javaSyntheticGenericPropretyAccess.kt");
+        @TestMetadata("javaSyntheticGenericPropertyAccess.kt")
+        public void testJavaSyntheticGenericPropertyAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/javaSyntheticGenericPropertyAccess.kt");
         }
 
         @TestMetadata("javaSyntheticPropertyAccess.kt")

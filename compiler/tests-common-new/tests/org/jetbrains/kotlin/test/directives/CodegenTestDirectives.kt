@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -56,13 +56,16 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val IGNORE_JAVA_ERRORS by directive(
+        description = "Ignore compilation errors from java"
+    )
+
     val IGNORE_FIR_DIAGNOSTICS by directive(
         description = "Run backend even FIR reported some diagnostics with ERROR severity"
     )
 
-    val IR_FILE by stringDirective(
-        description = "Specifies file name for IR text dump",
-        applicability = File
+    val DUMP_IR by directive(
+        description = "Dumps generated backend IR (enables ${IrTextDumpHandler::class})"
     )
 
     val DUMP_EXTERNAL_CLASS by stringDirective(
@@ -70,7 +73,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     val EXTERNAL_FILE by directive(
-        description = "Indicates that test file is external",
+        description = "Indicates that test file is external and should be skipped in ${IrTextDumpHandler::class}",
         applicability = File
     )
 }

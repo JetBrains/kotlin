@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.generators
 
-import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
@@ -67,6 +67,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
+            }
+
+            testClass<AbstractIrTextTest> {
+                model("ir/irText")
             }
         }
 

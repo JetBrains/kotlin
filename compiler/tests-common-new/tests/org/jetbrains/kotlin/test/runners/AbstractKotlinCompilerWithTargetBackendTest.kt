@@ -15,7 +15,15 @@ abstract class AbstractKotlinCompilerWithTargetBackendTest(
         super.configure(builder)
         with(builder) {
             globalDefaults {
-                targetBackend = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
+                val targetBackendFromMarker = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
+                if (targetBackend == null) {
+                    targetBackend = this@AbstractKotlinCompilerWithTargetBackendTest.targetBackend
+                } else {
+                    require(targetBackend == targetBackendFromMarker) {
+                        """Target backend in configuration specified to $targetBackend but in 
+                          |AbstractKotlinCompilerWithTargetBackendTest parent it is set to $targetBackendFromMarker""".trimMargin()
+                    }
+                }
             }
         }
     }
