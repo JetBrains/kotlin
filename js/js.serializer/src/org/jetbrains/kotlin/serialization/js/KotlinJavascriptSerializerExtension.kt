@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTabl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.types.FlexibleType
@@ -35,7 +36,7 @@ class KotlinJavascriptSerializerExtension(
     private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion
 ) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
-    override val stringTable = JavaScriptStringTable()
+    override val stringTable = ApproximatingStringTable()
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
