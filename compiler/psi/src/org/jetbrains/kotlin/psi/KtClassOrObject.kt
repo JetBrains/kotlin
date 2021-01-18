@@ -188,17 +188,17 @@ abstract class KtClassOrObject :
         return parts.joinToString(separator = ".")
     }
 
-    override fun getContextReceiverTypeReferences(): List<KtTypeReference> {
+    override fun getContextReceivers(): List<KtContextReceiver> {
         val stub = stub
         if (stub != null) {
-            return getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE)
+            return getStubOrPsiChildrenAsList(KtStubElementTypes.CONTEXT_RECEIVER)
         }
         var node = node.firstChildNode
         while (node != null) {
             val tt = node.elementType
-            if (tt === KtNodeTypes.CONTEXT_RECEIVER) {
-                val contextReceiver = node.psi as KtContextReceiver
-                return contextReceiver.typeReferences()
+            if (tt === KtNodeTypes.CONTEXT_RECEIVER_LIST) {
+                val contextReceiver = node.psi as KtContextReceiverList
+                return contextReceiver.contextReceivers()
             }
             node = node.treeNext
         }

@@ -422,12 +422,16 @@ class StatementGenerator(
                 generateThisReceiver(startOffset, endOffset, referenceTarget.thisAsReceiverParameter.type, referenceTarget)
 
             is CallableDescriptor -> {
-                val extensionReceiver = referenceTarget.extensionReceiverParameter ?: TODO("No extension receiver: $referenceTarget")
-                val extensionReceiverType = extensionReceiver.type.toIrType()
+                val resolvedCall = getResolvedCall(expression)
+                val receivers = listOfNotNull(referenceTarget.extensionReceiverParameter) + referenceTarget.contextReceiverParameters
+                val receiver = receivers.find {
+                    it == resolvedCall?.candidateDescriptor
+                } ?: referenceTarget.extensionReceiverParameter ?: TODO("No receiver: $referenceTarget")
+                val receiverType = receiver.type.toIrType()
                 IrGetValueImpl(
                     startOffset, endOffset,
-                    extensionReceiverType,
-                    context.symbolTable.referenceValueParameter(extensionReceiver)
+                    receiverType,
+                    context.symbolTable.referenceValueParameter(receiver)
                 )
             }
 

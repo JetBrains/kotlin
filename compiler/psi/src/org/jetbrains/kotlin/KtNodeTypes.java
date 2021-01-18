@@ -40,6 +40,7 @@ public interface KtNodeTypes {
     IElementType SECONDARY_CONSTRUCTOR  = KtStubElementTypes.SECONDARY_CONSTRUCTOR;
     IElementType PRIMARY_CONSTRUCTOR    = KtStubElementTypes.PRIMARY_CONSTRUCTOR;
     IElementType CONTEXT_RECEIVER       = KtStubElementTypes.CONTEXT_RECEIVER;
+    IElementType CONTEXT_RECEIVER_LIST  = KtStubElementTypes.CONTEXT_RECEIVER_LIST;
 
     IElementType TYPE_PARAMETER_LIST                = KtStubElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                     = KtStubElementTypes.TYPE_PARAMETER;
