@@ -8,18 +8,14 @@ package org.jetbrains.kotlin.jps.targets
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.jps.model.library.JpsOrderRootType
-import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.build.KotlinChunk
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
 import org.jetbrains.kotlin.jps.model.platform
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.*
-import org.jetbrains.kotlin.utils.LibraryUtils
 import kotlin.system.measureTimeMillis
 
 class KotlinTargetsIndex(
@@ -32,7 +28,6 @@ internal class KotlinTargetsIndexBuilder internal constructor(
     private val uninitializedContext: KotlinCompileContext
 ) {
     private val byJpsModuleBuildTarget = mutableMapOf<ModuleBuildTarget, KotlinModuleBuildTarget<*>>()
-    private val isKotlinJsStdlibJar = mutableMapOf<String, Boolean>()
     private val chunks = mutableListOf<KotlinChunk>()
 
     fun build(): KotlinTargetsIndex {
@@ -132,10 +127,9 @@ internal class KotlinTargetsIndexBuilder internal constructor(
         return dependencies
     }
 
-
     private fun ensureLoaded(target: ModuleBuildTarget): KotlinModuleBuildTarget<*> {
         return byJpsModuleBuildTarget.computeIfAbsent(target) {
-            val platform = target.module.platform?.idePlatformKind ?: detectTargetPlatform(target)
+            val platform = target.module.platform?.idePlatformKind ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind
 
             when {
                 platform.isCommon -> KotlinCommonModuleBuildTarget(uninitializedContext, target)
@@ -144,36 +138,5 @@ internal class KotlinTargetsIndexBuilder internal constructor(
                 else -> KotlinUnsupportedModuleBuildTarget(uninitializedContext, target)
             }
         }
-    }
-
-    /**
-     * Compatibility for KT-14082
-     * todo: remove when all projects migrated to facets
-     */
-    private fun detectTargetPlatform(target: ModuleBuildTarget): IdePlatformKind<*> {
-        if (hasJsStdLib(target)) return JsIdePlatformKind
-
-        return DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind
-    }
-
-    private fun hasJsStdLib(target: ModuleBuildTarget): Boolean {
-        JpsJavaExtensionService.dependencies(target.module)
-            .recursively()
-            .exportedOnly()
-            .includedIn(JpsJavaClasspathKind.compile(target.isTests))
-            .libraries
-            .forEach { library ->
-                for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
-                    val url = root.url
-
-                    val isKotlinJsLib = isKotlinJsStdlibJar.computeIfAbsent(url) {
-                        LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(url))
-                    }
-
-                    if (isKotlinJsLib) return true
-                }
-            }
-
-        return false
     }
 }
