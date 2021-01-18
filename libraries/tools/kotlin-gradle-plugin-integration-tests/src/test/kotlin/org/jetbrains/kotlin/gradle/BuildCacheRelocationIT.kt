@@ -128,7 +128,8 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                      cacheableTaskNames = listOf(
                          "kaptKotlin", "kaptGenerateStubsKotlin", "compileKotlin", "compileTestKotlin", "compileJava"
                      ),
-                     initProject = { File(projectDir, "build.gradle").appendText("\nkapt.useBuildCache = true") }
+                     initProject = { File(projectDir, "build.gradle").appendText("\nkapt.useBuildCache = true") },
+                     withAnotherGradleHome = true
             ),
             TestCase("kotlin2JsDceProject",
                      taskToExecute = arrayOf("assemble", "runDceKotlinJs"),
