@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.project.model
 
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 
-interface KotlinModuleFragmentsResolver {
+interface ModuleFragmentsResolver {
     fun getChosenFragments(
         requestingFragment: KotlinModuleFragment,
         dependencyModule: KotlinModule
@@ -30,17 +30,22 @@ sealed class FragmentResolution(val requestingFragment: KotlinModuleFragment, va
         FragmentResolution(requestingFragment, dependencyModule)
 }
 
-class DefaultKotlinModuleFragmentsResolver(
+class DefaultModuleFragmentsResolver(
     private val variantResolver: ModuleVariantResolver
-) : KotlinModuleFragmentsResolver {
+) : ModuleFragmentsResolver {
     override fun getChosenFragments(
         requestingFragment: KotlinModuleFragment,
         dependencyModule: KotlinModule
-    ): FragmentResolution.ChosenFragments {
+    ): FragmentResolution {
         val dependingModule = requestingFragment.containingModule
         val containingVariants = dependingModule.variantsContainingFragment(requestingFragment)
 
         val chosenVariants = containingVariants.map { variantResolver.getChosenVariant(it, dependencyModule) }
+
+        // TODO: extend this to more cases with non-matching variants, revisit the behavior when no matching variant is found once we fix
+        //       local publishing of libraries with missing host-specific parts (it breaks transitive dependencies now)
+        if (chosenVariants.none { it is VariantResolution.VariantMatch })
+            return FragmentResolution.NotRequested(requestingFragment, dependencyModule)
 
         val chosenFragments = chosenVariants.map { variantResolution ->
             when (variantResolution) {

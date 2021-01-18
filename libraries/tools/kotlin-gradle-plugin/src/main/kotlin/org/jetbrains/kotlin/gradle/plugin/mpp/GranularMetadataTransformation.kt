@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.targets.metadata.ALL_RUNTIME_METADATA_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -85,7 +87,6 @@ internal class GranularMetadataTransformation(
     /** A list of scopes that the dependencies from [kotlinSourceSet] are treated as requested dependencies. */
     private val sourceSetRequestedScopes: List<KotlinDependencyScope>,
     /** A configuration that holds the dependencies of the appropriate scope for all Kotlin source sets in the project */
-    private val allSourceSetsConfiguration: Configuration,
     private val parentTransformations: Lazy<Iterable<GranularMetadataTransformation>>
 ) {
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
@@ -98,40 +99,14 @@ internal class GranularMetadataTransformation(
     )
 
     private val requestedDependencies: Iterable<Dependency> by lazy {
-        fun collectScopedDependenciesFromSourceSet(sourceSet: KotlinSourceSet): Set<Dependency> =
-            sourceSetRequestedScopes.flatMapTo(mutableSetOf()) { scope ->
-                project.sourceSetDependencyConfigurationByScope(sourceSet, scope).incoming.dependencies
-            }
-
-        val ownDependencies = collectScopedDependenciesFromSourceSet(kotlinSourceSet)
-        val parentDependencies = parentTransformations.value.flatMapTo(mutableSetOf<Dependency>()) { it.requestedDependencies }
-
-        ownDependencies + parentDependencies
+        requestedDependencies(project, kotlinSourceSet, sourceSetRequestedScopes)
     }
 
+    private val allSourceSetsConfiguration: Configuration =
+        commonMetadataDependenciesConfigurationForScopes(project, sourceSetRequestedScopes)
+
     private val configurationToResolve: Configuration by lazy {
-        /** If [kotlinSourceSet] is not a published source set, its dependencies are not included in [allSourceSetsConfiguration].
-         * In that case, to resolve the dependencies of the source set in a way that is consistent with the published source sets,
-         * we need to create a new configuration with the dependencies from both [allSourceSetsConfiguration] and the
-         * input configuration(s) of the source set. */
-        var modifiedConfiguration: Configuration? = null
-
-        val originalDependencies = allSourceSetsConfiguration.allDependencies
-
-        requestedDependencies.forEach { dependency ->
-            if (dependency !in originalDependencies) {
-                modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
-                    fun <T> copyAttribute(key: Attribute<T>) {
-                        attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
-                    }
-                    allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
-                    allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
-                }
-                modifiedConfiguration!!.dependencies.add(dependency)
-            }
-        }
-
-        modifiedConfiguration ?: allSourceSetsConfiguration
+        resolvableMetadataConfiguration(project, allSourceSetsConfiguration, requestedDependencies)
     }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
@@ -229,7 +204,7 @@ internal class GranularMetadataTransformation(
             project,
             module,
             configurationToResolve,
-            resolveViaAvailableAt = false // we will process this dependency later in the queue
+            resolveViaAvailableAt = false // we will process the available-at module as a dependency later in the queue
         )
 
         val resolvedToProject: Project? = (mppDependencyMetadataExtractor as? ProjectMppDependencyMetadataExtractor)?.dependencyProject
@@ -301,6 +276,75 @@ internal class GranularMetadataTransformation(
     }
 }
 
+internal fun resolvableMetadataConfiguration(
+    project: Project,
+    sourceSets: Iterable<KotlinSourceSet>,
+    scopes: Iterable<KotlinDependencyScope>
+) = resolvableMetadataConfiguration(
+    project,
+    commonMetadataDependenciesConfigurationForScopes(project, scopes),
+    sourceSets.flatMapTo(mutableListOf()) { requestedDependencies(project, it, scopes) }
+)
+
+/** If a source set is not a published source set, its dependencies are not included in [allSourceSetsConfiguration].
+ * In that case, to resolve the dependencies of the source set in a way that is consistent with the published source sets,
+ * we need to create a new configuration with the dependencies from both [allSourceSetsConfiguration] and the
+ * other [requestedDependencies] */
+// TODO: optimize by caching the resulting configurations?
+internal fun resolvableMetadataConfiguration(
+    project: Project,
+    allSourceSetsConfiguration: Configuration,
+    requestedDependencies: Iterable<Dependency>
+): Configuration {
+    var modifiedConfiguration: Configuration? = null
+
+    val originalDependencies = allSourceSetsConfiguration.allDependencies
+
+    requestedDependencies.forEach { dependency ->
+        if (dependency !in originalDependencies) {
+            modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
+                fun <T> copyAttribute(key: Attribute<T>) {
+                    attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
+                }
+                allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
+                allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
+                dependencies.addAll(originalDependencies) // TODO: check if this line is redundant
+            }
+            modifiedConfiguration!!.dependencies.add(dependency)
+        }
+    }
+    return modifiedConfiguration ?: allSourceSetsConfiguration
+}
+
+/** The configuration that contains the dependencies of the corresponding scopes (and maybe others)
+ * from all published source sets. */
+internal fun commonMetadataDependenciesConfigurationForScopes(
+    project: Project,
+    scopes: Iterable<KotlinDependencyScope>
+): Configuration {
+    // TODO: what if 'runtimeOnly' is combined with 'compileOnly'? prohibit this or merge the two? we never do that now, though
+    val configurationName = if (KotlinDependencyScope.RUNTIME_ONLY_SCOPE in scopes)
+        ALL_RUNTIME_METADATA_CONFIGURATION_NAME
+    else
+        ALL_COMPILE_METADATA_CONFIGURATION_NAME
+    return project.configurations.getByName(configurationName)
+}
+
+internal fun requestedDependencies(
+    project: Project,
+    sourceSet: KotlinSourceSet,
+    requestedScopes: Iterable<KotlinDependencyScope>
+): Iterable<Dependency> {
+    fun collectScopedDependenciesFromSourceSet(sourceSet: KotlinSourceSet): Set<Dependency> =
+        requestedScopes.flatMapTo(mutableSetOf()) { scope ->
+            project.sourceSetDependencyConfigurationByScope(sourceSet, scope).incoming.dependencies
+        }
+
+    val otherContributingSourceSets = dependsOnClosureWithInterCompilationDependencies(project, sourceSet)
+    return listOf(sourceSet, *otherContributingSourceSets.toTypedArray()).flatMap(::collectScopedDependenciesFromSourceSet)
+}
+
+
 private abstract class MppDependencyMetadataExtractor(val project: Project, val dependency: ResolvedComponentResult) {
     abstract fun getProjectStructureMetadata(): KotlinProjectStructureMetadata?
 
@@ -343,7 +387,7 @@ private class IncludedBuildMetadataExtractor(
     init {
         val id = dependency.id
         require(id is ProjectComponentIdentifier) { "dependency should resolve to a project" }
-        require(!(id as ProjectComponentIdentifier).build.isCurrentBuild) { "should be a project from an included build" }
+        require(!id.build.isCurrentBuild) { "should be a project from an included build" }
         this.id = id
     }
 
@@ -493,7 +537,6 @@ internal fun getProjectStructureMetadata(
     module: ResolvedComponentResult,
     configuration: Configuration
 ): KotlinProjectStructureMetadata? {
-    // FIXME test dependencies won't work
     val extractor = getMetadataExtractor(project, module, configuration, resolveViaAvailableAt = true)
     return extractor?.getProjectStructureMetadata()
 }

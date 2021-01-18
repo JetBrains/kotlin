@@ -19,7 +19,11 @@ internal enum class KotlinDependencyScope(val scopeName: String) {
     API_SCOPE(API),
     IMPLEMENTATION_SCOPE(IMPLEMENTATION),
     COMPILE_ONLY_SCOPE(COMPILE_ONLY),
-    RUNTIME_ONLY_SCOPE(RUNTIME_ONLY)
+    RUNTIME_ONLY_SCOPE(RUNTIME_ONLY);
+
+    companion object {
+        val compileScopes = listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE, KotlinDependencyScope.COMPILE_ONLY_SCOPE)
+    }
 }
 
 internal fun Project.sourceSetDependencyConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration =

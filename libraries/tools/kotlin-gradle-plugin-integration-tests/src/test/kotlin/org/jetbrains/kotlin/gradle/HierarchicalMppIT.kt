@@ -427,8 +427,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         shouldInclude: Iterable<Pair<String, String>> = emptyList(),
         shouldNotInclude: Iterable<Pair<String, String>> = emptyList()
     ) {
-        val taskOutput = getOutputForTask(taskPath.removePrefix(":"))
-        val compilerArgsLine = taskOutput.lines().single { "Kotlin compiler args:" in it }
+        val compilerArgsLine = output.lines().single { "$taskPath Kotlin compiler args:" in it }
         val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
 
         val actualClasspath = classpathItems.joinToString("\n")

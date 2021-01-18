@@ -9,11 +9,11 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class DefaultKotlinModuleFragmentsResolverTest {
+class DefaultModuleFragmentsResolverTest {
     val moduleFoo = simpleModule("foo")
     val moduleBar = simpleModule("bar")
 
-    val fragmentResolver = DefaultKotlinModuleFragmentsResolver(MatchVariantsByExactAttributes())
+    val fragmentResolver = DefaultModuleFragmentsResolver(MatchVariantsByExactAttributes())
 
     @Test
     fun testFragmentVisibility() {
