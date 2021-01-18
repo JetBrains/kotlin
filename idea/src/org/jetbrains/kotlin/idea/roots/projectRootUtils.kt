@@ -130,12 +130,6 @@ fun getSuitableDestinationSourceRoots(project: Project): List<VirtualFile> {
     return roots
 }
 
-fun getSuitableDestinationSourceRoots(module: Module): MutableList<VirtualFile> {
-    val roots = ArrayList<VirtualFile>()
-    collectSuitableDestinationSourceRoots(module, roots)
-    return roots
-}
-
 fun collectSuitableDestinationSourceRoots(module: Module, result: MutableList<VirtualFile>) {
     for (entry in ModuleRootManager.getInstance(module).contentEntries) {
         for (sourceFolder in entry.getSourceFolders(KOTLIN_AWARE_SOURCE_ROOT_TYPES)) {

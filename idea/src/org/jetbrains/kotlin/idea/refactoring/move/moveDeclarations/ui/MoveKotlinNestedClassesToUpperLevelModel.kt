@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
 import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
 import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
-import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -67,8 +66,8 @@ internal abstract class MoveKotlinNestedClassesToUpperLevelModel(
             val targetName = packageName
             if (oldPackageFqName?.asString() != targetName) {
                 val projectRootManager = ProjectRootManager.getInstance(project)
-                val contentSourceRoots = target.module?.let { getSuitableDestinationSourceRoots(it) }
-                    ?: getSuitableDestinationSourceRoots(project)
+
+                val contentSourceRoots = getSuitableDestinationSourceRoots(project)
                 val newPackage = PackageWrapper(PsiManager.getInstance(project), targetName)
 
                 val targetSourceRoot: VirtualFile
