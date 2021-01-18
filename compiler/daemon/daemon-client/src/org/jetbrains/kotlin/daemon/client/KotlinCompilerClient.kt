@@ -374,10 +374,16 @@ object KotlinCompilerClient {
                 // hide daemon window
                 "-Djava.awt.headless=true",
                 "-D$JAVA_RMI_SERVER_HOSTNAME=$serverHostname")
+        val javaVersion = System.getProperty("java.specification.version")?.toIntOrNull()
+        val javaIllegalAccessWorkaround =
+            if (javaVersion != null && javaVersion >= 17)
+                listOf("--illegal-access=permit")
+            else emptyList()
         val args = listOf(
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
                    daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
+                   javaIllegalAccessWorkaround +
                    COMPILER_DAEMON_CLASS_FQN +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
