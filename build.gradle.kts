@@ -466,6 +466,7 @@ allprojects {
 
             if (useJvmFir) {
                 freeCompilerArgs += "-Xuse-fir"
+                freeCompilerArgs += "-Xabi-stability=stable"
             }
         }
     }
