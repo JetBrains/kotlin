@@ -50,7 +50,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(private val workerExec
     @get:Input
     internal val kotlinAndroidPluginWrapperPluginDoesNotExist = project.plugins.none { it is KotlinAndroidPluginWrapper }
 
-    @get:Input
+    @get:Classpath
     internal val kotlinStdlibClasspath = findKotlinStdlibClasspath(project)
 
     @get:Internal
