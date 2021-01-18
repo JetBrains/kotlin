@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.test.backend.classic.JavaCompilerFacade
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -19,10 +21,17 @@ class JvmIrBackendFacade(
     override fun transform(
         module: TestModule,
         inputArtifact: IrBackendInput
-    ): BinaryArtifacts.Jvm {
+    ): BinaryArtifacts.Jvm? {
         val state = inputArtifact.backendInput.state
         val codegenFactory = state.codegenFactory as JvmIrCodegenFactory
-        codegenFactory.doGenerateFilesInternal(inputArtifact.backendInput)
+        try {
+            codegenFactory.doGenerateFilesInternal(inputArtifact.backendInput)
+        } catch (e: BackendException) {
+            if (CodegenTestDirectives.IGNORE_ERRORS in module.directives) {
+                return null
+            }
+            throw e
+        }
         state.factory.done()
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)

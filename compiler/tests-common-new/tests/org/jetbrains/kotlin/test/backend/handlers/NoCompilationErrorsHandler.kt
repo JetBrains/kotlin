@@ -6,13 +6,20 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ERRORS
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicFrontendAnalysisHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 class NoCompilationErrorsHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
+    override val directivesContainers: List<DirectivesContainer>
+        get() = listOf(CodegenTestDirectives)
+
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
+        if (IGNORE_ERRORS in module.directives) return
         AnalyzingUtils.throwExceptionOnErrors(info.analysisResult.bindingContext)
     }
 

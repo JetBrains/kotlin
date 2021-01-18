@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -44,6 +45,7 @@ class ClassicFrontend2IrConverter(
             .isIrBackend(true)
             .build()
 
-        return IrBackendInput(codegenFactory.convertToIr(state, files))
+        val ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives
+        return IrBackendInput(codegenFactory.convertToIr(state, files, ignoreErrors))
     }
 }
