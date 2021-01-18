@@ -9,6 +9,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.io.File
 import java.nio.file.Paths
 
@@ -51,6 +55,7 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
         NONE,
         JVM_MOCK_RUNTIME,
         JVM_FULL_RUNTIME,
+        JS_STDLIB_WITHOUT_FACET,
         JS_STDLIB,
     }
 
@@ -62,7 +67,24 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
             LibraryDependency.NONE -> {}
             LibraryDependency.JVM_MOCK_RUNTIME -> addKotlinMockRuntimeDependency()
             LibraryDependency.JVM_FULL_RUNTIME -> addKotlinStdlibDependency()
-            LibraryDependency.JS_STDLIB -> addKotlinJavaScriptStdlibDependency()
+            LibraryDependency.JS_STDLIB_WITHOUT_FACET -> addKotlinJavaScriptStdlibDependency()
+            LibraryDependency.JS_STDLIB -> {
+                addKotlinJavaScriptStdlibDependency()
+                setupKotlinJSFacet()
+            }
+        }
+    }
+
+    protected fun setupKotlinJSFacet() {
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.compilerArguments = K2JSCompilerArguments()
+            facet.targetPlatform = JsPlatforms.defaultJsPlatform
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
         }
     }
 
