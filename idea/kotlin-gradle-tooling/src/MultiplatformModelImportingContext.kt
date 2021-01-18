@@ -109,7 +109,7 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
 
         for (target in targets) {
             for (compilation in target.compilations) {
-                for (sourceSet in compilation.sourceSets) {
+                for (sourceSet in compilation.allSourceSets) {
                     sourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
                     sourceSet.dependsOnSourceSets.mapNotNull { sourceSetByName(it) }.forEach {
                         sourceSetToCompilations.getOrPut(it) { LinkedHashSet() } += compilation
