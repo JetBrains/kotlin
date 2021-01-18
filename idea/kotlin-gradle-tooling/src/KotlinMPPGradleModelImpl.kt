@@ -127,7 +127,7 @@ data class KotlinNativeCompilationExtensionsImpl(
 
 data class KotlinCompilationImpl(
     override val name: String,
-    override val sourceSets: Collection<KotlinSourceSet>,
+    override val allSourceSets: Collection<KotlinSourceSet>,
     override val defaultSourceSets: Collection<KotlinSourceSet>,
     override val dependencies: Array<KotlinDependencyId>,
     override val output: KotlinCompilationOutput,
@@ -140,7 +140,7 @@ data class KotlinCompilationImpl(
     // create deep copy
     constructor(kotlinCompilation: KotlinCompilation, cloningCache: MutableMap<Any, Any>) : this(
         kotlinCompilation.name,
-        cloneSourceSetsWithCaching(kotlinCompilation.sourceSets, cloningCache),
+        cloneSourceSetsWithCaching(kotlinCompilation.allSourceSets, cloningCache),
         cloneSourceSetsWithCaching(kotlinCompilation.defaultSourceSets, cloningCache),
         kotlinCompilation.dependencies,
         KotlinCompilationOutputImpl(kotlinCompilation.output),
