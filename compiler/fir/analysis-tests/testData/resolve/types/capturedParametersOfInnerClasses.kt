@@ -10,4 +10,4 @@ class A<T1, T2> {
 
 fun <R1, R2, R3> foo(c: A<R1, R1>.B<R2, R2>.C<R3, R3>) {}
 
-fun <R3> foo(c: A.B.C<R3, R3>) {}
+fun <R3> foo(c: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A.B.C<R3, R3><!>) {}

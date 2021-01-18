@@ -55,7 +55,7 @@ object MessageManager10 : <!UNRESOLVED_REFERENCE!>Message5<Int><!>() {
     fun <T : Int> execute() {}
 }
 
-class MessageManager11<A> : <!UNRESOLVED_REFERENCE!>Message5<Message5<A>><!>() {
+class MessageManager11<A> : <!UNRESOLVED_REFERENCE!>Message5<<!UNRESOLVED_REFERENCE!>Message5<A><!>><!>() {
     fun <T : <!UNRESOLVED_REFERENCE!>Message5<A><!>> execute() {}
 }
 

@@ -859,7 +859,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
-        visitTypeRef(errorTypeRef)
+        errorTypeRef.annotations.renderAnnotations()
         print("<ERROR TYPE REF: ${errorTypeRef.diagnostic.reason}>")
     }
 

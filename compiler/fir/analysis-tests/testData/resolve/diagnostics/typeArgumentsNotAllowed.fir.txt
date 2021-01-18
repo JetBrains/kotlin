@@ -12,7 +12,7 @@ FILE: typeArgumentsNotAllowed.kt
     }
     public final fun <T> foo(): R|kotlin/Unit| {
         R|rest/bar|<<ERROR TYPE REF: Type arguments not allowed>>()
-        R|rest/bar|<<ERROR TYPE REF: Type arguments not allowed>>()
+        R|rest/bar|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed>>|>()
     }
     public final fun <T> bar(): R|kotlin/Unit| {
     }
@@ -41,9 +41,9 @@ FILE: typeArgumentsNotAllowed.kt
     public final fun <G> gest(): R|kotlin/Unit| {
     }
     public final fun <T> fest(): R|kotlin/Unit| {
-        lval b: <ERROR TYPE REF: Type arguments not allowed>
+        lval b: R|kotlin/collections/List<ERROR CLASS: Type arguments not allowed>|
         R|rest/gest|<<ERROR TYPE REF: Type arguments not allowed>>()
         R|rest/gest|<R|T|>()
-        lval c: <ERROR TYPE REF: Type arguments not allowed>
-        R|rest/gest|<<ERROR TYPE REF: Type arguments not allowed>>()
+        lval c: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed>>>|
+        R|rest/gest|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed>>|>()
     }

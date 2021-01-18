@@ -114,23 +114,29 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             val isPossibleBareType = areBareTypesAllowed && typeArguments.isEmpty()
             if (typeArguments.size != symbol.fir.typeParameters.size && !isPossibleBareType) {
                 @Suppress("NAME_SHADOWING")
-                val substitutor = substitutor ?: ConeSubstitutor.Empty
-                val n = symbol.fir.typeParameters.size - typeArguments.size
-                if (n < 0) {
-                    typeArguments = (1..symbol.fir.typeParameters.size).map {
-                        ConeClassErrorType(ConeWrongNumberOfTypeArgumentsError(typeArguments.size, symbol))
-                    }.toTypedArray()
+                if (symbol.fir.typeParameters.size < typeArguments.size) {
+                    return ConeClassErrorType(ConeWrongNumberOfTypeArgumentsError(symbol.fir.typeParameters.size, symbol))
                 } else {
-                    val argumentsFromOuterClassesAndParents = symbol.fir.typeParameters.takeLast(n).map {
+                    val substitutor = substitutor ?: ConeSubstitutor.Empty
+                    val argumentsFromOuterClassesAndParents = symbol.fir.typeParameters.drop(typeArguments.size).mapNotNull {
                         val type = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isNullable = false)
                         // we should report ConeSimpleDiagnostic(..., WrongNumberOfTypeArguments)
                         // but genericArgumentNumberMismatch.kt test fails with
                         // index out of bounds exception for start offset of
                         // the source
                         substitutor.substituteOrNull(type)
-                            ?: ConeClassErrorType(ConeIntermediateDiagnostic("Type argument not defined"))
+
                     }.toTypedArray<ConeTypeProjection>()
                     typeArguments += argumentsFromOuterClassesAndParents
+
+                    if (typeArguments.size != symbol.fir.typeParameters.size) {
+                        return ConeClassErrorType(
+                            ConeWrongNumberOfTypeArgumentsError(
+                                desiredCount = symbol.fir.typeParameters.size - argumentsFromOuterClassesAndParents.size,
+                                type = symbol
+                            )
+                        )
+                    }
                 }
             }
         }

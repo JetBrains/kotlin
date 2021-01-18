@@ -236,6 +236,7 @@ fun FirTypeRef.withReplacedConeType(
             this@withReplacedConeType.source
         type = newType
         annotations += this@withReplacedConeType.annotations
+        delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
     }
 }
 

@@ -38,9 +38,9 @@ val testNested2: <!UNRESOLVED_REFERENCE!>KT.Nested<!> = KT.<!UNRESOLVED_REFERENC
 val testNested3: <!UNRESOLVED_REFERENCE!>IT.Nested<!> = IT.<!UNRESOLVED_REFERENCE!>Nested<!>()
 val testInner1: <!UNRESOLVED_REFERENCE!>JT.Inner<!> = JT.<!UNRESOLVED_REFERENCE!>Inner<!>()
 val testInner2: <!UNRESOLVED_REFERENCE!>KT.Inner<!> = KT.<!UNRESOLVED_REFERENCE!>Inner<!>()
-fun testNestedAsTypeArgument1(x: <!UNRESOLVED_REFERENCE!>List<JT.Nested><!>) {}
-fun testNestedAsTypeArgument2(x: <!UNRESOLVED_REFERENCE!>List<KT.Nested><!>) {}
-fun testNestedAsTypeArgument3(x: <!UNRESOLVED_REFERENCE!>List<IT.Nested><!>) {}
-fun testInnerAsTypeArgument1(x: <!UNRESOLVED_REFERENCE!>List<JT.Inner><!>) {}
-fun testInnerAsTypeArgument2(x: <!UNRESOLVED_REFERENCE!>List<KT.Inner><!>) {}
+fun testNestedAsTypeArgument1(x: List<<!UNRESOLVED_REFERENCE!>JT.Nested<!>>) {}
+fun testNestedAsTypeArgument2(x: List<<!UNRESOLVED_REFERENCE!>KT.Nested<!>>) {}
+fun testNestedAsTypeArgument3(x: List<<!UNRESOLVED_REFERENCE!>IT.Nested<!>>) {}
+fun testInnerAsTypeArgument1(x: List<<!UNRESOLVED_REFERENCE!>JT.Inner<!>>) {}
+fun testInnerAsTypeArgument2(x: List<<!UNRESOLVED_REFERENCE!>KT.Inner<!>>) {}
 

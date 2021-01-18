@@ -1,7 +1,7 @@
 package p
 
 public fun foo(a: Any) {
-    a is Map<Int>
+    a is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<Int><!>
     a is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>
     a is Map<out Any?, Any?>
     a is Map<*, *>

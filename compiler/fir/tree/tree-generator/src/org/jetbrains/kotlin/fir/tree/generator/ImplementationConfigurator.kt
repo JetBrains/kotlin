@@ -172,6 +172,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("type", "ConeClassErrorType(diagnostic)")
             default("annotations", "mutableListOf()")
             useTypes(coneClassErrorTypeType)
+            default("delegatedTypeRef") {
+                needAcceptAndTransform = false
+            }
         }
 
 
