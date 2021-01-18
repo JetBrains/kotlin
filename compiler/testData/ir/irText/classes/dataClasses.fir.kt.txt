@@ -17,15 +17,15 @@ data class Test1 {
     field = z
     get
 
-  fun component1(): Int {
+  operator fun component1(): Int {
     return <this>.#x
   }
 
-  fun component2(): String {
+  operator fun component2(): String {
     return <this>.#y
   }
 
-  fun component3(): Any {
+  operator fun component3(): Any {
     return <this>.#z
   }
 
@@ -77,7 +77,7 @@ data class Test2 {
     field = x
     get
 
-  fun component1(): Any? {
+  operator fun component1(): Any? {
     return <this>.#x
   }
 
@@ -135,19 +135,19 @@ data class Test3 {
     field = df
     get
 
-  fun component1(): Double {
+  operator fun component1(): Double {
     return <this>.#d
   }
 
-  fun component2(): Double? {
+  operator fun component2(): Double? {
     return <this>.#dn
   }
 
-  fun component3(): Float {
+  operator fun component3(): Float {
     return <this>.#f
   }
 
-  fun component4(): Float? {
+  operator fun component4(): Float? {
     return <this>.#df
   }
 

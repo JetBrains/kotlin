@@ -79,11 +79,11 @@ data class P {
     field = y
     get
 
-  fun component1(): Int {
+  operator fun component1(): Int {
     return <this>.#x
   }
 
-  fun component2(): Int {
+  operator fun component2(): Int {
     return <this>.#y
   }
 

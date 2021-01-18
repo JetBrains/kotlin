@@ -9,7 +9,7 @@ data class TestData {
     field = nn
     get
 
-  fun component1(): Nothing? {
+  operator fun component1(): Nothing? {
     return <this>.#nn
   }
 

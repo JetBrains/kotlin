@@ -12,7 +12,7 @@ data class A {
     field = runA
     get
 
-  fun component1(): @ExtensionFunctionType Function2<A, String, Unit> {
+  operator fun component1(): @ExtensionFunctionType Function2<A, String, Unit> {
     return <this>.#runA
   }
 
@@ -66,7 +66,7 @@ data class B {
     field = x
     get
 
-  fun component1(): Any {
+  operator fun component1(): Any {
     return <this>.#x
   }
 

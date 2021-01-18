@@ -29,16 +29,16 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-y>' type=<root>.A origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.A'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.A'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.component1' type=<root>.A origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.A'
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int [operator] declared in <root>.A'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.component2' type=<root>.A origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.A, x:kotlin.Int, y:kotlin.Int) returnType:<root>.A
@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             VALUE_PARAMETER name:<destruct> index:0 type:<root>.A
             BLOCK_BODY
               VAR name:y type:kotlin.Int [val]
-                CALL 'public final fun component2 (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+                CALL 'public final fun component2 (): kotlin.Int [operator] declared in <root>.A' type=kotlin.Int origin=null
                   $this: GET_VAR '<destruct>: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=null
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (<destruct>: <root>.A): kotlin.Int declared in <root>.fn'
                 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS

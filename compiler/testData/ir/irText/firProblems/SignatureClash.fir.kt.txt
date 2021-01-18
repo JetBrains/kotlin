@@ -41,7 +41,7 @@ data class DataClass : Derived, Delegate {
     field = delegate
     get
 
-  fun component1(): Delegate {
+  operator fun component1(): Delegate {
     return <this>.#delegate
   }
 
