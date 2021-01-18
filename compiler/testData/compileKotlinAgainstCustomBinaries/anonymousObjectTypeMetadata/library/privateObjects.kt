@@ -29,6 +29,32 @@ private val o8 = object : G<Int>() {}
 private val o9 = object : G<Int>(), I1, I2 {}
 private val o10 = object : G<Int>(), I3 {}
 
+private val o11 = object {
+    inner class D {
+        fun df() {}
+    }
+    fun d(): D = D()
+}.d()
+
+private val o12 = {
+    class L {
+        fun l() {}
+    }
+    L()
+}()
+
+private val o13 = {
+    class L {
+        inner class L1 {
+            inner class L2 {
+                fun l2() {}
+            }
+        }
+    }
+
+    L().L1().L2()
+}()
+
 fun fn() {
     o1.foo()
     o2.i1()
@@ -50,6 +76,9 @@ fun fn() {
     o10.g()
     o10.i1()
     o10.i2()
+    o11.df()
+    o12.l()
+    o13.l2()
 }
 
 class W {

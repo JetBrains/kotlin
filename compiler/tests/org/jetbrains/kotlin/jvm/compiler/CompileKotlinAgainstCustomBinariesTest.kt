@@ -735,6 +735,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             listOf(library),
             K2MetadataCompiler(),
         )
+
+        val klibLibrary = compileCommonLibrary(
+            libraryName = "library",
+            listOf("-Xexpect-actual-linker"),
+        )
+        compileKotlin(
+            "anonymousObjectTypeMetadata.kt",
+            tmpdir,
+            listOf(klibLibrary),
+            K2MetadataCompiler(),
+            listOf("-Xexpect-actual-linker")
+        )
     }
 
     private fun loadClassFile(className: String, dir: File, library: File) {

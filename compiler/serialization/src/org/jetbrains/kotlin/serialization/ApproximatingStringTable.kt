@@ -13,19 +13,11 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 
-open class ApproximatingStringTable : StringTableImpl() {
+class ApproximatingStringTable : StringTableImpl() {
     override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? {
-        return if (descriptor.containingDeclaration is CallableMemberDescriptor) {
-            val superClassifiers = descriptor.getAllSuperClassifiers()
-                .mapNotNull { it as ClassifierDescriptorWithTypeParameters }
-                .filter { it != descriptor }
-                .toList()
-            if (superClassifiers.size == 1) {
-                superClassifiers[0].classId
-            } else {
-                val superClass = superClassifiers.find { !DescriptorUtils.isInterface(it) }
-                superClass?.classId ?: ClassId.topLevel(StandardNames.FqNames.any.toSafe())
-            }
+        return if (DescriptorUtils.isLocal(descriptor)) {
+            descriptor.getAllSuperClassifiers().firstOrNull()?.classId
+                ?: ClassId.topLevel(StandardNames.FqNames.any.toSafe())
         } else {
             super.getLocalClassIdReplacement(descriptor)
         }
