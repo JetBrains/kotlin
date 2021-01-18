@@ -132,6 +132,7 @@ public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: 
 }
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface XMLHttpRequestResponseType {
     companion object

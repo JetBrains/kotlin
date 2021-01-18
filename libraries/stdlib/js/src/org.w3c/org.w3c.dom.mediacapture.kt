@@ -664,6 +664,7 @@ public inline fun Constraints(advanced: Array<ConstraintSet>? = undefined): Cons
 }
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface MediaStreamTrackState {
     companion object
@@ -674,6 +675,7 @@ public inline val MediaStreamTrackState.Companion.LIVE: MediaStreamTrackState ge
 public inline val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState get() = "ended".asDynamic().unsafeCast<MediaStreamTrackState>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface VideoFacingModeEnum {
     companion object
@@ -688,6 +690,7 @@ public inline val VideoFacingModeEnum.Companion.LEFT: VideoFacingModeEnum get() 
 public inline val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get() = "right".asDynamic().unsafeCast<VideoFacingModeEnum>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface VideoResizeModeEnum {
     companion object
@@ -698,6 +701,7 @@ public inline val VideoResizeModeEnum.Companion.NONE: VideoResizeModeEnum get() 
 public inline val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeEnum get() = "crop-and-scale".asDynamic().unsafeCast<VideoResizeModeEnum>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface MediaDeviceKind {
     companion object
