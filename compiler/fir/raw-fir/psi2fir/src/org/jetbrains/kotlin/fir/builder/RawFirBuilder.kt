@@ -1106,7 +1106,7 @@ class RawFirBuilder(
                             source = valueParameter.toFirSourceElement()
                             session = baseSession
                             origin = FirDeclarationOrigin.Source
-                            returnTypeRef = buildImplicitTypeRef {
+                            returnTypeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
                                 source = multiDeclaration.toFirSourceElement(FirFakeSourceElementKind.ImplicitTypeRef)
                             }
                             this.name = name
@@ -1124,7 +1124,7 @@ class RawFirBuilder(
                         ) { toFirOrImplicitType() }
                         multiParameter
                     } else {
-                        val typeRef = buildImplicitTypeRef {
+                        val typeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
                             source = implicitTypeRefSource
                         }
                         valueParameter.toFirValueParameter(typeRef)

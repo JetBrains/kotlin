@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
@@ -155,7 +154,7 @@ class ExpressionsConverter(
                     val multiParameter = buildValueParameter {
                         session = baseSession
                         origin = FirDeclarationOrigin.Source
-                        returnTypeRef = buildImplicitTypeRef()
+                        returnTypeRef = valueParameter.firValueParameter.returnTypeRef
                         this.name = name
                         symbol = FirVariableSymbol(name)
                         defaultValue = null
