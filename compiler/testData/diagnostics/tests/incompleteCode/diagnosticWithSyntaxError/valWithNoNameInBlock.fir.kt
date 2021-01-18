@@ -46,5 +46,5 @@ fun foo() {
     propertyWithType: Int
 
     val
-    (<!UNRESOLVED_REFERENCE!>a<!>, <!UNRESOLVED_REFERENCE!>b<!>) = 1
+    (a, b) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>1<!>
 }

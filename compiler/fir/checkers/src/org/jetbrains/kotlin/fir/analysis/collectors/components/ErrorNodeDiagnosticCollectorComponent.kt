@@ -59,6 +59,14 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     private fun reportFirDiagnostic(diagnostic: ConeDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {
+        // Will be handled by [FirDestructuringDeclarationChecker]
+        if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+            // TODO: if all diagnostics are supported, we don't need the following check, and will bail out based on element type.
+            if (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError) {
+                return
+            }
+        }
+
         val coneDiagnostic = when (diagnostic) {
             is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.name?.asString() ?: "<No name>")
             is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.classId.asString())

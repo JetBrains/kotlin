@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 object FirDiagnosticRenderers {
     val NULLABLE_STRING = Renderer<String?> { it ?: "null" }
@@ -55,5 +56,16 @@ object FirDiagnosticRenderers {
             else -> return@Renderer "???"
         }
         name.asString()
+    }
+
+    val RENDER_TYPE = Renderer { typeRef: FirTypeRef ->
+        // TODO: need a way to tune granuality, e.g., without parameter names in functional types.
+        typeRef.render()
+    }
+
+    val AMBIGUOUS_CALLS = Renderer { candidates: Collection<AbstractFirBasedSymbol<*>> ->
+        candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
+            SYMBOL.render(symbol)
+        }
     }
 }
