@@ -4,23 +4,23 @@
 data class A(val x: Int, val y: String)
 
 fun bar() {
-    val x = { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b): A<!> ->
-        a <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        b <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    val x = { (a, b): A ->
+        a checkType { _<Int>() }
+        b checkType { _<String>() }
     }
 
     x checkType { _<(A) -> Unit>() }
 
-    val y = { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a: Int, b): A<!> ->
+    val y = { (a: Int, b): A ->
         a checkType { _<Int>() }
-        b <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        b checkType { _<String>() }
     }
 
     y checkType { _<(A) -> Unit>() }
 
-    val y2 = { <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a: Number, b): A<!> ->
+    val y2 = { (a: Number, b): A ->
         a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        b <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        b checkType { _<String>() }
     }
 
     y2 checkType { _<(A) -> Unit>() }

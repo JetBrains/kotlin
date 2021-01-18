@@ -9,9 +9,9 @@ fun <X, Y> foo(y: Y, x: (X, Y) -> Unit) {}
 
 fun bar(aInstance: A, bInstance: B) {
     foo("") {
-        <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b): A<!>, c ->
-        a <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
-        b <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        (a, b): A, c ->
+        a checkType { _<Int>() }
+        b checkType { _<String>() }
         c checkType { _<String>() }
     }
 
