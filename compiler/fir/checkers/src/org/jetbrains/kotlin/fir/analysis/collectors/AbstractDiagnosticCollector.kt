@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -158,6 +159,11 @@ abstract class AbstractDiagnosticCollector(
             if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
                 super.visitTypeRef(typeRef, null)
             }
+        }
+
+        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {
+            super.visitResolvedTypeRef(resolvedTypeRef, data)
+            resolvedTypeRef.delegatedTypeRef?.accept(this, data)
         }
 
         private inline fun visitWithDeclaration(

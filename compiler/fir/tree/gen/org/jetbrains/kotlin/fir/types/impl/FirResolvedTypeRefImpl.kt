@@ -26,12 +26,10 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
 ) : FirResolvedTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        delegatedTypeRef?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
         transformAnnotations(transformer, data)
-        delegatedTypeRef = delegatedTypeRef?.transformSingle(transformer, data)
         return this
     }
 

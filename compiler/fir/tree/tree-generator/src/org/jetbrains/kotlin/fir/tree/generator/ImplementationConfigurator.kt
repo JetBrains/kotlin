@@ -388,6 +388,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedTypeRef) {
             publicImplementation()
+            default("delegatedTypeRef") {
+                needAcceptAndTransform = false
+            }
         }
 
         impl(errorExpression) {
