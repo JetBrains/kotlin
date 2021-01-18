@@ -405,7 +405,7 @@ class HTMLRender: Render() {
             }
         }
 
-        val benchmarksWithChangedStatus = report.getBenchmarksWithChangedStatus()
+        val benchmarksWithChangedStatus = report.benchmarksWithChangedStatus
         val newFailures = benchmarksWithChangedStatus
                 .filter { it.current == BenchmarkResult.Status.FAILED }
         val newPasses = benchmarksWithChangedStatus
@@ -479,59 +479,86 @@ class HTMLRender: Render() {
     }
 
     private fun BodyTag.renderPerformanceSummary(report: SummaryBenchmarksReport) {
-        if (!report.improvements.isEmpty() || !report.regressions.isEmpty()) {
+        if (report.detailedMetricReports.values.any { it.improvements.isNotEmpty() } ||
+                report.detailedMetricReports.values.any { it.regressions.isNotEmpty() }) {
             h4 { +"Performance Summary" }
             table {
                 attributes["class"] = "table table-sm table-striped table-hover"
                 attributes["style"] = "width:initial;"
                 thead {
                     tr {
-                        th { +"Change" }
-                        th { +"#" }
-                        th { +"Maximum" }
-                        th { +"Geometric mean" }
-                    }
-                }
-                val maximumRegression = report.maximumRegression
-                val maximumImprovement = report.maximumImprovement
-                val regressionsGeometricMean = report.regressionsGeometricMean
-                val improvementsGeometricMean = report.improvementsGeometricMean
-                tbody {
-                    if (!report.regressions.isEmpty()) {
-                        tr {
-                            th { +"Regressions" }
-                            td { +"${report.regressions.size}" }
-                            td {
-                                attributes["bgcolor"] = ColoredCell(
-                                        maximumRegression/maxOf(maximumRegression, abs(maximumImprovement)))
-                                        .backgroundStyle
-                                +formatValue(maximumRegression, true)
-                            }
-                            td {
-                                attributes["bgcolor"] = ColoredCell(
-                                        regressionsGeometricMean/maxOf(regressionsGeometricMean,
-                                                            abs(improvementsGeometricMean)))
-                                        .backgroundStyle
-                                +formatValue(report.regressionsGeometricMean, true)
-                            }
+                        th(rowspan = Natural(2)) { +"Change" }
+                        report.detailedMetricReports.forEach { (metric, _) ->
+                            th(colspan = Natural(3)) { +metric.value }
                         }
                     }
-                    if (!report.improvements.isEmpty()) {
+                    tr {
+                        report.detailedMetricReports.forEach { _ ->
+                            th { +"#" }
+                            th { +"Maximum" }
+                            th { +"Geometric mean" }
+                        }
+                    }
+                }
+
+                tbody {
+                    tr {
+                        th { +"Regressions" }
+                        report.detailedMetricReports.values.forEach { report ->
+                            val maximumRegression = report.maximumRegression
+                            val regressionsGeometricMean = report.regressionsGeometricMean
+                            val maximumImprovement = report.maximumImprovement
+                            val improvementsGeometricMean = report.improvementsGeometricMean
+                            val maximumChange = maxOf(maximumRegression, abs(maximumImprovement))
+                            val maximumChangeGeoMean = maxOf(regressionsGeometricMean,
+                                    abs(improvementsGeometricMean))
+                            if (!report.regressions.isEmpty()) {
+                                td { +"${report.regressions.size}" }
+                                td {
+                                    attributes["bgcolor"] = ColoredCell(
+                                                (maximumRegression/maximumChange).takeIf{ maximumChange > 0.0 }
+                                            ).backgroundStyle
+                                    +formatValue(maximumRegression, true)
+                                }
+                                td {
+                                    attributes["bgcolor"] = ColoredCell(
+                                            (regressionsGeometricMean/maximumChangeGeoMean).takeIf{ maximumChangeGeoMean > 0.0 }
+                                    ).backgroundStyle
+                                    +formatValue(report.regressionsGeometricMean, true)
+                                }
+                            } else {
+                                repeat(3) { td { +"-" } }
+                            }
+                        }
+
                         tr {
                             th { +"Improvements" }
-                            td { +"${report.improvements.size}" }
-                            td {
-                                attributes["bgcolor"] = ColoredCell(
-                                        maximumImprovement/maxOf(maximumRegression, abs(maximumImprovement)))
-                                        .backgroundStyle
-                                +formatValue(report.maximumImprovement, true)
-                            }
-                            td {
-                                attributes["bgcolor"] = ColoredCell(
-                                        improvementsGeometricMean/maxOf(regressionsGeometricMean,
-                                                        abs(improvementsGeometricMean)))
-                                        .backgroundStyle
-                                +formatValue(report.improvementsGeometricMean, true)
+                            report.detailedMetricReports.values.forEach { report ->
+                                val maximumRegression = report.maximumRegression
+                                val regressionsGeometricMean = report.regressionsGeometricMean
+                                val maximumImprovement = report.maximumImprovement
+                                val improvementsGeometricMean = report.improvementsGeometricMean
+                                val maximumChange = maxOf(maximumRegression, abs(maximumImprovement))
+                                val maximumChangeGeoMean = maxOf(regressionsGeometricMean,
+                                        abs(improvementsGeometricMean))
+                                if (!report.improvements.isEmpty()) {
+                                    td { +"${report.improvements.size}" }
+                                    td {
+                                        attributes["bgcolor"] = ColoredCell(
+                                                (maximumImprovement / maximumChange).takeIf{ maximumChange > 0.0 }
+                                        ).backgroundStyle
+                                        +formatValue(report.maximumImprovement, true)
+                                    }
+                                    td {
+                                        attributes["bgcolor"] = ColoredCell(
+                                                (improvementsGeometricMean / maximumChangeGeoMean)
+                                                        .takeIf{ maximumChangeGeoMean > 0.0 }
+                                        ).backgroundStyle
+                                        +formatValue(report.improvementsGeometricMean, true)
+                                    }
+                                } else {
+                                    repeat(3) { td { +"-" } }
+                                }
                             }
                         }
                     }
@@ -584,43 +611,84 @@ class HTMLRender: Render() {
         }
     }
 
+    private fun TableBlock.renderFilteredBenchmarks(detailedReport: DetailedBenchmarksReport,
+                                                    onlyChanges: Boolean, unstableBenchmarks: List<String>,
+                                                    filterUnstable: Boolean) {
+        fun <T> filterBenchmarks(bucket: Map<String, T>) =
+            bucket.filter { (name, _) ->
+                if (filterUnstable) name in unstableBenchmarks else name !in unstableBenchmarks
+            }
+
+        val filteredRegressions = filterBenchmarks(detailedReport.regressions)
+        val filteredImprovements = filterBenchmarks(detailedReport.improvements)
+        renderBenchmarksDetails(detailedReport.mergedReport, filteredRegressions)
+        renderBenchmarksDetails(detailedReport.mergedReport, filteredImprovements)
+        if (!onlyChanges) {
+            // Print all remaining results.
+            renderBenchmarksDetails(filterBenchmarks(detailedReport.mergedReport).filter {
+                it.key !in detailedReport.regressions.keys &&
+                        it.key !in detailedReport.improvements.keys
+            })
+        }
+    }
+
     private fun BodyTag.renderPerformanceDetails(report: SummaryBenchmarksReport, onlyChanges: Boolean) {
         if (onlyChanges) {
-            if (report.regressions.isEmpty() && report.improvements.isEmpty()) {
+            if (report.detailedMetricReports.values.all { it.improvements.isEmpty() } &&
+                    report.detailedMetricReports.values.all { it.regressions.isEmpty() }) {
                 div("alert alert-success") {
                     attributes["role"] = "alert"
                     +"All becnhmarks are stable!"
                 }
             }
         }
+        report.detailedMetricReports.forEach { (metric, detailedReport) ->
+            renderCollapsedData(metric.value, false) {
+                table {
+                    attributes["id"] = "result"
+                    attributes["class"] = "table table-striped table-bordered"
+                    thead {
+                        tr {
+                            th { +"Benchmark" }
+                            th { +"First score" }
+                            th { +"Second score" }
+                            th { +"Percent" }
+                            th { +"Ratio" }
+                        }
+                    }
+                    val geoMeanChangeMap = detailedReport.geoMeanScoreChange?.let {
+                        mapOf(detailedReport.geoMeanBenchmark.first!!.name to detailedReport.geoMeanScoreChange!!)
+                    }
 
-        table {
-            attributes["id"] = "result"
-            attributes["class"] = "table table-striped table-bordered"
-            thead {
-                tr {
-                    th { +"Benchmark" }
-                    th { +"First score" }
-                    th { +"Second score" }
-                    th { +"Percent" }
-                    th { +"Ratio" }
+                    tbody {
+                        val boldRowStyle = "border-bottom: 2.3pt solid black; border-top: 2.3pt solid black"
+                        renderBenchmarksDetails(
+                                mutableMapOf(detailedReport.geoMeanBenchmark.first!!.name to detailedReport.geoMeanBenchmark),
+                                geoMeanChangeMap, boldRowStyle)
+
+                        val unstableBenchmarks = report.getUnstableBenchmarksForMetric(metric)
+
+                        if (unstableBenchmarks.isNotEmpty()) {
+                            tr {
+                                attributes["style"] = boldRowStyle
+                                th(colspan = Natural(5)) { +"Stable" }
+                            }
+                        }
+
+                        renderFilteredBenchmarks(detailedReport, onlyChanges, unstableBenchmarks, false)
+
+                        if (unstableBenchmarks.isNotEmpty()) {
+                            tr {
+                                attributes["style"] = boldRowStyle
+                                th(colspan = Natural(5)) { +"Unstable" }
+                            }
+                        }
+
+                        renderFilteredBenchmarks(detailedReport, onlyChanges, unstableBenchmarks, true)
+                    }
                 }
             }
-            val geoMeanChangeMap = report.geoMeanScoreChange?.
-                    let { mapOf(report.geoMeanBenchmark.first!!.name to report.geoMeanScoreChange!!) }
-
-            tbody {
-                renderBenchmarksDetails(
-                        mutableMapOf(report.geoMeanBenchmark.first!!.name to report.geoMeanBenchmark),
-                        geoMeanChangeMap, "border-bottom: 2.3pt solid black; border-top: 2.3pt solid black")
-                renderBenchmarksDetails(report.mergedReport, report.regressions)
-                renderBenchmarksDetails(report.mergedReport, report.improvements)
-                if (!onlyChanges) {
-                    // Print all remaining results.
-                    renderBenchmarksDetails(report.mergedReport.filter { it.key !in report.regressions.keys &&
-                            it.key !in report.improvements.keys })
-                }
-            }
+            hr {}
         }
     }
 

@@ -206,8 +206,8 @@ fun main(args: Array<String>) {
     }
 
     buildsNumberToShow = parameters["count"]?.toInt() ?: buildsNumberToShow
-    beforeDate = parameters["before"]?.let{ decodeURIComponent(it)}
-    afterDate = parameters["after"]?.let{ decodeURIComponent(it)}
+    beforeDate = parameters["before"]?.let { decodeURIComponent(it) }
+    afterDate = parameters["after"]?.let { decodeURIComponent(it) }
 
     // Get branches.
     val branchesUrl = "$serverUrl/branches"
@@ -285,30 +285,6 @@ fun main(args: Array<String>) {
     val platformSpecificBenchs = if (parameters["target"] == "Mac_OS_X") ",FrameworkBenchmarksAnalyzer,SpaceFramework_iosX64" else
         if (parameters["target"] == "Linux") ",kotlinx.coroutines" else ""
 
-    // Collect information for charts library.
-    val valuesToShow = mapOf("EXECUTION_TIME" to listOf(mapOf(
-            "normalize" to "true"
-            )),
-            "COMPILE_TIME" to listOf(mapOf(
-                    "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
-                    "agr" to "samples"
-            )),
-            "CODE_SIZE" to listOf(mapOf(
-                    "normalize" to "true",
-                    "exclude" to if (parameters["target"] == "Linux")
-                        "kotlinx.coroutines"
-                    else if (parameters["target"] == "Mac_OS_X")
-                        "SpaceFramework_iosX64"
-                    else ""
-            ), if (platformSpecificBenchs.isNotEmpty()) mapOf(
-                    "normalize" to "true",
-                    "agr" to "samples",
-                    "samples" to platformSpecificBenchs.removePrefix(",")
-            ) else null).filterNotNull(),
-            "BUNDLE_SIZE" to listOf(mapOf("samples" to "KotlinNative",
-                    "agr" to "samples"))
-    )
-
     var execData = listOf<String>() to listOf<List<Double?>>()
     var compileData = listOf<String>() to listOf<List<Double?>>()
     var codeSizeData = listOf<String>() to listOf<List<Double?>>()
@@ -328,6 +304,17 @@ fun main(args: Array<String>) {
 
     val metricUrl = "$serverUrl/metricValue/${parameters["target"]}/"
 
+    val unstableBenchmarksPromise = sendGetRequest("$serverUrl/unstable").then { response ->
+        val unstableList = response as String
+        val data = JsonTreeParser.parse(unstableList)
+        if (data !is JsonArray) {
+            error("Response is expected to be an array.")
+        }
+        data.jsonArray.map {
+            (it as JsonPrimitive).content
+        }
+    }
+
     // Get builds description.
     val buildsInfoPromise = sendGetRequest(descriptionUrl).then { response ->
         val buildsInfo = response as String
@@ -341,100 +328,131 @@ fun main(args: Array<String>) {
         }
     }
 
-    // Send requests to get all needed metric values.
-    valuesToShow.map { (metric, listOfSettings) ->
-        val resultValues = listOfSettings.map { settings ->
-            val getParameters = with(StringBuilder()) {
-                if (settings.isNotEmpty()) {
-                    append("?")
-                }
-                var prefix = ""
-                settings.forEach { (key, value) ->
-                    if (value.isNotEmpty()) {
-                        append("$prefix$key=$value")
-                        prefix = "&"
+    unstableBenchmarksPromise.then { unstableBenchmarks ->
+        // Collect information for charts library.
+        val valuesToShow = mapOf("EXECUTION_TIME" to listOf(mapOf(
+                        "normalize" to "true"
+                ),
+                mapOf(
+                        "normalize" to "true",
+                        "exclude" to unstableBenchmarks.joinToString(",")
+                )),
+                "COMPILE_TIME" to listOf(mapOf(
+                        "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
+                        "agr" to "samples"
+                )),
+                "CODE_SIZE" to listOf(mapOf(
+                        "normalize" to "true",
+                        "exclude" to if (parameters["target"] == "Linux")
+                            "kotlinx.coroutines"
+                        else if (parameters["target"] == "Mac_OS_X")
+                            "SpaceFramework_iosX64"
+                        else ""
+                ), if (platformSpecificBenchs.isNotEmpty()) mapOf(
+                        "normalize" to "true",
+                        "agr" to "samples",
+                        "samples" to platformSpecificBenchs.removePrefix(",")
+                ) else null).filterNotNull(),
+                "BUNDLE_SIZE" to listOf(mapOf("samples" to "KotlinNative",
+                        "agr" to "samples"))
+        )
+        // Send requests to get all needed metric values.
+        valuesToShow.map { (metric, listOfSettings) ->
+            val resultValues = listOfSettings.map { settings ->
+                val getParameters = with(StringBuilder()) {
+                    if (settings.isNotEmpty()) {
+                        append("?")
                     }
+                    var prefix = ""
+                    settings.forEach { (key, value) ->
+                        if (value.isNotEmpty()) {
+                            append("$prefix$key=$value")
+                            prefix = "&"
+                        }
+                    }
+                    toString()
                 }
-                toString()
+                val branchParameter = if (parameters["branch"] != "all")
+                    (if (getParameters.isEmpty()) "?" else "&") + "branch=${parameters["branch"]}"
+                else ""
+
+                val url = "$metricUrl$metric$getParameters$branchParameter${
+                    if (parameters["type"] != "all")
+                        (if (getParameters.isEmpty() && branchParameter.isEmpty()) "?" else "&") + "type=${parameters["type"]}"
+                    else ""
+                }&count=$buildsNumberToShow${getDatesComponents()}"
+                sendGetRequest(url)
+            }.toTypedArray()
+
+            // Get metrics values for charts.
+            Promise.all(resultValues).then { responses ->
+                val valuesList = responses.map { response ->
+                    val results = (JsonTreeParser.parse(response) as JsonArray).map {
+                        (it as JsonObject).getPrimitive("first").content to
+                                it.getArray("second").map { (it as JsonPrimitive).doubleOrNull }
+                    }
+
+                    val labels = results.map { it.first }
+                    val values = results[0]?.second?.size?.let { (0..it - 1).map { i -> results.map { it.second[i] } } }
+                            ?: emptyList()
+                    labels to values
+                }
+                val labels = valuesList[0].first
+
+                val values = valuesList.map { it.second }.reduce { acc, valuesPart -> acc + valuesPart }
+
+                when (metric) {
+                    // Update chart with gotten data.
+                    "COMPILE_TIME" -> {
+                        compileData = labels to values.map { it.map { it?.let { it / 1000 } } }
+                        compileChart = Chartist.Line("#compile_chart",
+                                getChartData(labels, compileData.second),
+                                getChartOptions(valuesToShow["COMPILE_TIME"]!![0]!!["samples"]!!.split(',').toTypedArray(),
+                                        "Time, milliseconds"))
+                        buildsInfoPromise.then { builds ->
+                            customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
+                            compileChart.update(getChartData(compileData.first, compileData.second))
+                        }
+                    }
+                    "EXECUTION_TIME" -> {
+                        execData = labels to values
+                        execChart = Chartist.Line("#exec_chart",
+                                getChartData(labels, execData.second),
+                                getChartOptions(arrayOf("Geometric Mean (All)", "Geometric mean (Stable)"),
+                                        "Normalized time"))
+                        buildsInfoPromise.then { builds ->
+                            customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
+                            execChart.update(getChartData(execData.first, execData.second))
+                        }
+                    }
+                    "CODE_SIZE" -> {
+                        codeSizeData = labels to values
+                        codeSizeChart = Chartist.Line("#codesize_chart",
+                                getChartData(labels, codeSizeData.second),
+                                getChartOptions(arrayOf("Geometric Mean") + platformSpecificBenchs.split(',')
+                                        .filter { it.isNotEmpty() },
+                                        "Normalized size",
+                                        arrayOf("ct-series-4", "ct-series-5", "ct-series-6")))
+                        buildsInfoPromise.then { builds ->
+                            customizeChart(codeSizeChart, "codesize_chart", js("$(\"#codesize_chart\")"), builds, parameters)
+                            codeSizeChart.update(getChartData(codeSizeData.first, codeSizeData.second, sizeClassNames))
+                        }
+                    }
+                    "BUNDLE_SIZE" -> {
+                        bundleSizeData = labels to values.map { it.map { it?.let { it.toInt() / 1024 / 1024 } } }
+                        bundleSizeChart = Chartist.Line("#bundlesize_chart",
+                                getChartData(labels,
+                                        bundleSizeData.second, sizeClassNames),
+                                getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-4")))
+                        buildsInfoPromise.then { builds ->
+                            customizeChart(bundleSizeChart, "bundlesize_chart", js("$(\"#bundlesize_chart\")"), builds, parameters)
+                            bundleSizeChart.update(getChartData(bundleSizeData.first, bundleSizeData.second, sizeClassNames))
+                        }
+                    }
+                    else -> error("No chart for metric $metric")
+                }
+                true
             }
-            val branchParameter = if (parameters["branch"] != "all")
-                (if (getParameters.isEmpty()) "?" else "&") + "branch=${parameters["branch"]}"
-            else ""
-
-            val url = "$metricUrl$metric$getParameters$branchParameter${
-            if (parameters["type"] != "all")
-                (if (getParameters.isEmpty() && branchParameter.isEmpty()) "?" else "&") + "type=${parameters["type"]}"
-            else ""
-            }&count=$buildsNumberToShow${getDatesComponents()}"
-            sendGetRequest(url)
-        }.toTypedArray()
-
-        // Get metrics values for charts.
-        Promise.all(resultValues).then { responses ->
-            val valuesList = responses.map { response ->
-                val results = (JsonTreeParser.parse(response) as JsonArray).map {
-                    (it as JsonObject).getPrimitive("first").content to
-                            it.getArray("second").map { (it as JsonPrimitive).doubleOrNull }
-                }
-
-                val labels = results.map { it.first }
-                val values = results[0]?.second?.size?.let { (0..it - 1).map { i -> results.map { it.second[i] } } }
-                        ?: emptyList()
-                labels to values
-            }
-            val labels = valuesList[0].first
-            val values = valuesList.map { it.second }.reduce { acc, valuesPart -> acc + valuesPart }
-
-            when (metric) {
-                // Update chart with gotten data.
-                "COMPILE_TIME" -> {
-                    compileData = labels to values.map { it.map { it?.let { it / 1000 } } }
-                    compileChart = Chartist.Line("#compile_chart",
-                            getChartData(labels, compileData.second),
-                            getChartOptions(valuesToShow["COMPILE_TIME"]!![0]!!["samples"]!!.split(',').toTypedArray(),
-                                    "Time, milliseconds"))
-                    buildsInfoPromise.then { builds ->
-                        customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
-                        compileChart.update(getChartData(compileData.first, compileData.second))
-                    }
-                }
-                "EXECUTION_TIME" -> {
-                    execData = labels to values
-                    execChart = Chartist.Line("#exec_chart",
-                            getChartData(labels, execData.second),
-                            getChartOptions(arrayOf("Geometric Mean"), "Normalized time"))
-                    buildsInfoPromise.then { builds ->
-                        customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
-                        execChart.update(getChartData(execData.first, execData.second))
-                    }
-                }
-                "CODE_SIZE" -> {
-                    codeSizeData = labels to values
-                    codeSizeChart = Chartist.Line("#codesize_chart",
-                            getChartData(labels, codeSizeData.second),
-                            getChartOptions(arrayOf("Geometric Mean") + platformSpecificBenchs.split(',')
-                                    .filter { it.isNotEmpty() },
-                                    "Normalized size",
-                                    arrayOf("ct-series-4", "ct-series-5", "ct-series-6")))
-                    buildsInfoPromise.then { builds ->
-                        customizeChart(codeSizeChart, "codesize_chart", js("$(\"#codesize_chart\")"), builds, parameters)
-                        codeSizeChart.update(getChartData(codeSizeData.first, codeSizeData.second, sizeClassNames))
-                    }
-                }
-                "BUNDLE_SIZE" -> {
-                    bundleSizeData = labels to values.map { it.map { it?.let { it.toInt() / 1024 / 1024 } } }
-                    bundleSizeChart = Chartist.Line("#bundlesize_chart",
-                            getChartData(labels,
-                                    bundleSizeData.second, sizeClassNames),
-                            getChartOptions(arrayOf("Bundle size"), "Size, MB", arrayOf("ct-series-4")))
-                    buildsInfoPromise.then { builds ->
-                        customizeChart(bundleSizeChart, "bundlesize_chart", js("$(\"#bundlesize_chart\")"), builds, parameters)
-                        bundleSizeChart.update(getChartData(bundleSizeData.first, bundleSizeData.second, sizeClassNames))
-                    }
-                }
-                else -> error("No chart for metric $metric")
-            }
-            true
         }
     }
 

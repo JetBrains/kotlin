@@ -270,7 +270,6 @@ open class BenchmarkResult(val name: String, val status: Status,
                 val metric = if (metricElement != null && metricElement is JsonLiteral)
                     metricFromString(metricElement.unquoted()) ?: Metric.EXECUTION_TIME
                 else Metric.EXECUTION_TIME
-                name += metric.suffix
                 val statusElement = data.getRequiredField("status")
                 if (statusElement is JsonLiteral) {
                     val status = statusFromString(statusElement.unquoted())
@@ -347,5 +346,36 @@ open class MeanVarianceBenchmark(name: String, status: BenchmarkResult.Status, s
             ${super.serializeFields()},
             "variance": $variance
             """
+    }
+}
+
+// Benchmark with set results stability state.
+open class BenchmarkWithStabilityState(name: String, status: BenchmarkResult.Status, score: Double, metric: BenchmarkResult.Metric,
+                                 runtimeInUs: Double, repeat: Int, warmup: Int, val unstable: Boolean) :
+        BenchmarkResult(name, status, score, metric, runtimeInUs, repeat, warmup) {
+
+    constructor(benchmarkResult: BenchmarkResult, unstable: Boolean) : this(benchmarkResult.name,
+            benchmarkResult.status, benchmarkResult.score, benchmarkResult.metric,
+            benchmarkResult.runtimeInUs, benchmarkResult.repeat, benchmarkResult.warmup, unstable)
+
+    override fun serializeFields(): String {
+        return """
+            ${super.serializeFields()},
+            "unstable": $unstable
+            """
+    }
+
+    companion object : EntityFromJsonFactory<BenchmarkResult> {
+        override fun create(data: JsonElement): BenchmarkWithStabilityState {
+            val parsedObject = BenchmarkResult.create(data)
+            if (data is JsonObject) {
+                val unstableElement = data.getOptionalField("unstable")
+                val unstableFlag = if (unstableElement != null && unstableElement is JsonPrimitive)
+                    unstableElement.boolean else false
+                return  BenchmarkWithStabilityState(parsedObject, unstableFlag)
+            } else {
+                error("Benchmark entity is expected to be an object. Please, check origin files.")
+            }
+        }
     }
 }

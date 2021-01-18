@@ -25,10 +25,13 @@ val MeanVarianceBenchmark.description: String
 
 // Calculate difference in percentage compare to another.
 fun MeanVarianceBenchmark.calcPercentageDiff(other: MeanVarianceBenchmark): MeanVariance {
+    if (score == 0.0 && variance == 0.0 && other.score == 0.0 && other.variance == 0.0)
+        return MeanVariance(score, variance)
     assert(other.score >= 0 &&
             other.variance >= 0 &&
-            other.score - other.variance != 0.0,
+            (other.score - other.variance != 0.0 || other.score == 0.0),
             { "Mean and variance should be positive and not equal!" })
+
     // Analyze intervals. Calculate difference between border points.
     val (bigValue, smallValue) = if (score > other.score) Pair(this, other) else Pair(other, this)
     val bigValueIntervalStart = bigValue.score - bigValue.variance
@@ -50,11 +53,13 @@ fun MeanVarianceBenchmark.calcPercentageDiff(other: MeanVarianceBenchmark): Mean
 
 // Calculate ratio value compare to another.
 fun MeanVarianceBenchmark.calcRatio(other: MeanVarianceBenchmark): MeanVariance {
+    if (other.score == 0.0 && other.variance == 0.0)
+        return MeanVariance(1.0, 0.0)
     assert(other.score >= 0 &&
             other.variance >= 0 &&
-            other.score - other.variance != 0.0,
+            (other.score - other.variance != 0.0 || other.score == 0.0),
             { "Mean and variance should be positive and not equal!" })
-    val mean = score / other.score
+    val mean = if (other.score != 0.0) (score / other.score) else 0.0
     val minRatio = (score - variance) / (other.score + other.variance)
     val maxRatio = (score + variance) / (other.score - other.variance)
     val ratioConfInt = min(abs(minRatio - mean), abs(maxRatio - mean))
@@ -63,7 +68,7 @@ fun MeanVarianceBenchmark.calcRatio(other: MeanVarianceBenchmark): MeanVariance 
 
 fun geometricMean(values: Collection<Double>, totalNumber: Int = values.size) =
         with(values.asSequence().filter { it != 0.0 }) {
-            if (count() == 0) {
+            if (count() == 0 || totalNumber == 0) {
                 0.0
             } else {
                 map { it.pow(1.0 / totalNumber) }.reduce { a, b -> a * b }

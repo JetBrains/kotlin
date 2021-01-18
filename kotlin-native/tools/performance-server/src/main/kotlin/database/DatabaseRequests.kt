@@ -131,6 +131,42 @@ fun getGoldenResults(goldenResultsIndex: GoldenResultsIndex): Promise<Map<String
     }
 }
 
+// Get list of unstable benchmarks from database.
+fun getUnstableResults(goldenResultsIndex: GoldenResultsIndex): Promise<List<String>> {
+    val queryDescription = """
+        {
+          "_source": ["env"],
+          "query": {
+            "nested" : {
+              "path" : "benchmarks",
+              "query" : {
+                "match": { "benchmarks.unstable": true } 
+              },
+              "inner_hits": {
+                "size": 100, 
+                "_source": ["benchmarks.name"]
+              }    
+            }                      
+          } 
+        }
+    """.trimIndent()
+
+    return goldenResultsIndex.search(queryDescription, listOf("hits.hits.inner_hits")).then { responseString ->
+        val dbResponse = JsonTreeParser.parse(responseString).jsonObject
+        val results = dbResponse.getObjectOrNull("hits")?.getArrayOrNull("hits")
+                ?: error("Wrong response:\n$responseString")
+        results.getObjectOrNull(0)?.let {
+            it
+                    .getObject("inner_hits")
+                    .getObject("benchmarks")
+                    .getObject("hits")
+                    .getArray("hits").map {
+                        (it as JsonObject).getObject("_source").getPrimitive("name").content
+                    }
+        } ?: listOf<String>()
+    }
+}
+
 // Get distinct values for needed field from database.
 fun distinctValues(field: String, index: ElasticSearchIndex): Promise<List<String>> {
     val queryDescription = """
