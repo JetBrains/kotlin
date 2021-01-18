@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.util.*
@@ -205,7 +206,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Dependencies caching strategy for [target].
      */
     fun nativeCacheKindForTarget(target: KonanTarget): NativeCacheKind? =
-        property("kotlin.native.cacheKind.${target.name}")?.let { NativeCacheKind.byCompilerArgument(it) }
+        property("kotlin.native.cacheKind.${target.presetName}")?.let { NativeCacheKind.byCompilerArgument(it) }
 
     /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
