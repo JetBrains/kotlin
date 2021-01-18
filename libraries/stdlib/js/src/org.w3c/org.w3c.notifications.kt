@@ -208,6 +208,7 @@ public inline fun NotificationEventInit(notification: Notification?, action: Str
 }
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface NotificationPermission {
     companion object
@@ -220,6 +221,7 @@ public inline val NotificationPermission.Companion.DENIED: NotificationPermissio
 public inline val NotificationPermission.Companion.GRANTED: NotificationPermission get() = "granted".asDynamic().unsafeCast<NotificationPermission>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface NotificationDirection {
     companion object

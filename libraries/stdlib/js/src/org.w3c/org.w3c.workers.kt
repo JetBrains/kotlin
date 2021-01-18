@@ -489,6 +489,7 @@ public external interface UnionMessagePortOrServiceWorker
 public external interface UnionClientOrMessagePortOrServiceWorker
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface ServiceWorkerState {
     companion object
@@ -505,6 +506,7 @@ public inline val ServiceWorkerState.Companion.ACTIVATED: ServiceWorkerState get
 public inline val ServiceWorkerState.Companion.REDUNDANT: ServiceWorkerState get() = "redundant".asDynamic().unsafeCast<ServiceWorkerState>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface FrameType {
     companion object
@@ -519,6 +521,7 @@ public inline val FrameType.Companion.NESTED: FrameType get() = "nested".asDynam
 public inline val FrameType.Companion.NONE: FrameType get() = "none".asDynamic().unsafeCast<FrameType>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface ClientType {
     companion object
