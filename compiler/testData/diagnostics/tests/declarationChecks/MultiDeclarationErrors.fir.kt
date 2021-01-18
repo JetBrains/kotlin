@@ -11,7 +11,7 @@ class MyClass2 {}
 <!CONFLICTING_OVERLOADS!>fun MyClass2.component1()<!> = 1.3
 
 fun test(mc1: MyClass, mc2: MyClass2) {
-    val (<!INAPPLICABLE_CANDIDATE!>a<!>, <!UNRESOLVED_REFERENCE!>b<!>) = mc1
+    val (<!INAPPLICABLE_CANDIDATE!>a<!>, b) = <!COMPONENT_FUNCTION_MISSING!>mc1<!>
     val (c) = mc2
 
     //a,b,c are error types

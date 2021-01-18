@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.PROPERTY_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
@@ -382,6 +386,18 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Destructuring declaration
             map.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration")
+            map.put(
+                COMPONENT_FUNCTION_MISSING,
+                "Destructuring declaration initializer of type {1} must have a ''{0}()'' function",
+                TO_STRING,
+                RENDER_TYPE
+            )
+            map.put(
+                COMPONENT_FUNCTION_AMBIGUITY,
+                "Function ''{0}''() is ambiguous for this expression: {1}",
+                TO_STRING,
+                AMBIGUOUS_CALLS
+            )
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{0} must be initialized before access", PROPERTY_NAME)

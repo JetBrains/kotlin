@@ -9,7 +9,7 @@ fun <X, Y> foo(y: Y, x: (X, Y) -> Unit) {}
 
 fun bar(aInstance: A, bInstance: B) {
     foo("") {
-        (<!UNRESOLVED_REFERENCE!>a<!>, <!UNRESOLVED_REFERENCE!>b<!>): A, c ->
+        <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>(a, b): A<!>, c ->
         a <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
         b <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
         c checkType { _<String>() }

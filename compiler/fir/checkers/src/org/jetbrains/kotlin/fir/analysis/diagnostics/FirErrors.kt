@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.KotlinType
 
 object FirErrors {
     // Miscellaneous
@@ -174,6 +177,10 @@ object FirErrors {
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<FirSourceElement, KtDestructuringDeclaration>()
+    val COMPONENT_FUNCTION_MISSING by error2<FirSourceElement, PsiElement, Name, FirTypeRef>()
+    val COMPONENT_FUNCTION_AMBIGUITY by error2<FirSourceElement, PsiElement, Name, Collection<AbstractFirBasedSymbol<*>>>()
+    // TODO: val COMPONENT_FUNCTION_ON_NULLABLE by ...
+    // TODO: val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by ...
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
