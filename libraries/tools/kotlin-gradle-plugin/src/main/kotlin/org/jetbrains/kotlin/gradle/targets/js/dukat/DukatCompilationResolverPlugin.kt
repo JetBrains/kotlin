@@ -85,7 +85,7 @@ internal class DukatCompilationResolverPlugin(
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
         externalNpmDependencies: Set<NpmDependency>,
-        fileCollectionDependencies: Set<FileCollectionDependency>
+        fileCollectionDependencies: Set<KotlinCompilationNpmResolver.FileCollectionExternalGradleDependency>
     ) {
         if (nodeJs.experimental.discoverTypes) {
             // todo: discoverTypes

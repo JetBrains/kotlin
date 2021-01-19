@@ -11,8 +11,10 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -27,29 +29,32 @@ constructor(
     private val nodeJs = npmProject.nodeJs
 
     private val compilationName = compilation.name
+    private val projectPath = project.path
 
-    private val compilationResolution by lazy {
-        nodeJs.npmResolutionManager.requireInstalled(
-            services,
-            logger
-        )[project.path][compilationName]
-    }
+    private val compilationResolution
+        get() = nodeJs.npmResolutionManager.requireInstalled(
+                services,
+                logger
+            )[projectPath][compilationName]
+
 
     init {
         // TODO: temporary workaround for configuration cache enabled builds
 //        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
     }
 
-//    @get:Input
-//    val packageJsonCustomFields: Map<String, Any?>
-//        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
-//            .apply {
-//                compilation.packageJsonHandlers.forEach { it() }
-//            }.customFields
+    // TODO: is map contains only serializable values?
+    @get:Input
+    val packageJsonCustomFields: Map<String, Any?> by lazy {
+        PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+            .apply {
+                compilation.packageJsonHandlers.forEach { it() }
+            }.customFields
+    }
 
     @get:Nested
-    internal val externalDependencies: Collection<NpmDependencyDeclaration> by lazy {
-        compilationResolution.externalNpmDependencies
+    internal val externalDependencies: Collection<NpmDependencyDeclaration>
+        get() = compilationResolution.externalNpmDependencies
             .map {
                 NpmDependencyDeclaration(
                     scope = it.scope,
@@ -58,40 +63,44 @@ constructor(
                     generateExternals = it.generateExternals
                 )
             }
+
+    private val publicPackageJsonTaskName by lazy {
+        npmProject.publicPackageJsonTaskName
     }
 
-    private val publicPackageJsonTaskName = npmProject.publicPackageJsonTaskName
-
-    @get:OutputFile
-    var packageJsonFile: File by property {
+    private val defaultPackageJsonFile by lazy {
         project.buildDir
             .resolve("tmp")
             .resolve(publicPackageJsonTaskName)
             .resolve(PACKAGE_JSON)
     }
 
+    @get:OutputFile
+    var packageJsonFile: File by property { defaultPackageJsonFile }
+
+    private val isJrIrCompilation = compilation is KotlinJsIrCompilation
+    private val projectVersion = project.version.toString()
+
     @TaskAction
     fun resolve() {
-//        val compilation = npmProject.compilation
-//
-//        packageJson(npmProject, realExternalDependencies).let { packageJson ->
-//            packageJson.main = "${npmProject.name}.js"
-//
-//            if (compilation is KotlinJsIrCompilation) {
-//                packageJson.types = "${npmProject.name}.d.ts"
-//            }
-//
-//            packageJson.apply {
-//                listOf(
-//                    dependencies,
-//                    devDependencies,
-//                    peerDependencies,
-//                    optionalDependencies
-//                ).forEach { it.processDependencies() }
-//            }
-//
-//            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
-//        }
+        packageJson(npmProject.name, projectVersion, npmProject.main, externalDependencies).let { packageJson ->
+            packageJson.main = "${npmProject.name}.js"
+
+            if (isJrIrCompilation) {
+                packageJson.types = "${npmProject.name}.d.ts"
+            }
+
+            packageJson.apply {
+                listOf(
+                    dependencies,
+                    devDependencies,
+                    peerDependencies,
+                    optionalDependencies
+                ).forEach { it.processDependencies() }
+            }
+
+            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
+        }
     }
 
     private fun MutableMap<String, String>.processDependencies() {

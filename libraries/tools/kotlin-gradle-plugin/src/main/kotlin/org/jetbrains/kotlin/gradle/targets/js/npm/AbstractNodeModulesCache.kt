@@ -53,6 +53,8 @@ internal abstract class AbstractNodeModulesCache(nodeJs: NodeJsRootExtension) : 
     }
 }
 
+// Synchronized as tasks from configuration cache run in parallel and every task has it's own modules cache
+@Synchronized
 fun makeNodeModule(
     container: File,
     packageJson: PackageJson,

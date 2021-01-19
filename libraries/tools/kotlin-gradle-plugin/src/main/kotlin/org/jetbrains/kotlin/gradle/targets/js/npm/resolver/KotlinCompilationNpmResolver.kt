@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.FileCollection
 import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.Input
@@ -210,6 +211,11 @@ internal class KotlinCompilationNpmResolver(
         val artifact: ResolvedArtifact
     )
 
+    data class FileCollectionExternalGradleDependency(
+        val fileCollection: FileCollection,
+        val dependencyVersion: String?
+    )
+
     data class FileExternalGradleDependency(
         val dependencyName: String,
         val dependencyVersion: String,
@@ -226,7 +232,7 @@ internal class KotlinCompilationNpmResolver(
         private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependency>()
-        private val fileCollectionDependencies = mutableSetOf<FileCollectionDependency>()
+        private val fileCollectionDependencies = mutableSetOf<FileCollectionExternalGradleDependency>()
 
         fun visit(configuration: Configuration) {
             configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
@@ -236,7 +242,7 @@ internal class KotlinCompilationNpmResolver(
             configuration.allDependencies.forEach { dependency ->
                 when (dependency) {
                     is NpmDependency -> externalNpmDependencies.add(dependency)
-                    is FileCollectionDependency -> fileCollectionDependencies.add(dependency)
+                    is FileCollectionDependency -> fileCollectionDependencies.add(FileCollectionExternalGradleDependency(dependency.files, dependency.version))
                 }
             }
 
@@ -369,7 +375,7 @@ internal class KotlinCompilationNpmResolver(
         val externalGradleDependencies: Collection<ExternalGradleDependency>,
         @Transient
         val externalNpmDependencies: Collection<NpmDependency>,
-        val fileCollectionDependencies: Collection<FileCollectionDependency>
+        val fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>
     ) {
         val externalNpmDependencyDeclarations by lazy {
             externalNpmDependencies.map {
@@ -393,7 +399,7 @@ internal class KotlinCompilationNpmResolver(
                 internalCompositeDependencies.flatMap { it.getPackages() },
                 fileExternalGradleDependencies.map { it.file },
                 externalNpmDependencyDeclarations.map { it.uniqueRepresentation() },
-                fileCollectionDependencies.map { it.files }.flatMap { it.files }
+                fileCollectionDependencies.map{ it.fileCollection }.flatMap { it.files }
             )
 
         fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
@@ -404,13 +410,13 @@ internal class KotlinCompilationNpmResolver(
             val importedExternalGradleDependencies = fileExternalGradleDependencies.mapNotNull {
                 gradleNodeModules.get(it.dependencyName, it.dependencyVersion, it.file)
             } + fileCollectionDependencies.flatMap { dependency ->
-                dependency.files
+                dependency.fileCollection.files
                     // Gradle can hash with FileHasher only files and only existed files
                     .filter { it.isFile }
                     .map { file ->
                         gradleNodeModules.get(
                             file.name,
-                            dependency.version ?: "0.0.1",
+                            dependency.dependencyVersion ?: "0.0.1",
                             file
                         )
                     }
