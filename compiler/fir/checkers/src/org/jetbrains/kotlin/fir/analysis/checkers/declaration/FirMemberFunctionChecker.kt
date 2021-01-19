@@ -60,6 +60,11 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
                 reporter.report(FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(source, function))
             }
         }
+
+        val isExpect = function.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
+        if (isExpect) {
+            checkExpectFunction(function, reporter)
+        }
     }
 
 }

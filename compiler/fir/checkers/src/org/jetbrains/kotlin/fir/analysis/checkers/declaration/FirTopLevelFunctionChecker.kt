@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -34,6 +33,10 @@ object FirTopLevelFunctionChecker : FirFileChecker() {
         val isExpect = function.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
         if (!function.hasBody && !hasAbstractModifier && !isExternal && !isExpect) {
             reporter.report(FirErrors.NON_MEMBER_FUNCTION_NO_BODY.on(source, function))
+        }
+
+        if (isExpect) {
+            checkExpectFunction(function, reporter)
         }
     }
 }

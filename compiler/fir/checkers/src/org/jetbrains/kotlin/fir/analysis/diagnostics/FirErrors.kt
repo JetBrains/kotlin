@@ -180,6 +180,9 @@ object FirErrors {
     val PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY by error0<FirSourceElement, PsiElement>()
     val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error0<FirSourceElement, PsiElement>()
 
+    // Multi-platform projects
+    val EXPECTED_DECLARATION_WITH_BODY by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<FirSourceElement, KtDestructuringDeclaration>()
     val COMPONENT_FUNCTION_MISSING by error2<FirSourceElement, PsiElement, Name, FirTypeRef>()

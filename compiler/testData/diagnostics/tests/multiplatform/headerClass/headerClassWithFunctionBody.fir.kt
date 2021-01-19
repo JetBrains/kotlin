@@ -21,7 +21,7 @@ expect class Foo(
         get() = "no"
         set(value) {}
 
-    fun functionWithBody(x: Int): Int {
+    <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1
     }
 }
