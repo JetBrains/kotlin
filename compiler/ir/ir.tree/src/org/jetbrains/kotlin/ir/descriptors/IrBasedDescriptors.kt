@@ -358,7 +358,7 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
 
     override fun isConst(): Boolean = false
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).toIrBasedDescriptor()
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).toIrBasedDescriptor()
 
     override fun isLateInit(): Boolean = false
 
