@@ -32,7 +32,6 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
     }
 
     defaultDirectives {
-        +USE_PSI_CLASS_FILES_READING
         +RUN_DEX_CHECKER
     }
 
