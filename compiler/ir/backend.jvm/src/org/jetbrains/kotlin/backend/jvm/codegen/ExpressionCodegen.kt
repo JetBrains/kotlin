@@ -637,6 +637,8 @@ class ExpressionCodegen(
     private fun unboxResultIfNeeded(arg: IrGetValue) {
         if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
         if (irFunction !is IrSimpleFunction) return
+        // Skip Result's methods
+        if (irFunction.parentAsClass.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME) return
 
         val index = (arg.symbol as? IrValueParameterSymbol)?.owner?.index ?: return
         val genericOrAnyOverride = irFunction.overriddenSymbols.any {
