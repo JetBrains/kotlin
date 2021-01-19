@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -26,7 +25,8 @@ fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " 
 fun IrFunction.hasStableJsName(): Boolean {
     if (
         origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
-        origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+        origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+        origin == IrDeclarationOrigin.BRIDGE
     ) {
         return false
     }
