@@ -51,7 +51,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 ) : FirSymbolProvider(session) {
     private val annotationsLoader = AnnotationsLoader(session)
     private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
-    private val packagePartsCache = SymbolProviderCache<FqName, Collection<PackagePartsCacheData>>()
+    private val packagePartsCache = session.firCachesFactory.createCache(::tryComputePackagePartInfos)
 
     private val classCache =
         session.firCachesFactory.createCacheWithPostCompute<ClassId, FirRegularClassSymbol?, FirDeserializationContext?, KotlinClassFinder.Result.KotlinClass?>(
@@ -262,13 +262,15 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
-        return packagePartsCache.lookupCacheOrCalculate(packageFqName) {
-            try {
-                computePackagePartsInfos(packageFqName)
-            } catch (e: ProcessCanceledException) {
-                emptyList()
-            }
-        }!!
+        return packagePartsCache.getValue(packageFqName)
+    }
+
+    private fun tryComputePackagePartInfos(packageFqName: FqName): List<PackagePartsCacheData> {
+        return try {
+            computePackagePartsInfos(packageFqName)
+        } catch (e: ProcessCanceledException) {
+            emptyList()
+        }
     }
 
     override fun getPackage(fqName: FqName): FqName? = null
