@@ -14,8 +14,8 @@ fun case_1(vararg x: Int?) {
 fun case_2(vararg x: Int?) {
     x[0].apply {
         if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>this<!>.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>.inv()
         }
     }
 
@@ -39,8 +39,8 @@ fun <T> case_3(vararg x: T?) {
 fun <T : Number?> case_4(vararg x: T?) {
     x[0].apply {
         if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?!!")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?!!")!>this<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?")!>this<!>.toByte()
         }
     }
 

@@ -10,8 +10,8 @@
 fun Int?.case_1() {
     val x = this
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>this<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>.inv()
     }
 }
 
@@ -48,6 +48,6 @@ fun Int?.case_3() {
 fun Int?.case_4() {
     val x = this
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>this<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>this<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>.inv()
 }

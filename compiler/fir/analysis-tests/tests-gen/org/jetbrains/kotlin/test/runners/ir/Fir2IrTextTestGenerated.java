@@ -2177,6 +2177,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("SimpleTypeMarker.kt")
+        public void testSimpleTypeMarker() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");
+        }
+
+        @Test
         @TestMetadata("SyntheticSetterType.kt")
         public void testSyntheticSetterType() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SyntheticSetterType.kt");
