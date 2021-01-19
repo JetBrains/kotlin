@@ -80,7 +80,7 @@ internal class KtFirSymbolProvider(
         firSymbolBuilder.buildAnonymousFunctionSymbol(psi.getOrBuildFirOfType(resolveState))
     }
 
-    override fun getAnonymousFunctionSymbol(psi: KtLambdaExpression): KtAnonymousFunctionSymbol = withValidityAssertion {
+    override fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KtAnonymousFunctionSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirAnonymousFunction, KtAnonymousFunctionSymbol>(resolveState) {
             firSymbolBuilder.buildAnonymousFunctionSymbol(it)
         }

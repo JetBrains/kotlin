@@ -114,7 +114,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtNamedFunction.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol = symbolProvider.getAnonymousFunctionSymbol(this)
 
-    fun KtLambdaExpression.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol = symbolProvider.getAnonymousFunctionSymbol(this)
+    fun KtFunctionLiteral.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol = symbolProvider.getAnonymousFunctionSymbol(this)
 
     fun KtProperty.getVariableSymbol(): KtVariableSymbol = symbolProvider.getVariableSymbol(this)
 

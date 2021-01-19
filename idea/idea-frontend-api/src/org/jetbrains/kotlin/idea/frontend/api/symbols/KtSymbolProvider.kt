@@ -19,7 +19,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtTypeParameter -> getTypeParameterSymbol(psi)
         is KtTypeAlias -> getTypeAliasSymbol(psi)
         is KtEnumEntry -> getEnumEntrySymbol(psi)
-        is KtLambdaExpression -> getAnonymousFunctionSymbol(psi)
+        is KtFunctionLiteral -> getAnonymousFunctionSymbol(psi)
         is KtProperty -> getVariableSymbol(psi)
         is KtClassOrObject -> {
             val literalExpression = (psi as? KtObjectDeclaration)?.parent as? KtObjectLiteralExpression
@@ -37,7 +37,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     abstract fun getTypeAliasSymbol(psi: KtTypeAlias): KtTypeAliasSymbol
     abstract fun getEnumEntrySymbol(psi: KtEnumEntry): KtEnumEntrySymbol
     abstract fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KtAnonymousFunctionSymbol
-    abstract fun getAnonymousFunctionSymbol(psi: KtLambdaExpression): KtAnonymousFunctionSymbol
+    abstract fun getAnonymousFunctionSymbol(psi: KtFunctionLiteral): KtAnonymousFunctionSymbol
     abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
     abstract fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol
     abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
