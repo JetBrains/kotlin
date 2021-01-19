@@ -50,7 +50,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val kotlinScopeProvider: KotlinScopeProvider,
 ) : FirSymbolProvider(session) {
     private val annotationsLoader = AnnotationsLoader(session)
-    private val typeAliasCache = SymbolProviderCache<ClassId, FirTypeAliasSymbol>()
+    private val typeAliasCache = session.firCachesFactory.createCache(::findAndDeserializeTypeAlias)
     private val packagePartsCache = SymbolProviderCache<FqName, Collection<PackagePartsCacheData>>()
 
     private val classCache =
@@ -131,20 +131,22 @@ class KotlinDeserializedJvmSymbolsProvider(
         get() = classHeader.isPreRelease
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return getClass(classId) ?: findAndDeserializeTypeAlias(classId)
+        return getClass(classId) ?: getTypeAlias(classId)
     }
 
-    private fun findAndDeserializeTypeAlias(
+    private fun getTypeAlias(
         classId: ClassId,
     ): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
-        return typeAliasCache.lookupCacheOrCalculate(classId) {
-            getPackageParts(classId.packageFqName).firstNotNullResult { part ->
-                val ids = part.typeAliasNameIndex[classId.shortClassName]
-                if (ids == null || ids.isEmpty()) return@firstNotNullResult null
-                val aliasProto = ids.map { part.proto.getTypeAlias(it) }.single()
-                part.context.memberDeserializer.loadTypeAlias(aliasProto).symbol
-            }
+        return typeAliasCache.getValue(classId)
+    }
+
+    private fun findAndDeserializeTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
+        return getPackageParts(classId.packageFqName).firstNotNullResult { part ->
+            val ids = part.typeAliasNameIndex[classId.shortClassName]
+            if (ids == null || ids.isEmpty()) return@firstNotNullResult null
+            val aliasProto = ids.map { part.proto.getTypeAlias(it) }.single()
+            part.context.memberDeserializer.loadTypeAlias(aliasProto).symbol
         }
     }
 
