@@ -63,7 +63,8 @@ public class JavaSingleAbstractMethodUtils {
     public static SamAdapterDescriptor<JavaMethodDescriptor> createSamAdapterFunction(
             @NotNull JavaMethodDescriptor original,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         SamAdapterFunctionDescriptor result = new SamAdapterFunctionDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
@@ -83,14 +84,15 @@ public class JavaSingleAbstractMethodUtils {
                         original.getVisibility()
                 );
             }
-        }, samResolver, samConversionOracle);
+        }, samResolver, samConversionOracle, allowNonSpreadArraysForVarargAfterSam);
     }
 
     @NotNull
     public static SamAdapterDescriptor<JavaClassConstructorDescriptor> createSamAdapterConstructor(
             @NotNull JavaClassConstructorDescriptor original,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         SamAdapterClassConstructorDescriptor result = new SamAdapterClassConstructorDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
@@ -103,7 +105,7 @@ public class JavaSingleAbstractMethodUtils {
                 result.initialize(valueParameters, original.getVisibility());
                 result.setReturnType(returnType);
             }
-        }, samResolver, samConversionOracle);
+        }, samResolver, samConversionOracle, allowNonSpreadArraysForVarargAfterSam);
     }
 
     @NotNull
@@ -112,7 +114,8 @@ public class JavaSingleAbstractMethodUtils {
             @NotNull SamAdapterDescriptor<F> adapter,
             @NotNull FunctionInitializer initializer,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         SamConstructorTypeParameters typeParameters;
         if (adapter instanceof SamAdapterClassConstructorDescriptor) {
@@ -131,7 +134,7 @@ public class JavaSingleAbstractMethodUtils {
 
 
         List<ValueParameterDescriptor> valueParameters =
-                createValueParametersForSamAdapter(original, adapter, substitutor, samResolver, samConversionOracle);
+                createValueParametersForSamAdapter(original, adapter, substitutor, samResolver, samConversionOracle, allowNonSpreadArraysForVarargAfterSam);
 
         initializer.initialize(typeParameters.getDescriptors(), valueParameters, returnType);
 
@@ -143,7 +146,8 @@ public class JavaSingleAbstractMethodUtils {
             @NotNull FunctionDescriptor samAdapter,
             @NotNull TypeSubstitutor substitutor,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
         List<ValueParameterDescriptor> valueParameters = new ArrayList<>(originalValueParameters.size());
@@ -154,13 +158,22 @@ public class JavaSingleAbstractMethodUtils {
             KotlinType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + substitutor;
 
+            /*
+             * Before 1.5 we allowed passing non-spread arrays into vararg parameter, after sam conversion like:
+             *      public static String foo1(Runnable r, String... strs) { }
+             *      ...
+             *      Test.foo1({}, arrayOf())
+             * For that, we don't pass `varargElementType` from the original parameter descriptor.
+             */
+            KotlinType varargElementType = allowNonSpreadArraysForVarargAfterSam ? null : originalParam.getVarargElementType();
+
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
                     samAdapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
                     originalParam.getName(), newType,
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
-                    null, SourceElement.NO_SOURCE
+                    varargElementType, SourceElement.NO_SOURCE
             );
             valueParameters.add(newParam);
         }
