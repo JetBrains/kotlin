@@ -331,12 +331,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
         val gradleCompilations = gradleTarget.compilations ?: return null
         val compilations = gradleCompilations.mapNotNull {
-            val compilation = buildCompilation(importingContext, it, disambiguationClassifier, dependencyResolver, dependencyMapper)
-            if (compilation == null || platform != KotlinPlatform.ANDROID) {
-                compilation
-            } else {
-                compilation.addDependsOnSourceSetsToCompilation(importingContext)
-            }
+            buildCompilation(importingContext, it, platform, disambiguationClassifier, dependencyResolver, dependencyMapper)
         }
         val jar = buildTargetJar(gradleTarget, importingContext.project)
         val testRunTasks = buildTestRunTasks(importingContext.project, gradleTarget)
@@ -360,24 +355,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             it.platform = target.platform
         }
         return target
-    }
-
-    private fun KotlinCompilationImpl.addDependsOnSourceSetsToCompilation(
-        importingContext: MultiplatformModelImportingContext
-    ): KotlinCompilationImpl {
-        val dependsOnSourceSets = this.allSourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { importingContext.sourceSetByName(it) }
-
-        return KotlinCompilationImpl(
-            this.name,
-            this.allSourceSets.union(dependsOnSourceSets),
-            this.allSourceSets,
-            this.dependencies,
-            this.output,
-            this.arguments,
-            this.dependencyClasspath,
-            this.kotlinTaskProperties,
-            this.nativeExtensions
-        )
     }
 
     private fun buildNativeMainRunTasks(gradleTarget: Named): Collection<KotlinNativeMainRunTask> {
@@ -489,6 +466,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun buildCompilation(
         importingContext: MultiplatformModelImportingContext,
         gradleCompilation: Named,
+        platform: KotlinPlatform,
         classifier: String?,
         dependencyResolver: DependencyResolver,
         dependencyMapper: KotlinDependencyMapper
@@ -516,9 +494,16 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
         val nativeExtensions = konanTarget?.let(::KotlinNativeCompilationExtensionsImpl)
 
+        val allSourceSets = if (platform != KotlinPlatform.ANDROID) {
+            kotlinSourceSets
+        } else {
+            kotlinSourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { importingContext.sourceSetByName(it) }
+                .union(kotlinSourceSets)
+        }
+
         return KotlinCompilationImpl(
             gradleCompilation.name,
-            kotlinSourceSets, // In fact, it's only default source-sets. It will be corrected later, see [addDependsOnSourceSetsToCompilation]
+            allSourceSets,
             kotlinSourceSets,
             dependencies.map { dependencyMapper.getId(it) }.distinct().toTypedArray(),
             output,
