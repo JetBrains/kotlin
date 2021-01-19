@@ -17,30 +17,36 @@
 package org.jetbrains.kotlin.gradle.plugin.konan
 
 import groovy.lang.Closure
-import org.gradle.api.*
+import org.gradle.api.Action
+import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Named
+import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
-import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 /** Base class for all Kotlin/Native artifacts. */
-abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: String,
-                                                         val type: Class<T>,
-                                                         val project: ProjectInternal,
-                                                         val targets: Iterable<String>)
-    : KonanBuildingSpec, Named, DomainObjectSet<T> by WrapUtil.toDomainObjectSet(type) {
+abstract class KonanBuildingConfig<T : KonanBuildingTask>(
+    private val name_: String,
+    val type: Class<T>,
+    val project: ProjectInternal,
+    val targets: Iterable<String>
+) : KonanBuildingSpec, Named {
 
     internal val mainVariant = KonanSoftwareComponent(project)
     override fun getName() = name_
 
-    protected val targetToTask = mutableMapOf<KonanTarget, T>()
+    protected val targetToTask = mutableMapOf<KonanTarget, TaskProvider<T>>()
 
-    internal val aggregateBuildTask: Task
+    fun tasks() = targetToTask.values
+
+    private val aggregateBuildTask: TaskProvider<Task>
 
     internal var pomActions = mutableListOf<Action<MavenPom>>()
 
@@ -56,12 +62,11 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                 continue
             }
             if (!targetIsSupported(konanTarget)) {
-                project.logger.info("The target ${targetName} is not supported by the artifact $name")
+                project.logger.info("The target $targetName is not supported by the artifact $name")
                 continue
             }
             if (this[konanTarget] == null) {
                 val task = createTask(konanTarget)
-                add(task)
                 targetToTask[konanTarget] = task
                 // Allow accessing targets just by their names in Groovy DSL.
                 (this as? ExtensionAware)?.extensions?.add(konanTarget.visibleName, task)
@@ -75,13 +80,13 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     }
 
     protected open fun generateTaskName(target: KonanTarget) =
-            "compileKonan${name.capitalize()}${target.visibleName.capitalize()}"
+        "compileKonan${name.capitalize()}${target.visibleName.capitalize()}"
 
     protected open fun generateAggregateTaskName() =
-            "compileKonan${name.capitalize()}"
+        "compileKonan${name.capitalize()}"
 
     protected open fun generateTargetAliasTaskName(targetName: String) =
-            "compileKonan${name.capitalize()}${targetName.capitalize()}"
+        "compileKonan${name.capitalize()}${targetName.capitalize()}"
 
     protected abstract fun generateTaskDescription(task: T): String
     protected abstract fun generateAggregateTaskDescription(task: Task): String
@@ -109,31 +114,33 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
         }
     }
 
-    protected fun createTask(target: KonanTarget): T =
-            project.tasks.create(generateTaskName(target), type) {
-                val outputDescription = determineOutputPlacement(target)
-                it.init(this, outputDescription.destinationDir, outputDescription.artifactName, target)
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = generateTaskDescription(it)
-            } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
+    private fun createTask(target: KonanTarget): TaskProvider<T> =
+        project.tasks.register(generateTaskName(target), type) {
+            val outputDescription = determineOutputPlacement(target)
+            it.init(this, outputDescription.destinationDir, outputDescription.artifactName, target)
+            it.group = BasePlugin.BUILD_GROUP
+            it.description = generateTaskDescription(it)
+        } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
 
-    protected fun createAggregateTask(): Task =
-            project.tasks.create(generateAggregateTaskName()) { task ->
-                task.group = BasePlugin.BUILD_GROUP
-                task.description = generateAggregateTaskDescription(task)
-                this.filter {
-                    project.targetIsRequested(it.konanTarget)
-                }.forEach {
-                            task.dependsOn(it)
-                        }
-                project.compileAllTask.dependsOn(task)
+    private fun createAggregateTask(): TaskProvider<Task> =
+        project.tasks.register(generateAggregateTaskName()) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = generateAggregateTaskDescription(task)
+
+            targetToTask.filter {
+                project.targetIsRequested(it.key)
+            }.forEach {
+                task.dependsOn(it.value)
             }
+        }.also {
+            project.compileAllTask.dependsOn(it)
+        }
 
-    protected fun createTargetAliasTaskIfDeclared(targetName: String): Task? {
+    protected fun createTargetAliasTaskIfDeclared(targetName: String): TaskProvider<Task>? {
         val canonicalTarget = project.hostManager.targetByName(targetName)
 
         return this[canonicalTarget]?.let { canonicalBuild ->
-            project.tasks.create(generateTargetAliasTaskName(targetName)) {
+            project.tasks.register(generateTargetAliasTaskName(targetName)) {
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = generateTargetAliasTaskDescription(it, targetName)
                 it.dependsOn(canonicalBuild)
@@ -143,31 +150,53 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
     internal operator fun get(target: KonanTarget) = targetToTask[target]
 
-    fun getByTarget(target: String) = findByTarget(target) ?: throw NoSuchElementException("No such target for artifact $name: ${target}")
+    fun getByTarget(target: String) =
+        findByTarget(target) ?: throw NoSuchElementException("No such target for artifact $name: $target")
+
     fun findByTarget(target: String) = this[project.hostManager.targetByName(target)]
 
-    fun getArtifactByTarget(target: String) = getByTarget(target).artifact
-    fun findArtifactByTarget(target: String) = findByTarget(target)?.artifact
+    fun getArtifactByTarget(target: String) = getByTarget(target).get().artifact
+    fun findArtifactByTarget(target: String) = findByTarget(target)?.get()?.artifact
 
     // Common building DSL.
 
-    override fun artifactName(name: String)  = forEach { it.artifactName(name) }
+    override fun artifactName(name: String) = tasks().forEach { it.configure { t -> t.artifactName(name) } }
 
-    fun baseDir(dir: Any) = forEach { it.destinationDir(project.file(dir).targetSubdir(it.konanTarget)) }
+    fun baseDir(dir: Any) =
+        tasks().forEach {
+            it.configure { t ->
+                t.destinationDir(
+                    project.file(dir).targetSubdir(t.konanTarget)
+                )
+            }
+        }
 
-    override fun libraries(closure: Closure<Unit>) = forEach { it.libraries(closure) }
-    override fun libraries(action: Action<KonanLibrariesSpec>) = forEach { it.libraries(action) }
-    override fun libraries(configure: KonanLibrariesSpec.() -> Unit) = forEach { it.libraries(configure) }
+    override fun libraries(closure: Closure<Unit>) =
+        tasks().forEach { it.configure { t -> t.libraries(closure) } }
 
-    override fun noDefaultLibs(flag: Boolean) = forEach { it.noDefaultLibs(flag) }
-    override fun noEndorsedLibs(flag: Boolean) = forEach { it.noEndorsedLibs(flag) }
+    override fun libraries(action: Action<KonanLibrariesSpec>) =
+        tasks().forEach { it.configure { t -> t.libraries(action) } }
 
-    override fun dumpParameters(flag: Boolean) = forEach { it.dumpParameters(flag) }
+    override fun libraries(configure: KonanLibrariesSpec.() -> Unit) =
+        tasks().forEach { it.configure { t -> t.libraries(configure) } }
 
-    override fun extraOpts(vararg values: Any) = forEach { it.extraOpts(*values) }
-    override fun extraOpts(values: List<Any>) = forEach { it.extraOpts(values) }
+    override fun noDefaultLibs(flag: Boolean) =
+        tasks().forEach { it.configure { t -> t.noDefaultLibs(flag) } }
 
-    fun dependsOn(vararg dependencies: Any?) = forEach { it.dependsOn(*dependencies) }
+    override fun noEndorsedLibs(flag: Boolean) =
+        tasks().forEach { it.configure { t -> t.noEndorsedLibs(flag) } }
+
+    override fun dumpParameters(flag: Boolean) =
+        tasks().forEach { it.configure { t -> t.dumpParameters(flag) } }
+
+    override fun extraOpts(vararg values: Any) =
+        tasks().forEach { it.configure { t -> t.extraOpts(*values) } }
+
+    override fun extraOpts(values: List<Any>) =
+        tasks().forEach { it.configure { t -> t.extraOpts(values) } }
+
+    fun dependsOn(vararg dependencies: Any?) =
+        tasks().forEach { it.configure { t -> t.dependsOn(*dependencies) } }
 
     fun target(targetString: String, configureAction: T.() -> Unit) {
         val target = project.hostManager.targetByName(targetString)
@@ -177,14 +206,16 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
             return
         }
 
-        val task = this[target] ?:
-                throw InvalidUserDataException("Target '$targetString' is not declared. Please add it into project.konanTasks list")
-        task.configureAction()
+        val task = this[target]
+            ?: throw InvalidUserDataException("Target '$targetString' is not declared. Please add it into project.konanTasks list")
+        task.configure(configureAction)
     }
+
     fun target(targetString: String, configureAction: Action<T>) =
-            target(targetString) { configureAction.execute(this) }
+        target(targetString) { configureAction.execute(this) }
+
     fun target(targetString: String, configureAction: Closure<Unit>) =
-            target(targetString, ConfigureUtil.configureUsing(configureAction))
+        target(targetString, ConfigureUtil.configureUsing(configureAction))
 
     fun pom(action: Action<MavenPom>) = pomActions + action
 }

@@ -192,9 +192,9 @@ konanArtifacts {
     }
 }
 
-task installTestLibrary(type: KlibInstall) {
-    dependsOn compileKonanTestLibraryHost
-    klib = konanArtifacts.testLibrary.getArtifactByTarget('host')
+def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
+    dependsOn "compileKonanTestLibraryHost"
+    klib = project.provider { konanArtifacts.testLibrary.getArtifactByTarget('host') }
     repo = rootProject.file(testLibraryDir)
 
     doLast {
@@ -2165,7 +2165,7 @@ standaloneTest("link_testLib_explicitly") {
     // there are no testLibrary for cross targets yet.
     enabled = project.target.name == project.hostName
 
-    dependsOn 'installTestLibrary'
+    dependsOn installTestLib
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
@@ -3535,12 +3535,12 @@ standaloneTest("testing_stacktrace") {
 }
 
 // Just check that the driver is able to produce runnable binaries.
-task driver0(type: KonanDriverTest) {
+tasks.register("driver0", KonanDriverTest) {
     goldValue = "Hello, world!\n"
     source = "runtime/basic/driver0.kt"
 }
 
-task driver_opt(type: KonanDriverTest) {
+tasks.register("driver_opt", KonanDriverTest) {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "Hello, world!\n"
     source = "runtime/basic/driver0.kt"
@@ -3728,14 +3728,16 @@ createInterop("embedStaticLibraries") {
     // Note: also hardcoded in def file.
     final String libDir = "$buildDir/embedStaticLibraries/"
 
-    it.getByTarget(target.name).doFirst {
-        1.upto(4) {
-            UtilsKt.buildStaticLibrary(
-                    project,
-                    [file("$projectDir/interop/embedStaticLibraries/${it}.c")],
-                    file("$libDir/${it}.a"),
-                    file("$libDir/${it}.objs"),
-            )
+    it.getByTarget(target.name).configure {
+        doFirst {
+            1.upto(4) {
+                UtilsKt.buildStaticLibrary(
+                        project,
+                        [file("$projectDir/interop/embedStaticLibraries/${it}.c")],
+                        file("$libDir/${it}.a"),
+                        file("$libDir/${it}.objs"),
+                )
+            }
         }
     }
 
@@ -4437,7 +4439,7 @@ dynamicTest("interop_memory_leaks") {
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }
 
-task library_mismatch(type: KonanDriverTest) {
+tasks.register("library_mismatch", KonanDriverTest) {
     // Does not work for cross targets yet.
     enabled = !(project.testTarget != null && project.target.name != project.hostName)
 
@@ -4475,7 +4477,7 @@ task library_mismatch(type: KonanDriverTest) {
     }
 }
 
-task library_ir_provider_mismatch(type: KonanDriverTest) {
+tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/ir_providers/library/empty.kt"
     def invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
@@ -4861,12 +4863,14 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
     }
 }
 
-task metadata_compare_typedefs(type: MetadataComparisonTest) {
+tasks.register("metadata_compare_typedefs", MetadataComparisonTest) {
+    UtilsKt.dependsOnDist(it)
     enabled = (project.testTarget != 'wasm32')
     defFile = "interop/basics/typedefs.def"
 }
 
-task metadata_compare_unable_to_import(type: MetadataComparisonTest) {
+tasks.register("metadata_compare_unable_to_import", MetadataComparisonTest) {
+    UtilsKt.dependsOnDist(it)
     enabled = (project.testTarget != 'wasm32')
     defFile = "interop/basics/unable_to_import.def"
 }
@@ -4883,8 +4887,7 @@ standaloneTest("local_ea_arraysfieldwrite") {
     source = "codegen/localEscapeAnalysis/arraysFieldWrite.kt"
 }
 
-task override_konan_properties0(type: KonanDriverTest) {
-
+tasks.register("override_konan_properties0", KonanDriverTest) {
     def overrides = PlatformInfo.isWindows()
             ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
             : '-Xoverride-konan-properties=llvmInlineThreshold=76'
@@ -4989,7 +4992,7 @@ task buildKonanTests { t ->
     project.tasks
             .withType(KonanLocalTest.class)
             .matching { !(it instanceof KonanStandaloneTest) }
-            .forEach { it.dependsOn(t) }
+            .configureEach { it.dependsOn(t) }
 }
 
 
@@ -5007,7 +5010,7 @@ sourceSets {
 }
 
 Task pluginTest(String name, String pluginName, Closure configureClosure) {
-    def jarTask = project.tasks.create("jar-$pluginName", Jar).configure {
+    def jarTask = project.tasks.register("jar-$pluginName", Jar) {
         it.dependsOn("compile${pluginName.capitalize()}Kotlin")
         from {
             sourceSets[pluginName].output
@@ -5062,7 +5065,7 @@ project.tasks.register("debugger_test", Test.class) {
 if (target.family == Family.IOS && (target.architecture == ARM32 || target.architecture == ARM64)) {
     project.tasks
             .withType(KonanTestExecutable.class)
-            .forEach {
+            .configureEach {
                 ExecutorServiceKt.configureXcodeBuild((KonanTestExecutable) it)
             }
     // Exclude tasks that cannot be run on device
@@ -5074,5 +5077,5 @@ if (target.family == Family.IOS && (target.architecture == ARM32 || target.archi
                     it instanceof KonanDynamicTest ||
                     it instanceof KonanLinkTest
             }
-            .forEach { it.enabled = false }
+            .configureEach { it.enabled = false }
 }

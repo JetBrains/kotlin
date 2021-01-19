@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.konan
 
+import groovy.lang.Closure
+import org.codehaus.groovy.runtime.GStringImpl
 import org.gradle.api.*
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
@@ -28,11 +30,11 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.api.tasks.Exec
 import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -330,11 +332,9 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             return
         }
         checkGradleVersion()
-        registry.register(KonanToolingModelBuilder)
         project.plugins.apply("base")
         // Create necessary tasks and extensions.
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
-        project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
         val container = project.extensions.create(
                 KonanArtifactContainer::class.java,
@@ -363,15 +363,36 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             doLast { project.cleanKonan() }
         }
 
+        project.afterEvaluate {
+            project.tasks
+                .withType(KonanCompileProgramTask::class.java)
+                .forEach { task ->
+                    val isCrossCompile = (task.target != HostManager.host.visibleName)
+                    if (!isCrossCompile && !project.hasProperty("konanNoRun"))
+                    task.runTask = project.tasks.register("run${task.artifactName.capitalize()}", Exec::class.java) {
+                        it.group= "run"
+                        it.dependsOn(task)
+                        val artifactPathClosure = object : Closure<String>(this) {
+                            override fun call() = task.artifactPath
+                        }
+                        // Use GString to evaluate a path to the artifact lazily thus allow changing it at configuration phase.
+                        val lazyArtifactPath = GStringImpl(arrayOf(artifactPathClosure), arrayOf(""))
+                        it.executable(lazyArtifactPath)
+                        // Add values passed in the runArgs project property as arguments.
+                        it.argumentProviders.add(task.RunArgumentProvider())
+                    }
+                }
+        }
+
         val runTask = project.getOrCreateTask("run")
         project.afterEvaluate {
             project.konanArtifactsContainer
-                    .filterIsInstance(KonanProgram::class.java)
-                    .forEach { program ->
-                        program.forEach { compile ->
-                            compile.runTask?.let { runTask.dependsOn(it) }
-                        }
+                .filterIsInstance(KonanProgram::class.java)
+                .forEach { program ->
+                    program.tasks().forEach { compile ->
+                        compile.configure { it.runTask?.let { runTask.dependsOn(it) } }
                     }
+                }
         }
 
         // Enable multiplatform support
