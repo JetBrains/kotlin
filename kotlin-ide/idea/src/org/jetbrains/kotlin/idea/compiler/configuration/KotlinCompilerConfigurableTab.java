@@ -107,7 +107,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
     private JTextField sourceMapPrefix;
     private JLabel labelForSourceMapPrefix;
     private JComboBox sourceMapEmbedSources;
-    private JPanel coroutinesPanel;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -330,7 +329,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
     public void onLanguageLevelChanged(@Nullable VersionView languageLevel) {
         if (languageLevel == null) return;
         restrictAPIVersions(languageLevel);
-        coroutinesPanel.setVisible(languageLevel.getVersion().compareTo(LanguageVersion.KOTLIN_1_3) < 0);
     }
 
     @SuppressWarnings("unchecked")
