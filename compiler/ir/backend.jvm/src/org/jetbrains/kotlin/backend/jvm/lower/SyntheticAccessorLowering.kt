@@ -531,9 +531,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             // Accessor for _s_uper-qualified call
             superQualifier != null -> "\$s" + superQualifier.owner.syntheticAccessorToSuperSuffix()
 
-            // Access to static members that need an accessor must be because they are inherited,
-            // hence accessed on a _s_upertype.
-            isStatic -> "\$s" + parentAsClass.syntheticAccessorToSuperSuffix()
+            // Access to protected members that need an accessor must be because they are inherited,
+            // hence accessed on a _s_upertype. If what is accessed is static, we can point to different
+            // parts of the inheritance hierarchy and need to distinguish with a suffix.
+            isStatic && visibility.isProtected -> "\$s" + parentAsClass.syntheticAccessorToSuperSuffix()
 
             else -> ""
         }
@@ -556,9 +557,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             return "cp"
         }
 
-        // Static accesses that need an accessor must be due to being inherited, hence accessed on a
-        // _s_upertype
-        return "p" + if (isStatic) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
+        // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
+        // _s_upertype. If the field is static, the super class the access is on can be different and therefore
+        // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
+        return "p" + if (isStatic && visibility.isProtected) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
     }
 
     private val DescriptorVisibility.isPrivate
