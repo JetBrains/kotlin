@@ -111,7 +111,8 @@ FILE: conflictingOverloads.kt
         }
 
     }
-    public final fun mest(): R|kotlin/Unit|
+    public final fun mest(): R|kotlin/Unit| {
+    }
     public final class mest : R|kotlin/Any| {
         public constructor(): R|mest| {
             super<R|kotlin/Any|>()
