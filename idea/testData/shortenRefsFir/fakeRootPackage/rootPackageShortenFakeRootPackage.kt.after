@@ -1,10 +1,18 @@
 // FIR_COMPARISON
 package test
 
+class Test
+
 fun test() {}
 
 fun usage() {
+    class Test
+
     fun test() {}
 
+
     test.test()
+    test.Test
+    val t: test.Test
+
 }
