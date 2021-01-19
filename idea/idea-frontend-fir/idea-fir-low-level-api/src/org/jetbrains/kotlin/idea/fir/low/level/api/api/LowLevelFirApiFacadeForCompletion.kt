@@ -95,7 +95,7 @@ object LowLevelFirApiFacadeForCompletion {
         originalFunction: FirSimpleFunction,
         state: FirModuleResolveState
     ): FirSimpleFunction {
-        val builtFunction = firIdeProvider.buildFunctionWithBody(element)
+        val builtFunction = firIdeProvider.buildFunctionWithBody(element, originalFunction)
 
         // right now we can't resolve builtFunction header properly, as it built right in air,
         // without file, which is now required for running stages other then body resolve, so we
@@ -115,7 +115,7 @@ object LowLevelFirApiFacadeForCompletion {
         originalProperty: FirProperty,
         state: FirModuleResolveState
     ): FirProperty {
-        val builtProperty = firIdeProvider.buildPropertyWithBody(element)
+        val builtProperty = firIdeProvider.buildPropertyWithBody(element, originalProperty)
 
         val originalSetter = originalProperty.setter
         val builtSetter = builtProperty.setter

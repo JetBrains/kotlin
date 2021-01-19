@@ -258,45 +258,6 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         checkHighlightingInProject()
     }
 
-    fun testCoroutineMixedReleaseStatus() {
-        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { skipMetadataVersionCheck = true }
-        KotlinCompilerSettings.getInstance(project).update { additionalArguments = "-Xskip-metadata-version-check" }
-
-        val libOld = MockLibraryUtilExt.compileJvmLibraryToJar(
-            testDataPath + "${getTestName(true)}/libOld", "libOld",
-            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2")
-        )
-
-        val libNew = MockLibraryUtilExt.compileJvmLibraryToJar(
-            testDataPath + "${getTestName(true)}/libNew", "libNew",
-            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
-        )
-
-        val moduleNew = module("moduleNew").setupKotlinFacet {
-            settings.coroutineSupport = LanguageFeature.State.ENABLED
-            settings.languageLevel = LanguageVersion.KOTLIN_1_3
-            settings.apiLevel = LanguageVersion.KOTLIN_1_3
-        }
-
-        val moduleOld = module("moduleOld").setupKotlinFacet {
-            settings.coroutineSupport = LanguageFeature.State.ENABLED
-            settings.languageLevel = LanguageVersion.KOTLIN_1_2
-            settings.apiLevel = LanguageVersion.KOTLIN_1_2
-        }
-
-        moduleNew.addLibrary(libOld)
-        moduleNew.addLibrary(libNew)
-        moduleNew.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-
-        moduleOld.addLibrary(libNew)
-        moduleOld.addLibrary(libOld)
-        moduleOld.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-
-        moduleNew.addDependency(moduleOld)
-
-        checkHighlightingInProject()
-    }
-
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {
         runWriteAction {
             val facet = FacetManager.getInstance(this).addFacet(KotlinFacetType.INSTANCE, KotlinFacetType.NAME, null)

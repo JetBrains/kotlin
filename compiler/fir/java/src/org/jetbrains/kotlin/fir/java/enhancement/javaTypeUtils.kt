@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.RawType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.extractRadix
@@ -303,15 +304,15 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 
     val (number, radix) = extractRadix(value)
     return when (classId.relativeClassName.asString()) {
-        "Boolean" -> buildConstExpression(null, FirConstKind.Boolean, value.toBoolean())
-        "Char" -> buildConstExpression(null, FirConstKind.Char, value.singleOrNull() ?: return null)
-        "Byte" -> buildConstExpression(null, FirConstKind.Byte, number.toByteOrNull(radix) ?: return null)
-        "Short" -> buildConstExpression(null, FirConstKind.Short, number.toShortOrNull(radix) ?: return null)
-        "Int" -> buildConstExpression(null, FirConstKind.Int, number.toIntOrNull(radix) ?: return null)
-        "Long" -> buildConstExpression(null, FirConstKind.Long, number.toLongOrNull(radix) ?: return null)
-        "Float" -> buildConstExpression(null, FirConstKind.Float, value.toFloatOrNull() ?: return null)
-        "Double" -> buildConstExpression(null, FirConstKind.Double, value.toDoubleOrNull() ?: return null)
-        "String" -> buildConstExpression(null, FirConstKind.String, value)
+        "Boolean" -> buildConstExpression(null, ConstantValueKind.Boolean, value.toBoolean())
+        "Char" -> buildConstExpression(null, ConstantValueKind.Char, value.singleOrNull() ?: return null)
+        "Byte" -> buildConstExpression(null, ConstantValueKind.Byte, number.toByteOrNull(radix) ?: return null)
+        "Short" -> buildConstExpression(null, ConstantValueKind.Short, number.toShortOrNull(radix) ?: return null)
+        "Int" -> buildConstExpression(null, ConstantValueKind.Int, number.toIntOrNull(radix) ?: return null)
+        "Long" -> buildConstExpression(null, ConstantValueKind.Long, number.toLongOrNull(radix) ?: return null)
+        "Float" -> buildConstExpression(null, ConstantValueKind.Float, value.toFloatOrNull() ?: return null)
+        "Double" -> buildConstExpression(null, ConstantValueKind.Double, value.toDoubleOrNull() ?: return null)
+        "String" -> buildConstExpression(null, ConstantValueKind.String, value)
         else -> null
     }
 }

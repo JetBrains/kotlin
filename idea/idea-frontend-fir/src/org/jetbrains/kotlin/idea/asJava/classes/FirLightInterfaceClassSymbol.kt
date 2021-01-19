@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.asJava.FirLightClassForClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isPrivateOrPrivateToThis
 
 internal class FirLightInterfaceClassSymbol(
     private val classOrObjectSymbol: KtClassOrObjectSymbol,
@@ -41,7 +42,7 @@ internal class FirLightInterfaceClassSymbol(
 
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
             val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility == KtSymbolVisibility.PRIVATE }
+                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
 
             createMethods(visibleDeclarations, result)
         }
@@ -66,4 +67,6 @@ internal class FirLightInterfaceClassSymbol(
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
+
+    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 }

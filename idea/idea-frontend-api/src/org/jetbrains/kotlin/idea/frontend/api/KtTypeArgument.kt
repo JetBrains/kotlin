@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api
 
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.types.Variance
 
 sealed class KtTypeArgument
 
@@ -13,10 +14,5 @@ object KtStarProjectionTypeArgument : KtTypeArgument()
 
 abstract class KtTypeArgumentWithVariance : KtTypeArgument() {
     abstract val type: KtType
-    abstract val variance: KtTypeArgumentVariance
+    abstract val variance: Variance
 }
-
-enum class KtTypeArgumentVariance {
-    COVARIANT, CONTRAVARIANT, INVARIANT
-}
-

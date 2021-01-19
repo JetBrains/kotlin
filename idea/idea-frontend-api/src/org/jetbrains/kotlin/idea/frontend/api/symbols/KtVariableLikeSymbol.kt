@@ -42,6 +42,7 @@ abstract class KtJavaFieldSymbol :
 
 sealed class KtPropertySymbol : KtVariableSymbol(),
     KtPossibleExtensionSymbol,
+    KtPossibleMemberSymbol,
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithVisibility,
     KtAnnotatedSymbol,

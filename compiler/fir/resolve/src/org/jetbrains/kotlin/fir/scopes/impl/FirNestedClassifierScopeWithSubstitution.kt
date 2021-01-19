@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.Name
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 private class FirNestedClassifierScopeWithSubstitution(
     private val scope: FirScope,
     private val substitutor: ConeSubstitutor
-) : FirScope() {
+) : FirScope(), FirContainingNamesAwareScope {
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         scope.processFunctionsByName(name, processor)
@@ -41,6 +40,9 @@ private class FirNestedClassifierScopeWithSubstitution(
         val substitutor = substitutor.takeIf { matchedClass.fir.isInner } ?: ConeSubstitutor.Empty
         processor(matchedClass, substitutor)
     }
+
+    override fun getCallableNames(): Set<Name> = scope.getContainingCallableNamesIfPresent()
+    override fun getClassifierNames(): Set<Name> = scope.getContainingClassifierNamesIfPresent()
 }
 
 fun FirScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(

@@ -32370,18 +32370,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("coroutinesDisabled.kt")
-            public void testCoroutinesDisabled() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutinesDisabled.kt");
-            }
-
-            @Test
-            @TestMetadata("coroutinesEnabledWithWarning.kt")
-            public void testCoroutinesEnabledWithWarning() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutinesEnabledWithWarning.kt");
-            }
-
-            @Test
             @TestMetadata("illegalSuspendCalls.kt")
             public void testIllegalSuspendCalls() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/illegalSuspendCalls.kt");
@@ -32520,12 +32508,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("suspendCoroutineOrReturn_1_2.kt")
-            public void testSuspendCoroutineOrReturn_1_2() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineOrReturn_1_2.kt");
-            }
-
-            @Test
             @TestMetadata("suspendCovarianJavaOverride.kt")
             public void testSuspendCovarianJavaOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCovarianJavaOverride.kt");
@@ -32607,12 +32589,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("tryCatchLambda.kt")
             public void testTryCatchLambda() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/tryCatchLambda.kt");
-            }
-
-            @Test
-            @TestMetadata("unsupported.kt")
-            public void testUnsupported() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/unsupported.kt");
             }
 
             @Test

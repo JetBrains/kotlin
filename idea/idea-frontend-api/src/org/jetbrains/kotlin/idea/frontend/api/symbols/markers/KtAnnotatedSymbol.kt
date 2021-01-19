@@ -22,4 +22,7 @@ data class KtNamedConstantValue(val name: String, val expression: KtConstantValu
 
 interface KtAnnotatedSymbol : KtSymbol {
     val annotations: List<KtAnnotationCall>
+
+    fun containsAnnotation(classId: ClassId): Boolean
+    val annotationClassIds: Collection<ClassId>
 }

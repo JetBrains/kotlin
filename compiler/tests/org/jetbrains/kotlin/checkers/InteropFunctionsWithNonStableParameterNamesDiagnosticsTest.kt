@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.test.KlibTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagnosticsTest() {
     private lateinit var klibFile: File
 

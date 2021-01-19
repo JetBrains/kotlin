@@ -13,6 +13,7 @@ class X {
 /*
 KtFirFunctionValueParameterSymbol:
   annotatedType: [] kotlin/String
+  annotationClassIds: []
   annotations: []
   hasDefaultValue: false
   isVararg: false
@@ -22,6 +23,7 @@ KtFirFunctionValueParameterSymbol:
 
 KtFirFunctionValueParameterSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   hasDefaultValue: false
   isVararg: false
@@ -31,24 +33,31 @@ KtFirFunctionValueParameterSymbol:
 
 KtFirConstructorSymbol:
   annotatedType: [] Anno
+  annotationClassIds: []
   annotations: []
   containingClassIdIfNonLocal: Anno
+  dispatchType: null
   isPrimary: true
   origin: SOURCE
   symbolKind: MEMBER
+  typeParameters: []
   valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: Anno
   classKind: ANNOTATION_CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: Anno
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Annotation]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -56,8 +65,10 @@ KtFirClassOrObjectSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Unit
+  annotationClassIds: [Anno]
   annotations: [Anno(param1 = funparam, param2 = 3)]
   callableIdIfNonLocal: X.x
+  dispatchType: X
   isExtension: false
   isExternal: false
   isInline: false
@@ -74,15 +85,19 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: [Anno]
   annotations: [Anno(param1 = param, param2 = 2)]
   classIdIfNonLocal: X
   classKind: CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: X
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []

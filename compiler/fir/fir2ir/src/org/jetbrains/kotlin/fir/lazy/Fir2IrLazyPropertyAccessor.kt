@@ -68,7 +68,7 @@ class Fir2IrLazyPropertyAccessor(
             declarationStorage.enterScope(this)
             listOf(
                 declarationStorage.createDefaultSetterParameter(
-                    startOffset, endOffset, origin,
+                    startOffset, endOffset,
                     (firAccessor?.valueParameters?.firstOrNull()?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
                         typeConverter, conversionTypeContext
                     ),

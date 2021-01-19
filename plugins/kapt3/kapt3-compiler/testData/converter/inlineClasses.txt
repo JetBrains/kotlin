@@ -14,11 +14,6 @@ public final class Cl {
         return false;
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getA() {
-        return null;
-    }
-
     @java.lang.Override()
     public int hashCode() {
         return 0;
@@ -26,6 +21,11 @@ public final class Cl {
 
     @java.lang.Override()
     public java.lang.String toString() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
         return null;
     }
 }

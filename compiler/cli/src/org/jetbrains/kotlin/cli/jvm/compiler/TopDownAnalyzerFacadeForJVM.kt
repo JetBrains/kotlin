@@ -91,11 +91,13 @@ object TopDownAnalyzerFacadeForJVM {
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory = ::FileBasedDeclarationProviderFactory,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
         klibList: List<KotlinLibrary> = emptyList(),
-        explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList()
+        explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
+        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList()
     ): AnalysisResult {
         val container = createContainer(
             project, files, trace, configuration, packagePartProvider, declarationProviderFactory, CompilerEnvironment,
-            sourceModuleSearchScope, klibList, explicitModuleDependencyList = explicitModuleDependencyList
+            sourceModuleSearchScope, klibList, explicitModuleDependencyList = explicitModuleDependencyList,
+            explicitModuleFriendsList = explicitModuleFriendsList
         )
 
         val module = container.get<ModuleDescriptor>()
@@ -140,7 +142,8 @@ object TopDownAnalyzerFacadeForJVM {
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
         klibList: List<KotlinLibrary> = emptyList(),
         implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
-        explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList()
+        explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
+        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList()
     ): ComponentProvider {
         val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
         val languageVersionSettings = configuration.languageVersionSettings
@@ -263,9 +266,15 @@ object TopDownAnalyzerFacadeForJVM {
             @Suppress("UNCHECKED_CAST")
             addAll(explicitModuleDependencyList)
         }
+        val friends = buildSet {
+            if (dependencyModule != null) {
+                add(dependencyModule)
+            }
+            addAll(explicitModuleFriendsList)
+        }
         module.setDependencies(
             dependencies,
-            if (dependencyModule != null) setOf(dependencyModule) else emptySet()
+            friends
         )
         module.initialize(
             CompositePackageFragmentProvider(

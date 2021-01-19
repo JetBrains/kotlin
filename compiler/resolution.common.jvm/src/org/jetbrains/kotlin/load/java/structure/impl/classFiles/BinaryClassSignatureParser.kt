@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.kotlin.utils.compact
+import org.jetbrains.kotlin.utils.createStringInterner
 import org.jetbrains.org.objectweb.asm.Type
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -36,8 +36,7 @@ import java.text.StringCharacterIterator
  * So please, do not convert it to object
  */
 class BinaryClassSignatureParser {
-
-    private val canonicalNameInterner = StringInterner()
+    private val canonicalNameInterner = createStringInterner()
 
     fun parseTypeParametersDeclaration(signature: CharacterIterator, context: ClassifierResolutionContext): List<JavaTypeParameter> {
         if (signature.current() != '<') {

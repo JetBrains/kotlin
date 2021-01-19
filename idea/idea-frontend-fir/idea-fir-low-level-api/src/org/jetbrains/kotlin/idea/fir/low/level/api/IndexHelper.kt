@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper.Companion.asStrin
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -65,6 +66,11 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
 
     fun getTopLevelFunctionsInPackage(packageFqName: FqName): Collection<KtFunction> =
         KotlinTopLevelFunctionByPackageIndex.getInstance().get(packageFqName.asStringForIndexes(), project, scope)
+
+    fun getClassNamesInPackage(packageFqName: FqName): Set<Name> =
+        KotlinTopLevelClassByPackageIndex.getInstance()
+            .get(packageFqName.asStringForIndexes(), project, scope)
+            .mapNotNullTo(hashSetOf()) { it.nameAsName }
 
 
     companion object {

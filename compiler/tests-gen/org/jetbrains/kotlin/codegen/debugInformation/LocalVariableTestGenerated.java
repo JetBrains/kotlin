@@ -57,6 +57,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     }
 
     @Test
+    @TestMetadata("emptyFun.kt")
+    public void testEmptyFun() throws Exception {
+        runTest("compiler/testData/debug/localVariables/emptyFun.kt");
+    }
+
+    @Test
     @TestMetadata("inlineProperty.kt")
     public void testInlineProperty() throws Exception {
         runTest("compiler/testData/debug/localVariables/inlineProperty.kt");
@@ -72,6 +78,12 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/localFun.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunUnused.kt")
+    public void testLocalFunUnused() throws Exception {
+        runTest("compiler/testData/debug/localVariables/localFunUnused.kt");
     }
 
     @Test

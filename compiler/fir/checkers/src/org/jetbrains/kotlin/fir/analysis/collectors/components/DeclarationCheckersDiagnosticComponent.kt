@@ -22,7 +22,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
-        checkers.memberDeclarationCheckers.check(property, data, reporter)
+        (checkers.memberDeclarationCheckers + checkers.propertyCheckers).check(property, data, reporter)
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {

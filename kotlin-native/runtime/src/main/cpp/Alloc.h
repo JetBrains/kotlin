@@ -119,4 +119,42 @@ bool operator!=(
     return !(x == y);
 }
 
+template <class T>
+class KonanDeleter {
+public:
+    void operator()(T* instance) noexcept { konanDestructInstance(instance); }
+};
+
+// Force a class to be heap-allocated using `konanAllocMemory`. Does not prevent stack allocation, or
+// allocation as part of another object.
+// Usage:
+// class A : public KonanAllocatorAware {
+//     ...
+// };
+class KonanAllocatorAware {
+public:
+    static void* operator new(size_t count) noexcept { return konanAllocMemory(count); }
+    static void* operator new[](size_t count) noexcept { return konanAllocMemory(count); }
+
+    static void* operator new(size_t count, void* ptr) noexcept { return ptr; }
+    static void* operator new[](size_t count, void* ptr) noexcept { return ptr; }
+
+    static void operator delete(void* ptr) noexcept { konanFreeMemory(ptr); }
+    static void operator delete[](void* ptr) noexcept { konanFreeMemory(ptr); }
+
+protected:
+    // Hide constructors, assignments and destructor to discourage operating on instance of `KonanAllocatorAware`
+    KonanAllocatorAware() = default;
+
+    KonanAllocatorAware(const KonanAllocatorAware&) = default;
+    KonanAllocatorAware(KonanAllocatorAware&&) = default;
+
+    KonanAllocatorAware& operator=(const KonanAllocatorAware&) = default;
+    KonanAllocatorAware& operator=(KonanAllocatorAware&&) = default;
+
+    // Not virtual by design. Since this class hides this destructor, no one can destroy an
+    // instance of `KonanAllocatorAware` directly, so this destructor is never called in a virtual manner.
+    ~KonanAllocatorAware() = default;
+};
+
 #endif // RUNTIME_ALLOC_H

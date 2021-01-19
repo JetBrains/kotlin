@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -24,17 +25,20 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
@@ -138,6 +142,7 @@ internal object FirReferenceResolveHelper {
         analysisSession: KtFirAnalysisSession
     ): Collection<KtSymbol> {
         val expression = ref.expression
+        if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
         val fir = expression.getOrBuildFir(analysisSession.firResolveState)
         val session = analysisSession.firResolveState.rootModuleSession
@@ -154,10 +159,45 @@ internal object FirReferenceResolveHelper {
             }
             is FirReturnExpression -> getSymbolsByReturnExpression(expression, fir, symbolBuilder)
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
+            is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
+            is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
+
+    private fun KtSimpleNameExpression.isSyntheticOperatorReference() = when (this) {
+        is KtOperationReferenceExpression -> operationSignTokenType in syntheticTokenTypes
+        else -> false
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun getSymbolsByVariableAssignment(
+        fir: FirVariableAssignment,
+        session: FirSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> = fir.calleeReference.toTargetSymbol(session, symbolBuilder)
+
+    private fun getSymbolsByNameArgumentExpression(
+        expression: KtSimpleNameExpression,
+        analysisSession: KtFirAnalysisSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> {
+        val ktValueArgumentName = expression.parent as? KtValueArgumentName ?: return emptyList()
+        val ktValueArgument = ktValueArgumentName.parent as? KtValueArgument ?: return emptyList()
+        val ktValueArgumentList = ktValueArgument.parent as? KtValueArgumentList ?: return emptyList()
+        val ktCallExpression = ktValueArgumentList.parent as? KtCallExpression ?: return emptyList()
+
+        val firCall = ktCallExpression.getOrBuildFirSafe<FirFunctionCall>(analysisSession.firResolveState) ?: return emptyList()
+        val parameter = firCall.findCorrespondingParameter(ktValueArgument) ?: return emptyList()
+        return listOfNotNull(parameter.buildSymbol(symbolBuilder))
+    }
+
+    private fun FirFunctionCall.findCorrespondingParameter(ktValueArgument: KtValueArgument): FirValueParameter? =
+        argumentMapping?.entries?.firstNotNullResult { (firArgument, firParameter) ->
+            if (firArgument.psi == ktValueArgument) firParameter
+            else null
+        }
 
     private fun handleUnknownFirElement(
         expression: KtSimpleNameExpression,
@@ -377,4 +417,6 @@ internal object FirReferenceResolveHelper {
     private tailrec fun KtTypeElement.unwrapNullable(): KtTypeElement? {
         return if (this is KtNullableType) innerType?.unwrapNullable() else this
     }
+
+    private val syntheticTokenTypes = TokenSet.create(KtTokens.ELVIS, KtTokens.EXCLEXCL)
 }

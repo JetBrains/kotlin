@@ -6,10 +6,10 @@ import java.lang.System;
 public final class A$B {
     public test.A$B.C c;
     public test.A$B.D$E de;
-    public test.A$B.D$$E dee;
-    public test.A$B.D$$$E deee;
     public test.J$B.C jc;
     public test.J$B.D$E jde;
+    public test.A$B.D$$E dee;
+    public test.A$B.D$$$E deee;
     public test.J$B.D$$E jdee;
     public test.J$B.D$$$E jdeee;
 
@@ -92,15 +92,15 @@ public final class Experiment {
     @test.Experiment.Type()
     public static final class Group {
 
-        public Group(@org.jetbrains.annotations.NotNull()
-        java.lang.String s) {
-            super();
-        }
-
         @org.jetbrains.annotations.NotNull()
         public final test.Experiment.Group copy(@org.jetbrains.annotations.NotNull()
         java.lang.String s) {
             return null;
+        }
+
+        public Group(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            super();
         }
     }
 }
@@ -259,6 +259,11 @@ public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IF
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final test.Foo.Bar.Zoo getZoo() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.Thread.State a() {
         return null;
     }
@@ -266,10 +271,5 @@ public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IF
     public final void b(@org.jetbrains.annotations.NotNull()
     test.JavaClass.Foo foo, @org.jetbrains.annotations.NotNull()
     test.JavaClass.Foo.Bar bar) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final test.Foo.Bar.Zoo getZoo() {
-        return null;
     }
 }

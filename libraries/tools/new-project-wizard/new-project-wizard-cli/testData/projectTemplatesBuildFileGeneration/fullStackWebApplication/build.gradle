@@ -13,7 +13,6 @@ repositories {
     mavenCentral()
     maven { url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers' }
     maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
-    maven { url 'https://dl.bintray.com/kotlin/ktor' }
 }
 
 kotlin {

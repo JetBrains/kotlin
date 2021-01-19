@@ -33,14 +33,14 @@ public final class KBox implements androidx.annotation.Box {
         super();
     }
 
-    @androidx.annotation.RecentlyNullable()
-    @java.lang.Override()
-    public java.lang.String foo() {
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.annotation.Box getDelegate() {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final androidx.annotation.Box getDelegate() {
+    @androidx.annotation.RecentlyNullable()
+    @java.lang.Override()
+    public java.lang.String foo() {
         return null;
     }
 }

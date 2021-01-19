@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.asJava.classes
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.asJava.*
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
@@ -49,4 +50,6 @@ internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
     override fun isInterface(): Boolean = true
 
     override fun isEnum(): Boolean = false
+
+    override fun isValid(): Boolean = super.isValid() && classOrObjectSymbol.isValid()
 }

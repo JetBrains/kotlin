@@ -70,8 +70,8 @@ open class SerializerIrGenerator(
             prop = generateSimplePropertyWithBackingField(desc, irClass)
 
             // TODO: Do not use descriptors here
-            localSerializersFieldsDescriptors = findLocalSerializersFieldDescriptors().map { it ->
-                it to generateSimplePropertyWithBackingField(it, irClass)
+            localSerializersFieldsDescriptors = findLocalSerializersFieldDescriptors().map { descriptor ->
+                descriptor to generateSimplePropertyWithBackingField(descriptor, irClass)
             }
         }
 

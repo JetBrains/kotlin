@@ -153,16 +153,14 @@ fun Module.removeKotlinFacet(
 //method used for non-mpp modules
 fun KotlinFacet.configureFacet(
     compilerVersion: String?,
-    coroutineSupport: LanguageFeature.State,
     platform: TargetPlatform?,
     modelsProvider: IdeModifiableModelsProvider
 ) {
-    configureFacet(compilerVersion, coroutineSupport, platform, modelsProvider, false, emptyList(), emptyList())
+    configureFacet(compilerVersion, platform, modelsProvider, false, emptyList(), emptyList())
 }
 
 fun KotlinFacet.configureFacet(
     compilerVersion: String?,
-    coroutineSupport: LanguageFeature.State,
     platform: TargetPlatform?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider,
     hmppEnabled: Boolean,
@@ -187,7 +185,6 @@ fun KotlinFacet.configureFacet(
         if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
             this.apiLevel = languageLevel
         }
-        this.coroutineSupport = if (languageLevel != null && languageLevel < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
         this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 
@@ -202,21 +199,6 @@ private fun Module.externalSystemRunTasks(): List<ExternalSystemRunTask> {
 fun Module.externalSystemTestRunTasks() = externalSystemRunTasks().filterIsInstance<ExternalSystemTestRunTask>()
 fun Module.externalSystemNativeMainRunTasks() = externalSystemRunTasks().filterIsInstance<ExternalSystemNativeMainRunTask>()
 
-@Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-@Deprecated(
-    message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
-    level = DeprecationLevel.ERROR
-)
-fun KotlinFacet.configureFacet(
-    compilerVersion: String?,
-    coroutineSupport: LanguageFeature.State,
-    platform: IdePlatform<*, *>,
-    modelsProvider: IdeModifiableModelsProvider
-) {
-    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider)
-}
-
-
 fun KotlinFacet.noVersionAutoAdvance() {
     configuration.settings.compilerArguments?.let {
         it.autoAdvanceLanguageVersion = false
@@ -229,8 +211,7 @@ fun KotlinFacet.noVersionAutoAdvance() {
 val commonUIExposedFields = listOf(
     CommonCompilerArguments::languageVersion.name,
     CommonCompilerArguments::apiVersion.name,
-    CommonCompilerArguments::suppressWarnings.name,
-    CommonCompilerArguments::coroutinesState.name
+    CommonCompilerArguments::suppressWarnings.name
 )
 private val commonUIHiddenFields = listOf(
     CommonCompilerArguments::pluginClasspaths.name,

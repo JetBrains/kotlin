@@ -6,13 +6,14 @@
 #include "SingleLockList.hpp"
 
 #include <atomic>
-#include <deque>
+#include <functional>
 #include <thread>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "TestSupport.hpp"
+#include "Types.h"
 
 using namespace kotlin;
 
@@ -47,7 +48,7 @@ TEST(SingleLockListTest, EmplaceAndIter) {
     list.Emplace(kSecond);
     list.Emplace(kThird);
 
-    std::vector<int> actual;
+    KStdVector<int> actual;
     for (int element : list.Iter()) {
         actual.push_back(element);
     }
@@ -65,7 +66,7 @@ TEST(SingleLockListTest, EmplaceEraseAndIter) {
     list.Emplace(kThird);
     list.Erase(secondNode);
 
-    std::vector<int> actual;
+    KStdVector<int> actual;
     for (int element : list.Iter()) {
         actual.push_back(element);
     }
@@ -76,7 +77,7 @@ TEST(SingleLockListTest, EmplaceEraseAndIter) {
 TEST(SingleLockListTest, IterEmpty) {
     IntList list;
 
-    std::vector<int> actual;
+    KStdVector<int> actual;
     for (int element : list.Iter()) {
         actual.push_back(element);
     }
@@ -97,7 +98,7 @@ TEST(SingleLockListTest, EraseToEmptyEmplaceAndIter) {
     list.Emplace(kThird);
     list.Emplace(kFourth);
 
-    std::vector<int> actual;
+    KStdVector<int> actual;
     for (int element : list.Iter()) {
         actual.push_back(element);
     }
@@ -110,8 +111,8 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
-    std::vector<int> expected;
+    KStdVector<std::thread> threads;
+    KStdVector<int> expected;
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
         threads.emplace_back([i, &list, &canStart, &readyCount]() {
@@ -129,7 +130,7 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
         t.join();
     }
 
-    std::vector<int> actual;
+    KStdVector<int> actual;
     for (int element : list.Iter()) {
         actual.push_back(element);
     }
@@ -140,14 +141,14 @@ TEST(SingleLockListTest, ConcurrentEmplace) {
 TEST(SingleLockListTest, ConcurrentErase) {
     IntList list;
     constexpr int kThreadCount = kDefaultThreadCount;
-    std::vector<IntList::Node*> items;
+    KStdVector<IntList::Node*> items;
     for (int i = 0; i < kThreadCount; ++i) {
         items.push_back(list.Emplace(i));
     }
 
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (auto* item : items) {
         threads.emplace_back([item, &list, &canStart, &readyCount]() {
             ++readyCount;
@@ -164,7 +165,7 @@ TEST(SingleLockListTest, ConcurrentErase) {
         t.join();
     }
 
-    std::vector<int> actual;
+    KStdVector<int> actual;
     for (int element : list.Iter()) {
         actual.push_back(element);
     }
@@ -177,8 +178,8 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std::deque<int> expectedBefore;
-    std::vector<int> expectedAfter;
+    KStdDeque<int> expectedBefore;
+    KStdVector<int> expectedAfter;
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_front(i);
         expectedAfter.push_back(i);
@@ -187,7 +188,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
 
     std::atomic<bool> canStart(false);
     std::atomic<int> startedCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -199,7 +200,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
         });
     }
 
-    std::vector<int> actualBefore;
+    KStdVector<int> actualBefore;
     {
         auto iter = list.Iter();
         canStart = true;
@@ -217,7 +218,7 @@ TEST(SingleLockListTest, IterWhileConcurrentEmplace) {
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
-    std::vector<int> actualAfter;
+    KStdVector<int> actualAfter;
     for (int element : list.Iter()) {
         actualAfter.push_back(element);
     }
@@ -229,8 +230,8 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
     IntList list;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std::deque<int> expectedBefore;
-    std::vector<IntList::Node*> items;
+    KStdDeque<int> expectedBefore;
+    KStdVector<IntList::Node*> items;
     for (int i = 0; i < kThreadCount; ++i) {
         expectedBefore.push_front(i);
         items.push_back(list.Emplace(i));
@@ -238,7 +239,7 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
 
     std::atomic<bool> canStart(false);
     std::atomic<int> startedCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (auto* item : items) {
         threads.emplace_back([item, &list, &canStart, &startedCount]() {
             while (!canStart) {
@@ -248,7 +249,7 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
         });
     }
 
-    std::vector<int> actualBefore;
+    KStdVector<int> actualBefore;
     {
         auto iter = list.Iter();
         canStart = true;
@@ -266,7 +267,7 @@ TEST(SingleLockListTest, IterWhileConcurrentErase) {
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
-    std::vector<int> actualAfter;
+    KStdVector<int> actualAfter;
     for (int element : list.Iter()) {
         actualAfter.push_back(element);
     }
@@ -298,10 +299,48 @@ TEST(SingleLockListTest, PinnedType) {
 
     list.Erase(itemNode);
 
-    std::vector<PinnedType*> actualAfter;
+    KStdVector<PinnedType*> actualAfter;
     for (auto& element : list.Iter()) {
         actualAfter.push_back(&element);
     }
 
     EXPECT_THAT(actualAfter, testing::IsEmpty());
+}
+
+namespace {
+
+class WithDestructorHook;
+
+using DestructorHook = void(WithDestructorHook*);
+
+class WithDestructorHook : private Pinned {
+public:
+    explicit WithDestructorHook(std::function<DestructorHook> hook) : hook_(std::move(hook)) {}
+
+    ~WithDestructorHook() { hook_(this); }
+
+private:
+    std::function<DestructorHook> hook_;
+};
+
+} // namespace
+
+TEST(SingleLockListTest, Destructor) {
+    testing::StrictMock<testing::MockFunction<DestructorHook>> hook;
+    {
+        SingleLockList<WithDestructorHook> list;
+        auto* first = list.Emplace(hook.AsStdFunction())->Get();
+        auto* second = list.Emplace(hook.AsStdFunction())->Get();
+        auto* third = list.Emplace(hook.AsStdFunction())->Get();
+        {
+            testing::InSequence seq;
+            // `list` is `third`->`second`->`first`. If destruction
+            // were to cause recursion, the order of destructors
+            // would've been backwards.
+            EXPECT_CALL(hook, Call(third));
+            EXPECT_CALL(hook, Call(second));
+            EXPECT_CALL(hook, Call(first));
+        }
+    }
+    testing::Mock::VerifyAndClear(&hook);
 }

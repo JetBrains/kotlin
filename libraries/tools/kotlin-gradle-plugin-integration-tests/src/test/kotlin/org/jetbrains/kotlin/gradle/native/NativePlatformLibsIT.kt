@@ -137,23 +137,30 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testRerunGeneratorIfCacheKindChanged() {
-        // Currently we can generate caches only for macos_x64 and ios_x64.
-        Assume.assumeTrue(HostManager.hostIsMac)
+        // There are no cacheable targets on MinGW for now.
+        Assume.assumeFalse(HostManager.hostIsMingw)
 
         deleteInstalledCompilers()
 
-        with(platformLibrariesProject("iosX64")) {
-            // Build Mac libraries without caches.
-            buildWithLightDist("tasks") {
-                assertSuccessful()
-                assertContains("Generate platform libraries for ios_x64")
-            }
+        fun buildPlatformLibrariesWithoutAndWithCaches(target: KonanTarget) {
+            with(platformLibrariesProject(target.presetName)) {
+                val targetName = target.name
+                // Build libraries without caches.
+                buildWithLightDist("tasks") {
+                    assertSuccessful()
+                    assertContains("Generate platform libraries for $targetName")
+                }
 
-            // Change cache kind and check that platform libraries generator was executed.
-            buildWithLightDist("tasks", "-Pkotlin.native.cacheKind=static") {
-                assertSuccessful()
-                assertContains("Precompile platform libraries for ios_x64 (precompilation: static)")
+                // Change cache kind and check that platform libraries generator was executed.
+                buildWithLightDist("tasks", "-Pkotlin.native.cacheKind.$targetName=static") {
+                    assertSuccessful()
+                    assertContains("Precompile platform libraries for $targetName (precompilation: static)")
+                }
             }
+        }
+        when {
+            HostManager.hostIsMac -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.IOS_X64)
+            HostManager.hostIsLinux -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.LINUX_X64)
         }
     }
 

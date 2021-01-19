@@ -74,8 +74,8 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
                     val otherLibrary = libraryOrderEntry.library
                     if (otherLibrary is LibraryEx && !otherLibrary.isDisposed) {
                         val otherLibraryInfos = createLibraryInfo(project, otherLibrary)
-                        otherLibraryInfos.firstOrNull()?.platform?.let { otherLibraryPlatform ->
-                            if (compatiblePlatforms(platform, otherLibraryPlatform)) {
+                        otherLibraryInfos.firstOrNull()?.let { otherLibraryInfo ->
+                            if (compatiblePlatforms(platform, otherLibraryInfo.platform)) {
                                 libraries.addAll(otherLibraryInfos)
                             }
                         }
@@ -84,7 +84,10 @@ class LibraryDependenciesCacheImpl(private val project: Project) : LibraryDepend
 
                 override fun visitJdkOrderEntry(jdkOrderEntry: JdkOrderEntry, value: Unit) {
                     val jdk = jdkOrderEntry.jdk ?: return
-                    sdks += SdkInfo(project, jdk)
+                    SdkInfo(project, jdk).also { sdkInfo ->
+                        if (compatiblePlatforms(platform, sdkInfo.platform))
+                            sdks += sdkInfo
+                    }
                 }
             }, Unit)
         }

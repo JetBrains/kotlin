@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "Memory.h"
+#include "Types.h"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -22,7 +23,7 @@ public:
 
     class Iterator {
     public:
-        explicit Iterator(std::vector<ObjHeader*>::iterator iterator) : iterator_(iterator) {}
+        explicit Iterator(KStdVector<ObjHeader*>::iterator iterator) : iterator_(iterator) {}
 
         ObjHeader** operator*() noexcept { return &*iterator_; }
 
@@ -35,7 +36,7 @@ public:
         bool operator!=(const Iterator& rhs) const noexcept { return iterator_ != rhs.iterator_; }
 
     private:
-        std::vector<ObjHeader*>::iterator iterator_;
+        KStdVector<ObjHeader*>::iterator iterator_;
     };
 
     // Add TLS record. Can only be called before `Commit`.
@@ -64,9 +65,9 @@ private:
 
     ObjHeader** Lookup(Entry entry, int index) noexcept;
 
-    std::vector<ObjHeader*> storage_;
-    // TODO: `std::unordered_map` is probably the wrong container here.
-    std::unordered_map<Key, Entry> map_;
+    KStdVector<ObjHeader*> storage_;
+    // TODO: `KStdUnorderedMap` is probably the wrong container here.
+    KStdUnorderedMap<Key, Entry> map_;
     State state_ = State::kBuilding;
     int size_ = 0; // Only used in `State::kBuilding`
     std::pair<Key, Entry> lastKeyAndEntry_;

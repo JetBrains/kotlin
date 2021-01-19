@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.render
@@ -36,17 +35,15 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestC
     private fun testFunctionPartialBuilding(filePath: String, nameToFind: String) {
         testPartialBuilding(
             filePath,
-            { file -> file.findDescendantOfType<KtNamedFunction> { it.name == nameToFind }!! },
-            RawFirBuilder::buildFunctionWithBody
-        )
+            { file -> file.findDescendantOfType<KtNamedFunction> { it.name == nameToFind }!! }
+        ) { rawFirBuilder, function -> rawFirBuilder.buildFunctionWithBody(function, original = null) }
     }
 
     private fun testPropertyPartialBuilding(filePath: String, nameToFind: String) {
         testPartialBuilding(
             filePath,
-            { file -> file.findDescendantOfType<KtProperty> { it.name == nameToFind }!! },
-            RawFirBuilder::buildPropertyWithBody
-        )
+            { file -> file.findDescendantOfType<KtProperty> { it.name == nameToFind }!! }
+        ) { rawFirBuilder, property -> rawFirBuilder.buildPropertyWithBody(property, original = null) }
     }
 
     private fun <T : KtElement> testPartialBuilding(

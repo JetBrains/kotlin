@@ -14,12 +14,14 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(androidDxJar())
 
     testImplementation(projectTests(":generators:test-generator"))
 
     testApi(platform("org.junit:junit-bom:5.7.0"))
     testApi("org.junit.jupiter:junit-jupiter")
     testApi("org.junit.platform:junit-platform-commons:1.7.0")
+    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))

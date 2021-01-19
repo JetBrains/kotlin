@@ -8,7 +8,7 @@ FILE: moreSpecificAmbiguousExtensions.kt
     public final fun R|IB|.extFun(x: R|IA|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        lval extFun1: R|kotlin/reflect/KFunction2<IA, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
+        lval extFun1: R|@ExtensionFunctionType kotlin/reflect/KFunction2<IA, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
         lval extFun2: <ERROR TYPE REF: No result type for initializer> = Q|IB|::<Unresolved reference: extFun>#
     }
     public final fun testWithExpectedType(): R|kotlin/Unit| {

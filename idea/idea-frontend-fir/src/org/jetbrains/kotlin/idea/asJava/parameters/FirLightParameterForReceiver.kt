@@ -12,6 +12,7 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
@@ -83,6 +84,8 @@ internal class FirLightParameterForReceiver private constructor(
                         receiverTypeAndAnnotations == other.receiverTypeAndAnnotations)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    override fun isValid(): Boolean = super.isValid() && context.isValid()
 }
 
 

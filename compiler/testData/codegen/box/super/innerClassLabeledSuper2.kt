@@ -1,3 +1,4 @@
+// IGNORE_FIR_DIAGNOSTICS
 //inspired by kt3492
 interface BK {
     fun foo(): String

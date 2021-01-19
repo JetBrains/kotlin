@@ -7,12 +7,13 @@
 
 #include <atomic>
 #include <thread>
+#include <type_traits>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "CppSupport.hpp"
 #include "TestSupport.hpp"
+#include "Types.h"
 
 using namespace kotlin;
 
@@ -24,8 +25,8 @@ using ObjectFactoryStorageRegular = ObjectFactoryStorage<alignof(void*)>;
 namespace {
 
 template <size_t DataAlignment>
-std::vector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
-    std::vector<void*> result;
+KStdVector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
+    KStdVector<void*> result;
     for (auto& node : storage.Iter()) {
         result.push_back(node.Data());
     }
@@ -33,8 +34,8 @@ std::vector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
 }
 
 template <typename T, size_t DataAlignment>
-std::vector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
-    std::vector<T> result;
+KStdVector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
+    KStdVector<T> result;
     for (auto& node : storage.Iter()) {
         result.push_back(*static_cast<T*>(node.Data()));
     }
@@ -300,8 +301,8 @@ TEST(ObjectFactoryStorageTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
-    std::vector<int> expected;
+    KStdVector<std::thread> threads;
+    KStdVector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
@@ -332,8 +333,8 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std::vector<int> expectedBefore;
-    std::vector<int> expectedAfter;
+    KStdVector<int> expectedBefore;
+    KStdVector<int> expectedAfter;
     ObjectFactoryStorageRegular::Producer producer(storage);
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_back(i);
@@ -345,7 +346,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -360,7 +361,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
         });
     }
 
-    std::vector<int> actualBefore;
+    KStdVector<int> actualBefore;
     {
         auto iter = storage.Iter();
         while (readyCount < kThreadCount) {
@@ -391,7 +392,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std::vector<int> expectedAfter;
+    KStdVector<int> expectedAfter;
     ObjectFactoryStorageRegular::Producer producer(storage);
     for (int i = 0; i < kStartCount; ++i) {
         if (i % 2 == 0) {
@@ -404,7 +405,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -449,15 +450,15 @@ using mm::ObjectFactory;
 
 namespace {
 
-std::unique_ptr<TypeInfo> MakeObjectTypeInfo(int32_t size) {
-    auto typeInfo = std_support::make_unique<TypeInfo>();
+KStdUniquePtr<TypeInfo> MakeObjectTypeInfo(int32_t size) {
+    auto typeInfo = make_unique<TypeInfo>();
     typeInfo->typeInfo_ = typeInfo.get();
     typeInfo->instanceSize_ = size;
     return typeInfo;
 }
 
-std::unique_ptr<TypeInfo> MakeArrayTypeInfo(int32_t elementSize) {
-    auto typeInfo = std_support::make_unique<TypeInfo>();
+KStdUniquePtr<TypeInfo> MakeArrayTypeInfo(int32_t elementSize) {
+    auto typeInfo = make_unique<TypeInfo>();
     typeInfo->typeInfo_ = typeInfo.get();
     typeInfo->instanceSize_ = -elementSize;
     return typeInfo;
@@ -537,9 +538,9 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     std::mutex expectedMutex;
-    std::vector<ObjHeader*> expected;
+    KStdVector<ObjHeader*> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&typeInfo, &objectFactory, &canStart, &readyCount, &expected, &expectedMutex]() {
@@ -564,7 +565,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     }
 
     auto iter = objectFactory.Iter();
-    std::vector<ObjHeader*> actual;
+    KStdVector<ObjHeader*> actual;
     for (auto it = iter.begin(); it != iter.end(); ++it) {
         actual.push_back(it.GetObjHeader());
     }

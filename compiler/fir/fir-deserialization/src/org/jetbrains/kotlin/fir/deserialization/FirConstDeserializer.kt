@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 class FirConstDeserializer(
     val session: FirSession,
@@ -53,16 +53,16 @@ class FirConstDeserializer(
         protoValue: ProtoBuf.Annotation.Argument.Value?, sourceValue: Any?, constKind: String, nameResolver: NameResolver
     ): FirExpression? {
         return when (constKind) {
-            "BYTE", "B" -> buildConstExpression(null, FirConstKind.Byte, ((protoValue?.intValue ?: sourceValue) as Number).toByte())
-            "CHAR", "C" -> buildConstExpression(null, FirConstKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toChar())
-            "SHORT", "S" -> buildConstExpression(null, FirConstKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort())
-            "INT", "I" -> buildConstExpression(null, FirConstKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int)
-            "LONG", "J" -> buildConstExpression(null, FirConstKind.Long, protoValue?.intValue ?: sourceValue as Long)
-            "FLOAT", "F" -> buildConstExpression(null, FirConstKind.Float, protoValue?.floatValue ?: sourceValue as Float)
-            "DOUBLE", "D" -> buildConstExpression(null, FirConstKind.Double, protoValue?.doubleValue ?: sourceValue as Double)
-            "BOOLEAN", "Z" -> buildConstExpression(null, FirConstKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0)
+            "BYTE", "B" -> buildConstExpression(null, ConstantValueKind.Byte, ((protoValue?.intValue ?: sourceValue) as Number).toByte())
+            "CHAR", "C" -> buildConstExpression(null, ConstantValueKind.Char, ((protoValue?.intValue ?: sourceValue) as Number).toChar())
+            "SHORT", "S" -> buildConstExpression(null, ConstantValueKind.Short, ((protoValue?.intValue ?: sourceValue) as Number).toShort())
+            "INT", "I" -> buildConstExpression(null, ConstantValueKind.Int, protoValue?.intValue?.toInt() ?: sourceValue as Int)
+            "LONG", "J" -> buildConstExpression(null, ConstantValueKind.Long, protoValue?.intValue ?: sourceValue as Long)
+            "FLOAT", "F" -> buildConstExpression(null, ConstantValueKind.Float, protoValue?.floatValue ?: sourceValue as Float)
+            "DOUBLE", "D" -> buildConstExpression(null, ConstantValueKind.Double, protoValue?.doubleValue ?: sourceValue as Double)
+            "BOOLEAN", "Z" -> buildConstExpression(null, ConstantValueKind.Boolean, (protoValue?.intValue?.toInt() ?: sourceValue) != 0)
             "STRING", "Ljava/lang/String;" -> buildConstExpression(
-                null, FirConstKind.String, protoValue?.stringValue?.let { nameResolver.getString(it) } ?: sourceValue as String
+                null, ConstantValueKind.String, protoValue?.stringValue?.let { nameResolver.getString(it) } ?: sourceValue as String
             )
             else -> null
         }

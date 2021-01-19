@@ -41,6 +41,13 @@ internal inline fun <T, R> Collection<T>.compactMap(transform: (T) -> R): List<R
         else -> mapTo(ArrayList(size), transform)
     }
 
+internal inline fun <T, R> Array<T>.compactMap(transform: (T) -> R): List<R> =
+    when (size) {
+        0 -> emptyList()
+        1 -> singletonList(transform(this[0]))
+        else -> mapTo(ArrayList(size), transform)
+    }
+
 internal inline fun <T, reified R : Any> Collection<T>.compactMapNotNull(transform: (T) -> R?): List<R> =
     if (isEmpty()) emptyList() else mapNotNullTo(ArrayList(size), transform).compact()
 

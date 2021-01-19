@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
+import org.jetbrains.kotlin.types.ConstantValueKind
+
 sealed class KtConstantValue
 object KtUnsupportedConstantValue : KtConstantValue()
 
-data class KtSimpleConstantValue<T>(val constant: T?) : KtConstantValue()
+data class KtSimpleConstantValue<T>(val constantValueKind: ConstantValueKind<T>, val value: T) : KtConstantValue()

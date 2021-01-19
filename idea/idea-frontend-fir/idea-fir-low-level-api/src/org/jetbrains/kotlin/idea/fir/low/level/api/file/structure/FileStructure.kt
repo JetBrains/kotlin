@@ -54,16 +54,10 @@ internal class FileStructure(
     fun getAllDiagnosticsForFile(): Collection<Diagnostic> {
         val containersForStructureElement = buildList {
             add(ktFile)
-            ktFile.forEachDescendantOfType<KtDeclaration>(
-                canGoInside = { psi -> psi !is KtFunction && psi !is KtValVarKeywordOwner }
-            ) { declaration ->
-                if (FileStructureUtil.isStructureElementContainer(declaration)) {
-                    add(declaration)
-                }
-            }
+            addAll(ktFile.declarations)
         }
         val structureElements = containersForStructureElement.map(::getStructureElementFor)
-        return buildList {
+        return buildSet {
             structureElements.forEach { it.diagnostics.forEach { diagnostics -> addAll(diagnostics) } }
         }
     }

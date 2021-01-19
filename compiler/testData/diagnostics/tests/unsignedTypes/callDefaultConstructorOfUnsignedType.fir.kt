@@ -1,1 +1,1 @@
-val foo = <!INAPPLICABLE_CANDIDATE!>UInt<!>()
+val foo = <!HIDDEN!>UInt<!>()

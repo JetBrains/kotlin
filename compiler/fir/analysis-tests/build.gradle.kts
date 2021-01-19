@@ -20,16 +20,20 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:fir:checkers"))
+    testApi(project(":compiler:fir:fir-serialization"))
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
 
     testApi(platform("org.junit:junit-bom:5.7.0"))
     testApi("org.junit.jupiter:junit-jupiter")
     testApi("org.junit.platform:junit-platform-commons:1.7.0")
+    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
+    testRuntimeOnly(androidDxJar())
+    testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
     testImplementation(intellijDep()) {

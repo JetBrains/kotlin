@@ -86,13 +86,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         endOffset: Int,
         descriptor: DeclarationDescriptor,
         resolvedCall: ResolvedCall<*>?,
-        origin: IrStatementOrigin?
+        origin: IrStatementOrigin?,
+        irType: IrType? = null
     ): IrExpression =
         when (descriptor) {
             is FakeCallableDescriptorForObject ->
-                generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin)
+                generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin, irType)
             is TypeAliasDescriptor ->
-                generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin)
+                generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin, irType)
             is ClassDescriptor -> {
                 val classValueType = descriptor.classValueType!!
                 statementGenerator.generateSingletonReference(descriptor, startOffset, endOffset, classValueType)
@@ -107,7 +108,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 IrGetFieldImpl(startOffset, endOffset, field, fieldType, receiver?.load())
             }
             is VariableDescriptor ->
-                generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin)
+                generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin, irType)
             else ->
                 TODO("Unexpected callable descriptor: $descriptor ${descriptor::class.java.simpleName}")
         }
@@ -117,7 +118,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         endOffset: Int,
         descriptor: VariableDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        origin: IrStatementOrigin? = null
+        origin: IrStatementOrigin? = null,
+        irType: IrType? = null
     ) =
         if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
             val getterDescriptor = descriptor.getter!!
@@ -128,8 +130,15 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments(typeArguments) { it.toIrType() }
             }
-        } else
-            IrGetValueImpl(startOffset, endOffset, descriptor.type.toIrType(), context.symbolTable.referenceValue(descriptor), origin)
+        } else {
+            val getValue =
+                IrGetValueImpl(startOffset, endOffset, descriptor.type.toIrType(), context.symbolTable.referenceValue(descriptor), origin)
+            if (irType != null) {
+                IrTypeOperatorCallImpl(startOffset, endOffset, irType, IrTypeOperator.IMPLICIT_CAST, irType, getValue)
+            } else {
+                getValue
+            }
+        }
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression =
         call.callReceiver.call { dispatchReceiver, extensionReceiver ->

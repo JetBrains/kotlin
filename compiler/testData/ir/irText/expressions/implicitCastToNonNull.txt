@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
-              $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
+              $this: TYPE_OP type=T of <root>.test3 origin=IMPLICIT_CAST typeOperand=T of <root>.test3
                 GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
   FUN name:test4 visibility:public modality:FINAL <T> (x:kotlin.Any?) returnType:kotlin.Int [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=GET_PROPERTY
-              $this: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
+              $this: TYPE_OP type=T of <root>.test4 origin=IMPLICIT_CAST typeOperand=T of <root>.test4
                 GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
   FUN name:test5 visibility:public modality:FINAL <T, S> (x:T of <root>.test5, fn:kotlin.Function1<S of <root>.test5, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[S of <root>.test5?]

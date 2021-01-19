@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.test.generators
 
+import org.jetbrains.kotlin.generators.model.AnnotationModel
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
+import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 
 fun generateJUnit5CompilerTests(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
@@ -53,6 +60,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("foreignAnnotations/tests")
                 model("foreignAnnotations/java8Tests", excludeDirs = listOf("jspecify", "typeEnhancementOnCompiledJava"))
             }
+
+            testClass<AbstractBlackBoxCodegenTest> {
+                model("codegen/box")
+            }
+
+            testClass<AbstractIrBlackBoxCodegenTest> {
+                model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------
@@ -62,6 +77,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
+
+            testClass<AbstractFirBlackBoxCodegenTest> {
+                model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
+            }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
@@ -70,7 +89,9 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
 
-            testClass<AbstractFirDiagnosticsWithLightTreeTest> {
+            testClass<AbstractFirDiagnosticsWithLightTreeTest>(
+                annotations = listOf(annotation(Execution::class.java, ExecutionMode.SAME_THREAD))
+            ) {
                 model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }

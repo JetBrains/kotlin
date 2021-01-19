@@ -69,7 +69,9 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
 
 
     fun initialize() {
-        assert(!supertypesLocked)
+        assert(!supertypesLocked) {
+            "Supertypes were locked for ${this::class}"
+        }
         supertypesLocked = true
 
         if (supertypesDeque == null) {

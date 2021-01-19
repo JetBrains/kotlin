@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import org.jetbrains.kotlin.idea.addExternalTestFiles
+import org.jetbrains.kotlin.idea.invalidateCaches
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
 
@@ -21,6 +23,11 @@ abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
     override fun doTest(unused: String?) {
         addExternalTestFiles(testPath())
         super.doTest(unused)
+    }
+
+    override fun tearDown() {
+        project.invalidateCaches(file as? KtFile)
+        super.tearDown()
     }
 
     override fun checkHighlighting(fileText: String) {

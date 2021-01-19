@@ -13,18 +13,17 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHan
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DynamicCallsDumpHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
-import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            backend = BackendKind.NoBackend
             targetPlatform = JsPlatforms.defaultJsPlatform
             dependencyKind = DependencyKind.Source
         }
@@ -35,7 +34,10 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractKotlinCompilerTest(
 
         enableMetaInfoHandler()
 
-        useConfigurators(::JsEnvironmentConfigurator,)
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JsEnvironmentConfigurator,
+        )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
         useAdditionalSourceProviders(

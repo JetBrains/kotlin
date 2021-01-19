@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -375,14 +376,14 @@ class ExpressionsConverter(
                 }
                 val receiver = getAsFirExpression<FirExpression>(argument, "No operand")
                 if (operationToken == PLUS || operationToken == MINUS) {
-                    if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                    if (receiver is FirConstExpression<*> && receiver.kind == ConstantValueKind.IntegerLiteral) {
                         val value = receiver.value as Long
                         val convertedValue = when (operationToken) {
                             MINUS -> -value
                             PLUS -> value
                             else -> error("Should not be here")
                         }
-                        return buildConstExpression(unaryExpression.toFirSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                        return buildConstExpression(unaryExpression.toFirSourceElement(), ConstantValueKind.IntegerLiteral, convertedValue)
                     }
                 }
                 buildFunctionCall {

@@ -90,6 +90,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/extension.kt");
     }
 
+    @TestMetadata("fileClassWithPrivateDeclarationsOnly_after.kt")
+    public void testFileClassWithPrivateDeclarationsOnly_after() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/fileClassWithPrivateDeclarationsOnly_after.kt");
+    }
+
+    @TestMetadata("fileClassWithPrivateDeclarationsOnly_before.kt")
+    public void testFileClassWithPrivateDeclarationsOnly_before() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/fileClassWithPrivateDeclarationsOnly_before.kt");
+    }
+
     @TestMetadata("immutableCollection.kt")
     public void testImmutableCollection() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/immutableCollection.kt");
@@ -155,6 +165,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/kt43519.kt");
     }
 
+    @TestMetadata("localFunction.kt")
+    public void testLocalFunction() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/localFunction.kt");
+    }
+
     @TestMetadata("localFunctionInInitBlock.kt")
     public void testLocalFunctionInInitBlock() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
@@ -213,6 +228,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     @TestMetadata("rawTypeInSignature.kt")
     public void testRawTypeInSignature() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
+    }
+
+    @TestMetadata("sealedClassConstructorWithDefaultParams.kt")
+    public void testSealedClassConstructorWithDefaultParams() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/sealedClassConstructorWithDefaultParams.kt");
     }
 
     @TestMetadata("strictfpFlag.kt")
@@ -408,6 +428,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("inheritingFromAbstractMutableList.kt")
         public void testInheritingFromAbstractMutableList() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/inheritingFromAbstractMutableList.kt");
+        }
+
+        @TestMetadata("kt44233.kt")
+        public void testKt44233() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/kt44233.kt");
         }
 
         @TestMetadata("mapOfPrimitivesFullJdk.kt")
@@ -1457,11 +1482,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("suspendMain.kt")
         public void testSuspendMain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain.kt");
-        }
-
-        @TestMetadata("suspendMain_before.kt")
-        public void testSuspendMain_before() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain_before.kt");
         }
     }
 

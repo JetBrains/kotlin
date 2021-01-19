@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerScopeLevel
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -38,16 +38,17 @@ abstract class FirAbstractSimpleImportingScope(
         }
     }
 
-    override fun <T : FirCallableSymbol<*>> processCallables(
-        name: Name,
-        token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> Unit
-    ) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val imports = simpleImports[name] ?: return
-        if (imports.isEmpty()) return
-
         for (import in imports) {
-            processCallables(import, import.importedName!!, token, processor)
+            processFunctionsByNameWithImport(import.importedName!!, import, processor)
+        }
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        val imports = simpleImports[name] ?: return
+        for (import in imports) {
+            processPropertiesByNameWithImport(import.importedName!!, import, processor)
         }
     }
 }

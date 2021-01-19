@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -163,7 +163,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDecla
     }
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
-    FirConstKind.IntegerLiteral -> {
+    ConstantValueKind.IntegerLiteral -> {
         val type = typeRef.coneTypeUnsafe<ConeIntegerLiteralType>()
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
     }
@@ -194,25 +194,25 @@ fun <T> FirConstExpression<T>.toIrConst(irType: IrType): IrConst<T> {
     }
 }
 
-private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
-    FirConstKind.Null -> IrConstKind.Null
-    FirConstKind.Boolean -> IrConstKind.Boolean
-    FirConstKind.Char -> IrConstKind.Char
+private fun ConstantValueKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
+    ConstantValueKind.Null -> IrConstKind.Null
+    ConstantValueKind.Boolean -> IrConstKind.Boolean
+    ConstantValueKind.Char -> IrConstKind.Char
 
-    FirConstKind.Byte -> IrConstKind.Byte
-    FirConstKind.Short -> IrConstKind.Short
-    FirConstKind.Int -> IrConstKind.Int
-    FirConstKind.Long -> IrConstKind.Long
+    ConstantValueKind.Byte -> IrConstKind.Byte
+    ConstantValueKind.Short -> IrConstKind.Short
+    ConstantValueKind.Int -> IrConstKind.Int
+    ConstantValueKind.Long -> IrConstKind.Long
 
-    FirConstKind.UnsignedByte -> IrConstKind.Byte
-    FirConstKind.UnsignedShort -> IrConstKind.Short
-    FirConstKind.UnsignedInt -> IrConstKind.Int
-    FirConstKind.UnsignedLong -> IrConstKind.Long
+    ConstantValueKind.UnsignedByte -> IrConstKind.Byte
+    ConstantValueKind.UnsignedShort -> IrConstKind.Short
+    ConstantValueKind.UnsignedInt -> IrConstKind.Int
+    ConstantValueKind.UnsignedLong -> IrConstKind.Long
 
-    FirConstKind.String -> IrConstKind.String
-    FirConstKind.Float -> IrConstKind.Float
-    FirConstKind.Double -> IrConstKind.Double
-    FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
+    ConstantValueKind.String -> IrConstKind.String
+    ConstantValueKind.Float -> IrConstKind.Float
+    ConstantValueKind.Double -> IrConstKind.Double
+    ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
 }
 
 

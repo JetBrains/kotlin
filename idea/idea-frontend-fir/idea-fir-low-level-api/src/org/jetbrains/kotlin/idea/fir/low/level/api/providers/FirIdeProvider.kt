@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceCheckerForSingleModule
@@ -97,12 +95,12 @@ internal class FirIdeProvider(
 
     // TODO move out of here
     // used only for completion
-    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction): FirFunction<*> {
-        return RawFirBuilder(session, kotlinScopeProvider).buildFunctionWithBody(ktNamedFunction)
+    fun buildFunctionWithBody(ktNamedFunction: KtNamedFunction, original: FirFunction<*>): FirFunction<*> {
+        return RawFirBuilder(session, kotlinScopeProvider).buildFunctionWithBody(ktNamedFunction, original)
     }
 
-    fun buildPropertyWithBody(ktNamedFunction: KtProperty): FirProperty {
-        return RawFirBuilder(session, kotlinScopeProvider).buildPropertyWithBody(ktNamedFunction)
+    fun buildPropertyWithBody(ktNamedFunction: KtProperty, original: FirProperty): FirProperty {
+        return RawFirBuilder(session, kotlinScopeProvider).buildPropertyWithBody(ktNamedFunction, original)
     }
 
 
@@ -116,10 +114,8 @@ internal class FirIdeProvider(
         TODO()
     }
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        // TODO: KT-41048
-        return emptySet()
-    }
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
+        indexHelper.getClassNamesInPackage(fqName)
 
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
@@ -129,6 +125,22 @@ internal class FirIdeProvider(
         @FirSymbolProviderInternals
         override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
             destination += getTopLevelCallableSymbols(packageFqName, name)
+        }
+
+        override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> =
+            providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
+
+        @FirSymbolProviderInternals
+        override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+            destination += getTopLevelFunctionSymbols(packageFqName, name)
+        }
+
+        override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> =
+            providerHelper.getTopLevelPropertySymbols(packageFqName, name)
+
+        @FirSymbolProviderInternals
+        override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+            destination += getTopLevelPropertySymbols(packageFqName, name)
         }
 
         override fun getPackage(fqName: FqName): FqName? =

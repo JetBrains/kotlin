@@ -59,6 +59,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlinp/src",
+                "libraries/tools/new-project-wizard/new-project-wizard-cli/build",
                 "out"
             )
         )
@@ -90,6 +91,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/.gradle",
                 "libraries/stdlib/js-v1/build",
                 "libraries/stdlib/js-v1/node_modules",
+                "libraries/stdlib/wasm/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-maven-plugin-test/target",
                 "libraries/tools/kotlin-test-js-runner/.gradle",
@@ -306,6 +308,11 @@ class CodeConformanceTest : TestCase() {
             ),
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
+            ),
+            RepoAllowList(
+                "kotlin/ktor", root, setOf(
+                    "gradle/cacheRedirector.gradle.kts"
+                )
             ),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests

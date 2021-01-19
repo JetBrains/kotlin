@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.*
 class InvokeStaticInitializersLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container !is IrConstructor) return
-        if (container?.parentClassOrNull?.isEnumClass == true) return
+        if (container.parentClassOrNull?.isEnumClass == true) return
 
         val irClass = container.constructedClass
         if (irClass.isEffectivelyExternal()) {

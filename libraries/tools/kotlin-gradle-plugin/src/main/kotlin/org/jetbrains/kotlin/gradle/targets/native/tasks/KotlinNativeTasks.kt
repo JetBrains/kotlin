@@ -34,10 +34,12 @@ import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import java.io.File
@@ -520,7 +522,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
 
     @get:Input
     protected val konanCacheKind: NativeCacheKind by lazy {
-        project.konanCacheKind
+        project.getKonanCacheKind(konanTarget)
     }
 
     inner class NativeLinkOptions : KotlinCommonToolOptions {
@@ -677,7 +679,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
         get() = binary.debuggable
 
     private val konanCacheKind: NativeCacheKind
-        get() = project.konanCacheKind
+        get() = project.getKonanCacheKind(konanTarget)
 
     // Inputs and outputs
     private val libraries: FileCollection
@@ -857,7 +859,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
 
 
     fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
-        if (konanCacheKind != NativeCacheKind.NONE && !optimized && cacheWorksFor(konanTarget)) {
+        if (konanCacheKind != NativeCacheKind.NONE && !optimized && cacheWorksFor(konanTarget, project)) {
             rootCacheDirectory.mkdirs()
             ensureCompilerProvidedLibsPrecached()
             add("-Xcache-directory=${rootCacheDirectory.absolutePath}")
@@ -896,10 +898,26 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
                 "${baseName}-cache"
             } ?: error("No output for kind $cacheKind")
 
-        internal fun cacheWorksFor(target: KonanTarget) =
-            target == KonanTarget.IOS_X64 || target == KonanTarget.MACOS_X64
+        private fun getCacheableTargets(project: Project) =
+            Distribution(project.konanHome)
+                .properties
+                .resolvablePropertyList("cacheableTargets", HostManager.hostName)
+                .map { KonanTarget.predefinedTargets.getValue(it) }
 
-        internal val DEFAULT_CACHE_KIND: NativeCacheKind = NativeCacheKind.STATIC
+        // Targets with well-tested static caches that can be enabled by default.
+        // TODO: Move it to konan.properties.
+        private val targetsWithStableStaticCaches =
+            setOf(KonanTarget.IOS_X64, KonanTarget.MACOS_X64)
+
+        internal fun cacheWorksFor(target: KonanTarget, project: Project) =
+            target in getCacheableTargets(project)
+
+        internal fun defaultCacheKindForTarget(target: KonanTarget): NativeCacheKind =
+            if (target in targetsWithStableStaticCaches) {
+                NativeCacheKind.STATIC
+            } else {
+                NativeCacheKind.NONE
+            }
     }
 }
 

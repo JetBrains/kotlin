@@ -94,13 +94,14 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = NativeIdePlatformKind
 
-    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?): BuiltInsCacheKey = NativeBuiltInsCacheKey
+    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?, stdlibInfo: LibraryInfo?): BuiltInsCacheKey = NativeBuiltInsCacheKey
 
     override fun createBuiltIns(
         moduleInfo: IdeaModuleInfo,
         projectContext: ProjectContext,
         resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        sdkDependency: SdkInfo?
+        sdkDependency: SdkInfo?,
+        stdlibDependency: LibraryInfo?,
     ) = createKotlinNativeBuiltIns(moduleInfo, projectContext)
 
     private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
@@ -118,8 +119,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
         val languageVersionSettings = IDELanguageSettingsProvider.getLanguageVersionSettings(
             stdlibInfo,
-            project,
-            isReleaseCoroutines = false
+            project
         )
 
         val stdlibPackageFragmentProvider = createKlibPackageFragmentProvider(

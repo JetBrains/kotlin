@@ -567,7 +567,8 @@ private class BackendChecker(val context: Context, val irFile: IrFile) : IrEleme
         if (type !is IrSimpleType)
             return
         val classifier = type.classifier
-        if (classifier is IrTypeParameterSymbol)
+        if (classifier is IrTypeParameterSymbol
+                && !classifier.owner.isReified /* Reified may be substituted with valid types later */)
             checkIrKTypeParameter(irElement, classifier.owner, seenTypeParameters)
 
         type.arguments.forEach {

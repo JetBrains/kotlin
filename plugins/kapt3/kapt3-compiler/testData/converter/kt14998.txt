@@ -14,9 +14,9 @@ public final class Outer {
     @kotlin.Metadata()
     final class Inner {
         @org.jetbrains.annotations.NotNull()
-        private final java.lang.String bar = null;
-        @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String bar = null;
 
         public Inner(@org.jetbrains.annotations.NotNull()
         java.lang.String foo, @org.jetbrains.annotations.NotNull()
@@ -25,12 +25,12 @@ public final class Outer {
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getBar() {
+        public final java.lang.String getFoo() {
             return null;
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getFoo() {
+        public final java.lang.String getBar() {
             return null;
         }
     }
@@ -38,9 +38,9 @@ public final class Outer {
     @kotlin.Metadata()
     static final class Nested {
         @org.jetbrains.annotations.NotNull()
-        private final java.lang.String bar = null;
-        @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String bar = null;
 
         public Nested(@org.jetbrains.annotations.NotNull()
         java.lang.String foo, @org.jetbrains.annotations.NotNull()
@@ -49,12 +49,12 @@ public final class Outer {
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getBar() {
+        public final java.lang.String getFoo() {
             return null;
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getFoo() {
+        public final java.lang.String getBar() {
             return null;
         }
     }

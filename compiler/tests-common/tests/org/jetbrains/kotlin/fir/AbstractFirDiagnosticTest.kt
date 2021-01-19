@@ -205,7 +205,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         // Lambda argument is always (?) duplicated by function literal
         // Block expression is always (?) duplicated by single block expression
         if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return null
-        val name = name ?: return null
+        val name = name
         if (diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]?.contains(name) != true) return null
 
         val argumentText = argument()

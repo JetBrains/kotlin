@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAnnotation
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -43,11 +45,16 @@ internal class KtFirClassOrObjectSymbol(
 
     override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val annotations: List<KtAnnotationCall> by cached {
-        firRef.toAnnotationsList()
-    }
+    override val annotations: List<KtAnnotationCall> by cached { firRef.toAnnotationsList() }
+    override fun containsAnnotation(classId: ClassId): Boolean = firRef.containsAnnotation(classId)
+    override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
     override val isInner: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInner }
+    override val isData: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isData }
+    override val isInline: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isInline }
+    override val isFun: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isFun }
+
+    override val isExternal: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isExternal }
 
     override val companionObject: KtClassOrObjectSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
         fir.companionObject?.let { builder.buildClassSymbol(it) }
@@ -55,10 +62,6 @@ internal class KtFirClassOrObjectSymbol(
 
     override val superTypes: List<KtTypeAndAnnotations> by cached {
         firRef.superTypesAndAnnotationsList(builder)
-    }
-
-    override val primaryConstructor: KtConstructorSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
-        fir.getPrimaryConstructorIfAny()?.let { builder.buildConstructorSymbol(it) }
     }
 
     override val typeParameters by firRef.withFirAndCache { fir ->

@@ -34,11 +34,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/compatibleProperties/");
     }
 
-    @TestMetadata("compilerArguments")
-    public void testCompilerArguments() throws Exception {
-        runTest("compiler/testData/multiplatform/compilerArguments/");
-    }
-
     @TestMetadata("contracts")
     public void testContracts() throws Exception {
         runTest("compiler/testData/multiplatform/contracts/");
@@ -329,19 +324,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInCompatibleProperties() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/compatibleProperties"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-    }
-
-    @TestMetadata("compiler/testData/multiplatform/compilerArguments")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class CompilerArguments extends AbstractMultiPlatformIntegrationTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInCompilerArguments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/compilerArguments"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 

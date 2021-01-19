@@ -55,13 +55,6 @@ public final class State2 {
         super();
     }
 
-    public final void methodWithoutArgs() {
-    }
-
-    public final void someMethod(@org.jetbrains.annotations.NotNull()
-    java.lang.String str) {
-    }
-
     public final int test(int someInt) {
         return 0;
     }
@@ -73,5 +66,12 @@ public final class State2 {
     public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
     java.lang.String someString) {
         return 0;
+    }
+
+    public final void someMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.String str) {
+    }
+
+    public final void methodWithoutArgs() {
     }
 }

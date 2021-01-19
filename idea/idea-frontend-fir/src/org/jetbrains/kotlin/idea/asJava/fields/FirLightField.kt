@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import javax.swing.Icon
 

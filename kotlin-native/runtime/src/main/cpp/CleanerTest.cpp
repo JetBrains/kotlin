@@ -6,7 +6,6 @@
 #include "Cleaner.h"
 
 #include <future>
-#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -14,6 +13,7 @@
 #include "Atomic.h"
 #include "TestSupport.hpp"
 #include "TestSupportCompilerGenerated.hpp"
+#include "Types.h"
 
 using testing::_;
 
@@ -31,7 +31,7 @@ TEST(CleanerTest, ConcurrentCreation) {
 
     int startedThreads = 0;
     bool allowRunning = false;
-    std::vector<std::future<KInt>> futures;
+    KStdVector<std::future<KInt>> futures;
     for (int i = 0; i < threadCount; ++i) {
         auto future = std::async(std::launch::async, [&startedThreads, &allowRunning]() {
             atomicAdd(&startedThreads, 1);
@@ -44,7 +44,7 @@ TEST(CleanerTest, ConcurrentCreation) {
     while (atomicGet(&startedThreads) != threadCount) {
     }
     atomicSet(&allowRunning, true);
-    std::vector<KInt> values;
+    KStdVector<KInt> values;
     for (auto& future : futures) {
         values.push_back(future.get());
     }

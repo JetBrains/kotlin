@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
 
 internal fun TypeBridge.makeNothing() = when (this) {
@@ -274,6 +275,8 @@ internal class ObjCExportCodeGenerator(
         emitSelectorsHolder()
 
         emitStaticInitializers()
+
+        emitKt42254Hint()
     }
 
     private fun emitTypeAdapters() {
@@ -343,6 +346,24 @@ internal class ObjCExportCodeGenerator(
         LLVMSetLinkage(initializer, LLVMLinkage.LLVMInternalLinkage)
 
         context.llvm.otherStaticInitializers += initializer
+    }
+
+    private fun emitKt42254Hint() {
+        if (determineLinkerOutput(context) == LinkerOutputKind.STATIC_LIBRARY) {
+            // Might be affected by https://youtrack.jetbrains.com/issue/KT-42254.
+            // The code below generally follows [replaceExternalWeakOrCommonGlobal] implementation.
+            if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+                // So the compiler uses caches. If a user is linking two such static frameworks into a single binary,
+                // the linker might fail with a lot of "duplicate symbol" errors due to KT-42254.
+                // Adding a similar symbol that would explicitly hint to take a look at the YouTrack issue if reported.
+                // Note: for some reason this symbol is reported as the last one, which is good for its purpose.
+                val name = "See https://youtrack.jetbrains.com/issue/KT-42254"
+                val global = staticData.placeGlobal(name, Int8(0), isExported = true)
+
+                context.llvm.usedGlobals += global.llvmGlobal
+                LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
+            }
+        }
     }
 
     // TODO: consider including this into ObjCExportCodeSpec.
@@ -488,6 +509,8 @@ private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
             // but it is simpler to do this for all globals, considering that all usages can't be removed by DCE anyway.
             context.llvm.usedGlobals += global.llvmGlobal
             LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
+
+            // See also [emitKt42254Hint].
         }
     }
 }

@@ -21,7 +21,6 @@ import kotlin.test.assertTrue
  */
 
 @Suite.SuiteClasses(
-    BlackBoxCodegenTestGenerated::class,
     BlackBoxInlineCodegenTestGenerated::class,
     CompileKotlinAgainstInlineKotlinTestGenerated::class,
     CompileKotlinAgainstKotlinTestGenerated::class,

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 abstract class AbstractAnnotationDeserializer(
     private val session: FirSession
@@ -222,30 +223,30 @@ abstract class AbstractAnnotationDeserializer(
 
         return when (value.type) {
             BYTE -> {
-                val kind = if (isUnsigned) FirConstKind.UnsignedByte else FirConstKind.Byte
+                val kind = if (isUnsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte
                 const(kind, value.intValue.toByte())
             }
 
             SHORT -> {
-                val kind = if (isUnsigned) FirConstKind.UnsignedShort else FirConstKind.Short
+                val kind = if (isUnsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short
                 const(kind, value.intValue.toShort())
             }
 
             INT -> {
-                val kind = if (isUnsigned) FirConstKind.UnsignedInt else FirConstKind.Int
+                val kind = if (isUnsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int
                 const(kind, value.intValue.toInt())
             }
 
             LONG -> {
-                val kind = if (isUnsigned) FirConstKind.UnsignedLong else FirConstKind.Long
+                val kind = if (isUnsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long
                 const(kind, value.intValue)
             }
 
-            CHAR -> const(FirConstKind.Char, value.intValue.toChar())
-            FLOAT -> const(FirConstKind.Float, value.floatValue)
-            DOUBLE -> const(FirConstKind.Double, value.doubleValue)
-            BOOLEAN -> const(FirConstKind.Boolean, (value.intValue != 0L))
-            STRING -> const(FirConstKind.String, nameResolver.getString(value.stringValue))
+            CHAR -> const(ConstantValueKind.Char, value.intValue.toChar())
+            FLOAT -> const(ConstantValueKind.Float, value.floatValue)
+            DOUBLE -> const(ConstantValueKind.Double, value.doubleValue)
+            BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L))
+            STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue))
             ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
             CLASS -> buildGetClassCall {
                 val classId = nameResolver.getClassId(value.classId)
@@ -294,5 +295,5 @@ abstract class AbstractAnnotationDeserializer(
         }
     }
 
-    private fun <T> const(kind: FirConstKind<T>, value: T) = buildConstExpression(null, kind, value)
+    private fun <T> const(kind: ConstantValueKind<T>, value: T) = buildConstExpression(null, kind, value)
 }

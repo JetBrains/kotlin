@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 
 internal class FirLightConstructorForSymbol(
@@ -60,4 +61,6 @@ internal class FirLightConstructorForSymbol(
                  constructorSymbol == other.constructorSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    override fun isValid(): Boolean = super.isValid() && constructorSymbol.isValid()
 }

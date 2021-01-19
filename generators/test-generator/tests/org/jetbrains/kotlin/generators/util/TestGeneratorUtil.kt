@@ -34,3 +34,15 @@ object TestGeneratorUtil {
         return escapeForJavaIdentifier(file.name).capitalize()
     }
 }
+
+private val defaultPackages = listOf(
+    "java.lang",
+    "kotlin",
+    "kotlin.annotations",
+    "kotlin.collections"
+)
+
+fun Class<*>.isDefaultImportedClass(): Boolean {
+    val outerName = canonicalName.removeSuffix(".$simpleName")
+    return outerName in defaultPackages
+}

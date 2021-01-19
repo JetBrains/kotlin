@@ -103,7 +103,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 class JvmForeignAnnotationsAgainstCompiledJavaConfigurator(testServices: TestServices) : JvmForeignAnnotationsConfigurator(testServices) {
     @OptIn(ExperimentalStdlibApi::class)
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
-        val compiledJavaPath = KtTestUtil.tmpDir("java-compiled-files")
+        val compiledJavaPath = testServices.createTempDirectory("java-compiled-files")
 
         val foreignAnnotations = createJarWithForeignAnnotations(module)
         val testAnnotations = compileTestAnnotations(foreignAnnotations)

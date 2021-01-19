@@ -1251,9 +1251,7 @@ open class IrFileSerializer(
 
         if (backendSpecificExplicitRoot(file)) {
             for (declaration in file.declarations) {
-                if (declaration is IrSymbolOwner) {
-                    proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
-                }
+                proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
             }
         } else {
             file.acceptVoid(

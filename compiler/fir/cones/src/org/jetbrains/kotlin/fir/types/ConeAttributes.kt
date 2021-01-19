@@ -34,6 +34,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         }
 
         val Empty: ConeAttributes = ConeAttributes(emptyList())
+        val WithExtensionFunctionType: ConeAttributes = ConeAttributes(listOf(CompilerConeAttributes.ExtensionFunctionType))
         internal val WithFlexibleNullability: ConeAttributes = ConeAttributes(listOf(CompilerConeAttributes.FlexibleNullability))
 
         fun create(attributes: List<ConeAttribute<*>>): ConeAttributes {

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswe
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.types.Variance
 
 class TypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirType, CirType>() {
     private lateinit var wrapped: Commonizer<*, CirType>
@@ -189,35 +188,6 @@ private class FlexibleTypeCommonizer(classifiers: CirKnownClassifiers) : Abstrac
     override fun doCommonizeWith(next: CirFlexibleType) =
         lowerBound.commonizeWith(next.lowerBound) && upperBound.commonizeWith(next.upperBound)
 }
-
-private class TypeArgumentCommonizer(
-    classifiers: CirKnownClassifiers
-) : AbstractStandardCommonizer<CirTypeProjection, CirTypeProjection>() {
-    private var isStar = false
-    private lateinit var projectionKind: Variance
-    private val type = TypeCommonizer(classifiers)
-
-    override fun commonizationResult() = if (isStar) CirStarTypeProjection else CirTypeProjectionImpl(
-        projectionKind = projectionKind,
-        type = type.result
-    )
-
-    override fun initialize(first: CirTypeProjection) {
-        when (first) {
-            is CirStarTypeProjection -> isStar = true
-            is CirTypeProjectionImpl -> projectionKind = first.projectionKind
-        }
-    }
-
-    override fun doCommonizeWith(next: CirTypeProjection) = when (next) {
-        is CirStarTypeProjection -> isStar
-        is CirTypeProjectionImpl -> !isStar && projectionKind == next.projectionKind && type.commonizeWith(next.type)
-    }
-}
-
-private class TypeArgumentListCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirTypeProjection, CirTypeProjection>(
-    singleElementCommonizerFactory = { TypeArgumentCommonizer(classifiers) }
-)
 
 private fun commonizeClass(classId: ClassId, classifiers: CirKnownClassifiers): Boolean {
     if (classifiers.commonDependeeLibraries.hasClassifier(classId)) {

@@ -129,10 +129,10 @@ class CyclicCollector {
 
  public:
   CyclicCollector() {
-    CHECK_CALL(pthread_mutex_init(&lock_, nullptr), "Cannot init collector mutex")
-    CHECK_CALL(pthread_mutex_init(&timestampLock_, nullptr), "Cannot init collector timestamp mutex")
-    CHECK_CALL(pthread_cond_init(&cond_, nullptr), "Cannot init collector condition")
-    CHECK_CALL(pthread_create(&gcThread_, nullptr, gcWorkerRoutine, this), "Cannot start collector thread")
+    CHECK_CALL(pthread_mutex_init(&lock_, nullptr), "Cannot init collector mutex");
+    CHECK_CALL(pthread_mutex_init(&timestampLock_, nullptr), "Cannot init collector timestamp mutex");
+    CHECK_CALL(pthread_cond_init(&cond_, nullptr), "Cannot init collector condition");
+    CHECK_CALL(pthread_create(&gcThread_, nullptr, gcWorkerRoutine, this), "Cannot start collector thread");
   }
 
   void clear() {
@@ -146,7 +146,7 @@ class CyclicCollector {
       Locker locker(&lock_);
       terminateCollector_ = true;
       if (enabled) shallRunCollector_ = true;
-      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
+      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector");
     }
     // TODO: improve waiting for collector termination.
     while (atomicGet(&terminateCollector_)) {}
@@ -173,7 +173,7 @@ class CyclicCollector {
        KStdUnorderedMap<ObjHeader*, int> sideRefCounts;
        int restartCount = 0;
        while (!terminateCollector_) {
-         CHECK_CALL(pthread_cond_wait(&cond_, &lock_), "Cannot wait collector condition")
+         CHECK_CALL(pthread_cond_wait(&cond_, &lock_), "Cannot wait collector condition");
          if (!shallRunCollector_) continue;
          atomicSet(&gcRunning_, 1);
          restartCount = 0;
@@ -325,7 +325,7 @@ class CyclicCollector {
     // When exiting the worker - we shall collect the cyclic garbage here.
     if (enabled) {
       shallRunCollector_ = true;
-      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
+      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector");
     }
     currentAliveWorkers_--;
   }
@@ -416,7 +416,7 @@ class CyclicCollector {
     if (checkIfShallCollect()) {
       Locker locker(&lock_);
       shallRunCollector_ = true;
-      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
+      CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector");
     }
   }
 
@@ -424,7 +424,7 @@ class CyclicCollector {
     if (atomicGet(&gcRunning_) != 0) return;
     Locker lock(&lock_);
     shallRunCollector_ = true;
-    CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector")
+    CHECK_CALL(pthread_cond_signal(&cond_), "Cannot signal collector");
   }
 
   void localGC() {

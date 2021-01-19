@@ -710,6 +710,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
             runTest("compiler/testData/codegen/boxAgainstJava/sam/samConstructorGenericSignature.kt");
         }
 
+        @TestMetadata("smartCastSamConversion.kt")
+        public void testSmartCastSamConversion() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/sam/smartCastSamConversion.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -6,8 +6,10 @@ class A {
 // SYMBOLS:
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: A.x
+  dispatchType: A
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
   hasGetter: true
@@ -28,7 +30,9 @@ KtFirKotlinPropertySymbol:
 
 KtFirPropertyGetterSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
+  dispatchType: null
   hasBody: true
   isDefault: false
   isInline: false
@@ -40,8 +44,10 @@ KtFirPropertyGetterSymbol:
 
 KtFirKotlinPropertySymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: A.y
+  dispatchType: A
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: false
   hasGetter: true
@@ -61,15 +67,19 @@ KtFirKotlinPropertySymbol:
   visibility: PUBLIC
 
 KtFirClassOrObjectSymbol:
+  annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A
   classKind: CLASS
   companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
   isInner: false
   modality: FINAL
   name: A
   origin: SOURCE
-  primaryConstructor: KtFirConstructorSymbol(<constructor>)
   superTypes: [[] kotlin/Any]
   symbolKind: TOP_LEVEL
   typeParameters: []

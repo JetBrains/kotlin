@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
+interface FirModuleVisibilityChecker : FirSessionComponent {
+    fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
+}
+
 abstract class FirVisibilityChecker : FirSessionComponent {
     @NoMutableState
     object Default : FirVisibilityChecker() {
@@ -54,14 +58,13 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val session = callInfo.session
         val provider = session.firProvider
 
-
         return when (declaration.visibility) {
             Visibilities.Internal -> {
-                declaration.session == callInfo.session
+                declaration.session == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
-                if (declaration.session == callInfo.session) {
+                if (declaration.session == session) {
                     if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
                         val candidateFile = when (symbol) {
                             is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
@@ -194,6 +197,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 }
 
+val FirSession.moduleVisibilityChecker: FirModuleVisibilityChecker? by FirSession.nullableSessionComponentAccessor()
 val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessor()
 
 fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {

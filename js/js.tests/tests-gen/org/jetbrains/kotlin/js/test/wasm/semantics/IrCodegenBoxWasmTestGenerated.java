@@ -2864,6 +2864,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt17200.kt");
             }
 
+            @TestMetadata("kt44347.kt")
+            public void testKt44347() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt44347.kt");
+            }
+
             @TestMetadata("sharedSlotsWithCapturedVars.kt")
             public void testSharedSlotsWithCapturedVars() throws Exception {
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
@@ -5884,6 +5889,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("smartCastToDoubleAndComparableToDouble.kt")
         public void testSmartCastToDoubleAndComparableToDouble() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/smartCastToDoubleAndComparableToDouble.kt");
+        }
+
+        @TestMetadata("smartCastToInt.kt")
+        public void testSmartCastToInt() throws Exception {
+            runTest("compiler/testData/codegen/box/ieee754/smartCastToInt.kt");
         }
 
         @TestMetadata("whenNoSubject_properIeeeComparisons.kt")
@@ -13253,6 +13263,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/smartCasts/kt19100.kt");
         }
 
+        @TestMetadata("multipleSmartCast.kt")
+        public void testMultipleSmartCast() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/multipleSmartCast.kt");
+        }
+
         @TestMetadata("smartCastInsideIf.kt")
         public void testSmartCastInsideIf() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/smartCastInsideIf.kt");
@@ -14340,6 +14355,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         @TestMetadata("checkBasicUnsignedLiterals.kt")
         public void testCheckBasicUnsignedLiterals() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/checkBasicUnsignedLiterals.kt");
+        }
+
+        @TestMetadata("defaultArguments.kt")
+        public void testDefaultArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/defaultArguments.kt");
         }
 
         @TestMetadata("equalsImplForInlineClassWrappingNullableInlineClass.kt")

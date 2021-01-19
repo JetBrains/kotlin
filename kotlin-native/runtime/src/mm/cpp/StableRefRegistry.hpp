@@ -40,7 +40,7 @@ public:
     void ProcessDeletions() noexcept;
 
     // Lock registry for safe iteration.
-    // TODO: Iteration over `stableRefs_` will be slow, because it's `std::list` collected at different times from
+    // TODO: Iteration over `stableRefs_` will be slow, because it's `KStdList` collected at different times from
     // different threads, and so the nodes are all over the memory. Use metrics to understand how
     // much of a problem is it.
     Iterable Iter() noexcept { return stableRefs_.Iter(); }

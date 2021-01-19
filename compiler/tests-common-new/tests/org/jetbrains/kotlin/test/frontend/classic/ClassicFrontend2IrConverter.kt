@@ -30,7 +30,7 @@ class ClassicFrontend2IrConverter(
         module: TestModule,
         inputArtifact: ClassicFrontendOutputArtifact
     ): IrBackendInput {
-        val (psiFiles, analysisResult, project, languageVersionSettings) = inputArtifact
+        val (psiFiles, analysisResult, project, _) = inputArtifact
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 

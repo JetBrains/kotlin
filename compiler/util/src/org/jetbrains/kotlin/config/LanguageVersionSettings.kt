@@ -144,6 +144,9 @@ enum class LanguageFeature(
 
     AllowSealedInheritorsInDifferentFilesOfSamePackage(KOTLIN_1_5),
     SealedInterfaces(KOTLIN_1_5),
+    JvmIrEnabledByDefault(KOTLIN_1_5),
+    // Disabled until the breaking change is approved by the committee, see KT-10884.
+    PackagePrivateFileClassesWithAllPrivateMembers(KOTLIN_1_5, defaultState = State.DISABLED),
 
     /*
      * Improvements include the following:
@@ -322,6 +325,9 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         val LATEST_STABLE = KOTLIN_1_4
     }
 }
+
+fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
+    isStable || this == KOTLIN_1_5
 
 interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State

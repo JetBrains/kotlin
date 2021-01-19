@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "Alloc.h"
 #include "Memory.h"
 #include "TypeInfo.h"
 #include "Utils.hpp"
@@ -17,7 +18,7 @@ namespace kotlin {
 namespace mm {
 
 // Optional data that's lazily allocated only for objects that need it.
-class ExtraObjectData : private Pinned {
+class ExtraObjectData : private Pinned, public KonanAllocatorAware {
 public:
     MetaObjHeader* AsMetaObjHeader() noexcept { return reinterpret_cast<MetaObjHeader*>(this); }
     static ExtraObjectData& FromMetaObjHeader(MetaObjHeader* header) noexcept { return *reinterpret_cast<ExtraObjectData*>(header); }

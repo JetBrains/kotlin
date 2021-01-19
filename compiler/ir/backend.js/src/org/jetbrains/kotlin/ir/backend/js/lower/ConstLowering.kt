@@ -45,7 +45,7 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
 
     override fun <T> visitConst(expression: IrConst<T>): IrExpression {
         with(context.intrinsics) {
-            if (expression.type.isUnsigned()) {
+            if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
                 return when (expression.type.classifierOrNull) {
                     uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl.Companion::byte, IrConstKind.Byte.valueOf(expression))
 

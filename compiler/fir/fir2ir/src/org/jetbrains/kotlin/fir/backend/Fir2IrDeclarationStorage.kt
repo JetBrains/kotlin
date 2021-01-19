@@ -253,7 +253,7 @@ class Fir2IrDeclarationStorage(
 
     private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType): T {
         valueParameters = listOf(
-            createDefaultSetterParameter(startOffset, endOffset, origin, type, parent = this)
+            createDefaultSetterParameter(startOffset, endOffset, type, parent = this)
         )
         return this
     }
@@ -261,7 +261,6 @@ class Fir2IrDeclarationStorage(
     internal fun createDefaultSetterParameter(
         startOffset: Int,
         endOffset: Int,
-        origin: IrDeclarationOrigin,
         type: IrType,
         parent: IrFunction
     ): IrValueParameter {

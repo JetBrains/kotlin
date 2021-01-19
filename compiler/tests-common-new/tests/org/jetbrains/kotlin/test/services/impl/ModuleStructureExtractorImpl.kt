@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -29,7 +32,12 @@ class ModuleStructureExtractorImpl(
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
-        private val moduleDirectiveRegex = """([\w-]+)(\((.*)\))?""".toRegex()
+        /*
+         * ([\w-]+) module name
+         * \((.*?)\) module dependencies
+         * (\((.*?)\))? module friends
+         */
+        private val moduleDirectiveRegex = """([\w-]+)(\((.*?)\)(\((.*?)\))?)?""".toRegex()
     }
 
     override fun splitTestDataByModules(
@@ -62,9 +70,10 @@ class ModuleStructureExtractorImpl(
         private var currentModuleName: String? = null
         private var currentModuleTargetPlatform: TargetPlatform? = null
         private var currentModuleFrontendKind: FrontendKind<*>? = null
-        private var currentModuleBackendKind: BackendKind<*>? = null
+        private var currentModuleTargetBackend: TargetBackend? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
         private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
+        private var friendsOfCurrentModule = mutableListOf<DependencyDescription>()
         private var filesOfCurrentModule = mutableListOf<TestFile>()
 
         private var currentFileName: String? = null
@@ -145,9 +154,17 @@ class ModuleStructureExtractorImpl(
                     } else {
                         finishGlobalDirectives()
                     }
-                    val (moduleName, dependencies) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
+                    val (moduleName, dependencies, friends) = splitRawModuleStringToNameAndDependencies(values.joinToString(separator = " "))
                     currentModuleName = moduleName
                     dependencies.mapTo(dependenciesOfCurrentModule) { name ->
+                        val dependentModule = modules.firstOrNull { it.name == name }
+                        if (dependentModule?.targetPlatform.isCommon()) {
+                            return@mapTo DependencyDescription(name, DependencyKind.Source, DependencyRelation.DependsOn)
+                        }
+                        val kind = defaultsProvider.defaultDependencyKind
+                        DependencyDescription(name, kind, DependencyRelation.Dependency)
+                    }
+                    friends.mapTo(friendsOfCurrentModule) { name ->
                         val kind = defaultsProvider.defaultDependencyKind
                         DependencyDescription(name, kind, DependencyRelation.Dependency)
                     }
@@ -172,12 +189,7 @@ class ModuleStructureExtractorImpl(
                     }
                 }
                 ModuleStructureDirectives.TARGET_BACKEND_KIND -> {
-                    val name = values.singleOrNull() as? String ?: assertions.fail {
-                        "Target backend specified incorrectly\nUsage: ${directive.description}"
-                    }
-                    currentModuleBackendKind = BackendKinds.fromString(name) ?: assertions.fail {
-                        "Unknown backend: $name"
-                    }
+                    currentModuleTargetBackend = values.single() as TargetBackend
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
@@ -194,12 +206,26 @@ class ModuleStructureExtractorImpl(
             return true
         }
 
-        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): Pair<String, List<String>> {
+        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependeciens {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
-            val (name, _, dependencies) = matchResult.destructured
-            if (dependencies.isBlank()) return name to emptyList()
-            return name to dependencies.split(" ")
+            val (name, _, dependencies, _, friends) = matchResult.destructured
+            var dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+            globalDirectives?.let { directives ->
+                /*
+                 * In old tests coroutine helpers was added as separate module named `support`
+                 *   instead of additional files for current module. So to safe compatibility with
+                 *   old testdata we need to filter this dependency
+                 */
+                if (AdditionalFilesDirectives.WITH_COROUTINES in directives) {
+                    dependenciesNames = dependenciesNames.filter { it != "support" }
+                }
+            }
+            return ModuleNameAndDependeciens(
+                name,
+                dependenciesNames,
+                friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
+            )
         }
 
         private fun finishGlobalDirectives() {
@@ -216,10 +242,11 @@ class ModuleStructureExtractorImpl(
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform,
+                targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend,
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
-                backendKind = currentModuleBackendKind ?: defaultsProvider.defaultBackend,
                 files = filesOfCurrentModule,
                 dependencies = dependenciesOfCurrentModule,
+                friends = friendsOfCurrentModule,
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
@@ -251,9 +278,14 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun finishFile() {
-            val filename = currentFileName ?: defaultFileName
+            val actualDefaultFileName = if (currentModuleName == null) {
+                defaultFileName
+            } else {
+                "module_${currentModuleName}_$defaultFileName"
+            }
+            val filename = currentFileName ?: actualDefaultFileName
             if (filesOfCurrentModule.any { it.name == filename }) {
-                error("File with name \"$filename\" already defined in module ${currentModuleName ?: defaultModuleName}")
+                error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
             filesOfCurrentModule.add(
                 TestFile(
@@ -272,11 +304,12 @@ class ModuleStructureExtractorImpl(
             firstFileInModule = true
             currentModuleName = null
             currentModuleTargetPlatform = null
+            currentModuleTargetBackend = null
             currentModuleFrontendKind = null
-            currentModuleBackendKind = null
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()
+            friendsOfCurrentModule = mutableListOf()
             directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         }
 
@@ -306,6 +339,12 @@ class ModuleStructureExtractorImpl(
             return defaultsProvider.newLanguageSettingsBuilder()
         }
     }
+
+    private data class ModuleNameAndDependeciens(
+        val name: String,
+        val dependencies: List<String>,
+        val friends: List<String>
+    )
 }
 
 private operator fun RegisteredDirectives.plus(other: RegisteredDirectives?): RegisteredDirectives {

@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.test.builders
 
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-
-typealias Constructor<T> = (TestServices) -> T
 
 @DefaultsDsl
 class TestConfigurationBuilder {
@@ -37,6 +36,17 @@ class TestConfigurationBuilder {
     val defaultRegisteredDirectivesBuilder: RegisteredDirectivesBuilder = RegisteredDirectivesBuilder()
 
     private val configurationsByTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
+    private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
+
+    lateinit var testInfo: KotlinTestInfo
+
+    inline fun <reified T : TestService> useAdditionalService(noinline serviceConstructor: (TestServices) -> T) {
+        useAdditionalService(service(serviceConstructor))
+    }
+
+    fun useAdditionalService(serviceRegistrationData: ServiceRegistrationData) {
+        additionalServices += serviceRegistrationData
+    }
 
     fun forTestsMatching(pattern: String, configuration: TestConfigurationBuilder.() -> Unit) {
         val regex = pattern.toMatchingRegexString().toRegex()
@@ -128,6 +138,7 @@ class TestConfigurationBuilder {
             }
         }
         return TestConfigurationImpl(
+            testInfo,
             defaultsProviderBuilder.build(),
             assertions,
             facades,
@@ -140,7 +151,8 @@ class TestConfigurationBuilder {
             afterAnalysisCheckers,
             metaInfoHandlerEnabled,
             directives,
-            defaultRegisteredDirectivesBuilder.build()
+            defaultRegisteredDirectivesBuilder.build(),
+            additionalServices
         )
     }
 }

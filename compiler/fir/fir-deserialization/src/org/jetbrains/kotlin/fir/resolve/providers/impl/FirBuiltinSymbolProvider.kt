@@ -48,7 +48,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import java.io.InputStream
 
-@NoMutableState
+//TODO make thread safe
+@ThreadSafeMutableState
 class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
 
     private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassKind, val arity: Int)
@@ -237,6 +238,17 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         }
     }
 
+    @FirSymbolProviderInternals
+    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        allPackageFragments[packageFqName]?.flatMapTo(destination) {
+            it.getTopLevelFunctionSymbols(name)
+        }
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+    }
+
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val session: FirSession,
         val kotlinScopeProvider: KotlinScopeProvider,
@@ -297,6 +309,10 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         }
 
         fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
+            return getTopLevelFunctionSymbols(name)
+        }
+
+        fun getTopLevelFunctionSymbols(name: Name): List<FirNamedFunctionSymbol> {
             return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
                 memberDeserializer.loadFunction(it).symbol
             }

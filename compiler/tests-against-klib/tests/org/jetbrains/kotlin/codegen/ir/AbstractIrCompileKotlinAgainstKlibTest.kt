@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -19,6 +20,7 @@ import java.io.File
 import java.nio.file.Paths
 import java.util.*
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTest() {
     lateinit var klibName: String
     lateinit var outputDir: File

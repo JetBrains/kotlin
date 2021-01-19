@@ -16,5 +16,5 @@ interface Test<in I, out O> {
     fun internal_fun(i: O) : I
     public fun public_fun(i: O) : I
     protected fun protected_fun(i: O) : I
-    private fun private_fun(i: O) : I
+    <!PRIVATE_FUNCTION_WITH_NO_BODY!>private<!> fun private_fun(i: O) : I
 }

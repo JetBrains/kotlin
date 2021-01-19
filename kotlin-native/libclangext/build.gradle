@@ -42,7 +42,7 @@ model {
             binaries.withType(StaticLibraryBinarySpec) { binary ->
                 if (!project.parent.convention.plugins.platformInfo.isWindows())
                     cppCompiler.args "-fPIC"
-                cppCompiler.args "--std=c++11", "-g", "-I${llvmDir}/include"
+                cppCompiler.args "--std=c++17", "-g", "-I${llvmDir}/include"
                 if (isEnabled) {
                     cppCompiler.args '-DLIBCLANGEXT_ENABLE=1'
                 }

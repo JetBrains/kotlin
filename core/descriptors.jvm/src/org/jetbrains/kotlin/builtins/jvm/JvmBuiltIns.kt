@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
 
-class JvmBuiltIns(storageManager: StorageManager, kind: Kind) : KotlinBuiltIns(storageManager) {
+class JvmBuiltIns(storageManager: StorageManager, val kind: Kind) : KotlinBuiltIns(storageManager) {
     /**
      * Where built-ins should be loaded from.
      */

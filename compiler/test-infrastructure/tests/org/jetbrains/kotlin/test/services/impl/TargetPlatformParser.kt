@@ -44,7 +44,7 @@ object TargetPlatformParser {
         return runIf(platformString == JS) { JsPlatforms.DefaultSimpleJsPlatform }
     }
 
-    private fun tryParseNativePlatform(platformString: String): NativePlatform? {
+    private fun tryParseNativePlatform(@Suppress("UNUSED_PARAMETER") platformString: String): NativePlatform? {
         // TODO: support native platforms
         return null
     }

@@ -23,7 +23,7 @@ abstract class TestClassModel : ClassModel {
     override val imports: Set<Class<*>>
         get() {
             return mutableSetOf<Class<*>>().also { allImports ->
-                annotations.mapTo(allImports) { it.annotation }
+                annotations.flatMapTo(allImports) { it.imports() }
                 methods.flatMapTo(allImports) { it.imports() }
                 innerTestClasses.flatMapTo(allImports) { it.imports }
             }

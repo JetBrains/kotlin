@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -18,12 +20,17 @@ import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 class ClassicJvmBackendFacade(
     testServices: TestServices
 ) : ClassicBackendFacade<BinaryArtifacts.Jvm>(testServices, ArtifactKinds.Jvm) {
+    private val javaCompilerFacade = JavaCompilerFacade(testServices)
+
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = listOf(CodegenTestDirectives)
+
     override fun transform(
         module: TestModule,
         inputArtifact: ClassicBackendInput
     ): BinaryArtifacts.Jvm {
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val (psiFiles, bindingContext, moduleDescriptor, project, languageVersionSettings) = inputArtifact
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val (psiFiles, bindingContext, moduleDescriptor, project, _) = inputArtifact
         // TODO: add configuring classBuilderFactory
         val generationState = GenerationState.Builder(
             project,
@@ -31,11 +38,11 @@ class ClassicJvmBackendFacade(
             moduleDescriptor,
             bindingContext,
             psiFiles.toList(),
-            compilerConfiguration
+            configuration
         ).codegenFactory(DefaultCodegenFactory).build()
 
         KotlinCodegenFacade.compileCorrectFiles(generationState)
-
+        javaCompilerFacade.compileJavaFiles(module, configuration, generationState.factory)
         return BinaryArtifacts.Jvm(generationState.factory)
     }
 }

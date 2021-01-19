@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import kotlin.io.FilesKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
@@ -128,16 +129,17 @@ public class CompileEnvironmentUtil {
         try (JarInputStream jis = new JarInputStream(new FileInputStream(jarPath))) {
             while (true) {
                 JarEntry e = jis.getNextJarEntry();
-                if (e == null) {
-                    break;
+                if (e == null) break;
+
+                if (!FileUtilRt.extensionEquals(e.getName(), "class") ||
+                    StringsKt.substringAfterLast(e.getName(), "/", e.getName()).equals("module-info.class")) {
+                    continue;
                 }
                 if (resetJarTimestamps) {
                     e.setTime(DOS_EPOCH);
                 }
-                if (FileUtilRt.extensionEquals(e.getName(), "class")) {
-                    stream.putNextEntry(e);
-                    FileUtil.copy(jis, stream);
-                }
+                stream.putNextEntry(e);
+                FileUtil.copy(jis, stream);
             }
         }
     }

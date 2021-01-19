@@ -116,7 +116,7 @@ interface IrBuilderExtension {
         irInvoke(
             dispatchReceiver,
             callee,
-            args = valueArguments.toTypedArray(),
+            *valueArguments.toTypedArray(),
             typeHint = returnTypeHint
         ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
 
@@ -590,7 +590,7 @@ interface IrBuilderExtension {
         kType,
         genericIndex
     ) { it, _ ->
-        val (prop, ir) = enclosingGenerator.localSerializersFieldsDescriptors[it]
+        val (_, ir) = enclosingGenerator.localSerializersFieldsDescriptors[it]
         irGetField(irGet(dispatchReceiverParameter), ir.backingField!!)
     }
 

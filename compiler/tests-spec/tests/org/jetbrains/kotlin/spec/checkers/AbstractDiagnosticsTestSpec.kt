@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.spec.checkers
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -23,6 +24,7 @@ import org.junit.Assert
 import java.io.File
 import java.util.regex.Matcher
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest() {
     companion object {
         private val withoutDescriptorsTestGroups = listOf(

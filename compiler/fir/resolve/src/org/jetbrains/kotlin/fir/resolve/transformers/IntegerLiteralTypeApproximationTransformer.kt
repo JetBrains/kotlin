@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 fun FirExpression.approximateIfIsIntegerConst(expectedType: ConeKotlinType? = null): FirExpression {
     return transformSingle(IntegerLiteralTypeApproximationTransformer, expectedType)
@@ -38,7 +38,7 @@ private object IntegerLiteralTypeApproximationTransformer : FirTransformer<ConeK
         val approximatedType = type.getApproximatedType(data)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(approximatedType)
         @Suppress("UNCHECKED_CAST")
-        val kind = approximatedType.toConstKind() as FirConstKind<T>
+        val kind = approximatedType.toConstKind() as ConstantValueKind<T>
         constExpression.replaceKind(kind)
         return constExpression.compose()
     }

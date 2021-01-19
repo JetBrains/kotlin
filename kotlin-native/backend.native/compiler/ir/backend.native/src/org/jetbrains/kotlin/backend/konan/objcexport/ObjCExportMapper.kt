@@ -265,7 +265,8 @@ private fun ObjCExportMapper.bridgeReturnType(
             }
         }
 
-        descriptor.containingDeclaration == descriptor.builtIns.any && descriptor.name.asString() == "hashCode" -> {
+        descriptor.containingDeclaration.let { it is ClassDescriptor && KotlinBuiltIns.isAny(it) } &&
+                descriptor.name.asString() == "hashCode" -> {
             assert(!convertExceptionsToErrors)
             MethodBridge.ReturnValue.HashCode
         }

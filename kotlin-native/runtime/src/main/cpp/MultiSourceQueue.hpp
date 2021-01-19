@@ -11,6 +11,7 @@
 #include <mutex>
 
 #include "Mutex.hpp"
+#include "Types.h"
 
 namespace kotlin {
 
@@ -20,9 +21,9 @@ class MultiSourceQueue {
 public:
     class Producer;
 
-    // TODO: Consider switching from `std::list` to `SingleLockList` to hide the constructor
+    // TODO: Consider switching from `KStdList` to `SingleLockList` to hide the constructor
     // and to not store the iterator.
-    class Node : private Pinned {
+    class Node : private Pinned, public KonanAllocatorAware {
     public:
         Node(const T& value, Producer* owner) noexcept : value_(value), owner_(owner) {}
 
@@ -33,7 +34,7 @@ public:
 
         T value_;
         std::atomic<Producer*> owner_; // `nullptr` signifies that `MultiSourceQueue` owns it.
-        typename std::list<Node>::iterator position_;
+        typename KStdList<Node>::iterator position_;
     };
 
     class Producer {
@@ -72,8 +73,8 @@ public:
 
     private:
         MultiSourceQueue& owner_; // weak
-        std::list<Node> queue_;
-        std::list<Node*> deletionQueue_;
+        KStdList<Node> queue_;
+        KStdList<Node*> deletionQueue_;
     };
 
     class Iterator {
@@ -92,9 +93,9 @@ public:
     private:
         friend class MultiSourceQueue;
 
-        explicit Iterator(const typename std::list<Node>::iterator& position) noexcept : position_(position) {}
+        explicit Iterator(const typename KStdList<Node>::iterator& position) noexcept : position_(position) {}
 
-        typename std::list<Node>::iterator position_;
+        typename KStdList<Node>::iterator position_;
     };
 
     class Iterable : MoveOnly {
@@ -118,7 +119,7 @@ public:
     // Lock `MultiSourceQueue` and apply deletions. Only deletes elements that were published.
     void ApplyDeletions() noexcept {
         std::lock_guard<SpinLock> guard(mutex_);
-        std::list<Node*> remainingDeletions;
+        KStdList<Node*> remainingDeletions;
 
         auto it = deletionQueue_.begin();
         while (it != deletionQueue_.end()) {
@@ -139,10 +140,10 @@ public:
     }
 
 private:
-    // Using `std::list` as it allows to implement `Collect` without memory allocations,
+    // Using `KStdList` as it allows to implement `Collect` without memory allocations,
     // which is important for GC mark phase.
-    std::list<Node> queue_;
-    std::list<Node*> deletionQueue_;
+    KStdList<Node> queue_;
+    KStdList<Node*> deletionQueue_;
     SpinLock mutex_;
 };
 

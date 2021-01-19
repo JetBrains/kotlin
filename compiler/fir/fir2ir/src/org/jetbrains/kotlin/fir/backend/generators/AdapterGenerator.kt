@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
@@ -51,8 +50,6 @@ internal class AdapterGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
-    private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
-
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     internal fun needToGenerateAdaptedCallableReference(
@@ -85,7 +82,10 @@ internal class AdapterGenerator(
      */
     private fun needCoercionToUnit(type: IrSimpleType, function: IrFunction): Boolean {
         val expectedReturnType = type.arguments.last().typeOrNull
-        return expectedReturnType?.isUnit() == true && !function.returnType.isUnit()
+        val actualReturnType = function.returnType
+        return expectedReturnType?.isUnit() == true &&
+                // In case of an external function whose return type is a type parameter, e.g., operator fun <T, R> invoke(T): R
+                !actualReturnType.isUnit() && !actualReturnType.isTypeParameter()
     }
 
     /**

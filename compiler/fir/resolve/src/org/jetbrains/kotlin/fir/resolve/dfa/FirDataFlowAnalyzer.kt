@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -366,8 +367,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         when {
             leftConst != null && rightConst != null -> return
-            leftConst?.kind == FirConstKind.Null -> processEqNull(node, rightOperand, operation)
-            rightConst?.kind == FirConstKind.Null -> processEqNull(node, leftOperand, operation)
+            leftConst?.kind == ConstantValueKind.Null -> processEqNull(node, rightOperand, operation)
+            rightConst?.kind == ConstantValueKind.Null -> processEqNull(node, leftOperand, operation)
             leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
             rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
             else -> processEq(node, leftOperand, rightOperand, operation)
@@ -389,7 +390,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         // propagating facts for (... == true) and (... == false)
-        if (const.kind == FirConstKind.Boolean) {
+        if (const.kind == ConstantValueKind.Boolean) {
             val constValue = const.value as Boolean
             val shouldInvert = isEq xor constValue
 
@@ -899,7 +900,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         if (isAssignment) {
-            if (initializer is FirConstExpression<*> && initializer.kind == FirConstKind.Null) {
+            if (initializer is FirConstExpression<*> && initializer.kind == ConstantValueKind.Null) {
                 flow.addTypeStatement(propertyVariable typeEq property.returnTypeRef.coneType.withNullability(ConeNullability.NULLABLE))
             } else {
                 flow.addTypeStatement(propertyVariable typeEq initializer.typeRef.coneType)

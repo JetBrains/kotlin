@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.Type
 
 internal val suspendLambdaPhase = makeIrFilePhase(
@@ -225,14 +223,14 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
     private fun IrClass.addInvokeSuspendForLambda(
         irFunction: IrFunction,
         suspendLambda: IrClass,
-        fields: List<ParameterInfo>
+        parameterInfos: List<ParameterInfo>
     ): IrSimpleFunction {
         val superMethod = suspendLambda.functions.single {
             it.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.valueParameters.size == 1 &&
                     it.valueParameters[0].type.isKotlinResult()
         }
         return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
-            val localVals: List<IrVariable?> = fields.mapIndexed { index, param ->
+            val localVals: List<IrVariable?> = parameterInfos.map { param ->
                 if (param.isUsed) {
                     buildVariable(
                         parent = this,

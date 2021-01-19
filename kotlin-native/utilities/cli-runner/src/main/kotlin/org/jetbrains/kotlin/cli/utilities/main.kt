@@ -15,6 +15,25 @@ private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
     when (utilityName) {
         "konanc" ->
             konancMain(utilityArgs)
+        "kotlinc" -> {
+            println("""
+                NOTE: you are running "kotlinc" CLI tool from Kotlin/Native distribution,
+                it runs Kotlin/Native compiler that produces native binaries from Kotlin code.
+                If your intention was to compile Kotlin code to JVM bytecode instead, then you
+                need to use "kotlinc" from the main Kotlin distribution (e.g. it can be
+                downloaded as kotlin-compiler-X.Y.ZZ.zip archive from
+                https://github.com/JetBrains/kotlin/releases/latest, or installed using various
+                package managers).
+
+                WARNING: if your intention was to run Kotlin/Native compiler, then please use
+                "kotlinc-native" CLI tool instead of "kotlinc". "kotlinc" tool will be removed
+                from Kotlin/Native distribution, so it will stop clashing with "kotlinc" from
+                the main Kotlin distribution.
+
+            """.trimIndent())
+
+            konancMain(utilityArgs)
+        }
         "cinterop" -> {
             val konancArgs = invokeInterop("native", utilityArgs)
             konancArgs?.let { konancMain(it) }

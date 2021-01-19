@@ -393,7 +393,9 @@ abstract class AbstractFirStatusResolveTransformer(
             }
             return
         }
-        require(file != null)
+        require(file != null) {
+            "Containing file was not found for\n${regularClass.render()}"
+        }
         val symbol = regularClass.symbol
         var declarationToStart: FirDeclaration? = null
         val designation = designationMapForLocalClasses[regularClass]?.let(::listOf)?.also {

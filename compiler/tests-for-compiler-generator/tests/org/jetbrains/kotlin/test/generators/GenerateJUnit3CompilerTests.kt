@@ -94,10 +94,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
             }
 
-            testClass<AbstractBlackBoxCodegenTest> {
-                model("codegen/box", targetBackend = TargetBackend.JVM)
-            }
-
             testClass<AbstractLightAnalysisModeTest> {
                 // "ranges/stepped" is excluded because it contains hundreds of generated tests and only have a box() method.
                 // There isn't much to be gained from running light analysis tests on them.
@@ -315,7 +311,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractAntTaskTest> {
-                model("integration/ant/jvm", extension = null, recursive = false, excludeParentDirs = true)
+                model("integration/ant/jvm", extension = null, recursive = false)
             }
 
             testClass<AbstractControlFlowTest> {
@@ -379,10 +375,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractComposeLikeIrBytecodeTextTest> {
                 model("codegen/composeLikeBytecodeText", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
 
             testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
@@ -514,10 +506,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             testRunnerMethodName = "runTestWithCustomIgnoreDirective",
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
         ) {
-            testClass<AbstractFirBlackBoxCodegenTest> {
-                model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractFirBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }

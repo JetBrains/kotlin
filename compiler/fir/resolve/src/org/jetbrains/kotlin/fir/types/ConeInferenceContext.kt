@@ -61,7 +61,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         isExtensionFunction: Boolean
     ): SimpleTypeMarker {
         val attributes = if (isExtensionFunction) // TODO: assert correct type constructor
-            ConeAttributes.create(listOf(CompilerConeAttributes.ExtensionFunctionType))
+            ConeAttributes.WithExtensionFunctionType
         else ConeAttributes.Empty
         @Suppress("UNCHECKED_CAST")
         return when (constructor) {

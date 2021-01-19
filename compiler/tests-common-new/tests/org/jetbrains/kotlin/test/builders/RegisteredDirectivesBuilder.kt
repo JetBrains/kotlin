@@ -16,6 +16,10 @@ class RegisteredDirectivesBuilder {
         simpleDirectives += this
     }
 
+    operator fun SimpleDirective.unaryMinus() {
+        simpleDirectives.remove(this)
+    }
+
     infix fun StringDirective.with(value: String) {
         with(listOf(value))
     }
@@ -24,12 +28,20 @@ class RegisteredDirectivesBuilder {
         stringDirectives.putWithExistsCheck(this, values)
     }
 
+    operator fun StringDirective.unaryMinus() {
+        stringDirectives.remove(this)
+    }
+
     infix fun <T : Any> ValueDirective<T>.with(value: T) {
         with(listOf(value))
     }
 
     infix fun <T : Any> ValueDirective<T>.with(values: List<T>) {
         valueDirectives.putWithExistsCheck(this, values)
+    }
+
+    operator fun ValueDirective<*>.unaryMinus() {
+        valueDirectives.remove(this)
     }
 
     private fun <K : Directive, V> MutableMap<K, V>.putWithExistsCheck(key: K, value: V) {

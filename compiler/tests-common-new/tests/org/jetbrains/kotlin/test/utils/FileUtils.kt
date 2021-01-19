@@ -28,9 +28,13 @@ val File.firTestDataFile: File
     }
 
 fun File.withExtension(extension: String): File {
+    return withSuffixAndExtension(suffix = "", extension)
+}
+
+fun File.withSuffixAndExtension(suffix: String, extension: String): File {
     @Suppress("NAME_SHADOWING")
     val extension = extension.removePrefix(".")
-    return parentFile.resolve("$nameWithoutExtension.$extension")
+    return parentFile.resolve("$nameWithoutExtension$suffix.$extension")
 }
 
 /*

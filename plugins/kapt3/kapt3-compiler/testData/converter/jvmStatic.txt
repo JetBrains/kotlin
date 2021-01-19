@@ -35,11 +35,11 @@ import java.lang.System;
 public final class JvmStaticTest {
     @org.jetbrains.annotations.NotNull()
     public static final JvmStaticTest.Companion Companion = null;
-    public static final char c = 'C';
-    public final char d = 'D';
     private static final int one = 1;
-    public final byte three = (byte)3;
     public static final int two = 2;
+    public static final char c = 'C';
+    public final byte three = (byte)3;
+    public final char d = 'D';
 
     public JvmStaticTest() {
         super();

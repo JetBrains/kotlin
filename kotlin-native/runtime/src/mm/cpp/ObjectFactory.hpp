@@ -9,12 +9,13 @@
 #include <algorithm>
 #include <memory>
 #include <mutex>
+#include <type_traits>
 
 #include "Alignment.hpp"
 #include "Alloc.h"
-#include "CppSupport.hpp"
 #include "Memory.h"
 #include "Mutex.hpp"
+#include "Types.h"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -31,14 +32,13 @@ class ObjectFactoryStorage : private Pinned {
     static_assert(IsValidAlignment(DataAlignment), "DataAlignment is not a valid alignment");
 
 public:
-    // This class does not know its size at compile-time.
+    // This class does not know its size at compile-time. Does not inherit from `KonanAllocatorAware` because
+    // in `KonanAllocatorAware::operator new(size_t size, KonanAllocTag)` `size` would be incorrect.
     class Node : private Pinned {
         constexpr static size_t DataOffset() noexcept { return AlignUp(sizeof(Node), DataAlignment); }
 
     public:
         ~Node() = default;
-
-        static void operator delete(void* ptr) noexcept { konanFreeMemory(ptr); }
 
         // Note: This can only be trivially destructible data, as nobody can invoke its destructor.
         void* Data() noexcept {
@@ -59,7 +59,7 @@ public:
 
         Node() noexcept = default;
 
-        static void* operator new(size_t size, size_t dataSize) noexcept {
+        static KStdUniquePtr<Node> Create(size_t dataSize) noexcept {
             size_t dataSizeAligned = AlignUp(dataSize, DataAlignment);
             size_t totalAlignment = std::max(alignof(Node), DataAlignment);
             size_t totalSize = AlignUp(sizeof(Node) + dataSizeAligned, totalAlignment);
@@ -73,10 +73,10 @@ public:
                 konan::abort();
             }
             RuntimeAssert(IsAligned(ptr, totalAlignment), "Allocator returned unaligned to %zu pointer %p", totalAlignment, ptr);
-            return ptr;
+            return KStdUniquePtr<Node>(new (ptr) Node());
         }
 
-        std::unique_ptr<Node> next_;
+        KStdUniquePtr<Node> next_;
         // There's some more data of an unknown (at compile-time) size here, but it cannot be represented
         // with C++ members.
     };
@@ -89,13 +89,11 @@ public:
 
         Node& Insert(size_t dataSize) noexcept {
             AssertCorrect();
-            auto* nodePtr = new (dataSize) Node();
-            std::unique_ptr<Node> node(nodePtr);
+            auto node = Node::Create(dataSize);
+            auto* nodePtr = node.get();
             if (!root_) {
-                RuntimeAssert(last_ == nullptr, "Unsynchronized root_ and last_");
                 root_ = std::move(node);
             } else {
-                RuntimeAssert(last_ != nullptr, "Unsynchronized root_ and last_");
                 last_->next_ = std::move(node);
             }
 
@@ -108,7 +106,7 @@ public:
         template <typename T, typename... Args>
         Node& Insert(Args&&... args) noexcept {
             static_assert(alignof(T) <= DataAlignment, "Cannot insert type with alignment bigger than DataAlignment");
-            static_assert(std_support::is_trivially_destructible_v<T>, "Type must be trivially destructible");
+            static_assert(std::is_trivially_destructible_v<T>, "Type must be trivially destructible");
             auto& node = Insert(sizeof(T));
             new (node.Data()) T(std::forward<Args>(args)...);
             return node;
@@ -155,7 +153,7 @@ public:
         }
 
         ObjectFactoryStorage& owner_; // weak
-        std::unique_ptr<Node> root_;
+        KStdUniquePtr<Node> root_;
         Node* last_ = nullptr;
     };
 
@@ -197,6 +195,11 @@ public:
         std::unique_lock<SpinLock> guard_;
     };
 
+    ~ObjectFactoryStorage() {
+        // Make sure not to blow up the stack by nested `~Node` calls.
+        for (auto node = std::move(root_); node != nullptr; node = std::move(node->next_)) {}
+    }
+
     // Lock `ObjectFactoryStorage` for safe iteration.
     Iterable Iter() noexcept { return Iterable(*this); }
 
@@ -236,7 +239,7 @@ private:
         }
     }
 
-    std::unique_ptr<Node> root_;
+    KStdUniquePtr<Node> root_;
     Node* last_ = nullptr;
     SpinLock mutex_;
 };

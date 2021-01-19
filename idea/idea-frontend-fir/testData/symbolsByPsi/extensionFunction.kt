@@ -4,8 +4,10 @@ fun String.foo(): Int = 10
 /*
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
+  annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: foo
+  dispatchType: null
   isExtension: true
   isExternal: false
   isInline: false

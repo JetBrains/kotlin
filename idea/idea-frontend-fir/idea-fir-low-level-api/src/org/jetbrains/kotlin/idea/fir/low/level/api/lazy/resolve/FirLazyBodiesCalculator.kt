@@ -32,7 +32,7 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesForFunction(simpleFunction: FirSimpleFunction) {
         if (simpleFunction.body !is FirLazyBlock) return
         val rawFirBuilder = createRawFirBuilder(simpleFunction)
-        val newFunction = rawFirBuilder.buildFunctionWithBody(simpleFunction.psi as KtNamedFunction) as FirSimpleFunction
+        val newFunction = rawFirBuilder.buildFunctionWithBody(simpleFunction.psi as KtNamedFunction, simpleFunction) as FirSimpleFunction
         simpleFunction.apply {
             replaceBody(newFunction.body)
             replaceContractDescription(newFunction.contractDescription)
@@ -43,7 +43,7 @@ internal object FirLazyBodiesCalculator {
         require(!secondaryConstructor.isPrimary)
         if (secondaryConstructor.body !is FirLazyBlock) return
         val rawFirBuilder = createRawFirBuilder(secondaryConstructor)
-        val newFunction = rawFirBuilder.buildSecondaryConstructor(secondaryConstructor.psi as KtSecondaryConstructor)
+        val newFunction = rawFirBuilder.buildSecondaryConstructor(secondaryConstructor.psi as KtSecondaryConstructor, secondaryConstructor)
         secondaryConstructor.apply {
             replaceBody(newFunction.body)
         }
@@ -53,7 +53,7 @@ internal object FirLazyBodiesCalculator {
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
         val rawFirBuilder = createRawFirBuilder(firProperty)
-        val newProperty = rawFirBuilder.buildPropertyWithBody(firProperty.psi as KtProperty)
+        val newProperty = rawFirBuilder.buildPropertyWithBody(firProperty.psi as KtProperty, firProperty)
 
         firProperty.getter?.takeIf { it.body is FirLazyBlock }?.let { getter ->
             val newGetter = newProperty.getter!!

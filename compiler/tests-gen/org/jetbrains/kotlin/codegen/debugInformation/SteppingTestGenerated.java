@@ -267,6 +267,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("localFunctionWIthOnelineExpressionBody.kt")
+    public void testLocalFunctionWIthOnelineExpressionBody() throws Exception {
+        runTest("compiler/testData/debug/stepping/localFunctionWIthOnelineExpressionBody.kt");
+    }
+
+    @Test
     @TestMetadata("multilineFunctionCall.kt")
     public void testMultilineFunctionCall() throws Exception {
         runTest("compiler/testData/debug/stepping/multilineFunctionCall.kt");

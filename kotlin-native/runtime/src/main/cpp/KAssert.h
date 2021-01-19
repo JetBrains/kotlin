@@ -25,7 +25,14 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message, ...);
+#if KONAN_ENABLE_ASSERT
+#define CURRENT_SOURCE_LOCATION __FILE__ ":" TOSTRING(__LINE__)
+#else
+// Do not generate location strings, when asserts are disabled to reduce code size.
+#define CURRENT_SOURCE_LOCATION nullptr
+#endif
+
+RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* format, ...) __attribute__((format(printf, 2, 3)));
 
 namespace internal {
 
@@ -35,7 +42,7 @@ inline RUNTIME_NORETURN void TODOImpl(const char* location) {
 
 // TODO: Support format string when `RuntimeAssertFailed` supports it.
 inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message) {
-    RuntimeAssertFailed(location, message);
+    RuntimeAssertFailed(location, "%s", message);
 }
 
 } // namespace internal
@@ -46,24 +53,31 @@ extern "C" const int KonanNeedDebugInfo;
 
 #if KONAN_ENABLE_ASSERT
 // Use RuntimeAssert() in internal state checks, which could be ignored in production.
-#define RuntimeAssert(condition, format, ...)                                     \
-if (KonanNeedDebugInfo && (!(condition))) {                                       \
-    RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), format, ##__VA_ARGS__); \
-}
+#define RuntimeAssert(condition, format, ...) \
+    do { \
+        if (KonanNeedDebugInfo && (!(condition))) { \
+            RuntimeAssertFailed(CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
+        } \
+    } while (false)
 #else
-#define RuntimeAssert(condition, message)
+#define RuntimeAssert(condition, format, ...) \
+    do { \
+    } while (false)
 #endif
 
 // Use RuntimeCheck() in runtime checks that could fail due to external condition and shall lead
 // to program termination. Never compiled out.
-#define RuntimeCheck(condition, format, ...)             \
-  if (!(condition)) {                                    \
-    RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
-  }
+// TODO: Consider using `CURRENT_SOURCE_LOCATION` when `KonanNeedDebugInfo` is `true`.
+#define RuntimeCheck(condition, format, ...) \
+    do { \
+        if (!(condition)) { \
+            RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
+        } \
+    } while (false)
 
 #define TODO(...) \
     do { \
-        ::internal::TODOImpl(__FILE__ ":" TOSTRING(__LINE__), ##__VA_ARGS__); \
+        ::internal::TODOImpl(CURRENT_SOURCE_LOCATION, ##__VA_ARGS__); \
     } while (false)
 
 #endif // RUNTIME_ASSERT_H

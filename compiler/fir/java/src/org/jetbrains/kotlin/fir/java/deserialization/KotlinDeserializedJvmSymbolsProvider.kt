@@ -363,14 +363,14 @@ class KotlinDeserializedJvmSymbolsProvider(
         return symbol
     }
 
-    private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol<*>> {
+    private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirNamedFunctionSymbol> {
         val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
         return functionIds.map {
             part.context.memberDeserializer.loadFunction(part.proto.getFunction(it)).symbol
         }
     }
 
-    private fun loadPropertiesByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol<*>> {
+    private fun loadPropertiesByName(part: PackagePartsCacheData, name: Name): List<FirPropertySymbol> {
         val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
         return propertyIds.map {
             part.context.memberDeserializer.loadProperty(part.proto.getProperty(it)).symbol
@@ -381,6 +381,20 @@ class KotlinDeserializedJvmSymbolsProvider(
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         getPackageParts(packageFqName).flatMapTo(destination) { part ->
             loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
+        }
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        getPackageParts(packageFqName).flatMapTo(destination) { part ->
+            loadFunctionsByName(part, name)
+        }
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+        getPackageParts(packageFqName).flatMapTo(destination) { part ->
+            loadPropertiesByName(part, name)
         }
     }
 

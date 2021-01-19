@@ -146,7 +146,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
     }
 
     private fun doTestLoadAndSaveProjectWithFacetConfig(valueBefore: String, valueAfter: String) {
-        val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray())
+        val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray()).trimEnd()
         Assert.assertTrue(moduleFileContentBefore.contains(valueBefore))
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.isSaveAllowed = true

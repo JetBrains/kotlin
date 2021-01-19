@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.*
+import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -78,6 +79,8 @@ internal class FirLightFieldForEnumEntry(
     }
 
     override fun getNameIdentifier(): PsiIdentifier = _identifier
+
+    override fun isValid(): Boolean = super.isValid() && enumEntrySymbol.isValid()
 
 
     override fun equals(other: Any?): Boolean =

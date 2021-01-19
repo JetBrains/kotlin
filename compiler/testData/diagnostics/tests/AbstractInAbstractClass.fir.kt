@@ -23,10 +23,10 @@ abstract class MyAbstractClass() {
     abstract val e3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = a<!>
 
     //methods
-    fun f()
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun f()<!>
     fun g() {}
     abstract fun h()
-    abstract fun j() {}
+    <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
     var i: Int                       abstract get  abstract set

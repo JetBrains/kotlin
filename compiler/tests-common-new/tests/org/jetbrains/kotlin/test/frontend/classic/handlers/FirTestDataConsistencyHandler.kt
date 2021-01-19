@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
@@ -41,6 +42,7 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
     private fun runFirTestAndGeneratedTestData(testData: File, firTestData: File) {
         firTestData.writeText(clearTextFromDiagnosticMarkup(testData.readText()))
         val test = object : AbstractFirDiagnosticTest() {}
+        test.initTestInfo(testServices.testInfo.copy(className = "${testServices.testInfo.className}_fir_anonymous"))
         test.runTest(firTestData.absolutePath)
     }
 }

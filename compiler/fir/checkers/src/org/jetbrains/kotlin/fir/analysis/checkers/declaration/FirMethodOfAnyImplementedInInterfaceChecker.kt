@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirMethodOfAnyImplementedInInterfaceChecker : FirMemberDeclarationChecker(), FirDeclarationPresenter {
+object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), FirDeclarationPresenter {
     private var inspector: FirDeclarationInspector? = null
 
     private fun getInspector(context: CheckerContext) = inspector ?: FirDeclarationInspector(this).apply {
@@ -56,8 +56,8 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirMemberDeclarationChecker
         append(')')
     }
 
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirClass<*> || declaration.classKind != ClassKind.INTERFACE) {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.classKind != ClassKind.INTERFACE) {
             return
         }
 

@@ -6,8 +6,6 @@
 #ifndef RUNTIME_UTILS_H
 #define RUNTIME_UTILS_H
 
-#include "CppSupport.hpp"
-
 namespace kotlin {
 
 // A helper for implementing classes with disabled copy constructor and copy assignment.

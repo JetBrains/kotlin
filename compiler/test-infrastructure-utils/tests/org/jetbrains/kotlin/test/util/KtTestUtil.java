@@ -49,6 +49,11 @@ public class KtTestUtil {
     }
 
     @NotNull
+    public static File tmpDir(@NotNull File parentDir, @NotNull String name) throws IOException {
+        return normalizeFile(FileUtil.createTempDirectory(parentDir, name, "", false));
+    }
+
+    @NotNull
     public static File tmpDirForReusableFolder(String name) throws IOException {
         return normalizeFile(FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "", true));
     }

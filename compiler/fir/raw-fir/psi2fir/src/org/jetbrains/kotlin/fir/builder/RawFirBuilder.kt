@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -62,23 +64,32 @@ class RawFirBuilder(
         return reference.accept(Visitor(), Unit) as FirTypeRef
     }
 
-    fun buildFunctionWithBody(function: KtNamedFunction): FirFunction<*> {
-        return buildDeclaration(function) as FirFunction<*>
+    fun buildFunctionWithBody(function: KtNamedFunction, original: FirFunction<*>?): FirFunction<*> {
+        return buildDeclaration(function, original) as FirFunction<*>
     }
 
-    fun buildSecondaryConstructor(secondaryConstructor: KtSecondaryConstructor): FirConstructor {
-        return buildDeclaration(secondaryConstructor) as FirConstructor
+    fun buildSecondaryConstructor(secondaryConstructor: KtSecondaryConstructor, original: FirConstructor?): FirConstructor {
+        return buildDeclaration(secondaryConstructor, original) as FirConstructor
     }
 
-    fun buildPropertyWithBody(property: KtProperty): FirProperty {
+    fun buildPropertyWithBody(property: KtProperty, original: FirProperty?): FirProperty {
         require(!property.isLocal) { "Should not be used to build local properties (variables)" }
-        return buildDeclaration(property) as FirProperty
+        return buildDeclaration(property, original) as FirProperty
     }
 
-    private fun buildDeclaration(declaration: KtDeclaration): FirDeclaration {
+    private fun buildDeclaration(declaration: KtDeclaration, original: FirDeclaration?): FirDeclaration {
         assert(mode ==  RawFirBuilderMode.NORMAL) { "Building FIR declarations isn't supported in stub or lazy mode mode" }
-        setupContextForPosition(declaration)
-        return declaration.accept(Visitor(), Unit) as FirDeclaration
+        setupContextForPosition(declaration,)
+        val firDeclaration = declaration.accept(Visitor(), Unit) as FirDeclaration
+        original?.let { firDeclaration.copyContainingClassAttrFrom(it) }
+        return firDeclaration
+    }
+
+    // TODO this is a (temporary) hack, instead we should properly initialize [context]
+    private fun FirDeclaration.copyContainingClassAttrFrom(from: FirDeclaration) {
+        (this as? FirCallableMemberDeclaration<*>)?.let {
+            it.containingClassAttr = (from as? FirCallableMemberDeclaration<*>)?.containingClassAttr
+        }
     }
 
     private fun setupContextForPosition(position: KtElement) {
@@ -200,10 +211,13 @@ class RawFirBuilder(
                 )
             }
 
-        private fun KtExpression?.toFirExpression(errorReason: String): FirExpression =
+        private fun KtExpression?.toFirExpression(
+            errorReason: String,
+            kind: DiagnosticKind = DiagnosticKind.ExpressionRequired,
+        ): FirExpression =
             if (stubMode) buildExpressionStub()
             else convertSafe() ?: buildErrorExpression(
-                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired),
+                this?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, kind),
             )
 
         private fun KtExpression.toFirStatement(errorReason: String): FirStatement =
@@ -559,7 +573,7 @@ class RawFirBuilder(
                             origin = FirDeclarationOrigin.Synthetic
                             name = delegateName
                             returnTypeRef = type
-                            symbol = FirFieldSymbol(CallableId(name))
+                            symbol = FirFieldSymbol(@OptIn(LocalCallableIdConstructor::class) CallableId(name))
                             isVar = false
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         }
@@ -1838,14 +1852,18 @@ class RawFirBuilder(
 
                     val receiver = argument.toFirExpression("No operand")
                     if (operationToken == PLUS || operationToken == MINUS) {
-                        if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                        if (receiver is FirConstExpression<*> && receiver.kind == ConstantValueKind.IntegerLiteral) {
                             val value = receiver.value as Long
                             val convertedValue = when (operationToken) {
                                 MINUS -> -value
                                 PLUS -> value
                                 else -> error("Should not be here")
                             }
-                            return buildConstExpression(expression.toFirPsiSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                            return buildConstExpression(
+                                expression.toFirPsiSourceElement(),
+                                ConstantValueKind.IntegerLiteral,
+                                convertedValue
+                            )
                         }
                     }
                     buildFunctionCall {
@@ -2055,7 +2073,7 @@ class RawFirBuilder(
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Unit): FirElement {
             val baseVariable = generateTemporaryVariable(
                 baseSession, multiDeclaration.toFirSourceElement(), "destruct",
-                multiDeclaration.initializer.toFirExpression("Destructuring declaration without initializer"),
+                multiDeclaration.initializer.toFirExpression("Initializer required for destructuring declaration", DiagnosticKind.Syntax),
             )
             return generateDestructuringBlock(
                 baseSession,

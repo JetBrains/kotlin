@@ -16,7 +16,7 @@ UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifie
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:bar) -> USimpleNameReferenceExpression (identifier = bar) -> KtUltraLightMethodForSourceDeclaration:bar: bar
-    ULocalVariable (name = z) -> UQualifiedReferenceExpression -> null: null
+    ULocalVariable (name = z) -> UQualifiedReferenceExpression -> LightMethodBuilder:filterIsInstance: filterIsInstance
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to PsiMethod:listOf) -> USimpleNameReferenceExpression (identifier = listOf) -> PsiMethod:listOf: listOf
-    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to null) -> USimpleNameReferenceExpression (identifier = filterIsInstance) -> null: null
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to LightMethodBuilder:filterIsInstance) -> USimpleNameReferenceExpression (identifier = filterIsInstance) -> LightMethodBuilder:filterIsInstance: filterIsInstance
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String

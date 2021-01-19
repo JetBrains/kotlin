@@ -21,6 +21,10 @@
 * Put implementation details inside `.h`/`.hpp` into a nested `namespace internal` (e.g. implementation details of module `mm` go into `namespace kotlin { namespace mm { namespace internal { ... } } }`)
 * Put implementation details inside `.cpp`/`.mm` into a global anonymous `namespace`
 * For `extern "C"` declarations emulate namespaces with `Kotlin_[module_name]_` prefixes.
+* To mark type as move-only, privately inherit from `kotlin::MoveOnly`
+* To mark type unmovable and uncopyable, privately inherit from `kotlin::Pinned`
+* All heap-allocated classes should publicly inherit from `KonanAllocatorAware`
+* Use `KStd*` containers and smart pointers instead of `std::*` ones.
 
 ## Naming
 

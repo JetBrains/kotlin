@@ -9,7 +9,6 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "CppSupport.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 
@@ -21,7 +20,7 @@ public:
     explicit ScopedStrictMockFunction(Mock** globalMockLocation) : globalMockLocation_(globalMockLocation) {
         RuntimeCheck(globalMockLocation != nullptr, "ScopedStrictMockFunction needs non-null global mock location");
         RuntimeCheck(*globalMockLocation == nullptr, "ScopedStrictMockFunction needs null global mock");
-        mock_ = kotlin::std_support::make_unique<Mock>();
+        mock_ = make_unique<Mock>();
         *globalMockLocation_ = mock_.get();
     }
 
@@ -57,7 +56,7 @@ public:
 private:
     // Can be null if moved-out of.
     Mock** globalMockLocation_;
-    std::unique_ptr<Mock> mock_;
+    KStdUniquePtr<Mock> mock_;
 };
 
 ScopedStrictMockFunction<KInt()> ScopedCreateCleanerWorkerMock();

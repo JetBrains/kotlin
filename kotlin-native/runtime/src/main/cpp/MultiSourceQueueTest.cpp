@@ -12,14 +12,15 @@
 #include "gtest/gtest.h"
 
 #include "TestSupport.hpp"
+#include "Types.h"
 
 using namespace kotlin;
 
 namespace {
 
 template <typename T>
-std::vector<T> Collect(MultiSourceQueue<T>& queue) {
-    std::vector<T> result;
+KStdVector<T> Collect(MultiSourceQueue<T>& queue) {
+    KStdVector<T> result;
     for (const auto& element : queue.Iter()) {
         result.push_back(element);
     }
@@ -192,8 +193,8 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
-    std::vector<int> expected;
+    KStdVector<std::thread> threads;
+    KStdVector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
@@ -223,8 +224,8 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    std::vector<int> expectedBefore;
-    std::vector<int> expectedAfter;
+    KStdVector<int> expectedBefore;
+    KStdVector<int> expectedAfter;
     IntQueue::Producer producer(queue);
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_back(i);
@@ -236,7 +237,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -251,7 +252,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
         });
     }
 
-    std::vector<int> actualBefore;
+    KStdVector<int> actualBefore;
     {
         auto iter = queue.Iter();
         while (readyCount < kThreadCount) {
@@ -282,7 +283,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    std::vector<std::thread> threads;
+    KStdVector<std::thread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&queue, i, &canStart, &readyCount, &startedCount]() {
             IntQueue::Producer producer(queue);

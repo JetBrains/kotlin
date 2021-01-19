@@ -692,6 +692,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
                                 val name = Name.identifier("it")
                                 val itParam = buildValueParameter {
+                                    source = lambda.source?.fakeElement(FirFakeSourceElementKind.ItLambdaParameter)
                                     session = this@FirDeclarationsResolveTransformer.session
                                     origin = FirDeclarationOrigin.Source
                                     returnTypeRef = buildResolvedTypeRef { type = singleParameterType }

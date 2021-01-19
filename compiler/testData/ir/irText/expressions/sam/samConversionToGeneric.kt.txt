@@ -26,7 +26,7 @@ fun test4(a: Any) {
 
 fun test5(a: Any) {
   a as Function1<String, String> /*~> Unit */
-  bar<@FlexibleNullability String?>(j = a /*as Function1<@ParameterName(name = "x") @FlexibleNullability String?, @FlexibleNullability String?> */ /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
+  bar<@FlexibleNullability String?>(j = a /*as Function1<String, String> */ /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
 }
 
 fun <T : Any?> test6(a: Function1<T, T>) {
@@ -35,7 +35,7 @@ fun <T : Any?> test6(a: Function1<T, T>) {
 
 fun <T : Any?> test7(a: Any) {
   a as Function1<T, T> /*~> Unit */
-  bar<@FlexibleNullability T?>(j = a /*as Function1<@ParameterName(name = "x") @FlexibleNullability T?, @FlexibleNullability T?> */ /*-> @FlexibleNullability J<@FlexibleNullability T?>? */)
+  bar<@FlexibleNullability T?>(j = a /*as Function1<T, T> */ /*-> @FlexibleNullability J<@FlexibleNullability T?>? */)
 }
 
 fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<@FlexibleNullability String?> {

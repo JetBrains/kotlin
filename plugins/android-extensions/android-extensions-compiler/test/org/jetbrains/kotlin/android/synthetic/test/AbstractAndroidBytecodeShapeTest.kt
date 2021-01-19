@@ -34,9 +34,9 @@ abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
         addAndroidExtensionsRuntimeLibrary(myEnvironment)
     }
 
-    override fun doTest(path: String) {
-        val fileName = path + getTestName(true) + ".kt"
-        createAndroidAPIEnvironment(path)
+    override fun doTest(filePath: String) {
+        val fileName = filePath + getTestName(true) + ".kt"
+        createAndroidAPIEnvironment(filePath)
         loadFileByFullPath(fileName)
         val expected = readExpectedOccurrences(fileName)
         val actual = generateToText()

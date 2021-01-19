@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
     @Throws(Exception::class)
     override fun doTest(filePath: String) {
@@ -68,6 +70,7 @@ abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTes
     }
 }
 
+@OptIn(ObsoleteTestInfrastructure::class)
 internal fun runJvmInstance(
     jdkHome: File,
     additionalArgs: List<String>,

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -352,7 +353,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             explicitReceiver = leftArgument
             argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {
-                source = assignmentOperatorStatement.source
+                source = assignmentOperatorStatement.source?.fakeElement(FirFakeSourceElementKind.DesugaredCompoundAssignment)
                 this.name = name
                 candidateSymbol = null
             }
@@ -682,14 +683,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         constExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 
         val type = when (val kind = constExpression.kind) {
-            FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> {
+            ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
                 val integerLiteralType =
-                    ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
+                    ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral)
                 if (data.expectedType != null) {
                     val approximatedType = integerLiteralType.getApproximatedType(data.expectedType?.coneTypeSafe())
                     val newConstKind = approximatedType.toConstKind()
                     @Suppress("UNCHECKED_CAST")
-                    constExpression.replaceKind(newConstKind as FirConstKind<T>)
+                    constExpression.replaceKind(newConstKind as ConstantValueKind<T>)
                     approximatedType
                 } else {
                     integerLiteralType

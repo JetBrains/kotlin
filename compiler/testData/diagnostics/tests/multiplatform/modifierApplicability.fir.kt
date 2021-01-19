@@ -9,7 +9,7 @@ class Outer expect constructor() {
 
     expect init {}
 
-    expect fun foo()
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>expect fun foo()<!>
     expect val bar: Int
 }
 
