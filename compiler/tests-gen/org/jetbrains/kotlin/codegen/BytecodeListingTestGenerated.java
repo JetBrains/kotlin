@@ -36,6 +36,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/accessorForProtectedPropertyWithPrivateSetterInObjectLiteral.kt");
     }
 
+    @TestMetadata("accessorForTopLevelMembers.kt")
+    public void testAccessorForTopLevelMembers() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/accessorForTopLevelMembers.kt");
+    }
+
     public void testAllFilesPresentInBytecodeListing() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
