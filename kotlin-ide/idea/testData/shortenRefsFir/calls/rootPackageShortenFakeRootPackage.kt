@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IGNORE
 package test
 
 fun test() {}

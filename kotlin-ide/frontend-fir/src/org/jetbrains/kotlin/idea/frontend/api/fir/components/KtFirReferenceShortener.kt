@@ -17,18 +17,20 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -91,8 +93,8 @@ internal class KtFirReferenceShortener(
         return null
     }
 
-    private fun findSingleFunctionInScopesByName(scopes: List<FirScope>, name: Name): FirNamedFunctionSymbol? {
-        return scopes.asSequence().mapNotNull { it.getSingleFunctionByName(name) }.singleOrNull()
+    private fun findFunctionsInScopes(scopes: List<FirScope>, name: Name): List<FirNamedFunctionSymbol> {
+        return scopes.flatMap { it.getFunctions(name) }
     }
 
     private fun findSinglePropertyInScopesByName(scopes: List<FirScope>, name: Name): FirVariableSymbol<*>? {
@@ -252,13 +254,16 @@ internal class KtFirReferenceShortener(
             val callExpression = functionCall.psi as? KtCallExpression ?: return
             val qualifiedCallExpression = callExpression.getDotQualifiedExpressionForSelector() ?: return
 
-            val resolvedNamedReference = functionCall.calleeReference as? FirResolvedNamedReference ?: return
-            val callableId = (resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId ?: return
+            val calleeReference = functionCall.calleeReference
+            val callableId = findUnambiguousReferencedCallableId(calleeReference) ?: return
 
             val scopes = findScopesAtPosition(callExpression, namesToImport) ?: return
-            val singleAvailableCallable = findSingleFunctionInScopesByName(scopes, callableId.callableName)
+            val availableCallables = findFunctionsInScopes(scopes, callableId.callableName)
 
-            if (singleAvailableCallable?.callableId == callableId) {
+            if (availableCallables.isEmpty()) {
+                val additionalImport = callableId.asImportableFqName() ?: return
+                addElementToImportAndShorten(additionalImport, qualifiedCallExpression)
+            } else if (availableCallables.all { it.callableId == callableId }) {
                 addElementToShorten(qualifiedCallExpression)
             }
         }
@@ -272,6 +277,38 @@ internal class KtFirReferenceShortener(
 
             val receiverType = explicitReceiver.typeRef.toRegularClass(firResolveState.rootModuleSession) ?: return true
             return receiverType.classKind != ClassKind.OBJECT
+        }
+
+        private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): CallableId? {
+            val unambiguousSymbol = when (namedReference) {
+                is FirResolvedNamedReference -> namedReference.resolvedSymbol
+                is FirErrorNamedReference -> {
+                    val candidateSymbol = namedReference.candidateSymbol
+                    if (candidateSymbol !is FirErrorFunctionSymbol) {
+                        candidateSymbol
+                    } else {
+                        getSingleUnambiguousCandidate(namedReference)
+                    }
+                }
+                else -> null
+            }
+
+            return (unambiguousSymbol as? FirCallableSymbol<*>)?.callableId
+        }
+
+        /**
+         * If [namedReference] is ambiguous and all candidates point to the callables with same callableId,
+         * returns the first candidate; otherwise returns null.
+         */
+        private fun getSingleUnambiguousCandidate(namedReference: FirErrorNamedReference): FirCallableSymbol<*>? {
+            val coneAmbiguityError = namedReference.diagnostic as? ConeAmbiguityError ?: return null
+
+            val candidates = coneAmbiguityError.candidates.map { it as FirCallableSymbol<*> }
+            require(candidates.isNotEmpty()) { "Cannot have zero candidates" }
+
+            val distinctCandidates = candidates.distinctBy { it.callableId }
+            return distinctCandidates.singleOrNull()
+                ?: error("Expected all candidates to have same callableId, but got: ${distinctCandidates.map { it.callableId }}")
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -357,6 +394,8 @@ private class ShortenCommandImpl(
         }
     }
 }
+
+private fun CallableId.asImportableFqName(): FqName? = if (classId == null) packageName.child(callableName) else null
 
 private fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
     getQualifiedExpressionForSelector() as? KtDotQualifiedExpression
