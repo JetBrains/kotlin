@@ -170,7 +170,7 @@ kotlin.sourceSets {
     // Configure all native platform sources sets to use it as a common one.
     linuxX64Main.dependsOn(nativeMain)
     macosX64Main.dependsOn(nativeMain)
-    //...
+    // ...
 }
 ```
 

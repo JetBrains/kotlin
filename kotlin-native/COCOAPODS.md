@@ -330,7 +330,7 @@ You can add dependencies on a Pod library from `zip`, `tar`, or `jar` archive wi
 1. Specify the name of a Pod library in the `pod()` function.
 In the configuration block specify the path to the archive: use the `url()` function with an arbitrary HTTP address in the `source` parameter value. 
 
-    Additionally, you can specify the boolean `flatten` parameter as a second argument for the `url()` function
+    Additionally, you can specify the boolean `flatten` parameter as a second argument for the `url()` function.
     This parameter indicates that all the Pod files are located in the root directory of the archive.
 
 2. Specify the minimum deployment target version for the Pod library.
@@ -430,7 +430,15 @@ You can add dependencies on a Pod library from a custom Podspec repository with 
 4. Re-import the project.
 
 > To work correctly with Xcode, you should specify the location of specs at the beginning of your Podfile.
-> For example, `source 'https://github.com/Kotlin/kotlin-cocoapods-spec.git'`
+> For example: 
+>
+> <div class="sample" markdown="1" theme="idea" data-highlight-only>
+>
+> ```ruby
+> source 'https://github.com/Kotlin/kotlin-cocoapods-spec.git'
+> ```
+>
+> </div>
 >
 > You should also specify the path to the Podspec in your Podfile.
 > For example:

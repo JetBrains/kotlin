@@ -225,7 +225,7 @@ directory structure, with the following layout:
   - foo/
     - $component_name/
       - ir/
-        - Seriaized Kotlin IR.
+        - Serialized Kotlin IR.
       - targets/
         - $platform/
           - kotlin/
