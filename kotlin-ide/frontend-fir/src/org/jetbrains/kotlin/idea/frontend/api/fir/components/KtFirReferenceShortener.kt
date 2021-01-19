@@ -11,6 +11,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -209,6 +210,17 @@ internal class KtFirReferenceShortener(
 
             if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
                 addTypeToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelTypeElement)
+            } else {
+                addFakePackagePrefixToShortenIfPresent(mostTopLevelTypeElement)
+            }
+        }
+
+        private fun addFakePackagePrefixToShortenIfPresent(typeElement: KtUserType) {
+            val deepestTypeWithQualifier = typeElement.qualifiersWithSelf.last().parent as? KtUserType
+                ?: error("Type element should have at least one qualifier, instead it was ${typeElement.text}")
+
+            if (deepestTypeWithQualifier.hasFakeRootPrefix()) {
+                addTypeToShorten(deepestTypeWithQualifier)
             }
         }
 
@@ -260,11 +272,17 @@ internal class KtFirReferenceShortener(
             val scopes = findScopesAtPosition(callExpression, namesToImport) ?: return
             val availableCallables = findFunctionsInScopes(scopes, callableId.callableName)
 
-            if (availableCallables.isEmpty()) {
-                val additionalImport = callableId.asImportableFqName() ?: return
-                addElementToImportAndShorten(additionalImport, qualifiedCallExpression)
-            } else if (availableCallables.all { it.callableId == callableId }) {
-                addElementToShorten(qualifiedCallExpression)
+            when {
+                availableCallables.isEmpty() -> {
+                    val additionalImport = callableId.asImportableFqName() ?: return
+                    addElementToImportAndShorten(additionalImport, qualifiedCallExpression)
+                }
+                availableCallables.all { it.callableId == callableId } -> {
+                    addElementToShorten(qualifiedCallExpression)
+                }
+                else -> {
+                    addFakePackagePrefixToShortenIfPresent(qualifiedCallExpression)
+                }
             }
         }
 
@@ -346,6 +364,15 @@ internal class KtFirReferenceShortener(
 
             if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
                 addElementToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelQualifier)
+            } else {
+                addFakePackagePrefixToShortenIfPresent(mostTopLevelQualifier)
+            }
+        }
+
+        private fun addFakePackagePrefixToShortenIfPresent(wholeQualifiedExpression: KtDotQualifiedExpression) {
+            val deepestQualifier = wholeQualifiedExpression.qualifiersWithSelf.last()
+            if (deepestQualifier.hasFakeRootPrefix()) {
+                addElementToShorten(deepestQualifier)
             }
         }
 
@@ -394,6 +421,12 @@ private class ShortenCommandImpl(
         }
     }
 }
+
+private fun KtUserType.hasFakeRootPrefix(): Boolean =
+    qualifier?.referencedName == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+
+private fun KtDotQualifiedExpression.hasFakeRootPrefix(): Boolean =
+    (receiverExpression as? KtNameReferenceExpression)?.getReferencedName() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 
 private fun CallableId.asImportableFqName(): FqName? = if (classId == null) packageName.child(callableName) else null
 

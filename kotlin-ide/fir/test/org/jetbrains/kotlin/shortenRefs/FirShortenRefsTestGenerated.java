@@ -126,11 +126,6 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
             runTest("idea/testData/shortenRefsFir/calls/rootPackage.kt");
         }
 
-        @TestMetadata("rootPackageShortenFakeRootPackage.kt")
-        public void testRootPackageShortenFakeRootPackage() throws Exception {
-            runTest("idea/testData/shortenRefsFir/calls/rootPackageShortenFakeRootPackage.kt");
-        }
-
         @TestMetadata("selfReferencingFunction.kt")
         public void testSelfReferencingFunction() throws Exception {
             runTest("idea/testData/shortenRefsFir/calls/selfReferencingFunction.kt");
@@ -139,6 +134,24 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         @TestMetadata("variableNotShortened.kt")
         public void testVariableNotShortened() throws Exception {
             runTest("idea/testData/shortenRefsFir/calls/variableNotShortened.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/shortenRefsFir/fakeRootPackage")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FakeRootPackage extends AbstractFirShortenRefsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithMuting, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFakeRootPackage() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefsFir/fakeRootPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("rootPackageShortenFakeRootPackage.kt")
+        public void testRootPackageShortenFakeRootPackage() throws Exception {
+            runTest("idea/testData/shortenRefsFir/fakeRootPackage/rootPackageShortenFakeRootPackage.kt");
         }
     }
 
