@@ -51,11 +51,7 @@ class KtSymbolBasedResolutionFacade(
         val ktSymbol = with(context.ktAnalysisSession) {
             declaration.getSymbol()
         }
-        return when (ktSymbol) {
-            is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(ktSymbol, context)
-            is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(ktSymbol, context)
-            else -> context.implementationPlanned()
-        }
+        return ktSymbol.toDeclarationDescriptor(context)
     }
 
     override val moduleDescriptor: ModuleDescriptor

@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.idea.frontend.old.binding
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.old.*
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
@@ -58,9 +57,12 @@ internal class ToDescriptorBindingContextValueProviders(bindingContext: KtSymbol
     }
 
     private fun getFunction(key: PsiElement): SimpleFunctionDescriptor? {
-        val ktFunctionSymbol = key.getKtSymbolOfTypeOrNull<KtFunctionSymbol>() ?: return null
-
-        return KtSymbolBasedFunctionDescriptor(ktFunctionSymbol, context)
+        val ktFunctionLikeSymbol = key.getKtSymbolOfTypeOrNull<KtFunctionLikeSymbol>() ?: return null
+        return when (ktFunctionLikeSymbol) {
+            is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(ktFunctionLikeSymbol, context)
+            is KtAnonymousFunctionSymbol -> KtSymbolBasedAnonymousFunctionDescriptor(ktFunctionLikeSymbol, context)
+            else -> null // todo maybe support constructors here
+        }
     }
 
     private fun getConstructor(key: PsiElement): ConstructorDescriptor? {

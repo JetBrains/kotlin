@@ -407,10 +407,10 @@ class KtSymbolBasedConstructorDescriptor(
     ): ClassConstructorDescriptor = noImplementation()
 }
 
-class KtSymbolBasedAnonymousDescriptor(
+class KtSymbolBasedAnonymousFunctionDescriptor(
     override val ktSymbol: KtAnonymousFunctionSymbol,
     context: KtSymbolBasedContext
-) : KtSymbolBasedFunctionLikeDescriptor(context) {
+) : KtSymbolBasedFunctionLikeDescriptor(context), SimpleFunctionDescriptor {
     override fun getName(): Name = SpecialNames.ANONYMOUS_FUNCTION
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = getExtensionReceiverParameter(ktSymbol)
@@ -433,6 +433,18 @@ class KtSymbolBasedAnonymousDescriptor(
     // it doesn't seems like isSuspend are used in FIR for anonymous functions, but it used in FIR2IR so if we really need that
     // we could implement that later
     override fun isSuspend(): Boolean = implementationPostponed()
+
+    override fun copy(
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
+    ): SimpleFunctionDescriptor = noImplementation()
+
+    override fun getOriginal(): SimpleFunctionDescriptor = this
+
+    override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out SimpleFunctionDescriptor> = noImplementation()
 }
 
 private fun KtSymbolBasedDeclarationDescriptor.getDispatchReceiverParameter(ktSymbol: KtPossibleMemberSymbol): ReceiverParameterDescriptor? {

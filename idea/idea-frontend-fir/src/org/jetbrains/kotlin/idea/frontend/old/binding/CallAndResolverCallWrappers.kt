@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.old.binding
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
@@ -15,6 +16,9 @@ import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedContext
 import org.jetbrains.kotlin.idea.frontend.old.KtSymbolBasedFunctionDescriptor
+import org.jetbrains.kotlin.idea.frontend.old.toDeclarationDescriptor
+import org.jetbrains.kotlin.idea.frontend.old.withAnalysisSession
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping
@@ -76,6 +80,7 @@ class FirWrapperCall(val ktCall: KtCall, val context: KtSymbolBasedContext) : Ca
 
 class FirWrapperResolvedCall(val firWrapperCall: FirWrapperCall) : ResolvedCall<CallableDescriptor> {
     private val ktCall = firWrapperCall.ktCall
+    private val context = firWrapperCall.context
 
     override fun getStatus(): ResolutionStatus =
         if (ktCall.isErrorCall) ResolutionStatus.OTHER_ERROR else ResolutionStatus.SUCCESS
@@ -83,13 +88,11 @@ class FirWrapperResolvedCall(val firWrapperCall: FirWrapperCall) : ResolvedCall<
     override fun getCall(): Call = firWrapperCall
 
     override fun getCandidateDescriptor(): CallableDescriptor {
-        TODO("Not yet implemented")
-    }
-
-    override fun getResultingDescriptor(): CallableDescriptor {
         val ktSymbol = ((ktCall as KtFunctionCall).targetFunction as KtSuccessCallTarget).symbol as KtFunctionSymbol
         return KtSymbolBasedFunctionDescriptor(ktSymbol, firWrapperCall.context)
     }
+
+    override fun getResultingDescriptor(): CallableDescriptor = context.incorrectImplementation { candidateDescriptor }
 
     override fun getExtensionReceiver(): ReceiverValue? {
         TODO("Not yet implemented")
@@ -135,6 +138,7 @@ class CallAndResolverCallWrappers(bindingContext: KtSymbolBasedBindingContext) {
     init {
         bindingContext.registerGetterByKey(BindingContext.CALL, this::getCall)
         bindingContext.registerGetterByKey(BindingContext.RESOLVED_CALL, this::getResolvedCall)
+        bindingContext.registerGetterByKey(BindingContext.REFERENCE_TARGET, this::getReferenceTarget)
     }
 
     private fun getCall(element: KtElement): Call {
@@ -149,5 +153,10 @@ class CallAndResolverCallWrappers(bindingContext: KtSymbolBasedBindingContext) {
             "Incorrect Call type: $call"
         }
         return FirWrapperResolvedCall(call)
+    }
+
+    private fun getReferenceTarget(key: KtReferenceExpression): DeclarationDescriptor? {
+        val ktSymbol = context.withAnalysisSession { key.mainReference.resolveToSymbols().singleOrNull() } ?: return null
+        return ktSymbol.toDeclarationDescriptor(context)
     }
 }

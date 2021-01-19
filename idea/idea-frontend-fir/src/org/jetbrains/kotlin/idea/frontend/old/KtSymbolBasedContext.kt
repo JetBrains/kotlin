@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -41,6 +44,13 @@ interface KtSymbolBasedContext {
 
     fun <R> incorrectImplementation(block: () -> R) = block()
 }
+
+fun KtSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext): DeclarationDescriptor =
+    when (this) {
+        is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(this, context)
+        is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(this, context)
+        else -> context.implementationPlanned()
+    }
 
 fun <R> KtSymbolBasedContext.withAnalysisSession(f: KtAnalysisSession.() -> R): R = f(ktAnalysisSession)
 
