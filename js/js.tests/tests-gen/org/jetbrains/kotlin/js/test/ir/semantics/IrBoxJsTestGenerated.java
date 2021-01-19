@@ -1622,6 +1622,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
         }
 
+        @TestMetadata("overridenMethod.kt")
+        public void testOverridenMethod() throws Exception {
+            runTest("js/js.translator/testData/box/export/overridenMethod.kt");
+        }
+
         @TestMetadata("reservedModuleName.kt")
         public void testReservedModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
