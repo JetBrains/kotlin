@@ -22,7 +22,7 @@ package MyPackage
     abstract val e3: Int = 0; get() = a
 
     //methods
-    fun f()
+    <!NON_MEMBER_FUNCTION_NO_BODY!>fun f()<!>
     fun g() {}
     abstract fun h()
     abstract fun j() {}

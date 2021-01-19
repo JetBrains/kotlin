@@ -19,7 +19,8 @@ FILE: operatorsOverLiterals.kt
     }
     public final fun R|kotlin/Int|.bar(): R|kotlin/Int| {
     }
-    public final fun R|kotlin/Int|.baz(): R|kotlin/Int|
+    public final fun R|kotlin/Int|.baz(): R|kotlin/Int| {
+    }
     public final fun R|kotlin/Byte|.baz(): R|kotlin/Byte| {
     }
     public final fun test_3(): R|kotlin/Unit| {

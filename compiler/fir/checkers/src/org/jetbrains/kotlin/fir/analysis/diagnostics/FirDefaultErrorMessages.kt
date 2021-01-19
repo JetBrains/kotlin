@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_MEMBER_FUNCTION_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
@@ -359,6 +360,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", DECLARATION_NAME)
             map.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", DECLARATION_NAME)
             map.put(PRIVATE_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be private", DECLARATION_NAME)
+            map.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", DECLARATION_NAME)
 
             map.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name")
 
