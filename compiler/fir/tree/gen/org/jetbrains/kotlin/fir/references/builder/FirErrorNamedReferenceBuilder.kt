@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirErrorNamedReferenceBuilder {
     var source: FirSourceElement? = null
+    var candidateSymbol: AbstractFirBasedSymbol<*>? = null
     lateinit var diagnostic: ConeDiagnostic
 
     fun build(): FirErrorNamedReference {
         return FirErrorNamedReferenceImpl(
             source,
+            candidateSymbol,
             diagnostic,
         )
     }

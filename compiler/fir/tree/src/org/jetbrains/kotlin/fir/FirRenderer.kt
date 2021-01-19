@@ -969,10 +969,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitNamedReference(namedReference: FirNamedReference) {
         val symbol = namedReference.candidateSymbol
         when {
-            symbol != null -> {
-                print("R?C|${symbol.render()}|")
-            }
             namedReference is FirErrorNamedReference -> print("<${namedReference.diagnostic.reason}>#")
+            symbol != null -> print("R?C|${symbol.render()}|")
             else -> print("${namedReference.name}#")
         }
     }

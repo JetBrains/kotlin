@@ -423,7 +423,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorNamedReference) {
             default("name", "Name.special(\"<\${diagnostic.reason}>\")")
-            defaultNull("candidateSymbol", withGetter = true)
         }
 
         impl(typeProjection, "FirTypePlaceholderProjection") {
