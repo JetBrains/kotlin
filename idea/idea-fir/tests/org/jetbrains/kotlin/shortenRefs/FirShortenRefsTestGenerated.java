@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -74,6 +74,36 @@ public class FirShortenRefsTestGenerated extends AbstractFirShortenRefsTest {
         @TestMetadata("functionInSameFile2.kt")
         public void testFunctionInSameFile2() throws Exception {
             runTest("idea/testData/shortenRefsFir/calls/functionInSameFile2.kt");
+        }
+
+        @TestMetadata("functionInSameFileAmbiguous.kt")
+        public void testFunctionInSameFileAmbiguous() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/functionInSameFileAmbiguous.kt");
+        }
+
+        @TestMetadata("notImportedTopLevelFunctionAmbiguous.kt")
+        public void testNotImportedTopLevelFunctionAmbiguous() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/notImportedTopLevelFunctionAmbiguous.kt");
+        }
+
+        @TestMetadata("notImportedTopLevelFunctionConflictsWithImported.kt")
+        public void testNotImportedTopLevelFunctionConflictsWithImported() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/notImportedTopLevelFunctionConflictsWithImported.kt");
+        }
+
+        @TestMetadata("notImportedTopLevelFunctionMissingArg.kt")
+        public void testNotImportedTopLevelFunctionMissingArg() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/notImportedTopLevelFunctionMissingArg.kt");
+        }
+
+        @TestMetadata("notImportedTopLevelFunctionNoArgs.kt")
+        public void testNotImportedTopLevelFunctionNoArgs() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/notImportedTopLevelFunctionNoArgs.kt");
+        }
+
+        @TestMetadata("notImportedTopLevelTypeConstructorNoArgs.kt")
+        public void testNotImportedTopLevelTypeConstructorNoArgs() throws Exception {
+            runTest("idea/testData/shortenRefsFir/calls/notImportedTopLevelTypeConstructorNoArgs.kt");
         }
 
         @TestMetadata("propertyChainCall.kt")
