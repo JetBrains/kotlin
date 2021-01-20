@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
@@ -579,7 +578,9 @@ class FirElementSerializer private constructor(
             }
             is ConeClassLikeType -> {
                 if (type.isSuspendFunctionType(session)) {
-                    val runtimeFunctionType = transformSuspendFunctionToRuntimeFunctionType(type)
+                    val runtimeFunctionType = type.suspendFunctionTypeToFunctionTypeWithContinuation(
+                        session, CONTINUATION_INTERFACE_CLASS_ID
+                    )
                     val functionType = typeProto(runtimeFunctionType)
                     functionType.flags = Flags.getTypeFlags(true)
                     return functionType
@@ -656,23 +657,6 @@ class FirElementSerializer private constructor(
                 }, builder
             )
         }
-    }
-
-    private fun transformSuspendFunctionToRuntimeFunctionType(type: ConeClassLikeType): ConeClassLikeType {
-        val suspendClassId = type.classId!!
-        val relativeClassName = suspendClassId.relativeClassName.asString()
-        val kind =
-            if (relativeClassName.startsWith("K")) FunctionClassKind.KFunction
-            else FunctionClassKind.Function
-        val runtimeClassId = ClassId(kind.packageFqName, Name.identifier(relativeClassName.replaceFirst("Suspend", "")))
-        val continuationClassId = CONTINUATION_INTERFACE_CLASS_ID
-        return ConeClassLikeLookupTagImpl(runtimeClassId).constructClassType(
-            (type.typeArguments.toList() + ConeClassLikeLookupTagImpl(continuationClassId).constructClassType(
-                arrayOf(type.typeArguments.last()),
-                isNullable = false
-            )).toTypedArray(),
-            type.isNullable
-        )
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {

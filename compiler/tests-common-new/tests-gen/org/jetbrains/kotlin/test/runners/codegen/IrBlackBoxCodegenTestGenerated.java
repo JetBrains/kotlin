@@ -13711,6 +13711,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testExtensionAlias() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ExtensionAlias.kt");
         }
+
+        @Test
+        @TestMetadata("SuspendExtension.kt")
+        public void testSuspendExtension() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");
+        }
     }
 
     @Nested
