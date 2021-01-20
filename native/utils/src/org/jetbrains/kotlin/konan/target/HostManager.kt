@@ -73,6 +73,7 @@ open class HostManager(
         ),
         MACOS_X64 to setOf(
             MACOS_X64,
+            MACOS_ARM64,
             IOS_ARM32,
             IOS_ARM64,
             IOS_X64,

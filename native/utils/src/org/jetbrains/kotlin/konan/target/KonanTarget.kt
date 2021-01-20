@@ -26,6 +26,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object MINGW_X86 : KonanTarget("mingw_x86", Family.MINGW, Architecture.X86)
     object MINGW_X64 : KonanTarget("mingw_x64", Family.MINGW, Architecture.X64)
     object MACOS_X64 : KonanTarget("macos_x64", Family.OSX, Architecture.X64)
+    object MACOS_ARM64 : KonanTarget("macos_arm64", Family.OSX, Architecture.ARM64)
     object LINUX_ARM64 : KonanTarget("linux_arm64", Family.LINUX, Architecture.ARM64)
     object LINUX_ARM32_HFP : KonanTarget("linux_arm32_hfp", Family.LINUX, Architecture.ARM32)
     object LINUX_MIPS32 : KonanTarget("linux_mips32", Family.LINUX, Architecture.MIPS32)
@@ -48,7 +49,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
                 TVOS_ARM64, TVOS_X64,
                 LINUX_X64,
                 MINGW_X86, MINGW_X64,
-                MACOS_X64,
+                MACOS_X64, MACOS_ARM64,
                 LINUX_ARM64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
                 WASM32
             ).associateBy { it.name }
