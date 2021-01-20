@@ -1,3 +1,13 @@
+// FILE: signedToUnsignedConversions_annotation.kt
+package kotlin.internal
+
+annotation class ImplicitIntegerCoercion : Annotation {
+  constructor() /* primary */
+
+}
+
+// FILE: signedToUnsignedConversions_test.kt
+
 @ImplicitIntegerCoercion
 const val IMPLICIT_INT: Int
   field = 255

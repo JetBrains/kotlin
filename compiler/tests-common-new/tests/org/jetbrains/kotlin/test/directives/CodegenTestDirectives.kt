@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
@@ -75,5 +76,13 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val EXTERNAL_FILE by directive(
         description = "Indicates that test file is external and should be skipped in ${IrTextDumpHandler::class}",
         applicability = File
+    )
+
+    val DUMP_KT_IR by directive(
+        description = "Dumps generated backend IR in pretty kotlin dump (enables ${IrPrettyKotlinDumpHandler::class})"
+    )
+
+    val SKIP_KT_DUMP by directive(
+        description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
     )
 }

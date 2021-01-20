@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrVerifier
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -35,6 +35,19 @@ import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import java.io.File
 
 class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+    companion object {
+        fun computeDumpExtension(module: TestModule, defaultExtension: String): String {
+            return if (module.frontendKind == FrontendKinds.ClassicFrontend || FIR_IDENTICAL in module.directives)
+                defaultExtension else "fir.$defaultExtension"
+        }
+
+        fun List<IrFile>.groupWithTestFiles(module: TestModule): List<Pair<TestFile, IrFile>> = mapNotNull { irFile ->
+            val name = irFile.fileEntry.name.removePrefix("/")
+            val testFile = module.files.firstOrNull { it.name == name } ?: return@mapNotNull null
+            testFile to irFile
+        }
+    }
+
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
@@ -45,11 +58,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_IR !in module.directives) return
         val irFiles = info.backendInput.irModuleFragment.files
-        val testFileToIrFile = irFiles.mapNotNull { irFile ->
-            val name = irFile.fileEntry.name.removePrefix("/")
-            val testFile = module.files.firstOrNull { it.name == name } ?: return@mapNotNull null
-            testFile to irFile
-        }
+        val testFileToIrFile = irFiles.groupWithTestFiles(module)
         val builder = baseDumper.builderForModule(module)
         for ((testFile, irFile) in testFileToIrFile) {
             if (EXTERNAL_FILE in testFile.directives) continue
@@ -112,5 +121,5 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
     }
 
     private val TestModule.dumpExtension: String
-        get() = if (frontendKind == FrontendKinds.ClassicFrontend || FIR_IDENTICAL in directives) "txt" else "fir.txt"
+        get() = computeDumpExtension(this, "txt")
 }
