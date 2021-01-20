@@ -32,6 +32,10 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val setupTask = registerTask<NodeJsSetupTask>(NodeJsSetupTask.NAME) {
             it.group = TASKS_GROUP_NAME
             it.description = "Download and install a local node/npm version"
+            it.configuration = provider {
+                this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
+                    .also { conf -> conf.isTransitive = false }
+            }
         }
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
