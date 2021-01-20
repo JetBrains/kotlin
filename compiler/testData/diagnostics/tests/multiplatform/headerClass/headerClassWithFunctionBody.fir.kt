@@ -15,7 +15,7 @@ expect class Foo(
 
     constructor() : this("no")
 
-    val prop: String = "no"
+    val prop: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     var getSet: String
         get() = "no"

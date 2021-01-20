@@ -61,6 +61,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val fileCheckers: Set<FirFileChecker> = setOf(
         FirTopLevelFunctionChecker,
+        FirTopLevelPropertyChecker,
     )
 
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
