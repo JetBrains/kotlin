@@ -36,6 +36,8 @@ import java.io.File
 
 class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     companion object {
+        const val DUMP_EXTENSION = "txt"
+
         fun computeDumpExtension(module: TestModule, defaultExtension: String): String {
             return if (module.frontendKind == FrontendKinds.ClassicFrontend || FIR_IDENTICAL in module.directives)
                 defaultExtension else "fir.$defaultExtension"
@@ -74,6 +76,9 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
     }
 
     private fun compareDumpsOfExternalClasses(module: TestModule, info: IrBackendInput) {
+        // FIR doesn't support searching descriptors
+        if (module.frontendKind == FrontendKinds.FIR) return
+
         val externalClassFqns = module.directives[DUMP_EXTERNAL_CLASS]
         if (externalClassFqns.isEmpty()) return
 
@@ -121,5 +126,5 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
     }
 
     private val TestModule.dumpExtension: String
-        get() = computeDumpExtension(this, "txt")
+        get() = computeDumpExtension(this, DUMP_EXTENSION)
 }

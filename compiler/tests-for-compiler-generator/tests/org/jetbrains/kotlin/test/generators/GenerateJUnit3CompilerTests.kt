@@ -597,16 +597,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "compiler/fir/fir2ir/tests-gen", "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
-        ) {
-            testClass<AbstractFir2IrTextTest> {
-                model("ir/irText")
-            }
-        }
-
         testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
                 model("rawBuilder", testMethod = "doFirBuilderDataTest")
