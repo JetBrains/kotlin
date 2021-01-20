@@ -69,7 +69,6 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
@@ -387,7 +386,7 @@ class ComposerParamTransformer(
             }
             fn.annotations = annotations.map { a -> a }
             fn.metadata = metadata
-            fn.body = body?.deepCopyWithSymbols(this)
+            fn.body = body
         }
     }
 
