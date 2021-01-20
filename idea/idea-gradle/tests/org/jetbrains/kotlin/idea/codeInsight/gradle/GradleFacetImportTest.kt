@@ -250,7 +250,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     @Test
     fun testJsImportTransitive() {
         configureByFiles()
-        importProject()
+        importProject(false)
 
         with(facetSettings) {
             Assert.assertEquals("1.3", languageLevel!!.versionString)
@@ -867,10 +867,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     override fun importProject() {
+        importProject(true)
+    }
+
+    fun importProject(skipIndexing: Boolean = true) {
         val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
         try {
             currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-            super.importProject(true)
+            super.importProject(skipIndexing)
         } finally {
             currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         }
