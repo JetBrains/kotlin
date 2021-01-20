@@ -949,6 +949,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/complex/closureChain.kt");
         }
 
+        @TestMetadata("kt44429.kt")
+        public void testKt44429() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complex/kt44429.kt");
+        }
+
         @TestMetadata("swapAndWith.kt")
         public void testSwapAndWith() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complex/swapAndWith.kt");

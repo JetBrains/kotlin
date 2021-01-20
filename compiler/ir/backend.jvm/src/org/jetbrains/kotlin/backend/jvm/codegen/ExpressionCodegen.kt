@@ -198,13 +198,13 @@ class ExpressionCodegen(
         return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
 
-    internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue {
+    internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue {
         if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
             if (expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST) {
                 // inline lambda parameters are passed from `foo$default` to `foo` call with implicit cast,
                 // we need return pure StackValue.local value to be able proper inline this parameter later
                 if (expression.type.makeNullable() == expression.argument.type) {
-                    return genOrGetLocal(expression.argument, data)
+                    return genOrGetLocal(expression.argument, type, parameterType, data)
                 }
             }
         }
@@ -212,7 +212,7 @@ class ExpressionCodegen(
         return if (expression is IrGetValue)
             StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toIrBasedKotlinType())
         else
-            gen(expression, typeMapper.mapType(expression.type), expression.type, data)
+            gen(expression, type, parameterType, data)
     }
 
     fun generate() {

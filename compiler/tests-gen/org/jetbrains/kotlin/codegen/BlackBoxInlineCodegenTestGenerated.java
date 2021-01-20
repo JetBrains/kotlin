@@ -1099,6 +1099,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/complex/forEachLine.kt");
         }
 
+        @TestMetadata("kt44429.kt")
+        public void testKt44429() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complex/kt44429.kt");
+        }
+
         @TestMetadata("lambdaInLambda.kt")
         public void testLambdaInLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complex/lambdaInLambda.kt");
