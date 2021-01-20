@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -99,6 +100,10 @@ class Fir2IrTypeConverter(
                     builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
                         typeAnnotations += it
                     }
+                }
+                for (attributeAnnotation in attributes.customAnnotations) {
+                    if (annotations.any { it.classId == attributeAnnotation.classId }) continue
+                    typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,

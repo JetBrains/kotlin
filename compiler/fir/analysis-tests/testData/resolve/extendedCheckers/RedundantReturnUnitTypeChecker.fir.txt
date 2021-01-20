@@ -22,7 +22,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun too(): @R|kotlin/Annotation|() R|kotlin/Unit| {
+        public final fun too(): @R|kotlin/Annotation|() R|@R|kotlin/Annotation|()  kotlin/Unit| {
         }
 
         public final fun foo(): R|kotlin/Unit| {

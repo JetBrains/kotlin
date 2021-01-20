@@ -95,6 +95,7 @@ fun List<FirAnnotationCall>.computeTypeAttributes(
 ): ConeAttributes {
     if (this.isEmpty()) return ConeAttributes.Empty
     val attributes = mutableListOf<ConeAttribute<*>>()
+    val customAnnotations = mutableListOf<FirAnnotationCall>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
         when (val classId = type.lookupTag.classId) {
@@ -102,8 +103,17 @@ fun List<FirAnnotationCall>.computeTypeAttributes(
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
-            else -> additionalProcessor.invoke(attributes, classId)
+            else -> {
+                if (classId.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE.shortName())) {
+                    // The check ^ is intended to leave only annotations which may be important for BE
+                    customAnnotations += annotation
+                }
+                additionalProcessor.invoke(attributes, classId)
+            }
         }
+    }
+    if (customAnnotations.isNotEmpty()) {
+        attributes += CustomAnnotationTypeAttribute(customAnnotations)
     }
     return ConeAttributes.create(attributes)
 }

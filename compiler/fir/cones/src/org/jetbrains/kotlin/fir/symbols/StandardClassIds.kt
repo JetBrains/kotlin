@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.Name
 
 object StandardClassIds {
 
-    private val BASE_KOTLIN_PACKAGE = FqName("kotlin")
+    val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
     private fun String.baseId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
     private fun ClassId.unsignedId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier("U" + shortClassName.identifier))
