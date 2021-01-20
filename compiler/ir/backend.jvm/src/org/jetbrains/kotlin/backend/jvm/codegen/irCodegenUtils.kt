@@ -393,15 +393,17 @@ val IrMemberAccessExpression<*>.psiElement: PsiElement?
 fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME)
 
-internal fun classFileContainsMethod(function: IrFunction, context: JvmBackendContext, name: String): Boolean? {
-    val classId = (function.containerSource as? JvmPackagePartSource)?.classId ?: (function.parent as? IrClass)?.classId ?: return null
+internal fun classFileContainsMethod(classId: ClassId, function: IrFunction, context: JvmBackendContext): Boolean? {
     val originalDescriptor = context.methodSignatureMapper.mapSignatureWithGeneric(function).asmMethod.descriptor
     val descriptor = if (function.isSuspend)
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
             .joinToString(prefix = "(", postfix = ")", separator = "") + AsmTypes.OBJECT_TYPE
     else originalDescriptor
-    return classFileContainsMethod(classId, context.state, Method(name, descriptor))
+    return classFileContainsMethod(classId, context.state, Method(function.name.asString(), descriptor))
 }
+
+val IrFunction.parentClassId: ClassId?
+    get() = (containerSource as? JvmPackagePartSource)?.classId ?: (parent as? IrClass)?.classId
 
 // Translated into IR-based terms from classifierDescriptor?.classId
 val IrClass.classId: ClassId?
