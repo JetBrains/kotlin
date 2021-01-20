@@ -115,7 +115,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             }
         }
 
-        val dependencies = psi2irContext.moduleDescriptor.allDependencyModules.map {
+        val dependencies = psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
             val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
             if (it.hasJdkCapability) {
                 // For IDE environment only, i.e. when compiling for debugger
@@ -151,6 +151,17 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             extensions,
             JvmBackendExtension.Default,
         )
+    }
+
+    private fun ModuleDescriptor.collectAllDependencyModulesTransitively(): List<ModuleDescriptor> {
+        val result = LinkedHashSet<ModuleDescriptor>()
+        fun collectImpl(descriptor: ModuleDescriptor) {
+            val dependencies = descriptor.allDependencyModules
+            dependencies.forEach { if (it !in result) collectImpl(it) }
+            result += dependencies
+        }
+        collectImpl(this)
+        return result.toList()
     }
 
     fun doGenerateFilesInternal(input: JvmIrBackendInput) {
