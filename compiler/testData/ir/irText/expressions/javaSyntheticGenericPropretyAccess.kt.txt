@@ -14,4 +14,3 @@ fun <F : Any?> test(j: J<F>) {
     tmp2_receiver.setFoo<F>(x = tmp2_receiver.getFoo<F>().plus(other = 1))
   }
 }
-

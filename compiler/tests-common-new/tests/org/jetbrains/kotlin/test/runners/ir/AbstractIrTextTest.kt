@@ -75,7 +75,10 @@ open class AbstractFir2IrTextTest : AbstractIrTextTestBase(FrontendKinds.FIR) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            useAfterAnalysisCheckers(::FirIrDumpIdenticalChecker)
+            useAfterAnalysisCheckers(
+                ::FirIrDumpIdenticalChecker,
+                ::BlackBoxCodegenSuppressor
+            )
         }
     }
 }
