@@ -1,0 +1,90 @@
+interface Visitor {
+  abstract fun visit()
+  fun visitArray(): Visitor? {
+    return null
+  }
+
+  fun visitAnnotation(): Visitor? {
+    return null
+  }
+
+}
+
+class AnnotationLoader {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun loadAnnotation(): Visitor? {
+    return { // BLOCK
+      local class <no name provided> : Visitor {
+        private constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        override fun visit() {
+        }
+
+        override fun visitArray(): Visitor? {
+          return { // BLOCK
+            local class <no name provided> : Visitor {
+              private constructor() /* primary */ {
+                super/*Any*/()
+                /* <init>() */
+
+              }
+
+              override fun visit() {
+                <this>.foo()
+              }
+
+            }
+
+            <no name provided>()
+          }
+        }
+
+        override fun visitAnnotation(): Visitor? {
+          val visitor: Visitor = CHECK_NOT_NULL<Visitor>(arg0 = <this>.loadAnnotation())
+          return { // BLOCK
+            local class <no name provided> : Visitor {
+              private constructor() /* primary */ {
+                super/*Any*/()
+                /* <init>() */
+
+                <this>.#<$$delegate_0> = visitor
+              }
+
+              override fun visit() {
+              }
+
+              override fun visitArray(): Visitor? {
+                return <this>.#<$$delegate_0>.visitArray()
+              }
+
+              override fun visitAnnotation(): Visitor? {
+                return <this>.#<$$delegate_0>.visitAnnotation()
+              }
+
+              local /* final field */ val <$$delegate_0>: Visitor
+
+            }
+
+            <no name provided>()
+          }
+        }
+
+        private fun foo() {
+        }
+
+      }
+
+      <no name provided>()
+    }
+  }
+
+}

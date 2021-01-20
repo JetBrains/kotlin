@@ -2075,6 +2075,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("AnnotationLoader.kt")
+        public void testAnnotationLoader() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnnotationLoader.kt");
+        }
+
+        @Test
         @TestMetadata("candidateSymbol.kt")
         public void testCandidateSymbol() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/candidateSymbol.kt");
