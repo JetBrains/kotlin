@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.codegen.parentClassId
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
@@ -226,6 +227,27 @@ class MemoizedInlineClassReplacements(
         replacementOrigin: IrDeclarationOrigin,
         noFakeOverride: Boolean = false,
         body: IrFunction.() -> Unit
+    ): IrSimpleFunction {
+        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
+        // When using the new mangling scheme we might run into dependencies using the old scheme
+        // for which we will fall back to the old mangling scheme as well.
+        if (
+            !useOldManglingScheme &&
+            replacement.name.asString().contains("-") &&
+            function.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false
+        ) {
+            return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
+        }
+        return replacement
+    }
+
+    private fun buildReplacementInner(
+        function: IrFunction,
+        replacementOrigin: IrDeclarationOrigin,
+        noFakeOverride: Boolean,
+        useOldManglingScheme: Boolean,
+        body: IrFunction.() -> Unit,
     ): IrSimpleFunction = irFactory.buildFun {
         updateFrom(function)
         if (function is IrConstructor) {
@@ -243,15 +265,7 @@ class MemoizedInlineClassReplacements(
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
         name = mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
-        if (
-            !useOldManglingScheme &&
-            name.asString().contains("-") &&
-            classFileContainsMethod(function, context, name.asString()) == false
-        ) {
-            name = mangledNameFor(function, mangleReturnTypes, true)
-        }
         returnType = function.returnType
     }.apply {
         parent = function.parent
