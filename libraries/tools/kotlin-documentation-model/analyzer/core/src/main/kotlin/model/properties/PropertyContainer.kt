@@ -16,6 +16,9 @@ data class PropertyContainer<C : Any> internal constructor(
     fun <D : C> addAll(extras: Collection<ExtraProperty<D>>): PropertyContainer<D> =
         PropertyContainer(map + extras.map { p -> p.key to p })
 
+    operator fun <D : C> minus(prop: ExtraProperty.Key<C, *>): PropertyContainer<D> =
+        PropertyContainer(map.filterNot { it.key == prop })
+
     companion object {
         fun <T : Any> empty(): PropertyContainer<T> = PropertyContainer(emptyMap())
         fun <T : Any> withAll(vararg extras: ExtraProperty<T>?) = empty<T>().addAll(extras.filterNotNull())
