@@ -270,7 +270,7 @@ private fun createInitialCompilerConfiguration(
     }
 }
 
-internal fun collectRefinedSourcesAndUpdateEnvironment(
+fun collectRefinedSourcesAndUpdateEnvironment(
     context: SharedScriptCompilationContext,
     mainKtFile: KtFile,
     messageCollector: ScriptDiagnosticsMessageCollector

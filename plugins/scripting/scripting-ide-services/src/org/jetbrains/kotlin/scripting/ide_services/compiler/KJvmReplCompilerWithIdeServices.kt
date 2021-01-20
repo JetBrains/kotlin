@@ -107,12 +107,18 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
 
         val compilationState = state.getCompilationState(initialConfiguration)
 
-        val (_, errorHolder, snippetKtFile) = prepareForAnalyze(
+        val (context, errorHolder, snippetKtFile) = prepareForAnalyze(
             newSnippet,
             messageCollector,
             compilationState,
             checkSyntaxErrors = false
         ).valueOr { return it }
+
+        collectRefinedSourcesAndUpdateEnvironment(
+            context,
+            snippetKtFile,
+            messageCollector
+        )
 
         val analysisResult =
             compilationState.analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), scriptPriority.get() + 1)
