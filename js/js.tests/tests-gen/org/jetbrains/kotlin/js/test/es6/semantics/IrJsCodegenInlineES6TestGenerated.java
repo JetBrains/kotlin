@@ -3151,6 +3151,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunctionWithInlineCall.kt");
         }
 
+        @TestMetadata("forInline.kt")
+        public void testForInline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/forInline.kt");
+        }
+
         @TestMetadata("interleavedFiles.kt")
         public void testInterleavedFiles() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/interleavedFiles.kt");
