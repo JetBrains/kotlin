@@ -8,10 +8,17 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.inline.v
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -71,8 +78,10 @@ object JvmInvokeDynamic : IntrinsicMethod() {
                 generateMethodHandle(element, codegen)
             is IrCall ->
                 when (element.symbol) {
-                    codegen.context.ir.symbols.jvmMethodTypeIntrinsic ->
-                        generateMethodType(element, codegen)
+                    codegen.context.ir.symbols.jvmOriginalMethodTypeIntrinsic ->
+                        generateOriginalMethodType(element, codegen)
+                    codegen.context.ir.symbols.jvmSubstitutedMethodTypeIntrinsic ->
+                        generateSubstitutedMethodType(element, codegen)
                     else ->
                         throw AssertionError("Unexpected callee in bootstrap method argument:\n${element.dump()}")
                 }
@@ -92,12 +101,14 @@ object JvmInvokeDynamic : IntrinsicMethod() {
                 throw AssertionError("Unexpected bootstrap method argument:\n${element.dump()}")
         }
 
-    private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Any {
+    private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
         val irFun = irRawFunctionReference.symbol.owner
         val irParentClass = irFun.parentAsClass
         val owner = codegen.typeMapper.mapOwner(irParentClass)
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
         val handleTag = when {
+            irFun is IrConstructor ->
+                Opcodes.H_NEWINVOKESPECIAL
             irFun.dispatchReceiverParameter == null ->
                 Opcodes.H_INVOKESTATIC
             else ->
@@ -106,15 +117,54 @@ object JvmInvokeDynamic : IntrinsicMethod() {
         return Handle(handleTag, owner.internalName, asmMethod.name, asmMethod.descriptor, irParentClass.isJvmInterface)
     }
 
-    private fun generateMethodType(jvmMethodTypeCall: IrCall, codegen: ExpressionCodegen): Any {
-        val irRawFunctionReference = jvmMethodTypeCall.getValueArgument(0) as? IrRawFunctionReference
+    private fun generateOriginalMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
+        val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference
             ?: throw AssertionError(
-                "Argument in ${jvmMethodTypeCall.symbol.owner.name} call is expected to be a raw function reference:\n" +
-                        jvmMethodTypeCall.dump()
+                "Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference:\n" +
+                        irCall.dump()
             )
-        val irFun = irRawFunctionReference.symbol.owner
-        // TODO substitute signature
+        val irFun = irRawFunRef.symbol.owner
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
+        return Type.getMethodType(asmMethod.descriptor)
+    }
+
+    private fun generateSubstitutedMethodType(irCall: IrCall, codegen: ExpressionCodegen): Type {
+        fun fail(message: String): Nothing =
+            throw AssertionError("$message; irCall:\n${irCall.dump()}")
+
+        val irRawFunRef = irCall.getValueArgument(0) as? IrRawFunctionReference
+            ?: fail("Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference")
+        val irOriginalFun = irRawFunRef.symbol.owner as? IrSimpleFunction
+            ?: fail("IrSimpleFunction expected: ${irRawFunRef.symbol.owner.render()}")
+        val substitutedType = irCall.getTypeArgument(0) as? IrSimpleType
+            ?: fail("Type argument expected")
+
+        // Force boxing on primitive types, otherwise D8 fails to accept resulting MethodType in presence of primitive types in arguments
+        // (LambdaMetafactory is ok with such types, though).
+        val substitutedTypeWithNullableArgs =
+            substitutedType.classifier.typeWithArguments(
+                substitutedType.arguments.map {
+                    when (it) {
+                        is IrStarProjection -> it
+                        is IrTypeProjection -> {
+                            val type = it.type
+                            if (type !is IrSimpleType || type.hasQuestionMark)
+                                it
+                            else
+                                makeTypeProjection(type.withHasQuestionMark(true), it.variance)
+                        }
+                        else ->
+                            fail("Unexpected type argument '${it}' :: ${it::class.simpleName}")
+                    }
+                }
+            )
+
+        val fakeClass = codegen.context.irFactory.buildClass { name = Name.special("<fake>") }
+        fakeClass.parent = codegen.context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+        val irFakeOverride = buildFakeOverrideMember(substitutedTypeWithNullableArgs, irOriginalFun, fakeClass) as IrSimpleFunction
+        irFakeOverride.overriddenSymbols = listOf(irOriginalFun.symbol)
+
+        val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFakeOverride)
         return Type.getMethodType(asmMethod.descriptor)
     }
 

@@ -46,7 +46,11 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         try {
             for (ktFile in ktFiles) {
                 val className = ktFile.getFacadeFqName() ?: continue
-                val clazz = classLoader.getGeneratedClass(className)
+                val clazz = try {
+                    classLoader.getGeneratedClass(className)
+                } catch (e: LinkageError) {
+                    throw AssertionError("Failed to load class '$className':\n${info.classFileFactory.createText()}", e)
+                }
                 val method = clazz.getBoxMethodOrNull() ?: continue
                 boxMethodFound = true
                 callBoxMethodAndCheckResultWithCleanup(
@@ -128,7 +132,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
     ): GeneratedClassLoader {
         val classLoader = createClassLoader(module, classFileFactory)
         val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, classLoader, reportProblems)
-        if (!verificationSucceeded ) {
+        if (!verificationSucceeded) {
             assertions.fail { "Verification failed: see exceptions above" }
         }
         return classLoader

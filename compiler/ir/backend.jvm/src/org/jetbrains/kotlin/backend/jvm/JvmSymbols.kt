@@ -604,11 +604,25 @@ class JvmSymbols(
         }.symbol
 
     // Intrinsic used to represent MethodType objects in bootstrap method arguments (see jvmInvokeDynamicIntrinsic above).
-    // Type argument is a possibly substituted method owner type (e.g., 'java.lang.function.Supplier<String>').
     // Value argument is a raw function reference to a corresponding method (e.g., 'java.lang.function.Supplier#get').
-    val jvmMethodTypeIntrinsic: IrSimpleFunctionSymbol =
+    // Resulting method type is unsubstituted.
+    val jvmOriginalMethodTypeIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {
-            name = Name.special("<jvm-method-type>")
+            name = Name.special("<jvm-original-method-type>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addValueParameter("method", irBuiltIns.anyType)
+            returnType = irBuiltIns.anyType
+        }.symbol
+
+    // Intrinsic used to represent MethodType objects in bootstrap method arguments (see jvmInvokeDynamicIntrinsic above).
+    // Type argument is a substituted method owner type (e.g., 'java.lang.function.Supplier<String>').
+    // Value argument is a raw function reference to a corresponding method (e.g., 'java.lang.function.Supplier#get').
+    // Resulting method type is substituted.
+    val jvmSubstitutedMethodTypeIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-substituted-method-type>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             parent = kotlinJvmInternalPackage

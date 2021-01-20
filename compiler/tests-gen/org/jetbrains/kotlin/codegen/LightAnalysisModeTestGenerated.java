@@ -16138,6 +16138,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/boundReference.kt");
             }
 
+            @TestMetadata("builtinMemberReference.kt")
+            public void testBuiltinMemberReference() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/builtinMemberReference.kt");
+            }
+
             @TestMetadata("capturedDispatchReceiver.kt")
             public void testCapturedDispatchReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/capturedDispatchReceiver.kt");
@@ -16158,9 +16163,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/capturingIndySam.kt");
             }
 
+            @TestMetadata("capturingVar.kt")
+            public void testCapturingVar() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/capturingVar.kt");
+            }
+
+            @TestMetadata("constructorReference.kt")
+            public void testConstructorReference() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/constructorReference.kt");
+            }
+
+            @TestMetadata("genericFunInterface.kt")
+            public void testGenericFunInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/genericFunInterface.kt");
+            }
+
+            @TestMetadata("genericFunInterfaceWithPrimitive.kt")
+            public void testGenericFunInterfaceWithPrimitive() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/genericFunInterfaceWithPrimitive.kt");
+            }
+
             @TestMetadata("primitiveVsWrapperInSam.kt")
             public void testPrimitiveVsWrapperInSam() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/primitiveVsWrapperInSam.kt");
+            }
+
+            @TestMetadata("samConversionOnFunctionReference.kt")
+            public void testSamConversionOnFunctionReference() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/samConversionOnFunctionReference.kt");
             }
 
             @TestMetadata("simpleIndyFunInterface.kt")

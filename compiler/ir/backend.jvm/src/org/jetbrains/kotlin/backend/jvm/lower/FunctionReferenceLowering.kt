@@ -103,11 +103,22 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
         reference.transformChildrenVoid()
 
-        return if (shouldUseIndySamConversions) {
+        return if (shouldUseIndySamConversions && canUseIndySamConversion(reference)) {
             wrapSamConversionArgumentWithIndySamConversion(expression)
         } else {
             FunctionReferenceBuilder(reference, expression.typeOperand).build()
         }
+    }
+
+    private fun canUseIndySamConversion(reference: IrFunctionReference): Boolean {
+        // Can't use indy for regular function references by default (because of 'equals').
+        // TODO special mode that would generate indy everywhere?
+        if (reference.origin != IrStatementOrigin.LAMBDA)
+            return false
+        // TODO wrap intrinsic function in lambda?
+        if (context.irIntrinsics.getIntrinsic(reference.symbol) != null)
+            return false
+        return true
     }
 
     private fun wrapSamConversionArgumentWithIndySamConversion(expression: IrTypeOperatorCall): IrExpression {

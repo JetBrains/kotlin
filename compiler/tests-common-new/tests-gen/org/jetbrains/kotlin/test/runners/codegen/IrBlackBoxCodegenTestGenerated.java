@@ -18404,6 +18404,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("builtinMemberReference.kt")
+            public void testBuiltinMemberReference() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/builtinMemberReference.kt");
+            }
+
+            @Test
             @TestMetadata("capturedDispatchReceiver.kt")
             public void testCapturedDispatchReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/capturedDispatchReceiver.kt");
@@ -18428,9 +18434,39 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("capturingVar.kt")
+            public void testCapturingVar() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/capturingVar.kt");
+            }
+
+            @Test
+            @TestMetadata("constructorReference.kt")
+            public void testConstructorReference() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/constructorReference.kt");
+            }
+
+            @Test
+            @TestMetadata("genericFunInterface.kt")
+            public void testGenericFunInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/genericFunInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("genericFunInterfaceWithPrimitive.kt")
+            public void testGenericFunInterfaceWithPrimitive() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/genericFunInterfaceWithPrimitive.kt");
+            }
+
+            @Test
             @TestMetadata("primitiveVsWrapperInSam.kt")
             public void testPrimitiveVsWrapperInSam() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/primitiveVsWrapperInSam.kt");
+            }
+
+            @Test
+            @TestMetadata("samConversionOnFunctionReference.kt")
+            public void testSamConversionOnFunctionReference() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/samConversionOnFunctionReference.kt");
             }
 
             @Test
