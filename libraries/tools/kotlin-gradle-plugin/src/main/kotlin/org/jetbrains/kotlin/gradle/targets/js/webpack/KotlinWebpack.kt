@@ -10,7 +10,6 @@ import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -50,6 +49,8 @@ constructor(
     }
 
     private val npmProject = compilation.npmProject
+
+    private val projectPath = project.path
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -108,6 +109,9 @@ constructor(
     @Input
     var saveEvaluatedConfigFile: Boolean = true
 
+    @Transient
+    private val baseConventions: BasePluginConvention? = project.convention.plugins["base"] as BasePluginConvention?
+
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
         library = baseConventions?.archivesBaseName,
@@ -120,22 +124,27 @@ constructor(
     val outputPath: File
         get() = destinationDirectory
 
-    private val baseConventions: BasePluginConvention?
-        get() = project.convention.plugins["base"] as BasePluginConvention?
-
     @get:Internal
     internal var _destinationDirectory: File? = null
 
+    private val defaultDestinationDirectory by lazy {
+        project.buildDir.resolve(baseConventions!!.distsDirName)
+    }
+
     @get:Internal
     var destinationDirectory: File
-        get() = _destinationDirectory ?: project.buildDir.resolve(baseConventions!!.distsDirName)
+        get() = _destinationDirectory ?: defaultDestinationDirectory
         set(value) {
             _destinationDirectory = value
         }
 
+    private val defaultOutputFileName by lazy {
+        baseConventions?.archivesBaseName + ".js"
+    }
+
     @get:Internal
     var outputFileName: String by property {
-        baseConventions?.archivesBaseName + ".js"
+        defaultOutputFileName
     }
 
     @get:OutputFile
@@ -257,7 +266,7 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-//        nodeJs.npmResolutionManager?.checkRequiredDependencies(this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
 
         val runner = createRunner()
 

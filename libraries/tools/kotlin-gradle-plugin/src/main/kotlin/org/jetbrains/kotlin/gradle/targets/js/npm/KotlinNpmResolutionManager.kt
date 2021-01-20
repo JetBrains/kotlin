@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Incubating
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.logging.Logger
@@ -120,8 +121,9 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     @Incubating
     internal fun requireInstalled(
         services: ServiceRegistry,
-        logger: Logger
-    ) = installIfNeeded(reason = "", services = services, logger = logger)
+        logger: Logger,
+        reason: String = ""
+    ) = installIfNeeded(reason = reason, services = services, logger = logger)
 
     internal fun requireConfiguringState(): KotlinRootNpmResolver =
         (this.state as? ResolutionState.Configuring ?: error("NPM Dependencies already resolved and installed")).resolver
@@ -155,9 +157,6 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
             return resolution
         }
     }
-
-//    internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-//        installIfNeeded(reason = reason)[project.path]
 
     internal val packageJsonFiles: Collection<File>
         get() = state.npmProjects.map { it.packageJsonFile }
@@ -230,18 +229,18 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         return resolvedProject.npmProjectsByNpmDependency[npmDependency] ?: error("NPM project resolved without $this")
     }
 
-    internal fun <T> checkRequiredDependencies(task: T)
+    internal fun <T> checkRequiredDependencies(task: T, services: ServiceRegistry, logger: Logger, projectPath: String)
             where T : RequiresNpmDependencies,
                   T : Task {
-//        val project = task.project
-//        val requestedTaskDependencies = requireAlreadyInstalled(project, "before $task execution").taskRequirements
-//        val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
-//
-//        task.requiredNpmDependencies.forEach {
-//            check(it in targetRequired) {
-//                "${it.createDependency(project)} required by $task was not found resolved at the time of nodejs package manager call. " +
-//                        "This may be caused by changing $task configuration after npm dependencies resolution."
-//            }
-//        }
+        val project = task.project
+        val requestedTaskDependencies = requireInstalled(services, logger, "before $task execution")[projectPath].taskRequirements
+        val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
+
+        task.requiredNpmDependencies.forEach {
+            check(it in targetRequired) {
+                "${it.createDependency(project)} required by $task was not found resolved at the time of nodejs package manager call. " +
+                        "This may be caused by changing $task configuration after npm dependencies resolution."
+            }
+        }
     }
 }
