@@ -40,6 +40,18 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     }
 
     @Test
+    @TestMetadata("bareTypes2.kt")
+    public void testBareTypes2() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/bareTypes2.kt");
+    }
+
+    @Test
+    @TestMetadata("bareTypesWithFlexibleArguments.kt")
+    public void testBareTypesWithFlexibleArguments() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/bareTypesWithFlexibleArguments.kt");
+    }
+
+    @Test
     @TestMetadata("cast.kt")
     public void testCast() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/cast.kt");

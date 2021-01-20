@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
@@ -473,7 +474,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val type = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
         val indexMapping = typeParameters.map { parameter ->
             // TODO: if many, check consistency of the result
-            type.typeArguments.indexOfFirst { it is ConeTypeParameterType && it.lookupTag.typeParameterSymbol == parameter.symbol }
+            type.typeArguments.indexOfFirst {
+                val argument = (it as? ConeKotlinType)?.lowerBoundIfFlexible()
+                argument is ConeTypeParameterType && argument.lookupTag.typeParameterSymbol == parameter.symbol
+            }
         }
         if (indexMapping.any { it == -1 }) return null
 
@@ -488,14 +492,23 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
         if (firClass !is FirTypeParameterRefsOwner || firClass.typeParameters.isEmpty()) return this
 
-        val baseType = argument.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return this
+        val baseType = argument.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.fullyExpandedType(session) ?: return this
+        if (baseType !is ConeClassLikeType) return this
         val baseFirClass = baseType.lookupTag.toSymbol(session)?.fir ?: return this
 
-        val newArguments = type.inheritTypeArguments(baseFirClass, baseType.typeArguments)
-            ?: return buildErrorTypeRef {
-                source = this@withTypeArgumentsForBareType.source
-                diagnostic = ConeWrongNumberOfTypeArgumentsError(firClass.typeParameters.size, firClass.symbol)
+        val newArguments = if (AbstractTypeChecker.isSubtypeOfClass(session.typeCheckerContext, baseType.lookupTag, type.lookupTag)) {
+            // If actual type of declaration is more specific than bare type then we should just find
+            // corresponding supertype with proper arguments
+            with(session.typeContext) {
+                val superType = baseType.fastCorrespondingSupertypes(type.lookupTag)?.firstOrNull() as? ConeKotlinType?
+                superType?.typeArguments
             }
+        } else {
+            type.inheritTypeArguments(baseFirClass, baseType.typeArguments)
+        } ?: return buildErrorTypeRef {
+            source = this@withTypeArgumentsForBareType.source
+            diagnostic = ConeWrongNumberOfTypeArgumentsError(firClass.typeParameters.size, firClass.symbol)
+        }
         return if (newArguments.isEmpty()) this else withReplacedConeType(type.withArguments(newArguments))
     }
 
