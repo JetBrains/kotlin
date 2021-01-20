@@ -1,5 +1,5 @@
-// FILE: JavaAnn.java
 // FIR_IDENTICAL
+// FILE: JavaAnn.java
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -10,7 +10,6 @@ import java.lang.annotation.RetentionPolicy;
 }
 
 // FILE: javaAnnotation.kt
-// FIR_IDENTICAL
 @JavaAnn fun test1() {}
 
 @JavaAnn(value="abc", i=123) fun test2() {}

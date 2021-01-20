@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+// FULL_JDK
 // FILE: OverloadResolutionResultsImpl.java
 
 import java.util.*;
@@ -18,8 +20,6 @@ public class OverloadResolutionResultsImpl<D> {
 }
 
 // FILE: AllCandidates.kt
-// WITH_RUNTIME
-// FULL_JDK
 
 class ResolvedCall<C>
 
