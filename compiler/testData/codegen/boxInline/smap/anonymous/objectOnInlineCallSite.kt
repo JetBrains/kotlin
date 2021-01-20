@@ -1,8 +1,8 @@
 // IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
 // FILE: 1.kt
-
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 package builders
-
 inline fun call(crossinline init: () -> Unit) {
     return init()
 }
