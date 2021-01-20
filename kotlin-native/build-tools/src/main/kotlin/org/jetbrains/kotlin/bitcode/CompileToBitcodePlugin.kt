@@ -9,6 +9,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.createCompilationDatabasesFromCompileToBitcodeTasks
+import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.target.SanitizerKind
+import org.jetbrains.kotlin.konan.target.supportedSanitizers
 import java.io.File
 import javax.inject.Inject
 
@@ -45,20 +48,40 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
             configurationBlock: CompileToBitcode.() -> Unit = {}
     ) {
         targetList.get().forEach { targetName ->
-            project.tasks.register(
-                    "${targetName}${name.snakeCaseToCamelCase().capitalize()}",
-                    CompileToBitcode::class.java,
-                    srcDir, name, targetName, outputGroup
-            ).configure {
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = "Compiles '$name' to bitcode for $targetName"
-                it.configurationBlock()
+            val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+            val target = platformManager.targetByName(targetName)
+            val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
+            sanitizers.forEach { sanitizer ->
+                project.tasks.register(
+                        "${targetName}${name.snakeCaseToCamelCase().capitalize()}${suffixForSanitizer(sanitizer)}",
+                        CompileToBitcode::class.java,
+                        srcDir, name, targetName, outputGroup
+                ).configure {
+                    it.sanitizer = sanitizer
+                    it.group = BasePlugin.BUILD_GROUP
+                    val sanitizerDescription = when (sanitizer) {
+                        null -> ""
+                        SanitizerKind.ADDRESS -> " with ASAN"
+                        SanitizerKind.THREAD -> " with TSAN"
+                    }
+                    it.description = "Compiles '$name' to bitcode for $targetName$sanitizerDescription"
+                    it.configurationBlock()
+                }
             }
         }
     }
 
     companion object {
+
         private fun String.snakeCaseToCamelCase() =
                 split('_').joinToString(separator = "") { it.capitalize() }
+
+        fun suffixForSanitizer(sanitizer: SanitizerKind?) =
+            when (sanitizer) {
+                null -> ""
+                SanitizerKind.ADDRESS -> "_ASAN"
+                SanitizerKind.THREAD -> "_TSAN"
+            }
+
     }
 }
