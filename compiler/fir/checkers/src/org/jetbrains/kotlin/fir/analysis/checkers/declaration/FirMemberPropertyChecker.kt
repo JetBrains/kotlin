@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
@@ -34,6 +34,8 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        val source = property.source ?: return
+        if (source.kind is FirFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { property.source.getModifierList() }
@@ -56,15 +58,11 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
                     return
                 }
             }
-
-            if (property.delegate != null) {
-                property.delegate!!.source?.let {
-                    if (containingDeclaration.isInterface) {
-                        reporter.report(it, FirErrors.DELEGATED_PROPERTY_IN_INTERFACE)
-                    } else {
-                        reporter.report(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY)
-                    }
-                }
+            property.initializer?.source?.let {
+                reporter.report(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER)
+            }
+            property.delegate?.source?.let {
+                reporter.report(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY)
             }
 
             checkAccessor(property.getter, property.delegate) { src, symbol ->
@@ -79,7 +77,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             }
         }
 
-        checkPropertyInitializer(containingDeclaration, property, isAbstract, reporter)
+        checkPropertyInitializer(containingDeclaration, property, reporter)
 
         val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
         if (hasOpenModifier &&
@@ -97,28 +95,6 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
                     reporter.report(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
-                }
-            }
-        }
-    }
-
-    private fun checkPropertyInitializer(
-        containingDeclaration: FirRegularClass,
-        property: FirProperty,
-        propertyIsAbstract: Boolean,
-        reporter: DiagnosticReporter
-    ) {
-        property.initializer?.source?.let {
-            if (propertyIsAbstract) {
-                reporter.report(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER)
-            } else if (containingDeclaration.isInterface) {
-                reporter.report(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE)
-            }
-        }
-        if (propertyIsAbstract) {
-            if (property.initializer == null && property.delegate == null && property.returnTypeRef is FirImplicitTypeRef) {
-                property.source?.let {
-                    reporter.report(it, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER)
                 }
             }
         }

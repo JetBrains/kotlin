@@ -168,12 +168,20 @@ object FirErrors {
     val PRIVATE_PROPERTY_IN_INTERFACE by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
 
     val ABSTRACT_PROPERTY_WITH_INITIALIZER by error0<FirSourceElement, KtExpression>()
+    // TODO: val MUST_BE_INITIALIZED by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    // TODO: val MUST_BE_INITIALIZED_OR_BE_ABSTRACT by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    // TODO: val EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+
+    // TODO: val EXTENSION_PROPERTY_WITH_BACKING_FIELD by error0<FirSourceElement, KtExpression>()
+    // TODO: val PROPERTY_INITIALIZER_NO_BACKING_FIELD by error0<FirSourceElement, KtExpression>()
+
     val PROPERTY_INITIALIZER_IN_INTERFACE by error0<FirSourceElement, KtExpression>()
     val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    // TODO: val BACKING_FIELD_IN_INTERFACE by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
     val ABSTRACT_DELEGATED_PROPERTY by error0<FirSourceElement, KtPropertyDelegate>()
     val DELEGATED_PROPERTY_IN_INTERFACE by error0<FirSourceElement, KtPropertyDelegate>()
-    // TODO: val ACCESSOR_FOR_DELEGATED_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
+    // TODO: val ACCESSOR_FOR_DELEGATED_PROPERTY by error1<FirSourceElement, KtPropertyAccessor, FirPropertyAccessorSymbol>()
 
     val ABSTRACT_PROPERTY_WITH_GETTER by error0<FirSourceElement, KtPropertyAccessor>()
     val ABSTRACT_PROPERTY_WITH_SETTER by error0<FirSourceElement, KtPropertyAccessor>()
@@ -182,6 +190,9 @@ object FirErrors {
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val EXPECTED_PROPERTY_INITIALIZER by error0<FirSourceElement, KtExpression>()
+    // TODO: need to cover `by` as well as delegate expression
+    val EXPECTED_DELEGATED_PROPERTY by error0<FirSourceElement, KtPropertyDelegate>()
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<FirSourceElement, KtDestructuringDeclaration>()
