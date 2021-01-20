@@ -145,6 +145,30 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val DECLARATION_SIGNATURE_OR_DEFAULT: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> =
+            if (node.isDeclaration) {
+                DECLARATION_SIGNATURE.mark(node, tree)
+            } else {
+                DEFAULT.mark(node, tree)
+            }
+
+        private val LighterASTNode.isDeclaration: Boolean
+            get() =
+                when (tokenType) {
+                    KtNodeTypes.PRIMARY_CONSTRUCTOR, KtNodeTypes.SECONDARY_CONSTRUCTOR,
+                    KtNodeTypes.FUN, KtNodeTypes.FUNCTION_LITERAL,
+                    KtNodeTypes.PROPERTY,
+                    KtNodeTypes.PROPERTY_ACCESSOR,
+                    KtNodeTypes.CLASS,
+                    KtNodeTypes.OBJECT_DECLARATION,
+                    KtNodeTypes.CLASS_INITIALIZER ->
+                        true
+                    else ->
+                        false
+                }
+    }
+
     private class ModifierSetBasedLightTreePositioningStrategy(private val modifierSet: TokenSet) : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
             tree.findChildByType(node, modifierSet)?.let { return markElement(it, tree) }

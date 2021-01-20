@@ -23,7 +23,7 @@ fun test_2(a: A?) {
     }
 }
 
-<!CONFLICTING_OVERLOADS!>fun test_3(x: Any?) {
+<!CONFLICTING_OVERLOADS{LT}!><!CONFLICTING_OVERLOADS{PSI}!>fun test_3(x: Any?)<!> {
     val a = x as? A ?: return
     a.foo() // Should be OK
     x.foo() // Should be OK
@@ -53,7 +53,7 @@ fun test_2(a: B?) {
     }
 }
 
-<!CONFLICTING_OVERLOADS!>fun test_3(x: Any?) {
+<!CONFLICTING_OVERLOADS{LT}!><!CONFLICTING_OVERLOADS{PSI}!>fun test_3(x: Any?)<!> {
     val a = x as? B ?: return
     a.foo() // Should be OK
     x.foo() // Should be OK

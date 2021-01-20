@@ -139,7 +139,7 @@ object FirErrors {
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
-    val CONFLICTING_OVERLOADS by error1<FirSourceElement, PsiElement, String>()
+    val CONFLICTING_OVERLOADS by error1<FirSourceElement, PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val REDECLARATION by error1<FirSourceElement, PsiElement, String>()
     val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
 

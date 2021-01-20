@@ -33,6 +33,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_SIGNATURE
     )
 
+    val DECLARATION_SIGNATURE_OR_DEFAULT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT,
+        PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT
+    )
+
     val VISIBILITY_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VISIBILITY_MODIFIER,
         PositioningStrategies.VISIBILITY_MODIFIER

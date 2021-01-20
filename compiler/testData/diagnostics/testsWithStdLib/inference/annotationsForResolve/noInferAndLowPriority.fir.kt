@@ -4,10 +4,10 @@
 <!CONFLICTING_OVERLOADS!>@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.jvm.JvmName("containsAny")
 <!HIDDEN!>@kotlin.internal.LowPriorityInOverloadResolution<!>
-public fun <T> Iterable<T>.contains1(element: T): Int = null!!<!>
+public fun <T> Iterable<T>.contains1(element: T): Int<!> = null!!
 
 <!CONFLICTING_OVERLOADS!>@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public fun <T> Iterable<T>.contains1(element: @kotlin.internal.NoInfer T): Boolean = null!!<!>
+public fun <T> Iterable<T>.contains1(element: @kotlin.internal.NoInfer T): Boolean<!> = null!!
 
 
 fun test() {

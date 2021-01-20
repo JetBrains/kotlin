@@ -3,32 +3,32 @@ package c
 
 fun z(view: () -> Unit) {}
 
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
-<!CONFLICTING_OVERLOADS!>fun x() = z { z { z { z { z { z { z { z { } } } } } } } }<!>
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
+<!CONFLICTING_OVERLOADS!>fun x()<!> = z { z { z { z { z { z { z { z { } } } } } } } }
 
 class x() {}
