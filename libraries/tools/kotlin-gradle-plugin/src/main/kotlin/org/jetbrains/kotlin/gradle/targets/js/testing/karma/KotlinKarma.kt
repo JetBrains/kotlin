@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
 
-class KotlinKarma(override val compilation: KotlinJsCompilation, private val services: ServiceRegistry) :
+class KotlinKarma(override val compilation: KotlinJsCompilation, private val services: ServiceRegistry, private val basePath: String) :
     KotlinJsTestFramework {
     private val project: Project = compilation.target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -55,6 +55,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation, private val ser
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
+
+    override fun getPath() = "$basePath:kotlinKarma"
 
     override val settingsState: String
         get() = "KotlinKarma($config)"

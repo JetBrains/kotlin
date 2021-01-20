@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.toDeclaration
 
 class TasksRequirements {
-    private val _byTask = mutableMapOf<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>()
+    private val _byTask = mutableMapOf<String, Set<RequiredKotlinJsDependency>>()
     private val byCompilation = mutableMapOf<String, MutableSet<NpmDependencyDeclaration>>()
 
-    val byTask: Map<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>
+    val byTask: Map<String, Set<RequiredKotlinJsDependency>>
         get() = _byTask
 
     internal fun getCompilationNpmRequirements(compilationName: String): Set<NpmDependencyDeclaration> =
@@ -25,7 +25,7 @@ class TasksRequirements {
     fun addTaskRequirements(task: RequiresNpmDependencies) {
         val requirements = task.requiredNpmDependencies
 
-        _byTask[task] = requirements
+        _byTask[task.getPath()] = requirements
 
         val requiredNpmDependencies = requirements
             .asSequence()

@@ -20,22 +20,22 @@ constructor(
 
     override val considerGeneratingFlag: Boolean = true
 
+    private val npmProject = compilation.npmProject
+
     @get:OutputDirectory
     override val destinationDir: File by lazy {
-        compilation.npmProject.externalsDir
+        npmProject.externalsDir
     }
 
-    @delegate:Transient
-    private val executor by lazy {
-        DukatExecutor(
+    private val executor
+        get() = DukatExecutor(
             nodeJs,
             dts,
             externalsOutputFormat,
-            compilation.npmProject,
+            npmProject,
             true,
             compareInputs = false
         )
-    }
 
     @TaskAction
     override fun run() {
