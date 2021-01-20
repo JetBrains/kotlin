@@ -16,14 +16,14 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface KtSymbolBasedContext {
     val builtIns: KotlinBuiltIns
@@ -48,8 +48,21 @@ interface KtSymbolBasedContext {
 fun KtSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext): DeclarationDescriptor =
     when (this) {
         is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(this, context)
-        is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(this, context)
+        is KtFunctionLikeSymbol -> toDeclarationDescriptor(context)
+        is KtParameterSymbol -> KtSymbolBasedValueParameterDescriptor(this, context)
         else -> context.implementationPlanned()
+    }
+
+fun KtFunctionLikeSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext): FunctionDescriptor =
+    when (this) {
+        is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(this, context)
+        is KtAnonymousFunctionSymbol -> KtSymbolBasedAnonymousFunctionDescriptor(this, context)
+        is KtConstructorSymbol -> {
+            val ktConstructorSymbol = this
+            val ktClassOrObject = context.withAnalysisSession { ktConstructorSymbol.getContainingSymbol() as KtClassOrObjectSymbol }
+            KtSymbolBasedConstructorDescriptor(ktConstructorSymbol, KtSymbolBasedClassDescriptor(ktClassOrObject, context))
+        }
+        else -> error("Unexpected kind of KtFunctionLikeSymbol: ${this.javaClass}")
     }
 
 fun <R> KtSymbolBasedContext.withAnalysisSession(f: KtAnalysisSession.() -> R): R = f(ktAnalysisSession)

@@ -120,15 +120,8 @@ abstract class KtSymbolBasedDeclarationDescriptor(val context: KtSymbolBasedCont
 
         val containerSymbol = with(context.ktAnalysisSession) {
             (ktSymbol as KtSymbolWithKind).getContainingSymbol()
-        }
-        return when (containerSymbol) {
-            // i.e. descriptor is top-level
-            null -> KtSymbolBasedPackageFragmentDescriptor(getPackageFqNameIfTopLevel(), context)
-
-            is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(containerSymbol, context)
-            is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(containerSymbol, context)
-            else -> noImplementation() // todo support other cases
-        }
+        } ?: error("ContainerSymbol not found for $ktSymbol")
+        return containerSymbol.toDeclarationDescriptor(context)
     }
 
     protected abstract fun getPackageFqNameIfTopLevel(): FqName
@@ -274,6 +267,7 @@ class KtSymbolBasedTypeParameterDescriptor(
     override fun getStorageManager(): StorageManager = noImplementation()
 }
 
+
 abstract class KtSymbolBasedFunctionLikeDescriptor(context: KtSymbolBasedContext) :
     KtSymbolBasedDeclarationDescriptor(context), FunctionDescriptor {
     abstract override val ktSymbol: KtFunctionLikeSymbol
@@ -281,23 +275,7 @@ abstract class KtSymbolBasedFunctionLikeDescriptor(context: KtSymbolBasedContext
     override fun getReturnType(): KotlinType = ktSymbol.annotatedType.toKotlinType(context)
 
     override fun getValueParameters(): List<ValueParameterDescriptor> = ktSymbol.valueParameters.mapIndexed { index, it ->
-        it.toValueParameterDescriptor(index)
-    }
-
-    private fun KtParameterSymbol.toValueParameterDescriptor(index: Int): ValueParameterDescriptor {
-        return ValueParameterDescriptorImpl(
-            this@KtSymbolBasedFunctionLikeDescriptor,
-            null,
-            index,
-            Annotations.EMPTY, // TODO
-            name,
-            annotatedType.toKotlinType(context),
-            this.hasDefaultValue,
-            context.incorrectImplementation { false },
-            context.incorrectImplementation { false },
-            context.incorrectImplementation { null },
-            psi.safeAs<KtPureElement>().toSourceElement()
-        )
+        KtSymbolBasedValueParameterDescriptor(it, context, index)
     }
 
     override fun hasStableParameterNames(): Boolean = implementationPostponed()
@@ -485,8 +463,24 @@ private class KtSymbolStubDispatchReceiverParameterDescriptor(
 
 class KtSymbolBasedValueParameterDescriptor(
     override val ktSymbol: KtParameterSymbol,
-    context: KtSymbolBasedContext
+    context: KtSymbolBasedContext,
+    index: Int = -1
 ) : KtSymbolBasedDeclarationDescriptor(context), KtSymbolBasedNamed, ValueParameterDescriptor {
+    override val index: Int
+
+    init {
+        if (index != -1) {
+            this.index = index
+        } else {
+            val containerSymbol = (containingDeclaration as KtSymbolBasedFunctionLikeDescriptor).ktSymbol
+            this.index = containerSymbol.valueParameters.indexOfFirst {
+                it === ktSymbol
+            }
+            check(this.index != -1) {
+                "Parameter not found in container symbol = $containerSymbol"
+            }
+        }
+    }
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
@@ -505,10 +499,7 @@ class KtSymbolBasedValueParameterDescriptor(
 
     override fun getType(): KotlinType = ktSymbol.annotatedType.toKotlinType(context)
     override fun getContainingDeclaration(): CallableDescriptor = super.getContainingDeclaration() as CallableDescriptor
-    override fun getPackageFqNameIfTopLevel(): FqName = error("Could be top-level")
-
-    override val index: Int
-        get() = implementationPostponed()
+    override fun getPackageFqNameIfTopLevel(): FqName = error("Couldn't be top-level")
 
     override fun declaresDefaultValue(): Boolean = ktSymbol.hasDefaultValue
 
@@ -534,6 +525,14 @@ class KtSymbolBasedValueParameterDescriptor(
     override fun isVar(): Boolean = false
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
     override fun isConst(): Boolean = false
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is KtSymbolBasedValueParameterDescriptor) return false
+        return index == other.index && containingDeclaration == other.containingDeclaration
+    }
+
+    override fun hashCode(): Int = containingDeclaration.hashCode() * 37 + index
 }
 
 class KtSymbolBasedPropertyDescriptor(

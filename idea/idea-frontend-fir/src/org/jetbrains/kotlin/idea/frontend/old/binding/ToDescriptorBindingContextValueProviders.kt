@@ -58,11 +58,7 @@ internal class ToDescriptorBindingContextValueProviders(bindingContext: KtSymbol
 
     private fun getFunction(key: PsiElement): SimpleFunctionDescriptor? {
         val ktFunctionLikeSymbol = key.getKtSymbolOfTypeOrNull<KtFunctionLikeSymbol>() ?: return null
-        return when (ktFunctionLikeSymbol) {
-            is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(ktFunctionLikeSymbol, context)
-            is KtAnonymousFunctionSymbol -> KtSymbolBasedAnonymousFunctionDescriptor(ktFunctionLikeSymbol, context)
-            else -> null // todo maybe support constructors here
-        }
+        return ktFunctionLikeSymbol.toDeclarationDescriptor(context).safeAs()
     }
 
     private fun getConstructor(key: PsiElement): ConstructorDescriptor? {
