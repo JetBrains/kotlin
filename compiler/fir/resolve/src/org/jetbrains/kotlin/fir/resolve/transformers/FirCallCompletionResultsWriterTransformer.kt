@@ -555,24 +555,37 @@ class FirCallCompletionResultsWriterTransformer(
         val declaration = calleeReference?.candidate?.symbol?.fir as? FirSimpleFunction
 
         if (calleeReference == null || declaration == null) {
-            syntheticCall.transformChildren(
-                this,
-                data = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.typeRef.coneType.toExpectedType()
-            )
+            transformSyntheticCallChildren(syntheticCall, data)
             return syntheticCall.compose()
         }
 
         val typeRef = typeCalculator.tryCalculateReturnType(declaration)
         syntheticCall.replaceTypeRefWithSubstituted(calleeReference, typeRef)
-        syntheticCall.transformChildren(
-            this,
-            data = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.typeRef.coneType.toExpectedType()
-        )
+        transformSyntheticCallChildren(syntheticCall, data)
 
         return (syntheticCall.transformCalleeReference(
             StoreCalleeReference,
             calleeReference.toResolvedReference(),
         ) as D).compose()
+    }
+
+    private inline fun <reified D> transformSyntheticCallChildren(
+        syntheticCall: D,
+        data: ExpectedArgumentType?
+    ) where D : FirResolvable, D : FirExpression {
+        val newData = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.typeRef.coneType.toExpectedType()
+
+        if (syntheticCall is FirTryExpression) {
+            syntheticCall.transformCalleeReference(this, newData)
+            syntheticCall.transformTryBlock(this, newData)
+            syntheticCall.transformCatches(this, newData)
+            return
+        }
+
+        syntheticCall.transformChildren(
+            this,
+            data = newData
+        )
     }
 
     override fun <T> transformConstExpression(
