@@ -12,10 +12,10 @@ buildscript {
     repositories {
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
-            maven("https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-dependencies")
+            maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         } else {
             jcenter()
-            maven("https://kotlin.bintray.com/kotlin-dependencies")
+            maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         }
 
         project.bootstrapKotlinRepo?.let {
@@ -88,7 +88,7 @@ extra["customDepsOrg"] = "kotlin.build"
 repositories {
     jcenter()
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
-    maven("https://kotlin.bintray.com/kotlin-dependencies")
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     gradlePluginPortal()
 
     extra["bootstrapKotlinRepo"]?.let {

@@ -309,11 +309,9 @@ class CodeConformanceTest : TestCase() {
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
             ),
-            RepoAllowList(
-                "kotlin/ktor", root, setOf(
-                    "gradle/cacheRedirector.gradle.kts"
-                )
-            ),
+            RepoAllowList("kotlin/ktor", root, setOf("gradle/cacheRedirector.gradle.kts")),
+            RepoAllowList("bintray.com/kotlin-dependencies", root, setOf("gradle/cacheRedirector.gradle.kts")),
+            RepoAllowList("api.bintray.com/maven/kotlin/kotlin-dependencies", root, setOf()),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
                 "https://dl.bintray.com/kotlin/kotlin-dev", root, setOf(
