@@ -137,6 +137,7 @@ enum class LibraryJarDescriptor(
 
 fun bundledRuntimeVersion(): String = KotlinCompilerVersion.VERSION
 
+fun kotlinCompilerVersionForWizard() = KotlinCompilerVersion.VERSION.substringBefore("-release")
 
 fun getLocalJar(kotlinRuntimeJar: VirtualFile?): VirtualFile? {
     if (kotlinRuntimeJar == null) return null

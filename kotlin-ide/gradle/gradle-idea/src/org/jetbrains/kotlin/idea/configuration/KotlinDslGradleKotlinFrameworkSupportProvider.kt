@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.isSnapshot
-import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
-import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
-import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
-import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
+import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider
 import javax.swing.Icon
@@ -51,7 +48,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
         modifiableModelsProvider: ModifiableModelsProvider,
         buildScriptData: BuildScriptDataBuilder
     ) {
-        var kotlinVersion = bundledRuntimeVersion()
+        var kotlinVersion = kotlinCompilerVersionForWizard()
         val additionalRepository = getRepositoryForVersion(kotlinVersion)
         if (isSnapshot(bundledRuntimeVersion())) {
             kotlinVersion = LAST_SNAPSHOT_VERSION
