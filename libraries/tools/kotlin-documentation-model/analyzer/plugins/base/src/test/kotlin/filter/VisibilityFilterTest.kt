@@ -33,7 +33,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 1
+                    it.first().packages.first().functions.size == 1
                 )
             }
         }
@@ -64,7 +64,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 0
+                    it.first().packages.first().functions.size == 0
                 )
             }
         }
@@ -95,7 +95,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 1
+                    it.first().packages.first().functions.size == 1
                 )
             }
         }
@@ -135,7 +135,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 1
+                    it.first().packages.first().functions.size == 1
                 )
             }
         }
@@ -175,7 +175,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 0
+                    it.first().packages.first().functions.size == 0
                 )
             }
         }
@@ -202,7 +202,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
             configuration
         ) {
             documentablesFirstTransformationStep = {
-                assertEquals(0, it.component2().packages.first().typealiases.size)
+                assertEquals(0, it.first().packages.first().typealiases.size)
             }
         }
     }

@@ -80,6 +80,12 @@ class DokkaBase : DokkaPlugin() {
         }
     }
 
+    val emptyModulesFilter by extending {
+        preMergeDocumentableTransformer with EmptyModulesFilterTransformer() order {
+            after(emptyPackagesFilter)
+        }
+    }
+
     val modulesAndPackagesDocumentation by extending {
         preMergeDocumentableTransformer providing ::ModuleAndPackageDocumentationTransformer
     }
