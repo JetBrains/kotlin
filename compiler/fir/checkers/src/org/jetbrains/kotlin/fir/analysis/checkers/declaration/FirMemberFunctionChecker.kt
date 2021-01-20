@@ -39,10 +39,10 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
         val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
-                reporter.report(source, FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS)
+                reporter.report(FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(source, function, containingDeclaration))
             }
             if (function.hasBody) {
-                reporter.report(source, FirErrors.ABSTRACT_FUNCTION_WITH_BODY)
+                reporter.report(FirErrors.ABSTRACT_FUNCTION_WITH_BODY.on(source, function))
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
@@ -51,13 +51,13 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
-                    reporter.report(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY)
+                    reporter.report(FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY.on(source, function))
                 }
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
                     reporter.report(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
                 }
             } else if (!isInsideExpectClass && !hasAbstractModifier && !isExternal) {
-                reporter.report(FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(source, function.symbol))
+                reporter.report(FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(source, function))
             }
         }
     }
