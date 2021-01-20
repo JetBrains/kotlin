@@ -154,21 +154,21 @@ object FirErrors {
     val PRIVATE_FUNCTION_WITH_NO_BODY by error0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
 
     // Properties & accessors
-    val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
-    val PRIVATE_PROPERTY_IN_INTERFACE by error0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<FirSourceElement, KtModifierListOwner, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
+    val PRIVATE_PROPERTY_IN_INTERFACE by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
 
-    val ABSTRACT_PROPERTY_WITH_INITIALIZER by error1<FirSourceElement, PsiElement, FirExpression>()
-    val PROPERTY_INITIALIZER_IN_INTERFACE by error1<FirSourceElement, PsiElement, FirExpression>()
-    val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+    val ABSTRACT_PROPERTY_WITH_INITIALIZER by error0<FirSourceElement, KtExpression>()
+    val PROPERTY_INITIALIZER_IN_INTERFACE by error0<FirSourceElement, KtExpression>()
+    val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error0<FirSourceElement, KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
-    val ABSTRACT_DELEGATED_PROPERTY by error1<FirSourceElement, PsiElement, FirExpression>()
-    val DELEGATED_PROPERTY_IN_INTERFACE by error1<FirSourceElement, PsiElement, FirExpression>()
+    val ABSTRACT_DELEGATED_PROPERTY by error0<FirSourceElement, KtPropertyDelegate>()
+    val DELEGATED_PROPERTY_IN_INTERFACE by error0<FirSourceElement, KtPropertyDelegate>()
     // TODO: val ACCESSOR_FOR_DELEGATED_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
 
-    val ABSTRACT_PROPERTY_WITH_GETTER by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
-    val ABSTRACT_PROPERTY_WITH_SETTER by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
-    val PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
-    val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
+    val ABSTRACT_PROPERTY_WITH_GETTER by error0<FirSourceElement, KtPropertyAccessor>()
+    val ABSTRACT_PROPERTY_WITH_SETTER by error0<FirSourceElement, KtPropertyAccessor>()
+    val PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY by error0<FirSourceElement, PsiElement>()
+    val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error0<FirSourceElement, PsiElement>()
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<FirSourceElement, PsiElement>()
