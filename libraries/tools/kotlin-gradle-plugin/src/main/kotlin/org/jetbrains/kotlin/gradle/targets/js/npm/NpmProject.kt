@@ -65,8 +65,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
     val main: String
         get() = "$DIST_FOLDER/$name.js"
 
-    val externalsDirRoot: File
-        get() = project.buildDir.resolve("externals").resolve(name)
+    val externalsDirRoot by lazy {
+        project.buildDir.resolve("externals").resolve(name)
+    }
 
     val externalsDir: File
         get() = externalsDirRoot.resolve("src")

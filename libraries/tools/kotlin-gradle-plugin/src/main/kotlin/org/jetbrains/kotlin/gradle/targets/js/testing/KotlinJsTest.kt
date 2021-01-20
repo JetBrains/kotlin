@@ -110,7 +110,7 @@ constructor(
     }
 
     fun useMocha() = useMocha {}
-    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation), body)
+    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation, path), body)
     fun useMocha(fn: Closure<*>) {
         useMocha {
             ConfigureUtil.configure(fn, this)
@@ -119,7 +119,7 @@ constructor(
 
     fun useKarma() = useKarma {}
     fun useKarma(body: KotlinKarma.() -> Unit) = use(
-        KotlinKarma(compilation, services),
+        KotlinKarma(compilation, services, path),
         body
     )
     fun useKarma(fn: Closure<*>) {

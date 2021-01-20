@@ -232,13 +232,12 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     internal fun <T> checkRequiredDependencies(task: T, services: ServiceRegistry, logger: Logger, projectPath: String)
             where T : RequiresNpmDependencies,
                   T : Task {
-        val project = task.project
         val requestedTaskDependencies = requireInstalled(services, logger, "before $task execution")[projectPath].taskRequirements
-        val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
+        val targetRequired = requestedTaskDependencies[task.path]?.toSet() ?: setOf()
 
         task.requiredNpmDependencies.forEach {
             check(it in targetRequired) {
-                "${it.createDependency(project)} required by $task was not found resolved at the time of nodejs package manager call. " +
+                "${it.createDependency(task.project)} required by $task was not found resolved at the time of nodejs package manager call. " +
                         "This may be caused by changing $task configuration after npm dependencies resolution."
             }
         }

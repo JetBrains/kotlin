@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import java.io.File
 
-class KotlinMocha(override val compilation: KotlinJsCompilation) :
+class KotlinMocha(override val compilation: KotlinJsCompilation, private val basePath: String) :
     KotlinJsTestFramework {
     private val project: Project = compilation.target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -37,6 +37,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
             versions.sourceMapSupport,
             versions.formatUtil
         )
+
+    override fun getPath() = "$basePath:kotlinMocha"
 
     // https://mochajs.org/#-timeout-ms-t-ms
     var timeout: String = DEFAULT_TIMEOUT

@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
-import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 
 /**
  * Info about NPM projects inside particular gradle [project].
@@ -18,7 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 class KotlinProjectNpmResolution(
     val project: String,
     val npmProjects: List<KotlinCompilationNpmResolution>,
-    val taskRequirements: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>
+    val taskRequirements: Map<String, Collection<RequiredKotlinJsDependency>>
 ) {
     val npmProjectsByNpmDependency: Map<NpmDependency, KotlinCompilationNpmResolution> by lazy {
         mutableMapOf<NpmDependency, KotlinCompilationNpmResolution>().also { result ->
