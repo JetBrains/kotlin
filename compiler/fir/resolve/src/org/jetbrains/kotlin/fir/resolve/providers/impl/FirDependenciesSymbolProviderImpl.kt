@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 @ThreadSafeMutableState
 open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolProvider(session) {
-    private val classCache = SymbolProviderCache<ClassId, FirClassLikeSymbol<*>>()
-    private val topLevelCallableCache = SymbolProviderCache<CallableId, List<FirCallableSymbol<*>>>()
-    private val topLevelFunctionCache = SymbolProviderCache<CallableId, List<FirNamedFunctionSymbol>>()
-    private val topLevelPropertyCache = SymbolProviderCache<CallableId, List<FirPropertySymbol>>()
-    private val packageCache = SymbolProviderCache<FqName, FqName>()
+    private val classCache = session.firCachesFactory.createCache(::computeClass)
+    private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
+    private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)
+    private val topLevelPropertyCache = session.firCachesFactory.createCache(::computeTopLevelProperties)
+    private val packageCache = session.firCachesFactory.createCache(::computePackage)
+
 
     protected open val dependencyProviders by lazy {
         val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
@@ -36,26 +38,36 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolPro
         }.toList()
     }
 
+    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    private fun computeTopLevelCallables(callableId: CallableId): List<FirCallableSymbol<*>> = buildList {
+        dependencyProviders.forEach { it.getTopLevelCallableSymbolsTo(this, callableId.packageName, callableId.callableName) }
+    }
+
+    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    private fun computeTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> = buildList {
+        dependencyProviders.forEach { it.getTopLevelFunctionSymbolsTo(this, callableId.packageName, callableId.callableName) }
+    }
+
+    @OptIn(FirSymbolProviderInternals::class, ExperimentalStdlibApi::class)
+    private fun computeTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> = buildList {
+        dependencyProviders.forEach { it.getTopLevelPropertySymbolsTo(this, callableId.packageName, callableId.callableName) }
+    }
+
+    private fun computePackage(it: FqName): FqName? =
+        dependencyProviders.firstNotNullResult { provider -> provider.getPackage(it) }
+
+    private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
+        dependencyProviders.firstNotNullResult { provider -> provider.getClassLikeSymbolByFqName(classId) }
+
+
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        destination += topLevelFunctionCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
-            val result = mutableListOf<FirNamedFunctionSymbol>()
-            dependencyProviders.forEach {
-                it.getTopLevelFunctionSymbolsTo(result, packageFqName, name)
-            }
-            result
-        } ?: emptyList()
+        destination += topLevelFunctionCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        destination += topLevelPropertyCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
-            val result = mutableListOf<FirPropertySymbol>()
-            dependencyProviders.forEach {
-                it.getTopLevelPropertySymbolsTo(result, packageFqName, name)
-            }
-            result
-        } ?: emptyList()
+        destination += topLevelPropertyCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
@@ -64,30 +76,14 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolPro
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return topLevelCallableCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
-            dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
-        } ?: emptyList()
+        return topLevelCallableCache.getValue(CallableId(packageFqName, name))
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return classCache.lookupCacheOrCalculate(classId) {
-            for (provider in dependencyProviders) {
-                provider.getClassLikeSymbolByFqName(classId)?.let {
-                    return@lookupCacheOrCalculate it
-                }
-            }
-            null
-        }
+        return classCache.getValue(classId)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
-        return packageCache.lookupCacheOrCalculate(fqName) {
-            for (provider in dependencyProviders) {
-                provider.getPackage(fqName)?.let {
-                    return@lookupCacheOrCalculate it
-                }
-            }
-            null
-        }
+        return packageCache.getValue(fqName)
     }
 }
