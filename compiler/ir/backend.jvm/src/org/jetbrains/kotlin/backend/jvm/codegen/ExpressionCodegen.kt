@@ -629,6 +629,8 @@ class ExpressionCodegen(
         if (irFunction !is IrSimpleFunction) return
         // Skip Result's methods
         if (irFunction.parentAsClass.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME) return
+        // Do not unbox, if there is a bridge, which unboxes for us
+        if (hasBridge()) return
 
         val index = (arg.symbol as? IrValueParameterSymbol)?.owner?.index ?: return
         val genericOrAnyOverride = irFunction.overriddenSymbols.any {
@@ -637,7 +639,14 @@ class ExpressionCodegen(
         } || irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
         if (!genericOrAnyOverride) return
 
-        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.toIrBasedKotlinType(), mv)
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
+    }
+
+    private fun hasBridge(): Boolean = irFunction.parentAsClass.declarations.any { function ->
+        function is IrFunction && function != irFunction &&
+                context.methodSignatureMapper.mapSignatureSkipGeneric(function).let {
+                    it.asmMethod.name == signature.asmMethod.name && it.valueParameters == signature.valueParameters
+                }
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
