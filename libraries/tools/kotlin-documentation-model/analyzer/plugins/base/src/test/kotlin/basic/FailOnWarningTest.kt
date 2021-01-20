@@ -24,8 +24,9 @@ class FailOnWarningTest : BaseAbstractTest() {
         assertThrows<DokkaException> {
             testInline(
                 """
-                |/src/main/kotlin
+                |/src/main/kotlin/Bar.kt
                 |package sample
+                |class Bar {}
                 """.trimIndent(), configuration
             ) {
                 pluginsSetupStage = {
@@ -49,8 +50,9 @@ class FailOnWarningTest : BaseAbstractTest() {
         assertThrows<DokkaException> {
             testInline(
                 """
-                |/src/main/kotlin
+                |/src/main/kotlin/Bar.kt
                 |package sample
+                |class Bar {}
                 """.trimIndent(), configuration
             ) {
                 pluginsSetupStage = {
@@ -75,8 +77,9 @@ class FailOnWarningTest : BaseAbstractTest() {
 
         testInline(
             """
-                |/src/main/kotlin
+                |/src/main/kotlin/Bar.kt
                 |package sample
+                |class Bar {}
                 """.trimIndent(),
             configuration,
             loggerForTest = TestLogger(ZeroErrorOrWarningCountDokkaLogger())
@@ -99,8 +102,9 @@ class FailOnWarningTest : BaseAbstractTest() {
 
         testInline(
             """
-                |/src/main/kotlin
+                |/src/main/kotlin/Bar.kt
                 |package sample
+                |class Bar {}
                 """.trimIndent(), configuration
         ) {
             pluginsSetupStage = {
