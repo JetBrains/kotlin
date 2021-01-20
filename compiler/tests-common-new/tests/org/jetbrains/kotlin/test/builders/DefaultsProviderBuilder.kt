@@ -12,16 +12,19 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.model.BinaryKind
 import org.jetbrains.kotlin.test.services.DefaultsDsl
 import org.jetbrains.kotlin.test.services.DefaultsProvider
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 
 @DefaultsDsl
 class DefaultsProviderBuilder {
     lateinit var frontend: FrontendKind<*>
     var targetBackend: TargetBackend? = null
     lateinit var targetPlatform: TargetPlatform
+    var artifactKind: BinaryKind<*>? = null
     lateinit var dependencyKind: DependencyKind
 
     @PrivateForInline
@@ -44,6 +47,7 @@ class DefaultsProviderBuilder {
             languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE),
             languageVersionSettingsBuilder ?: LanguageVersionSettingsBuilder(),
             targetPlatform,
+            artifactKind,
             targetBackend,
             dependencyKind
         )

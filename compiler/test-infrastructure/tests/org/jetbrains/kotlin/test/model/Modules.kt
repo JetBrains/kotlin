@@ -16,6 +16,7 @@ data class TestModule(
     val targetPlatform: TargetPlatform,
     val targetBackend: TargetBackend?,
     val frontendKind: FrontendKind<*>,
+    val binaryKind: BinaryKind<*>,
     val files: List<TestFile>,
     val dependencies: List<DependencyDescription>,
     val friends: List<DependencyDescription>,

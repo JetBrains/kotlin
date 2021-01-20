@@ -33,7 +33,7 @@ class TestModuleStructureImpl(
                     result += ArtifactKinds.KLib
                 }
             }
-            module.targetPlatform.toArtifactKind()?.let { result += it }
+            result += module.binaryKind
             put(module.name, result)
         }
     }
@@ -52,11 +52,11 @@ class TestModuleStructureImpl(
     }
 
     companion object {
-        private fun TargetPlatform.toArtifactKind(): BinaryKind<*>? = when (this) {
+        fun TargetPlatform.toArtifactKind(): BinaryKind<*> = when (this) {
             in JvmPlatforms.allJvmPlatforms -> ArtifactKinds.Jvm
             in JsPlatforms.allJsPlatforms -> ArtifactKinds.Js
             in NativePlatforms.allNativePlatforms -> ArtifactKinds.Native
-            else -> null
+            else -> BinaryKind.NoArtifact
         }
     }
 }
