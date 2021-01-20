@@ -68,10 +68,8 @@ fun run() {
     // hashCode (directly):
     // hash() returns value of NSUInteger type.
     val hash = if (sizeOf<NSUIntegerVar>() == 4L) {
-        // `typedef unsigned int NSInteger` on watchOS.
         foo.hash().toInt()
     } else {
-        // `typedef unsigned long NSUInteger` on iOS, macOS, tvOS.
         foo.hash().let { it.toInt() xor (it shr 32).toInt() }
     }
     if (foo.hashCode() == hash) {
