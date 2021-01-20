@@ -51,8 +51,7 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
 
     val experimental = Experimental()
 
-    @Transient
-    val taskRequirements = TasksRequirements()
+    val taskRequirements: TasksRequirements = TasksRequirements()
 
     val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = rootProject.tasks.withType(NodeJsSetupTask::class.java).named(NodeJsSetupTask.NAME)

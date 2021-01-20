@@ -35,6 +35,8 @@ constructor(
     RequiresNpmDependencies {
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
+    private val projectPath = project.path
+
     @get:Internal
     var testFramework: KotlinJsTestFramework? = null
         set(value) {
@@ -134,7 +136,7 @@ constructor(
     }
 
     override fun executeTests() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
         super.executeTests()
     }
 

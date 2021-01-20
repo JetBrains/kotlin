@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.toDeclaration
 
 class TasksRequirements {
-    @Transient
     private val _byTask = mutableMapOf<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>()
     private val byCompilation = mutableMapOf<String, MutableSet<NpmDependencyDeclaration>>()
 
