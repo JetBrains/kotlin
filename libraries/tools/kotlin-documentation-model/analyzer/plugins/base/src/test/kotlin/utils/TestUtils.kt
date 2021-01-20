@@ -1,9 +1,10 @@
 package utils
 
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
-import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.collections.orEmpty
 
@@ -21,7 +22,7 @@ abstract class ModelDSL : BaseAbstractTest() {
 
 @TestDSL
 interface AssertDSL {
-    infix fun Any?.equals(other: Any?) = this.assertEqual(other)
+    infix fun Any?.equals(other: Any?) = assertEquals(other, this)
     infix fun Collection<Any>?.allEquals(other: Any?) =
         this?.also { c -> c.forEach { it equals other } } ?: run { assert(false) { "Collection is empty" } }
     infix fun <T> Collection<T>?.exists(e: T) {
@@ -35,10 +36,6 @@ interface AssertDSL {
 
     fun <T> Collection<T>.assertCount(n: Int, prefix: String = "") =
         assert(count() == n) { "${prefix}Expected $n, got ${count()}" }
-
-    fun <T> T?.assertEqual(expected: T, prefix: String = "") = assert(this == expected) {
-        "${prefix}Expected $expected, got $this"
-    }
 }
 
 inline fun <reified T : Any> Any?.assertIsInstance(name: String): T =

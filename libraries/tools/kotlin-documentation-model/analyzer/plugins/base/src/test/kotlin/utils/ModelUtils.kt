@@ -20,6 +20,7 @@ abstract class AbstractModelTest(val path: String? = null, val pkg: String) : Mo
                 sourceSet {
                     sourceRoots = listOf("src/")
                     analysisPlatform = platform
+                    classpath += jvmStdlibPath!!
                 }
             }
         }
