@@ -37,7 +37,7 @@ class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : P
     override fun render(): String = formatMeasurement("IR $kind", milliseconds, lines)
 
     enum class Kind {
-        TRANSLATION, GENERATION
+        TRANSLATION, LOWERING, GENERATION
     }
 }
 
