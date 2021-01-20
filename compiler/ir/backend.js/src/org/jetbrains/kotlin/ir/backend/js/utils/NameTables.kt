@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBreak
@@ -113,11 +111,7 @@ fun jsFunctionSignature(declaration: IrFunction): Signature {
 
     val declarationName = declaration.getJsNameOrKotlinName().asString()
 
-    val needsStableName = declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
-            declaration.hasStableJsName() ||
-            (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
-
-    if (needsStableName) {
+    if (declaration.hasStableJsName()) {
         return StableNameSignature(declarationName)
     }
 

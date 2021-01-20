@@ -117,9 +117,9 @@ abstract class BridgesConstruction(val context: JsCommonBackendContext) : Declar
 
         val origin =
             if (bridge.hasStableJsName())
-                JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION
+                JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME
             else
-                IrDeclarationOrigin.BRIDGE
+                JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
 
         // TODO: Support offsets for debug info
         val irFunction = context.irFactory.buildFun {

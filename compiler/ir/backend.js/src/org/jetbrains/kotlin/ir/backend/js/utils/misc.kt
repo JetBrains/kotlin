@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -24,9 +25,16 @@ fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " 
 
 fun IrFunction.hasStableJsName(): Boolean {
     if (
+        origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
+        (this as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+    ) {
+        return true
+    }
+
+    if (
         origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
         origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-        origin == IrDeclarationOrigin.BRIDGE
+        origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
     ) {
         return false
     }

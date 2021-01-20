@@ -324,8 +324,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             return Exportability.Prohibited("Suspend function")
         if (function.isFakeOverride)
             return Exportability.NotNeeded
-        if (function.origin == IrDeclarationOrigin.BRIDGE ||
-            function.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
+        if (function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
+            function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
             function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
             function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
