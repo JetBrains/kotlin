@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 internal class DefaultDocumentableMerger(val context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
 
-    override fun invoke(modules: Collection<DModule>): DModule {
-
-        return modules.reduce { left, right ->
+    override fun invoke(modules: Collection<DModule>): DModule? =
+        modules.reduceOrNull { left, right ->
             val list = listOf(left, right)
             DModule(
                 name = modules.map { it.name }.distinct().joinToString("|"),
@@ -26,7 +25,6 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
                 sourceSets = list.flatMap { it.sourceSets }.toSet()
             ).mergeExtras(left, right)
         }
-    }
 
     private fun DokkaContext.getDependencyInfo()
             : Map<DokkaConfiguration.DokkaSourceSet, List<DokkaConfiguration.DokkaSourceSet>> {
