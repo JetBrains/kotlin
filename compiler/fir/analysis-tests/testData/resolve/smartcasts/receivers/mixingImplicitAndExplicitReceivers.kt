@@ -1,4 +1,4 @@
-<!CONFLICTING_OVERLOADS!>fun takeString(s: String) {}<!>
+<!CONFLICTING_OVERLOADS{LT}!><!CONFLICTING_OVERLOADS{PSI}!>fun takeString(s: String)<!> {}<!>
 
 class Wrapper(val s: String?) {
     fun withThis() {
@@ -11,4 +11,4 @@ class Wrapper(val s: String?) {
     }
 }
 
-<!CONFLICTING_OVERLOADS!>fun takeString(s: String) {}<!>
+<!CONFLICTING_OVERLOADS{LT}!><!CONFLICTING_OVERLOADS{PSI}!>fun takeString(s: String)<!> {}<!>
