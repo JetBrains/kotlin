@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.MySet
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-size> (): kotlin.Int declared in <root>.MySet'
-            CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
+            CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
     FUN name:contains visibility:public modality:FINAL <> ($this:<root>.MySet, element:kotlin.String) returnType:kotlin.Boolean [operator]
       overridden:
         public abstract fun contains (element: E of kotlin.collections.Set): kotlin.Boolean [operator] declared in kotlin.collections.Set
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
       VALUE_PARAMETER name:element index:0 type:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun contains (element: kotlin.String): kotlin.Boolean [operator] declared in <root>.MySet'
-          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
+          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
     FUN name:containsAll visibility:public modality:FINAL <> ($this:<root>.MySet, elements:kotlin.collections.Collection<kotlin.String>) returnType:kotlin.Boolean
       overridden:
         public abstract fun containsAll (elements: kotlin.collections.Collection<E of kotlin.collections.Set>): kotlin.Boolean declared in kotlin.collections.Set
@@ -32,21 +32,21 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.String>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun containsAll (elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean declared in <root>.MySet'
-          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
+          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
     FUN name:isEmpty visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.Boolean
       overridden:
         public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun isEmpty (): kotlin.Boolean declared in <root>.MySet'
-          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
+          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
     FUN name:iterator visibility:public modality:FINAL <> ($this:<root>.MySet) returnType:kotlin.collections.Iterator<kotlin.String> [operator]
       overridden:
         public abstract fun iterator (): kotlin.collections.Iterator<E of kotlin.collections.Set> [operator] declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun iterator (): kotlin.collections.Iterator<kotlin.String> [operator] declared in <root>.MySet'
-          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
+          CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
