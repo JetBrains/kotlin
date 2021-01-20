@@ -26,6 +26,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     os/activity.h os/availability.h os/base.h os/lock.h \
     os/log.h os/object.h os/overflow.h os/signpost.h os/trace.h \
     simd/simd.h sys/sysctl.h sys/user.h \
+    sys/_types/_os_inline.h \
     net/if_media.h sys/disk.h sys/kernel_types.h
 
 headerFilter = **
@@ -39,5 +40,6 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     xpc_debugger_api_misuse_info \
                     vm_stats
 
-compilerOpts = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
+compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
+compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm
