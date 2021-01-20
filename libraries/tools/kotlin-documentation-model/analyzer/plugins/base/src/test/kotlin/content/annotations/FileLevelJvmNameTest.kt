@@ -74,7 +74,7 @@ class FileLevelJvmNameTest : BaseAbstractTest() {
                     dri = DRI("kotlin.jvm", "JvmName"),
                     params = mapOf("name" to StringValue("CustomJvmName")),
                     scope = Annotations.AnnotationScope.FILE,
-                    mustBeDocumented = false
+                    mustBeDocumented = true
                 )
                 val function = modules.flatMap { it.packages }.first().functions.first()
                 val annotation = function.extra[Annotations]?.fileLevelAnnotations?.entries?.first()?.value?.single()
@@ -97,7 +97,7 @@ class FileLevelJvmNameTest : BaseAbstractTest() {
                     dri = DRI("kotlin.jvm", "JvmName"),
                     params = mapOf("name" to StringValue("CustomJvmName")),
                     scope = Annotations.AnnotationScope.FILE,
-                    mustBeDocumented = false
+                    mustBeDocumented = true
                 )
                 val properties = modules.flatMap { it.packages }.first().properties.first()
                 val annotation = properties.extra[Annotations]?.fileLevelAnnotations?.entries?.first()?.value?.single()
