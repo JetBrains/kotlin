@@ -31,7 +31,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 1
+                    it.first().packages.first().functions.size == 1
                 )
             }
         }
@@ -61,7 +61,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 1
+                    it.first().packages.first().functions.size == 1
                 )
             }
         }
@@ -91,7 +91,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 0
+                    it.first().packages.first().functions.size == 0
                 )
             }
         }
@@ -130,7 +130,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 0
+                    it.first().packages.first().functions.size == 0
                 )
             }
         }
@@ -167,7 +167,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.first().functions.size == 1
+                    it.first().packages.first().functions.size == 1
                 )
             }
         }

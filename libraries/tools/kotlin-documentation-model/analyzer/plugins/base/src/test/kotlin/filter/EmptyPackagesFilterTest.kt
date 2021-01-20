@@ -3,6 +3,7 @@ package filter
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class EmptyPackagesFilterTest : BaseAbstractTest() {
     @Test
@@ -28,7 +29,7 @@ class EmptyPackagesFilterTest : BaseAbstractTest() {
         ) {
             documentablesFirstTransformationStep = {
                 Assertions.assertTrue(
-                    it.component2().packages.isNotEmpty()
+                    it.first().packages.isNotEmpty()
                 )
             }
         }
@@ -39,7 +40,7 @@ class EmptyPackagesFilterTest : BaseAbstractTest() {
             sourceSets {
                 sourceSet {
                     skipEmptyPackages = true
-                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                    sourceRoots = listOf("src/main/kotlin")
                 }
             }
         }
@@ -49,15 +50,15 @@ class EmptyPackagesFilterTest : BaseAbstractTest() {
             |/src/main/kotlin/basic/Test.kt
             |package example
             |
-            |
+            | class ThisShouldBePresent { }
+            |/src/main/kotlin/empty/TestEmpty.kt
+            |package empty
         """.trimMargin(),
             configuration
         ) {
             documentablesFirstTransformationStep = { modules ->
                 modules.forEach { module ->
-                    Assertions.assertTrue(
-                        module.packages.isEmpty()
-                    )
+                    assertEquals(listOf("example"), module.packages.map { it.name })
                 }
             }
         }

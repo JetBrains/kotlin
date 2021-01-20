@@ -1,4 +1,3 @@
-
 package org.jetbrains.dokka.base.generation
 
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +31,7 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
         report("Merging documentation models")
         val documentationModel = mergeDocumentationModels(transformedDocumentationBeforeMerge)
+            ?: exitGenerationGracefully("Nothing to document")
 
         report("Transforming documentation model after merging")
         val transformedDocumentation = transformDocumentationModelAfterMerge(documentationModel)
@@ -56,7 +56,8 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
     }
 
     fun transformDocumentationModelBeforeMerge(modulesFromPlatforms: List<DModule>) =
-        context.plugin<DokkaBase>().query { preMergeDocumentableTransformer }.fold(modulesFromPlatforms) { acc, t -> t(acc) }
+        context.plugin<DokkaBase>().query { preMergeDocumentableTransformer }
+            .fold(modulesFromPlatforms) { acc, t -> t(acc) }
 
     fun mergeDocumentationModels(modulesFromPlatforms: List<DModule>) =
         context.single(CoreExtensions.documentableMerger).invoke(modulesFromPlatforms)
@@ -99,7 +100,7 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
     private suspend fun translateSources(sourceSet: DokkaConfiguration.DokkaSourceSet, context: DokkaContext) =
         context[CoreExtensions.sourceToDocumentableTranslator].parallelMap { translator ->
-            when(translator){
+            when (translator) {
                 is AsyncSourceToDocumentableTranslator -> translator.invokeSuspending(sourceSet, context)
                 else -> translator.invoke(sourceSet, context)
             }

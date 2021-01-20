@@ -38,7 +38,7 @@ class BaseDokkaTestGenerator(
         documentablesFirstTransformationStep(filteredModules)
 
         val documentationModel = singleModuleGeneration.mergeDocumentationModels(filteredModules)
-        documentablesMergingStage(documentationModel)
+        documentablesMergingStage(documentationModel!!)
 
         val transformedDocumentation = singleModuleGeneration.transformDocumentationModelAfterMerge(documentationModel)
         documentablesTransformationStage(transformedDocumentation)
