@@ -626,6 +626,7 @@ class ExpressionCodegen(
     // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
     private fun unboxResultIfNeeded(arg: IrGetValue) {
         if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        if (!onlyResultInlineClassParameters()) return
         if (irFunction !is IrSimpleFunction) return
         // Skip Result's methods
         if (irFunction.parentAsClass.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME) return
@@ -640,6 +641,10 @@ class ExpressionCodegen(
         if (!genericOrAnyOverride) return
 
         StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
+    }
+
+    private fun onlyResultInlineClassParameters(): Boolean = irFunction.valueParameters.all {
+        !it.type.erasedUpperBound.isInline || it.type.erasedUpperBound.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME
     }
 
     private fun hasBridge(): Boolean = irFunction.parentAsClass.declarations.any { function ->
