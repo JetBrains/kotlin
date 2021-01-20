@@ -18,7 +18,8 @@ internal fun Type.isStret(target: KonanTarget): Boolean {
     val unwrappedType = this.unwrapTypedefs()
     val abiInfo: ObjCAbiInfo = when (target) {
         KonanTarget.IOS_ARM64,
-        KonanTarget.TVOS_ARM64 -> DarwinArm64AbiInfo()
+        KonanTarget.TVOS_ARM64,
+        KonanTarget.MACOS_ARM64 -> DarwinArm64AbiInfo()
 
         KonanTarget.IOS_X64,
         KonanTarget.MACOS_X64,

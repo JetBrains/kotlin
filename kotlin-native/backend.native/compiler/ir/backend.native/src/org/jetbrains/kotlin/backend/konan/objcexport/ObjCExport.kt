@@ -136,8 +136,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         modules.child("module.modulemap").writeBytes(moduleMap.toByteArray())
 
         emitInfoPlist(frameworkContents, frameworkName)
-
-        if (target == KonanTarget.MACOS_X64) {
+        if (target.family == Family.OSX) {
             framework.child("Versions/Current").createAsSymlink("A")
             for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
                 framework.child(child).createAsSymlink("Versions/Current/$child")
@@ -163,7 +162,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             KonanTarget.IOS_X64 -> "iPhoneSimulator"
             KonanTarget.TVOS_ARM64 -> "AppleTVOS"
             KonanTarget.TVOS_X64 -> "AppleTVSimulator"
-            KonanTarget.MACOS_X64 -> "MacOSX"
+            KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "MacOSX"
             KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "WatchOS"
             KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "WatchSimulator"
             else -> error(target)
