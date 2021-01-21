@@ -18480,6 +18480,88 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testSimpleIndySam() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/simpleIndySam.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InlineClassInSignature extends AbstractIrBlackBoxCodegenTest {
+                @Test
+                public void testAllFilesPresentInInlineClassInSignature() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("funInterfaceWithInlineAny.kt")
+                public void testFunInterfaceWithInlineAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineAny.kt");
+                }
+
+                @Test
+                @TestMetadata("funInterfaceWithInlineInt.kt")
+                public void testFunInterfaceWithInlineInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineInt.kt");
+                }
+
+                @Test
+                @TestMetadata("funInterfaceWithInlineNAny.kt")
+                public void testFunInterfaceWithInlineNAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNAny.kt");
+                }
+
+                @Test
+                @TestMetadata("funInterfaceWithInlineNInt.kt")
+                public void testFunInterfaceWithInlineNInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNInt.kt");
+                }
+
+                @Test
+                @TestMetadata("funInterfaceWithInlineNString.kt")
+                public void testFunInterfaceWithInlineNString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNString.kt");
+                }
+
+                @Test
+                @TestMetadata("funInterfaceWithInlineString.kt")
+                public void testFunInterfaceWithInlineString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineString.kt");
+                }
+
+                @Test
+                @TestMetadata("genericFunInterfaceWithInlineAny.kt")
+                public void testGenericFunInterfaceWithInlineAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineAny.kt");
+                }
+
+                @Test
+                @TestMetadata("genericFunInterfaceWithInlineInt.kt")
+                public void testGenericFunInterfaceWithInlineInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineInt.kt");
+                }
+
+                @Test
+                @TestMetadata("genericFunInterfaceWithInlineNAny.kt")
+                public void testGenericFunInterfaceWithInlineNAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineNAny.kt");
+                }
+
+                @Test
+                @TestMetadata("genericFunInterfaceWithInlineNInt.kt")
+                public void testGenericFunInterfaceWithInlineNInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineNInt.kt");
+                }
+
+                @Test
+                @TestMetadata("genericFunInterfaceWithInlineNString.kt")
+                public void testGenericFunInterfaceWithInlineNString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineNString.kt");
+                }
+
+                @Test
+                @TestMetadata("genericFunInterfaceWithInlineString.kt")
+                public void testGenericFunInterfaceWithInlineString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineString.kt");
+                }
+            }
         }
     }
 

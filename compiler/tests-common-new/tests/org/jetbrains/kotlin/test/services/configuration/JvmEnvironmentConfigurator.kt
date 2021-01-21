@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.CONSTRUCTOR_CALL_NORMALIZATION_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.DirectiveToConfigurationKeyExtractor
 import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -53,6 +52,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(STRING_CONCAT, JVMConfigurationKeys.STRING_CONCAT)
         register(ASSERTIONS_MODE, JVMConfigurationKeys.ASSERTIONS_MODE)
         register(CONSTRUCTOR_CALL_NORMALIZATION_MODE, JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE)
+        register(SAM_CONVERSIONS, JVMConfigurationKeys.SAM_CONVERSIONS)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
@@ -162,7 +162,8 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
     }
 
     private fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
-        val withRuntime = JvmEnvironmentConfigurationDirectives.WITH_RUNTIME in registeredDirectives || JvmEnvironmentConfigurationDirectives.WITH_STDLIB in registeredDirectives
+        val withRuntime = JvmEnvironmentConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
+                JvmEnvironmentConfigurationDirectives.WITH_STDLIB in registeredDirectives
         val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives
         val noRuntime = JvmEnvironmentConfigurationDirectives.NO_RUNTIME in registeredDirectives
         if (noRuntime && withRuntime) {

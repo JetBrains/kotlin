@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
@@ -136,37 +134,45 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             ?: fail("Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference")
         val irOriginalFun = irRawFunRef.symbol.owner as? IrSimpleFunction
             ?: fail("IrSimpleFunction expected: ${irRawFunRef.symbol.owner.render()}")
-        val substitutedType = irCall.getTypeArgument(0) as? IrSimpleType
+        val superType = irCall.getTypeArgument(0) as? IrSimpleType
             ?: fail("Type argument expected")
 
-        // Force boxing on primitive types, otherwise D8 fails to accept resulting MethodType in presence of primitive types in arguments
-        // (LambdaMetafactory is ok with such types, though).
-        val substitutedTypeWithNullableArgs =
-            substitutedType.classifier.typeWithArguments(
-                substitutedType.arguments.map {
-                    when (it) {
-                        is IrStarProjection -> it
-                        is IrTypeProjection -> {
-                            val type = it.type
-                            if (type !is IrSimpleType || type.hasQuestionMark)
-                                it
-                            else
-                                makeTypeProjection(type.withHasQuestionMark(true), it.variance)
-                        }
-                        else ->
-                            fail("Unexpected type argument '${it}' :: ${it::class.simpleName}")
-                    }
-                }
-            )
+        val patchedSuperType = replaceTypeArgumentsWithNullable(superType)
 
         val fakeClass = codegen.context.irFactory.buildClass { name = Name.special("<fake>") }
         fakeClass.parent = codegen.context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
-        val irFakeOverride = buildFakeOverrideMember(substitutedTypeWithNullableArgs, irOriginalFun, fakeClass) as IrSimpleFunction
+        val irFakeOverride = buildFakeOverrideMember(patchedSuperType, irOriginalFun, fakeClass) as IrSimpleFunction
         irFakeOverride.overriddenSymbols = listOf(irOriginalFun.symbol)
 
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFakeOverride)
         return Type.getMethodType(asmMethod.descriptor)
     }
+
+    // Given the following functional interface
+    //  fun interface IFoo<T> {
+    //      fun foo(x: T): T
+    //  }
+    // To comply with java.lang.invoke.LambdaMetafactory requirements, we need an instance method that accepts references
+    // (not primitives, and not unboxed inline classes).
+    // In order to do so, we replace type arguments with nullable types.
+    private fun replaceTypeArgumentsWithNullable(substitutedType: IrSimpleType) =
+        substitutedType.classifier.typeWithArguments(
+            substitutedType.arguments.map { typeArgument ->
+                when (typeArgument) {
+                    is IrStarProjection -> typeArgument
+                    is IrTypeProjection -> {
+                        val type = typeArgument.type
+                        if (type !is IrSimpleType || type.hasQuestionMark)
+                            typeArgument
+                        else {
+                            makeTypeProjection(type.withHasQuestionMark(true), typeArgument.variance)
+                        }
+                    }
+                    else ->
+                        throw AssertionError("Unexpected type argument '$typeArgument' :: ${typeArgument::class.simpleName}")
+                }
+            }
+        )
 
     private fun IrExpression.getIntConst() =
         if (this is IrConst<*> && kind == IrConstKind.Int)

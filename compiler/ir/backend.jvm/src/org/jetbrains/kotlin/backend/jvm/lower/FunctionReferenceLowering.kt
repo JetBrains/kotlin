@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerat
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.config.JvmSamConversions
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal val functionReferencePhase = makeIrFilePhase(
     ::FunctionReferenceLowering,
@@ -115,21 +117,54 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // TODO special mode that would generate indy everywhere?
         if (reference.origin != IrStatementOrigin.LAMBDA)
             return false
+
         // TODO wrap intrinsic function in lambda?
         if (context.irIntrinsics.getIntrinsic(reference.symbol) != null)
             return false
+
+        // Can't use JDK LambdaMetafactory if lambda signature contains an inline class mapped to a non-null reference type.
+        val target = reference.symbol.owner
+        if (target.extensionReceiverParameter?.run { type.isProhibitedTypeForIndySamConversion() } == true ||
+            target.valueParameters.any { it.type.isProhibitedTypeForIndySamConversion() } ||
+            target.returnType.isProhibitedTypeForIndySamConversion()
+        )
+            return false
+
         return true
     }
 
+    private fun IrType.isProhibitedTypeForIndySamConversion(): Boolean {
+        if (this !is IrSimpleType) return false
+
+        val erasedType = when (val classifier = classifier.owner) {
+            is IrTypeParameter ->
+                classifier.representativeUpperBound.withHasQuestionMark(hasQuestionMark)
+            else ->
+                this
+        }
+        val erasedClass = erasedType.getClass() ?: return false
+
+        if (!erasedType.isInlined()) return false
+
+        val underlyingType = getInlineClassUnderlyingType(erasedClass) as? IrSimpleType
+            ?: throw AssertionError("Underlying type for inline class should be a simple type: ${erasedClass.render()}")
+        return !underlyingType.hasQuestionMark && !underlyingType.isJvmPrimitiveType()
+    }
+
+    private fun IrType.isJvmPrimitiveType() =
+        isBoolean() || isChar() || isByte() || isShort() || isInt() || isLong() || isFloat() || isDouble()
+
     private fun wrapSamConversionArgumentWithIndySamConversion(expression: IrTypeOperatorCall): IrExpression {
+        val samType = expression.typeOperand
         return when (val argument = expression.argument) {
-            is IrFunctionReference ->
-                wrapWithIndySamConversion(expression.typeOperand, argument)
+            is IrFunctionReference -> {
+                wrapWithIndySamConversion(samType, argument)
+            }
             is IrBlock -> {
                 val last = argument.statements.last()
                 val functionReference = last as? IrFunctionReference
                     ?: throw AssertionError("Function reference expected: ${last.render()}")
-                argument.statements[argument.statements.size - 1] = wrapWithIndySamConversion(expression.typeOperand, functionReference)
+                argument.statements[argument.statements.size - 1] = wrapWithIndySamConversion(samType, functionReference)
                 return argument
             }
             else -> throw AssertionError("Block or function reference expected: ${expression.render()}")
@@ -145,6 +180,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         )
 
     private fun wrapWithIndySamConversion(samType: IrType, irFunRef: IrFunctionReference): IrCall {
+        patchSignatureForIndySamConversion(irFunRef.symbol.owner, samType)
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
         return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
@@ -160,6 +196,48 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
     }
+
+    private fun patchSignatureForIndySamConversion(irLambda: IrFunction, samType: IrType) {
+        if (irLambda.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
+            throw AssertionError("Can't patch a signature of a non-lambda: ${irLambda.render()}")
+
+        val samClass = samType.classOrNull?.owner
+            ?: throw AssertionError("SAM type should be a class type: '${samType.render()}'")
+        val samMethod = samClass.functions.singleOrNull { it.modality == Modality.ABSTRACT }
+            ?: throw AssertionError("SAM method not found:\n${samClass.dump()}")
+
+        val samMethodParameters = collectValueParameters(samMethod)
+        val irLambdaParameters = collectValueParameters(irLambda)
+        if (samMethodParameters.size != irLambdaParameters.size) {
+            throw AssertionError(
+                "SAM method and implementing lambda have mismatching value parameters " +
+                        "(${samMethodParameters.size} != ${irLambdaParameters.size}:\n" +
+                        "samMethod: ${samMethod.render()}\n" +
+                        "lambda: ${irLambda.render()}"
+            )
+        }
+
+        for ((irLambdaParameter, samMethodParameter) in irLambdaParameters.zip(samMethodParameters)) {
+            irLambdaParameter.type = patchTypeForIndySamConversion(irLambdaParameter.type, samMethodParameter.type)
+        }
+
+        irLambda.returnType = patchTypeForIndySamConversion(irLambda.returnType, samMethod.returnType)
+    }
+
+    private fun collectValueParameters(irFunction: IrFunction): List<IrValueParameter> =
+        ArrayList<IrValueParameter>().apply {
+            addIfNotNull(irFunction.extensionReceiverParameter)
+            addAll(irFunction.valueParameters)
+        }
+
+    private fun patchTypeForIndySamConversion(originalType: IrType, targetType: IrType): IrType {
+        if (originalType.isUnboxedInlineClassType() && !targetType.isUnboxedInlineClassType())
+            return targetType
+        return originalType
+    }
+
+    private fun IrType.isUnboxedInlineClassType() =
+        this is IrSimpleType && isInlined() && !hasQuestionMark
 
     private inner class FunctionReferenceBuilder(val irFunctionReference: IrFunctionReference, val samSuperType: IrType? = null) {
         private val isLambda = irFunctionReference.origin.isLambda

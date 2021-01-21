@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.JvmSamConversions
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
@@ -91,6 +90,4 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val TREAT_AS_ONE_FILE by directive(
         description = "Treat bytecode from all files as one in ${BytecodeTextHandler::class}"
     )
-
-    val SAM_CONVERSIONS by enumDirective<JvmSamConversions>("SAM conversion code generation scheme")
 }

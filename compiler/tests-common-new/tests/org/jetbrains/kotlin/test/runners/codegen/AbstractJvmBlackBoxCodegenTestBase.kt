@@ -40,13 +40,3 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
     }
 }
 
-// This class configures various JVM-specific codegen minutiae.
-// Ideally, test directives could take care of such things themselves.
-class JvmCodegenEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
-        val samConversions = module.directives[CodegenTestDirectives.SAM_CONVERSIONS].lastOrNull()
-        if (samConversions != null) {
-            configuration.put(JVMConfigurationKeys.SAM_CONVERSIONS, samConversions)
-        }
-    }
-}
