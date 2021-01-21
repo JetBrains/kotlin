@@ -643,9 +643,14 @@ public abstract class QuickFixMultiFileTestGenerated extends AbstractQuickFixMul
             runTest("testData/quickfix/autoImports/unaryPlusOperator.before.Main.kt");
         }
 
-        @TestMetadata("withSmartCastQualifier.before.Main.kt")
-        public void testWithSmartCastQualifier() throws Exception {
-            runTest("testData/quickfix/autoImports/withSmartCastQualifier.before.Main.kt");
+        @TestMetadata("ImportOperatorInvokeWithConvention.before.Main.kt")
+        public void testImportOperatorInvokeWithConvention() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/ImportOperatorInvokeWithConvention.before.Main.kt");
+        }
+
+        @TestMetadata("importTrait.before.Main.kt")
+        public void testImportTrait() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/importTrait.before.Main.kt");
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
