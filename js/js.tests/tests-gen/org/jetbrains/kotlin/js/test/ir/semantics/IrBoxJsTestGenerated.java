@@ -1617,6 +1617,16 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("exportAllFile.kt")
+        public void testExportAllFile() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportAllFile.kt");
+        }
+
+        @TestMetadata("exportNestedClass.kt")
+        public void testExportNestedClass() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportNestedClass.kt");
+        }
+
         @TestMetadata("nonIndetifierModuleName.kt")
         public void testNonIndetifierModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
