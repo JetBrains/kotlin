@@ -1,4 +1,5 @@
-//!LANGUAGE: -DefaultMethodsCallFromJava6TargetError
+// !LANGUAGE: -DefaultMethodsCallFromJava6TargetError
+// !JVM_TARGET: 1.6
 // FILE: JavaInterface.java
 
 public interface JavaInterface {

@@ -31,7 +31,7 @@ class A {
 <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'interface'">@JvmStatic</error>
 interface B {
     companion object {
-        <error descr="[JVM_STATIC_IN_INTERFACE_1_6] '@JvmStatic' annotation in interface supported only with JVM target 1.8 and above. Recompile with '-jvm-target 1.8'\"">@JvmStatic fun a1()</error> {
+        @JvmStatic fun a1() {
 
         }
     }
