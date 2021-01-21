@@ -56,3 +56,9 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         this.module.generatedSourceDirs.add(generationRoot)
     }
 }
+
+kotlin {
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("InlineClasses")
+    }
+}
