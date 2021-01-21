@@ -113,6 +113,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
+    private val keepKdocComments = kaptContext.options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
 
     private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
@@ -433,7 +434,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             superTypes.superClass,
             superTypes.interfaces,
             enumValues + sortedFields + sortedMethods + nestedClasses
-        ).keepKdocComments(clazz)
+        ).also {
+            if (keepKdocComments) {
+                it.keepKdocComments(clazz)
+            }
+        }
     }
 
     private class MemberData(val name: String, val descriptor: String, val position: KotlinPosition?)
@@ -708,7 +713,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         lineMappings.registerField(containingClass, field)
 
         val initializer = explicitInitializer ?: convertPropertyInitializer(field)
-        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocComments(field)
+        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).also {
+            if (keepKdocComments) {
+                it.keepKdocComments(field)
+            }
+        }
     }
 
     private fun convertPropertyInitializer(field: FieldNode): JCExpression? {
@@ -954,7 +963,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
             genericSignature.parameterTypes, genericSignature.exceptionTypes,
             body, defaultValue
-        ).keepKdocComments(method).keepSignature(lineMappings, method)
+        ).keepSignature(lineMappings, method).also {
+            if (keepKdocComments) {
+                it.keepKdocComments(method)
+            }
+        }
     }
 
     private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {
