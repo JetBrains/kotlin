@@ -19655,6 +19655,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/kt9805.kt");
                 }
 
+                @TestMetadata("reportFunctionExpectedOnSimpleUnresolved.kt")
+                public void testReportFunctionExpectedOnSimpleUnresolved() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/reportFunctionExpectedOnSimpleUnresolved.kt");
+                }
+
                 @TestMetadata("reportFunctionExpectedWhenOneInvokeExist.kt")
                 public void testReportFunctionExpectedWhenOneInvokeExist() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/reportFunctionExpectedWhenOneInvokeExist.kt");
