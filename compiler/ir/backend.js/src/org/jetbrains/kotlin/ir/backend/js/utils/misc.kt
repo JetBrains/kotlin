@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -51,7 +52,7 @@ fun IrFunction.hasStableJsName(): Boolean {
         else -> true
     }
 
-    return (isEffectivelyExternal() || getJsName() != null || isJsExport() || parentClassOrNull?.isJsExport() == true) && namedOrMissingGetter
+    return (isEffectivelyExternal() || getJsName() != null || isExported(null)) && namedOrMissingGetter
 }
 
 fun IrFunction.isEqualsInheritedFromAny() =

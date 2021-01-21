@@ -391,11 +391,11 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     return declaration
 }
 
-private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
-    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarationNames)
+private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext?): Boolean {
+    if (context?.additionalExportedDeclarationNames?.contains(declaration.fqNameWhenAvailable) == true)
         return true
 
-    if (declaration in context.additionalExportedDeclarations)
+    if (context?.additionalExportedDeclarations?.contains(declaration) == true)
         return true
 
     if (declaration.isJsExport())
@@ -408,7 +408,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     }
 }
 
-fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
+fun IrDeclaration.isExported(context: JsIrBackendContext?): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExported(candidate, context)
 }
