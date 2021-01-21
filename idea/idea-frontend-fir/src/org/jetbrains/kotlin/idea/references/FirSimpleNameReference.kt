@@ -8,17 +8,36 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtImportAlias
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression
 ) : KtSimpleNameReference(expression), KtFirReference {
+
+    private fun KtAnalysisSession.fixUpAnnotationCallResolveToCtor(resultsToFix: Collection<KtSymbol>): Collection<KtSymbol> {
+        if (resultsToFix.isEmpty()) return resultsToFix
+
+        val isAnnotationCall = (((expression.parent as? KtUserType)
+            ?.parent as? KtTypeReference)
+            ?.parent as? KtConstructorCalleeExpression)
+            ?.parent is KtAnnotationEntry
+        if (!isAnnotationCall) return resultsToFix
+
+        return resultsToFix.map { targetSymbol ->
+            if (targetSymbol is KtFirClassOrObjectSymbol && targetSymbol.classKind == KtClassKind.ANNOTATION_CLASS) {
+                targetSymbol.getMemberScope().getConstructors().firstOrNull() ?: targetSymbol
+            } else targetSymbol
+        }
+    }
+
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFirAnalysisSession)
-        return FirReferenceResolveHelper.resolveSimpleNameReference(this@KtFirSimpleNameReference, this)
+        val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KtFirSimpleNameReference, this)
+        return fixUpAnnotationCallResolveToCtor(results)
     }
 
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {
