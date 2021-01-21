@@ -6196,6 +6196,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt");
                 }
 
+                @TestMetadata("lambdaParameterUsed.kt")
+                public void testLambdaParameterUsed() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/lambdaParameterUsed.kt");
+                }
+
                 @TestMetadata("longArgs.kt")
                 public void testLongArgs() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/longArgs.kt");

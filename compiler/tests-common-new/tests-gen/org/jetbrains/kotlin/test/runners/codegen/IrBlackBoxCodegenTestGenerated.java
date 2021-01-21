@@ -8563,6 +8563,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("lambdaParameterUsed.kt")
+                public void testLambdaParameterUsed() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/lambdaParameterUsed.kt");
+                }
+
+                @Test
                 @TestMetadata("longArgs.kt")
                 public void testLongArgs() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/longArgs.kt");
