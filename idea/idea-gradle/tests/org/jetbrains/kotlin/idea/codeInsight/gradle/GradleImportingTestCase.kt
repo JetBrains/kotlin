@@ -141,7 +141,6 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME)
             TestCase.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
             if (!jdkTable.allJdks.contains(jdk)) {
-//                jdkTable.addJdk(jdk!!, testRootDisposable)
                 (jdkTable as ProjectJdkTableImpl).addTestJdk(jdk!!, testRootDisposable)
                 ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
@@ -179,7 +178,6 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                 runWrite {
                     Arrays.stream(ProjectJdkTable.getInstance().allJdks).forEach { jdk: Sdk ->
                         (ProjectJdkTable.getInstance() as ProjectJdkTableImpl).removeTestJdk(jdk)
-//                        ProjectJdkTable.getInstance().removeJdk(jdk)
                     }
                     for (sdk in removedSdks) {
                         SdkConfigurationUtil.addSdk(sdk)
