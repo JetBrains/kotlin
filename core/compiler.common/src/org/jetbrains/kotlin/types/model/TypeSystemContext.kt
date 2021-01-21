@@ -137,6 +137,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun TypeConstructorMarker.isCapturedTypeConstructor(): Boolean
 
+    fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean
+
     fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker?
 
     fun KotlinTypeMarker.isUnit(): Boolean
