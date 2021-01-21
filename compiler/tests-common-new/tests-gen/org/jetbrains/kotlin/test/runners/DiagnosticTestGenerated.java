@@ -22975,6 +22975,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("reportFunctionExpectedOnSimpleUnresolved.kt")
+                public void testReportFunctionExpectedOnSimpleUnresolved() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/reportFunctionExpectedOnSimpleUnresolved.kt");
+                }
+
+                @Test
                 @TestMetadata("reportFunctionExpectedWhenOneInvokeExist.kt")
                 public void testReportFunctionExpectedWhenOneInvokeExist() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/reportFunctionExpectedWhenOneInvokeExist.kt");
