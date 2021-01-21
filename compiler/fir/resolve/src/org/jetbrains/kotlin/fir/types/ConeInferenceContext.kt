@@ -360,6 +360,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this is ConeCapturedTypeConstructor
     }
 
+    override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean {
+        return this.getTypeParameterClassifier() != null
+    }
+
     override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
         // TODO
         return this
