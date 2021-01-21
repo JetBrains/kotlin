@@ -641,6 +641,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("hashCodeOnNonNull.kt")
+        public void testHashCodeOnNonNull() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/hashCodeOnNonNull.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClassesAndInlinedLambda.kt")
         public void testInlineClassesAndInlinedLambda() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/inlineClassesAndInlinedLambda.kt");
@@ -3119,9 +3125,9 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("hashCode.kt")
-        public void testHashCode() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/hashCode/hashCode.kt");
+        @TestMetadata("hashCode_1_6.kt")
+        public void testHashCode_1_6() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/hashCode/hashCode_1_6.kt");
         }
 
         @Test

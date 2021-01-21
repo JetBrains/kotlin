@@ -1,3 +1,5 @@
+// JVM_TARGET: 1.6
+
 fun box(): String {
     true.hashCode()
     1.toByte().hashCode()

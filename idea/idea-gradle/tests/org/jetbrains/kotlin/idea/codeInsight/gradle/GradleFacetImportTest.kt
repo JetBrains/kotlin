@@ -104,7 +104,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
-            Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
                 "-Xallow-no-source-files -Xdump-declarations-to=tmpTest",
                 compilerSettings!!.additionalArguments
@@ -158,7 +158,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.3", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
-            Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
                 "-Xallow-no-source-files -Xdump-declarations-to=tmpTest",
                 compilerSettings!!.additionalArguments
