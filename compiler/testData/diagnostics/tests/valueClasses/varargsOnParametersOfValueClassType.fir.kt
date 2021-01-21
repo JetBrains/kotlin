@@ -16,7 +16,7 @@ class A {
     fun f3(a0: Int, vararg a1: Foo) {
         fun f4(vararg a: Foo) {}
 
-        val g = fun (vararg v: Foo) {}
+        val g = fun (<!USELESS_VARARG_ON_PARAMETER!>vararg v: Foo<!>) {}
     }
 }
 

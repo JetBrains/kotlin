@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_CLASS_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNED_VALUE_IS_NEVER_READ
@@ -133,6 +134,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_NEVER_READ
@@ -359,6 +361,12 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(PRIVATE_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be private", DECLARATION_NAME)
 
             map.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name")
+
+            map.put(
+                ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE,
+                "An anonymous function is not allowed to specify default values for its parameters"
+            )
+            map.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless")
 
             // Properties & accessors
             map.put(
