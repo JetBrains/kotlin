@@ -50,8 +50,6 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
         var moduleNameToAnchorName: Map<String, String> = emptyMap()
     )
 
-    private val logger = logger<ResolutionAnchorCacheServiceImpl>()
-
     @JvmField
     @Volatile
     var myState: State = State()
@@ -116,5 +114,9 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
 
             library to anchor
         }.toMap()
+    }
+
+    companion object {
+        private val logger = logger<ResolutionAnchorCacheServiceImpl>()
     }
 }
