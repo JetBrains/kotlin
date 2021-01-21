@@ -1159,7 +1159,7 @@ fun <T> B(foo: T, bar: String) { }
                 a++
                 val c = remember { mutableStateOf(0) }
                 val d = remember(c.value) { b++; b }
-                val recompose = invalidate
+                val scope = currentRecomposeScope
                 Button(
                   text=listOf(a, b, c.value, d).joinToString(", "),
                   onClick={ c.value += 1 },
@@ -1167,7 +1167,7 @@ fun <T> B(foo: T, bar: String) { }
                 )
                 Button(
                   text="Recompose",
-                  onClick={ recompose() },
+                  onClick={ scope.invalidate() },
                   id=43
                 )
             }
