@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.WHITE_SPACE
 
 open class LightTreePositioningStrategy {
-    open fun markDiagnostic(diagnostic: FirDiagnostic<*>): List<TextRange> {
-        val element = diagnostic.element
-        return mark(element.lighterASTNode, element.treeStructure)
-    }
-
-    open fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
-        return markElement(node, tree)
+    open fun mark(
+        node: LighterASTNode,
+        startOffset: Int,
+        endOffset: Int,
+        tree: FlyweightCapableTreeStructure<LighterASTNode>
+    ): List<TextRange> {
+        return markElement(node, startOffset, endOffset, tree)
     }
 
     open fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
@@ -29,12 +29,30 @@ open class LightTreePositioningStrategy {
     }
 }
 
-fun markElement(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
-    return listOf(TextRange(tree.getStartOffset(node), tree.getEndOffset(node)))
+fun markElement(
+    node: LighterASTNode,
+    startOffset: Int,
+    endOffset: Int,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    originalNode: LighterASTNode = node,
+): List<TextRange> {
+    if (node === originalNode) return listOf(TextRange(startOffset, endOffset))
+    val startDelta = tree.getStartOffset(node) - tree.getStartOffset(originalNode)
+    val endDelta = tree.getEndOffset(node) - tree.getEndOffset(originalNode)
+    return listOf(TextRange(startDelta + startOffset, endDelta + endOffset))
 }
 
-fun markRange(from: LighterASTNode, to: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
-    return listOf(TextRange(tree.getStartOffset(from), tree.getEndOffset(to)))
+fun markRange(
+    from: LighterASTNode,
+    to: LighterASTNode,
+    startOffset: Int,
+    endOffset: Int,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    originalNode: LighterASTNode
+): List<TextRange> {
+    val startDelta = tree.getStartOffset(from) - tree.getStartOffset(originalNode)
+    val endDelta = tree.getEndOffset(to) - tree.getEndOffset(originalNode)
+    return listOf(TextRange(startDelta + startOffset, endDelta + endOffset))
 }
 
 private val DOC_AND_COMMENT_TOKENS = setOf(

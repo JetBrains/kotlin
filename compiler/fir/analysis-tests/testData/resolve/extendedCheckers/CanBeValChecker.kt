@@ -23,7 +23,7 @@ operator fun C.plusAssign(a: Any) {}
 fun testOperatorAssignment() {
     val c = C()
     c += ""
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> c1 = C()<!>
+    <!CAN_BE_VAL!>var<!> c1 = C()
     <!ASSIGN_OPERATOR_AMBIGUITY!>c1 += ""<!>
 
     var a = 1
@@ -33,7 +33,7 @@ fun testOperatorAssignment() {
 
 
 fun destructuringDeclaration() {
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> (v1, <!UNUSED_VARIABLE!>v2<!>) = getPair()<!>
+    <!CAN_BE_VAL!>var<!> (v1, <!UNUSED_VARIABLE!>v2<!>) = getPair()
     print(v1)
 
     var (v3, <!VARIABLE_NEVER_READ!>v4<!>) = getPair()
@@ -49,11 +49,11 @@ fun destructuringDeclaration() {
 
     val (<!UNUSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>, <!UNUSED_VARIABLE!>c<!>) = Triple(1, 1, 1)
 
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> (<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>, <!UNUSED_VARIABLE!>z<!>) = Triple(1, 1, 1)<!>
+    <!CAN_BE_VAL!>var<!> (<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>, <!UNUSED_VARIABLE!>z<!>) = Triple(1, 1, 1)
 }
 
 fun stackOverflowBug() {
-    <!CAN_BE_VAL{LT}, VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL{PSI}!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
+    <!VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
     <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 1
     for (i in 1..10)
         print(i)
@@ -71,8 +71,8 @@ fun smth(flag: Boolean) {
 }
 
 fun withAnnotation(p: List<Any>) {
-    <!CAN_BE_VAL{LT}!>@Suppress("UNCHECKED_CAST")
-    <!CAN_BE_VAL{PSI}!>var<!> v = p as List<String><!>
+    @Suppress("UNCHECKED_CAST")
+    <!CAN_BE_VAL!>var<!> v = p as List<String>
     print(v)
 }
 
@@ -88,7 +88,7 @@ fun listReceiver(p: List<String>) {}
 fun withInitializer() {
     <!VARIABLE_NEVER_READ{LT}!>var <!VARIABLE_NEVER_READ{PSI}!>v1<!> = 1<!>
     var v2 = 2
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> v3 = 3<!>
+    <!CAN_BE_VAL!>var<!> v3 = 3
     <!ASSIGNED_VALUE_IS_NEVER_READ!>v1<!> = 1
     <!ASSIGNED_VALUE_IS_NEVER_READ!>v2<!>++ // todo mark this UNUSED_CHANGED_VALUES
     print(v3)
@@ -102,7 +102,7 @@ fun test() {
 }
 
 fun foo() {
-    <!CAN_BE_VAL{LT}, VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL{PSI}!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
+    <!VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
     val bool = true
     if (bool) <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 4 else <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 42
     <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>b<!>: String<!>
@@ -130,7 +130,7 @@ fun assignedTwice(p: Int) {
 }
 
 fun main(args: Array<String?>) {
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> a: String?<!>
+    <!CAN_BE_VAL!>var<!> a: String?
     <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>unused<!> = 0<!>
 
     if (args.size == 1) {
@@ -153,7 +153,7 @@ fun lambda() {
 }
 
 fun lambdaInitialization() {
-    <!CAN_BE_VAL{LT}, VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL{PSI}!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
+    <!VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
 
     run {
         <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 20
@@ -161,7 +161,7 @@ fun lambdaInitialization() {
 }
 
 fun notAssignedWhenNotUsed(p: Int) {
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> v: Int<!>
+    <!CAN_BE_VAL!>var<!> v: Int
     if (p > 0) {
         v = 1
         print(v)

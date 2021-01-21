@@ -10,10 +10,10 @@ interface C {
     fun baz()
 }
 
-<!CONSTRUCTOR_IN_INTERFACE{LT}!>interface <!CONSTRUCTOR_IN_INTERFACE{PSI}!>Inv<K, T>()<!> {
+interface <!CONSTRUCTOR_IN_INTERFACE!>Inv<K, T>()<!> {
     fun k(): K
     fun t(): T
-}<!>
+}
 
 typealias Inv0 = Inv<A, B>
 typealias Inv1<X> = Inv<A, X>

@@ -1,15 +1,15 @@
-<!TYPE_PARAMETERS_IN_OBJECT{LT}!><!TYPE_PARAMETERS_IN_OBJECT{PSI}!>object A<!><T, K : T> {
-    <!TYPE_PARAMETERS_IN_OBJECT{LT}!><!TYPE_PARAMETERS_IN_OBJECT{PSI}!>object B<!><L><!>
-}<!>
+<!TYPE_PARAMETERS_IN_OBJECT!>object A<!><T, K : T> {
+    <!TYPE_PARAMETERS_IN_OBJECT!>object B<!><L>
+}
 
 class N {
-    <!TYPE_PARAMETERS_IN_OBJECT{LT}!>companion <!TYPE_PARAMETERS_IN_OBJECT{PSI}!>object<!><T> {
+    companion <!TYPE_PARAMETERS_IN_OBJECT!>object<!><T> {
 
-    }<!>
+    }
 }
 
 fun test() {
-    <!LOCAL_OBJECT_NOT_ALLOWED{LT}, TYPE_PARAMETERS_IN_OBJECT{LT}!><!LOCAL_OBJECT_NOT_ALLOWED{PSI}, TYPE_PARAMETERS_IN_OBJECT{PSI}!>object M<!><H> {
+    <!LOCAL_OBJECT_NOT_ALLOWED, TYPE_PARAMETERS_IN_OBJECT!>object M<!><H> {
 
-    }<!>
+    }
 }

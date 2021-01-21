@@ -52,7 +52,7 @@ fun foo() {
     <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>piFloat<!>: <!REDUNDANT_EXPLICIT_TYPE!>Float<!> = 3.14f<!>
     <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>piDouble<!>: <!REDUNDANT_EXPLICIT_TYPE!>Double<!> = 3.14<!>
     <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>charZ<!>: <!REDUNDANT_EXPLICIT_TYPE!>Char<!> = 'z'<!>
-    <!CAN_BE_VAL{LT}, UNUSED_VARIABLE{LT}!><!CAN_BE_VAL{PSI}!>var<!> <!UNUSED_VARIABLE{PSI}!>alpha<!>: <!REDUNDANT_EXPLICIT_TYPE!>Int<!> = 0<!>
+    <!UNUSED_VARIABLE{LT}!><!CAN_BE_VAL!>var<!> <!UNUSED_VARIABLE{PSI}!>alpha<!>: <!REDUNDANT_EXPLICIT_TYPE!>Int<!> = 0<!>
 }
 
 fun test(boolean: Boolean) {

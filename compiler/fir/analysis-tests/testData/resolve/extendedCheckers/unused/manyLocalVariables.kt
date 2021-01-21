@@ -1,5 +1,5 @@
 fun foo() {
-    <!CAN_BE_VAL{LT}!><!CAN_BE_VAL{PSI}!>var<!> a = 1<!>
+    <!CAN_BE_VAL!>var<!> a = 1
     var b = <!VARIABLE_INITIALIZER_IS_REDUNDANT!>2<!>
     var c = 3
 
