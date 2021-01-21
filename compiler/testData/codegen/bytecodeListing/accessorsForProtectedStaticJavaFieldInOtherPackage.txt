@@ -1,0 +1,39 @@
+@kotlin.Metadata
+final class test/C$f$1 {
+    // source: 'C.kt'
+    enclosing method test/C.f()Ljava/lang/String;
+    public final static field INSTANCE: test.C$f$1
+    inner (anonymous) class test/C$f$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+}
+
+@kotlin.Metadata
+final class test/C$g$1 {
+    // source: 'C.kt'
+    enclosing method test/C.g()Lkotlin/jvm/functions/Function0;
+    public final static field INSTANCE: test.C$g$1
+    inner (anonymous) class test/C$g$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class test/C {
+    // source: 'C.kt'
+    inner (anonymous) class test/C$f$1
+    inner (anonymous) class test/C$g$1
+    public method <init>(): void
+    public synthetic final static method access$getX$p$s65(): java.lang.String
+    public synthetic final static method access$getX$p$s66(): java.lang.String
+    public synthetic final static method access$h$s65(): java.lang.String
+    public synthetic final static method access$h$s66(): java.lang.String
+    public synthetic final static method access$setX$p$s65(p0: java.lang.String): void
+    public synthetic final static method access$setX$p$s66(p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method g(): kotlin.jvm.functions.Function0
+}
