@@ -6,7 +6,7 @@ fun Int.invoke() {}
 class SomeClass
 
 fun test(identifier: SomeClass, fn: String.() -> Unit) {
-    <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;DEBUG_INFO_MISSING_UNRESOLVED, OI;FUNCTION_EXPECTED!>identifier<!>()
+    <!DEBUG_INFO_MISSING_UNRESOLVED, FUNCTION_EXPECTED!>identifier<!>()
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>identifier<!>(123)
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>identifier<!>(1, 2)
     1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fn<!>()
