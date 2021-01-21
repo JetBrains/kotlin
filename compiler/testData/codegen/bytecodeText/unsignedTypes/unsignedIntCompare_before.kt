@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// JVM_TARGET: 1.6
 
 val ua = 1234U
 val ub = 5678U

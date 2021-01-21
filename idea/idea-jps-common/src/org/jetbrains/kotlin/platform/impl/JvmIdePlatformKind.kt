@@ -38,7 +38,7 @@ object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
         message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
         level = DeprecationLevel.ERROR
     )
-    override fun getDefaultPlatform(): Platform = Platform(JvmTarget.JVM_1_6)
+    override fun getDefaultPlatform(): Platform = Platform(JvmTarget.DEFAULT)
 
     override fun createArguments(): CommonCompilerArguments {
         return K2JVMCompilerArguments()

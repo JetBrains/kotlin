@@ -62,7 +62,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 
     private var jvmTargetField: kotlin.String? = null
     override var jvmTarget: kotlin.String
-        get() = jvmTargetField ?: "1.6"
+        get() = jvmTargetField ?: "1.8"
         set(value) {
             jvmTargetField = value
         }
@@ -137,7 +137,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     includeRuntime = false
     javaParameters = false
     jdkHome = null
-    jvmTarget = "1.6"
+    jvmTarget = "1.8"
     moduleName = null
     noJdk = false
     noReflect = true

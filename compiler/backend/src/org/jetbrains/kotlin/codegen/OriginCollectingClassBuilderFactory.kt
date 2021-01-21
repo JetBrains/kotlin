@@ -58,7 +58,7 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
     }
 
     override fun asBytes(builder: ClassBuilder): ByteArray {
-        val classWriter = ClassWriter(0)
+        val classWriter = ClassWriter(ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS)
         (builder as OriginCollectingClassBuilder).classNode.accept(classWriter)
         return classWriter.toByteArray()
     }
