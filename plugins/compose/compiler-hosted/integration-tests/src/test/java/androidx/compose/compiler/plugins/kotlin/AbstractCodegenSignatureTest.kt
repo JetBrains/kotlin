@@ -112,6 +112,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                 import android.widget.LinearLayout
                 import android.content.Context
                 import androidx.compose.ui.node.UiApplier
+                import kotlin.coroutines.EmptyCoroutineContext
 
                 $src
 
@@ -127,7 +128,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                     val container = LinearLayout(__context!!)
                     return Composer(
                         UiApplier(container),
-                        Recomposer.current()
+                        Recomposer(EmptyCoroutineContext)
                     )
                 }
 
