@@ -62,7 +62,8 @@ class KaptOptions(
 
         val flags: MutableSet<KaptFlag> = mutableSetOf(
             KaptFlag.USE_LIGHT_ANALYSIS,
-            KaptFlag.INCLUDE_COMPILE_CLASSPATH
+            KaptFlag.INCLUDE_COMPILE_CLASSPATH,
+            KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS
         )
 
         var mode: AptMode = AptMode.WITH_COMPILATION
@@ -114,7 +115,8 @@ enum class KaptFlag(val description: String) {
     STRICT("Strict mode"),
     INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath"),
     INCREMENTAL_APT("Incremental annotation processing (apt mode)"),
-    STRIP_METADATA("Strip @Metadata annotations from stubs")
+    STRIP_METADATA("Strip @Metadata annotations from stubs"),
+    KEEP_KDOC_COMMENTS_IN_STUBS("Keep KDoc comments in stubs")
     ;
 }
 

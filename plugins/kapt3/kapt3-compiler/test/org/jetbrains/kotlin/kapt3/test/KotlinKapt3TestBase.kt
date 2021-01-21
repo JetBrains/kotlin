@@ -10,29 +10,41 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import java.io.File
 
 abstract class KotlinKapt3TestBase : CodegenTestCase() {
-    val kaptFlags = mutableListOf<KaptFlag>()
+    val kaptFlagsToAdd = mutableListOf<KaptFlag>()
+    val kaptFlagsToRemove = mutableListOf<KaptFlag>()
 
     override fun setUp() {
         super.setUp()
-        kaptFlags.clear()
+        kaptFlagsToAdd.clear()
+        kaptFlagsToRemove.clear()
     }
 
-    protected fun File.isOptionSet(name: String) = this.useLines { lines -> lines.any { it.trim() == "// $name" } }
+    protected fun isFlagEnabled(flagName: String, testFile: File): Boolean {
+        val stringToCheck = "// $flagName"
+        return testFile.useLines { lines -> lines.any { it.trim() == stringToCheck } }
+    }
+
+    private fun isFlagDisabled(flagName: String, testFile: File): Boolean {
+        val stringToCheck = "// !$flagName"
+        return testFile.useLines { lines -> lines.any { it.trim() == stringToCheck } }
+    }
+
+    protected fun addOrRemoveFlag(flag: KaptFlag, testFile: File) {
+        if (isFlagEnabled(flag.name, testFile)) {
+            kaptFlagsToAdd.add(flag)
+        } else if (isFlagDisabled(flag.name, testFile)) {
+            kaptFlagsToRemove.add(flag)
+        }
+    }
 
     override fun doTest(filePath: String) {
-        val wholeFile = File(filePath)
+        val testFile = File(filePath)
 
-        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+        kaptFlagsToAdd.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
 
-        fun handleFlag(flag: KaptFlag) {
-            if (wholeFile.isOptionSet(flag.name)) {
-                kaptFlags.add(flag)
-            }
-        }
-
-        handleFlag(KaptFlag.CORRECT_ERROR_TYPES)
-        handleFlag(KaptFlag.STRICT)
-        handleFlag(KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES)
+        addOrRemoveFlag(KaptFlag.CORRECT_ERROR_TYPES, testFile)
+        addOrRemoveFlag(KaptFlag.STRICT, testFile)
+        addOrRemoveFlag(KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES, testFile)
 
         super.doTest(filePath)
     }

@@ -129,7 +129,8 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
             incrementalDataOutputDir = sourcesOutputDir
 
             this.javacOptions.putAll(javacOptions)
-            flags.addAll(kaptFlags)
+            flags.addAll(kaptFlagsToAdd)
+            flags.removeAll(kaptFlagsToRemove)
 
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
         }.build()
@@ -251,21 +252,16 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     fun testSuppressWarning() {}
 
     override fun doTest(filePath: String) {
-        val wholeFile = File(filePath)
+        val testFile = File(filePath)
 
-        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+        kaptFlagsToAdd.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
 
-        if (wholeFile.isOptionSet("CORRECT_ERROR_TYPES")) {
-            kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
+        addOrRemoveFlag(KaptFlag.CORRECT_ERROR_TYPES, testFile)
+        if (isFlagEnabled("STRICT_MODE", testFile)) {
+            kaptFlagsToAdd.add(KaptFlag.STRICT)
         }
-
-        if (wholeFile.isOptionSet("STRICT_MODE")) {
-            kaptFlags.add(KaptFlag.STRICT)
-        }
-
-        if (wholeFile.isOptionSet("STRIP_METADATA")) {
-            kaptFlags.add(KaptFlag.STRIP_METADATA)
-        }
+        addOrRemoveFlag(KaptFlag.STRIP_METADATA, testFile)
+        addOrRemoveFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, testFile)
 
         super.doTest(filePath)
         doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
@@ -273,8 +269,8 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     }
 
     override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {
-        val generateNonExistentClass = wholeFile.isOptionSet("NON_EXISTENT_CLASS")
-        val validate = !wholeFile.isOptionSet("NO_VALIDATION")
+        val generateNonExistentClass = isFlagEnabled("NON_EXISTENT_CLASS", wholeFile)
+        val validate = !isFlagEnabled("NO_VALIDATION", wholeFile)
         val expectedErrors = wholeFile.getRawOptionValues(EXPECTED_ERROR).sorted()
 
         val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass)
@@ -331,9 +327,9 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
     override fun doTest(filePath: String) {
-        kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
-        kaptFlags.add(KaptFlag.STRICT)
-        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+        kaptFlagsToAdd.add(KaptFlag.CORRECT_ERROR_TYPES)
+        kaptFlagsToAdd.add(KaptFlag.STRICT)
+        kaptFlagsToAdd.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
         super.doTest(filePath)
     }
 

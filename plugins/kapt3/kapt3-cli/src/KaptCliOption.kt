@@ -195,6 +195,12 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
     ),
 
+    KEEP_KDOC_COMMENTS_IN_STUBS(
+        "keepKdocCommentsInStubs",
+        "true | false",
+        "Keep KDoc comments in stubs"
+    ),
+
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
     INCLUDE_COMPILE_CLASSPATH(
         "includeCompileClasspath",
