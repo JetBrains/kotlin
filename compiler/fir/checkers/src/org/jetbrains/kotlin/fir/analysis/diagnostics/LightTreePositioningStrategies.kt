@@ -247,6 +247,30 @@ object LightTreePositioningStrategies {
             return markElement(tree.operationReference(node) ?: node, startOffset, endOffset, tree, node)
         }
     }
+
+    val PARAMETER_DEFAULT_VALUE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val defaultValueElement = tree.defaultValue(node) ?: node
+            return markElement(defaultValueElement, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val PARAMETER_VARARG_MODIFIER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val modifier = tree.modifierList(node)?.let { modifierList -> tree.findChildByType(modifierList, KtTokens.VARARG_KEYWORD) }
+            return markElement(modifier ?: node, startOffset, endOffset, tree, node)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -314,6 +338,20 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.receiverTypeReference(
     return childrenRef.get()?.filterNotNull()?.firstOrNull {
         if (it.tokenType == KtTokens.COLON || it.tokenType == KtTokens.LPAR) return null
         it.tokenType == KtNodeTypes.TYPE_REFERENCE
+    }
+}
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    // p : T = v
+    return childrenRef.get()?.reversed()?.firstOrNull {
+        it != null &&
+                it.tokenType != KtTokens.WHITE_SPACE &&
+                it.tokenType != KtTokens.EQ &&
+                it.tokenType != KtNodeTypes.TYPE_REFERENCE &&
+                it.tokenType != KtTokens.COLON &&
+                it.tokenType != KtTokens.IDENTIFIER
     }
 }
 

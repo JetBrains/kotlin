@@ -52,4 +52,14 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
     )
+    
+    val PARAMETER_DEFAULT_VALUE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PARAMETER_DEFAULT_VALUE,
+        PositioningStrategies.PARAMETER_DEFAULT_VALUE
+    )
+
+    val PARAMETER_VARARG_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
+        PositioningStrategies.PARAMETER_VARARG_MODIFIER
+    )
 }
