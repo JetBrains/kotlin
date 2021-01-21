@@ -813,6 +813,10 @@ task hello0(type: KonanLocalTest) {
     source = "runtime/basic/hello0.kt"
 }
 
+task stringTrim(type: KonanLocalTest) {
+    source = "codegen/stringTrim/stringTrim.kt"
+}
+
 standaloneTest("hello1") {
    goldValue = "Hello World"
    testData = "Hello World\n"
