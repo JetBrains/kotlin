@@ -245,7 +245,7 @@ class KotlinChangeSignatureDialog(
 
                     when {
                         KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo) ->
-                            (components[column] as @Suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).selectedItem
+                            (components[column] as JComboBox<*>).selectedItem
                         KotlinCallableParameterTableModel.isTypeColumn(columnInfo) ->
                             item.typeCodeFragment
                         KotlinCallableParameterTableModel.isNameColumn(columnInfo) ->
