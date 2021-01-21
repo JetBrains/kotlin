@@ -89,7 +89,7 @@ internal class FileStructure(
             val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(
                 container,
                 moduleFileCache,
-                FirResolvePhase.IMPORTS,
+                FirResolvePhase.TYPES,
                 checkPCE = true
             )
             RootStructureElement(
