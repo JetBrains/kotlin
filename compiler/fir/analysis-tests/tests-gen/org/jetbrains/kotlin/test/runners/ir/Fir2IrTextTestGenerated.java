@@ -2147,6 +2147,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("Modality.kt")
+        public void testModality() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/Modality.kt");
+        }
+
+        @Test
         @TestMetadata("MultiList.kt")
         public void testMultiList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
