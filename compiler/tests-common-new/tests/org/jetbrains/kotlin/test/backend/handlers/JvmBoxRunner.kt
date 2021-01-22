@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.lang.reflect.Method
 import java.net.URLClassLoader
 
-class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices, doNotRunIfThereWerePreviousFailures = true) {
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
     }
