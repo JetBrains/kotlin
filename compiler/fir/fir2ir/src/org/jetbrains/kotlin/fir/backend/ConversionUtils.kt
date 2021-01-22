@@ -232,7 +232,19 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCall
         val originalForTypeAlias = fir.originalConstructorIfTypeAlias
         if (originalForTypeAlias != null) return originalForTypeAlias.symbol.unwrapCallRepresentative(this)
     }
-    if (fir.isIntersectionOverride) return this
+
+    if (fir.isIntersectionOverride) {
+        // We've got IR declarations (fake overrides) for intersection overrides in classes, but not for intersection types
+        // interface A { fun foo() }
+        // interface B { fun foo() }
+        // interface C : A, B // for C.foo we've got an IR fake override
+        // for {A & B} we don't have such an IR declaration, so we're unwrapping it
+        if (fir is FirCallableMemberDeclaration && fir.dispatchReceiverType is ConeIntersectionType) {
+            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(this)
+        }
+
+        return this
+    }
 
     val overriddenSymbol = fir.originalForSubstitutionOverride?.takeIf {
         it.containingClass() == root.containingClass()

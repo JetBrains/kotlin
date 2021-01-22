@@ -149,6 +149,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
     }
 
+    @TestMetadata("fakeOverridesForIntersectionTypes.kt")
+    public void testFakeOverridesForIntersectionTypes() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");
+    }
+
     @TestMetadata("importCompanion.kt")
     public void testImportCompanion() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/importCompanion.kt");
