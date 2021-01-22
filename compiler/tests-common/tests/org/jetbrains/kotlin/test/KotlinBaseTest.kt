@@ -197,6 +197,9 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
                     addRuntime = true
                 }
+                if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_STDLIB")) {
+                    addRuntime = true
+                }
                 if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
                     addReflect = true
                 }
