@@ -1,0 +1,64 @@
+@kotlin.Metadata
+public abstract class TestNoSubclasses {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestNoSubclassesAllDefaults {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestSubclassAfter {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestSubclassAfterAllDefaults {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public abstract class TestSubclassBefore {
+    // source: 'sealedClassConstructor_1_5.kt'
+    private final field x: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public final class X1 {
+    // source: 'sealedClassConstructor_1_5.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class X3 {
+    // source: 'sealedClassConstructor_1_5.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class X4 {
+    // source: 'sealedClassConstructor_1_5.kt'
+    public method <init>(): void
+}

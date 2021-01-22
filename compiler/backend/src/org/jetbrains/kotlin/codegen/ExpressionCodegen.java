@@ -2523,19 +2523,37 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // $default method is not private, so you need no accessor to call it
             return descriptor;
         }
-        else if (InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor.getOriginal())) {
-            // Constructors with inline class type value parameters should always be called using an accessor.
-            // NB this will require accessors even if the constructor itself is in a different module.
-            return new AccessorForConstructorDescriptor(
-                    (ClassConstructorDescriptor) descriptor.getOriginal(),
-                    descriptor.getContainingDeclaration(),
-                    getSuperCallTarget(resolvedCall.getCall()),
-                    AccessorKind.NORMAL
-            );
+        else if (shouldForceAccessorForConstructor(descriptor.getOriginal())) {
+            return createAccessorForHiddenConstructor(resolvedCall, descriptor);
         }
         else {
             return context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
         }
+    }
+
+    private boolean shouldForceAccessorForConstructor(FunctionDescriptor descriptor) {
+        // Force using accessors on hidden constructors only
+        if (!isHiddenConstructor(descriptor)) {
+            return false;
+        }
+        // Don't use accessor when calling hidden constructor from the same class.
+        if (descriptor.getContainingDeclaration() == context.getContextDescriptor().getContainingDeclaration()) {
+            return false;
+        }
+        return true;
+    }
+
+    @NotNull
+    private AccessorForConstructorDescriptor createAccessorForHiddenConstructor(
+            @NotNull ResolvedCall<?> resolvedCall,
+            FunctionDescriptor descriptor
+    ) {
+        return new AccessorForConstructorDescriptor(
+                (ClassConstructorDescriptor) descriptor.getOriginal(),
+                descriptor.getContainingDeclaration(),
+                getSuperCallTarget(resolvedCall.getCall()),
+                AccessorKind.NORMAL
+        );
     }
 
     @NotNull

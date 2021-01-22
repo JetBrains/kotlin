@@ -235,11 +235,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
     }
 
-    @TestMetadata("sealedClassConstructorWithDefaultParams.kt")
-    public void testSealedClassConstructorWithDefaultParams() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/sealedClassConstructorWithDefaultParams.kt");
-    }
-
     @TestMetadata("strictfpFlag.kt")
     public void testStrictfpFlag() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/strictfpFlag.kt");
@@ -1057,6 +1052,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/genericChild.kt");
         }
 
+        @TestMetadata("hiddenConstructor.kt")
+        public void testHiddenConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/hiddenConstructor.kt");
+        }
+
         @TestMetadata("inlineCharSequence.kt")
         public void testInlineCharSequence() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCharSequence.kt");
@@ -1636,6 +1636,34 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("wrapperInlinedFromAnotherClass.kt")
         public void testWrapperInlinedFromAnotherClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/sam/wrapperInlinedFromAnotherClass.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/sealed")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Sealed extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSealed() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("annotationsOnSealedConstructor.kt")
+        public void testAnnotationsOnSealedConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sealed/annotationsOnSealedConstructor.kt");
+        }
+
+        @TestMetadata("sealedClassConstructor_1_4.kt")
+        public void testSealedClassConstructor_1_4() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sealed/sealedClassConstructor_1_4.kt");
+        }
+
+        @TestMetadata("sealedClassConstructor_1_5.kt")
+        public void testSealedClassConstructor_1_5() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sealed/sealedClassConstructor_1_5.kt");
         }
     }
 
