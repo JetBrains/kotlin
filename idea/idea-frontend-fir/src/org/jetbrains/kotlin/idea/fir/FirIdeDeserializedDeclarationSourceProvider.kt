@@ -140,7 +140,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
 private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 
 fun FirElement.findPsi(project: Project): PsiElement? =
-    realPsi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
+    realPsi ?: psiForGeneratedElement ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
 
 fun FirElement.findPsi(session: FirSession): PsiElement? =
     findPsi((session as FirIdeSession).project)

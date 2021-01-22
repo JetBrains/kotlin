@@ -290,6 +290,7 @@ val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)
 
 val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
 val FirElement.realPsi: PsiElement? get() = (source as? FirRealPsiSourceElement<*>)?.psi
+val FirElement.psiForGeneratedElement: PsiElement? get() = (source as? FirFakeSourceElement<*>)?.psi
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirRealSourceElementKind): FirPsiSourceElement<*> = when (kind) {
