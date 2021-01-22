@@ -11,7 +11,7 @@ public final class Cl {
     private final java.lang.String a = null;
 
     @java.lang.Override()
-    public boolean equals(java.lang.Object p0) {
+    public boolean equals(java.lang.Object other) {
         return false;
     }
 
