@@ -272,6 +272,14 @@ private fun createTestTask(
         val xmlReport = workingDir.resolve("report.xml")
         executable(linkTask.outputFile)
         args("--gtest_output=xml:${xmlReport.absoluteFile}")
+        when (sanitizer) {
+            SanitizerKind.THREAD -> {
+                val file = project.file("tsan_suppressions.txt")
+                inputs.file(file)
+                environment("TSAN_OPTIONS", "suppressions=${file.absolutePath}")
+            }
+            else -> {} // no action required
+        }
 
         doFirst {
             workingDir.mkdirs()
