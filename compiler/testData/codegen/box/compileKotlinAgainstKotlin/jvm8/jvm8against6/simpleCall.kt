@@ -8,8 +8,8 @@ interface Test {
 }
 
 // MODULE: main(lib)
-// FILE: 2.kt
 // JVM_TARGET: 1.8
+// FILE: 2.kt
 class TestClass : Test {
     override fun test(): String {
         return super.test()

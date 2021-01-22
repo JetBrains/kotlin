@@ -1,6 +1,8 @@
+// WITH_STDLIB
+
 // MODULE: lib
-// FILE: 1.kt
 // !JVM_DEFAULT_MODE: disable
+// FILE: 1.kt
 
 interface Foo<T> {
     fun test(p: T) = "fail"
@@ -8,9 +10,10 @@ interface Foo<T> {
         get() = "fail"
 }
 
-// FILE: main.kt
+// MODULE: main(lib)
 // !JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
+// FILE: main.kt
 interface Foo2: Foo<String> {
     override fun test(p: String) = p
 

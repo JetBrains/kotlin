@@ -1,7 +1,7 @@
 // MODULE: lib
-// FILE: A.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
+// FILE: A.kt
 package a
 
 import kotlin.coroutines.*

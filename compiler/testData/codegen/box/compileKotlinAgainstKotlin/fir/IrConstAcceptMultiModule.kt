@@ -1,8 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// FILE: A.kt
 // WITH_RUNTIME
+// FILE: A.kt
 
 abstract class IrConst<T> : IrExpression(), IrExpressionWithCopy {
     abstract val kind: IrConstKind<T>

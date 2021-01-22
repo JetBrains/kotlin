@@ -1,7 +1,9 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FULL_JDK
+// WITH_STDLIB
+
 // MODULE: lib
 // FILE: A.kt
-// FULL_JDK
 
 package test
 

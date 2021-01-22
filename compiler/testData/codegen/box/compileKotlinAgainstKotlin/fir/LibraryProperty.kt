@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// FILE: A.kt
 // WITH_RUNTIME
+// FILE: A.kt
 
 package first.second
 

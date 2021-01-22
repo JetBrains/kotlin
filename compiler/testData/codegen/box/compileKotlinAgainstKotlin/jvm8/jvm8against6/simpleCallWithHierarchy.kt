@@ -9,9 +9,9 @@ interface Test {
 }
 
 // MODULE: main(lib)
-// FILE: 2.kt
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
+// FILE: 2.kt
 interface Test2 : Test {
     @JvmDefault
     override fun test(): String {

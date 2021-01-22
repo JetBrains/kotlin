@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // FULL_JDK
+// WITH_STDLIB
+
 // MODULE: lib
 // FILE: 1.kt
 interface KInterface  {
@@ -10,9 +12,10 @@ interface KInterface  {
     fun superCall()  = Thread.currentThread().getStackTrace().map { it.className + "." + it.methodName }
 }
 
-// FILE: main.kt
+// MODULE: main(lib)
 // !JVM_DEFAULT_MODE: all-compatibility
 // JVM_TARGET: 1.8
+// FILE: main.kt
 interface KInterface2 : KInterface  {
     override fun superCall() = super.superCall()
 }

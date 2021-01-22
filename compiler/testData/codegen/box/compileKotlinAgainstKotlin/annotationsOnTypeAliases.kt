@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
+
 // MODULE: lib
 // FILE: A.kt
 package a
@@ -16,6 +18,7 @@ annotation class Ann(val x: Int)
 typealias TA = Any
 
 // MODULE: main(lib)
+// FULL_JDK
 // FILE: B.kt
 import a.Ann
 

@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// FILE: A.kt
 // WITH_RUNTIME
+// FILE: A.kt
 
 abstract class IncrementalCompilerRunner<T>(
     private val workingDir: String,
