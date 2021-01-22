@@ -31889,9 +31889,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                         }
 
                         @Test
-                        @TestMetadata("varIndefiniteIntialization.kt")
-                        public void testVarIndefiniteIntialization() throws Exception {
-                            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/atLeastOnce/varIndefiniteIntialization.kt");
+                        @TestMetadata("varIndefiniteInitialization.kt")
+                        public void testVarIndefiniteInitialization() throws Exception {
+                            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/initialization/atLeastOnce/varIndefiniteInitialization.kt");
                         }
                     }
 
