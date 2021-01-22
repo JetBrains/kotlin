@@ -14189,6 +14189,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testSubstitutionIntoInnerClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/substitutionIntoInnerClass.kt");
                 }
+
+                @Test
+                @TestMetadata("substitutionOfTypeEnhancement.kt")
+                public void testSubstitutionOfTypeEnhancement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/substitutionOfTypeEnhancement.kt");
+                }
             }
 
             @Nested
