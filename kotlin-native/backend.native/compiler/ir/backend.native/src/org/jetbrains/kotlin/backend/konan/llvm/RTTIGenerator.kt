@@ -505,7 +505,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     functionType(kObjHeaderPtr, false, kObjHeaderPtrPtr),
                     ""
             ) {
-                ret(getObjectValue(value, ExceptionHandler.Caller, startLocationInfo = null))
+                ret(getObjectValue(value, ExceptionHandler.Caller(), startLocationInfo = null))
             }
 
             Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(associatedObjectGetter))

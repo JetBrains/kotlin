@@ -32,4 +32,5 @@ object KonanFqNames {
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
     val hasFinalizer = FqName("kotlin.native.internal.HasFinalizer")
     val hasFreezeHook = FqName("kotlin.native.internal.HasFreezeHook")
+    val gcCritical = FqName("kotlin.native.internal.GCCritical")
 }

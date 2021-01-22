@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
+import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
@@ -85,10 +88,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
 internal sealed class ExceptionHandler {
     object None : ExceptionHandler()
-    object Caller : ExceptionHandler()
+    class Caller(val needThreadStateSwitch: Boolean = false) : ExceptionHandler()
     abstract class Local : ExceptionHandler() {
         abstract val unwind: LLVMBasicBlockRef
     }
+}
+
+internal enum class ThreadState {
+    Native, Runnable
 }
 
 val LLVMValueRef.name:String?
@@ -341,7 +348,7 @@ internal class StackLocalsManagerImpl(
 internal class FunctionGenerationContext(val function: LLVMValueRef,
                                          val codegen: CodeGenerator,
                                          startLocation: LocationInfo?,
-                                         endLocation: LocationInfo?,
+                                         private val endLocation: LocationInfo?,
                                          internal val irFunction: IrFunction? = null): ContextUtils {
 
     override val context = codegen.context
@@ -373,6 +380,15 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     private val entryBb = basicBlockInFunction("entry", startLocation)
     private val epilogueBb = basicBlockInFunction("epilogue", endLocation)
     private val cleanupLandingpad = basicBlockInFunction("cleanup_landingpad", endLocation)
+    private var _cleanupLandingpadExternal: LLVMBasicBlockRef? = null
+    private val cleanupLandingpadExternal: LLVMBasicBlockRef
+        get() = _cleanupLandingpadExternal
+                ?: basicBlockInFunction("cleanup_landingpad_external", endLocation).also {
+                    check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
+                        "An external landingpad can be created for experimental memory model only."
+                    }
+                    _cleanupLandingpadExternal = it
+                }
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -528,6 +544,16 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     //-------------------------------------------------------------------------//
 
+    fun switchThreadState(state: ThreadState) {
+        check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            "Thread state switching is allowed in the experimental memory model only."
+        }
+        when (state) {
+            Native -> call(context.llvm.Kotlin_mm_switchThreadStateNative, emptyList())
+            Runnable -> call(context.llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
+        }.let {} // Force exhaustive.
+    }
+
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
              exceptionHandler: ExceptionHandler = ExceptionHandler.None,
@@ -569,7 +595,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
         } else {
             val unwind = when (exceptionHandler) {
-                ExceptionHandler.Caller -> cleanupLandingpad
+                is ExceptionHandler.Caller ->
+                    if (exceptionHandler.needThreadStateSwitch) {
+                        cleanupLandingpadExternal
+                    } else {
+                        cleanupLandingpad
+                    }
+
                 is ExceptionHandler.Local -> exceptionHandler.unwind
 
                 ExceptionHandler.None -> {
@@ -769,6 +801,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
             LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
 
+            if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+                switchThreadState(Runnable)
+            }
+
             val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position()?.start)
             val forwardKotlinExceptionBlock = basicBlock("forwardKotlinException", position()?.start)
 
@@ -830,12 +866,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun kotlinExceptionHandler(
+            switchThreadState: Boolean = false,
             block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit
     ): ExceptionHandler {
         val lpBlock = basicBlock("kotlinExceptionHandler", position()?.end)
 
         appendingTo(lpBlock) {
-            val exception = catchKotlinException()
+            val exception = catchKotlinException(switchThreadState)
             block(exception)
         }
 
@@ -844,10 +881,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun catchKotlinException(): LLVMValueRef {
+    fun catchKotlinException(switchThreadState: Boolean): LLVMValueRef {
         val landingpadResult = gxxLandingpad(numClauses = 1, name = "lp")
 
         LLVMAddClause(landingpadResult, LLVMConstNull(kInt8Ptr))
+
+        if (switchThreadState) {
+            switchThreadState(Runnable)
+        }
 
         // TODO: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
         // bypassing the finally block.
@@ -1248,6 +1289,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         if (isObjectType(returnType!!)) {
             returnSlot = LLVMGetParam(function, numParameters(function.type) - 1)
         }
+
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL &&
+                irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+            positionAtEnd(prologueBb)
+            switchThreadState(Runnable)
+        }
+
         positionAtEnd(localsInitBb)
         slotsPhi = phi(kObjHeaderPtrPtr)
         // Is removed by DCE trivially, if not needed.
@@ -1307,8 +1355,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 returnType == voidType -> {
                     releaseVars()
                     assert(returnSlot == null)
-                    if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL)
+                    if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL) {
                         call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
+                        if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                            switchThreadState(Native)
+                        }
+                    }
                     LLVMBuildRetVoid(builder)
                 }
                 returns.isNotEmpty() -> {
@@ -1318,8 +1370,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         updateReturnRef(returnPhi, returnSlot!!)
                     }
                     releaseVars()
-                    if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL)
+                    if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL) {
                         call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
+                        if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                            switchThreadState(Native)
+                        }
+                    }
                     LLVMBuildRet(builder, returnPhi)
                 }
                 // Do nothing, all paths throw.
@@ -1360,9 +1416,30 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
 
             releaseVars()
-            if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL)
+            if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL) {
                 call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
+                if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                    switchThreadState(Native)
+                }
+            }
             LLVMBuildResume(builder, landingpad)
+        }
+
+        _cleanupLandingpadExternal?.let {
+            check(context.memoryModel == MemoryModel.EXPERIMENTAL)
+            // C -> Kotlin bridges should not include external calls.
+            check(irFunction?.origin != CBridgeOrigin.C_TO_KOTLIN_BRIDGE)
+            appendingTo(it) {
+                val landingpad = gxxLandingpad(numClauses = 0)
+                LLVMSetCleanup(landingpad, 1)
+                switchThreadState(Runnable)
+
+                // TODO: Process forwardingForeignExceptionsTerminatedWith
+                //  when thread switching for ObjC calls is supported.
+
+                releaseVars()
+                LLVMBuildResume(builder, landingpad)
+            }
         }
 
         returns.clear()

@@ -221,7 +221,7 @@ private class ExportedElement(val kind: ElementKind,
                         val numParams = LLVMCountParams(llvmFunction)
                         val args = (0 .. numParams - 1).map { index -> param(index) }
                         val callee = lookupVirtualImpl(receiver, irFunction)
-                        val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                        val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller(), verbatim = true)
                         ret(result)
                     }
                 } else {
@@ -247,7 +247,7 @@ private class ExportedElement(val kind: ElementKind,
                 // Produce instance getter if needed.
                 if (isSingletonObject) {
                     generateFunction(owner.codegen, owner.kGetObjectFuncType, "${cname}_instance") {
-                        val value = getObjectValue(irClass, ExceptionHandler.Caller, null)
+                        val value = getObjectValue(irClass, ExceptionHandler.Caller(), null)
                         ret(value)
                     }
                 }
@@ -257,7 +257,7 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 generateFunction(owner.codegen, owner.kGetObjectFuncType, cname) {
                     val irEnumEntry = irSymbol.owner as IrEnumEntry
-                    val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
+                    val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller())
                     ret(value)
                 }
             }
