@@ -53,6 +53,7 @@ enum class KtSymbolOrigin {
      * Declaration which do not have it's PSI source and was generated, they are:
      * For data classes the `copy`, `component{N}`, `toString`, `equals`, `hashCode` functions are generated
      * For enum classes the `valueOf` & `values` functions are generated
+     * For lambda the `it` property is generated
      */
     SOURCE_MEMBER_GENERATED,
 

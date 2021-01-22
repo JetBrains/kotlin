@@ -139,7 +139,7 @@ object FirIdeDeserializedDeclarationSourceProvider {
 
 private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 
-private val allowedFakeElementKinds = setOf(FirFakeSourceElementKind.PropertyFromParameter)
+private val allowedFakeElementKinds = setOf(FirFakeSourceElementKind.PropertyFromParameter, FirFakeSourceElementKind.ItLambdaParameter)
 
 private fun FirElement.getAllowedPsi() = when (val source = source) {
     null -> null

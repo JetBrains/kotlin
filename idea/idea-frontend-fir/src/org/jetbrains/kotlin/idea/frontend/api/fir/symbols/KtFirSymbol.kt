@@ -26,6 +26,7 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
     FirDeclarationOrigin.Source -> {
         if (source?.kind == FirFakeSourceElementKind.DataClassGeneratedMembers
             || source?.kind == FirFakeSourceElementKind.EnumGeneratedDeclaration
+            || source?.kind == FirFakeSourceElementKind.ItLambdaParameter
         ) {
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED
         } else KtSymbolOrigin.SOURCE
