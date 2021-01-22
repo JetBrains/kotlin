@@ -374,13 +374,27 @@ class KotlinTypeMapper @JvmOverloads constructor(
         kind: OwnerKind? = null,
         resolvedCall: ResolvedCall<*>? = null
     ): CallableMethod {
+        fun mapDefaultCallback(descriptor: FunctionDescriptor, kind: OwnerKind): () -> Method {
+            if (useOldManglingRulesForFunctionAcceptingInlineClass && !useOldInlineClassesManglingScheme) {
+                return {
+                    val prevManglingState = useOldManglingRulesForFunctionAcceptingInlineClass
+                    useOldManglingRulesForFunctionAcceptingInlineClass = true
+                    mapDefaultMethod(descriptor, kind).also {
+                        useOldManglingRulesForFunctionAcceptingInlineClass = prevManglingState
+                    }
+                }
+            } else {
+                return { mapDefaultMethod(descriptor, kind) }
+            }
+        }
+
         // we generate constructors of inline classes as usual functions
         if (descriptor is ConstructorDescriptor && kind != OwnerKind.ERASED_INLINE_CLASS) {
             val method = mapSignatureSkipGeneric(descriptor.original)
             val owner = mapOwner(descriptor)
             val originalDescriptor = descriptor.original
             return CallableMethod(
-                owner, owner, { mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION) }, method, INVOKESPECIAL,
+                owner, owner, mapDefaultCallback(originalDescriptor, OwnerKind.IMPLEMENTATION), method, INVOKESPECIAL,
                 null, null, null, null, null, originalDescriptor.returnType, isInterfaceMethod = false, isDefaultMethodInInterface = false
             )
         }
@@ -545,7 +559,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         return CallableMethod(
             owner, ownerForDefaultImpl,
-            { mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)) },
+            mapDefaultCallback(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)),
             signature, invokeOpcode, thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType,
             calleeType, returnKotlinType,
             if (jvmTarget >= JvmTarget.JVM_1_8) isInterfaceMember else invokeOpcode == INVOKEINTERFACE,
