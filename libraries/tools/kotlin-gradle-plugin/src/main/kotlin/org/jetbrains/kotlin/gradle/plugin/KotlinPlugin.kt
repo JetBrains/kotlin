@@ -456,7 +456,7 @@ internal abstract class AbstractKotlinPlugin(
                 }
             }
 
-            // Setup conf2ScopeMappings so that the API dependencies are wriiten with the compile scope in the POMs in case of 'java' plugin
+            // Setup conf2ScopeMappings so that the API dependencies are written with the compile scope in the POMs in case of 'java' plugin
             project.convention.getPlugin(MavenPluginConvention::class.java)
                 .conf2ScopeMappings.addMapping(0, project.configurations.getByName("api"), Conf2ScopeMappingContainer.COMPILE)
         }
