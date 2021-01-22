@@ -12,6 +12,9 @@ import org.junit.Test
 import kotlin.test.assertTrue
 
 class DukatIntegrationIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("6.0")
+
     @Test
     fun testSeparateDukatKotlinDslRootDependencies() {
         testSeparateDukat(

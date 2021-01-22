@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.Project
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.jetbrains.kotlin.gradle.targets.js.JS
@@ -17,8 +18,9 @@ import java.io.File
  * Creates fake NodeJS module directory from given gradle [dependency].
  */
 internal class GradleNodeModuleBuilder(
+    val project: Project,
     val fs: FileSystemOperations,
-    val archiveOperations: ArchiveOperations,
+    val archiveOperations: Any?,
     val moduleName: String,
     val moduleVersion: String,
     val srcFiles: Collection<File>,
@@ -31,10 +33,17 @@ internal class GradleNodeModuleBuilder(
         srcFiles.forEach { srcFile ->
             when {
                 isKotlinJsRuntimeFile(srcFile) -> files.add(srcFile)
-                srcFile.isCompatibleArchive -> archiveOperations.zipTree(srcFile).forEach { innerFile ->
-                    when {
-                        innerFile.name == NpmProject.PACKAGE_JSON -> srcPackageJsonFile = innerFile
-                        isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)
+                srcFile.isCompatibleArchive -> {
+                    val archiveFiles = if (archiveOperations != null) {
+                        (archiveOperations as ArchiveOperations).zipTree(srcFile)
+                    } else {
+                        project.zipTree(srcFile)
+                    }
+                    archiveFiles.forEach { innerFile ->
+                        when {
+                            innerFile.name == NpmProject.PACKAGE_JSON -> srcPackageJsonFile = innerFile
+                            isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)
+                        }
                     }
                 }
             }
