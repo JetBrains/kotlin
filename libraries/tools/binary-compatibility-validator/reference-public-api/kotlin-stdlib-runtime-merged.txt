@@ -727,6 +727,8 @@ public final class kotlin/collections/ArrayDeque : kotlin/collections/AbstractMu
 	public final fun removeLastOrNull ()Ljava/lang/Object;
 	public fun retainAll (Ljava/util/Collection;)Z
 	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public final class kotlin/collections/ArraysKt {
