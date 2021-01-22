@@ -1,5 +1,10 @@
 # kotlinx-metadata-jvm
 
+## 0.2.1
+
+- Deprecate `KotlinClassHeader.bytecodeVersion` and `KotlinClassHeader`'s constructor that takes a bytecode version array.
+  Related to ['KT-41758`](https://youtrack.jetbrains.com/issue/KT-41758).
+
 ## 0.2.0
 
 - ['KT-41011`](https://youtrack.jetbrains.com/issue/KT-41011) Using KotlinClassMetadata.Class.Writer with metadata version < 1.4 will write incorrect version requirement table
