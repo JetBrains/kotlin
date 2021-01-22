@@ -87,7 +87,7 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
             return null
         }
 
-        if (!declaration.hasStableJsName()) {
+        if (!declaration.hasStableJsName(context)) {
             return null
         }
 

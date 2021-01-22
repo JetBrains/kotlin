@@ -27,7 +27,7 @@ class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainArguments: List<String>?,
     private val generateScriptModule: Boolean = false,
-    var namer: NameTables = NameTables(emptyList()),
+    var namer: NameTables = NameTables(emptyList(), context = backendContext),
     private val fullJs: Boolean = true,
     private val dceJs: Boolean = false,
     private val multiModule: Boolean = false,
@@ -64,7 +64,7 @@ class IrModuleToJsTransformer(
             eliminateDeadDeclarations(modules, backendContext)
             // Use a fresh namer for DCE so that we could compare the result with DCE-driven
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
-            val namer = NameTables(emptyList())
+            val namer = NameTables(emptyList(), context = backendContext)
             namer.merge(modules.flatMap { it.files }, additionalPackages)
             generateWrappedModuleBody(modules, exportedModule, namer)
         } else null

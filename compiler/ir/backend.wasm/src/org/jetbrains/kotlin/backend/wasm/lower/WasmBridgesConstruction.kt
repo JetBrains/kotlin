@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.BridgesConstruction
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,12 +19,14 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
-class WasmBridgesConstruction(context: JsCommonBackendContext) : BridgesConstruction(context) {
+class WasmBridgesConstruction(context: JsCommonBackendContext) : BridgesConstruction<JsCommonBackendContext>(context) {
     override fun getFunctionSignature(function: IrSimpleFunction): WasmSignature =
         function.wasmSignature(context.irBuiltIns)
 
     // Dispatch receiver type must be casted when types are different.
     override val shouldCastDispatchReceiver: Boolean = true
+    override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
+        IrDeclarationOrigin.BRIDGE
 }
 
 data class WasmSignature(

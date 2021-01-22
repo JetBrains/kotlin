@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBreak
@@ -105,13 +106,13 @@ fun fieldSignature(field: IrField): Signature {
     return BackingFieldSignature(field)
 }
 
-fun jsFunctionSignature(declaration: IrFunction): Signature {
+fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext?): Signature {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
     val declarationName = declaration.getJsNameOrKotlinName().asString()
 
-    if (declaration.hasStableJsName()) {
+    if (declaration.hasStableJsName(context)) {
         return StableNameSignature(declarationName)
     }
 
@@ -148,7 +149,8 @@ class NameTables(
     packages: List<IrPackageFragment>,
     reservedForGlobal: MutableSet<String> = mutableSetOf(),
     reservedForMember: MutableSet<String> = mutableSetOf(),
-    val mappedNames: MutableMap<String, String>? = null
+    val mappedNames: MutableMap<String, String>? = null,
+    private val context: JsIrBackendContext? = null
 ) {
     val globalNames: NameTable<IrDeclaration>
     private val memberNames: NameTable<Signature>
@@ -250,7 +252,13 @@ class NameTables(
         val packages = mutableListOf<IrPackageFragment>().also { it.addAll(files) }
         if (packagesAdded()) packages.addAll(additionalPackages)
 
-        val table = NameTables(packages, globalNames.reserved, memberNames.reserved, mappedNames)
+        val table = NameTables(
+            packages,
+            globalNames.reserved,
+            memberNames.reserved,
+            mappedNames,
+            context
+        )
 
         globalNames.names.addAllIfAbsent(table.globalNames.names)
         memberNames.names.addAllIfAbsent(table.memberNames.names)
@@ -274,7 +282,7 @@ class NameTables(
     }
 
     private fun generateNameForMemberFunction(declaration: IrSimpleFunction) {
-        when (val signature = jsFunctionSignature(declaration)) {
+        when (val signature = jsFunctionSignature(declaration, context)) {
             is StableNameSignature -> memberNames.declareStableName(signature, signature.name)
             is ParameterTypeBasedSignature -> memberNames.declareFreshName(signature, signature.suggestedName)
         }
@@ -327,7 +335,7 @@ class NameTables(
     }
 
     fun getNameForMemberFunction(function: IrSimpleFunction): String {
-        val signature = jsFunctionSignature(function)
+        val signature = jsFunctionSignature(function, context)
         val name = memberNames.names[signature] ?: mappedNames?.get(mapToKey(signature))
 
         // TODO Add a compiler flag, which enables this behaviour
