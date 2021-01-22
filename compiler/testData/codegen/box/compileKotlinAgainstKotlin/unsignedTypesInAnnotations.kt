@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
+// WITH_STDLIB
+// WITH_REFLECT
 
 // MODULE: lib
 // FILE: A.kt
@@ -20,7 +22,6 @@ object ForTest {
 
 // MODULE: main(lib)
 // FILE: B.kt
-
 
 fun box(): String {
     val fResult = (ForTest::f.annotations.first() as Anno).u // force annotation deserialization

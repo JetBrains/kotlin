@@ -1,4 +1,6 @@
 // !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+
 // MODULE: lib
 // FILE: A.kt
 package z

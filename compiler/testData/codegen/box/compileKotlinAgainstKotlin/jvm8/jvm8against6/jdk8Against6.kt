@@ -13,8 +13,8 @@ class Jdk6List<F> : AbstractList<F>() {
 }
 
 // MODULE: main(lib)
-// FILE: B.kt
 // FULL_JDK
+// FILE: B.kt
 
 fun box(): String {
     val result = Jdk6List<String>().stream().filter { it == "OK" }.count()

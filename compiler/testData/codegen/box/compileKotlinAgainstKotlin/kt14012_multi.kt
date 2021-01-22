@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
+
 // MODULE: lib
 // FILE: A.kt
 @file:JvmName("TTest")

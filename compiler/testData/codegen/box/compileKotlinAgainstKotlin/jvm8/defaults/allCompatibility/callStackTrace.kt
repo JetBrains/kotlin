@@ -1,6 +1,8 @@
 // !JVM_DEFAULT_MODE: all-compatibility
 // JVM_TARGET: 1.8
 // FULL_JDK
+// WITH_STDLIB
+
 // MODULE: lib
 // FILE: 1.kt
 interface KInterface  {

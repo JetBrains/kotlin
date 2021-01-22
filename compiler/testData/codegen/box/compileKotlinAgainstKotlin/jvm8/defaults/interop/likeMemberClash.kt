@@ -1,8 +1,8 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // FULL_JDK
 // MODULE: lib
-// FILE: 1.kt
 // !JVM_DEFAULT_MODE: disable
+// FILE: 1.kt
 interface Check {
     fun test(): String {
         return "fail";
@@ -18,9 +18,10 @@ interface SubCheck : Check {
 
 open class CheckClass : Check
 
-// FILE: main.kt
+// MODULE: main(lib)
 // !JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
+// FILE: main.kt
 class SubCheckClass : CheckClass(), SubCheck
 
 fun box(): String {

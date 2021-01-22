@@ -1,4 +1,7 @@
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
+// WITH_REFLECT
+
 // MODULE: lib
 // FILE: A.kt
 

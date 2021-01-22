@@ -2,8 +2,8 @@
 // WITH_RUNTIME
 // JVM_TARGET: 1.8
 // MODULE: lib
-// FILE: 1.kt
 // !JVM_DEFAULT_MODE: disable
+// FILE: 1.kt
 
 interface Foo<T> {
     fun test(p: T) = p
@@ -13,8 +13,9 @@ interface Foo<T> {
 
 interface FooDerived: Foo<String>
 
-// FILE: main.kt
+// MODULE: main(lib)
 // !JVM_DEFAULT_MODE: all-compatibility
+// FILE: main.kt
 open class UnspecializedFromDerived : FooDerived
 
 fun box(): String {
