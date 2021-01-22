@@ -261,7 +261,7 @@ FILE fqName:<root> fileName:/MultiList.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List
-          public abstract fun <get-size> (): kotlin.Int declared in java.util.ArrayList
+          public abstract fun <get-size> (): kotlin.Int [fake_override] declared in java.util.ArrayList
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<E of kotlin.collections.List>
     FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:java.util.Collection<E of java.util.Collection>) returnType:@[FlexibleNullability] java.util.Spliterator<<root>.Some<T of <root>.SomeList>?> [fake_override]
       overridden:
@@ -471,7 +471,7 @@ FILE fqName:<root> fileName:/MultiList.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List
-          public abstract fun <get-size> (): kotlin.Int declared in java.util.ArrayList
+          public abstract fun <get-size> (): kotlin.Int [fake_override] declared in java.util.ArrayList
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<E of kotlin.collections.List>
     FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:java.util.Collection<E of java.util.Collection>) returnType:@[FlexibleNullability] java.util.Spliterator<<root>.Some<kotlin.String>?> [fake_override]
       overridden:

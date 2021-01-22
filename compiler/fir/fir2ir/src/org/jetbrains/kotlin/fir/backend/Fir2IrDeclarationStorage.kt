@@ -1065,7 +1065,7 @@ class Fir2IrDeclarationStorage(
                 val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
                     symbolTable.declareProperty(signature, { symbol }) {
                         val isFakeOverride =
-                            fir.isSubstitutionOverride &&
+                            fir.isSubstitutionOrIntersectionOverride &&
                                     firPropertySymbol.dispatchReceiverClassOrNull() !=
                                     firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                         Fir2IrLazyProperty(

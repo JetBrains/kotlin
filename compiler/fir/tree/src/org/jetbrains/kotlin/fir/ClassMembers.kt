@@ -32,6 +32,7 @@ var FirCallableDeclaration<*>.containingClassAttr: ConeClassLikeLookupTag? by Fi
 
 val FirCallableDeclaration<*>.isIntersectionOverride get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableDeclaration<*>.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
+val FirCallableDeclaration<*>.isSubstitutionOrIntersectionOverride get() = isSubstitutionOverride || isIntersectionOverride
 
 inline val <reified D : FirCallableDeclaration<*>> D.originalForSubstitutionOverride: D?
     get() = if (isSubstitutionOverride) originalForSubstitutionOverrideAttr else null
