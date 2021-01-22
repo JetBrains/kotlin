@@ -22,7 +22,7 @@ class BlackBoxCodegenSuppressor(testServices: TestServices) : AfterAnalysisCheck
     override val directives: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
-    override fun suppressIfNeeded(failedAssertions: List<AssertionError>): List<AssertionError> {
+    override fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> {
         val moduleStructure = testServices.moduleStructure
         val targetBackends = moduleStructure.modules.mapNotNull { it.targetBackend }
         return when (moduleStructure.modules.map { it.frontendKind }.first()) {
@@ -36,8 +36,8 @@ class BlackBoxCodegenSuppressor(testServices: TestServices) : AfterAnalysisCheck
         moduleStructure: TestModuleStructure,
         directive: ValueDirective<TargetBackend>,
         targetBackends: List<TargetBackend>,
-        failedAssertions: List<AssertionError>
-    ): List<AssertionError> {
+        failedAssertions: List<Throwable>
+    ): List<Throwable> {
         val ignoredBackends = moduleStructure.allDirectives[directive]
         if (ignoredBackends.isEmpty()) return failedAssertions
         val matchedBackend = ignoredBackends.intersect(targetBackends)
@@ -52,10 +52,10 @@ class BlackBoxCodegenSuppressor(testServices: TestServices) : AfterAnalysisCheck
 
 
     private fun processAssertions(
-        failedAssertions: List<AssertionError>,
+        failedAssertions: List<Throwable>,
         directive: ValueDirective<TargetBackend>,
         additionalMessage: String = ""
-    ): List<AssertionError> {
+    ): List<Throwable> {
         return if (failedAssertions.isNotEmpty()) emptyList()
         else {
             val message = buildString {

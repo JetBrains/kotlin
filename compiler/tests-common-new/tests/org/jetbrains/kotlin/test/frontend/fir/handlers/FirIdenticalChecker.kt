@@ -25,7 +25,7 @@ class FirIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(tes
         }
     }
 
-    override fun check(failedAssertions: List<AssertionError>) {
+    override fun check(failedAssertions: List<Throwable>) {
         if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         if (testDataFile.isFirTestData) {

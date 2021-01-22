@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.*
 import java.io.IOException
 
 class TestRunner(private val testConfiguration: TestConfiguration) {
-    private val failedAssertions = mutableListOf<AssertionError>()
+    private val failedAssertions = mutableListOf<Throwable>()
 
     fun runTest(@TestDataFile testDataFileName: String) {
         try {
@@ -79,9 +79,10 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         val filteredFailedAssertions = testConfiguration.afterAnalysisCheckers
-            .fold<AfterAnalysisChecker, List<AssertionError>>(failedAssertions) { assertions, checker ->
+            .fold<AfterAnalysisChecker, List<Throwable>>(failedAssertions) { assertions, checker ->
                 checker.suppressIfNeeded(assertions)
             }
+            .map { if (it is ExceptionFromTestError) it.cause else it }
 
         services.assertions.assertAll(filteredFailedAssertions)
     }
@@ -134,7 +135,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     private inline fun withAssertionCatching(insertExceptionInStart: Boolean = false, block: () -> Unit) {
         try {
             block()
-        } catch (e: AssertionError) {
+        } catch (e: Throwable) {
             if (insertExceptionInStart) {
                 failedAssertions.add(0, e)
             } else {

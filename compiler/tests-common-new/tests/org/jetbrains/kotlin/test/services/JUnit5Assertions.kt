@@ -51,7 +51,7 @@ object JUnit5Assertions : AssertionsService() {
         JUnit5PlatformAssertions.assertFalse(value, message?.invoke())
     }
 
-    override fun assertAll(exceptions: List<AssertionError>) {
+    override fun assertAll(exceptions: List<Throwable>) {
         exceptions.singleOrNull()?.let { throw it }
         JUnit5PlatformAssertions.assertAll(exceptions.map { Executable { throw it } })
     }

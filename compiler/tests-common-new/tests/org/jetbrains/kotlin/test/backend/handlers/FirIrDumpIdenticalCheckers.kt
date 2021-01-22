@@ -39,7 +39,7 @@ class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisCheck
         }
     }
 
-    override fun check(failedAssertions: List<AssertionError>) {
+    override fun check(failedAssertions: List<Throwable>) {
         if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         if (FIR_IDENTICAL in testServices.moduleStructure.allDirectives) {

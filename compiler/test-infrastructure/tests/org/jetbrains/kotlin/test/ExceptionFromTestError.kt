@@ -8,4 +8,7 @@ package org.jetbrains.kotlin.test
 class ExceptionFromTestError(cause: Throwable) : AssertionError(cause) {
     override val message: String
         get() = "Exception was thrown"
+
+    override val cause: Throwable
+        get() = super.cause!!
 }

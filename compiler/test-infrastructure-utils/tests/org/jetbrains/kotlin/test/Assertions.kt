@@ -44,7 +44,7 @@ abstract class Assertions {
         return collection.joinToString("\n")
     }
 
-    abstract fun assertAll(exceptions: List<AssertionError>)
+    abstract fun assertAll(exceptions: List<Throwable>)
 
     abstract fun fail(message: () -> String): Nothing
 }

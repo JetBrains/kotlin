@@ -12,7 +12,7 @@ abstract class AfterAnalysisChecker(protected val testServices: TestServices) {
     open val directives: List<DirectivesContainer>
         get() = emptyList()
 
-    open fun check(failedAssertions: List<AssertionError>) {}
+    open fun check(failedAssertions: List<Throwable>) {}
 
-    open fun suppressIfNeeded(failedAssertions: List<AssertionError>): List<AssertionError> = failedAssertions
+    open fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> = failedAssertions
 }

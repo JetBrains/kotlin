@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun suppressIfNeeded(failedAssertions: List<AssertionError>): List<AssertionError> {
+    override fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> {
         val testFile = testServices.moduleStructure.originalTestDataFiles.first()
         val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail")
         val exceptionFromFir = failedAssertions.firstOrNull { it is ExceptionFromTestError }
