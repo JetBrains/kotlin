@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.CONSTRUCTOR_CALL_NORMALIZATION_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.DirectiveToConfigurationKeyExtractor
 import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -43,6 +47,12 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::CompiledClassesManager))
+
+    override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
+        register(STRING_CONCAT, JVMConfigurationKeys.STRING_CONCAT)
+        register(ASSERTIONS_MODE, JVMConfigurationKeys.ASSERTIONS_MODE)
+        register(CONSTRUCTOR_CALL_NORMALIZATION_MODE, JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE)
+    }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return

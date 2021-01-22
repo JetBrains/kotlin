@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+// ASSERTIONS_MODE: jvm
 // WITH_RUNTIME
 
 // If assertions are disabled, neither argument to assert should be evaluated.

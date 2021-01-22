@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.config.JVMAssertionsMode
+import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
+import org.jetbrains.kotlin.config.JvmStringConcat
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
+    @Suppress("RemoveExplicitTypeArguments")
     val JVM_TARGET by enumDirective<JvmTarget>(
         description = "Target bytecode version",
         additionalParser = JvmTarget.Companion::fromString
@@ -34,4 +38,22 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
     val USE_JAVAC by directive("Enable javac integration")
     val SKIP_JAVA_SOURCES by directive("Don't add java sources to compile classpath")
+
+    @Suppress("RemoveExplicitTypeArguments")
+    val STRING_CONCAT by enumDirective<JvmStringConcat>(
+        description = "Configure mode of string concatenation",
+        additionalParser = JvmStringConcat.Companion::fromString
+    )
+
+    @Suppress("RemoveExplicitTypeArguments")
+    val ASSERTIONS_MODE by enumDirective<JVMAssertionsMode>(
+        description = "Configure jvm assertions mode",
+        additionalParser = JVMAssertionsMode.Companion::fromString
+    )
+
+    @Suppress("RemoveExplicitTypeArguments")
+    val CONSTRUCTOR_CALL_NORMALIZATION_MODE by enumDirective<JVMConstructorCallNormalizationMode>(
+        description = "Configure jvm constructor call normalization mode",
+        additionalParser = JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
+    )
 }
