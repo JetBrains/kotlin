@@ -120,8 +120,12 @@ abstract class KtSymbolBasedDeclarationDescriptor(val context: KtSymbolBasedCont
 
         val containerSymbol = with(context.ktAnalysisSession) {
             (ktSymbol as KtSymbolWithKind).getContainingSymbol()
-        } ?: error("ContainerSymbol not found for $ktSymbol")
-        return containerSymbol.toDeclarationDescriptor(context)
+        }
+        if (containerSymbol != null)
+            return containerSymbol.toDeclarationDescriptor(context)
+
+        // i.e. declaration is top-level
+        return KtSymbolBasedPackageFragmentDescriptor(getPackageFqNameIfTopLevel(), context)
     }
 
     protected abstract fun getPackageFqNameIfTopLevel(): FqName
@@ -275,7 +279,7 @@ abstract class KtSymbolBasedFunctionLikeDescriptor(context: KtSymbolBasedContext
     override fun getReturnType(): KotlinType = ktSymbol.annotatedType.toKotlinType(context)
 
     override fun getValueParameters(): List<ValueParameterDescriptor> = ktSymbol.valueParameters.mapIndexed { index, it ->
-        KtSymbolBasedValueParameterDescriptor(it, context, index)
+        KtSymbolBasedValueParameterDescriptor(it, context,this, index)
     }
 
     override fun hasStableParameterNames(): Boolean = implementationPostponed()
@@ -286,7 +290,6 @@ abstract class KtSymbolBasedFunctionLikeDescriptor(context: KtSymbolBasedContext
 
     override fun getOriginal(): FunctionDescriptor = this
 
-    override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = context.incorrectImplementation { emptyList() }
     override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean = implementationPostponed()
 
     override fun getInitialSignatureDescriptor(): FunctionDescriptor? = noImplementation()
@@ -319,13 +322,23 @@ class KtSymbolBasedFunctionDescriptor(override val ktSymbol: KtFunctionSymbol, c
     override fun isInfix(): Boolean = implementationPostponed()
     override fun isTailrec(): Boolean = implementationPostponed()
 
-    override fun isExpect(): Boolean = implementationPostponed()
-    override fun isActual(): Boolean = implementationPostponed()
+    override fun isExpect(): Boolean = context.incorrectImplementation { false }
+    override fun isActual(): Boolean = context.incorrectImplementation { false }
 
     override fun getVisibility(): DescriptorVisibility = ktSymbol.visibility.toDescriptorVisibility()
     override fun getModality(): Modality = ktSymbol.modality.toDescriptorModality()
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> = getTypeParameters(ktSymbol)
+
+
+    override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> {
+        val overriddenKtSymbols = context.withAnalysisSession {
+            val containingSymbol = ktSymbol.getContainingSymbol().safeAs<KtClassOrObjectSymbol>() ?: return emptyList()
+            ktSymbol.getOverriddenSymbols(containingSymbol)
+        }
+
+        return overriddenKtSymbols.map { KtSymbolBasedFunctionDescriptor(it as KtFunctionSymbol, context) }
+    }
 
     override fun copy(
         newOwner: DeclarationDescriptor?,
@@ -376,6 +389,8 @@ class KtSymbolBasedConstructorDescriptor(
 
     override fun getOriginal(): ClassConstructorDescriptor = this
 
+    override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList()
+
     override fun copy(
         newOwner: DeclarationDescriptor,
         modality: Modality,
@@ -411,6 +426,8 @@ class KtSymbolBasedAnonymousFunctionDescriptor(
     // it doesn't seems like isSuspend are used in FIR for anonymous functions, but it used in FIR2IR so if we really need that
     // we could implement that later
     override fun isSuspend(): Boolean = implementationPostponed()
+
+    override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList()
 
     override fun copy(
         newOwner: DeclarationDescriptor?,
@@ -464,7 +481,8 @@ private class KtSymbolStubDispatchReceiverParameterDescriptor(
 class KtSymbolBasedValueParameterDescriptor(
     override val ktSymbol: KtParameterSymbol,
     context: KtSymbolBasedContext,
-    index: Int = -1
+    val containingDeclaration: KtSymbolBasedFunctionLikeDescriptor,
+    index: Int = -1,
 ) : KtSymbolBasedDeclarationDescriptor(context), KtSymbolBasedNamed, ValueParameterDescriptor {
     override val index: Int
 
@@ -472,7 +490,7 @@ class KtSymbolBasedValueParameterDescriptor(
         if (index != -1) {
             this.index = index
         } else {
-            val containerSymbol = (containingDeclaration as KtSymbolBasedFunctionLikeDescriptor).ktSymbol
+            val containerSymbol = containingDeclaration.ktSymbol
             this.index = containerSymbol.valueParameters.indexOfFirst {
                 it === ktSymbol
             }
@@ -498,7 +516,7 @@ class KtSymbolBasedValueParameterDescriptor(
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
 
     override fun getType(): KotlinType = ktSymbol.annotatedType.toKotlinType(context)
-    override fun getContainingDeclaration(): CallableDescriptor = super.getContainingDeclaration() as CallableDescriptor
+    override fun getContainingDeclaration(): CallableDescriptor = containingDeclaration
     override fun getPackageFqNameIfTopLevel(): FqName = error("Couldn't be top-level")
 
     override fun declaresDefaultValue(): Boolean = ktSymbol.hasDefaultValue
@@ -514,8 +532,9 @@ class KtSymbolBasedValueParameterDescriptor(
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor =
         context.noImplementation()
 
-    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> =
-        implementationPostponed()
+    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> {
+        return containingDeclaration.overriddenDescriptors.map { valueParameters[index] }
+    }
 
     override val isCrossinline: Boolean
         get() = implementationPostponed()
@@ -533,6 +552,7 @@ class KtSymbolBasedValueParameterDescriptor(
     }
 
     override fun hashCode(): Int = containingDeclaration.hashCode() * 37 + index
+
 }
 
 class KtSymbolBasedPropertyDescriptor(

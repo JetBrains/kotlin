@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.idea.frontend.old.binding
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -31,17 +30,20 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.LinkedHashMap
 
-private fun FirExpression?.toExpressionReceiverValue(context: KtSymbolBasedContext): ExpressionReceiver? {
+private fun FirExpression?.toExpressionReceiverValue(context: KtSymbolBasedContext): ReceiverValue? {
+    if (this == null) return null
+
     val firSymbolBuilder = (context.ktAnalysisSession as KtFirAnalysisSession).firSymbolBuilder
 
-    if (this == null) return null
+    if (this is FirThisReceiverExpression) {
+        val ktClassSymbol = firSymbolBuilder.buildClassLikeSymbol(calleeReference.boundSymbol?.fir as FirClassLikeDeclaration<*>)
+        return ImplicitClassReceiver(ktClassSymbol.toDeclarationDescriptor(context) as ClassDescriptor)
+    }
     val expression = realPsi.safeAs<KtExpression>() ?: context.implementationPostponed()
     return ExpressionReceiver.create(
         expression,
@@ -105,7 +107,7 @@ class FirWrapperResolvedCall(val firSimpleWrapperCall: FirSimpleWrapperCall) : R
     override fun getExtensionReceiver(): ReceiverValue? {
         if (firCall.extensionReceiver === FirNoReceiverExpression) return null
 
-        return firCall.explicitReceiver.toExpressionReceiverValue(context)
+        return firCall.extensionReceiver.toExpressionReceiverValue(context)
     }
 
     override fun getDispatchReceiver(): ReceiverValue? {

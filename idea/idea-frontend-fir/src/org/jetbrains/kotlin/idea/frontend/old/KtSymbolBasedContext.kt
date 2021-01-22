@@ -49,11 +49,17 @@ fun KtSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext): Declaration
     when (this) {
         is KtClassOrObjectSymbol -> KtSymbolBasedClassDescriptor(this, context)
         is KtFunctionLikeSymbol -> toDeclarationDescriptor(context)
-        is KtParameterSymbol -> KtSymbolBasedValueParameterDescriptor(this, context)
+        is KtParameterSymbol -> {
+            val containingSymbol = context.withAnalysisSession { this@toDeclarationDescriptor.getContainingSymbol() }
+            check(containingSymbol is KtFunctionLikeSymbol) {
+                "Unexpected containing symbol = $containingSymbol"
+            }
+            KtSymbolBasedValueParameterDescriptor(this, context, containingSymbol.toDeclarationDescriptor(context))
+        }
         else -> context.implementationPlanned()
     }
 
-fun KtFunctionLikeSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext): FunctionDescriptor =
+fun KtFunctionLikeSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext): KtSymbolBasedFunctionLikeDescriptor =
     when (this) {
         is KtFunctionSymbol -> KtSymbolBasedFunctionDescriptor(this, context)
         is KtAnonymousFunctionSymbol -> KtSymbolBasedAnonymousFunctionDescriptor(this, context)
@@ -65,7 +71,7 @@ fun KtFunctionLikeSymbol.toDeclarationDescriptor(context: KtSymbolBasedContext):
         else -> error("Unexpected kind of KtFunctionLikeSymbol: ${this.javaClass}")
     }
 
-fun <R> KtSymbolBasedContext.withAnalysisSession(f: KtAnalysisSession.() -> R): R = f(ktAnalysisSession)
+inline fun <R> KtSymbolBasedContext.withAnalysisSession(f: KtAnalysisSession.() -> R): R = f(ktAnalysisSession)
 
 class KtSymbolBasedContextImpl(
     val project: Project,
