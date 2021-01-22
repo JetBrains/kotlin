@@ -133,7 +133,25 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     actual override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
 
     override fun toString() = arrayToString(array)
-    override fun toArray(): Array<Any?> = js("[]").slice.call(array)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> toArray(array: Array<T>): Array<T> {
+        if (array.size < size) {
+            return toArray() as Array<T>
+        }
+
+        (this.array as Array<T>).copyInto(array)
+
+        if (array.size > size) {
+            array[size] = null as T // null-terminate
+        }
+
+        return array
+    }
+
+    override fun toArray(): Array<Any?> {
+        return js("[]").slice.call(array)
+    }
 
 
     internal override fun checkIsMutable() {

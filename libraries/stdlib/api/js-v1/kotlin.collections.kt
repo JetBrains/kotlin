@@ -10519,6 +10519,10 @@ public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
     public open override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open override operator fun set(index: kotlin.Int, element: E): E
+
+    protected open override fun toArray(): kotlin.Array<kotlin.Any?>
+
+    protected open override fun <T> toArray(array: kotlin.Array<T>): kotlin.Array<T>
 }
 
 public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotlin.collections.MutableList<E>, kotlin.collections.RandomAccess {
@@ -10557,6 +10561,8 @@ public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotl
     public open override operator fun set(index: kotlin.Int, element: E): E
 
     protected open override fun toArray(): kotlin.Array<kotlin.Any?>
+
+    protected open override fun <T> toArray(array: kotlin.Array<T>): kotlin.Array<T>
 
     public open override fun toString(): kotlin.String
 

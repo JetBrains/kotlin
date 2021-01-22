@@ -130,13 +130,25 @@ internal class ListBuilder<E> private constructor(
         return ListBuilder(array, offset + fromIndex, toIndex - fromIndex, isReadOnly, this, root ?: this)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun ensureCapacity(minCapacity: Int) {
-        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
-        if (minCapacity > array.size) {
-            val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
-            array = array.copyOfUninitializedElements(newSize)
+    override fun <T> toArray(destination: Array<T>): Array<T> {
+        if (destination.size < length) {
+            return java.util.Arrays.copyOfRange(array, offset, offset + length, destination.javaClass)
         }
+
+        @Suppress("UNCHECKED_CAST")
+        (array as Array<T>).copyInto(destination, 0, startIndex = offset, endIndex = offset + length)
+
+        if (destination.size > length) {
+            @Suppress("UNCHECKED_CAST")
+            destination[length] = null as T // null-terminate
+        }
+
+        return destination
+    }
+
+    override fun toArray(): Array<Any?> {
+        @Suppress("UNCHECKED_CAST")
+        return array.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<Any?>
     }
 
     override fun equals(other: Any?): Boolean {
@@ -153,6 +165,14 @@ internal class ListBuilder<E> private constructor(
     }
 
     // ---------------------------- private ----------------------------
+
+    private fun ensureCapacity(minCapacity: Int) {
+        if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
+        if (minCapacity > array.size) {
+            val newSize = ArrayDeque.newCapacity(array.size, minCapacity)
+            array = array.copyOfUninitializedElements(newSize)
+        }
+    }
 
     private fun checkIsMutable() {
         if (isReadOnly || root != null && root.isReadOnly) throw UnsupportedOperationException()
