@@ -882,7 +882,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val asmReturnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
 
-        val parametersInfo = method.getParametersInfo(containingClass, isInner)
+        val parametersInfo = method.getParametersInfo(containingClass, isInner, descriptor)
 
         if (!checkIfValidTypeName(containingClass, asmReturnType)
             || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }
