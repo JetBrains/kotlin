@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.annotation.Repeatable;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;

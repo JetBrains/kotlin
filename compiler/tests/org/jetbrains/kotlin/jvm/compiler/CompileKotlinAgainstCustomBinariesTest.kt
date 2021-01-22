@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.WrongBytecodeVersionTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.inline.remove
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
@@ -102,7 +102,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = transformJar(
             compileLibrary(libraryName, additionalOptions = listOf("-Xmetadata-version=42.0.0")),
             { _, bytes ->
-                WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { fieldName, value ->
+                transformMetadataInClassFile(bytes) { fieldName, value ->
                     additionalTransformation?.invoke(fieldName, value)
                 }
             }
