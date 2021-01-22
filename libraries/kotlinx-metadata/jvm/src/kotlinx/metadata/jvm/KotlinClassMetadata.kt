@@ -68,10 +68,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             ): Class {
                 checkMetadataVersion(metadataVersion)
                 val (d1, d2) = writeProtoBufData(t.build(), c)
-                val metadata = KotlinClassHeader(
-                    KotlinClassHeader.CLASS_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
-                    d1, d2, null, null, extraInt
-                )
+                val metadata = KotlinClassHeader(KotlinClassHeader.CLASS_KIND, metadataVersion, d1, d2, null, null, extraInt)
                 return Class(metadata)
             }
         }
@@ -122,10 +119,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             ): FileFacade {
                 checkMetadataVersion(metadataVersion)
                 val (d1, d2) = writeProtoBufData(t.build(), c)
-                val metadata = KotlinClassHeader(
-                    KotlinClassHeader.FILE_FACADE_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
-                    d1, d2, null, null, extraInt
-                )
+                val metadata = KotlinClassHeader(KotlinClassHeader.FILE_FACADE_KIND, metadataVersion, d1, d2, null, null, extraInt)
                 return FileFacade(metadata)
             }
         }
@@ -197,10 +191,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 val (d1, d2) =
                     if (proto != null) writeProtoBufData(proto, c)
                     else Pair(emptyArray(), emptyArray())
-                val metadata = KotlinClassHeader(
-                    KotlinClassHeader.SYNTHETIC_CLASS_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
-                    d1, d2, null, null, extraInt
-                )
+                val metadata = KotlinClassHeader(KotlinClassHeader.SYNTHETIC_CLASS_KIND, metadataVersion, d1, d2, null, null, extraInt)
                 return SyntheticClass(metadata)
             }
         }
@@ -238,7 +229,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             ): MultiFileClassFacade {
                 checkMetadataVersion(metadataVersion)
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND, metadataVersion,
                     partClassNames.toTypedArray(), null, null, null, extraInt
                 )
                 return MultiFileClassFacade(metadata)
@@ -303,8 +294,7 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
                 checkMetadataVersion(metadataVersion)
                 val (d1, d2) = writeProtoBufData(t.build(), c)
                 val metadata = KotlinClassHeader(
-                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND, metadataVersion, KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
-                    d1, d2, facadeClassName, null, extraInt
+                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND, metadataVersion, d1, d2, facadeClassName, null, extraInt
                 )
                 return MultiFileClassPart(metadata)
             }
