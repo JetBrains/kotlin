@@ -12293,6 +12293,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 public void testSubstitutionIntoInnerClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/substitutionIntoInnerClass.kt");
                 }
+
+                @TestMetadata("substitutionOfTypeEnhancement.kt")
+                public void testSubstitutionOfTypeEnhancement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/substitutionOfTypeEnhancement.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/upperBounds")
@@ -17829,6 +17834,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
 
                 public void testAllFilesPresentInTypeEnhancement() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("buildFlexibleEnhancement.kt")
+                public void testBuildFlexibleEnhancement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/buildFlexibleEnhancement.kt");
                 }
 
                 @TestMetadata("overriddenExtensions.kt")
