@@ -182,7 +182,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         val ref = call(
                 context.llvm.kRefSharedHolderRef,
                 listOf(srcRefHolder),
-                exceptionHandler = ExceptionHandler.Caller,
+                exceptionHandler = ExceptionHandler.Caller(),
                 verbatim = true
         )
 
@@ -239,7 +239,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val kotlinObject = call(
                     context.llvm.kRefSharedHolderRef,
                     listOf(structGep(blockPtr, 1)),
-                    exceptionHandler = ExceptionHandler.Caller,
+                    exceptionHandler = ExceptionHandler.Caller(),
                     verbatim = true
             )
 
