@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -103,6 +104,8 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
             name = declaration.name
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }
+
+        context.additionalExportedDeclarations.add(exportedDefaultStubFun)
 
         exportedDefaultStubFun.returnType = declaration.returnType.remapTypeParameters(declaration, exportedDefaultStubFun)
         exportedDefaultStubFun.parent = declaration.parent

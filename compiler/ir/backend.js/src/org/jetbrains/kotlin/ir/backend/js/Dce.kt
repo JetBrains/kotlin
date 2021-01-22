@@ -413,7 +413,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
         reachabilityInfo.forEach(::println)
     }
 
-    return result
+    return result + context.additionalExportedDeclarations
 }
 
 private fun Collection<IrClass>.filterDescendantsOf(bases: Collection<IrClass>): Collection<IrClass> {
