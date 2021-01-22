@@ -20859,6 +20859,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("buildFlexibleEnhancement.kt")
+                public void testBuildFlexibleEnhancement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/buildFlexibleEnhancement.kt");
+                }
+
+                @Test
                 @TestMetadata("overriddenExtensions.kt")
                 public void testOverriddenExtensions() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/overriddenExtensions.kt");
