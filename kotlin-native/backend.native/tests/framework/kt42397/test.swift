@@ -7,6 +7,7 @@ class Results {
 
 func runTestKt42397(pointer: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer? {
     autoreleasepool {
+        KnlibraryKt.enableMemoryChecker()
         let results = pointer.bindMemory(to: Results.self, capacity: 1).pointee
         results.aFoo = A().foo()
         results.bFoo = B.Companion().foo()

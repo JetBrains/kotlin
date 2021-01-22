@@ -6,6 +6,8 @@ int main() {
     auto t = std::thread([] {
         auto lib = testlib_symbols();
 
+        lib->kotlin.root.knlibrary.enableMemoryChecker();
+
         // Initialize A and B.Companion and get their stable pointers.
         auto a = lib->kotlin.root.knlibrary.A._instance();
         auto bCompanion = lib->kotlin.root.knlibrary.B.Companion._instance();

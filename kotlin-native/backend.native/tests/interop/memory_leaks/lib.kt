@@ -4,6 +4,11 @@
  */
 
 import kotlinx.cinterop.*
+import kotlin.native.Platform
+
+fun enableMemoryChecker() {
+    Platform.isMemoryLeakCheckerActive = true
+}
 
 fun leakMemory() {
     StableRef.create(Any())

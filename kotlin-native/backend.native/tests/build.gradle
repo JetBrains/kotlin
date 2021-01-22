@@ -783,9 +783,7 @@ task array_to_any(type: KonanLocalTest) {
 }
 
 standaloneTest("runtime_basic_init") {
-    disabled = (project.testTarget == 'wasm32') // -g not yet properly works for WASM.
     source = "runtime/basic/init.kt"
-    flags = ['-g']
     expectedExitStatus = 0
 }
 
@@ -941,20 +939,6 @@ standaloneTest("cleaner_in_main_without_checker") {
     goldValue = ""
 }
 
-standaloneTest("cleaner_leak_release") {
-    enabled = !project.globalTestArgs.contains('-g') && (project.testTarget != 'wasm32') // Cleaners need workers
-    source = "runtime/basic/cleaner_leak.kt"
-    goldValue = ""
-}
-
-standaloneTest("cleaner_leak_debug") {
-    enabled = !project.globalTestArgs.contains('-opt') && (project.testTarget != 'wasm32') // Cleaners need workers
-    source = "runtime/basic/cleaner_leak.kt"
-    flags = ['-g']
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
-}
-
 standaloneTest("cleaner_leak_without_checker") {
     enabled = (project.testTarget != 'wasm32') // Cleaners need workers
     source = "runtime/basic/cleaner_leak_without_checker.kt"
@@ -1066,9 +1050,8 @@ task worker11(type: KonanLocalTest) {
 }
 
 standaloneTest("worker_threadlocal_no_leak") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
+    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
-    flags = ['-g']
 }
 
 task freeze0(type: KonanLocalTest) {
@@ -1168,17 +1151,15 @@ task enumIdentity(type: KonanLocalTest) {
 }
 
 standaloneTest("leakWorker") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
+    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
     source = "runtime/workers/leak_worker.kt"
-    flags = ['-g']
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Unfinished workers detected, 1 workers leaked!") }
 }
 
 standaloneTest("leakMemoryWithWorkerTermination") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
+    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
     source = "runtime/workers/leak_memory_with_worker_termination.kt"
-    flags = ['-g']
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }
@@ -2965,7 +2946,6 @@ standaloneTest("cycle_detector") {
 
 standaloneTest("cycle_collector") {
     disabled = true // Needs USE_CYCLIC_GC, which is disabled.
-    flags = ['-g']
     source = "runtime/memory/cycle_collector.kt"
 }
 
@@ -2975,9 +2955,14 @@ standaloneTest("cycle_collector_deadlock1") {
 }
 
 standaloneTest("leakMemory") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     source = "runtime/memory/leak_memory.kt"
-    flags = ['-g']
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+}
+
+standaloneTest("leakMemoryWithTestRunner") {
+    source = "runtime/memory/leak_memory_test_runner.kt"
+    flags = ['-tr']
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }
@@ -4084,17 +4069,13 @@ interopTest("interop_kt43265") {
 }
 
 interopTest("interop_leakMemoryWithRunningThreadUnchecked") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     interop = 'leakMemoryWithRunningThread'
     source = "interop/leakMemoryWithRunningThread/unchecked.kt"
-    flags = ['-g']
 }
 
 interopTest("interop_leakMemoryWithRunningThreadChecked") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     interop = 'leakMemoryWithRunningThread'
     source = "interop/leakMemoryWithRunningThread/checked.kt"
-    flags = ['-g']
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
 }
@@ -4192,7 +4173,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         goldValue = "OK\n"
         source = "interop/objc_with_initializer/objc_test.kt"
         interop = 'objcMisc'
-        flags = ['-g']
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4395,11 +4375,10 @@ dynamicTest("interop_concurrentRuntime") {
 }
 
 dynamicTest("interop_kt42397") {
-    disabled = project.target.name != project.hostName || project.globalTestArgs.contains('-opt')
+    disabled = project.target.name != project.hostName
     source = "interop/kt42397/knlibrary.kt"
     cSource = "$projectDir/interop/kt42397/test.cpp"
     clangTool = "clang++"
-    flags = ['-g']
 }
 
 dynamicTest("interop_cleaners_main_thread") {
@@ -4447,12 +4426,11 @@ dynamicTest("interop_migrating_main_thread") {
 }
 
 dynamicTest("interop_memory_leaks") {
-    disabled = (project.target.name != project.hostName) ||
-            project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    disabled = (project.target.name != project.hostName)
     source = "interop/memory_leaks/lib.kt"
     cSource = "$projectDir/interop/memory_leaks/main.cpp"
     clangTool = "clang++"
-    flags = ['-g', '-Xdestroy-runtime-mode=legacy'] // Runtime cannot be destroyed with interop with on-shutdown.
+    flags = ['-Xdestroy-runtime-mode=legacy'] // Runtime cannot be destroyed with interop with on-shutdown.
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }
@@ -4732,7 +4710,6 @@ if (isAppleTarget(project)) {
         enabled = !project.globalTestArgs.contains('-opt')
         framework("Kt42397") {
             sources = ['framework/kt42397']
-            opts = ['-g']
         }
         swiftSources = ['framework/kt42397']
     }
