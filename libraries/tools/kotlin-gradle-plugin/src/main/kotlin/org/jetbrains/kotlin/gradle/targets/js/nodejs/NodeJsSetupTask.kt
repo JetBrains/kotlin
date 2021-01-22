@@ -17,7 +17,12 @@ open class NodeJsSetupTask : DefaultTask() {
     private val settings = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.requireConfigured() }
     private val fs = services.get(FileSystemOperations::class.java)
-    private val archives = services.get(ArchiveOperations::class.java)
+    private val archives: Any? = try {
+        services.get(ArchiveOperations::class.java)
+    } catch (e: NoClassDefFoundError) {
+        // Gradle version < 6.6
+        null
+    }
 
     val ivyDependency: String
         @Input get() = env.ivyDependency
@@ -84,12 +89,22 @@ open class NodeJsSetupTask : DefaultTask() {
 
         when {
             archive.name.endsWith("zip") -> fs.copy {
-                it.from(archives.zipTree(archive))
+                val from = if (archives != null) {
+                    (archives as ArchiveOperations).zipTree(archive)
+                } else {
+                    project.zipTree(archive)
+                }
+                it.from(from)
                 it.into(destination)
             }
             else -> {
                 fs.copy {
-                    it.from(archives.tarTree(archive))
+                    val from = if (archives != null) {
+                        (archives as ArchiveOperations).tarTree(archive)
+                    } else {
+                        project.tarTree(archive)
+                    }
+                    it.from(from)
                     it.into(destination)
                 }
             }

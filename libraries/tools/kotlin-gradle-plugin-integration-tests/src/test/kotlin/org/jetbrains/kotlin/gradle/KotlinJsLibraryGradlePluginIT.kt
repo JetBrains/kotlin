@@ -16,6 +16,9 @@ class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
             jsCompilerType = KotlinJsCompilerType.IR
         )
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("6.0")
+
     @Test
     fun testSimpleJsBinaryLibrary() {
         val project = Project("simple-js-library")

@@ -14,7 +14,7 @@ import org.junit.Test
 class CleanDataTaskIT : BaseGradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("5.5.1")
+        get() = GradleVersionRequired.AtLeast("6.0")
 
     @Test
     fun testDownloadedFolderDeletion() {

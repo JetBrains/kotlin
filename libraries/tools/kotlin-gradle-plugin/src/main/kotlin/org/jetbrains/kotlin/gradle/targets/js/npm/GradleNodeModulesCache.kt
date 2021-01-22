@@ -15,15 +15,23 @@ import java.io.File
  * Cache for storing already created [GradleNodeModule]s
  */
 internal class GradleNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
-    private val fs = (nodeJs.rootProject as ProjectInternal).services.get(FileSystemOperations::class.java)
-    private val archiveOperations = (nodeJs.rootProject as ProjectInternal).services.get(ArchiveOperations::class.java)
+    @Transient
+    private val project = nodeJs.rootProject
+
+    private val fs = (project as ProjectInternal).services.get(FileSystemOperations::class.java)
+    private val archiveOperations: Any? = try {
+        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
+    } catch (e: NoClassDefFoundError) {
+        // Gradle version < 6.6
+        null
+    }
 
     override fun buildImportedPackage(
         name: String,
         version: String,
         file: File
     ): File? {
-        val module = GradleNodeModuleBuilder(fs, archiveOperations, name, version, listOf(file), dir)
+        val module = GradleNodeModuleBuilder(project, fs, archiveOperations, name, version, listOf(file), dir)
         module.visitArtifacts()
         return module.rebuild()
     }
