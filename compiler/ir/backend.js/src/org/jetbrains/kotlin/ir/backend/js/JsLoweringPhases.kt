@@ -185,6 +185,12 @@ private val stripTypeAliasDeclarationsPhase = makeDeclarationTransformerPhase(
     description = "Strip typealias declarations"
 )
 
+private val jsCodeOutliningPhase = makeBodyLoweringPhase(
+    ::JsCodeOutliningLowering,
+    name = "JsCodeOutliningLowering",
+    description = "Outline js() calls where JS code references Kotlin locals"
+)
+
 private val arrayConstructorPhase = makeBodyLoweringPhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
@@ -713,6 +719,7 @@ private val loweringList = listOf<Lowering>(
     validateIrBeforeLowering,
     expectDeclarationsRemovingPhase,
     stripTypeAliasDeclarationsPhase,
+    jsCodeOutliningPhase,
     arrayConstructorPhase,
     lateinitNullableFieldsPhase,
     lateinitDeclarationLoweringPhase,
