@@ -824,18 +824,18 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    import my.test.lib.*
 
                    var bar = 0
-                   var doRecompose: () -> Unit = {}
+                   var scope: RecomposeScope? = null
 
                    class TestF {
                        @Composable
                        fun compose() {
-                         doRecompose = invalidate
+                         scope = currentRecomposeScope
                          Foo(bar)
                        }
 
                        fun advance() {
                          bar++
-                         doRecompose()
+                         scope?.invalidate()
                        }
                    }
 
