@@ -87,7 +87,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private val moduleName: String,
     val languageVersionSettings: LanguageVersionSettings,
     private val useOldInlineClassesManglingScheme: Boolean,
-    private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
@@ -845,8 +844,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         skipGenericSignature: Boolean,
         hasSpecialBridge: Boolean
     ): JvmMethodGenericSignature {
-        checkOwnerCompatibility(f)
-
         val sw = if (skipGenericSignature || f is AccessorForCallableDescriptor<*>)
             JvmSignatureWriter()
         else
@@ -966,15 +963,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
             // and to `invokevirtual (...)Ljava/lang/Object;` in an expression context.
             expression.isUsedAsExpression(bindingContext) -> null to OBJECT_TYPE
             else -> null to Type.VOID_TYPE
-        }
-    }
-
-    private fun checkOwnerCompatibility(descriptor: FunctionDescriptor) {
-        val ownerClass = descriptor.getContainingKotlinJvmBinaryClass() ?: return
-
-        val version = ownerClass.classHeader.bytecodeVersion
-        if (!version.isCompatible()) {
-            incompatibleClassTracker.record(ownerClass)
         }
     }
 

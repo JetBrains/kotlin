@@ -405,10 +405,6 @@ object KotlinToJVMBytecodeCompiler {
                 environment.messageCollector
             )
 
-            AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
-                generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
-            )
-
             performanceManager?.notifyIRGenerationFinished()
             performanceManager?.notifyGenerationFinished()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -605,10 +601,6 @@ object KotlinToJVMBytecodeCompiler {
                 result.bindingContext.diagnostics
             ),
             environment.messageCollector
-        )
-
-        AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
-            generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
         )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
