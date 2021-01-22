@@ -1,8 +1,10 @@
+// TARGET_BACKEND: JVM
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
 // WITH_REFLECT
 
 // FILE: A.kt
+// KOTLIN_CONFIGURATION_FLAGS: +JVM.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 package a
 
 import kotlin.reflect.jvm.isAccessible
