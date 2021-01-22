@@ -9,7 +9,7 @@ class Box(val value: String) {
     internal fun result(): String = value
 }
 
-// MODULE: main(lib)
+// MODULE: main()(lib)
 // FILE: B.kt
 
 fun box(): String {

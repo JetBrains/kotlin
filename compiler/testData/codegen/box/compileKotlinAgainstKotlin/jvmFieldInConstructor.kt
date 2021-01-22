@@ -11,7 +11,7 @@ open class A(@JvmField public val publicField: String = "1",
 
 open class B : A()
 
-// MODULE: main(lib)
+// MODULE: main()(lib)
 // FILE: B.kt
 
 open class C : B() {

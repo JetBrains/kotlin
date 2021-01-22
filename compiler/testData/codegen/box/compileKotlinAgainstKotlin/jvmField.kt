@@ -15,7 +15,7 @@ open class B : A() {
 
 }
 
-// MODULE: main(lib)
+// MODULE: main()(lib)
 // FILE: B.kt
 
 open class C : B() {

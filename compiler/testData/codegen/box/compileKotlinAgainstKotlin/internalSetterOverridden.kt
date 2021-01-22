@@ -9,7 +9,7 @@ class Derived: Base() {
     override var x: String = "Z"
 }
 
-// MODULE: main(lib)
+// MODULE: main()(lib)
 // FILE: B.kt
 fun box(): String {
     val d = Derived()
