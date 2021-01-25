@@ -33,7 +33,7 @@ class TasksRequirements {
             .filterIsInstance<NpmDependency>()
             .toMutableSet()
 
-        val compilation = task.compilation.name
+        val compilation = task.compilation.disambiguatedName
         if (compilation in byCompilation) {
             byCompilation[compilation]!!.addAll(requiredNpmDependencies.map { it.toDeclaration() })
         } else {
