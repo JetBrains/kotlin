@@ -28,7 +28,11 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
         )
         try {
             val allGeneratedFiles = factory1.asList() + factory2.asList()
-            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), files)
+            InlineTestUtil.checkNoCallsToInline(
+                allGeneratedFiles.filterClassFiles(),
+                skipParameterCheckingInDirectives = files.any { "NO_CHECK_LAMBDA_INLINING" in it.directives },
+                skippedMethods = files.flatMapTo(mutableSetOf()) { it.directives.listValues("SKIP_INLINE_CHECK_IN") ?: emptyList() }
+            )
             SMAPTestUtil.checkSMAP(files, allGeneratedFiles.filterClassFiles(), true)
         } catch (e: Throwable) {
             if (!isIgnored) {
