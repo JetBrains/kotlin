@@ -12,12 +12,17 @@ import kotlin.reflect.KClass
 class CheckersConfigurator {
     private val registeredAliases: MutableMap<KClass<*>, String> = LinkedHashMap()
     private val additionalCheckers: MutableMap<String, String> = LinkedHashMap()
+    private val typeArguments: MutableMap<KClass<*>, String> = mutableMapOf()
 
     inline fun <reified T : FirElement> alias(name: String) {
         alias(T::class, name)
     }
 
     fun alias(kClass: KClass<out FirElement>, name: String) {
+        if (kClass.typeParameters.isNotEmpty()) {
+            val typeArgument = kClass.typeParameters.joinToString(", ", "<", ">") { "*" }
+            typeArguments[kClass] = typeArgument
+        }
         val realName = name.takeIf { it.startsWith("Fir") } ?: "Fir$name"
         registeredAliases[kClass] = realName
     }
@@ -27,7 +32,7 @@ class CheckersConfigurator {
     }
 
     fun build(): CheckersConfiguration {
-        return CheckersConfiguration(registeredAliases, additionalCheckers)
+        return CheckersConfiguration(registeredAliases, additionalCheckers, typeArguments)
     }
 }
 
