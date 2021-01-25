@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
+import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -38,18 +40,22 @@ class ExternalDependenciesGenerator(
          */
         var unbound = setOf<IrSymbol>()
         lateinit var prevUnbound: Set<IrSymbol>
-        do {
-            prevUnbound = unbound
-            unbound = symbolTable.allUnbound
+        try {
+            do {
+                prevUnbound = unbound
+                unbound = symbolTable.allUnbound
 
-            for (symbol in unbound) {
-                // Symbol could get bound as a side effect of deserializing other symbols.
-                if (!symbol.isBound) {
-                    irProviders.getDeclaration(symbol)
+                for (symbol in unbound) {
+                    // Symbol could get bound as a side effect of deserializing other symbols.
+                    if (!symbol.isBound) {
+                        irProviders.getDeclaration(symbol)
+                    }
                 }
-            }
-        // We wait for the unbound to stabilize on fake overrides.
-        } while (unbound != prevUnbound)
+                // We wait for the unbound to stabilize on fake overrides.
+            } while (unbound != prevUnbound)
+        } catch (ex: KotlinIrLinkerInternalException) {
+            throw AnalysisResult.CompilationErrorException()
+        }
     }
 }
 
