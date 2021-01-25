@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -27,7 +28,10 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
@@ -37,9 +41,31 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 // Makes locals usages explicit.
 class JsCodeOutliningLowering(val backendContext: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        // Fast path to avoid tracking locals scopes for bodies without js() calls
+        if (!irBody.containsCallsTo(backendContext.intrinsics.jsCode))
+            return
+
         val replacer = JsCodeOutlineTransformer(backendContext, container)
         irBody.transformChildrenVoid(replacer)
     }
+}
+
+private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
+    var result = false
+    acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            if (expression.symbol == symbol) {
+                result = true
+            }
+            super.visitCall(expression)
+        }
+    })
+
+    return result
 }
 
 private class JsCodeOutlineTransformer(
