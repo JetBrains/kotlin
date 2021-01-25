@@ -33,7 +33,7 @@ class FirIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(tes
             val classicFile = helper.getClassicFileToCompare(testDataFile)
             if (helper.contentsAreEquals(classicFile, firFile)) {
                 helper.deleteFirFile(testDataFile)
-                helper.addDirectiveToClassicFileAndAssert(testDataFile)
+                helper.addDirectiveToClassicFileAndAssert(classicFile)
             }
         } else {
             removeFirFileIfExist(testDataFile)
