@@ -2,9 +2,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-private expect fun foo()
-private expect val bar: String
-private expect fun Int.memExt(): Any
+<!EXPECTED_PRIVATE_DECLARATION!>private<!> expect fun foo()
+<!EXPECTED_PRIVATE_DECLARATION!>private<!> expect val bar: String
+<!EXPECTED_PRIVATE_DECLARATION!>private<!> expect fun Int.memExt(): Any
 
 private expect class Foo
 

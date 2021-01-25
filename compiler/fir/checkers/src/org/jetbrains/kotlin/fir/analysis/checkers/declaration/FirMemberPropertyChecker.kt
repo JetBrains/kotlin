@@ -98,6 +98,8 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
                 }
             }
         }
+
+        checkPrivateExpectedDeclaration(property, reporter)
     }
 
     private fun checkAccessor(
