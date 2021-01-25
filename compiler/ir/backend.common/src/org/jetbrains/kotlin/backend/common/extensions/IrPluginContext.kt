@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
@@ -35,6 +36,14 @@ interface IrPluginContext : IrGeneratorContext {
     val symbols: BuiltinSymbolsBase
 
     val platform: TargetPlatform?
+
+    /**
+     * Returns a logger instance to post diagnostic messages from plugin
+     *
+     * @param pluginId the unique plugin ID to make it easy to distinguish in log
+     * @return         the logger associated with specified ID
+     */
+    fun createDiagnosticReporter(pluginId: String): IrMessageLogger
 
     // The following API is experimental
     fun referenceClass(fqName: FqName): IrClassSymbol?

@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
@@ -328,7 +327,8 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
             symbolTable,
             typeTranslator,
             irBuiltIns,
-            linker = irLinker
+            linker = irLinker,
+            messageLogger
         )
 
         for (extension in extensions) {
