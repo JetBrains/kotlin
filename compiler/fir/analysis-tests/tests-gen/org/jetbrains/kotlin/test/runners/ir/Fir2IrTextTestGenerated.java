@@ -2141,6 +2141,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("JCTree.kt")
+        public void testJCTree() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/JCTree.kt");
+        }
+
+        @Test
         @TestMetadata("kt43342.kt")
         public void testKt43342() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt43342.kt");

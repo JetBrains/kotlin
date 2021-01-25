@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
@@ -298,7 +295,7 @@ class Fir2IrImplicitCastInserter(
             return implicitCastOrExpression(value, castTypeRef)
         }
         val referencedSymbol = calleeReference.resolvedSymbol
-        if (referencedSymbol !is FirPropertySymbol && referencedSymbol !is FirFunctionSymbol) {
+        if (referencedSymbol !is FirPropertySymbol && referencedSymbol !is FirFunctionSymbol && referencedSymbol !is FirFieldSymbol) {
             return implicitCastOrExpression(value, castTypeRef)
         }
 
@@ -339,7 +336,7 @@ class Fir2IrImplicitCastInserter(
             }
         }
         when (referencedSymbol) {
-            is FirPropertySymbol -> scope.processPropertiesByName(name, processor)
+            is FirPropertySymbol, is FirFieldSymbol -> scope.processPropertiesByName(name, processor)
             is FirFunctionSymbol -> scope.processFunctionsByName(name, processor)
         }
         return result

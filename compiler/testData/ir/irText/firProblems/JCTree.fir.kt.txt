@@ -1,0 +1,21 @@
+class Owner<out T : JCTree> {
+  constructor(tree: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val tree: T
+    field = tree
+    get
+
+  val foo: String
+    get(): String {
+      var tree: JCTree = <this>.<get-tree>()
+      when {
+        tree /*as T */ is JCTypeApply -> return tree /*as JCTypeApply */.#clazz /*!! String */
+      }
+      return ""
+    }
+
+}
