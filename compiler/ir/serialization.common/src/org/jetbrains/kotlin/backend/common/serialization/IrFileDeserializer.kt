@@ -169,7 +169,6 @@ abstract class IrFileDeserializer(
     private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
         val symbol = deserializeIrSymbolAndRemap(proto.classifier) as? IrClassifierSymbol
             ?: error("could not convert sym to ClassifierSymbol")
-        logger.log { "deserializeSimpleType: symbol=$symbol" }
 
         val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
@@ -182,7 +181,6 @@ abstract class IrFileDeserializer(
             annotations,
             if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
         )
-        logger.log { "ir_type = $result; render = ${result.render()}" }
         return result
 
     }
@@ -321,8 +319,6 @@ abstract class IrFileDeserializer(
             else
             -> TODO("Statement deserialization not implemented: ${proto.statementCase}")
         }
-
-        logger.log { "### Deserialized statement: ${ir2string(element)}" }
 
         return element
     }
@@ -938,7 +934,6 @@ abstract class IrFileDeserializer(
         val operation = proto.operation
         val expression = deserializeOperation(operation, start, end, type)
 
-        logger.log { "### Deserialized expression: ${ir2string(expression)} ir_type=$type" }
         return expression
     }
 
@@ -1428,8 +1423,6 @@ abstract class IrFileDeserializer(
             IR_ERROR_DECLARATION -> deserializeErrorDeclaration(proto.irErrorDeclaration)
             DECLARATOR_NOT_SET -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
-
-        logger.log { "### Deserialized declaration: ${declaration.descriptor} -> ${ir2string(declaration)}" }
 
         return declaration
     }
