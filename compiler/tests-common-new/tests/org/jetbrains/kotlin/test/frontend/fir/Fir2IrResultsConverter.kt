@@ -64,7 +64,7 @@ class Fir2IrResultsConverter(
         )
 
         val generationState = GenerationState.Builder(
-            project, ClassBuilderFactories.BINARIES,
+            project, ClassBuilderFactories.TEST,
             container.get(), dummyBindingContext, ktFiles,
             configuration
         ).codegenFactory(
