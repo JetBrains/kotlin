@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationCh
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 object ExtendedDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
@@ -32,5 +31,9 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
 
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
         UnusedChecker,
+    )
+
+    override val classCheckers: Set<FirClassChecker> = setOf(
+        LeakingThisChecker
     )
 }
