@@ -193,6 +193,7 @@ object FirErrors {
     val EXPECTED_PROPERTY_INITIALIZER by error0<FirSourceElement, KtExpression>()
     // TODO: need to cover `by` as well as delegate expression
     val EXPECTED_DELEGATED_PROPERTY by error0<FirSourceElement, KtPropertyDelegate>()
+    val EXPECTED_PRIVATE_DECLARATION by error0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<FirSourceElement, KtDestructuringDeclaration>()

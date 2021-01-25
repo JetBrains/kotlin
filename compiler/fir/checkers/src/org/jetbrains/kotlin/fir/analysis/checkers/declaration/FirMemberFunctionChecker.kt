@@ -61,10 +61,8 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
             }
         }
 
-        val isExpect = function.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
-        if (isExpect) {
-            checkExpectFunction(function, reporter)
-        }
+        checkExpectFunctionHasBody(function, reporter)
+        checkPrivateExpectedDeclaration(function, reporter)
     }
 
 }

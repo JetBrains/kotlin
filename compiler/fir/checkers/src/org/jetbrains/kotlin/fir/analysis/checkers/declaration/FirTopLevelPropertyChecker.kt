@@ -22,5 +22,6 @@ object FirTopLevelPropertyChecker : FirFileChecker() {
 
     private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter) {
         checkPropertyInitializer(null, property, reporter)
+        checkPrivateExpectedDeclaration(property, reporter)
     }
 }

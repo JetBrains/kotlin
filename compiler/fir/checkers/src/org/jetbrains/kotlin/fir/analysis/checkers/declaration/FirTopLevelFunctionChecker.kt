@@ -35,8 +35,7 @@ object FirTopLevelFunctionChecker : FirFileChecker() {
             reporter.report(FirErrors.NON_MEMBER_FUNCTION_NO_BODY.on(source, function))
         }
 
-        if (isExpect) {
-            checkExpectFunction(function, reporter)
-        }
+        checkExpectFunctionHasBody(function, reporter)
+        checkPrivateExpectedDeclaration(function, reporter)
     }
 }
