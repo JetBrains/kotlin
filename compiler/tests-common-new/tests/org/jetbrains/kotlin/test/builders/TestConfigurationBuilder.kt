@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestConfiguration
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.impl.TestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 
 @DefaultsDsl
+@OptIn(TestInfrastructureInternals::class)
 class TestConfigurationBuilder {
     val defaultsProviderBuilder: DefaultsProviderBuilder = DefaultsProviderBuilder()
     lateinit var assertions: AssertionsService
@@ -26,6 +28,7 @@ class TestConfigurationBuilder {
     private val environmentConfigurators: MutableList<Constructor<EnvironmentConfigurator>> = mutableListOf()
 
     private val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
+    private val moduleStructureTransformers: MutableList<ModuleStructureTransformer> = mutableListOf()
 
     private val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
     private val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
@@ -115,6 +118,11 @@ class TestConfigurationBuilder {
         additionalSourceProviders += providers
     }
 
+    @TestInfrastructureInternals
+    fun useModuleStructureTransformers(vararg transformers: ModuleStructureTransformer) {
+        moduleStructureTransformers += transformers
+    }
+
     fun useMetaTestConfigurators(vararg configurators: Constructor<MetaTestConfigurator>) {
         metaTestConfigurators += configurators
     }
@@ -147,6 +155,7 @@ class TestConfigurationBuilder {
             additionalMetaInfoProcessors,
             environmentConfigurators,
             additionalSourceProviders,
+            moduleStructureTransformers,
             metaTestConfigurators,
             afterAnalysisCheckers,
             metaInfoHandlerEnabled,

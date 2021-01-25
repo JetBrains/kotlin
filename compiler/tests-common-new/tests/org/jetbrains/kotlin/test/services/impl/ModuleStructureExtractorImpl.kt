@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
@@ -35,11 +36,13 @@ import java.io.File
  * - All directives between `MODULE` and `FILE` directives belongs to module
  * - All directives before first `MODULE` are global and belongs to each declared module
  */
+@OptIn(TestInfrastructureInternals::class)
 class ModuleStructureExtractorImpl(
     testServices: TestServices,
     additionalSourceProviders: List<AdditionalSourceProvider>,
+    moduleStructureTransformers: List<ModuleStructureTransformer>,
     private val environmentConfigurators: List<EnvironmentConfigurator>
-) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
+) : ModuleStructureExtractor(testServices, additionalSourceProviders, moduleStructureTransformers) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
 
@@ -57,7 +60,11 @@ class ModuleStructureExtractorImpl(
     ): TestModuleStructure {
         val testDataFile = File(testDataFileName)
         val extractor = ModuleStructureExtractorWorker(listOf(testDataFile), directivesContainer)
-        return extractor.splitTestDataByModules()
+        var result = extractor.splitTestDataByModules()
+        for (transformer in moduleStructureTransformers) {
+            result = transformer.transformModuleStructure(result)
+        }
+        return result
     }
 
     private inner class ModuleStructureExtractorWorker constructor(
