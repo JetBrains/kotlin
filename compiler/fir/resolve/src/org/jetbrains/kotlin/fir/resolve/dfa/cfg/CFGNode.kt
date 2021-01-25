@@ -19,6 +19,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, private val id: Int) {
     companion object {
+        fun addEdgeIfNotExist(
+            from: CFGNode<*>,
+            to: CFGNode<*>,
+            kind: EdgeKind,
+            propagateDeadness: Boolean,
+            label: EdgeLabel = NormalPath
+        ) {
+            if (to !in from._followingNodes && from !in to.previousNodes) {
+                addEdge(from, to, kind, propagateDeadness, label)
+            }
+        }
+
         internal fun addEdge(
             from: CFGNode<*>,
             to: CFGNode<*>,

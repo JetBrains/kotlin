@@ -98,6 +98,7 @@ data class Edge(
         private val Normal_CfgForward = Edge(NormalPath, EdgeKind.CfgForward)
         private val Normal_CfgBackward = Edge(NormalPath, EdgeKind.CfgBackward)
         private val Normal_DeadBackward = Edge(NormalPath, EdgeKind.DeadBackward)
+        private val Normal_Interprocedural = Edge(NormalPath, EdgeKind.Interprocedural)
 
         fun create(label: EdgeLabel, kind: EdgeKind): Edge =
             when (label) {
@@ -109,6 +110,7 @@ data class Edge(
                         EdgeKind.CfgForward -> Normal_CfgForward
                         EdgeKind.CfgBackward -> Normal_CfgBackward
                         EdgeKind.DeadBackward -> Normal_DeadBackward
+                        EdgeKind.Interprocedural -> Normal_Interprocedural
                     }
                 }
                 else -> {
@@ -150,7 +152,8 @@ enum class EdgeKind(
     DfgForward(usedInDfa = true, usedInCfa = false, isBack = false, isDead = false),
     CfgForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
     CfgBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true)
+    DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true),
+    Interprocedural(usedInDfa = false, usedInCfa = false, isBack = false, isDead = false)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
