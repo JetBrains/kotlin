@@ -439,6 +439,16 @@ allprojects {
         "-Xnormalize-constructor-calls=enable"
     )
 
+    val outputDir = buildDir.resolve("classes/java/main")
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+        destinationDir = outputDir
+    }
+//    sourceSets {
+//        "main" {
+//            java.outputDir = outputDir
+//        }
+//    }
+
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
         kotlinOptions {
             freeCompilerArgs = commonCompilerArgs + jvmCompilerArgs
