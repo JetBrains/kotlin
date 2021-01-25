@@ -31723,7 +31723,7 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builderInference")
         @TestDataPath("$PROJECT_ROOT")
-        public class BuilderInference extends AbstractDiagnosticTest {
+        public class BuilderInference {
             @Test
             public void testAllFilesPresentInBuilderInference() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builderInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);

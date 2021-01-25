@@ -1,0 +1,316 @@
+digraph ManyReports_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter class My" style="filled" fillcolor=red];
+        1 [label="Part of class initialization"];
+        2 [label="Part of class initialization"];
+        3 [label="Part of class initialization"];
+        4 [label="Exit class My" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+    1 -> {2} [style=dotted];
+    1 -> {12} [color=green];
+    1 -> {12} [style=dashed];
+    2 -> {3} [style=dotted];
+    2 -> {64} [color=green];
+    2 -> {64} [style=dashed];
+    3 -> {4} [style=dotted];
+    3 -> {69} [color=green];
+    3 -> {69} [style=dashed];
+
+    subgraph cluster_1 {
+        color=red
+        5 [label="Enter function <init>" style="filled" fillcolor=red];
+        6 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        7 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    5 -> {6};
+    6 -> {7};
+
+    subgraph cluster_2 {
+        color=red
+        8 [label="Enter function getter" style="filled" fillcolor=red];
+        9 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    8 -> {9};
+    9 -> {20 33} [color=green style=dashed];
+
+    subgraph cluster_3 {
+        color=red
+        10 [label="Enter function setter" style="filled" fillcolor=red];
+        11 [label="Exit function setter" style="filled" fillcolor=red];
+    }
+    10 -> {11};
+    11 -> {20 33} [color=green style=dashed];
+
+    subgraph cluster_4 {
+        color=red
+        12 [label="Enter property" style="filled" fillcolor=red];
+        13 [label="Access variable R|<local>/x|"];
+        14 [label="Exit property" style="filled" fillcolor=red];
+    }
+    12 -> {13};
+    13 -> {14};
+    14 -> {2} [color=green];
+    14 -> {64} [color=green style=dashed];
+
+    subgraph cluster_5 {
+        color=red
+        15 [label="Enter function getter" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            16 [label="Enter block"];
+            subgraph cluster_7 {
+                color=blue
+                17 [label="Enter when"];
+                subgraph cluster_8 {
+                    color=blue
+                    18 [label="Enter when branch condition "];
+                    19 [label="Access variable R|/My.x|"];
+                    20 [label="Const: String()"];
+                    21 [label="Equality operator !="];
+                    22 [label="Exit when branch condition"];
+                }
+                subgraph cluster_9 {
+                    color=blue
+                    23 [label="Enter when branch condition else"];
+                    24 [label="Exit when branch condition"];
+                }
+                25 [label="Enter when branch result"];
+                subgraph cluster_10 {
+                    color=blue
+                    26 [label="Enter block"];
+                    27 [label="Access variable R|/My.z|"];
+                    28 [label="Exit block"];
+                }
+                29 [label="Exit when branch result"];
+                30 [label="Enter when branch result"];
+                subgraph cluster_11 {
+                    color=blue
+                    31 [label="Enter block"];
+                    32 [label="Access variable R|/My.x|"];
+                    33 [label="Exit block"];
+                }
+                34 [label="Exit when branch result"];
+                35 [label="Exit when"];
+            }
+            36 [label="Jump: ^ when () {
+    !=(this@R|/My|.R|/My.x|, String()) ->  {
+        this@R|/My|.R|/My.x|
+    }
+    else ->  {
+        this@R|/My|.R|/My.z|
+    }
+}
+"];
+            37 [label="Stub" style="filled" fillcolor=gray];
+            38 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        39 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    19 -> {10 8} [color=green style=dashed];
+    20 -> {21};
+    21 -> {22};
+    22 -> {30 23};
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {35};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    32 -> {10 8} [color=green style=dashed];
+    33 -> {34};
+    34 -> {35};
+    35 -> {36};
+    36 -> {39};
+    36 -> {37} [style=dotted];
+    37 -> {38} [style=dotted];
+    38 -> {39} [style=dotted];
+    39 -> {74 82 89} [color=green style=dashed];
+
+    subgraph cluster_12 {
+        color=red
+        40 [label="Enter function setter" style="filled" fillcolor=red];
+        subgraph cluster_13 {
+            color=blue
+            41 [label="Enter block"];
+            subgraph cluster_14 {
+                color=blue
+                42 [label="Enter when"];
+                subgraph cluster_15 {
+                    color=blue
+                    43 [label="Enter when branch condition "];
+                    44 [label="Access variable R|<local>/arg|"];
+                    45 [label="Const: String()"];
+                    46 [label="Equality operator !="];
+                    47 [label="Exit when branch condition"];
+                }
+                48 [label="Synthetic else branch"];
+                49 [label="Enter when branch result"];
+                subgraph cluster_16 {
+                    color=blue
+                    50 [label="Enter block"];
+                    51 [label="Access variable R|<local>/arg|"];
+                    52 [label="Assignment: R|/My.x|"];
+                    53 [label="Exit block"];
+                }
+                54 [label="Exit when branch result"];
+                55 [label="Exit when"];
+            }
+            56 [label="Exit block"];
+        }
+        57 [label="Exit function setter" style="filled" fillcolor=red];
+    }
+    40 -> {41};
+    41 -> {42};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    46 -> {47};
+    47 -> {49 48};
+    48 -> {55};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+    52 -> {53};
+    53 -> {54};
+    54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {74 82 89} [color=green style=dashed];
+
+    subgraph cluster_17 {
+        color=red
+        58 [label="Enter function getter" style="filled" fillcolor=red];
+        59 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    58 -> {59};
+
+    subgraph cluster_18 {
+        color=red
+        60 [label="Enter function getter" style="filled" fillcolor=red];
+        61 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    60 -> {61};
+
+    subgraph cluster_19 {
+        color=red
+        62 [label="Enter function setter" style="filled" fillcolor=red];
+        63 [label="Exit function setter" style="filled" fillcolor=red];
+    }
+    62 -> {63};
+
+    subgraph cluster_20 {
+        color=red
+        64 [label="Enter property" style="filled" fillcolor=red];
+        65 [label="Const: String()"];
+        66 [label="Exit property" style="filled" fillcolor=red];
+    }
+    64 -> {65};
+    65 -> {66};
+    66 -> {3} [color=green];
+    66 -> {69} [color=green style=dashed];
+
+    subgraph cluster_21 {
+        color=red
+        67 [label="Enter function getter" style="filled" fillcolor=red];
+        68 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    67 -> {68};
+
+    subgraph cluster_22 {
+        color=red
+        69 [label="Enter init block" style="filled" fillcolor=red];
+        subgraph cluster_23 {
+            color=blue
+            70 [label="Enter block"];
+            subgraph cluster_24 {
+                color=blue
+                71 [label="Enter when"];
+                subgraph cluster_25 {
+                    color=blue
+                    72 [label="Enter when branch condition "];
+                    73 [label="Access variable R|/My.y|"];
+                    74 [label="Const: String()"];
+                    75 [label="Equality operator !="];
+                    76 [label="Exit when branch condition"];
+                }
+                subgraph cluster_26 {
+                    color=blue
+                    77 [label="Enter when branch condition else"];
+                    78 [label="Exit when branch condition"];
+                }
+                79 [label="Enter when branch result"];
+                subgraph cluster_27 {
+                    color=blue
+                    80 [label="Enter block"];
+                    81 [label="Access variable R|/My.y|"];
+                    82 [label="Assignment: R|/My.z|"];
+                    83 [label="Exit block"];
+                }
+                84 [label="Exit when branch result"];
+                85 [label="Enter when branch result"];
+                subgraph cluster_28 {
+                    color=blue
+                    86 [label="Enter block"];
+                    87 [label="Access variable this@R|/My|"];
+                    88 [label="Access variable R|/My.y|"];
+                    89 [label="Assignment: R|/My.z|"];
+                    90 [label="Exit block"];
+                }
+                91 [label="Exit when branch result"];
+                92 [label="Exit when"];
+            }
+            93 [label="Const: String()"];
+            94 [label="Assignment: R|/My.z|"];
+            95 [label="Exit block"];
+        }
+        96 [label="Exit init block" style="filled" fillcolor=red];
+    }
+    69 -> {70};
+    70 -> {71};
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+    73 -> {40 15} [color=green style=dashed];
+    74 -> {75};
+    75 -> {76};
+    76 -> {85 77};
+    77 -> {78};
+    78 -> {79};
+    79 -> {80};
+    80 -> {81};
+    81 -> {82};
+    81 -> {40 15} [color=green style=dashed];
+    82 -> {83};
+    83 -> {84};
+    84 -> {92};
+    85 -> {86};
+    86 -> {87};
+    87 -> {88};
+    88 -> {89};
+    88 -> {40 15} [color=green style=dashed];
+    89 -> {90};
+    90 -> {91};
+    91 -> {92};
+    92 -> {93};
+    93 -> {94};
+    94 -> {95};
+    95 -> {96};
+    96 -> {4} [color=green];
+
+}

@@ -1,0 +1,24 @@
+FILE: Recursion.kt
+    public final class Recursion : R|kotlin/Any| {
+        public constructor(): R|Recursion| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val s: R|kotlin/String|
+            private get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Recursion|.R|/Recursion.bar|()
+            this@R|/Recursion|.R|/Recursion.s|.R|kotlin/String.length|
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            this@R|/Recursion|.R|/Recursion.foo|()
+        }
+
+        init {
+            this@R|/Recursion|.R|/Recursion.foo|()
+            this@R|/Recursion|.R|/Recursion.s| = String()
+        }
+
+    }

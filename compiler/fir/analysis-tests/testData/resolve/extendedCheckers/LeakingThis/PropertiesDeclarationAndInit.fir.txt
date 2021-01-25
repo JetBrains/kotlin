@@ -1,0 +1,21 @@
+FILE: PropertiesDeclarationAndInit.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final val useUnitialized: R|kotlin/Int| = this@R|/A|.R|/A.x|.R|kotlin/Int.plus|(this@R|/A|.R|/A.y|)
+            public get(): R|kotlin/Int|
+
+        public final var y: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        init {
+            this@R|/A|.R|/A.x|.R|kotlin/Int.plus|(this@R|/A|.R|/A.y|)
+        }
+
+    }

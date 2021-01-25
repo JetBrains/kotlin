@@ -1901,6 +1901,69 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             }
         }
 
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LeakingThis extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLeakingThis() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("CallingFunctionsFromClassInit.kt")
+            public void testCallingFunctionsFromClassInit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/CallingFunctionsFromClassInit.kt");
+            }
+
+            @TestMetadata("GetterAndSetterCallsBadFunction.kt")
+            public void testGetterAndSetterCallsBadFunction() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/GetterAndSetterCallsBadFunction.kt");
+            }
+
+            @TestMetadata("IfElseBranch.kt")
+            public void testIfElseBranch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/IfElseBranch.kt");
+            }
+
+            @TestMetadata("InternalCalls.kt")
+            public void testInternalCalls() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/InternalCalls.kt");
+            }
+
+            @TestMetadata("ManyReports.kt")
+            public void testManyReports() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/ManyReports.kt");
+            }
+
+            @TestMetadata("MissingLeakingThis.kt")
+            public void testMissingLeakingThis() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/MissingLeakingThis.kt");
+            }
+
+            @TestMetadata("MoreThanOneInit.kt")
+            public void testMoreThanOneInit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/MoreThanOneInit.kt");
+            }
+
+            @TestMetadata("PropertiesDeclarationAndInit.kt")
+            public void testPropertiesDeclarationAndInit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/PropertiesDeclarationAndInit.kt");
+            }
+
+            @TestMetadata("Recursion.kt")
+            public void testRecursion() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/Recursion.kt");
+            }
+
+            @TestMetadata("useOfPropertiesWithPrimary.kt")
+            public void testUseOfPropertiesWithPrimary() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/useOfPropertiesWithPrimary.kt");
+            }
+        }
+
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

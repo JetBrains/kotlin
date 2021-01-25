@@ -1,0 +1,78 @@
+FILE: MissingLeakingThis.kt
+    public abstract class Second : R|kotlin/Any| {
+        public constructor(): R|Second| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        init {
+            R|/use|(this@R|/Second|)
+            this@R|/Second|.R|/Second.x| = this@R|/Second|.R|/Second.bar|()
+            this@R|/Second|.R|/Second.foo|()
+        }
+
+        private final fun bar(): R|kotlin/String| {
+            ^bar this@R|/Second|.R|/Second.foo|()
+        }
+
+        public abstract fun foo(): R|kotlin/String|
+
+    }
+    public final fun use(second: R|Second|): R|kotlin/String| {
+        ^use R|<local>/second|.R|/Second.x|
+    }
+    public final class SecondDerived : R|Second| {
+        public constructor(): R|SecondDerived| {
+            super<R|Second|>()
+        }
+
+        public final val y: R|kotlin/String| = this@R|/SecondDerived|.R|/Second.x|
+            public get(): R|kotlin/String|
+
+        public final override fun foo(): R|kotlin/String| {
+            ^foo this@R|/SecondDerived|.R|/SecondDerived.y|
+        }
+
+    }
+    public open class Third : R|kotlin/Any| {
+        public open var x: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public constructor(): R|Third| {
+            super<R|kotlin/Any|>()
+            this@R|/Third|.R|/Third.x| = String(X)
+        }
+
+    }
+    public final class ThirdDerived : R|Third| {
+        public constructor(): R|ThirdDerived| {
+            super<R|Third|>()
+        }
+
+        public final override var x: R|kotlin/String| = String(Y)
+            public get(): R|kotlin/String|
+            public set(arg: R|kotlin/String|): R|kotlin/Unit| {
+                this@R|/ThirdDerived|.F|/ThirdDerived.x| = <strcat>(R|<local>/arg|.R|kotlin/Any.toString|(), this@R|/ThirdDerived|.R|/ThirdDerived.y|.R|kotlin/Any.toString|())
+            }
+
+        public final val y: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public final class Fourth : R|kotlin/Any| {
+        public constructor(): R|Fourth| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ this@R|/Fourth|.R|/Fourth.y|
+            }
+
+        public final val y: R|kotlin/String| = this@R|/Fourth|.R|/Fourth.x|
+            public get(): R|kotlin/String|
+
+    }

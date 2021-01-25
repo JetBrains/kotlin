@@ -1,0 +1,27 @@
+FILE: MoreThanOneInit.kt
+    public final class MoreThanOneInit : R|kotlin/Any| {
+        public constructor(): R|MoreThanOneInit| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val t: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/MoreThanOneInit|.R|/MoreThanOneInit.t|.R|kotlin/String.length|
+            this@R|/MoreThanOneInit|.R|/MoreThanOneInit.s|.R|kotlin/String.length|
+        }
+
+        init {
+            this@R|/MoreThanOneInit|.R|/MoreThanOneInit.s| = String(test)
+        }
+
+        init {
+            this@R|/MoreThanOneInit|.R|/MoreThanOneInit.t| = String(test)
+            this@R|/MoreThanOneInit|.R|/MoreThanOneInit.foo|()
+        }
+
+    }

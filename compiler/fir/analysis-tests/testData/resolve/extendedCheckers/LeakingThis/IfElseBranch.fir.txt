@@ -1,0 +1,24 @@
+FILE: IfElseBranch.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(v: R|kotlin/Boolean|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/B|.R|/B.a|.R|kotlin/String.length|
+        }
+
+        init {
+            when () {
+                R|<local>/v| ->  {
+                    this@R|/B|.R|/B.a| = String(123)
+                }
+            }
+
+            this@R|/B|.R|/B.foo|()
+        }
+
+    }
