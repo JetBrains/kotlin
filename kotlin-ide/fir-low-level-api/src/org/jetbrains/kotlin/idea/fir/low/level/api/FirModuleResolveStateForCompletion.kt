@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
-import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
@@ -73,9 +71,8 @@ internal class FirModuleResolveStateForCompletion(
         containerFirFile: FirFile,
         firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirTowerDataContextCollector
     ) {
-        originalState.lazyResolveDeclarationForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextCollector)
+        originalState.lazyResolveDeclarationForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase)
     }
 
     override fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {

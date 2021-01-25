@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 // For KT-2796
 
 fun test() {

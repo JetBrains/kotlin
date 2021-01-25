@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getTowerDataContextUnsafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.ResolutionParameters
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.SingleCandidateResolutionMode
 import org.jetbrains.kotlin.idea.fir.low.level.api.resolver.SingleCandidateResolver
@@ -20,9 +21,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.buildCompletionContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.fakeEnclosingDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -38,9 +36,6 @@ internal class KtFirCompletionCandidateChecker(
     override val token: ValidityToken,
 ) : KtCompletionCandidateChecker(), KtFirAnalysisSessionComponent {
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
-
-    private val completionContextCache =
-        ConcurrentHashMap<Pair<FirFile, KtCallableDeclaration>, LowLevelFirApiFacadeForCompletion.FirCompletionContext>()
 
     override fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
@@ -92,7 +87,7 @@ internal class KtFirCompletionCandidateChecker(
         firFile: FirFile,
         fakeNameExpression: KtSimpleNameExpression
     ): Sequence<ImplicitReceiverValue<*>?> {
-        val towerDataContext = analysisSession.towerDataContextProvider.getTowerDataContext(fakeNameExpression)
+        val towerDataContext = analysisSession.firResolveState.getTowerDataContextUnsafe(fakeNameExpression)
 
         return sequence {
             yield(null) // otherwise explicit receiver won't be checked when there are no implicit receivers in completion position
