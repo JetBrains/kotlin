@@ -63,6 +63,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         val mangler = JvmManglerDesc(MainFunctionDetector(state.bindingContext, state.languageVersionSettings))
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
         val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider)
+        val messageLogger = state.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, symbolTable, extensions)
         val pluginExtensions = IrGenerationExtension.getInstances(state.project)
         val functionFactory = IrFunctionFactory(psi2irContext.irBuiltIns, symbolTable)
@@ -85,7 +86,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         }
         val irLinker = JvmIrLinker(
             psi2irContext.moduleDescriptor,
-            EmptyLoggingContext,
+            messageLogger,
             psi2irContext.irBuiltIns,
             symbolTable,
             functionFactory,
@@ -98,7 +99,15 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             psi2irContext.run {
                 val symbols = BuiltinSymbolsBase(irBuiltIns, moduleDescriptor.builtIns, symbolTable.lazyWrapper)
                 IrPluginContextImpl(
-                    moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, typeTranslator, irBuiltIns, irLinker, symbols
+                    moduleDescriptor,
+                    bindingContext,
+                    languageVersionSettings,
+                    symbolTable,
+                    typeTranslator,
+                    irBuiltIns,
+                    irLinker,
+                    messageLogger,
+                    symbols
                 )
             }
         }

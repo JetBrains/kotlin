@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
-abstract class IrModuleSerializer<F : IrFileSerializer>(protected val logger: LoggingContext) {
+abstract class IrModuleSerializer<F : IrFileSerializer>(protected val messageLogger: IrMessageLogger) {
     abstract fun createSerializerForFile(file: IrFile): F
 
     /**

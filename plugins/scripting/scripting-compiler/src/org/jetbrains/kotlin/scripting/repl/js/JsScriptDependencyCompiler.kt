@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.emptyLoggingContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
@@ -34,6 +33,7 @@ class JsScriptDependencyCompiler(
     fun compile(dependencies: List<ModuleDescriptor>): String {
         val builtIns: KotlinBuiltIns = dependencies.single { it.allDependencyModules.isEmpty() }.builtIns
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+        val messageLogger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
         val moduleName = Name.special("<script-dependencies>")
         val storageManager = LockBasedStorageManager.NO_LOCKS
         val moduleDescriptor = ModuleDescriptorImpl(moduleName, storageManager, builtIns, null).also {
@@ -48,7 +48,7 @@ class JsScriptDependencyCompiler(
         val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
         irBuiltIns.functionFactory = functionFactory
-        val jsLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null)
+        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, functionFactory, null)
 
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it, it.kotlinLibrary) }
         val moduleFragment = irDependencies.last()

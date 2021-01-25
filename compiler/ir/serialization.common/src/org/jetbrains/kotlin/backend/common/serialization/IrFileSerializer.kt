@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.descriptors.*
@@ -104,7 +103,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpress
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 
 open class IrFileSerializer(
-    val logger: LoggingContext,
+    val messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
     private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val bodiesOnlyForInlines: Boolean = false,

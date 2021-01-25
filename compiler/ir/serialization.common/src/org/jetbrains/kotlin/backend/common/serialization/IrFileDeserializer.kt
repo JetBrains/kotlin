@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
@@ -111,7 +109,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommo
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 
 abstract class IrFileDeserializer(
-    val logger: LoggingContext,
+    val messageLogger: IrMessageLogger,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     protected var deserializeBodies: Boolean,

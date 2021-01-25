@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.isPublicApi
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -34,14 +34,14 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
-    logger: LoggingContext,
+    messageLogger: IrMessageLogger,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable,
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmManglerDesc
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JvmManglerIr), builtIns)
 
