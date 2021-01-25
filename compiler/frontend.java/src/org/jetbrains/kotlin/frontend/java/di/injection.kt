@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmDiagnosticComponents
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 fun createContainerForLazyResolveWithJava(
@@ -95,7 +94,9 @@ fun createContainerForLazyResolveWithJava(
 }
 
 fun StorageComponentContainer.initializeJavaSpecificComponents(bindingTrace: BindingTrace) {
-    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>(), get<LanguageVersionSettings>())
+    get<AbstractJavaClassFinder>().initialize(
+        bindingTrace, codeAnalyzer = get(), languageVersionSettings = get(), jvmTarget = get()
+    )
 }
 
 fun StorageComponentContainer.configureJavaSpecificComponents(

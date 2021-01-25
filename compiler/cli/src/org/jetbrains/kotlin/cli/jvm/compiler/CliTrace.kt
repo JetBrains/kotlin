@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -13,30 +14,32 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.jvm.JvmCodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import kotlin.properties.Delegates
 
-class CliTraceHolder : CodeAnalyzerInitializer {
-    var bindingContext: BindingContext by Delegates.notNull()
+class CliTraceHolder : JvmCodeAnalyzerInitializer() {
+    lateinit var bindingContext: BindingContext
         private set
-    var module: ModuleDescriptor by Delegates.notNull()
+    lateinit var module: ModuleDescriptor
         private set
-    var languageVersionSettings: LanguageVersionSettings by Delegates.notNull()
+    lateinit var languageVersionSettings: LanguageVersionSettings
         private set
-
+    lateinit var jvmTarget: JvmTarget
+        private set
 
     override fun initialize(
         trace: BindingTrace,
         module: ModuleDescriptor,
         codeAnalyzer: KotlinCodeAnalyzer,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        jvmTarget: JvmTarget
     ) {
         this.bindingContext = trace.bindingContext
         this.module = module
         this.languageVersionSettings = languageVersionSettings
+        this.jvmTarget = jvmTarget
 
         if (trace !is CliBindingTrace) {
             throw IllegalArgumentException("Shared trace is expected to be subclass of ${CliBindingTrace::class.java.simpleName} class")
