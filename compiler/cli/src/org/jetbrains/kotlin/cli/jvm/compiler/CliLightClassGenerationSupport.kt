@@ -23,11 +23,17 @@ import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolderImpl
-import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
+import org.jetbrains.kotlin.asJava.classes.cleanFromAnonymousTypes
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.classes.tryGetPredefinedName
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.name.Name
@@ -57,7 +63,8 @@ class CliLightClassGenerationSupport(
 
     private class CliLightClassSupport(
         private val project: Project,
-        override val languageVersionSettings: LanguageVersionSettings
+        override val languageVersionSettings: LanguageVersionSettings,
+        private val jvmTarget: JvmTarget
     ) : KtUltraLightSupport {
 
         // This is the way to untie CliLightClassSupport and CliLightClassGenerationSupport to prevent descriptors leak
@@ -88,7 +95,7 @@ class CliLightClassGenerationSupport(
                 moduleName,
                 languageVersionSettings,
                 useOldInlineClassesManglingScheme = false,
-                jvmTarget = JvmTarget.JVM_1_8,
+                jvmTarget = jvmTarget,
                 typePreprocessor = KotlinType::cleanFromAnonymousTypes,
                 namePreprocessor = ::tryGetPredefinedName
             )
@@ -96,7 +103,7 @@ class CliLightClassGenerationSupport(
     }
 
     private val ultraLightSupport: KtUltraLightSupport by lazyPub {
-        CliLightClassSupport(project, traceHolder.languageVersionSettings)
+        CliLightClassSupport(project, traceHolder.languageVersionSettings, traceHolder.jvmTarget)
     }
 
     override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport {
@@ -129,7 +136,9 @@ class CliLightClassGenerationSupport(
     }
 
     private fun getContext(): LightClassConstructionContext =
-        LightClassConstructionContext(traceHolder.bindingContext, traceHolder.module)
+        LightClassConstructionContext(
+            traceHolder.bindingContext, traceHolder.module, null /* TODO: traceHolder.languageVersionSettings? */, traceHolder.jvmTarget
+        )
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         return traceHolder.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)

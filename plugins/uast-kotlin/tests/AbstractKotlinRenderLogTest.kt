@@ -1,6 +1,5 @@
 package org.jetbrains.uast.test.kotlin
 
-import com.intellij.openapi.util.Conditions
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
@@ -9,6 +8,7 @@ import com.intellij.util.PairProcessor
 import com.intellij.util.ref.DebugReflectionUtil
 import junit.framework.TestCase
 import junit.framework.TestCase.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CliTraceHolder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
@@ -152,7 +152,7 @@ fun checkDescriptorsLeak(node: UElement) {
         10,
         mapOf(node to node.javaClass.name),
         Any::class.java,
-        Conditions.alwaysTrue(),
+        { it !is CliTraceHolder },
         PairProcessor { value, backLink ->
             descriptorsClasses.find { it.isInstance(value) }?.let {
                 TestCase.fail("""Leaked descriptor ${it.qualifiedName} in ${node.javaClass.name}\n$backLink""")
