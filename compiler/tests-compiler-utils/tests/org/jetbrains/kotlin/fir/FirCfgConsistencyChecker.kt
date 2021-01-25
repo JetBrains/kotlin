@@ -57,7 +57,8 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
         for (node in graph.nodes) {
             for (previousNode in node.previousNodes) {
                 if (previousNode.owner != graph) continue
-                if (!node.incomingEdges.getValue(previousNode).kind.isBack) {
+                val incomingPreviousNode = node.incomingEdges.getValue(previousNode)
+                if (!incomingPreviousNode.kind.isBack && incomingPreviousNode.kind != EdgeKind.Interprocedural) {
                     assertions.assertTrue(previousNode in visited)
                 }
             }

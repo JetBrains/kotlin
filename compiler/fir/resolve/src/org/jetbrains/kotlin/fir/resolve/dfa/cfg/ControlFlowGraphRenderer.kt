@@ -31,7 +31,8 @@ class FirControlFlowGraphRenderVisitor(
                 EdgeKind.CfgForward to "[color=green]",
                 EdgeKind.DfgForward to "[color=red]",
                 EdgeKind.CfgBackward to "[color=green style=dashed]",
-                EdgeKind.DeadBackward to "[color=green style=dotted]"
+                EdgeKind.DeadBackward to "[color=green style=dotted]",
+                EdgeKind.Interprocedural to "[color=green style=dashed]"
             )
         )
     }

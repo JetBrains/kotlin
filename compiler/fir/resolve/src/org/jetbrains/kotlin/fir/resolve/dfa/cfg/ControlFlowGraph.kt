@@ -70,6 +70,23 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         }
     }
 
+    fun copy(): ControlFlowGraph {
+        val newCFG = ControlFlowGraph(declaration, name, kind)
+        nodes.forEach {
+            it.copy(newCFG)
+        }
+        val newSubGraphs = subGraphs.map {
+            it.copy()
+        }
+
+        newCFG.enterNode = enterNode
+        newCFG.exitNode = exitNode
+        newCFG.owner = owner
+        newCFG.state = state
+        newCFG._subGraphs.addAll(newSubGraphs)
+        return newCFG
+    }
+
     enum class State {
         Building,
         Completed;
@@ -91,6 +108,7 @@ data class Edge(
     val label: EdgeLabel,
     val kind: EdgeKind,
 ) {
+    @OptIn(InterproceduralOnly::class)
     companion object {
         val Normal_Forward = Edge(NormalPath, EdgeKind.Forward)
         private val Normal_DeadForward = Edge(NormalPath, EdgeKind.DeadForward)
@@ -98,6 +116,7 @@ data class Edge(
         private val Normal_CfgForward = Edge(NormalPath, EdgeKind.CfgForward)
         private val Normal_CfgBackward = Edge(NormalPath, EdgeKind.CfgBackward)
         private val Normal_DeadBackward = Edge(NormalPath, EdgeKind.DeadBackward)
+        private val Normal_Interprocedural = Edge(NormalPath, EdgeKind.Interprocedural)
 
         fun create(label: EdgeLabel, kind: EdgeKind): Edge =
             when (label) {
@@ -109,6 +128,7 @@ data class Edge(
                         EdgeKind.CfgForward -> Normal_CfgForward
                         EdgeKind.CfgBackward -> Normal_CfgBackward
                         EdgeKind.DeadBackward -> Normal_DeadBackward
+                        EdgeKind.Interprocedural -> Normal_Interprocedural
                     }
                 }
                 else -> {
@@ -150,7 +170,10 @@ enum class EdgeKind(
     DfgForward(usedInDfa = true, usedInCfa = false, isBack = false, isDead = false),
     CfgForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
     CfgBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
-    DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true)
+    DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true),
+
+    @InterproceduralOnly
+    Interprocedural(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -202,3 +225,6 @@ private fun ControlFlowGraph.walkThrowSubGraphs(
         }
     }
 }
+
+@RequiresOptIn("This edge exclusive for Interprocedural Analysis")
+annotation class InterproceduralOnly
