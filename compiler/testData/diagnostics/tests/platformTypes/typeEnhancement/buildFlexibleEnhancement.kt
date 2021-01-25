@@ -2,6 +2,7 @@
 // FULL_JDK
 // WITH_RUNTIME
 // WITH_REFLECT
+// SKIP_TXT
 
 // FILE: NonNullApi.java
 
