@@ -21,12 +21,32 @@ object CodeMetaInfoParser {
      */
     private val tagRegex = """([\S&&[^,(){}]]+)([{](.*?)[}])?(\("(.*?)"\))?(, )?""".toRegex()
 
+    private class Opening(val index: Int, val tags: String, val startOffset: Int) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Opening
+
+            if (index != other.index) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return index
+        }
+    }
+
     fun getCodeMetaInfoFromText(renderedText: String): List<ParsedCodeMetaInfo> {
         var text = renderedText
-        val openingMatchResults = ArrayDeque<MatchResult>()
-        val stackOfOpeningMatchResults = ArrayDeque<MatchResult>()
-        val closingMatchResults = mutableMapOf<MatchResult, MatchResult>()
+
+        val openings = ArrayDeque<Opening>()
+        val stackOfOpenings = ArrayDeque<Opening>()
+        val closingOffsets = mutableMapOf<Opening, Int>()
         val result = mutableListOf<ParsedCodeMetaInfo>()
+
+        var counter = 0
 
         while (true) {
             var openingStartOffset = Int.MAX_VALUE
@@ -42,22 +62,23 @@ object CodeMetaInfoParser {
 
             text = if (openingStartOffset < closingStartOffset) {
                 requireNotNull(opening)
-                openingMatchResults.addLast(opening)
-                stackOfOpeningMatchResults.addLast(opening)
+                val openingMatch = Opening(counter++, opening.groups[2]!!.value, opening.range.first)
+                openings.addLast(openingMatch)
+                stackOfOpenings.addLast(openingMatch)
                 text.removeRange(openingStartOffset, opening.range.last + 1)
             } else {
                 requireNotNull(closing)
-                closingMatchResults[stackOfOpeningMatchResults.removeLast()] = closing
+                closingOffsets[stackOfOpenings.removeLast()] = closing.range.first
                 text.removeRange(closingStartOffset, closing.range.last + 1)
             }
         }
-        if (openingMatchResults.size != closingMatchResults.size) {
+        if (openings.size != closingOffsets.size) {
             error("Opening and closing tags counts are not equals")
         }
-        while (!openingMatchResults.isEmpty()) {
-            val openingMatchResult = openingMatchResults.removeLast()
-            val closingMatchResult = closingMatchResults.getValue(openingMatchResult)
-            val allMetaInfos = openingMatchResult.groups[2]!!.value
+        while (!openings.isEmpty()) {
+            val openingMatchResult = openings.removeLast()
+            val closingMatchResult = closingOffsets.getValue(openingMatchResult)
+            val allMetaInfos = openingMatchResult.tags
             tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
                 val tag = it[1]!!.value
                 val attributes = it[3]?.value?.split(";") ?: emptyList()
@@ -65,8 +86,8 @@ object CodeMetaInfoParser {
 
                 result.add(
                     ParsedCodeMetaInfo(
-                        openingMatchResult.range.first,
-                        closingMatchResult.range.first,
+                        openingMatchResult.startOffset,
+                        closingMatchResult,
                         attributes.toMutableList(),
                         tag,
                         description
