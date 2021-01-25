@@ -192,8 +192,10 @@ class FakeOverrideGenerator(
     ): List<S> {
         if (symbol.fir.origin != FirDeclarationOrigin.IntersectionOverride) return listOf(basedSymbol)
         return scope.directOverridden(symbol).map {
+            // Unwrapping should happen only for fake overrides members from the same class, not from supertypes
+            if (it.dispatchReceiverClassOrNull() != containingClass) return@map it
             when {
-                it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass ->
+                it.fir.isSubstitutionOverride ->
                     it.originalForSubstitutionOverride!!
                 it.fir.origin == FirDeclarationOrigin.Delegated ->
                     it.fir.delegatedWrapperData?.wrapped?.symbol!! as S

@@ -374,6 +374,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedTypeAliasExpansion.kt");
     }
 
+    @TestMetadata("noExplicitOverrideForDelegatedFromSupertype.kt")
+    public void testNoExplicitOverrideForDelegatedFromSupertype() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/noExplicitOverrideForDelegatedFromSupertype.kt");
+    }
+
     @TestMetadata("optionalAnnotation.kt")
     public void testOptionalAnnotation() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/optionalAnnotation.kt");
