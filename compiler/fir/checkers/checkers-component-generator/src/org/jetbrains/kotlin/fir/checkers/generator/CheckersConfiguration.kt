@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
+import org.jetbrains.kotlin.fir.FirElement
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
 
 class CheckersConfiguration(
     val aliases: Map<KClass<*>, String>,
-    val additionalCheckers: MutableMap<String, String>
+    val additionalCheckers: MutableMap<String, String>,
+    val typeArguments: MutableMap<KClass<*>, String>
 ) {
     val parentsMap: Map<KClass<*>, List<KClass<*>>>
 
