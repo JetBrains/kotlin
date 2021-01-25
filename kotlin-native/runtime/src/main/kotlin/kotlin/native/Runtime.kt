@@ -5,19 +5,20 @@
 package kotlin.native
 
 import kotlin.native.concurrent.InvalidMutabilityException
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.UnhandledExceptionHookHolder
 
 /**
  * Initializes Kotlin runtime for the current thread, if not inited already.
  */
-@SymbolName("Kotlin_initRuntimeIfNeeded")
+@GCUnsafeCall("Kotlin_initRuntimeIfNeeded")
 external public fun initRuntimeIfNeeded(): Unit
 
 /**
  * Deinitializes Kotlin runtime for the current thread, if was inited.
  * Cannot be called from Kotlin frames holding references, thus deprecated.
  */
-@SymbolName("Kotlin_deinitRuntimeIfNeeded")
+@GCUnsafeCall("Kotlin_deinitRuntimeIfNeeded")
 @Deprecated("Deinit runtime can not be called from Kotlin", level = DeprecationLevel.ERROR)
 external public fun deinitRuntimeIfNeeded(): Unit
 
@@ -55,5 +56,5 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): Report
  * Compute stable wrt potential object relocations by the memory manager identity hash code.
  * @return 0 for `null` object, identity hash code otherwise.
  */
-@SymbolName("Kotlin_Any_hashCode")
+@GCUnsafeCall("Kotlin_Any_hashCode")
 public external fun Any?.identityHashCode(): Int

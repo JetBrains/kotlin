@@ -291,6 +291,8 @@ fun <T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? {
 fun IrFunction.externalSymbolOrThrow(): String? {
     annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationStringValue() }
 
+    annotations.findAnnotation(KonanFqNames.gcUnsafeCall)?.let { return it.getAnnotationStringValue("callee") }
+
     if (annotations.hasAnnotation(KonanFqNames.objCMethod)) return null
 
     if (annotations.hasAnnotation(KonanFqNames.typedIntrinsic)) return null
@@ -299,7 +301,7 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     if (origin == InternalAbi.INTERNAL_ABI_ORIGIN) return null
 
-    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
+    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall or @ObjCMethod annotation")
 }
 
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR

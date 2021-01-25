@@ -28,6 +28,10 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
                 // Treat any `@SymbolName` declaration as exported.
                 return true
             }
+            if (annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)) {
+                // Treat any `@GCUnsafeCall` declaration as exported.
+                return true
+            }
             if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
                 // Treat any `@ExportForCppRuntime` declaration as exported.
                 return true
@@ -97,6 +101,10 @@ abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl
             // TODO: revise
             if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
                 // Treat any `@SymbolName` declaration as exported.
+                return true
+            }
+            if (annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)) {
+                // Treat any `@GCUnsafeCall` declaration as exported.
                 return true
             }
             if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {

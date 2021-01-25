@@ -68,22 +68,22 @@ internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> 
     override fun toString(): String = "unreflected class ($message)"
 }
 
-@SymbolName("Kotlin_TypeInfo_findAssociatedObject")
+@GCUnsafeCall("Kotlin_TypeInfo_findAssociatedObject")
 private external fun findAssociatedObjectImpl(typeInfo: NativePtr, key: NativePtr): Any?
 
 @ExportForCompiler
-@SymbolName("Kotlin_Any_getTypeInfo")
+@GCUnsafeCall("Kotlin_Any_getTypeInfo")
 internal external fun getObjectTypeInfo(obj: Any): NativePtr
 
 @ExportForCompiler
 @TypedIntrinsic(IntrinsicType.GET_CLASS_TYPE_INFO)
 internal external inline fun <reified T : Any> getClassTypeInfo(): NativePtr
 
-@SymbolName("Kotlin_TypeInfo_getPackageName")
+@GCUnsafeCall("Kotlin_TypeInfo_getPackageName")
 private external fun getPackageName(typeInfo: NativePtr): String?
 
-@SymbolName("Kotlin_TypeInfo_getRelativeName")
+@GCUnsafeCall("Kotlin_TypeInfo_getRelativeName")
 private external fun getRelativeName(typeInfo: NativePtr): String?
 
-@SymbolName("Kotlin_TypeInfo_isInstance")
+@GCUnsafeCall("Kotlin_TypeInfo_isInstance")
 private external fun isInstance(obj: Any, typeInfo: NativePtr): Boolean

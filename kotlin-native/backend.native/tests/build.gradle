@@ -3830,6 +3830,11 @@ createInterop("cppSkia") {
     it.defFile 'interop/cpp/skia.def'
 }
 
+createInterop("threadStates") {
+    it.defFile "interop/threadStates/threadStates.def"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/threadStates/threadStates.cpp"
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4115,6 +4120,20 @@ interopTest("interop_callbacksAndVarargs") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/callbacksAndVarargs.kt"
     interop = 'ccallbacksAndVarargs'
+}
+
+interopTest("interop_threadStates") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            !isExperimentalMM // No thread state switching in the legacy MM.
+    source = "interop/threadStates/threadStates.kt"
+    interop = "threadStates"
+}
+
+interopTest("interop_threadStates_callbacksWithExceptions") {
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            !isExperimentalMM // No thread state switching in the legacy MM.
+    source = "interop/threadStates/callbacksWithExceptions.kt"
+    interop = "threadStates"
 }
 
 interopTest("interop_withSpaces") {

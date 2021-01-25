@@ -7,10 +7,7 @@
 
 package kotlin
 
-import kotlin.native.internal.CanBePrecreated
-import kotlin.native.internal.IntrinsicType
-import kotlin.native.internal.NumberConverter
-import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.*
 
 /**
  * Represents a 8-bit signed integer.
@@ -307,7 +304,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     public override fun equals(other: Any?): Boolean =
             other is Byte && kotlin.native.internal.areEqualByValue(this, other)
 
-    @SymbolName("Kotlin_Byte_toString")
+    @GCUnsafeCall("Kotlin_Byte_toString")
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -609,7 +606,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     public override fun equals(other: Any?): Boolean =
         other is Short && kotlin.native.internal.areEqualByValue(this, other)
 
-    @SymbolName("Kotlin_Short_toString")
+    @GCUnsafeCall("Kotlin_Short_toString")
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -953,7 +950,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     public override fun equals(other: Any?): Boolean =
          other is Int && kotlin.native.internal.areEqualByValue(this, other)
 
-    @SymbolName("Kotlin_Int_toString")
+    @GCUnsafeCall("Kotlin_Int_toString")
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -1301,7 +1298,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     public override fun equals(other: Any?): Boolean =
             other is Long && kotlin.native.internal.areEqualByValue(this, other)
 
-    @SymbolName("Kotlin_Long_toString")
+    @GCUnsafeCall("Kotlin_Long_toString")
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -1577,7 +1574,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * Returns zero if this `Float` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
-    @SymbolName("Kotlin_Float_toInt")
+    @GCUnsafeCall("Kotlin_Float_toInt")
     external public override fun toInt(): Int
     /**
      * Converts this [Float] value to [Long].
@@ -1586,7 +1583,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * Returns zero if this `Float` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
-    @SymbolName("Kotlin_Float_toLong")
+    @GCUnsafeCall("Kotlin_Float_toLong")
     external public override fun toLong(): Long
 
     /** Returns this value. */
@@ -1887,7 +1884,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * Returns zero if this `Double` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
-    @SymbolName("Kotlin_Double_toInt")
+    @GCUnsafeCall("Kotlin_Double_toInt")
     external public override fun toInt(): Int
     /**
      * Converts this [Double] value to [Long].
@@ -1896,7 +1893,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
-    @SymbolName("Kotlin_Double_toLong")
+    @GCUnsafeCall("Kotlin_Double_toLong")
     external public override fun toLong(): Long
     /**
      * Converts this [Double] value to [Float].

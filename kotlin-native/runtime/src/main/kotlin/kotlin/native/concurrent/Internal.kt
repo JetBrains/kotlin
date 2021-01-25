@@ -7,6 +7,7 @@ package kotlin.native.concurrent
 
 import kotlin.native.internal.DescribeObjectForDebugging
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 import kotlin.native.internal.debugDescription
 import kotlin.native.identityHashCode
@@ -15,17 +16,17 @@ import kotlinx.cinterop.*
 
 // Implementation details.
 
-@SymbolName("Kotlin_Worker_stateOfFuture")
+@GCUnsafeCall("Kotlin_Worker_stateOfFuture")
 external internal fun stateOfFuture(id: Int): Int
 
-@SymbolName("Kotlin_Worker_consumeFuture")
+@GCUnsafeCall("Kotlin_Worker_consumeFuture")
 @PublishedApi
 external internal fun consumeFuture(id: Int): Any?
 
-@SymbolName("Kotlin_Worker_waitForAnyFuture")
+@GCUnsafeCall("Kotlin_Worker_waitForAnyFuture")
 external internal fun waitForAnyFuture(versionToken: Int, millis: Int): Boolean
 
-@SymbolName("Kotlin_Worker_versionToken")
+@GCUnsafeCall("Kotlin_Worker_versionToken")
 external internal fun versionToken(): Int
 
 @kotlin.native.internal.ExportForCompiler
@@ -33,29 +34,29 @@ internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any
                          job: CPointer<CFunction<*>>): Future<Any?> =
         Future<Any?>(executeInternal(worker.id, mode.value, producer, job))
 
-@SymbolName("Kotlin_Worker_startInternal")
+@GCUnsafeCall("Kotlin_Worker_startInternal")
 external internal fun startInternal(errorReporting: Boolean, name: String?): Int
 
-@SymbolName("Kotlin_Worker_currentInternal")
+@GCUnsafeCall("Kotlin_Worker_currentInternal")
 external internal fun currentInternal(): Int
 
-@SymbolName("Kotlin_Worker_requestTerminationWorkerInternal")
+@GCUnsafeCall("Kotlin_Worker_requestTerminationWorkerInternal")
 external internal fun requestTerminationInternal(id: Int, processScheduledJobs: Boolean): Int
 
-@SymbolName("Kotlin_Worker_executeInternal")
+@GCUnsafeCall("Kotlin_Worker_executeInternal")
 external internal fun executeInternal(
         id: Int, mode: Int, producer: () -> Any?, job: CPointer<CFunction<*>>): Int
 
-@SymbolName("Kotlin_Worker_executeAfterInternal")
+@GCUnsafeCall("Kotlin_Worker_executeAfterInternal")
 external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
 
-@SymbolName("Kotlin_Worker_processQueueInternal")
+@GCUnsafeCall("Kotlin_Worker_processQueueInternal")
 external internal fun processQueueInternal(id: Int): Boolean
 
-@SymbolName("Kotlin_Worker_parkInternal")
+@GCUnsafeCall("Kotlin_Worker_parkInternal")
 external internal fun parkInternal(id: Int, timeoutMicroseconds: Long, process: Boolean): Boolean
 
-@SymbolName("Kotlin_Worker_getNameInternal")
+@GCUnsafeCall("Kotlin_Worker_getNameInternal")
 external internal fun getWorkerNameInternal(id: Int): String?
 
 @ExportForCppRuntime
@@ -70,17 +71,17 @@ internal fun ThrowWorkerInvalidState(): Unit =
 internal fun WorkerLaunchpad(function: () -> Any?) = function()
 
 @PublishedApi
-@SymbolName("Kotlin_Worker_detachObjectGraphInternal")
+@GCUnsafeCall("Kotlin_Worker_detachObjectGraphInternal")
 external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): NativePtr
 
 @PublishedApi
-@SymbolName("Kotlin_Worker_attachObjectGraphInternal")
+@GCUnsafeCall("Kotlin_Worker_attachObjectGraphInternal")
 external internal fun attachObjectGraphInternal(stable: NativePtr): Any?
 
-@SymbolName("Kotlin_Worker_freezeInternal")
+@GCUnsafeCall("Kotlin_Worker_freezeInternal")
 internal external fun freezeInternal(it: Any?)
 
-@SymbolName("Kotlin_Worker_isFrozenInternal")
+@GCUnsafeCall("Kotlin_Worker_isFrozenInternal")
 internal external fun isFrozenInternal(it: Any?): Boolean
 
 @ExportForCppRuntime
@@ -99,9 +100,9 @@ internal fun ThrowIllegalObjectSharingException(typeInfo: NativePtr, address: Na
     throw IncorrectDereferenceException("illegal attempt to access non-shared $description from other thread")
 }
 
-@SymbolName("Kotlin_AtomicReference_checkIfFrozen")
+@GCUnsafeCall("Kotlin_AtomicReference_checkIfFrozen")
 external internal fun checkIfFrozen(ref: Any?)
 
 @InternalForKotlinNative
-@SymbolName("Kotlin_Worker_waitTermination")
+@GCUnsafeCall("Kotlin_Worker_waitTermination")
 external public fun waitWorkerTermination(worker: Worker)

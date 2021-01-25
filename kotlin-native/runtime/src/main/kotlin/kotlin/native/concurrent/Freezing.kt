@@ -5,6 +5,8 @@
 
 package kotlin.native.concurrent
 
+import kotlin.native.internal.GCUnsafeCall
+
 /**
  * Exception thrown whenever freezing is not possible.
  *
@@ -49,5 +51,5 @@ public val Any?.isFrozen
  * @throws FreezingException thrown immediately if this object is already frozen
  * @see freeze
  */
-@SymbolName("Kotlin_Worker_ensureNeverFrozen")
+@GCUnsafeCall("Kotlin_Worker_ensureNeverFrozen")
 public external fun Any.ensureNeverFrozen()

@@ -6,6 +6,7 @@
 #include "MarkAndSweepUtils.hpp"
 
 #include <functional>
+#include <TestSupport.hpp>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -142,6 +143,7 @@ public:
     }
 
 private:
+    kotlin::ScopedMemoryInit memoryInit;
     ScopedMarkTraits markTraits_;
 };
 

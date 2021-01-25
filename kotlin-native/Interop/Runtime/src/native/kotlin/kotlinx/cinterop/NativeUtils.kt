@@ -16,13 +16,14 @@
 
 package kotlinx.cinterop
 
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.Intrinsic
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
 internal fun encodeToUtf8(str: String): ByteArray = str.encodeToByteArray()
 
-@SymbolName("Kotlin_CString_toKStringFromUtf8Impl")
+@GCUnsafeCall("Kotlin_CString_toKStringFromUtf8Impl")
 internal external fun CPointer<ByteVar>.toKStringFromUtf8Impl(): String
 
 @TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_FLOAT)

@@ -8,13 +8,13 @@ package kotlin.native.concurrent
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
-@SymbolName("Kotlin_Any_share")
+@GCUnsafeCall("Kotlin_Any_share")
 external private fun Any.share()
 
-@SymbolName("Kotlin_CPointer_CopyMemory")
+@GCUnsafeCall("Kotlin_CPointer_CopyMemory")
 external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, count: Int)
 
-@SymbolName("ReadHeapRefNoLock")
+@GCUnsafeCall("ReadHeapRefNoLock")
 internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
 
 /**

@@ -3576,6 +3576,10 @@ RUNTIME_NOTHROW void DisposeStablePointer(KNativePtr pointer) {
   disposeStablePointer(pointer);
 }
 
+RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState, KNativePtr pointer) {
+  DisposeStablePointer(pointer);
+}
+
 OBJ_GETTER(DerefStablePointer, KNativePtr pointer) {
   RETURN_RESULT_OF(derefStablePointer, pointer);
 }
@@ -3716,7 +3720,7 @@ ALWAYS_INLINE ObjHeader* ExceptionObjHolder::GetExceptionObject() noexcept {
 }
 #endif
 
-ALWAYS_INLINE kotlin::ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept {
+ALWAYS_INLINE kotlin::ThreadState kotlin::SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant) noexcept {
     // no-op, used by the new MM only.
     return ThreadState::kRunnable;
 }
@@ -3727,4 +3731,9 @@ ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState ex
 
 MemoryState* kotlin::mm::GetMemoryState() {
     return ::memoryState;
+}
+
+kotlin::ThreadState kotlin::GetThreadState(MemoryState* thread) noexcept {
+    // Assume that we are always in the Runnable thread state.
+    return ThreadState::kRunnable;
 }

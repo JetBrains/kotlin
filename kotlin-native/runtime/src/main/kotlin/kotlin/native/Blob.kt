@@ -16,10 +16,10 @@ public final class ImmutableBlob private constructor() {
         get() = getArrayLength()
 
     // Data layout is the same as for ByteArray, so we can share native functions.
-    @SymbolName("Kotlin_ByteArray_get")
+    @GCUnsafeCall("Kotlin_ByteArray_get")
     public external operator fun get(index: Int): Byte
 
-    @SymbolName("Kotlin_ByteArray_getArrayLength")
+    @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
     private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -47,7 +47,7 @@ private class ImmutableBlobIteratorImpl(val blob: ImmutableBlob) : ByteIterator(
  * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
  * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
-@SymbolName("Kotlin_ImmutableBlob_toByteArray")
+@GCUnsafeCall("Kotlin_ImmutableBlob_toByteArray")
 public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -57,7 +57,7 @@ public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int
  * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
 @ExperimentalUnsignedTypes
-@SymbolName("Kotlin_ImmutableBlob_toByteArray")
+@GCUnsafeCall("Kotlin_ImmutableBlob_toByteArray")
 public external fun ImmutableBlob.toUByteArray(startIndex: Int = 0, endIndex: Int = size): UByteArray
 
 /**
@@ -71,7 +71,7 @@ public fun ImmutableBlob.asCPointer(offset: Int = 0): CPointer<ByteVar> =
 public fun ImmutableBlob.asUCPointer(offset: Int = 0): CPointer<UByteVar> =
         interpretCPointer<UByteVar>(asCPointerImpl(offset))!!
 
-@SymbolName("Kotlin_ImmutableBlob_asCPointerImpl")
+@GCUnsafeCall("Kotlin_ImmutableBlob_asCPointerImpl")
 private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.internal.NativePtr
 
 /**

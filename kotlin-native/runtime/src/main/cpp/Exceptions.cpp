@@ -91,6 +91,9 @@ _Unwind_Reason_Code unwindCallback(
 #else
   _Unwind_Ptr address = _Unwind_GetIP(context);
 #endif
+  // We run the unwinding process in the native thread state. But setting a next element
+  // requires writing to a Kotlin array which must be performed in the runnable thread state.
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
   backtrace->setNextElement(address);
 
   return _URC_NO_REASON;
@@ -100,7 +103,7 @@ _Unwind_Reason_Code unwindCallback(
 THREAD_LOCAL_VARIABLE bool disallowSourceInfo = false;
 
 #if !OMIT_BACKTRACE && !USE_GCC_UNWIND
-SourceInfo getSourceInfo(KConstRef stackTrace, int index) {
+SourceInfo getSourceInfo(KConstRef stackTrace, int32_t index) {
   return disallowSourceInfo
       ? SourceInfo { .fileName = nullptr, .lineNumber = -1, .column = -1 }
       : Kotlin_getSourceInfo(*PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), index));
@@ -112,6 +115,7 @@ SourceInfo getSourceInfo(KConstRef stackTrace, int index) {
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
+  using namespace kotlin;
 #if OMIT_BACKTRACE
   return AllocArrayInstance(theNativePtrArrayTypeInfo, 0, OBJ_RESULT);
 #else
@@ -119,17 +123,17 @@ NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
   constexpr int kSkipFrames = 2;
 #if USE_GCC_UNWIND
   int depth = 0;
-  _Unwind_Backtrace(depthCountCallback, &depth);
+  CallWithThreadState<ThreadState::kNative>(_Unwind_Backtrace, depthCountCallback, static_cast<void*>(&depth));
   Backtrace result(depth, kSkipFrames);
   if (result.obj()->array()->count_ > 0) {
-    _Unwind_Backtrace(unwindCallback, &result);
+    CallWithThreadState<ThreadState::kNative>(_Unwind_Backtrace, unwindCallback, static_cast<void*>(&result));
   }
   RETURN_OBJ(result.obj());
 #else
   const int maxSize = 32;
   void* buffer[maxSize];
 
-  int size = backtrace(buffer, maxSize);
+  int size = kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(backtrace, buffer, maxSize);
   if (size < kSkipFrames)
     return AllocArrayInstance(theNativePtrArrayTypeInfo, 0, OBJ_RESULT);
 
@@ -144,6 +148,7 @@ NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
 }
 
 OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
+  using namespace kotlin;
 #if OMIT_BACKTRACE
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, 1, OBJ_RESULT);
   ObjHolder holder;
@@ -151,14 +156,14 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
   UpdateHeapRef(ArrayAddressOfElementAt(result->array(), 0), holder.obj());
   return result;
 #else
-  uint32_t size = stackTrace->array()->count_;
+  int32_t size = static_cast<int32_t>(stackTrace->array()->count_);
   ObjHolder resultHolder;
   ObjHeader* strings = AllocArrayInstance(theArrayTypeInfo, size, resultHolder.slot());
 #if USE_GCC_UNWIND
-  for (uint32_t index = 0; index < size; ++index) {
+  for (int32_t index = 0; index < size; ++index) {
     KNativePtr address = Kotlin_NativePtrArray_get(stackTrace, index);
     char symbol[512];
-    if (!AddressToSymbol((const void*) address, symbol, sizeof(symbol))) {
+    if (!CallWithThreadState<ThreadState::kNative>(AddressToSymbol, (const void*) address, symbol, sizeof(symbol))) {
       // Make empty string:
       symbol[0] = '\0';
     }
@@ -170,11 +175,12 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
   }
 #else
   if (size > 0) {
-    char **symbols = backtrace_symbols(PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0), size);
+    char **symbols = CallWithThreadState<ThreadState::kNative>(
+            backtrace_symbols, PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0), size);
     RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
 
-    for (uint32_t index = 0; index < size; ++index) {
-      auto sourceInfo = getSourceInfo(stackTrace, index);
+    for (int32_t index = 0; index < size; ++index) {
+      auto sourceInfo = CallWithThreadState<ThreadState::kNative>(getSourceInfo, stackTrace, index);
       const char* symbol = symbols[index];
       const char* result;
       char line[1024];

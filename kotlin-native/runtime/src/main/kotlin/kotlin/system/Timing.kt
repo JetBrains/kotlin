@@ -5,25 +5,27 @@
 
 package kotlin.system
 
+import kotlin.native.internal.GCUnsafeCall
+
 /**
  * Gets current system time in milliseconds since certain moment in the past,
  * only delta between two subsequent calls makes sense.
  */
-@SymbolName("Kotlin_system_getTimeMillis")
+@GCUnsafeCall("Kotlin_system_getTimeMillis")
 public external fun getTimeMillis() : Long
 
 /**
  * Gets current system time in nanoseconds since certain moment in the past,
  * only delta between two subsequent calls makes sense.
  */
-@SymbolName("Kotlin_system_getTimeNanos")
+@GCUnsafeCall("Kotlin_system_getTimeNanos")
 public external fun getTimeNanos() : Long
 
 /**
  * Gets current system time in microseconds since certain moment in the past,
  * only delta between two subsequent calls makes sense.
  */
-@SymbolName("Kotlin_system_getTimeMicros")
+@GCUnsafeCall("Kotlin_system_getTimeMicros")
 public external fun getTimeMicros() : Long
 
 /**

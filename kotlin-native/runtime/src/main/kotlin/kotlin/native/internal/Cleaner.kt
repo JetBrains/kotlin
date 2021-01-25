@@ -105,7 +105,7 @@ fun waitCleanerWorker() =
         Unit
     }.result
 
-@SymbolName("Kotlin_CleanerImpl_getCleanerWorker")
+@GCUnsafeCall("Kotlin_CleanerImpl_getCleanerWorker")
 external private fun getCleanerWorker(): Worker
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_shutdownCleanerWorker")
@@ -125,8 +125,8 @@ private class CleanerImpl(
     private val cleanPtr: NativePtr,
 ): Cleaner {}
 
-@SymbolName("Kotlin_Any_isShareable")
+@GCUnsafeCall("Kotlin_Any_isShareable")
 external private fun Any?.isShareable(): Boolean
 
-@SymbolName("CreateStablePointer")
+@GCUnsafeCall("CreateStablePointer")
 external private fun createStablePointer(obj: Any): NativePtr

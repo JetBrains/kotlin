@@ -5,6 +5,8 @@
 
 package kotlin.math
 
+import kotlin.native.internal.GCUnsafeCall
+
 // region ================ Double Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
@@ -13,7 +15,7 @@ package kotlin.math
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_sin")
+@GCUnsafeCall("Kotlin_math_sin")
 external public actual fun sin(x: Double): Double
 
 /** Computes the cosine of the angle [x] given in radians.
@@ -22,7 +24,7 @@ external public actual fun sin(x: Double): Double
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_cos")
+@GCUnsafeCall("Kotlin_math_cos")
 external public actual fun cos(x: Double): Double
 
 /** Computes the tangent of the angle [x] given in radians.
@@ -31,7 +33,7 @@ external public actual fun cos(x: Double): Double
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_tan")
+@GCUnsafeCall("Kotlin_math_tan")
 external public actual fun tan(x: Double): Double
 
 /**
@@ -42,7 +44,7 @@ external public actual fun tan(x: Double): Double
  *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_asin")
+@GCUnsafeCall("Kotlin_math_asin")
 external public actual fun asin(x: Double): Double
 
 /**
@@ -53,7 +55,7 @@ external public actual fun asin(x: Double): Double
  *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_acos")
+@GCUnsafeCall("Kotlin_math_acos")
 external public actual fun acos(x: Double): Double
 
 /**
@@ -64,7 +66,7 @@ external public actual fun acos(x: Double): Double
  *   - `atan(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_atan")
+@GCUnsafeCall("Kotlin_math_atan")
 external public actual fun atan(x: Double): Double
 
 /**
@@ -84,7 +86,7 @@ external public actual fun atan(x: Double): Double
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_atan2")
+@GCUnsafeCall("Kotlin_math_atan2")
 external public actual fun atan2(y: Double, x: Double): Double
 
 /**
@@ -96,7 +98,7 @@ external public actual fun atan2(y: Double, x: Double): Double
  *   - `sinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_sinh")
+@GCUnsafeCall("Kotlin_math_sinh")
 external public actual fun sinh(x: Double): Double
 
 /**
@@ -107,7 +109,7 @@ external public actual fun sinh(x: Double): Double
  *   - `cosh(+Inf|-Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_cosh")
+@GCUnsafeCall("Kotlin_math_cosh")
 external public actual fun cosh(x: Double): Double
 
 /**
@@ -119,7 +121,7 @@ external public actual fun cosh(x: Double): Double
  *   - `tanh(-Inf)` is `-1.0`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_tanh")
+@GCUnsafeCall("Kotlin_math_tanh")
 external public actual fun tanh(x: Double): Double
 
 /**
@@ -133,7 +135,7 @@ external public actual fun tanh(x: Double): Double
  *   - `asinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_asinh")
+@GCUnsafeCall("Kotlin_math_asinh")
 external public actual fun asinh(x: Double): Double
 
 /**
@@ -147,7 +149,7 @@ external public actual fun asinh(x: Double): Double
  *   - `acosh(+Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_acosh")
+@GCUnsafeCall("Kotlin_math_acosh")
 external public actual fun acosh(x: Double): Double
 
 /**
@@ -162,7 +164,7 @@ external public actual fun acosh(x: Double): Double
  *   - `tanh(-1.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_atanh")
+@GCUnsafeCall("Kotlin_math_atanh")
 external public actual fun atanh(x: Double): Double
 
 /**
@@ -173,7 +175,7 @@ external public actual fun atanh(x: Double): Double
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_hypot")
+@GCUnsafeCall("Kotlin_math_hypot")
 external public actual fun hypot(x: Double, y: Double): Double
 
 /**
@@ -183,7 +185,7 @@ external public actual fun hypot(x: Double, y: Double): Double
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_sqrt")
+@GCUnsafeCall("Kotlin_math_sqrt")
 external public actual fun sqrt(x: Double): Double
 
 /**
@@ -195,7 +197,7 @@ external public actual fun sqrt(x: Double): Double
  *   - `exp(-Inf)` is `0.0`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_exp")
+@GCUnsafeCall("Kotlin_math_exp")
 external public actual fun exp(x: Double): Double
 
 /**
@@ -211,7 +213,7 @@ external public actual fun exp(x: Double): Double
  * @see [exp] function.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_expm1")
+@GCUnsafeCall("Kotlin_math_expm1")
 external public actual fun expm1(x: Double): Double
 
 /**
@@ -242,7 +244,7 @@ public actual fun log(x: Double, base: Double): Double {
  *   - `ln(0.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_ln")
+@GCUnsafeCall("Kotlin_math_ln")
 external public actual fun ln(x: Double): Double
 
 /**
@@ -251,7 +253,7 @@ external public actual fun ln(x: Double): Double
  * @see [ln] actual function for special cases.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_log10")
+@GCUnsafeCall("Kotlin_math_log10")
 external public actual fun log10(x: Double): Double
 
 /**
@@ -260,7 +262,7 @@ external public actual fun log10(x: Double): Double
  * @see [ln] actual function for special cases.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_log2")
+@GCUnsafeCall("Kotlin_math_log2")
 external public actual fun log2(x: Double): Double
 
 /**
@@ -278,7 +280,7 @@ external public actual fun log2(x: Double): Double
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_ln1p")
+@GCUnsafeCall("Kotlin_math_ln1p")
 external public actual fun ln1p(x: Double): Double
 
 /**
@@ -290,7 +292,7 @@ external public actual fun ln1p(x: Double): Double
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_ceil")
+@GCUnsafeCall("Kotlin_math_ceil")
 external public actual fun ceil(x: Double): Double
 
 /**
@@ -302,7 +304,7 @@ external public actual fun ceil(x: Double): Double
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_floor")
+@GCUnsafeCall("Kotlin_math_floor")
 external public actual fun floor(x: Double): Double
 
 /**
@@ -327,7 +329,7 @@ public actual fun truncate(x: Double): Double = when {
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_round")
+@GCUnsafeCall("Kotlin_math_round")
 external public actual fun round(x: Double): Double
 
 /**
@@ -339,7 +341,7 @@ external public actual fun round(x: Double): Double
  * @see absoluteValue extension property for [Double]
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_abs")
+@GCUnsafeCall("Kotlin_math_abs")
 external public actual fun abs(x: Double): Double
 
 /**
@@ -396,7 +398,7 @@ public actual fun max(a: Double, b: Double): Double = when {
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Double_pow")
+@GCUnsafeCall("Kotlin_math_Double_pow")
 external public actual fun Double.pow(x: Double): Double
 
 /**
@@ -420,7 +422,7 @@ public actual fun Double.pow(n: Int): Double = pow(n.toDouble())
  * @see round
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Double_IEEErem")
+@GCUnsafeCall("Kotlin_math_Double_IEEErem")
 external public fun Double.IEEErem(divisor: Double): Double
 
 /**
@@ -454,7 +456,7 @@ public actual val Double.sign: Double
  * If [sign] is `NaN` the sign of the result is undefined.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Double_withSign")
+@GCUnsafeCall("Kotlin_math_Double_withSign")
 external public actual fun Double.withSign(sign: Double): Double
 
 /**
@@ -489,13 +491,13 @@ public actual val Double.ulp: Double
  * Returns the [Double] value nearest to this value in direction of positive infinity.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Double_nextUp")
+@GCUnsafeCall("Kotlin_math_Double_nextUp")
 external public actual fun Double.nextUp(): Double
 /**
  * Returns the [Double] value nearest to this value in direction of negative infinity.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Double_nextDown")
+@GCUnsafeCall("Kotlin_math_Double_nextDown")
 external public actual fun Double.nextDown(): Double
 
 /**
@@ -507,13 +509,13 @@ external public actual fun Double.nextDown(): Double
  *
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Double_nextTowards")
+@GCUnsafeCall("Kotlin_math_Double_nextTowards")
 external public actual fun Double.nextTowards(to: Double): Double
 
 /**
  * Returns true if the sign of [this] value is negative and false otherwise
  */
-@SymbolName("Kotlin_math_Double_signBit")
+@GCUnsafeCall("Kotlin_math_Double_signBit")
 external private fun Double.signBit(): Boolean
 
 /**
@@ -562,7 +564,7 @@ public actual fun Double.roundToLong(): Long = when {
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_sinf")
+@GCUnsafeCall("Kotlin_math_sinf")
 external public actual fun sin(x: Float): Float
 
 /** Computes the cosine of the angle [x] given in radians.
@@ -571,7 +573,7 @@ external public actual fun sin(x: Float): Float
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_cosf")
+@GCUnsafeCall("Kotlin_math_cosf")
 external public actual fun cos(x: Float): Float
 
 /** Computes the tangent of the angle [x] given in radians.
@@ -580,7 +582,7 @@ external public actual fun cos(x: Float): Float
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_tanf")
+@GCUnsafeCall("Kotlin_math_tanf")
 external public actual fun tan(x: Float): Float
 
 /**
@@ -591,7 +593,7 @@ external public actual fun tan(x: Float): Float
  *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_asinf")
+@GCUnsafeCall("Kotlin_math_asinf")
 external public actual fun asin(x: Float): Float
 
 /**
@@ -602,7 +604,7 @@ external public actual fun asin(x: Float): Float
  *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_acosf")
+@GCUnsafeCall("Kotlin_math_acosf")
 external public actual fun acos(x: Float): Float
 
 /**
@@ -613,7 +615,7 @@ external public actual fun acos(x: Float): Float
  *   - `atan(NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_atanf")
+@GCUnsafeCall("Kotlin_math_atanf")
 external public actual fun atan(x: Float): Float
 
 /**
@@ -633,7 +635,7 @@ external public actual fun atan(x: Float): Float
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_atan2f")
+@GCUnsafeCall("Kotlin_math_atan2f")
 external public actual fun atan2(y: Float, x: Float): Float
 
 /**
@@ -645,7 +647,7 @@ external public actual fun atan2(y: Float, x: Float): Float
  *   - `sinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_sinhf")
+@GCUnsafeCall("Kotlin_math_sinhf")
 external public actual fun sinh(x: Float): Float
 
 /**
@@ -656,7 +658,7 @@ external public actual fun sinh(x: Float): Float
  *   - `cosh(+Inf|-Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_coshf")
+@GCUnsafeCall("Kotlin_math_coshf")
 external public actual fun cosh(x: Float): Float
 
 /**
@@ -668,7 +670,7 @@ external public actual fun cosh(x: Float): Float
  *   - `tanh(-Inf)` is `-1.0`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_tanhf")
+@GCUnsafeCall("Kotlin_math_tanhf")
 external public actual fun tanh(x: Float): Float
 
 /**
@@ -682,7 +684,7 @@ external public actual fun tanh(x: Float): Float
  *   - `asinh(-Inf)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_asinhf")
+@GCUnsafeCall("Kotlin_math_asinhf")
 external public actual fun asinh(x: Float): Float
 
 /**
@@ -696,7 +698,7 @@ external public actual fun asinh(x: Float): Float
  *   - `acosh(+Inf)` is `+Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_acoshf")
+@GCUnsafeCall("Kotlin_math_acoshf")
 external public actual fun acosh(x: Float): Float
 
 /**
@@ -711,7 +713,7 @@ external public actual fun acosh(x: Float): Float
  *   - `tanh(-1.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_atanhf")
+@GCUnsafeCall("Kotlin_math_atanhf")
 external public actual fun atanh(x: Float): Float
 
 /**
@@ -722,7 +724,7 @@ external public actual fun atanh(x: Float): Float
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_hypotf")
+@GCUnsafeCall("Kotlin_math_hypotf")
 external public actual fun hypot(x: Float, y: Float): Float
 
 /**
@@ -732,7 +734,7 @@ external public actual fun hypot(x: Float, y: Float): Float
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_sqrtf")
+@GCUnsafeCall("Kotlin_math_sqrtf")
 external public actual fun sqrt(x: Float): Float
 
 /**
@@ -744,7 +746,7 @@ external public actual fun sqrt(x: Float): Float
  *   - `exp(-Inf)` is `0.0`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_expf")
+@GCUnsafeCall("Kotlin_math_expf")
 external public actual fun exp(x: Float): Float
 
 /**
@@ -760,7 +762,7 @@ external public actual fun exp(x: Float): Float
  * @see [exp] function.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_expm1f")
+@GCUnsafeCall("Kotlin_math_expm1f")
 external public actual fun expm1(x: Float): Float
 
 /**
@@ -791,7 +793,7 @@ public actual fun log(x: Float, base: Float): Float {
  *   - `ln(0.0)` is `-Inf`
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_lnf")
+@GCUnsafeCall("Kotlin_math_lnf")
 external public actual fun ln(x: Float): Float
 
 /**
@@ -800,7 +802,7 @@ external public actual fun ln(x: Float): Float
  * @see [ln] actual function for special cases.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_log10f")
+@GCUnsafeCall("Kotlin_math_log10f")
 external public actual fun log10(x: Float): Float
 
 /**
@@ -809,7 +811,7 @@ external public actual fun log10(x: Float): Float
  * @see [ln] actual function for special cases.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_log2f")
+@GCUnsafeCall("Kotlin_math_log2f")
 external public actual fun log2(x: Float): Float
 
 /**
@@ -827,7 +829,7 @@ external public actual fun log2(x: Float): Float
  * @see [expm1] function
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_ln1pf")
+@GCUnsafeCall("Kotlin_math_ln1pf")
 external public actual fun ln1p(x: Float): Float
 
 /**
@@ -839,7 +841,7 @@ external public actual fun ln1p(x: Float): Float
  *   - `ceil(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_ceilf")
+@GCUnsafeCall("Kotlin_math_ceilf")
 external public actual fun ceil(x: Float): Float
 
 /**
@@ -851,7 +853,7 @@ external public actual fun ceil(x: Float): Float
  *   - `floor(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_floorf")
+@GCUnsafeCall("Kotlin_math_floorf")
 external public actual fun floor(x: Float): Float
 
 /**
@@ -876,7 +878,7 @@ public actual fun truncate(x: Float): Float = when {
  *   - `round(x)` is `x` where `x` is `NaN` or `+Inf` or `-Inf` or already a mathematical integer.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_roundf")
+@GCUnsafeCall("Kotlin_math_roundf")
 external public actual fun round(x: Float): Float
 
 
@@ -889,7 +891,7 @@ external public actual fun round(x: Float): Float
  * @see absoluteValue extension property for [Float]
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_absf")
+@GCUnsafeCall("Kotlin_math_absf")
 external public actual fun abs(x: Float): Float
 
 /**
@@ -946,7 +948,7 @@ public actual fun max(a: Float, b: Float): Float = when {
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Float_pow")
+@GCUnsafeCall("Kotlin_math_Float_pow")
 external public actual fun Float.pow(x: Float): Float
 
 /**
@@ -970,7 +972,7 @@ public actual fun Float.pow(n: Int): Float = pow(n.toFloat())
  * @see round
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Float_IEEErem")
+@GCUnsafeCall("Kotlin_math_Float_IEEErem")
 external public fun Float.IEEErem(divisor: Float): Float
 
 /**
@@ -1004,7 +1006,7 @@ public actual val Float.sign: Float
  * If [sign] is `NaN` the sign of the result is undefined.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Float_withSign")
+@GCUnsafeCall("Kotlin_math_Float_withSign")
 external public actual fun Float.withSign(sign: Float): Float
 /**
  * Returns this value with the sign bit same as of the [sign] value.
@@ -1028,13 +1030,13 @@ public val Float.ulp: Float
  * Returns the [Float] value nearest to this value in direction of positive infinity.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Float_nextUp")
+@GCUnsafeCall("Kotlin_math_Float_nextUp")
 external public fun Float.nextUp(): Float
 /**
  * Returns the [Float] value nearest to this value in direction of negative infinity.
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Float_nextDown")
+@GCUnsafeCall("Kotlin_math_Float_nextDown")
 external public fun Float.nextDown(): Float
 
 /**
@@ -1046,13 +1048,13 @@ external public fun Float.nextDown(): Float
  *
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_Float_nextTowards")
+@GCUnsafeCall("Kotlin_math_Float_nextTowards")
 external public fun Float.nextTowards(to: Float): Float
 
 /**
  * Returns true if the sign of [this] value is negative and false otherwise
  */
-@SymbolName("Kotlin_math_Float_signBit")
+@GCUnsafeCall("Kotlin_math_Float_signBit")
 external private fun Float.signBit(): Boolean
 
 /**
@@ -1104,7 +1106,7 @@ public actual fun Float.roundToLong(): Long = when {
  * @see absoluteValue extension property for [Int]
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_absi")
+@GCUnsafeCall("Kotlin_math_absi")
 external public actual fun abs(n: Int): Int
 
 /**
@@ -1155,7 +1157,7 @@ public actual val Int.sign: Int
  * @see absoluteValue extension property for [Long]
  */
 @SinceKotlin("1.2")
-@SymbolName("Kotlin_math_absl")
+@GCUnsafeCall("Kotlin_math_absl")
 external public actual fun abs(n: Long): Long
 
 /**

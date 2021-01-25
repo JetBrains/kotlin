@@ -31,7 +31,7 @@ import kotlin.comparisons.*
  * @return the double closest to the real number
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
-@SymbolName("Kotlin_native_FloatingPointParser_parseDoubleImpl")
+@GCUnsafeCall("Kotlin_native_FloatingPointParser_parseDoubleImpl")
 private external fun parseDoubleImpl(s: String, e: Int): Double
 
 /**
@@ -46,7 +46,7 @@ private external fun parseDoubleImpl(s: String, e: Int): Double
  * @return the float closest to the real number
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
-@SymbolName("Kotlin_native_FloatingPointParser_parseFloatImpl")
+@GCUnsafeCall("Kotlin_native_FloatingPointParser_parseFloatImpl")
 private external fun parseFloatImpl(s: String, e: Int): Float
 
 /**

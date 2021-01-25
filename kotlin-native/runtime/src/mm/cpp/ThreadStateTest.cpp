@@ -20,30 +20,26 @@ namespace {
 class ThreadStateTest : public testing::Test {
 public:
     ThreadStateTest() {
-        globalKotlinFunctionMock = &kotlinFunctionMock_;
+        globalSomeFunctionMock = &someFunctionMock();
     }
 
     ~ThreadStateTest() {
-        globalKotlinFunctionMock = nullptr;
+        globalSomeFunctionMock = nullptr;
     }
 
-    testing::MockFunction<int32_t(int32_t)>& kotlinFunctionMock() { return kotlinFunctionMock_; }
+    testing::MockFunction<int32_t(int32_t)>& someFunctionMock() { return someFunctionMock_; }
 
-    static int32_t kotlinFunction(int32_t arg) {
-        return globalKotlinFunctionMock->Call(arg);
+    static int32_t someFunction(int32_t arg) {
+        return globalSomeFunctionMock->Call(arg);
     }
 
-    static RUNTIME_NORETURN void noReturnKotlinFunciton(int32_t arg) {
-        globalKotlinFunctionMock->Call(arg);
-        throw std::exception();
-    }
 private:
-    testing::MockFunction<int32_t(int32_t)> kotlinFunctionMock_;
-    static testing::MockFunction<int32_t(int32_t)>* globalKotlinFunctionMock;
+    testing::MockFunction<int32_t(int32_t)> someFunctionMock_;
+    static testing::MockFunction<int32_t(int32_t)>* globalSomeFunctionMock;
 };
 
 //static
-testing::MockFunction<int32_t(int32_t)>* ThreadStateTest::globalKotlinFunctionMock = nullptr;
+testing::MockFunction<int32_t(int32_t)>* ThreadStateTest::globalSomeFunctionMock = nullptr;
 
 } // namespace
 
@@ -109,35 +105,34 @@ TEST_F(ThreadStateTest, StateGuardForCurrentThread) {
     });
 }
 
-TEST_F(ThreadStateTest, CallKotlin) {
+TEST_F(ThreadStateTest, CallWithNativeState) {
     RunInNewThread([this](mm::ThreadData& threadData) {
-        SwitchThreadState(&threadData, ThreadState::kNative);
-        ASSERT_THAT(threadData.state(), ThreadState::kNative);
+        ASSERT_THAT(threadData.state(), ThreadState::kRunnable);
 
-        EXPECT_CALL(kotlinFunctionMock(), Call(42))
+        EXPECT_CALL(someFunctionMock(), Call(42))
             .WillOnce([&threadData](int32_t arg) {
-                EXPECT_THAT(threadData.state(), ThreadState::kRunnable);
+                EXPECT_THAT(threadData.state(), ThreadState::kNative);
                 return 24;
             });
-        int32_t result = CallKotlin(kotlinFunction, 42);
-        EXPECT_THAT(threadData.state(), ThreadState::kNative);
+        int32_t result = CallWithThreadState<ThreadState::kNative>(someFunction, 42);
+        EXPECT_THAT(threadData.state(), ThreadState::kRunnable);
         EXPECT_THAT(result, 24);
     });
 }
 
-TEST_F(ThreadStateTest, CallKotlinNoReturn) {
+TEST_F(ThreadStateTest, CallWithRunnableState) {
     RunInNewThread([this](mm::ThreadData& threadData) {
-        SwitchThreadState(&threadData, ThreadState::kNative);
-        ASSERT_THAT(threadData.state(), ThreadState::kNative);
+       SwitchThreadState(&threadData, ThreadState::kNative);
+       ASSERT_THAT(threadData.state(), ThreadState::kNative);
 
-        EXPECT_CALL(kotlinFunctionMock(), Call(42))
-            .WillOnce([&threadData](int32_t arg){
+       EXPECT_CALL(someFunctionMock(), Call(42))
+            .WillOnce([&threadData](int32_t arg) {
                 EXPECT_THAT(threadData.state(), ThreadState::kRunnable);
                 return 24;
             });
-
-        EXPECT_THROW(CallKotlinNoReturn(noReturnKotlinFunciton, 42), std::exception);
-        EXPECT_THAT(threadData.state(), ThreadState::kNative);
+       int32_t result = CallWithThreadState<ThreadState::kRunnable>(someFunction, 42);
+       EXPECT_THAT(threadData.state(), ThreadState::kNative);
+       EXPECT_THAT(result, 24);
     });
 }
 
@@ -167,5 +162,15 @@ TEST(ThreadStateDeathTest, IncorrectStateSwitch) {
         SwitchThreadState(threadData, kotlin::ThreadState::kNative);
         EXPECT_DEATH(Kotlin_mm_switchThreadStateNative(),
                      "runtime assert: Illegal thread state switch. Old state: NATIVE. New state: NATIVE");
+    });
+}
+
+TEST(ThreadStateDeathTest, ReentrantStateSwitch) {
+    RunInNewThread([](MemoryState* memoryState) {
+        auto* threadData = memoryState->GetThreadData();
+        ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+        EXPECT_EXIT({ SwitchThreadState(memoryState, ThreadState::kRunnable, true); exit(0); },
+                    testing::ExitedWithCode(0),
+                    testing::Not(testing::ContainsRegex("runtime assert: Illegal thread state switch.")));
     });
 }

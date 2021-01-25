@@ -19,10 +19,10 @@ package kotlin.native.internal
 
 import kotlin.text.regex.*
 
-@SymbolName("Kotlin_native_int_bits_to_float")
+@GCUnsafeCall("Kotlin_native_int_bits_to_float")
 private external fun intBitsToFloat(x: Int): Float
 
-@SymbolName("Kotlin_native_long_bits_to_double")
+@GCUnsafeCall("Kotlin_native_long_bits_to_double")
 private external fun longBitsToDouble(x: Long): Double
 
 /*

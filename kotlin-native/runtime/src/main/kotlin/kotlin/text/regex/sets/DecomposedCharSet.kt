@@ -22,11 +22,13 @@
 
 package kotlin.text.regex
 
+import kotlin.native.internal.GCUnsafeCall
+
 /**
  * Decomposes the given codepoint. Saves the decomposition into [outputCodepoints] array starting with [fromIndex].
  * Returns the length of the decomposition.
  */
-@SymbolName("Kotlin_text_regex_decomposeCodePoint")
+@GCUnsafeCall("Kotlin_text_regex_decomposeCodePoint")
 external private fun decomposeCodePoint(codePoint: Int, outputCodePoints: IntArray, fromIndex: Int): Int
 
 /** Represents canonical decomposition of Unicode character. Is used when CANON_EQ flag of Pattern class is specified. */

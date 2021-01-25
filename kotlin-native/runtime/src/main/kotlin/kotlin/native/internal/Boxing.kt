@@ -5,29 +5,40 @@
 
 package kotlin.native.internal
 
-@SymbolName("getCachedBooleanBox")
+@GCUnsafeCall("getCachedBooleanBox")
 external fun getCachedBooleanBox(value: Boolean): Boolean?
-@SymbolName("inBooleanBoxCache")
+
+@GCUnsafeCall("inBooleanBoxCache")
 external fun inBooleanBoxCache(value: Boolean): Boolean
-@SymbolName("getCachedByteBox")
+
+@GCUnsafeCall("getCachedByteBox")
 external fun getCachedByteBox(value: Byte): Byte?
-@SymbolName("inByteBoxCache")
+
+@GCUnsafeCall("inByteBoxCache")
 external fun inByteBoxCache(value: Byte): Boolean
-@SymbolName("getCachedCharBox")
+
+@GCUnsafeCall("getCachedCharBox")
 external fun getCachedCharBox(value: Char): Char?
-@SymbolName("inCharBoxCache")
+
+@GCUnsafeCall("inCharBoxCache")
 external fun inCharBoxCache(value: Char): Boolean
-@SymbolName("getCachedShortBox")
+
+@GCUnsafeCall("getCachedShortBox")
 external fun getCachedShortBox(value: Short): Short?
-@SymbolName("inShortBoxCache")
+
+@GCUnsafeCall("inShortBoxCache")
 external fun inShortBoxCache(value: Short): Boolean
-@SymbolName("getCachedIntBox")
+
+@GCUnsafeCall("getCachedIntBox")
 external fun getCachedIntBox(idx: Int): Int?
-@SymbolName("inIntBoxCache")
+
+@GCUnsafeCall("inIntBoxCache")
 external fun inIntBoxCache(value: Int): Boolean
-@SymbolName("getCachedLongBox")
+
+@GCUnsafeCall("getCachedLongBox")
 external fun getCachedLongBox(value: Long): Long?
-@SymbolName("inLongBoxCache")
+
+@GCUnsafeCall("inLongBoxCache")
 external fun inLongBoxCache(value: Long): Boolean
 
 // TODO: functions below are used for ObjCExport, move and rename them correspondigly.

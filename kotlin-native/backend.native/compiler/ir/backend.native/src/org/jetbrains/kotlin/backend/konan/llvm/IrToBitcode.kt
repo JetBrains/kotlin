@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.ir.allParameters
 import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
@@ -673,7 +674,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        override val exceptionHandler get() = ExceptionHandler.Caller
+        override val exceptionHandler: ExceptionHandler
+            get() = ExceptionHandler.Caller
 
         override fun genThrow(exception: LLVMValueRef) {
             val objHeaderPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, exception)
@@ -1030,7 +1032,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private inner abstract class CatchingScope : InnerScopeImpl() {
 
         /**
-         * The LLVM `landingpad` such that if invoked function throws an exception,
+         * The LLVM `landingpad` such that if an invoked function throws an exception,
          * then this exception is passed to [handler].
          */
         private val landingpad: LLVMBasicBlockRef by lazy {
@@ -1087,9 +1089,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
 
-        override val exceptionHandler: ExceptionHandler get() = object : ExceptionHandler.Local() {
-            override val unwind get() = landingpad
-        }
+        override val exceptionHandler: ExceptionHandler
+            get() = object : ExceptionHandler.Local() {
+                override val unwind get() = landingpad
+            }
 
         override fun genThrow(exception: LLVMValueRef) {
             jumpToHandler(exception)
@@ -2332,17 +2335,39 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
+    private val IrFunction.needsNativeThreadState: Boolean
+        get() {
+            // We assume that call site thread state switching is required for interop calls only.
+            val result = context.memoryModel == MemoryModel.EXPERIMENTAL && origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE
+            if (result) {
+                check(isExternal)
+                check(!annotations.hasAnnotation(KonanFqNames.gcUnsafeCall))
+                check(annotations.hasAnnotation(RuntimeNames.filterExceptions))
+            }
+            return result
+        }
+
     private fun call(function: IrFunction, llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime): LLVMValueRef {
+        check(!function.isTypedIntrinsic)
 
+        val needsNativeThreadState = function.needsNativeThreadState
         val exceptionHandler = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
             val foreignExceptionMode = ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
-            functionGenerationContext.filteringExceptionHandler(currentCodeContext, foreignExceptionMode)
+            functionGenerationContext.filteringExceptionHandler(currentCodeContext, foreignExceptionMode, needsNativeThreadState)
         } ?: currentCodeContext.exceptionHandler
 
+        if (needsNativeThreadState) {
+            functionGenerationContext.switchThreadState(ThreadState.Native)
+        }
+
         val result = call(llvmFunction, args, resultLifetime, exceptionHandler)
-        if (!function.isSuspend && function.returnType.isNothing()) {
-            functionGenerationContext.unreachable()
+
+        when {
+            !function.isSuspend && function.returnType.isNothing() ->
+                functionGenerationContext.unreachable()
+            needsNativeThreadState ->
+                functionGenerationContext.switchThreadState(ThreadState.Runnable)
         }
 
         if (LLVMGetReturnType(getFunctionType(llvmFunction)) == voidType) {

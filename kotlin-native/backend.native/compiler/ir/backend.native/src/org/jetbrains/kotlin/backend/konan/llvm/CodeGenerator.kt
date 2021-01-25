@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
+import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
@@ -89,6 +92,10 @@ internal sealed class ExceptionHandler {
     abstract class Local : ExceptionHandler() {
         abstract val unwind: LLVMBasicBlockRef
     }
+}
+
+internal enum class ThreadState {
+    Native, Runnable
 }
 
 val LLVMValueRef.name:String?
@@ -341,7 +348,7 @@ internal class StackLocalsManagerImpl(
 internal class FunctionGenerationContext(val function: LLVMValueRef,
                                          val codegen: CodeGenerator,
                                          startLocation: LocationInfo?,
-                                         endLocation: LocationInfo?,
+                                         private val endLocation: LocationInfo?,
                                          internal val irFunction: IrFunction? = null): ContextUtils {
 
     override val context = codegen.context
@@ -527,6 +534,19 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     //-------------------------------------------------------------------------//
+
+    fun switchThreadState(state: ThreadState) {
+        check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            "Thread state switching is allowed in the experimental memory model only."
+        }
+        check(!forbidRuntime) {
+            "Attempt to switch the thread state when runtime is forbidden"
+        }
+        when (state) {
+            Native -> call(context.llvm.Kotlin_mm_switchThreadStateNative, emptyList())
+            Runnable -> call(context.llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
+        }.let {} // Force exhaustive.
+    }
 
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
@@ -755,7 +775,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildExtractElement(builder, vector, index, name)!!
     }
 
-    fun filteringExceptionHandler(codeContext: CodeContext, foreignExceptionMode: ForeignExceptionMode.Mode): ExceptionHandler {
+    fun filteringExceptionHandler(codeContext: CodeContext, foreignExceptionMode: ForeignExceptionMode.Mode, switchThreadState: Boolean): ExceptionHandler {
         val lpBlock = basicBlockInFunction("filteringExceptionHandler", position()?.start)
 
         val wrapExceptionMode = context.config.target.family.isAppleFamily &&
@@ -768,6 +788,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 LLVMAddClause(landingpad, objcNSExceptionRtti.llvm)
             }
             LLVMAddClause(landingpad, LLVMConstNull(kInt8Ptr))
+
+            if (switchThreadState) {
+                switchThreadState(Runnable)
+            }
 
             val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position()?.start)
             val forwardKotlinExceptionBlock = basicBlock("forwardKotlinException", position()?.start)
@@ -829,9 +853,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun kotlinExceptionHandler(
-            block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit
-    ): ExceptionHandler {
+    fun kotlinExceptionHandler(block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit): ExceptionHandler {
         val lpBlock = basicBlock("kotlinExceptionHandler", position()?.end)
 
         appendingTo(lpBlock) {
@@ -1248,6 +1270,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         if (isObjectType(returnType!!)) {
             returnSlot = LLVMGetParam(function, numParameters(function.type) - 1)
         }
+
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL &&
+                irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+            check(!forbidRuntime) { "Attempt to switch the thread state when runtime is forbidden" }
+            positionAtEnd(prologueBb)
+            switchThreadState(Runnable)
+        }
+
         positionAtEnd(localsInitBb)
         slotsPhi = phi(kObjHeaderPtrPtr)
         // Is removed by DCE trivially, if not needed.
@@ -1307,8 +1337,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 returnType == voidType -> {
                     releaseVars()
                     assert(returnSlot == null)
-                    if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL)
-                        call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
+                    handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
                     LLVMBuildRetVoid(builder)
                 }
                 returns.isNotEmpty() -> {
@@ -1318,8 +1347,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         updateReturnRef(returnPhi, returnSlot!!)
                     }
                     releaseVars()
-                    if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL)
-                        call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
+                    handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointFunctionEpilogue)
                     LLVMBuildRet(builder, returnPhi)
                 }
                 // Do nothing, all paths throw.
@@ -1360,8 +1388,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
 
             releaseVars()
-            if (!forbidRuntime && context.memoryModel == MemoryModel.EXPERIMENTAL)
-                call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
+            handleEpilogueForExperimentalMM(context.llvm.Kotlin_mm_safePointExceptionUnwind)
             LLVMBuildResume(builder, landingpad)
         }
 
@@ -1369,6 +1396,18 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         vars.clear()
         returnSlot = null
         slotsPhi = null
+    }
+
+    private fun handleEpilogueForExperimentalMM(safePointFunction: LLVMValueRef) {
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            if (!forbidRuntime) {
+                call(safePointFunction, emptyList())
+            }
+            if (irFunction?.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE) {
+                check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
+                switchThreadState(Native)
+            }
+        }
     }
 
     private val kotlinExceptionRtti: ConstPointer

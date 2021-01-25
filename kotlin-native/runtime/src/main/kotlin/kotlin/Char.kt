@@ -6,6 +6,7 @@
 
 package kotlin
 
+import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
@@ -171,7 +172,7 @@ public class Char private constructor() : Comparable<Char> {
     public override fun equals(other: Any?): Boolean =
             other is Char && this.equals(other)
 
-    @SymbolName("Kotlin_Char_toString")
+    @GCUnsafeCall("Kotlin_Char_toString")
     external public override fun toString(): String
 
     public override fun hashCode(): Int {

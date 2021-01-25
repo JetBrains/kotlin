@@ -15,13 +15,20 @@
 #include "TestSupportCompilerGenerated.hpp"
 #include "Types.h"
 
+using namespace kotlin;
 using testing::_;
 
 // TODO: Also test disposal. (This requires extracting Worker interface)
 
-TEST(CleanerTest, ConcurrentCreation) {
-    ResetCleanerWorkerForTests();
+class CleanerTest : public testing::Test {
+public:
+    CleanerTest() {}
+    ~CleanerTest() {
+        ResetCleanerWorkerForTests();
+    }
+};
 
+TEST_F(CleanerTest, ConcurrentCreation) {
     constexpr int threadCount = kotlin::kDefaultThreadCount;
     constexpr KInt workerId = 42;
 
@@ -34,6 +41,8 @@ TEST(CleanerTest, ConcurrentCreation) {
     KStdVector<std::future<KInt>> futures;
     for (int i = 0; i < threadCount; ++i) {
         auto future = std::async(std::launch::async, [&startedThreads, &allowRunning]() {
+            // Thread state switching requires initilized memory subsystem.
+            ScopedMemoryInit init;
             atomicAdd(&startedThreads, 1);
             while (!atomicGet(&allowRunning)) {
             }
@@ -53,29 +62,28 @@ TEST(CleanerTest, ConcurrentCreation) {
     EXPECT_THAT(values, testing::Each(workerId));
 }
 
-TEST(CleanerTest, ShutdownWithoutCreation) {
-    ResetCleanerWorkerForTests();
+TEST_F(CleanerTest, ShutdownWithoutCreation) {
+    RunInNewThread([]() {
+        auto createCleanerWorkerMock = ScopedCreateCleanerWorkerMock();
+        auto shutdownCleanerWorkerMock = ScopedShutdownCleanerWorkerMock();
 
-    auto createCleanerWorkerMock = ScopedCreateCleanerWorkerMock();
-    auto shutdownCleanerWorkerMock = ScopedShutdownCleanerWorkerMock();
-
-    EXPECT_CALL(*createCleanerWorkerMock, Call()).Times(0);
-    EXPECT_CALL(*shutdownCleanerWorkerMock, Call(_, _)).Times(0);
-    ShutdownCleaners(true);
+        EXPECT_CALL(*createCleanerWorkerMock, Call()).Times(0);
+        EXPECT_CALL(*shutdownCleanerWorkerMock, Call(_, _)).Times(0);
+        ShutdownCleaners(true);
+    });
 }
 
-TEST(CleanerTest, ShutdownWithCreation) {
-    ResetCleanerWorkerForTests();
+TEST_F(CleanerTest, ShutdownWithCreation) {
+    RunInNewThread([]() {
+        constexpr KInt workerId = 42;
+        constexpr bool executeScheduledCleaners = true;
 
-    constexpr KInt workerId = 42;
-    constexpr bool executeScheduledCleaners = true;
+        auto createCleanerWorkerMock = ScopedCreateCleanerWorkerMock();
+        auto shutdownCleanerWorkerMock = ScopedShutdownCleanerWorkerMock();
+        EXPECT_CALL(*createCleanerWorkerMock, Call()).WillOnce(testing::Return(workerId));
+        Kotlin_CleanerImpl_getCleanerWorker();
 
-    auto createCleanerWorkerMock = ScopedCreateCleanerWorkerMock();
-    auto shutdownCleanerWorkerMock = ScopedShutdownCleanerWorkerMock();
-
-    EXPECT_CALL(*createCleanerWorkerMock, Call()).WillOnce(testing::Return(workerId));
-    Kotlin_CleanerImpl_getCleanerWorker();
-
-    EXPECT_CALL(*shutdownCleanerWorkerMock, Call(workerId, executeScheduledCleaners));
-    ShutdownCleaners(executeScheduledCleaners);
+        EXPECT_CALL(*shutdownCleanerWorkerMock, Call(workerId, executeScheduledCleaners));
+        ShutdownCleaners(executeScheduledCleaners);
+    });
 }

@@ -21,13 +21,16 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
+inline MemoryState* InitMemoryForTests() { return InitMemory(false); }
+void DeinitMemoryForTests(MemoryState* memoryState);
+
 // Scopely initializes the memory subsystem of the current thread for tests.
-class ScopedRuntimeInit : private kotlin::Pinned {
+class ScopedMemoryInit : private kotlin::Pinned {
 public:
-    ScopedRuntimeInit() : memoryState_(InitMemory(false)) {}
-    ~ScopedRuntimeInit() {
+    ScopedMemoryInit() : memoryState_(InitMemoryForTests()) {}
+    ~ScopedMemoryInit() {
         ClearMemoryForTests(memoryState());
-        DeinitMemory(memoryState_, false);
+        DeinitMemoryForTests(memoryState());
     }
 
     MemoryState* memoryState() { return memoryState_; }
@@ -38,7 +41,7 @@ private:
 // Runs the given function in a separate thread with minimally initialized runtime.
 inline void RunInNewThread(std::function<void(MemoryState*)> f) {
     std::thread([&f]() {
-        ScopedRuntimeInit init;
+        ScopedMemoryInit init;
         f(init.memoryState());
     }).join();
 }

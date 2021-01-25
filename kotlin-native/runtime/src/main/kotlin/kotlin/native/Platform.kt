@@ -4,6 +4,8 @@
  */
 package kotlin.native
 
+import kotlin.native.internal.GCUnsafeCall
+
 /**
  * Operating system family.
  */
@@ -100,32 +102,32 @@ public object Platform {
         set(value) = Platform_setCleanersLeakChecker(value)
 }
 
-@SymbolName("Konan_Platform_canAccessUnaligned")
+@GCUnsafeCall("Konan_Platform_canAccessUnaligned")
 private external fun Platform_canAccessUnaligned(): Int
 
-@SymbolName("Konan_Platform_isLittleEndian")
+@GCUnsafeCall("Konan_Platform_isLittleEndian")
 private external fun Platform_isLittleEndian(): Int
 
-@SymbolName("Konan_Platform_getOsFamily")
+@GCUnsafeCall("Konan_Platform_getOsFamily")
 private external fun Platform_getOsFamily(): Int
 
-@SymbolName("Konan_Platform_getCpuArchitecture")
+@GCUnsafeCall("Konan_Platform_getCpuArchitecture")
 private external fun Platform_getCpuArchitecture(): Int
 
-@SymbolName("Konan_Platform_getMemoryModel")
+@GCUnsafeCall("Konan_Platform_getMemoryModel")
 private external fun Platform_getMemoryModel(): Int
 
-@SymbolName("Konan_Platform_isDebugBinary")
+@GCUnsafeCall("Konan_Platform_isDebugBinary")
 private external fun Platform_isDebugBinary(): Boolean
 
-@SymbolName("Konan_Platform_getMemoryLeakChecker")
+@GCUnsafeCall("Konan_Platform_getMemoryLeakChecker")
 private external fun Platform_getMemoryLeakChecker(): Boolean
 
-@SymbolName("Konan_Platform_setMemoryLeakChecker")
+@GCUnsafeCall("Konan_Platform_setMemoryLeakChecker")
 private external fun Platform_setMemoryLeakChecker(value: Boolean): Unit
 
-@SymbolName("Konan_Platform_getCleanersLeakChecker")
+@GCUnsafeCall("Konan_Platform_getCleanersLeakChecker")
 private external fun Platform_getCleanersLeakChecker(): Boolean
 
-@SymbolName("Konan_Platform_setCleanersLeakChecker")
+@GCUnsafeCall("Konan_Platform_setCleanersLeakChecker")
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit

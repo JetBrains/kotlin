@@ -105,7 +105,7 @@ RuntimeState* initRuntime() {
       case DESTROY_RUNTIME_LEGACY:
           compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
-          result->worker = WorkerInit(true);
+          result->worker = WorkerInit(result->memoryState, true);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
           if (CurrentMemoryModel == MemoryModel::kExperimental) {
               RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
@@ -124,7 +124,7 @@ RuntimeState* initRuntime() {
               RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
           }
           result->memoryState = InitMemory(firstRuntime);
-          result->worker = WorkerInit(true);
+          result->worker = WorkerInit(result->memoryState, true);
   }
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
@@ -368,6 +368,14 @@ void Kotlin_Debugging_setForceCheckedShutdown(KBoolean value) {
             break;
     }
     g_forceCheckedShutdown = value;
+}
+
+KBoolean Kotlin_Debugging_isThreadStateRunnable() {
+    return kotlin::GetThreadState() == kotlin::ThreadState::kRunnable;
+}
+
+KBoolean Kotlin_Debugging_isThreadStateNative() {
+    return kotlin::GetThreadState() == kotlin::ThreadState::kNative;
 }
 
 }  // extern "C"
