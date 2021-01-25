@@ -15,14 +15,14 @@
  */
 
 // TESTCASE NUMBER: 0, 1, 2, 3, 4
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
 class A() {
     infix fun foo(x: ()->Int) = "member fun foo"
 }
 
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 // TESTCASE NUMBER: 0
 
 package sentence3

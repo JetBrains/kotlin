@@ -32,7 +32,7 @@ fun case1(){
     <!DEBUG_INFO_CALL("fqName: tests.case1.B.<init>; typeCall: function")!>B()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package lib.case1
 
 fun B() : String = ""
@@ -60,7 +60,7 @@ fun case2(){
     <!DEBUG_INFO_CALL("fqName: tests.case2.B.<init>; typeCall: function")!>B()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package lib.case2
 
 //fun B() : String = ""
@@ -91,7 +91,7 @@ fun case3(){
     <!DEBUG_INFO_CALL("fqName: tests.case3.B.<init>; typeCall: function")!>B()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package lib.case3
 
 //fun B() : String = ""

@@ -13,7 +13,7 @@
  * DESCRIPTION: call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Callables star-imported into the current file;
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 
@@ -22,12 +22,12 @@ import libPackageCase1.*
 fun case1() {
     <!DEBUG_INFO_CALL("fqName: libPackageCase1.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements = arrayOf(1)<!>, body = { "" })<!>
 }
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 
 fun <T> listOf(vararg elements: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testsCase2
 import libPackageCase2.*
@@ -41,7 +41,7 @@ class A {
     operator fun <T> invoke(): T = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackageCase2
 import testsCase2.*
 
@@ -49,7 +49,7 @@ fun <T> listOf(vararg elements: T = TODO(), body: () -> T = { TODO() }): List<T>
 val listOf: A
     get() = A()
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 package testsCase3
 import libPackageCase3.*
@@ -63,7 +63,7 @@ class A {
     operator fun <T> invoke(vararg elements: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libPackageCase3
 import testsCase3.*
 

@@ -13,7 +13,7 @@
  * DESCRIPTION: Superclass companion object receivers are prioritized according to the inheritance order
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 
@@ -60,7 +60,7 @@ open class Super_2 : Super_1() {
 }
 
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testsCase2
 
@@ -106,7 +106,7 @@ open class Super_2 : Super_1() {
 
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 package testsCase3
 
@@ -153,7 +153,7 @@ open class Super_2 : Super_1() {
 }
 
 
-// FILE: TestCase.kt
+// FILE: TestCase4.kt
 // TESTCASE NUMBER: 4
 package testsCase4
 

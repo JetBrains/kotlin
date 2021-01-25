@@ -273,11 +273,11 @@ fun case_11(x: Any?) {
  */
 fun case_12(x: Any?) {
     if (x is Interface1? && x != null && x is Interface2?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any?")!>x<!>.itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any?")!>x<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any?")!>x<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any?")!>x<!>.itest2()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & kotlin.Any?")!>x<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>it<!>.itest2() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any?")!>x<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2")!>it<!>.itest2() }
     }
 }
 
@@ -293,12 +293,12 @@ fun case_13(x: Any?) {
             if (x is ClassLevel2? && x is Interface1?) {
                 if (x !is Interface3?) {} else if (false) {
                     if (x != null) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & ClassLevel2 & Interface3 & kotlin.Any?")!>x<!>
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & ClassLevel2 & Interface3 & kotlin.Any?")!>x<!>.itest1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & ClassLevel2 & Interface3 & kotlin.Any?")!>x<!>.itest2()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & ClassLevel2 & Interface3 & kotlin.Any?")!>x<!>.itest3()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & ClassLevel2 & Interface3 & kotlin.Any?")!>x<!>.test1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1 & ClassLevel2 & Interface3 & kotlin.Any?")!>x<!>.test2()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & ClassLevel2 & Interface1 & Interface3 & kotlin.Any?")!>x<!>
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & ClassLevel2 & Interface1 & Interface3 & kotlin.Any?")!>x<!>.itest1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & ClassLevel2 & Interface1 & Interface3 & kotlin.Any?")!>x<!>.itest2()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & ClassLevel2 & Interface1 & Interface3 & kotlin.Any?")!>x<!>.itest3()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & ClassLevel2 & Interface1 & Interface3 & kotlin.Any?")!>x<!>.test1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & ClassLevel2 & Interface1 & Interface3 & kotlin.Any?")!>x<!>.test2()
                     }
                 }
             }
@@ -341,19 +341,19 @@ fun case_15(x: Any?) {
     if (x !is ClassLevel2? || x !is ClassLevel1?) else {
         if (x === null || x !is Interface1?) else {
             if (x !is Interface2? || x !is Interface3?) {} else {
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface3 & Interface2 & kotlin.Any?")!>x<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface3 & Interface2 & kotlin.Any?")!>x<!>.itest2()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface3 & Interface2 & kotlin.Any?")!>x<!>.itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface3 & Interface2 & kotlin.Any?")!>x<!>.itest3()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface3 & Interface2 & kotlin.Any?")!>x<!>.test1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface3 & Interface2 & kotlin.Any?")!>x<!>.test2()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any?")!>x<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any?")!>x<!>.itest2()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any?")!>x<!>.itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any?")!>x<!>.itest3()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any?")!>x<!>.test1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any?")!>x<!>.test2()
             }
         }
     }
 }
 
 // TESTCASE NUMBER: 16
-fun case_16(a: Any?, b: Int = if (a is Number? && a is Int? && a !== null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!> else 0) {
+fun case_16(a: Any?, b: Int = if (a is Number? && a is Int? && a !== null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>a<!> else 0) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>.equals(null)
@@ -368,7 +368,7 @@ fun case_16(a: Any?, b: Int = if (a is Number? && a is Int? && a !== null) <!DEB
 }
 
 // TESTCASE NUMBER: 17
-fun case_17(a: Any?, b: Int = if (a !is Number? || a !is Int? || a == null) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!>) {
+fun case_17(a: Any?, b: Int = if (a !is Number? || a !is Int? || a == null) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>a<!>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>.equals(null)

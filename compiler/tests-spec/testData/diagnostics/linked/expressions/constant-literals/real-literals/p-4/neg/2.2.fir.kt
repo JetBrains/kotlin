@@ -59,7 +59,7 @@ val value_19 = <!ILLEGAL_UNDERSCORE!>9_______9______9_____9____9___9__9_9.0E__<!
 val value_20 = <!ILLEGAL_UNDERSCORE!>0_0_0_0_0_0_0_0_0_0.12345678e+__90F<!>
 
 // TESTCASE NUMBER: 21
-val value_21 = <!ILLEGAL_UNDERSCORE!>1_2_3_4_5_6_7_8_9.2_3_4_5_6_7_8_9e_<!><!AMBIGUITY!>-<!><!UNRESOLVED_REFERENCE!>_0<!>
+val value_21 = <!ILLEGAL_UNDERSCORE!>1_2_3_4_5_6_7_8_9.2_3_4_5_6_7_8_9e_<!>-<!UNRESOLVED_REFERENCE!>_0<!>
 
 // TESTCASE NUMBER: 22
 val value_22 = <!ILLEGAL_UNDERSCORE!>.345______________6e_____7_______8f<!>

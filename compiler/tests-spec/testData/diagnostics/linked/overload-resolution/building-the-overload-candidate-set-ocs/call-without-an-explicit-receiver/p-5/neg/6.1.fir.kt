@@ -16,7 +16,7 @@ fun case1() {
     <!AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libCase1
 fun Regex(pattern: String) {}
 
@@ -36,11 +36,11 @@ fun case2() {
     <!AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libCase2.a
 fun Regex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libCase2.b
 fun Regex(pattern: String) {}
 
@@ -60,11 +60,11 @@ fun case4() {
     <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!AMBIGUITY!>Regex<!>("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package libCase4.a
 fun Regex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib5.kt
 package libCase4.b
 class Regex(pattern: String) {}
 
@@ -83,11 +83,11 @@ fun case5() {
     <!AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib6.kt
 package libCase5.a
 fun Regex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib7.kt
 package libCase5.b
 class Regex(pattern: String) {}
 
@@ -104,10 +104,10 @@ fun case6() {
     <!AMBIGUITY!>MyRegex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib8.kt
 package libCase6.a
 fun MyRegex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib9.kt
 package libCase6.b
 class MyRegex(pattern: String) {}

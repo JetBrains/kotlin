@@ -14,7 +14,7 @@
  */
 
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 import checkType
@@ -41,7 +41,7 @@ fun case1() {
     a checkType { check<Boolean>() }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 import checkType
@@ -67,7 +67,7 @@ fun case2() {
     a checkType { check<Boolean>() }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 package testPackCase3
 import checkType
@@ -94,7 +94,7 @@ fun case3() {
     a checkType { check<Boolean>() }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase4.kt
 // TESTCASE NUMBER: 4
 package testPackCase4
 import checkType

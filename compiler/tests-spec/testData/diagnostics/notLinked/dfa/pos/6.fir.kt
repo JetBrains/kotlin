@@ -363,17 +363,17 @@ fun case_19(b: Boolean) {
         }
     } else z
 
-    if (a != z && a.<!INAPPLICABLE_CANDIDATE!>B19<!> !== z && a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!> != z && a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!> != z && a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!> !== z) {
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.equals(null)
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.propAny
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.propNullableAny
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.funAny()
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!UNRESOLVED_REFERENCE!>C19<!>.<!UNRESOLVED_REFERENCE!>D19<!>.<!UNRESOLVED_REFERENCE!>x<!>.funNullableAny()
+    if (a != z && a.<!INAPPLICABLE_CANDIDATE!>B19<!> !== z && a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!> != z && a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!> != z && a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!> !== z) {
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.propT
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.propNullableT
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.propNullableAny
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.funT()
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.funNullableT()
+        a.<!INAPPLICABLE_CANDIDATE!>B19<!>.<!INAPPLICABLE_CANDIDATE!>C19<!>.<!INAPPLICABLE_CANDIDATE!>D19<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.funNullableAny()
     }
 }
 
@@ -422,7 +422,7 @@ fun case_21() {
 // TESTCASE NUMBER: 22
 fun case_22(a: (() -> Unit)?) {
     if (a != implicitNullableNothingProperty) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!><!INAPPLICABLE_CANDIDATE!>a<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!INAPPLICABLE_CANDIDATE!>a<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>a<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>a<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>a<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
@@ -438,18 +438,18 @@ fun case_22(a: (() -> Unit)?) {
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
     if (a != z && b !== z && b !== z) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (x != z || x !== implicitNullableNothingProperty) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableAny()
         }
     }
 }
@@ -489,19 +489,19 @@ fun case_25(b: Boolean, z: Nothing?) {
     val y = if (b) x else z
 
     if (y !== z || y != implicitNullableNothingProperty) {
-        val z1 = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
+        val z1 = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
 
         if (z1 != z && implicitNullableNothingProperty !== z1) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.<!UNRESOLVED_REFERENCE!>a<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z1<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>a<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!>.funNullableAny()
         }
     }
 }
@@ -511,18 +511,18 @@ fun case_26(a: ((Float) -> Int?)?, b: Float?) {
     var z = null
 
     if (a != z == true && b != implicitNullableNothingProperty == true) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (x != implicitNullableNothingProperty == true || z !== x) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableAny()
         }
     }
 }
@@ -575,19 +575,19 @@ fun case_29(x: Boolean) {
     val y = if (x) z else null
 
     if (false || false || false || false || y !== v) {
-        val t = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
+        val t = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
 
         if (z !== t || false) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.<!UNRESOLVED_REFERENCE!>a<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>t<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>a<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!>.funNullableAny()
         }
     }
 }
@@ -595,18 +595,18 @@ fun case_29(x: Boolean) {
 // TESTCASE NUMBER: 30
 fun case_30(a: ((Float) -> Int?)?, b: Float?) {
     if (implicitNullableNothingProperty != a == true && b != implicitNullableNothingProperty == true || false || false || false || false || false || false || false || false || false) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (false || implicitNullableNothingProperty != x == true) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableAny()
         }
     }
 }
@@ -651,20 +651,20 @@ fun case_33(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
     if (true && a == z == true || b == null == true) {
 
     } else {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!INAPPLICABLE_CANDIDATE!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>)<!>
         if (x == z == true && x === z || (c != z && <!INAPPLICABLE_CANDIDATE!>!<!>c)) {
 
         } else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propNullableT<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funNullableT<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function1.invoke]")!>x<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.funNullableAny()
         }
     }
 }
@@ -714,7 +714,7 @@ fun case_36(x: Any) {
 
     if (x == z) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!INAPPLICABLE_CANDIDATE!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>java<!>
     }
 }
 
@@ -736,7 +736,7 @@ fun case_38() {
     if (Object.prop_2 != z)
     else {
         Object.prop_2
-        Object.prop_2.<!INAPPLICABLE_CANDIDATE!>java<!>
+        Object.prop_2.<!UNRESOLVED_REFERENCE!>java<!>
     }
 }
 
@@ -953,9 +953,9 @@ fun case_54(b: Boolean) {
 
     val z = null
 
-    if (a != z && a.<!INAPPLICABLE_CANDIDATE!>B54<!> !== a.<!INAPPLICABLE_CANDIDATE!>z<!> && a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!UNRESOLVED_REFERENCE!>C54<!> != a.<!INAPPLICABLE_CANDIDATE!>z<!> && a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!UNRESOLVED_REFERENCE!>C54<!>.<!UNRESOLVED_REFERENCE!>D54<!> != a.<!INAPPLICABLE_CANDIDATE!>z<!> && a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!UNRESOLVED_REFERENCE!>C54<!>.<!UNRESOLVED_REFERENCE!>D54<!>.<!UNRESOLVED_REFERENCE!>x<!> === a.<!INAPPLICABLE_CANDIDATE!>z<!>) {
-        a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!UNRESOLVED_REFERENCE!>C54<!>.<!UNRESOLVED_REFERENCE!>D54<!>.<!UNRESOLVED_REFERENCE!>x<!>
-        a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!UNRESOLVED_REFERENCE!>C54<!>.<!UNRESOLVED_REFERENCE!>D54<!>.<!UNRESOLVED_REFERENCE!>x<!>.hashCode()
+    if (a != z && a.<!INAPPLICABLE_CANDIDATE!>B54<!> !== a.<!INAPPLICABLE_CANDIDATE!>z<!> && a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!INAPPLICABLE_CANDIDATE!>C54<!> != a.<!INAPPLICABLE_CANDIDATE!>z<!> && a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!INAPPLICABLE_CANDIDATE!>C54<!>.<!INAPPLICABLE_CANDIDATE!>D54<!> != a.<!INAPPLICABLE_CANDIDATE!>z<!> && a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!INAPPLICABLE_CANDIDATE!>C54<!>.<!INAPPLICABLE_CANDIDATE!>D54<!>.<!INAPPLICABLE_CANDIDATE!>x<!> === a.<!INAPPLICABLE_CANDIDATE!>z<!>) {
+        a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!INAPPLICABLE_CANDIDATE!>C54<!>.<!INAPPLICABLE_CANDIDATE!>D54<!>.<!INAPPLICABLE_CANDIDATE!>x<!>
+        a.<!INAPPLICABLE_CANDIDATE!>B54<!>.<!INAPPLICABLE_CANDIDATE!>C54<!>.<!INAPPLICABLE_CANDIDATE!>D54<!>.<!INAPPLICABLE_CANDIDATE!>x<!>.hashCode()
     }
 }
 
@@ -994,7 +994,7 @@ fun case_57(a: (() -> Unit)) {
 
     if (a == z) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>a<!>.<!INAPPLICABLE_CANDIDATE!>java<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>")!>a<!>.<!UNRESOLVED_REFERENCE!>java<!>
     }
 }
 
@@ -1008,7 +1008,7 @@ fun case_58(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>
         if (a != z) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>.<!INAPPLICABLE_CANDIDATE!>java<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>.<!UNRESOLVED_REFERENCE!>java<!>
         }
     }
 }
@@ -1054,10 +1054,10 @@ fun case_60(b: Boolean) {
     val y = if (b) x else nullableNothingProperty
 
     if (y != nullableNothingProperty) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!INAPPLICABLE_CANDIDATE!>y<!>()<!>
 
         if (z == nullableNothingProperty) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Inapplicable(WRONG_RECEIVER): [kotlin/Function0.invoke]")!>z<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z<!>
         }
     }
 }
@@ -1296,11 +1296,11 @@ fun case_71(t: Any?) {
         if (t is Interface2?) {
             if (t != z2) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.itest2()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.itest()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
 
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.itest2() }
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>() }
             }
         }
     }
@@ -1317,12 +1317,12 @@ fun case_72(t: Any?, z1: Nothing?) {
     var z2 = null
 
     if (t is Interface1? && t != z1 ?: z2 && t is Interface2?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & kotlin.Any?")!>t<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & kotlin.Any?")!>t<!>.itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & kotlin.Any?")!>t<!>.itest2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & kotlin.Any?")!>t<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & kotlin.Any?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1?")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1?")!>it<!>.itest2() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2? & kotlin.Any?")!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>(); <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface2?")!>it<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>() }
     }
 }
 
@@ -1341,12 +1341,12 @@ fun case_73(t: Any?) {
             if (t is ClassLevel2? && t is Interface1?) {
                 if (t !is Interface3?) {} else if (false) {
                     if (t != `null`) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.itest2()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.itest1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.itest()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.test1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.test2()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & ClassLevel2? & Interface1? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & ClassLevel2? & Interface1? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & ClassLevel2? & Interface1? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & ClassLevel2? & Interface1? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test1<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & ClassLevel2? & Interface1? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test2<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & ClassLevel2? & Interface1? & Interface3? & kotlin.Any?")!>t<!>
                     }
                 }
             }
@@ -1366,11 +1366,11 @@ fun case_74(t: Any?) {
             if (t == implicitNullableNothingProperty || t === implicitNullableNothingProperty || t !is Interface1?) else {
                 if (t is ClassLevel2?) {
                     if (t is Interface3?) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.itest2()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.itest1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.itest()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.test1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.test2()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test1<!>()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test2<!>()
                         <!DEBUG_INFO_EXPRESSION_TYPE("Interface2? & Interface1? & ClassLevel2? & Interface3? & kotlin.Any?")!>t<!>
                     }
                 }
@@ -1389,19 +1389,19 @@ fun case_75(t: Any?, z: Nothing?) {
     if (t !is ClassLevel2? || t !is ClassLevel1?) else {
         if (t === ((((((z)))))) || t !is Interface1?) else {
             if (t !is Interface2? || t !is Interface3?) {} else {
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface3? & Interface2? & kotlin.Any?")!>t<!>.itest2()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface3? & Interface2? & kotlin.Any?")!>t<!>.itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface3? & Interface2? & kotlin.Any?")!>t<!>.itest()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface3? & Interface2? & kotlin.Any?")!>t<!>.test1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface3? & Interface2? & kotlin.Any?")!>t<!>.test2()
-                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface3? & Interface2? & kotlin.Any?")!>t<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest2<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest1<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>itest<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test1<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface2? & Interface3? & kotlin.Any?")!>t<!>.<!INAPPLICABLE_CANDIDATE!>test2<!>()
+                <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2? & Interface1? & Interface2? & Interface3? & kotlin.Any?")!>t<!>
             }
         }
     }
 }
 
 // TESTCASE NUMBER: 76
-fun case_76(a: Any?, b: Int = if (a !is Number? === true || a !is Int? == true || a != null == false == true) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!>) {
+fun case_76(a: Any?, b: Int = if (a !is Number? === true || a !is Int? == true || a != null == false == true) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>a<!>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>.equals(null)

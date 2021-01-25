@@ -13,14 +13,14 @@
  * DESCRIPTION: Implicitly imported extension callable without infix modifier
  */
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
 class A() {
      fun foo(x: Int) = "member fun foo"
 }
 
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 // TESTCASE NUMBER: 1, 2, 3, 4
 
 package sentence3

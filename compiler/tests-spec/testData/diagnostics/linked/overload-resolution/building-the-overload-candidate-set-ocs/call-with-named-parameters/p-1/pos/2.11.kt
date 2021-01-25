@@ -14,7 +14,7 @@
  * DESCRIPTION: Explicit receiver:  Top-level non-extension functions: Implicitly imported callables
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 import libPackageCase1.* //nothing to import
@@ -22,12 +22,12 @@ import libPackageCase1.* //nothing to import
 fun case1() {
     <!DEBUG_INFO_CALL("fqName: kotlin.collections.listOf; typeCall: function")!>listOf(elements = *arrayOf(1))<!>
 }
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 
 private fun <T> listOf(vararg elements1: T): List<T> = TODO()
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testscase2
 
@@ -44,7 +44,7 @@ class A {
     operator fun <T>invoke(vararg elements1: T): List<T> = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackagecase2
 import testscase2.*
 private fun <T> listOf(vararg elements1: T): List<T> = TODO()

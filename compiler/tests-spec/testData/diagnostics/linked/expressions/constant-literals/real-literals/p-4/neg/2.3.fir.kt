@@ -38,7 +38,7 @@ val value_12 = <!ILLEGAL_UNDERSCORE!>33__3.0_e_10__0<!>
 val value_13 = <!ILLEGAL_UNDERSCORE!>.0_E_0______00F<!>
 
 // TESTCASE NUMBER: 14
-val value_14 = <!ILLEGAL_UNDERSCORE!>5_________555_________5.0____e____<!><!AMBIGUITY!>-<!><!UNRESOLVED_REFERENCE!>____9<!>
+val value_14 = <!ILLEGAL_UNDERSCORE!>5_________555_________5.0____e____<!>-<!UNRESOLVED_REFERENCE!>____9<!>
 
 // TESTCASE NUMBER: 15
 val value_15 = <!ILLEGAL_UNDERSCORE!>666_666.0__________________________________________________1_E+_2___________________________________________________________________0F<!>
@@ -50,7 +50,7 @@ val value_16 = <!ILLEGAL_UNDERSCORE!>9_______9______9_____9____9___9__9_9.0___E_
 val value_17 = <!ILLEGAL_UNDERSCORE!>0_0_0_0_0_0_0_0_0_0.12345678___e+__90F<!>
 
 // TESTCASE NUMBER: 18
-val value_18 = <!ILLEGAL_UNDERSCORE!>1_2_3_4_5_6_7_8_9.2_3_4_5_6_7_8_9_e_<!><!AMBIGUITY!>-<!><!UNRESOLVED_REFERENCE!>_0<!>
+val value_18 = <!ILLEGAL_UNDERSCORE!>1_2_3_4_5_6_7_8_9.2_3_4_5_6_7_8_9_e_<!>-<!UNRESOLVED_REFERENCE!>_0<!>
 
 // TESTCASE NUMBER: 19
 val value_19 = <!ILLEGAL_UNDERSCORE!>.45_6_E_7f<!>

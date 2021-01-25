@@ -13,7 +13,7 @@
  * DESCRIPTION: call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: Local extension callables
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 
@@ -35,14 +35,14 @@ class Case1() {
 
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 import testsCase1.*
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 fun <T> Case1.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackageCase1Explicit
 import testsCase1.*
 
@@ -50,14 +50,14 @@ fun <T> Case1.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): 
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: LibtestsPack.kt
+// FILE: LibtestsPack1.kt
 package testsCase1
 fun <T> Case1.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 
 /*
  * TESTCASE NUMBER: 2
@@ -96,7 +96,7 @@ class A {
     operator fun <T> invoke(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 // TESTCASE NUMBER: 2
 package libPackageCase2
 import testsCase2.*
@@ -107,7 +107,7 @@ val Case2.listOf: A
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 // TESTCASE NUMBER: 2
 
 package libPackageCase2Explicit
@@ -117,7 +117,7 @@ fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): 
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: LibtestsPack.kt
+// FILE: LibtestsPack2.kt
 // TESTCASE NUMBER: 2
 
 package testsCase2
@@ -126,7 +126,7 @@ fun <T> Case2.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 
 /*
  * TESTCASE NUMBER: 3
@@ -164,7 +164,7 @@ class A {
     operator fun <T> invoke(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib5.kt
 // TESTCASE NUMBER: 3
 package libPackageCase3
 import testsCase3.*
@@ -175,7 +175,7 @@ val Case3.listOf: A
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib6.kt
 // TESTCASE NUMBER: 3
 
 package libPackageCase3Explicit
@@ -185,7 +185,7 @@ fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): 
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: LibtestsPack.kt
+// FILE: LibtestsPack3.kt
 // TESTCASE NUMBER: 3
 package testsCase3
 fun <T> Case3.listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()

@@ -16,11 +16,11 @@
  * DESCRIPTION: Infix fun: Local extension infix extension callables
  */
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
 infix fun CharSequence.trim(predicate: (Char) -> Boolean): CharSequence = TODO()
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 
 package sentence3
 

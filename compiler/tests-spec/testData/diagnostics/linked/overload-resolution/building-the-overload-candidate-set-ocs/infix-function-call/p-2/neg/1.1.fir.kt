@@ -2,14 +2,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
 class A() {
      fun foo(x: Int) = "member fun foo"
 }
 
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 // TESTCASE NUMBER: 1, 2, 3, 4
 
 package sentence3

@@ -14,7 +14,7 @@
  * DESCRIPTION: call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Implicitly imported callables
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 
@@ -23,12 +23,12 @@ import libPackageCase1.* //nothing to import
 fun case1() {
     <!DEBUG_INFO_CALL("fqName: kotlin.run; typeCall: inline function")!>run(block = { "ss" })<!>
 }
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 
 private fun <R> run(vararg elements: R = TODO(), block: () -> R): R = TODO()
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testscase2
 
@@ -45,7 +45,7 @@ class A {
     fun <R> run(vararg elements: R = TODO(), block: () -> R): R = TODO()
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackagecase2
 import testscase2.*
 

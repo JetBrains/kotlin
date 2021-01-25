@@ -13,7 +13,7 @@
  * DESCRIPTION: call-with-trailing-lambda-expressions,Explicit receiver:  Top-level non-extension functions: Callables explicitly imported into the current file
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 
@@ -24,23 +24,23 @@ fun case1() {
     <!DEBUG_INFO_CALL("fqName: libPackageCase1Explicit.listOf; typeCall: function")!>listOf(<!CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>elements1 = arrayOf(1)<!>, body = { "" })<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackageCase1Explicit
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: LibtestsPack.kt
+// FILE: LibtestsPack1.kt
 package testsCase1
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testsCase2
 import libPackageCase2.*
@@ -53,12 +53,12 @@ fun case2() {
 class A {
     operator fun <T> invoke(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 }
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libPackageCase2
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package libPackageCase2Explicit
 import testsCase2.*
 
@@ -67,13 +67,13 @@ val listOf: A
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: LibtestsPack.kt
+// FILE: LibtestsPack2.kt
 package testsCase2
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 package testsCase3
 import libPackageCase3.*
@@ -86,12 +86,12 @@ fun case3() {
 class A {
     operator fun <T> invoke(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 }
-// FILE: Lib.kt
+// FILE: Lib5.kt
 package libPackageCase3
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib6.kt
 package libPackageCase3Explicit
 import testsCase3.*
 
@@ -100,7 +100,7 @@ val listOf: A
 
 private fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
 
-// FILE: LibtestsPack.kt
+// FILE: LibtestsPack3.kt
 package testsCase3
 
 public fun <T> listOf(vararg elements1: T = TODO(), body: () -> T = { TODO() }): List<T> = TODO()
