@@ -1368,14 +1368,12 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl")) {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
-        fun testDependencies() =
-            testResolveAllConfigurations("app", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
-                assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
-                assertEquals(
-                    1,
-                    (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output)
-                        .count()
-                )
+        fun testDependencies() = testResolveAllConfigurations("app") {
+            assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
+            assertEquals(
+                1,
+                (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
+            )
 
                 assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
                 assertEquals(
@@ -1405,7 +1403,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
-        testResolveAllConfigurations("app", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+        testResolveAllConfigurations("app") {
             assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
             assertContains(">> :app:junitCompileClasspath --> junit-4.12.jar")
 

@@ -776,7 +776,7 @@ class KotlinGradleIT : BaseGradleIT() {
             setupWorkingDir()
             // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
             gradleBuildScript().appendText("\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:1.2.71' }")
-            testResolveAllConfigurations(options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+            testResolveAllConfigurations {
                 assertSuccessful()
                 assertContains(">> :compileClasspath --> kotlin-reflect-1.2.71.jar")
                 // Check that the default newer Kotlin version still wins for 'kotlin-stdlib':
