@@ -1,0 +1,27 @@
+FILE: CallingFunctionsFromClassInit.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/A|.R|/A.boo|()
+        }
+
+        public final fun boo(): R|kotlin/Unit| {
+            this@R|/A|.R|/A.too|()
+        }
+
+        public final fun too(): R|kotlin/Unit| {
+            this@R|/A|.R|/A.s|.R|kotlin/String.length|
+        }
+
+        init {
+            this@R|/A|.R|/A.foo|()
+            this@R|/A|.R|/A.s| = String()
+        }
+
+    }

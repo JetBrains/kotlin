@@ -1,0 +1,108 @@
+digraph MoreThanOneInit_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter class MoreThanOneInit" style="filled" fillcolor=red];
+        1 [label="Part of class initialization"];
+        2 [label="Part of class initialization"];
+        3 [label="Exit class MoreThanOneInit" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+    1 -> {2} [style=dotted];
+    1 -> {19} [color=green];
+    1 -> {19} [style=dashed];
+    2 -> {3} [style=dotted];
+    2 -> {25} [color=green];
+    2 -> {25} [style=dashed];
+
+    subgraph cluster_1 {
+        color=red
+        4 [label="Enter function <init>" style="filled" fillcolor=red];
+        5 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        6 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+    4 -> {5};
+    5 -> {6};
+
+    subgraph cluster_2 {
+        color=red
+        7 [label="Enter function getter" style="filled" fillcolor=red];
+        8 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    7 -> {8};
+
+    subgraph cluster_3 {
+        color=red
+        9 [label="Enter function getter" style="filled" fillcolor=red];
+        10 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+    9 -> {10};
+
+    subgraph cluster_4 {
+        color=red
+        11 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_5 {
+            color=blue
+            12 [label="Enter block"];
+            13 [label="Access variable R|/MoreThanOneInit.t|"];
+            14 [label="Access variable R|kotlin/String.length|"];
+            15 [label="Access variable R|/MoreThanOneInit.s|"];
+            16 [label="Access variable R|kotlin/String.length|"];
+            17 [label="Exit block"];
+        }
+        18 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {30} [color=green style=dashed];
+
+    subgraph cluster_6 {
+        color=red
+        19 [label="Enter init block" style="filled" fillcolor=red];
+        subgraph cluster_7 {
+            color=blue
+            20 [label="Enter block"];
+            21 [label="Const: String(test)"];
+            22 [label="Assignment: R|/MoreThanOneInit.s|"];
+            23 [label="Exit block"];
+        }
+        24 [label="Exit init block" style="filled" fillcolor=red];
+    }
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23};
+    23 -> {24};
+    24 -> {2} [color=green];
+
+    subgraph cluster_8 {
+        color=red
+        25 [label="Enter init block" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            26 [label="Enter block"];
+            27 [label="Const: String(test)"];
+            28 [label="Assignment: R|/MoreThanOneInit.t|"];
+            29 [label="Function call: this@R|/MoreThanOneInit|.R|/MoreThanOneInit.foo|()"];
+            30 [label="Exit block"];
+        }
+        31 [label="Exit init block" style="filled" fillcolor=red];
+    }
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    29 -> {11} [color=green style=dashed];
+    30 -> {31};
+    31 -> {3} [color=green];
+
+}

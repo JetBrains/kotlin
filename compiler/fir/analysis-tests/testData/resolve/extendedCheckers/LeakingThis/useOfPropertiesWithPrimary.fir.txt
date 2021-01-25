@@ -1,0 +1,18 @@
+FILE: useOfPropertiesWithPrimary.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(w: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val w: R|kotlin/Int| = R|<local>/w|
+            public get(): R|kotlin/Int|
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        init {
+            this@R|/A|.R|/A.x|.R|kotlin/Int.plus|(this@R|/A|.R|/A.w|)
+            this@R|/A|.R|/A.x| = Int(1)
+        }
+
+    }

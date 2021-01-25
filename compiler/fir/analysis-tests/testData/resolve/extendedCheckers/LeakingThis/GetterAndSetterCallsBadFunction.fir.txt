@@ -1,0 +1,21 @@
+FILE: GetterAndSetterCallsBadFunction.kt
+    public final class GetterAndSetterCallsBadFunction : R|kotlin/Any| {
+        public constructor(): R|GetterAndSetterCallsBadFunction| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public final val property: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                this@R|/GetterAndSetterCallsBadFunction|.R|/GetterAndSetterCallsBadFunction.s|.R|kotlin/String.length|
+                ^ Int(1)
+            }
+
+        init {
+            R|kotlin/io/print|(this@R|/GetterAndSetterCallsBadFunction|.R|/GetterAndSetterCallsBadFunction.property|)
+            this@R|/GetterAndSetterCallsBadFunction|.R|/GetterAndSetterCallsBadFunction.s| = String()
+        }
+
+    }
