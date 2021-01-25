@@ -13701,6 +13701,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("ConstValAccess.kt")
+        public void testConstValAccess() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/ConstValAccess.kt");
+        }
+
+        @Test
         @TestMetadata("ExtensionAlias.kt")
         public void testExtensionAlias() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ExtensionAlias.kt");

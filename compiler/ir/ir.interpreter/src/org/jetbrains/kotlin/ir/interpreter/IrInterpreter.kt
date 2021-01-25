@@ -540,6 +540,9 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             stack.pushReturnValue(Wrapper.getStaticGetter(field)!!.invokeWithArguments().toState(field.type))
             return Next
         }
+        if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.correspondingPropertySymbol?.owner?.isConst == true) {
+            return field.initializer?.expression?.interpret() ?: Next
+        }
         // receiver is null, for example, for top level fields
         val result = receiver?.let { stack.getVariable(receiver).state.getState(field.correspondingPropertySymbol!!) }
             ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
