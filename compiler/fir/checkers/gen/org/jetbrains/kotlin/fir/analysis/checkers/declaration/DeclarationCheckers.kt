@@ -24,6 +24,7 @@ abstract class DeclarationCheckers {
     open val functionCheckers: Set<FirFunctionChecker> = emptySet()
     open val propertyCheckers: Set<FirPropertyChecker> = emptySet()
     open val regularClassCheckers: Set<FirRegularClassChecker> = emptySet()
+    open val classCheckers: Set<FirClassChecker> = emptySet()
     open val constructorCheckers: Set<FirConstructorChecker> = emptySet()
     open val fileCheckers: Set<FirFileChecker> = emptySet()
 
@@ -34,7 +35,8 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allMemberDeclarationCheckers: Set<FirMemberDeclarationChecker> get() = memberDeclarationCheckers + allBasicDeclarationCheckers
     @CheckersComponentInternal internal val allFunctionCheckers: Set<FirFunctionChecker> get() = functionCheckers + allBasicDeclarationCheckers
     @CheckersComponentInternal internal val allPropertyCheckers: Set<FirPropertyChecker> get() = propertyCheckers + allMemberDeclarationCheckers
-    @CheckersComponentInternal internal val allRegularClassCheckers: Set<FirRegularClassChecker> get() = regularClassCheckers + allMemberDeclarationCheckers
+    @CheckersComponentInternal internal val allRegularClassCheckers: Set<FirRegularClassChecker> get() = regularClassCheckers + allMemberDeclarationCheckers + allClassCheckers
+    @CheckersComponentInternal internal val allClassCheckers: Set<FirClassChecker> get() = classCheckers + allBasicDeclarationCheckers
     @CheckersComponentInternal internal val allConstructorCheckers: Set<FirConstructorChecker> get() = constructorCheckers + allFunctionCheckers
     @CheckersComponentInternal internal val allFileCheckers: Set<FirFileChecker> get() = fileCheckers + allBasicDeclarationCheckers
 }

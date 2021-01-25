@@ -84,10 +84,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_B
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKING_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_CLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_INTERFACE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OBJECTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MAY_BE_NOT_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
@@ -507,6 +509,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
             map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
             map.put(VARIABLE_NEVER_READ, "Variable is never read")
+            map.put(LEAKING_THIS, "Leaking this: member is accessed before property {0} was initialized", SYMBOL)
+            map.put(MAY_BE_NOT_INITIALIZED, "Property {0} may be not initialized yet", PROPERTY_NAME)
         }
     }
 }

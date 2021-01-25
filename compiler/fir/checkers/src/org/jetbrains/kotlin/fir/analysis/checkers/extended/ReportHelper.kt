@@ -9,10 +9,19 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory1
 
 inline fun <reified T : FirSourceElement, P : PsiElement> DiagnosticReporter.report(
     source: T?,
     factory: FirDiagnosticFactory0<T, P>
 ) {
     source?.let { report(factory.on(it)) }
+}
+
+inline fun <reified T : FirSourceElement, P : PsiElement, A : Any> DiagnosticReporter.report(
+    source: T?,
+    factory: FirDiagnosticFactory1<T, P, A>,
+    a: A
+) {
+    source?.let { report(factory.on(it, a)) }
 }

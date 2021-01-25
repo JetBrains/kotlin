@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
-import org.jetbrains.kotlin.fir.analysis.checkers.resolvedSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedPropertySymbol
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -26,7 +26,7 @@ abstract class InterproceduralVisitorVoid : ControlFlowGraphVisitorVoid() {
 
             functionCfg.traverseInterprocedural(direction, this, visitedSymbols + functionSymbol)
         } else if (node is QualifiedAccessNode) {
-            val property = node.fir.calleeReference.resolvedSymbol?.fir as? FirProperty
+            val property = node.fir.calleeReference.resolvedPropertySymbol?.fir
             val propertySymbol = property?.symbol as? AbstractFirBasedSymbol<*>
             if (propertySymbol in visitedSymbols) return
 

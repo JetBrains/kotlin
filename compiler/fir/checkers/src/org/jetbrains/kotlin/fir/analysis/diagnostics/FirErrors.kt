@@ -243,4 +243,6 @@ object FirErrors {
     val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_NEVER_READ by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val USELESS_CALL_ON_NOT_NULL by warning0<FirSourceElement, PsiElement>()
+    val LEAKING_THIS by warning1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
+    val MAY_BE_NOT_INITIALIZED by warning1<FirSourceElement, PsiElement, FirPropertySymbol>()
 }

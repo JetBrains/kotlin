@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeCheckerContext
 import org.jetbrains.kotlin.fir.types.*
@@ -318,3 +320,9 @@ fun Modality.toToken(): KtModifierKeywordToken = when (this) {
 
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
+
+/**
+ * Returns resolved symbol by reference
+ */
+val FirReference.resolvedPropertySymbol: FirPropertySymbol?
+    get() = (this as? FirResolvedNamedReference)?.resolvedSymbol as? FirPropertySymbol
