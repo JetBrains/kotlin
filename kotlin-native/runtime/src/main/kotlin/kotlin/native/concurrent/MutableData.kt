@@ -9,12 +9,15 @@ import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
 @SymbolName("Kotlin_Any_share")
+@GCCritical
 external private fun Any.share()
 
 @SymbolName("Kotlin_CPointer_CopyMemory")
+@GCCritical
 external private fun CopyMemory(to: COpaquePointer?, from: COpaquePointer?, count: Int)
 
 @SymbolName("ReadHeapRefNoLock")
+@GCCritical
 internal external fun readHeapRefNoLock(where: Any, index: Int): Any?
 
 /**

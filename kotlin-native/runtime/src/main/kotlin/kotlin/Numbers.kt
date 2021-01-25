@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.native.internal.GCCritical
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
@@ -13,6 +14,7 @@ import kotlin.native.internal.IntrinsicType
  * Not-a-Number (NaN) value, `false` otherwise.
  */
 @SymbolName("Kotlin_Double_isNaN")
+@GCCritical
 public actual external fun Double.isNaN(): Boolean
 
 /**
@@ -20,30 +22,35 @@ public actual external fun Double.isNaN(): Boolean
  * Not-a-Number (NaN) value, `false` otherwise.
  */
 @SymbolName("Kotlin_Float_isNaN")
+@GCCritical
 public actual external fun Float.isNaN(): Boolean
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
 @SymbolName("Kotlin_Double_isInfinite")
+@GCCritical
 public actual external fun Double.isInfinite(): Boolean
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
 @SymbolName("Kotlin_Float_isInfinite")
+@GCCritical
 public actual external fun Float.isInfinite(): Boolean
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @SymbolName("Kotlin_Double_isFinite")
+@GCCritical
 public actual external fun Double.isFinite(): Boolean
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
 @SymbolName("Kotlin_Float_isFinite")
+@GCCritical
 public actual external fun Float.isFinite(): Boolean
 
 /**
@@ -110,6 +117,7 @@ internal external fun fromBits(bits: Int): Float
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
 @SymbolName("Kotlin_Int_countOneBits")
+@GCCritical
 public actual external fun Int.countOneBits(): Int
 
 /**
@@ -117,6 +125,7 @@ public actual external fun Int.countOneBits(): Int
  * Returns undefined result for zero [value].
  */
 @SymbolName("Kotlin_Int_countLeadingZeroBits")
+@GCCritical
 private external fun countLeadingZeroBits(value: Int): Int
 
 /**
@@ -132,6 +141,7 @@ public actual fun Int.countLeadingZeroBits(): Int =
  * Returns undefined result for zero [value].
  */
 @SymbolName("Kotlin_Int_countTrailingZeroBits")
+@GCCritical
 private external fun countTrailingZeroBits(value: Int): Int
 
 /**
@@ -198,6 +208,7 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
 @SymbolName("Kotlin_Long_countOneBits")
+@GCCritical
 public actual external fun Long.countOneBits(): Int
 
 /**
@@ -205,6 +216,7 @@ public actual external fun Long.countOneBits(): Int
  * Returns undefined result for zero [value].
  */
 @SymbolName("Kotlin_Long_countLeadingZeroBits")
+@GCCritical
 private external fun countLeadingZeroBits(value: Long): Int
 
 /**
@@ -220,6 +232,7 @@ public actual fun Long.countLeadingZeroBits(): Int =
  * Returns undefined result for zero [value].
  */
 @SymbolName("Kotlin_Long_countTrailingZeroBits")
+@GCCritical
 private external fun countTrailingZeroBits(value: Long): Int
 
 /**

@@ -6,6 +6,7 @@
 package kotlin.native
 
 import kotlinx.cinterop.toKString
+import kotlin.native.internal.GCCritical
 
 /**
  * Converts an UTF-8 array into a [String]. Replaces invalid input sequences with a default character.
@@ -136,22 +137,29 @@ internal fun insertString(array: CharArray, start: Int, value: String): Int =
         insertString(array, start, value, 0, value.length)
 
 @SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8")
+@GCCritical
 internal external fun ByteArray.unsafeStringFromUtf8(start: Int, size: Int) : String
 
 @SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8OrThrow")
+@GCCritical
 internal external fun ByteArray.unsafeStringFromUtf8OrThrow(start: Int, size: Int) : String
 
 @SymbolName("Kotlin_String_unsafeStringToUtf8")
+@GCCritical
 internal external fun String.unsafeStringToUtf8(start: Int, size: Int) : ByteArray
 
 @SymbolName("Kotlin_String_unsafeStringToUtf8OrThrow")
+@GCCritical
 internal external fun String.unsafeStringToUtf8OrThrow(start: Int, size: Int) : ByteArray
 
 @SymbolName("Kotlin_String_unsafeStringFromCharArray")
+@GCCritical
 internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 @SymbolName("Kotlin_StringBuilder_insertString")
+@GCCritical
 internal external fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int
 
 @SymbolName("Kotlin_StringBuilder_insertInt")
+@GCCritical
 internal external fun insertInt(array: CharArray, start: Int, value: Int): Int

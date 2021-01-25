@@ -10,4 +10,5 @@ package kotlin.native.internal
  * This method is unsafe and should be used with care.
  */
 @SymbolName("Kotlin_native_internal_undefined")
+@GCCritical
 internal external fun <T> undefined(): T

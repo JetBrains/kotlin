@@ -5,8 +5,11 @@
 
 package kotlin.time
 
+import kotlin.native.internal.GCCritical
+
 
 @SymbolName("Kotlin_DurationValue_formatToExactDecimals")
+@GCCritical
 internal actual external fun formatToExactDecimals(value: Double, decimals: Int): String
 
 internal actual fun formatUpToDecimals(value: Double, decimals: Int): String {
@@ -14,6 +17,7 @@ internal actual fun formatUpToDecimals(value: Double, decimals: Int): String {
 }
 
 @SymbolName("Kotlin_DurationValue_formatScientificImpl")
+@GCCritical
 internal external fun formatScientificImpl(value: Double): String
 
 internal actual fun formatScientific(value: Double): String {

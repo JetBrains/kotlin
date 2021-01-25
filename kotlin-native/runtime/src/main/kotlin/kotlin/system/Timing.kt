@@ -5,11 +5,14 @@
 
 package kotlin.system
 
+import kotlin.native.internal.GCCritical
+
 /**
  * Gets current system time in milliseconds since certain moment in the past,
  * only delta between two subsequent calls makes sense.
  */
 @SymbolName("Kotlin_system_getTimeMillis")
+@GCCritical
 public external fun getTimeMillis() : Long
 
 /**
@@ -17,6 +20,7 @@ public external fun getTimeMillis() : Long
  * only delta between two subsequent calls makes sense.
  */
 @SymbolName("Kotlin_system_getTimeNanos")
+@GCCritical
 public external fun getTimeNanos() : Long
 
 /**
@@ -24,6 +28,7 @@ public external fun getTimeNanos() : Long
  * only delta between two subsequent calls makes sense.
  */
 @SymbolName("Kotlin_system_getTimeMicros")
+@GCCritical
 public external fun getTimeMicros() : Long
 
 /** Executes the given [block] and returns elapsed time in milliseconds. */

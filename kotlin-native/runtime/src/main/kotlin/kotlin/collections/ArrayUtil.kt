@@ -7,6 +7,7 @@ package kotlin.collections
 
 import kotlin.native.internal.PointsTo
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.GCCritical
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with _uninitialized_ values.
@@ -76,31 +77,40 @@ internal fun <E> Array<E>.resetAt(index: Int) {
 }
 
 @SymbolName("Kotlin_Array_fillImpl")
+@GCCritical
 @PointsTo(0x3000, 0x0000, 0x0000, 0x0000) // array.intestines -> value
 internal external fun <T> arrayFill(array: Array<T>, fromIndex: Int, toIndex: Int, value: T)
 
 @SymbolName("Kotlin_ByteArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: ByteArray, fromIndex: Int, toIndex: Int, value: Byte)
 
 @SymbolName("Kotlin_ShortArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: ShortArray, fromIndex: Int, toIndex: Int, value: Short)
 
 @SymbolName("Kotlin_CharArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: CharArray, fromIndex: Int, toIndex: Int, value: Char)
 
 @SymbolName("Kotlin_IntArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: IntArray, fromIndex: Int, toIndex: Int, value: Int)
 
 @SymbolName("Kotlin_LongArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: LongArray, fromIndex: Int, toIndex: Int, value: Long)
 
 @SymbolName("Kotlin_DoubleArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: DoubleArray, fromIndex: Int, toIndex: Int, value: Double)
 
 @SymbolName("Kotlin_FloatArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: FloatArray, fromIndex: Int, toIndex: Int, value: Float)
 
 @SymbolName("Kotlin_BooleanArray_fillImpl")
+@GCCritical
 internal external fun arrayFill(array: BooleanArray, fromIndex: Int, toIndex: Int, value: Boolean)
 
 @ExportForCppRuntime
@@ -125,31 +135,40 @@ internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
 }
 
 @SymbolName("Kotlin_Array_copyImpl")
+@GCCritical
 @PointsTo(0x00000, 0x00000, 0x00004, 0x00000, 0x00000) // destination.intestines -> array.intestines
 internal external fun arrayCopy(array: Array<Any?>, fromIndex: Int, destination: Array<Any?>, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_ByteArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: ByteArray, fromIndex: Int, destination: ByteArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_ShortArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: ShortArray, fromIndex: Int, destination: ShortArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_CharArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: CharArray, fromIndex: Int, destination: CharArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_IntArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: IntArray, fromIndex: Int, destination: IntArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_LongArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: LongArray, fromIndex: Int, destination: LongArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_FloatArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: FloatArray, fromIndex: Int, destination: FloatArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_DoubleArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: DoubleArray, fromIndex: Int, destination: DoubleArray, toIndex: Int, count: Int)
 
 @SymbolName("Kotlin_BooleanArray_copyImpl")
+@GCCritical
 internal external fun arrayCopy(array: BooleanArray, fromIndex: Int, destination: BooleanArray, toIndex: Int, count: Int)
 
 

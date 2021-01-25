@@ -5,6 +5,8 @@
 
 package kotlin.system
 
+import kotlin.native.internal.GCCritical
+
 /**
  * Terminates the currently running process.
  *
@@ -14,4 +16,5 @@ package kotlin.system
  * @return This method never returns normally.
  */
 @SymbolName("Kotlin_system_exitProcess")
+@GCCritical
 public external fun exitProcess(status: Int): Nothing

@@ -5,9 +5,11 @@
 
 package kotlin.io
 
+import kotlin.native.internal.GCCritical
+
 /** Prints the given [message] to the standard output stream. */
 @SymbolName("Kotlin_io_Console_print")
-external public fun print(message: String)
+public external fun print(message: String)
 
 /** Prints the given [message] to the standard output stream. */
 public actual fun print(message: Any?) {
@@ -16,7 +18,7 @@ public actual fun print(message: Any?) {
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 @SymbolName("Kotlin_io_Console_println")
-external public fun println(message: String)
+public external fun println(message: String)
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 public actual fun println(message: Any?) {
@@ -25,7 +27,7 @@ public actual fun println(message: Any?) {
 
 /** Prints the line separator to the standard output stream. */
 @SymbolName("Kotlin_io_Console_println0")
-external public actual fun println()
+public actual external fun println()
 
 /**
  * Reads a line of input from the standard input stream.
@@ -33,4 +35,7 @@ external public actual fun println()
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
 @SymbolName("Kotlin_io_Console_readLine")
-external public fun readLine(): String?
+// We need to allocate a string inside this function. Thus we mark it as @GCCritical
+// and then manually switch the thread state at the C++ side.
+@GCCritical
+public external fun readLine(): String?

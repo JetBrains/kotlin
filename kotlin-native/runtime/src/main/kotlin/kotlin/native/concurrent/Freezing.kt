@@ -5,6 +5,8 @@
 
 package kotlin.native.concurrent
 
+import kotlin.native.internal.GCCritical
+
 /**
  * Exception thrown whenever freezing is not possible.
  *
@@ -50,4 +52,5 @@ public val Any?.isFrozen
  * @see freeze
  */
 @SymbolName("Kotlin_Worker_ensureNeverFrozen")
+@GCCritical
 public external fun Any.ensureNeverFrozen()

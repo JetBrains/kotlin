@@ -7,6 +7,7 @@ package kotlin
 
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.Frozen
+import kotlin.native.internal.GCCritical
 
 @ExportTypeInfo("theStringTypeInfo")
 @Frozen
@@ -15,6 +16,7 @@ public final class String : Comparable<String>, CharSequence {
     }
 
     @SymbolName("Kotlin_String_hashCode")
+    @GCCritical
     external public override fun hashCode(): Int
 
     public operator fun plus(other: Any?): String {
@@ -34,22 +36,28 @@ public final class String : Comparable<String>, CharSequence {
      * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_String_get")
-    external override public fun get(index: Int): Char
+    @GCCritical
+    public external override fun get(index: Int): Char
 
     @SymbolName("Kotlin_String_subSequence")
-    external override public fun subSequence(startIndex: Int, endIndex: Int): CharSequence
+    @GCCritical
+    public external override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 
     @SymbolName("Kotlin_String_compareTo")
-    override external public fun compareTo(other: String): Int
+    @GCCritical
+    public external override fun compareTo(other: String): Int
 
     @SymbolName("Kotlin_String_getStringLength")
-    external private fun getStringLength(): Int
+    @GCCritical
+    private external fun getStringLength(): Int
 
     @SymbolName("Kotlin_String_plusImpl")
-    external private fun plusImpl(other: String): String
+    @GCCritical
+    private external fun plusImpl(other: String): String
 
     @SymbolName("Kotlin_String_equals")
-    external public override fun equals(other: Any?): Boolean
+    @GCCritical
+    external override fun equals(other: Any?): Boolean
 }
 
 public inline operator fun kotlin.String?.plus(other: kotlin.Any?): kotlin.String =

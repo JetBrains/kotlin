@@ -11,6 +11,7 @@ package kotlin
 import kotlin.internal.PureReifiable
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.GCCritical
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.PointsTo
 
@@ -45,6 +46,7 @@ public final class ByteArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_ByteArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Byte
 
     /**
@@ -53,9 +55,11 @@ public final class ByteArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_ByteArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Byte): Unit
 
     @SymbolName("Kotlin_ByteArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -109,6 +113,7 @@ public final class CharArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_CharArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Char
 
     /**
@@ -117,9 +122,11 @@ public final class CharArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_CharArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Char): Unit
 
     @SymbolName("Kotlin_CharArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -173,6 +180,7 @@ public final class ShortArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_ShortArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Short
 
     /**
@@ -181,9 +189,11 @@ public final class ShortArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_ShortArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Short): Unit
 
     @SymbolName("Kotlin_ShortArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -237,6 +247,7 @@ public final class IntArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_IntArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Int
 
     /**
@@ -245,9 +256,11 @@ public final class IntArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_IntArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Int): Unit
 
     @SymbolName("Kotlin_IntArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -301,6 +314,7 @@ public final class LongArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_LongArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Long
 
     /**
@@ -309,9 +323,11 @@ public final class LongArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_LongArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Long): Unit
 
     @SymbolName("Kotlin_LongArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -365,6 +381,7 @@ public final class FloatArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_FloatArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Float
 
     /**
@@ -373,9 +390,11 @@ public final class FloatArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_FloatArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Float): Unit
 
     @SymbolName("Kotlin_FloatArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -425,6 +444,7 @@ public final class DoubleArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_DoubleArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Double
 
     /**
@@ -433,9 +453,11 @@ public final class DoubleArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_DoubleArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Double): Unit
 
     @SymbolName("Kotlin_DoubleArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -485,6 +507,7 @@ public final class BooleanArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_BooleanArray_get")
+    @GCCritical
     external public operator fun get(index: Int): Boolean
 
     /**
@@ -493,9 +516,11 @@ public final class BooleanArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @SymbolName("Kotlin_BooleanArray_set")
+    @GCCritical
     external public operator fun set(index: Int, value: Boolean): Unit
 
     @SymbolName("Kotlin_BooleanArray_getArrayLength")
+    @GCCritical
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -532,6 +557,7 @@ public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> 
 public external inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
 
 @SymbolName("Kotlin_emptyArray")
+@GCCritical
 external public fun <T> emptyArray(): Array<T>
 
 /**

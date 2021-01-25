@@ -151,3 +151,12 @@ internal annotation class InternalForKotlinNative
  */
 @Target(AnnotationTarget.CLASS)
 internal annotation class HasFreezeHook
+
+/**
+ * Marks an external function whose call should not be wrapped with GC thread state switches.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Retention(value = AnnotationRetention.BINARY)
+@InternalForKotlinNative
+// TODO: Add a frontend check that the annotated function is external.
+internal annotation class GCCritical

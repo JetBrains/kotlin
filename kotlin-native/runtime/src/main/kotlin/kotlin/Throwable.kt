@@ -9,6 +9,7 @@ import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.GCCritical
 import kotlin.native.internal.NativePtrArray
 
 /**
@@ -140,9 +141,11 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 }
 
 @SymbolName("Kotlin_getCurrentStackTrace")
+@GCCritical
 private external fun getCurrentStackTrace(): NativePtrArray
 
 @SymbolName("Kotlin_getStackTraceStrings")
+@GCCritical
 private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<String>
 
 /**

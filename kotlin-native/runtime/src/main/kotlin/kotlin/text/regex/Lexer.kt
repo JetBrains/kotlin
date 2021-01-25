@@ -23,17 +23,22 @@
 
 package kotlin.text.regex
 
+import kotlin.native.internal.GCCritical
+
 // Access to the decomposition tables. =========================================================================
 /** Gets canonical class for given codepoint from decomposition mappings table. */
 @SymbolName("Kotlin_text_regex_getCanonicalClassInternal")
+@GCCritical
 external private fun getCanonicalClassInternal(ch: Int): Int
 
 /** Check if the given character is in table of single decompositions. */
 @SymbolName("Kotlin_text_regex_hasSingleCodepointDecompositionInternal")
+@GCCritical
 external private fun hasSingleCodepointDecompositionInternal(ch: Int): Boolean
 
 /** Returns a decomposition for a given codepoint. */
 @SymbolName("Kotlin_text_regex_getDecompositionInternal")
+@GCCritical
 external private fun getDecompositionInternal(ch: Int): IntArray?
 
 /**
@@ -41,6 +46,7 @@ external private fun getDecompositionInternal(ch: Int): IntArray?
  * Returns the length of the decomposition.
  */
 @SymbolName("Kotlin_text_regex_decomposeString")
+// The method has nested loops inside, so we do not mark it as GCCritical.
 external private fun decomposeString(inputCodePoints: IntArray, inputLength: Int, outputCodePoints: IntArray): Int
 // =============================================================================================================
 

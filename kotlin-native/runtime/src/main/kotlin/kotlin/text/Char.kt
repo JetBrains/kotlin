@@ -6,6 +6,7 @@
 package kotlin.text
 
 import kotlin.IllegalArgumentException
+import kotlin.native.internal.GCCritical
 
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
@@ -78,6 +79,7 @@ public actual fun Char.isDigit(): Boolean {
  * character in a Java identifier or a Unicode identifier.
  */
 @SymbolName("Kotlin_Char_isIdentifierIgnorable")
+@GCCritical
 external public fun Char.isIdentifierIgnorable(): Boolean
 
 /**
@@ -88,6 +90,7 @@ external public fun Char.isIdentifierIgnorable(): Boolean
  * @sample samples.text.Chars.isISOControl
  */
 @SymbolName("Kotlin_Char_isISOControl")
+@GCCritical
 external public actual fun Char.isISOControl(): Boolean
 
 /**
@@ -227,18 +230,21 @@ public actual fun Char.titlecaseChar(): Char = titlecaseCharImpl()
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
  */
 @SymbolName("Kotlin_Char_isHighSurrogate")
+@GCCritical
 external public actual fun Char.isHighSurrogate(): Boolean
 
 /**
  * Returns `true` if this character is a Unicode low-surrogate code unit (also known as trailing-surrogate code unit).
  */
 @SymbolName("Kotlin_Char_isLowSurrogate")
+@GCCritical
 external public actual fun Char.isLowSurrogate(): Boolean
 
 
 internal actual fun digitOf(char: Char, radix: Int): Int = digitOfChecked(char, checkRadix(radix))
 
 @SymbolName("Kotlin_Char_digitOfChecked")
+@GCCritical
 external internal fun digitOfChecked(char: Char, radix: Int): Int
 
 /**
