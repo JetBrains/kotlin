@@ -184,6 +184,10 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         with(outerProject) {
             embedProject(innerProject)
 
+            gradleBuildScript().appendText(
+                "\nconfigurations['jvm6TestRuntime'].canBeConsumed = true"
+            )
+
             gradleBuildScript(innerProject.projectName).appendText(
                 "\ndependencies { testImplementation project(path: ':', configuration: 'jvm6TestRuntime') }"
             )
