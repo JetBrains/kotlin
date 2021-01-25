@@ -89,6 +89,7 @@ object O0
 
 object O {
     val x = 10
+    @JsName("foo")  // TODO: Should work without JsName
     fun foo() = 20
 }
 

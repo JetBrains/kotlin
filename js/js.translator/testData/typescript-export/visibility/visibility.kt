@@ -37,6 +37,7 @@ open class Class {
     protected class protectedClass
 
     public val publicVal = 10
+    @JsName("publicFun")  // TODO: Should work without JsName
     public fun publicFun() = 10
     public class publicClass
 }

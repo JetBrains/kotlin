@@ -3,6 +3,7 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
 // LANGUAGE: +SuspendFunctionsInFunInterfaces, +JvmIrEnabledByDefault
+// SKIP_DCE_DRIVEN
 
 import helpers.*
 import kotlin.coroutines.*
