@@ -231,8 +231,21 @@ open class KotlinLibraryImpl(
     BaseKotlinLibrary by base,
     MetadataLibrary by metadata,
     IrLibrary by ir {
-    override fun toString(): String {
-        return "[Klib: ${base.libraryFile.name}, file: ${base.libraryFile.path}]"
+    override fun toString(): String = buildString {
+        append("name ")
+        append(base.libraryName)
+        append(", ")
+        append("file: ")
+        append(base.libraryFile.path)
+        append(", ")
+        append("version: ")
+        append(base.versions)
+        if (isInterop) {
+            append(", interop: true, ")
+            append("native targets: ")
+            nativeTargets.joinTo(this, ", ", "{", "}")
+        }
+        append(')')
     }
 }
 
