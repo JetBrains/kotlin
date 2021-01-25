@@ -15,7 +15,6 @@ class KotlinCompilationNpmResolution(
     @Transient
     private val _project: Project?,
     val npmProject: NpmProject,
-    val internalDependencies: Collection<KotlinCompilationNpmResolution>,
     val internalCompositeDependencies: Collection<GradleNodeModule>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
     private val _externalNpmDependencies: Collection<NpmDependencyDeclaration>,

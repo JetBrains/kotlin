@@ -33,15 +33,15 @@ open class KotlinPackageJsonTask : DefaultTask() {
     @Transient
     private lateinit var compilation: KotlinJsCompilation
 
-    private val compilationName by lazy {
-        compilation.name
+    private val compilationDisambiguatedName by lazy {
+        compilation.disambiguatedName
     }
 
     @Input
     val projectPath = project.path
 
     private val compilationResolver
-        get() = nodeJs.npmResolutionManager.resolver[projectPath][compilationName]
+        get() = nodeJs.npmResolutionManager.resolver[projectPath][compilationDisambiguatedName]
 
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer
@@ -64,7 +64,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
     @get:Input
     internal val toolsNpmDependencies: List<String> by lazy {
         nodeJs.taskRequirements
-            .getCompilationNpmRequirements(compilationName)
+            .getCompilationNpmRequirements(compilationDisambiguatedName)
             .map { it.toString() }
     }
 

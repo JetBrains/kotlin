@@ -28,7 +28,7 @@ constructor(
     private val npmProject = compilation.npmProject
     private val nodeJs = npmProject.nodeJs
 
-    private val compilationName = compilation.name
+    private val compilationName = compilation.disambiguatedName
     private val projectPath = project.path
 
     private val compilationResolution

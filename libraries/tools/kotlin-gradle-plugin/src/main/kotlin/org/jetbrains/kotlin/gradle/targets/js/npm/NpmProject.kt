@@ -25,7 +25,7 @@ val KotlinJsCompilation.npmProject: NpmProject
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
 open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
-    val compilationName = compilation.name
+    val compilationName = compilation.disambiguatedName
 
     val name: String by lazy {
         buildNpmProjectName()

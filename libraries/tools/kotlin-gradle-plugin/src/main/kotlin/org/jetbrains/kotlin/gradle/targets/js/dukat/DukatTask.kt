@@ -23,7 +23,7 @@ abstract class DukatTask(
 
     @get:Internal
     val compilationName by lazy {
-        compilation.name
+        compilation.disambiguatedName
     }
 
     init {
@@ -96,7 +96,7 @@ abstract class DukatTask(
 
     @TaskAction
     open fun run() {
-//        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(this, services, logger, projectPath)
 
         destinationDir.deleteRecursively()
 

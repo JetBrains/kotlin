@@ -27,7 +27,7 @@ internal class DukatCompilationResolverPlugin(
     val npmProject get() = resolver.npmProject
     val compilation get() = npmProject.compilation
     val compilationName by lazy {
-        compilation.name
+        compilation.disambiguatedName
     }
     val legacyTargetReuseIrTask by lazy {
         val target = compilation.target

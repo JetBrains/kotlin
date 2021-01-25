@@ -37,7 +37,7 @@ internal class KotlinProjectNpmResolver(
 
     operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
         check(compilation.target.project == project)
-        return byCompilation[compilation.name] ?: error("$compilation was not registered in $this")
+        return byCompilation[compilation.disambiguatedName] ?: error("$compilation was not registered in $this")
     }
 
     operator fun get(compilationName: String): KotlinCompilationNpmResolver {
@@ -110,7 +110,7 @@ internal class KotlinProjectNpmResolver(
     private fun addCompilation(compilation: KotlinJsCompilation) {
         check(!closed) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
-        byCompilation[compilation.name] = KotlinCompilationNpmResolver(this, compilation)
+        byCompilation[compilation.disambiguatedName] = KotlinCompilationNpmResolver(this, compilation)
     }
 
     fun close(): KotlinProjectNpmResolution {
