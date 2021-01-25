@@ -11,6 +11,8 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ib.CreateInteropBundleTask
 import org.jetbrains.kotlin.gradle.ib.InteropBundle
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,17 +23,27 @@ class CreateInteropBundleTaskTest {
         val project = ProjectBuilder.builder().build()
 
         project.buildDir.mkdirs()
-        val linuxX64Klib = project.buildDir.resolve("linux.klib")
-        val macosX64Klib = project.buildDir.resolve("macos.klib")
-        linuxX64Klib.writeText("linux stub")
-        macosX64Klib.writeText("macos stub")
+
+        val linuxKlib = project.buildDir.resolve("linux.klib")
+        ZipOutputStream(linuxKlib.outputStream()).use { stream ->
+            val entry = ZipEntry("linux-content-stub")
+            stream.putNextEntry(entry)
+            stream.write("linux stub".toByteArray())
+        }
+
+        val macosKlib = project.buildDir.resolve("macos.klib")
+        ZipOutputStream(macosKlib.outputStream()).use { stream ->
+            val entry = ZipEntry("macos-content-stub")
+            stream.putNextEntry(entry)
+            stream.write("macos stub".toByteArray())
+        }
 
         project.configurations.create(KonanTarget.LINUX_X64.name)
         project.configurations.create(KonanTarget.MACOS_X64.name)
 
         project.dependencies.run {
-            add(KonanTarget.LINUX_X64.name, project.files(linuxX64Klib))
-            add(KonanTarget.MACOS_X64.name, project.files(macosX64Klib))
+            add(KonanTarget.LINUX_X64.name, project.files(linuxKlib))
+            add(KonanTarget.MACOS_X64.name, project.files(macosKlib))
         }
 
         val outputDirectory = project.buildDir.resolve("testInteropBundle")
@@ -41,8 +53,10 @@ class CreateInteropBundleTaskTest {
         task.createInteropBundle()
 
         val interopBundle = InteropBundle(outputDirectory)
-        assertEquals("macos stub", interopBundle.listLibraries(KonanTarget.MACOS_X64).single().readText())
-        assertEquals("linux stub", interopBundle.listLibraries(KonanTarget.LINUX_X64).single().readText())
+        assertEquals("macos stub", interopBundle.resolve(KonanTarget.MACOS_X64).resolve("macos-content-stub").readText())
+        assertEquals("linux stub", interopBundle.resolve(KonanTarget.LINUX_X64).resolve("linux-content-stub").readText())
         assertEquals(2, interopBundle.listLibraries().size, "Expected only two libraries")
+        assertEquals(1, interopBundle.resolve(KonanTarget.MACOS_X64).listFiles()?.size, "Expected only one stub entry")
+        assertEquals(1, interopBundle.resolve(KonanTarget.LINUX_X64).listFiles()?.size, "Expected only one stub entry")
     }
 }

@@ -11,6 +11,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.ib.InteropBundlePlugin.Companion.konanTargets
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -42,8 +43,14 @@ abstract class CreateInteropBundleTask : DefaultTask() {
             val libraryFiles = configuration.resolve()
             if (libraryFiles.isEmpty()) return@forEach
             libraryFiles.forEach { libraryFile ->
-                val targetFile = interopBundle.resolve(konanTarget, libraryFile.name)
-                libraryFile.copyTo(targetFile, true)
+                require(libraryFile.extension == "klib") { "Only klib files supported" }
+                val targetFile = interopBundle.resolve(konanTarget)
+                if (libraryFile.extension == "klib") {
+                    project.copy { copySpec ->
+                        copySpec.from(project.zipTree(libraryFile))
+                        copySpec.into(targetFile)
+                    }
+                }
             }
         }
     }

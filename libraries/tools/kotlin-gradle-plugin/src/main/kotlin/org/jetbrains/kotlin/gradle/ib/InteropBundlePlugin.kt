@@ -36,7 +36,7 @@ internal const val KLIB_ARTIFACT_TYPE = "org.jetbrains.kotlin.klib"
 internal const val INTEROP_BUNDLE_ARTIFACT_TYPE = "org.jetbrains.kotlin.interopBundle"
 internal const val ZIPPED_INTEROP_BUNDLE_ARTIFACT_TYPE = "org.jetbrains.kotlin.zippedInteropBundle"
 internal const val COMMONIZED_INTEROP_BUNDLE_ARTIFACT_TYPE = "org.jetbrains.kotlin.commonizedInteropBundle"
-internal const val ZIPPED_INTEROP_BUNDLE_FILE_EXTENSION = "kib"
+internal const val ZIPPED_INTEROP_BUNDLE_FILE_EXTENSION = "klib"
 
 open class InteropBundleExtension(internal val project: Project) {
     val version: Property<String> = project.objects.property(String::class.java)

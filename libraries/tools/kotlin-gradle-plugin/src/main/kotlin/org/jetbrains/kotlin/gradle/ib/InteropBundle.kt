@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 internal data class InteropBundle(val root: File) {
-    fun resolve(target: KonanTarget, fileName: String): File = root.resolve(target.name).resolve(fileName)
-    fun listLibraries(target: KonanTarget): Set<File> = root.resolve(target.name).listFiles().orEmpty().filter(::isLibrary).toSet()
-    fun listLibraries(): Set<File> = root.walkTopDown().maxDepth(2).filter(::isLibrary).toSet()
+    fun resolve(target: KonanTarget): File = root.resolve(target.name)
+    fun listLibraries(): Set<File> = root.listFiles().orEmpty().filter(::isLibrary).toSet()
 }
 
-private fun isLibrary(file: File): Boolean = file.exists() && file.extension == "klib"
+private fun isLibrary(file: File): Boolean =
+    file.exists() && (file.extension == "klib" || file.isDirectory)
