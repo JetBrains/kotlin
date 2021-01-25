@@ -18,35 +18,16 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 interface CodeAnalyzerInitializer {
-    fun initialize(
-        trace: BindingTrace,
-        module: ModuleDescriptor,
-        codeAnalyzer: KotlinCodeAnalyzer,
-        languageVersionSettings: LanguageVersionSettings
-    )
-
     fun createTrace(): BindingTrace
 
     companion object {
         fun getInstance(project: Project): CodeAnalyzerInitializer =
-            ServiceManager.getService<CodeAnalyzerInitializer>(project, CodeAnalyzerInitializer::class.java)!!
+            ServiceManager.getService(project, CodeAnalyzerInitializer::class.java)!!
     }
 }
 
 class DummyCodeAnalyzerInitializer : CodeAnalyzerInitializer {
-    override fun initialize(
-        trace: BindingTrace,
-        module: ModuleDescriptor,
-        codeAnalyzer: KotlinCodeAnalyzer,
-        languageVersionSettings: LanguageVersionSettings
-    ) {
-        // Do nothing
-    }
-
     override fun createTrace(): BindingTrace = BindingTraceContext(true)
 }
