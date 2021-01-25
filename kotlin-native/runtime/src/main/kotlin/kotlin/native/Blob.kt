@@ -17,9 +17,11 @@ public final class ImmutableBlob private constructor() {
 
     // Data layout is the same as for ByteArray, so we can share native functions.
     @SymbolName("Kotlin_ByteArray_get")
+    @GCCritical
     public external operator fun get(index: Int): Byte
 
     @SymbolName("Kotlin_ByteArray_getArrayLength")
+    @GCCritical
     private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -48,6 +50,7 @@ private class ImmutableBlobIteratorImpl(val blob: ImmutableBlob) : ByteIterator(
  * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
 @SymbolName("Kotlin_ImmutableBlob_toByteArray")
+@GCCritical
 public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -58,6 +61,7 @@ public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int
  */
 @ExperimentalUnsignedTypes
 @SymbolName("Kotlin_ImmutableBlob_toByteArray")
+@GCCritical
 public external fun ImmutableBlob.toUByteArray(startIndex: Int = 0, endIndex: Int = size): UByteArray
 
 /**
@@ -72,6 +76,7 @@ public fun ImmutableBlob.asUCPointer(offset: Int = 0): CPointer<UByteVar> =
         interpretCPointer<UByteVar>(asCPointerImpl(offset))!!
 
 @SymbolName("Kotlin_ImmutableBlob_asCPointerImpl")
+@GCCritical
 private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.internal.NativePtr
 
 /**

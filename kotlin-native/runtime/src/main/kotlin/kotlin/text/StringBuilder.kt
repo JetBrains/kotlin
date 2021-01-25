@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.native.internal.GCCritical
+
 /**
  * A mutable sequence of characters.
  *
@@ -804,9 +806,11 @@ internal fun insertString(array: CharArray, start: Int, value: String): Int =
         insertString(array, start, value, 0, value.length)
 
 @SymbolName("Kotlin_StringBuilder_insertString")
+@GCCritical
 internal external fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int
 
 @SymbolName("Kotlin_StringBuilder_insertInt")
+@GCCritical
 internal external fun insertInt(array: CharArray, start: Int, value: Int): Int
 
 

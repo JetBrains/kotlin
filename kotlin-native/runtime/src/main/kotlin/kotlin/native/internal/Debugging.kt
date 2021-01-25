@@ -14,7 +14,9 @@ public object Debugging {
 }
 
 @SymbolName("Kotlin_Debugging_getForceCheckedShutdown")
+@GCCritical
 private external fun Debugging_getForceCheckedShutdown(): Boolean
 
 @SymbolName("Kotlin_Debugging_setForceCheckedShutdown")
+@GCCritical
 private external fun Debugging_setForceCheckedShutdown(value: Boolean): Unit

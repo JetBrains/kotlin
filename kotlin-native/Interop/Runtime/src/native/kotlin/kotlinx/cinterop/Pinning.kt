@@ -16,6 +16,7 @@
 
 package kotlinx.cinterop
 import kotlin.native.*
+import kotlin.native.internal.GCCritical
 
 data class Pinned<out T : Any> internal constructor(private val stablePtr: COpaquePointer) {
 
@@ -93,37 +94,49 @@ private inline fun <T : Any, P : CPointed> T.usingPinned(
 }
 
 @SymbolName("Kotlin_Arrays_getByteArrayAddressOfElement")
+@GCCritical
 private external fun ByteArray.addressOfElement(index: Int): CPointer<ByteVar>
 
 @SymbolName("Kotlin_Arrays_getStringAddressOfElement")
+@GCCritical
 private external fun String.addressOfElement(index: Int): CPointer<COpaque>
 
 @SymbolName("Kotlin_Arrays_getCharArrayAddressOfElement")
+@GCCritical
 private external fun CharArray.addressOfElement(index: Int): CPointer<COpaque>
 
 @SymbolName("Kotlin_Arrays_getShortArrayAddressOfElement")
+@GCCritical
 private external fun ShortArray.addressOfElement(index: Int): CPointer<ShortVar>
 
 @SymbolName("Kotlin_Arrays_getIntArrayAddressOfElement")
+@GCCritical
 private external fun IntArray.addressOfElement(index: Int): CPointer<IntVar>
 
 @SymbolName("Kotlin_Arrays_getLongArrayAddressOfElement")
+@GCCritical
 private external fun LongArray.addressOfElement(index: Int): CPointer<LongVar>
 
 @SymbolName("Kotlin_Arrays_getByteArrayAddressOfElement")
+@GCCritical
 private external fun UByteArray.addressOfElement(index: Int): CPointer<UByteVar>
 
 @SymbolName("Kotlin_Arrays_getShortArrayAddressOfElement")
+@GCCritical
 private external fun UShortArray.addressOfElement(index: Int): CPointer<UShortVar>
 
 @SymbolName("Kotlin_Arrays_getIntArrayAddressOfElement")
+@GCCritical
 private external fun UIntArray.addressOfElement(index: Int): CPointer<UIntVar>
 
 @SymbolName("Kotlin_Arrays_getLongArrayAddressOfElement")
+@GCCritical
 private external fun ULongArray.addressOfElement(index: Int): CPointer<ULongVar>
 
 @SymbolName("Kotlin_Arrays_getFloatArrayAddressOfElement")
+@GCCritical
 private external fun FloatArray.addressOfElement(index: Int): CPointer<FloatVar>
 
 @SymbolName("Kotlin_Arrays_getDoubleArrayAddressOfElement")
+@GCCritical
 private external fun DoubleArray.addressOfElement(index: Int): CPointer<DoubleVar>

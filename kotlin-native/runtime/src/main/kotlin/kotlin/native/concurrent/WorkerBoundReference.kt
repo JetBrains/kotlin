@@ -8,12 +8,15 @@ package kotlin.native.concurrent
 import kotlin.native.internal.*
 
 @SymbolName("Kotlin_WorkerBoundReference_create")
+@GCCritical
 external private fun createWorkerBoundReference(value: Any): NativePtr
 
 @SymbolName("Kotlin_WorkerBoundReference_deref")
+@GCCritical
 external private fun derefWorkerBoundReference(ref: NativePtr): Any?
 
 @SymbolName("Kotlin_WorkerBoundReference_describe")
+@GCCritical
 external private fun describeWorkerBoundReference(ref: NativePtr): String
 
 /**

@@ -16,6 +16,7 @@
 
 package kotlinx.cinterop
 
+import kotlin.native.internal.GCCritical
 import kotlin.native.internal.Intrinsic
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
@@ -23,6 +24,7 @@ import kotlin.native.internal.IntrinsicType
 internal fun encodeToUtf8(str: String): ByteArray = str.encodeToByteArray()
 
 @SymbolName("Kotlin_CString_toKStringFromUtf8Impl")
+@GCCritical
 internal external fun CPointer<ByteVar>.toKStringFromUtf8Impl(): String
 
 @TypedIntrinsic(IntrinsicType.INTEROP_BITS_TO_FLOAT)

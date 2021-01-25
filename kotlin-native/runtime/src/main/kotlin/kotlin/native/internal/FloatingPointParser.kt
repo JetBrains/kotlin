@@ -32,6 +32,7 @@ import kotlin.comparisons.*
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @SymbolName("Kotlin_native_FloatingPointParser_parseDoubleImpl")
+@GCCritical
 private external fun parseDoubleImpl(s: String, e: Int): Double
 
 /**
@@ -47,6 +48,7 @@ private external fun parseDoubleImpl(s: String, e: Int): Double
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @SymbolName("Kotlin_native_FloatingPointParser_parseFloatImpl")
+@GCCritical
 private external fun parseFloatImpl(s: String, e: Int): Float
 
 /**

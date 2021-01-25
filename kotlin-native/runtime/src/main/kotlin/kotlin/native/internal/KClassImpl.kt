@@ -69,10 +69,12 @@ internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> 
 }
 
 @SymbolName("Kotlin_TypeInfo_findAssociatedObject")
+@GCCritical
 private external fun findAssociatedObjectImpl(typeInfo: NativePtr, key: NativePtr): Any?
 
 @ExportForCompiler
 @SymbolName("Kotlin_Any_getTypeInfo")
+@GCCritical
 internal external fun getObjectTypeInfo(obj: Any): NativePtr
 
 @ExportForCompiler
@@ -80,10 +82,13 @@ internal external fun getObjectTypeInfo(obj: Any): NativePtr
 internal external inline fun <reified T : Any> getClassTypeInfo(): NativePtr
 
 @SymbolName("Kotlin_TypeInfo_getPackageName")
+@GCCritical
 private external fun getPackageName(typeInfo: NativePtr): String?
 
 @SymbolName("Kotlin_TypeInfo_getRelativeName")
+@GCCritical
 private external fun getRelativeName(typeInfo: NativePtr): String?
 
 @SymbolName("Kotlin_TypeInfo_isInstance")
+@GCCritical
 private external fun isInstance(obj: Any, typeInfo: NativePtr): Boolean

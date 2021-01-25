@@ -4,6 +4,8 @@
  */
 package kotlin.native
 
+import kotlin.native.internal.GCCritical
+
 /**
  * Operating system family.
  */
@@ -101,31 +103,41 @@ public object Platform {
 }
 
 @SymbolName("Konan_Platform_canAccessUnaligned")
+@GCCritical
 private external fun Platform_canAccessUnaligned(): Int
 
 @SymbolName("Konan_Platform_isLittleEndian")
+@GCCritical
 private external fun Platform_isLittleEndian(): Int
 
 @SymbolName("Konan_Platform_getOsFamily")
+@GCCritical
 private external fun Platform_getOsFamily(): Int
 
 @SymbolName("Konan_Platform_getCpuArchitecture")
+@GCCritical
 private external fun Platform_getCpuArchitecture(): Int
 
 @SymbolName("Konan_Platform_getMemoryModel")
+@GCCritical
 private external fun Platform_getMemoryModel(): Int
 
 @SymbolName("Konan_Platform_isDebugBinary")
+@GCCritical
 private external fun Platform_isDebugBinary(): Boolean
 
 @SymbolName("Konan_Platform_getMemoryLeakChecker")
+@GCCritical
 private external fun Platform_getMemoryLeakChecker(): Boolean
 
 @SymbolName("Konan_Platform_setMemoryLeakChecker")
+@GCCritical
 private external fun Platform_setMemoryLeakChecker(value: Boolean): Unit
 
 @SymbolName("Konan_Platform_getCleanersLeakChecker")
+@GCCritical
 private external fun Platform_getCleanersLeakChecker(): Boolean
 
 @SymbolName("Konan_Platform_setCleanersLeakChecker")
+@GCCritical
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
