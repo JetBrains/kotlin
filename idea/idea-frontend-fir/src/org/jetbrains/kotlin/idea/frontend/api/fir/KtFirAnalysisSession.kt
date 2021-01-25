@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.buildCompletionContext
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.recordCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.psi.KtElement
@@ -37,8 +37,6 @@ private constructor(
     init {
         assertIsValidAndAccessible()
     }
-
-    internal val towerDataContextProvider: TowerDataContextProvider = TowerDataContextProvider(this)
 
     override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this, token)
     override val expressionTypeProvider: KtExpressionTypeProvider = KtFirExpressionTypeProvider(this, token)
@@ -110,11 +108,9 @@ internal sealed class KtFirAnalysisSessionContext {
     ) : KtFirAnalysisSessionContext() {
         init {
             require(!fakeContextElement.isPhysical)
-        }
 
-        val completionContext = run {
             val enclosingContext = EnclosingDeclarationContext.detect(originalFile, fakeContextElement)
-            enclosingContext.buildCompletionContext(firFile, fakeModuleResolveState)
+            enclosingContext.recordCompletionContext(firFile, fakeModuleResolveState)
         }
 
         val fakeKtFile = fakeContextElement.containingKtFile

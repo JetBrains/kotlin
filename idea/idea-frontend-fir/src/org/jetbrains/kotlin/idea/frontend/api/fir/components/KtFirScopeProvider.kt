@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
-import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getTowerDataContextUnsafe
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
@@ -31,8 +29,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymb
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirEnumEntrySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.buildCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
@@ -147,7 +143,7 @@ internal class KtFirScopeProvider(
         originalFile: KtFile,
         positionInFakeFile: KtElement
     ): KtScopeContext = withValidityAssertion {
-        val towerDataContext = analysisSession.towerDataContextProvider.getTowerDataContext(positionInFakeFile)
+        val towerDataContext = analysisSession.firResolveState.getTowerDataContextUnsafe(positionInFakeFile)
 
         val implicitReceivers = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver }.distinct()
         val implicitReceiversTypes = implicitReceivers.map { builder.buildKtType(it.type) }

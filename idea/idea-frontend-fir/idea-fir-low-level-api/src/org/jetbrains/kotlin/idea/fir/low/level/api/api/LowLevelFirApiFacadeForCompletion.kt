@@ -32,61 +32,34 @@ object LowLevelFirApiFacadeForCompletion {
         return FirModuleResolveStateForCompletion(originalState.project, originalState)
     }
 
-    class FirCompletionContext internal constructor(
-        val session: FirSession,
-        private val towerDataContextCollector: FirTowerDataContextCollector,
-    ) {
-        fun getTowerDataContext(element: KtElement): FirTowerDataContext {
-            var current: PsiElement? = element
-            while (current is KtElement) {
-                towerDataContextCollector.getContext(current)?.let { return it }
-                current = current.parent
-            }
-
-            error("No context for ${element.getElementTextInContext()}")
-        }
-    }
-
-    fun buildCompletionContextForFunction(
+    fun recordCompletionContextForFunction(
         firFile: FirFile,
         fakeElement: KtNamedFunction,
         originalElement: KtNamedFunction,
         state: FirModuleResolveState,
-    ): FirCompletionContext {
+    ) {
         val firIdeProvider = firFile.session.firIdeProvider
 
         val originalFunction = state.getOrBuildFirFor(originalElement) as FirSimpleFunction
         val copyFunction = buildFunctionCopyForCompletion(firIdeProvider, fakeElement, originalFunction, state)
 
-        val contextCollector = FirTowerDataContextCollector()
-        state.lazyResolveDeclarationForCompletion(copyFunction, firFile, firIdeProvider, FirResolvePhase.BODY_RESOLVE, contextCollector)
+        state.lazyResolveDeclarationForCompletion(copyFunction, firFile, firIdeProvider, FirResolvePhase.BODY_RESOLVE)
         state.recordPsiToFirMappingsForCompletionFrom(copyFunction, firFile, fakeElement.containingKtFile)
-
-        return FirCompletionContext(
-            copyFunction.session,
-            contextCollector
-        )
     }
 
-    fun buildCompletionContextForProperty(
+    fun recordCompletionContextForProperty(
         firFile: FirFile,
         fakeElement: KtProperty,
         originalElement: KtProperty,
         state: FirModuleResolveState,
-    ): FirCompletionContext {
+    ) {
         val firIdeProvider = firFile.session.firIdeProvider
 
         val originalProperty = state.getOrBuildFirFor(originalElement) as FirProperty
         val copyProperty = buildPropertyCopyForCompletion(firIdeProvider, fakeElement, originalProperty, state)
 
-        val contextCollector = FirTowerDataContextCollector()
-        state.lazyResolveDeclarationForCompletion(copyProperty, firFile, firIdeProvider, FirResolvePhase.BODY_RESOLVE, contextCollector)
+        state.lazyResolveDeclarationForCompletion(copyProperty, firFile, firIdeProvider, FirResolvePhase.BODY_RESOLVE)
         state.recordPsiToFirMappingsForCompletionFrom(copyProperty, firFile, fakeElement.containingKtFile)
-
-        return FirCompletionContext(
-            copyProperty.session,
-            contextCollector
-        )
     }
 
     private fun buildFunctionCopyForCompletion(

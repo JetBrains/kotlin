@@ -45,6 +45,15 @@ internal class FirModuleResolveStateImpl(
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
 ) : FirModuleResolveState() {
     override val rootModuleSession: FirIdeSourcesSession get() = sessionProvider.rootModuleSession
+
+    /**
+     * WARNING! This object contains scopes for all statements and declarations that were ever resolved.
+     * It can grow unbounded if you never edit the files in the opened project.
+     *
+     * It is a temporary solution until we can retrieve scopes for any fir element without re-resolving it.
+     *
+     * TODO Fix this when refactoring that separates resolving and scopes creation is done
+     */
     private val collector = FirTowerDataContextCollector()
     val fileStructureCache = FileStructureCache(firFileBuilder, firLazyDeclarationResolver, collector)
     val elementBuilder = FirElementBuilder()
@@ -149,7 +158,6 @@ internal class FirModuleResolveStateImpl(
         containerFirFile: FirFile,
         firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirTowerDataContextCollector
     ) {
         firFileBuilder.runCustomResolveWithPCECheck(containerFirFile, rootModuleSession.cache) {
             firLazyDeclarationResolver.runLazyResolveWithoutLock(
@@ -159,7 +167,7 @@ internal class FirModuleResolveStateImpl(
                 firIdeProvider,
                 fromPhase = firFunction.resolvePhase,
                 toPhase,
-                towerDataContextCollector,
+                towerDataContextCollector = collector,
                 checkPCE = true
             )
         }

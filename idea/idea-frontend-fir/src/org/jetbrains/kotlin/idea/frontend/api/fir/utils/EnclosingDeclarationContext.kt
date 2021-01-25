@@ -65,22 +65,23 @@ internal val EnclosingDeclarationContext.fakeEnclosingDeclaration: KtCallableDec
         is PropertyContext -> fakeEnclosingProperty
     }
 
-internal fun EnclosingDeclarationContext.buildCompletionContext(originalFirFile: FirFile, firResolveState: FirModuleResolveState) =
+internal fun EnclosingDeclarationContext.recordCompletionContext(originalFirFile: FirFile, firResolveState: FirModuleResolveState) {
     when (this) {
-        is FunctionContext -> LowLevelFirApiFacadeForCompletion.buildCompletionContextForFunction(
+        is FunctionContext -> LowLevelFirApiFacadeForCompletion.recordCompletionContextForFunction(
             originalFirFile,
             fakeEnclosingFunction,
             originalEnclosingFunction,
             state = firResolveState
         )
 
-        is PropertyContext -> LowLevelFirApiFacadeForCompletion.buildCompletionContextForProperty(
+        is PropertyContext -> LowLevelFirApiFacadeForCompletion.recordCompletionContextForProperty(
             originalFirFile,
             fakeEnclosingProperty,
             originalEnclosingProperty,
             state = firResolveState
         )
     }
+}
 
 private inline fun <reified T : KtElement> KtFile.findDeclarationOfTypeAt(offset: Int): T? =
     findElementAt(offset)

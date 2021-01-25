@@ -13,13 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
-import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -75,10 +70,12 @@ abstract class FirModuleResolveState {
         containerFirFile: FirFile,
         firIdeProvider: FirProvider,
         toPhase: FirResolvePhase,
-        towerDataContextCollector: FirTowerDataContextCollector
     )
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
 
     abstract fun getTowerDataContextForElement(element: KtElement): FirTowerDataContext?
 }
+
+fun FirModuleResolveState.getTowerDataContextUnsafe(element: KtElement): FirTowerDataContext =
+    getTowerDataContextForElement(element) ?: error("No context for ${element.getElementTextInContext()}")
