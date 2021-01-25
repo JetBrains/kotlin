@@ -16,13 +16,17 @@
 
 package kotlinx.cinterop
 import kotlin.native.*
+import kotlin.native.internal.GCCritical
 
 @SymbolName("Kotlin_Interop_createStablePointer")
+@GCCritical
 internal external fun createStablePointer(any: Any): COpaquePointer
 
 @SymbolName("Kotlin_Interop_disposeStablePointer")
+@GCCritical
 internal external fun disposeStablePointer(pointer: COpaquePointer)
 
 @PublishedApi
 @SymbolName("Kotlin_Interop_derefStablePointer")
+@GCCritical
 internal external fun derefStablePointer(pointer: COpaquePointer): Any

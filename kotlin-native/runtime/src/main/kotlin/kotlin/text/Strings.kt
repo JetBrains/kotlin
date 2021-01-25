@@ -6,29 +6,34 @@
 package kotlin.text
 
 import kotlin.native.concurrent.SharedImmutable
+import kotlin.native.internal.GCCritical
 
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
 @SymbolName("Kotlin_String_indexOfChar")
+@GCCritical
 internal actual external fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
 @SymbolName("Kotlin_String_indexOfString")
+@GCCritical
 internal actual external fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
 @SymbolName("Kotlin_String_lastIndexOfChar")
+@GCCritical
 internal actual external fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
 @SymbolName("Kotlin_String_lastIndexOfString")
+@GCCritical
 internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 
 /**
@@ -62,6 +67,7 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 }
 
 @SymbolName("Kotlin_String_replace")
+@GCCritical
 private external fun String.replace(oldChar: Char, newChar: Char): String
 
 private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
@@ -188,6 +194,7 @@ public fun String.regionMatches(
 
 // Bounds must be checked before calling this method
 @SymbolName("Kotlin_String_unsafeRangeEquals")
+@GCCritical
 private external fun String.unsafeRangeEquals(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean
 
 // Bounds must be checked before calling this method
@@ -246,6 +253,7 @@ public actual fun String.lowercase(): String = lowercaseImpl()
 public actual fun String.toCharArray(): CharArray = toCharArray(this, 0, length)
 
 @SymbolName("Kotlin_String_toCharArray")
+@GCCritical
 private external fun toCharArray(string: String, start: Int, size: Int): CharArray
 
 /**
@@ -357,6 +365,7 @@ internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
 }
 
 @SymbolName("Kotlin_String_unsafeStringFromCharArray")
+@GCCritical
 internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 /**
@@ -431,15 +440,19 @@ public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throw
 }
 
 @SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8")
+@GCCritical
 internal external fun ByteArray.unsafeStringFromUtf8(start: Int, size: Int) : String
 
 @SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8OrThrow")
+@GCCritical
 internal external fun ByteArray.unsafeStringFromUtf8OrThrow(start: Int, size: Int) : String
 
 @SymbolName("Kotlin_String_unsafeStringToUtf8")
+@GCCritical
 internal external fun String.unsafeStringToUtf8(start: Int, size: Int) : ByteArray
 
 @SymbolName("Kotlin_String_unsafeStringToUtf8OrThrow")
+@GCCritical
 internal external fun String.unsafeStringToUtf8OrThrow(start: Int, size: Int) : ByteArray
 
 internal fun compareToIgnoreCase(thiz: String, other: String): Int {

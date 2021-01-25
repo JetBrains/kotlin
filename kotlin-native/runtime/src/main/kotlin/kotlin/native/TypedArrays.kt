@@ -5,6 +5,7 @@
 package kotlin.native
 
 import kotlin.native.SymbolName
+import kotlin.native.internal.GCCritical
 
 /**
  * Those operations allows to extract primitive values out of the [ByteArray] byte buffers.
@@ -24,6 +25,7 @@ public fun ByteArray.getUByteAt(index: Int): UByte = UByte(get(index))
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getCharAt")
+@GCCritical
 public external fun ByteArray.getCharAt(index: Int): Char
 
 /**
@@ -31,6 +33,7 @@ public external fun ByteArray.getCharAt(index: Int): Char
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getShortAt")
+@GCCritical
 public external fun ByteArray.getShortAt(index: Int): Short
 
 /**
@@ -38,6 +41,7 @@ public external fun ByteArray.getShortAt(index: Int): Short
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getShortAt")
+@GCCritical
 @ExperimentalUnsignedTypes
 public external fun ByteArray.getUShortAt(index: Int): UShort
 
@@ -46,6 +50,7 @@ public external fun ByteArray.getUShortAt(index: Int): UShort
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getIntAt")
+@GCCritical
 public external fun ByteArray.getIntAt(index: Int): Int
 
 /**
@@ -53,6 +58,7 @@ public external fun ByteArray.getIntAt(index: Int): Int
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getIntAt")
+@GCCritical
 @ExperimentalUnsignedTypes
 public external fun ByteArray.getUIntAt(index: Int): UInt
 
@@ -61,6 +67,7 @@ public external fun ByteArray.getUIntAt(index: Int): UInt
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getLongAt")
+@GCCritical
 public external fun ByteArray.getLongAt(index: Int): Long
 
 /**
@@ -68,6 +75,7 @@ public external fun ByteArray.getLongAt(index: Int): Long
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getLongAt")
+@GCCritical
 @ExperimentalUnsignedTypes
 public external fun ByteArray.getULongAt(index: Int): ULong
 
@@ -76,6 +84,7 @@ public external fun ByteArray.getULongAt(index: Int): ULong
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getFloatAt")
+@GCCritical
 public external fun ByteArray.getFloatAt(index: Int): Float
 
 /**
@@ -83,6 +92,7 @@ public external fun ByteArray.getFloatAt(index: Int): Float
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_getDoubleAt")
+@GCCritical
 public external fun ByteArray.getDoubleAt(index: Int): Double
 
 /**
@@ -90,6 +100,7 @@ public external fun ByteArray.getDoubleAt(index: Int): Double
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_set")
+@GCCritical
 public external fun ByteArray.setUByteAt(index: Int, value: UByte)
 
 /**
@@ -97,6 +108,7 @@ public external fun ByteArray.setUByteAt(index: Int, value: UByte)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setCharAt")
+@GCCritical
 public external fun ByteArray.setCharAt(index: Int, value: Char)
 
 /**
@@ -104,6 +116,7 @@ public external fun ByteArray.setCharAt(index: Int, value: Char)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setShortAt")
+@GCCritical
 public external fun ByteArray.setShortAt(index: Int, value: Short)
 
 /**
@@ -111,6 +124,7 @@ public external fun ByteArray.setShortAt(index: Int, value: Short)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setShortAt")
+@GCCritical
 @ExperimentalUnsignedTypes
 public external fun ByteArray.setUShortAt(index: Int, value: UShort)
 
@@ -119,6 +133,7 @@ public external fun ByteArray.setUShortAt(index: Int, value: UShort)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setIntAt")
+@GCCritical
 public external fun ByteArray.setIntAt(index: Int, value: Int)
 
 /**
@@ -126,6 +141,7 @@ public external fun ByteArray.setIntAt(index: Int, value: Int)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setIntAt")
+@GCCritical
 public external fun ByteArray.setUIntAt(index: Int, value: UInt)
 
 /**
@@ -133,6 +149,7 @@ public external fun ByteArray.setUIntAt(index: Int, value: UInt)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setLongAt")
+@GCCritical
 public external fun ByteArray.setLongAt(index: Int, value: Long)
 
 /**
@@ -140,6 +157,7 @@ public external fun ByteArray.setLongAt(index: Int, value: Long)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setLongAt")
+@GCCritical
 @ExperimentalUnsignedTypes
 public external fun ByteArray.setULongAt(index: Int, value: ULong)
 
@@ -148,6 +166,7 @@ public external fun ByteArray.setULongAt(index: Int, value: ULong)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setFloatAt")
+@GCCritical
 public external fun ByteArray.setFloatAt(index: Int, value: Float)
 
 /**
@@ -155,4 +174,5 @@ public external fun ByteArray.setFloatAt(index: Int, value: Float)
  * @throws ArrayIndexOutOfBoundsException if [index] is outside of array boundaries.
  */
 @SymbolName("Kotlin_ByteArray_setDoubleAt")
+@GCCritical
 public external fun ByteArray.setDoubleAt(index: Int, value: Double)

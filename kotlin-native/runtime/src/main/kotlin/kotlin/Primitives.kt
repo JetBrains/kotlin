@@ -7,10 +7,10 @@
 
 package kotlin
 
-import kotlin.native.internal.CanBePrecreated
-import kotlin.native.internal.IntrinsicType
-import kotlin.native.internal.NumberConverter
+import kotlin.native.internal.*
+import kotlin.native.internal.GCCritical
 import kotlin.native.internal.TypedIntrinsic
+import kotlin.native.internal.areEqualByValue
 
 /**
  * Represents a 8-bit signed integer.
@@ -308,6 +308,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
             other is Byte && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Byte_toString")
+    @GCCritical
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -610,6 +611,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
         other is Short && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Short_toString")
+    @GCCritical
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -954,6 +956,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
          other is Int && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Int_toString")
+    @GCCritical
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -1302,6 +1305,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
             other is Long && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Long_toString")
+    @GCCritical
     external public override fun toString(): String
 
     public override fun hashCode(): Int {
@@ -1578,6 +1582,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
     @SymbolName("Kotlin_Float_toInt")
+    @GCCritical
     external public override fun toInt(): Int
     /**
      * Converts this [Float] value to [Long].
@@ -1587,6 +1592,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
     @SymbolName("Kotlin_Float_toLong")
+    @GCCritical
     external public override fun toLong(): Long
 
     /** Returns this value. */
@@ -1888,6 +1894,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
     @SymbolName("Kotlin_Double_toInt")
+    @GCCritical
     external public override fun toInt(): Int
     /**
      * Converts this [Double] value to [Long].
@@ -1897,6 +1904,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
     @SymbolName("Kotlin_Double_toLong")
+    @GCCritical
     external public override fun toLong(): Long
     /**
      * Converts this [Double] value to [Float].

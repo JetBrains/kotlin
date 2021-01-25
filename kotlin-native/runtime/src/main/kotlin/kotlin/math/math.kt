@@ -5,6 +5,8 @@
 
 package kotlin.math
 
+import kotlin.native.internal.GCCritical
+
 // region ================ Double Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
@@ -14,6 +16,7 @@ package kotlin.math
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_sin")
+@GCCritical
 external public actual fun sin(x: Double): Double
 
 /** Computes the cosine of the angle [x] given in radians.
@@ -23,6 +26,7 @@ external public actual fun sin(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_cos")
+@GCCritical
 external public actual fun cos(x: Double): Double
 
 /** Computes the tangent of the angle [x] given in radians.
@@ -32,6 +36,7 @@ external public actual fun cos(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_tan")
+@GCCritical
 external public actual fun tan(x: Double): Double
 
 /**
@@ -43,6 +48,7 @@ external public actual fun tan(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_asin")
+@GCCritical
 external public actual fun asin(x: Double): Double
 
 /**
@@ -54,6 +60,7 @@ external public actual fun asin(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_acos")
+@GCCritical
 external public actual fun acos(x: Double): Double
 
 /**
@@ -65,6 +72,7 @@ external public actual fun acos(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_atan")
+@GCCritical
 external public actual fun atan(x: Double): Double
 
 /**
@@ -85,6 +93,7 @@ external public actual fun atan(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_atan2")
+@GCCritical
 external public actual fun atan2(y: Double, x: Double): Double
 
 /**
@@ -97,6 +106,7 @@ external public actual fun atan2(y: Double, x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_sinh")
+@GCCritical
 external public actual fun sinh(x: Double): Double
 
 /**
@@ -108,6 +118,7 @@ external public actual fun sinh(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_cosh")
+@GCCritical
 external public actual fun cosh(x: Double): Double
 
 /**
@@ -120,6 +131,7 @@ external public actual fun cosh(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_tanh")
+@GCCritical
 external public actual fun tanh(x: Double): Double
 
 /**
@@ -134,6 +146,7 @@ external public actual fun tanh(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_asinh")
+@GCCritical
 external public actual fun asinh(x: Double): Double
 
 /**
@@ -148,6 +161,7 @@ external public actual fun asinh(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_acosh")
+@GCCritical
 external public actual fun acosh(x: Double): Double
 
 /**
@@ -163,6 +177,7 @@ external public actual fun acosh(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_atanh")
+@GCCritical
 external public actual fun atanh(x: Double): Double
 
 /**
@@ -174,6 +189,7 @@ external public actual fun atanh(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_hypot")
+@GCCritical
 external public actual fun hypot(x: Double, y: Double): Double
 
 /**
@@ -184,6 +200,7 @@ external public actual fun hypot(x: Double, y: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_sqrt")
+@GCCritical
 external public actual fun sqrt(x: Double): Double
 
 /**
@@ -196,6 +213,7 @@ external public actual fun sqrt(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_exp")
+@GCCritical
 external public actual fun exp(x: Double): Double
 
 /**
@@ -212,6 +230,7 @@ external public actual fun exp(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_expm1")
+@GCCritical
 external public actual fun expm1(x: Double): Double
 
 /**
@@ -243,6 +262,7 @@ public actual fun log(x: Double, base: Double): Double {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ln")
+@GCCritical
 external public actual fun ln(x: Double): Double
 
 /**
@@ -252,6 +272,7 @@ external public actual fun ln(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_log10")
+@GCCritical
 external public actual fun log10(x: Double): Double
 
 /**
@@ -261,6 +282,7 @@ external public actual fun log10(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_log2")
+@GCCritical
 external public actual fun log2(x: Double): Double
 
 /**
@@ -279,6 +301,7 @@ external public actual fun log2(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ln1p")
+@GCCritical
 external public actual fun ln1p(x: Double): Double
 
 /**
@@ -291,6 +314,7 @@ external public actual fun ln1p(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ceil")
+@GCCritical
 external public actual fun ceil(x: Double): Double
 
 /**
@@ -303,6 +327,7 @@ external public actual fun ceil(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_floor")
+@GCCritical
 external public actual fun floor(x: Double): Double
 
 /**
@@ -328,6 +353,7 @@ public actual fun truncate(x: Double): Double = when {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_round")
+@GCCritical
 external public actual fun round(x: Double): Double
 
 /**
@@ -340,6 +366,7 @@ external public actual fun round(x: Double): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_abs")
+@GCCritical
 external public actual fun abs(x: Double): Double
 
 /**
@@ -397,6 +424,7 @@ public actual fun max(a: Double, b: Double): Double = when {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Double_pow")
+@GCCritical
 external public actual fun Double.pow(x: Double): Double
 
 /**
@@ -421,6 +449,7 @@ public actual fun Double.pow(n: Int): Double = pow(n.toDouble())
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Double_IEEErem")
+@GCCritical
 external public fun Double.IEEErem(divisor: Double): Double
 
 /**
@@ -455,6 +484,7 @@ public actual val Double.sign: Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Double_withSign")
+@GCCritical
 external public actual fun Double.withSign(sign: Double): Double
 
 /**
@@ -490,12 +520,14 @@ public actual val Double.ulp: Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Double_nextUp")
+@GCCritical
 external public actual fun Double.nextUp(): Double
 /**
  * Returns the [Double] value nearest to this value in direction of negative infinity.
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Double_nextDown")
+@GCCritical
 external public actual fun Double.nextDown(): Double
 
 /**
@@ -508,12 +540,14 @@ external public actual fun Double.nextDown(): Double
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Double_nextTowards")
+@GCCritical
 external public actual fun Double.nextTowards(to: Double): Double
 
 /**
  * Returns true if the sign of [this] value is negative and false otherwise
  */
 @SymbolName("Kotlin_math_Double_signBit")
+@GCCritical
 external private fun Double.signBit(): Boolean
 
 /**
@@ -563,6 +597,7 @@ public actual fun Double.roundToLong(): Long = when {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_sinf")
+@GCCritical
 external public actual fun sin(x: Float): Float
 
 /** Computes the cosine of the angle [x] given in radians.
@@ -572,6 +607,7 @@ external public actual fun sin(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_cosf")
+@GCCritical
 external public actual fun cos(x: Float): Float
 
 /** Computes the tangent of the angle [x] given in radians.
@@ -581,6 +617,7 @@ external public actual fun cos(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_tanf")
+@GCCritical
 external public actual fun tan(x: Float): Float
 
 /**
@@ -592,6 +629,7 @@ external public actual fun tan(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_asinf")
+@GCCritical
 external public actual fun asin(x: Float): Float
 
 /**
@@ -603,6 +641,7 @@ external public actual fun asin(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_acosf")
+@GCCritical
 external public actual fun acos(x: Float): Float
 
 /**
@@ -614,6 +653,7 @@ external public actual fun acos(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_atanf")
+@GCCritical
 external public actual fun atan(x: Float): Float
 
 /**
@@ -634,6 +674,7 @@ external public actual fun atan(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_atan2f")
+@GCCritical
 external public actual fun atan2(y: Float, x: Float): Float
 
 /**
@@ -646,6 +687,7 @@ external public actual fun atan2(y: Float, x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_sinhf")
+@GCCritical
 external public actual fun sinh(x: Float): Float
 
 /**
@@ -657,6 +699,7 @@ external public actual fun sinh(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_coshf")
+@GCCritical
 external public actual fun cosh(x: Float): Float
 
 /**
@@ -669,6 +712,7 @@ external public actual fun cosh(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_tanhf")
+@GCCritical
 external public actual fun tanh(x: Float): Float
 
 /**
@@ -683,6 +727,7 @@ external public actual fun tanh(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_asinhf")
+@GCCritical
 external public actual fun asinh(x: Float): Float
 
 /**
@@ -697,6 +742,7 @@ external public actual fun asinh(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_acoshf")
+@GCCritical
 external public actual fun acosh(x: Float): Float
 
 /**
@@ -712,6 +758,7 @@ external public actual fun acosh(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_atanhf")
+@GCCritical
 external public actual fun atanh(x: Float): Float
 
 /**
@@ -723,6 +770,7 @@ external public actual fun atanh(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_hypotf")
+@GCCritical
 external public actual fun hypot(x: Float, y: Float): Float
 
 /**
@@ -733,6 +781,7 @@ external public actual fun hypot(x: Float, y: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_sqrtf")
+@GCCritical
 external public actual fun sqrt(x: Float): Float
 
 /**
@@ -745,6 +794,7 @@ external public actual fun sqrt(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_expf")
+@GCCritical
 external public actual fun exp(x: Float): Float
 
 /**
@@ -761,6 +811,7 @@ external public actual fun exp(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_expm1f")
+@GCCritical
 external public actual fun expm1(x: Float): Float
 
 /**
@@ -792,6 +843,7 @@ public actual fun log(x: Float, base: Float): Float {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_lnf")
+@GCCritical
 external public actual fun ln(x: Float): Float
 
 /**
@@ -801,6 +853,7 @@ external public actual fun ln(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_log10f")
+@GCCritical
 external public actual fun log10(x: Float): Float
 
 /**
@@ -810,6 +863,7 @@ external public actual fun log10(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_log2f")
+@GCCritical
 external public actual fun log2(x: Float): Float
 
 /**
@@ -828,6 +882,7 @@ external public actual fun log2(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ln1pf")
+@GCCritical
 external public actual fun ln1p(x: Float): Float
 
 /**
@@ -840,6 +895,7 @@ external public actual fun ln1p(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ceilf")
+@GCCritical
 external public actual fun ceil(x: Float): Float
 
 /**
@@ -852,6 +908,7 @@ external public actual fun ceil(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_floorf")
+@GCCritical
 external public actual fun floor(x: Float): Float
 
 /**
@@ -877,6 +934,7 @@ public actual fun truncate(x: Float): Float = when {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_roundf")
+@GCCritical
 external public actual fun round(x: Float): Float
 
 
@@ -890,6 +948,7 @@ external public actual fun round(x: Float): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_absf")
+@GCCritical
 external public actual fun abs(x: Float): Float
 
 /**
@@ -947,6 +1006,7 @@ public actual fun max(a: Float, b: Float): Float = when {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Float_pow")
+@GCCritical
 external public actual fun Float.pow(x: Float): Float
 
 /**
@@ -971,6 +1031,7 @@ public actual fun Float.pow(n: Int): Float = pow(n.toFloat())
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Float_IEEErem")
+@GCCritical
 external public fun Float.IEEErem(divisor: Float): Float
 
 /**
@@ -1005,6 +1066,7 @@ public actual val Float.sign: Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Float_withSign")
+@GCCritical
 external public actual fun Float.withSign(sign: Float): Float
 /**
  * Returns this value with the sign bit same as of the [sign] value.
@@ -1029,12 +1091,14 @@ public val Float.ulp: Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Float_nextUp")
+@GCCritical
 external public fun Float.nextUp(): Float
 /**
  * Returns the [Float] value nearest to this value in direction of negative infinity.
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Float_nextDown")
+@GCCritical
 external public fun Float.nextDown(): Float
 
 /**
@@ -1047,12 +1111,14 @@ external public fun Float.nextDown(): Float
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_Float_nextTowards")
+@GCCritical
 external public fun Float.nextTowards(to: Float): Float
 
 /**
  * Returns true if the sign of [this] value is negative and false otherwise
  */
 @SymbolName("Kotlin_math_Float_signBit")
+@GCCritical
 external private fun Float.signBit(): Boolean
 
 /**
@@ -1105,6 +1171,7 @@ public actual fun Float.roundToLong(): Long = when {
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_absi")
+@GCCritical
 external public actual fun abs(n: Int): Int
 
 /**
@@ -1156,6 +1223,7 @@ public actual val Int.sign: Int
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_absl")
+@GCCritical
 external public actual fun abs(n: Long): Long
 
 /**

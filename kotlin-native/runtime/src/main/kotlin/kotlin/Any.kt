@@ -7,6 +7,7 @@ package kotlin
 
 import kotlin.native.identityHashCode
 import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.GCCritical
 
 /**
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
@@ -26,6 +27,7 @@ public open class Any {
      * Read more about [equality](https://kotlinlang.org/docs/reference/equality.html) in Kotlin.
      */
     @SymbolName("Kotlin_Any_equals")
+    @GCCritical
     external public open operator fun equals(other: Any?): Boolean
 
     /**

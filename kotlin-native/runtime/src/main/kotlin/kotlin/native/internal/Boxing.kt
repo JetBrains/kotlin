@@ -6,28 +6,51 @@
 package kotlin.native.internal
 
 @SymbolName("getCachedBooleanBox")
+@GCCritical
 external fun getCachedBooleanBox(value: Boolean): Boolean?
+
 @SymbolName("inBooleanBoxCache")
+@GCCritical
 external fun inBooleanBoxCache(value: Boolean): Boolean
+
 @SymbolName("getCachedByteBox")
+@GCCritical
 external fun getCachedByteBox(value: Byte): Byte?
+
 @SymbolName("inByteBoxCache")
+@GCCritical
 external fun inByteBoxCache(value: Byte): Boolean
+
 @SymbolName("getCachedCharBox")
+@GCCritical
 external fun getCachedCharBox(value: Char): Char?
+
 @SymbolName("inCharBoxCache")
+@GCCritical
 external fun inCharBoxCache(value: Char): Boolean
+
 @SymbolName("getCachedShortBox")
+@GCCritical
 external fun getCachedShortBox(value: Short): Short?
+
 @SymbolName("inShortBoxCache")
+@GCCritical
 external fun inShortBoxCache(value: Short): Boolean
+
 @SymbolName("getCachedIntBox")
+@GCCritical
 external fun getCachedIntBox(idx: Int): Int?
+
 @SymbolName("inIntBoxCache")
+@GCCritical
 external fun inIntBoxCache(value: Int): Boolean
+
 @SymbolName("getCachedLongBox")
+@GCCritical
 external fun getCachedLongBox(value: Long): Long?
+
 @SymbolName("inLongBoxCache")
+@GCCritical
 external fun inLongBoxCache(value: Long): Boolean
 
 // TODO: functions below are used for ObjCExport, move and rename them correspondigly.

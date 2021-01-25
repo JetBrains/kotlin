@@ -5,12 +5,13 @@
 
 package kotlin.native.concurrent
 
-import kotlin.native.internal.ExportTypeInfo
-import kotlin.native.internal.Frozen
-import kotlin.native.internal.LeakDetectorCandidate
-import kotlin.native.internal.NoReorderFields
 import kotlin.native.SymbolName
 import kotlinx.cinterop.NativePtr
+import kotlin.native.internal.*
+import kotlin.native.internal.Frozen
+import kotlin.native.internal.GCCritical
+import kotlin.native.internal.LeakDetectorCandidate
+import kotlin.native.internal.NoReorderFields
 
 /**
  * Atomic values and freezing: atomics [AtomicInt], [AtomicLong], [AtomicNativePtr] and [AtomicReference]
@@ -33,6 +34,7 @@ public class AtomicInt(private var value_: Int) {
      * @return the new value
      */
     @SymbolName("Kotlin_AtomicInt_addAndGet")
+    @GCCritical
     external public fun addAndGet(delta: Int): Int
 
     /**
@@ -43,6 +45,7 @@ public class AtomicInt(private var value_: Int) {
      * @return the old value
      */
     @SymbolName("Kotlin_AtomicInt_compareAndSwap")
+    @GCCritical
     external public fun compareAndSwap(expected: Int, new: Int): Int
 
     /**
@@ -53,6 +56,7 @@ public class AtomicInt(private var value_: Int) {
      * @return true if successful
      */
     @SymbolName("Kotlin_AtomicInt_compareAndSet")
+    @GCCritical
     external public fun compareAndSet(expected: Int, new: Int): Boolean
 
     /**
@@ -78,9 +82,11 @@ public class AtomicInt(private var value_: Int) {
 
     // Implementation details.
     @SymbolName("Kotlin_AtomicInt_set")
+    @GCCritical
     private external fun setImpl(new: Int): Unit
 
     @SymbolName("Kotlin_AtomicInt_get")
+    @GCCritical
     private external fun getImpl(): Int
 }
 
@@ -100,6 +106,7 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @return the new value
      */
     @SymbolName("Kotlin_AtomicLong_addAndGet")
+    @GCCritical
     external public fun addAndGet(delta: Long): Long
 
     /**
@@ -118,6 +125,7 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @return the old value
      */
     @SymbolName("Kotlin_AtomicLong_compareAndSwap")
+    @GCCritical
     external public fun compareAndSwap(expected: Long, new: Long): Long
 
     /**
@@ -128,6 +136,7 @@ public class AtomicLong(private var value_: Long = 0)  {
      * @return true if successful, false if state is unchanged
      */
     @SymbolName("Kotlin_AtomicLong_compareAndSet")
+    @GCCritical
     external public fun compareAndSet(expected: Long, new: Long): Boolean
 
     /**
@@ -153,9 +162,11 @@ public class AtomicLong(private var value_: Long = 0)  {
 
     // Implementation details.
     @SymbolName("Kotlin_AtomicLong_set")
+    @GCCritical
     private external fun setImpl(new: Long): Unit
 
     @SymbolName("Kotlin_AtomicLong_get")
+    @GCCritical
     private external fun getImpl(): Long
 }
 
@@ -178,6 +189,7 @@ public class AtomicNativePtr(private var value_: NativePtr) {
      * @return the old value
      */
     @SymbolName("Kotlin_AtomicNativePtr_compareAndSwap")
+    @GCCritical
     external public fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr
 
     /**
@@ -188,6 +200,7 @@ public class AtomicNativePtr(private var value_: NativePtr) {
      * @return true if successful
      */
     @SymbolName("Kotlin_AtomicNativePtr_compareAndSet")
+    @GCCritical
     external public fun compareAndSet(expected: NativePtr, new: NativePtr): Boolean
 
     /**
@@ -199,9 +212,11 @@ public class AtomicNativePtr(private var value_: NativePtr) {
 
     // Implementation details.
     @SymbolName("Kotlin_AtomicNativePtr_set")
+    @GCCritical
     private external fun setImpl(new: NativePtr): Unit
 
     @SymbolName("Kotlin_AtomicNativePtr_get")
+    @GCCritical
     private external fun getImpl(): NativePtr
 }
 
@@ -262,6 +277,7 @@ public class AtomicReference<T> {
      * @return the old value
      */
     @SymbolName("Kotlin_AtomicReference_compareAndSwap")
+    @GCCritical
     external public fun compareAndSwap(expected: T, new: T): T
 
     /**
@@ -273,6 +289,7 @@ public class AtomicReference<T> {
      * @return true if successful
      */
     @SymbolName("Kotlin_AtomicReference_compareAndSet")
+    @GCCritical
     external public fun compareAndSet(expected: T, new: T): Boolean
 
     /**
@@ -298,9 +315,11 @@ public class AtomicReference<T> {
 
     // Implementation details.
     @SymbolName("Kotlin_AtomicReference_set")
+    @GCCritical
     private external fun setImpl(new: Any?): Unit
 
     @SymbolName("Kotlin_AtomicReference_get")
+    @GCCritical
     private external fun getImpl(): Any?
 }
 
@@ -382,14 +401,18 @@ public class FreezableAtomicReference<T>(private var value_: T) {
 
     // Implementation details.
     @SymbolName("Kotlin_AtomicReference_set")
+    @GCCritical
     private external fun setImpl(new: Any?): Unit
 
     @SymbolName("Kotlin_AtomicReference_get")
+    @GCCritical
     private external fun getImpl(): Any?
 
     @SymbolName("Kotlin_AtomicReference_compareAndSwap")
+    @GCCritical
     private external fun compareAndSwapImpl(expected: Any?, new: Any?): Any?
 
     @SymbolName("Kotlin_AtomicReference_compareAndSet")
+    @GCCritical
     private external fun compareAndSetImpl(expected: Any?, new: Any?): Boolean
 }
