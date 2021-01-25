@@ -146,6 +146,11 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         runTest("testData/compiler/asJava/lightClasses/SpecialAnnotationsOnAnnotationClass.kt");
     }
 
+    @TestMetadata("SpecialAnnotationsOnAnnotationClass_1_6.kt")
+    public void testSpecialAnnotationsOnAnnotationClass_1_6() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/SpecialAnnotationsOnAnnotationClass_1_6.kt");
+    }
+
     @TestMetadata("StubOrderForOverloads.kt")
     public void testStubOrderForOverloads() throws Exception {
         runTest("testData/compiler/asJava/lightClasses/StubOrderForOverloads.kt");
