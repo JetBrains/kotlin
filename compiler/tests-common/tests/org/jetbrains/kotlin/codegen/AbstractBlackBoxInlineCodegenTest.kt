@@ -24,7 +24,11 @@ abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest()
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         super.doMultiFileTest(wholeFile, files)
         try {
-            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), files)
+            InlineTestUtil.checkNoCallsToInline(
+                initializedClassLoader.allGeneratedFiles.filterClassFiles(),
+                skipParameterCheckingInDirectives = files.any { "NO_CHECK_LAMBDA_INLINING" in it.directives },
+                skippedMethods = files.flatMapTo(mutableSetOf()) { it.directives.listValues("SKIP_INLINE_CHECK_IN") ?: emptyList() }
+            )
             SMAPTestUtil.checkSMAP(files, generateClassesInFile().getClassFiles(), false)
         } catch (e: Throwable) {
             println(generateToText())

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
@@ -89,5 +86,13 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val TREAT_AS_ONE_FILE by directive(
         description = "Treat bytecode from all files as one in ${BytecodeTextHandler::class}"
+    )
+
+    val NO_CHECK_LAMBDA_INLINING by directive(
+        description = "Skip checking of lambda inlining in ${BytecodeInliningHandler::class.java}"
+    )
+
+    val SKIP_INLINE_CHECK_IN by stringDirective(
+        description = "Skip checking of specific methods in ${BytecodeInliningHandler::class.java}"
     )
 }
