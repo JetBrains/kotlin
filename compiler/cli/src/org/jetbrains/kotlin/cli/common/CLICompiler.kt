@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.PrintStream
-import java.util.ArrayList
+import java.util.*
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
@@ -68,6 +69,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors).also {
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, it)
         }
+
+        configuration.put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(collector))
 
         configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
         try {
