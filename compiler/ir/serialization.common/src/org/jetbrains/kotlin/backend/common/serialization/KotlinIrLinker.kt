@@ -103,6 +103,8 @@ abstract class KotlinIrLinker(
                     filesWithPendingTopLevels.remove(pendingDeserializer)
                 }
             }
+
+            override fun toString(): String = klib.toString()
         }
 
         private val moduleDeserializationState = ModuleDeserializationState()
