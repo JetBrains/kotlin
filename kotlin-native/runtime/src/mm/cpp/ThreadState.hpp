@@ -14,6 +14,7 @@ namespace kotlin {
 // Switches the state of the given thread to `newState` and returns the previous thread state.
 ALWAYS_INLINE ThreadState SwitchThreadState(mm::ThreadData* threadData, ThreadState newState) noexcept;
 
+// Asserts that the given thread is in the given state.
 ALWAYS_INLINE void AssertThreadState(mm::ThreadData* threadData, ThreadState expected) noexcept;
 
 } // namespace kotlin
