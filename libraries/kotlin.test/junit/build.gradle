@@ -3,7 +3,6 @@ description = 'Kotlin Test JUnit'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
-configurePublishing(project)
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
