@@ -14773,6 +14773,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("funInterfaceCallInLambda.kt")
+            public void testFunInterfaceCallInLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/funInterface/funInterfaceCallInLambda.kt");
+            }
+
+            @Test
             @TestMetadata("funInterfaceInheritance.kt")
             public void testFunInterfaceInheritance() throws Exception {
                 runTest("compiler/testData/codegen/box/funInterface/funInterfaceInheritance.kt");
