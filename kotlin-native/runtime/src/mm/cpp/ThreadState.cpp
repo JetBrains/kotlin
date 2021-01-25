@@ -24,7 +24,7 @@ const char* stateToString(ThreadState state) noexcept {
 
 } // namespace
 
-// Switches the state of the current thread to `newState` and returns the previous state.
+// Switches the state of the given thread to `newState` and returns the previous state.
 ALWAYS_INLINE ThreadState kotlin::SwitchThreadState(mm::ThreadData* threadData, ThreadState newState) noexcept {
     auto oldState = threadData->setState(newState);
     // TODO(perf): Mesaure the impact of this assert in debug and opt modes.
