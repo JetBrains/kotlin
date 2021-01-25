@@ -3,7 +3,6 @@ description = 'Kotlin Test JUnit 5'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
-configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
 

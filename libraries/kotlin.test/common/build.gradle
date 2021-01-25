@@ -2,8 +2,6 @@ description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
 
-configurePublishing(project)
-
 jvmTarget = "1.6"
 
 dependencies {

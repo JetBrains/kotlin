@@ -6,9 +6,6 @@ archivesBaseName = 'kotlin-test'
 
 configureJvm6Project(project)
 
-configurePublishing(project) {
-    artifactId = archivesBaseName
-}
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
