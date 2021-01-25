@@ -165,9 +165,9 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
                 "\n" + """
                 dependencies {
                     jvm6Implementation project(':${innerJvmProject.projectName}')
-                    jvm6TestRuntime project(':${innerJvmProject.projectName}')
+                    jvm6TestRuntimeOnly project(':${innerJvmProject.projectName}')
                     nodeJsImplementation project(':${innerJsProject.projectName}')
-                    nodeJsTestRuntime project(':${innerJsProject.projectName}')
+                    nodeJsTestRuntimeOnly project(':${innerJsProject.projectName}')
                 }
             """.trimIndent()
             )
@@ -184,12 +184,8 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         with(outerProject) {
             embedProject(innerProject)
 
-            gradleBuildScript().appendText(
-                "\nconfigurations['jvm6TestRuntime'].canBeConsumed = true"
-            )
-
             gradleBuildScript(innerProject.projectName).appendText(
-                "\ndependencies { testImplementation project(path: ':', configuration: 'jvm6TestRuntime') }"
+                "\ndependencies { testImplementation project(path: ':', configuration: 'jvm6RuntimeElements') }"
             )
 
             testResolveAllConfigurations(innerProject.projectName) {
