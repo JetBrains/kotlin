@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.BytecodeTextHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
@@ -84,5 +85,9 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val SKIP_KT_DUMP by directive(
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
+    )
+
+    val TREAT_AS_ONE_FILE by directive(
+        description = "Treat bytecode from all files as one in ${BytecodeTextHandler::class}"
     )
 }

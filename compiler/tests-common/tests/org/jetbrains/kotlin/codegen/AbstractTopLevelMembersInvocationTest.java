@@ -24,11 +24,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.kotlin.codegen.BytecodeTextUtilsKt.checkGeneratedTextAgainstExpectedOccurrences;
+import static org.jetbrains.kotlin.codegen.BytecodeTextUtilsKt.readExpectedOccurrences;
 
 public abstract class AbstractTopLevelMembersInvocationTest extends AbstractBytecodeTextTest {
     @Override
@@ -60,6 +64,6 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         List<OccurrenceInfo> expected = readExpectedOccurrences(KtTestUtil.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
         String actual = generateToText();
-        Companion.checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY, true);
+        checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY, true, JUnit4Assertions.INSTANCE);
     }
 }

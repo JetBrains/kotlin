@@ -2,7 +2,7 @@
 
 public class J {
     public interface F {
-        public int call(String x)
+        public int call(String x);
     }
 
     public static void g(F r) {

@@ -140,10 +140,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/customScript", pattern = "^(.*)$")
             }
 
-            testClass<AbstractBytecodeTextTest> {
-                model("codegen/bytecodeText", targetBackend = TargetBackend.JVM)
-            }
-
             testClass<AbstractIrJsTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
             }
@@ -484,10 +480,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrBytecodeTextTest> {
-                model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM_IR)
             }
@@ -508,10 +500,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
                 model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
-            testClass<AbstractFirBytecodeTextTest> {
-                model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
 
             testClass<AbstractFirCompileKotlinAgainstKotlinTest> {

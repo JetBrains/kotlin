@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
-import org.jetbrains.kotlin.test.runners.codegen.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.junit.jupiter.api.parallel.Execution
@@ -73,6 +71,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractIrTextTest> {
                 model("ir/irText")
             }
+
+            testClass<AbstractBytecodeTextTest> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractIrBytecodeTextTest> {
+                model("codegen/bytecodeText", excludeDirs = listOf("oldLanguageVersions"))
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------
@@ -104,6 +110,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFir2IrTextTest> {
                 model("ir/irText")
+            }
+
+            testClass<AbstractFirBytecodeTextTest> {
+                model("codegen/bytecodeText", excludeDirs = listOf("oldLanguageVersions"))
             }
         }
     }
