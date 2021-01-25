@@ -16,7 +16,7 @@ package
 public typealias Test0 = @A @B kotlin.Int
 public typealias Test1 = @A @A kotlin.Int
 public typealias Test2 = @A @B kotlin.Int
-public typealias Test3 = @A() (@A kotlin.Int) -> kotlin.Int
+public typealias Test3 = @A (@A kotlin.Int) -> kotlin.Int
 public typealias Test4 = @A @B kotlin.Int?
 public typealias Test5 = @A @B kotlin.Int?
 public typealias Test6 = @A @B kotlin.Int

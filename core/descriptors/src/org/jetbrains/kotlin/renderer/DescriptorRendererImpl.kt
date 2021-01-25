@@ -38,7 +38,6 @@ internal class DescriptorRendererImpl(
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
         withOptions {
             excludedTypeAnnotationClasses += listOf(StandardNames.FqNames.extensionFunctionType)
-            annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.ALWAYS_PARENTHESIZED
         } as DescriptorRendererImpl
     }
 

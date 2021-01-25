@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.caches.project.BinaryModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.LOG
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -189,8 +190,8 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         return descriptorRendererForKeys.render(this)
     }
 
-    private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS.withOptions {
-        modifiers = DescriptorRendererModifier.ALL
+    private val descriptorRendererForKeys = DescriptorRenderer.withOptions {
+        defaultDecompilerRendererOptions()
         withDefinedIn = true
     }
 }

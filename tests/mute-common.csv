@@ -55,7 +55,6 @@ org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestG
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndOneDoesNot,,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndManyDoNot,,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testSeveralWithSource,,, FLAKY
-org.jetbrains.kotlin.idea.resolve.ReferenceResolveTestGenerated.DelegatedPropertyAccessors.InStandardLibrary.testNotNull,,,
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleGroovy.testMultiplatformApplication,,,
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleKts.testMultiplatformApplication,,,
 org.jetbrains.kotlin.gradle.NewMultiplatformIT.testJavaSupportInJvmTargets,,,
