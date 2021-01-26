@@ -114,6 +114,38 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return getReceiverTypeRefByTree();
     }
 
+    @NotNull
+    @Override
+    public List<KtTypeReference> getContextReceiverTypeReferences() {
+        KotlinPropertyStub stub = getStub();
+        if (stub != null) {
+            KtContextReceiver contextReceiver = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER);
+            if (contextReceiver != null) {
+                return contextReceiver.typeReferences();
+            } else {
+                return Collections.emptyList();
+            }
+        }
+        return getContextReceiverTypeRefsByTree();
+    }
+
+    @NotNull
+    private List<KtTypeReference> getContextReceiverTypeRefsByTree() {
+        ASTNode node = getNode().getFirstChildNode();
+        while (node != null) {
+            IElementType tt = node.getElementType();
+            if (tt == KtTokens.COLON) {
+                break;
+            }
+            if (tt == KtNodeTypes.CONTEXT_RECEIVER) {
+                KtContextReceiver contextReceiver = (KtContextReceiver) node.getPsi();
+                return contextReceiver.typeReferences();
+            }
+            node = node.getTreeNext();
+        }
+        return Collections.emptyList();
+    }
+
     @Nullable
     private KtTypeReference getReceiverTypeRefByTree() {
         ASTNode node = getNode().getFirstChildNode();
