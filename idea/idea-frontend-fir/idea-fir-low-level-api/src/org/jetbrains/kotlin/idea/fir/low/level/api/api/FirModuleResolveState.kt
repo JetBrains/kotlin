@@ -9,6 +9,7 @@ import org.jetbrains.annotations.TestOnly
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -36,9 +37,9 @@ abstract class FirModuleResolveState {
 
     internal abstract fun isFirFileBuilt(ktFile: KtFile): Boolean
 
-    internal abstract fun getDiagnostics(element: KtElement): List<Diagnostic>
+    internal abstract fun getDiagnostics(element: KtElement): List<FirPsiDiagnostic<*>>
 
-    internal abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
+    internal abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>>
 
     @TestOnly
     internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?
