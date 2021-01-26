@@ -57,9 +57,14 @@ object CirTypeFactory {
                     Annotations.EMPTY
                 ) as AbbreviatedType
 
+                val expandedType = extractExpandedType(abbreviatedType)
+
+                val cirExpandedType = create(expandedType, useAbbreviation = true) as CirClassOrTypeAliasType
+                val cirExpandedTypeWithProperNullability = if (source.isMarkedNullable) makeNullable(cirExpandedType) else cirExpandedType
+
                 createTypeAliasType(
                     typeAliasId = classifierDescriptor.internedClassId,
-                    underlyingType = create(extractExpandedType(abbreviatedType), useAbbreviation = true) as CirClassOrTypeAliasType,
+                    underlyingType = cirExpandedTypeWithProperNullability,
                     arguments = createArguments(source.arguments, useAbbreviation = true),
                     isMarkedNullable = source.isMarkedNullable
                 )
