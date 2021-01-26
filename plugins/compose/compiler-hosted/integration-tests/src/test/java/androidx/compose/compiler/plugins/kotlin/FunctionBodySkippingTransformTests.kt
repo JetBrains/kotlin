@@ -62,7 +62,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, y: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<Wrap>:Test.kt")
               val %dirty = %changed
               val x = x
@@ -84,7 +84,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0010 !== 0) {
                   y = 0
                 }
-                Wrap(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                Wrap(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                   if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     if (x > 0) {
                       %composer.startReplaceableGroup(<>, "<A(x)>")
@@ -102,7 +102,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, y, %composer, %changed or 0b0001, %default)
               }
             }
@@ -127,7 +127,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, y: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<Wrap>:Test.kt")
               val %dirty = %changed
               val x = x
@@ -149,7 +149,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0010 !== 0) {
                   y = 0
                 }
-                Wrap(composableLambda(%composer, <>, false, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                Wrap(composableLambda(%composer, <>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                   %composer.startReplaceableGroup(<>, "<A(x)>")
                   A(x, 0, %composer, 0b1110 and %dirty, 0b0010)
                   %composer.endReplaceableGroup()
@@ -157,7 +157,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, y, %composer, %changed or 0b0001, %default)
               }
             }
@@ -180,7 +180,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             fun Example(a: A) {
               Example(class <no name provided> : A {
                 @Composable
-                override fun compute(it: Int, %composer: Composer<*>?, %changed: Int) {
+                override fun compute(it: Int, %composer: Composer?, %changed: Int) {
                   %composer.startRestartGroup(<>, "C(compute)<comput...>:Test.kt")
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
@@ -193,7 +193,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                     %composer.skipToGroupEnd()
                   }
                   val tmp0_rcvr = <this>
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                     tmp0_rcvr.compute(it, %composer, %changed or 0b0001)
                   }
                 }
@@ -231,7 +231,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Button(colors: ButtonColors, %composer: Composer<*>?, %changed: Int) {
+            fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Button)<getCol...>,<Text("...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -242,17 +242,17 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Button(colors, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun Test(%composer: Composer<*>?, %changed: Int) {
+            fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<Button>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 Button(class <no name provided> : ButtonColors {
                   @Composable
-                  override fun getColor(%composer: Composer<*>?, %changed: Int): Color {
+                  override fun getColor(%composer: Composer?, %changed: Int): Color {
                     %composer.startReplaceableGroup(<>, "C(getColor)<condit...>:Test.kt")
                     val tmp0 = if (condition(%composer, 0)) {
                       Companion.Red
@@ -267,7 +267,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
               }
             }
@@ -348,7 +348,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(RowColumnImpl)P(5,4!1,2,3):Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -410,12 +410,12 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 RowColumnImpl(orientation, modifier, arrangement, crossAxisAlignment, crossAxisSize, content, %composer, %changed or 0b0001, %default)
               }
             }
             @Composable
-            fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Column)P(2,3,1)<RowCol...>:Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -465,7 +465,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Column(modifier, verticalArrangement, horizontalGravity, content, %composer, %changed or 0b0001, %default)
               }
             }
@@ -490,7 +490,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun SimpleBox(modifier: Modifier?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun SimpleBox(modifier: Modifier?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(SimpleBox):Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -507,7 +507,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 SimpleBox(modifier, %composer, %changed or 0b0001, %default)
               }
             }
@@ -527,7 +527,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Example(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val a = a
@@ -552,7 +552,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(a, %composer, %changed or 0b0001, %default)
               }
             }
@@ -581,7 +581,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             @ComposableContract(restartable = false)
-            fun Example(%composer: Composer<*>?, %changed: Int) {
+            fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<Call()>:Test.kt")
               Call(%composer, 0)
               val tmp0_iterator = 0 .. 1.iterator()
@@ -624,7 +624,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun SimpleBox(modifier: Modifier?, shape: Shape?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun SimpleBox(modifier: Modifier?, shape: Shape?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(SimpleBox):Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -658,7 +658,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 SimpleBox(modifier, shape, %composer, %changed or 0b0001, %default)
               }
             }
@@ -683,7 +683,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun SimpleBox(modifier: Modifier?, content: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun SimpleBox(modifier: Modifier?, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(SimpleBox)P(1):Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -703,7 +703,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   modifier = Companion
                 }
                 if (%default and 0b0010 !== 0) {
-                  content = composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                  content = composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                     if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                       Unit
                     } else {
@@ -715,7 +715,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 SimpleBox(modifier, content, %composer, %changed or 0b0001, %default)
               }
             }
@@ -738,7 +738,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
-            val foo: Function4<Int, Foo, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, y: Foo, %composer: Composer<*>?, %changed: Int ->
+            val foo: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -770,7 +770,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
-            val foo: Function4<Int, Foo, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, y: Foo, %composer: Composer<*>?, %changed: Int ->
+            val foo: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
               A(x, %composer, 0b1110 and %changed)
               B(y, %composer, 0b1000)
             }
@@ -793,7 +793,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun SomeThing(content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+            fun SomeThing(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(SomeThing):Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -803,15 +803,15 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 SomeThing(content, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun Example(%composer: Composer<*>?, %changed: Int) {
+            fun Example(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Example)<SomeTh...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                SomeThing(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                SomeThing(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                   if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     val id = object
                   } else {
@@ -821,7 +821,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(%composer, %changed or 0b0001)
               }
             }
@@ -840,7 +840,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun B(values: IntArray, %composer: Composer<*>?, %changed: Int) {
+            fun B(values: IntArray, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B):Test.kt")
               val %dirty = %changed
               %composer.startReplaceableGroup(values.size)
@@ -858,7 +858,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(*values, %composer, %changed or 0b0001)
               }
             }
@@ -879,7 +879,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun B(values: Array<out Foo>, %composer: Composer<*>?, %changed: Int) {
+            fun B(values: Array<out Foo>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B):Test.kt")
               val %dirty = %changed
               %composer.startReplaceableGroup(values.size)
@@ -897,7 +897,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(*values, %composer, %changed or 0b0001)
               }
             }
@@ -918,10 +918,10 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun B(values: Array<out Foo>, %composer: Composer<*>?, %changed: Int) {
+            fun B(values: Array<out Foo>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B):Test.kt")
               print(values)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(*values, %composer, %changed or 0b0001)
               }
             }
@@ -948,7 +948,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             class Foo {
               var counter: Int = 0
               @Composable
-              fun A(%composer: Composer<*>?, %changed: Int) {
+              fun A(%composer: Composer?, %changed: Int) {
                 %composer.startRestartGroup(<>, "C(A):Test.kt")
                 val %dirty = %changed
                 %dirty = %dirty or 0b0110
@@ -958,17 +958,17 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   %composer.skipToGroupEnd()
                 }
                 val tmp0_rcvr = <this>
-                %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                   tmp0_rcvr.A(%composer, %changed or 0b0001)
                 }
               }
               @Composable
-              fun B(%composer: Composer<*>?, %changed: Int) {
+              fun B(%composer: Composer?, %changed: Int) {
                 %composer.startRestartGroup(<>, "C(B):Test.kt")
                 val %dirty = %changed
                 print(counter)
                 val tmp0_rcvr = <this>
-                %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                   tmp0_rcvr.B(%composer, %changed or 0b0001)
                 }
               }
@@ -990,7 +990,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a: Int, b: Int, c: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Example(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example)<makeIn...>:Test.kt")
               val %dirty = %changed
               val a = a
@@ -1032,7 +1032,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(a, b, c, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1057,7 +1057,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+            fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Wrap)P(1)<conten...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -1071,12 +1071,12 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Wrap(y, content, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun Test(x: Int, y: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<Wrap(1...>:Test.kt")
               val %dirty = %changed
               val x = x
@@ -1098,7 +1098,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 if (%default and 0b0010 !== 0) {
                   y = 0
                 }
-                Wrap(10, composableLambda(%composer, <>, true, "C<A(x)>:Test.kt") { it: Int, %composer: Composer<*>?, %changed: Int ->
+                Wrap(10, composableLambda(%composer, <>, true, "C<A(x)>:Test.kt") { it: Int, %composer: Composer?, %changed: Int ->
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
@@ -1112,7 +1112,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, y, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1133,7 +1133,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, y: Int, %composer: Composer<*>?, %changed: Int, %default: Int): Int {
+            fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Test)<A(x,>:Test.kt")
               val x = if (%default and 0b0001 !== 0) 0 else x
               val y = if (%default and 0b0010 !== 0) 0 else y
@@ -1156,7 +1156,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
-            val test: Function3<Int, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, %composer: Composer<*>?, %changed: Int ->
+            val test: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, true) { x: Int, %composer: Composer?, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -1180,7 +1180,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, %composer: Composer<*>?, %changed: Int): Int {
+            fun Test(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Test)<A()>:Test.kt")
               val tmp0 = A(0, 0, %composer, 0, 0b0011)
               %composer.endReplaceableGroup()
@@ -1201,7 +1201,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, y: Int, %composer: Composer<*>?, %changed: Int) {
+            fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(y>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -1215,7 +1215,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, y, %composer, %changed or 0b0001)
               }
             }
@@ -1241,7 +1241,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun CanSkip(a: Int, b: Foo?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun CanSkip(a: Int, b: Foo?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(CanSkip):Test.kt")
               val %dirty = %changed
               val a = a
@@ -1276,27 +1276,27 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 CanSkip(a, b, %composer, %changed or 0b0001, %default)
               }
             }
             @Composable
-            fun CannotSkip(a: Int, b: Foo, %composer: Composer<*>?, %changed: Int) {
+            fun CannotSkip(a: Int, b: Foo, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(CannotSkip):Test.kt")
               print("Hello World")
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 CannotSkip(a, b, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun NoParams(%composer: Composer<*>?, %changed: Int) {
+            fun NoParams(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(NoParams):Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 print("Hello World")
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 NoParams(%composer, %changed or 0b0001)
               }
             }
@@ -1316,14 +1316,14 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<*>?, %changed: Int) {
+            fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A()>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 A(%composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
               }
             }
@@ -1343,7 +1343,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, %composer: Composer<*>?, %changed: Int) {
+            fun Test(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -1354,7 +1354,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001)
               }
             }
@@ -1381,7 +1381,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(text: String, %composer: Composer<*>?, %changed: Int) {
+            fun A(text: String, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<B(text...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -1392,12 +1392,12 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(text, %composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun B(text: String, color: Color, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun B(text: String, color: Color, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(B)P(1,0:Color):Test.kt")
               val %dirty = %changed
               val color = color
@@ -1426,7 +1426,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(text, color, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1488,11 +1488,11 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(%composer: Composer<*>?, %changed: Int) {
+            fun A(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<D>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 val x = 123
-                D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                   if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     Unit
                   } else {
@@ -1518,12 +1518,12 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(%composer, %changed or 0b0001)
               }
             }
             @Composable
-            fun B(%composer: Composer<*>?, %changed: Int) {
+            fun B(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(B)<C(Math...>,<C(Math...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 C(random(), %composer, 0)
@@ -1531,7 +1531,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 B(%composer, %changed or 0b0001)
               }
             }
@@ -1550,10 +1550,10 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<*>?, %changed: Int) {
+            fun Example(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Example)<D>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                D(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                   if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     Unit
                   } else {
@@ -1563,7 +1563,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(%composer, %changed or 0b0001)
               }
             }
@@ -1584,7 +1584,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(x)>:Test.kt")
               val %dirty = %changed
               val x = x
@@ -1601,7 +1601,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1622,7 +1622,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<I()>,<A(x)>:Test.kt")
               val %dirty = %changed
               val x = x
@@ -1647,7 +1647,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1668,10 +1668,10 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Foo, %composer: Composer<*>?, %changed: Int) {
+            fun Test(x: Foo, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(x)>:Test.kt")
               A(x, %composer, 0b1000)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001)
               }
             }
@@ -1692,7 +1692,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Foo?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(x: Foo?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(x)>:Test.kt")
               val %dirty = %changed
               val x = x
@@ -1717,7 +1717,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1738,7 +1738,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A(a,>:Test.kt")
               val %dirty = %changed
               val c = c
@@ -1793,7 +1793,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(a, b, c, d, e, %composer, %changed or 0b0001, %default)
               }
             }
@@ -1813,7 +1813,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun X(x: Int, %composer: Composer<*>?, %changed: Int) {
+            fun X(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(X)<X(x>,<X(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -1825,7 +1825,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 X(x, %composer, %changed or 0b0001)
               }
             }
@@ -1855,7 +1855,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(x: Int, %composer: Composer<*>?, %changed: Int) {
+            fun A(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<B(>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -1866,7 +1866,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(x, %composer, %changed or 0b0001)
               }
             }
@@ -1895,7 +1895,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
-            val unstableUnused: @[ExtensionFunctionType] Function3<Foo, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %changed: Int ->
+            val unstableUnused: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
               val %dirty = %changed
               %dirty = %dirty or 0b0110
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
@@ -1904,11 +1904,11 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
             }
-            val unstableUsed: @[ExtensionFunctionType] Function3<Foo, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %changed: Int ->
+            val unstableUsed: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
               val %dirty = %changed
               print(x)
             }
-            val stableUnused: @[ExtensionFunctionType] Function3<StableFoo, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %changed: Int ->
+            val stableUnused: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
               val %dirty = %changed
               %dirty = %dirty or 0b0110
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
@@ -1917,7 +1917,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
             }
-            val stableUsed: @[ExtensionFunctionType] Function3<StableFoo, Composer<*>, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %changed: Int ->
+            val stableUsed: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
@@ -1951,20 +1951,20 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(x: Int, %composer: Composer<*>?, %changed: Int) {
+            fun A(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<Provid...>,<B(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                Provide(composableLambda(%composer, <>, true, "C<Provid...>,<B(x,>:Test.kt") { y: Int, %composer: Composer<*>?, %changed: Int ->
+                Provide(composableLambda(%composer, <>, true, "C<Provid...>,<B(x,>:Test.kt") { y: Int, %composer: Composer?, %changed: Int ->
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
                   }
                   if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
-                    Provide(composableLambda(%composer, <>, true, "C<B(x,>:Test.kt") { z: Int, %composer: Composer<*>?, %changed: Int ->
+                    Provide(composableLambda(%composer, <>, true, "C<B(x,>:Test.kt") { z: Int, %composer: Composer?, %changed: Int ->
                       val %dirty = %changed
                       if (%changed and 0b1110 === 0) {
                         %dirty = %dirty or if (%composer.changed(z)) 0b0100 else 0b0010
@@ -1984,7 +1984,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(x, %composer, %changed or 0b0001)
               }
             }
@@ -2007,7 +2007,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(x: Int, %composer: Composer<*>?, %changed: Int) {
+            fun A(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(A)<foo(x)>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -2015,7 +2015,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 @Composable
-                fun foo(y: Int, %composer: Composer<*>?, %changed: Int) {
+                fun foo(y: Int, %composer: Composer?, %changed: Int) {
                   %composer.startRestartGroup(<>, "C(foo)<B(x,>:Test.kt")
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
@@ -2026,7 +2026,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                     foo(y, %composer, %changed or 0b0001)
                   }
                 }
@@ -2034,7 +2034,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 A(x, %composer, %changed or 0b0001)
               }
             }
@@ -2104,7 +2104,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %default: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, %composer: Composer?, %changed: Int, %changed1: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example)<Exampl...>,<Exampl...>:Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
@@ -2249,7 +2249,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, %composer, %changed or 0b0001, %changed1, %default)
               }
             }
@@ -2322,7 +2322,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %default: Int) {
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, %composer: Composer?, %changed: Int, %changed1: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example)<Exampl...>,<Exampl...>:Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
@@ -2476,7 +2476,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, %composer, %changed or 0b0001, %changed1, %default)
               }
             }
@@ -2515,7 +2515,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 }
               @ComposableContract(readonly = true)
               @Composable
-              fun getHashCode(%composer: Composer<*>?, %changed: Int): Int {
+              fun getHashCode(%composer: Composer?, %changed: Int): Int {
                 val tmp0 = %composer.hashCode()
                 return tmp0
               }
@@ -2523,7 +2523,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             }
             @ComposableContract(readonly = true)
             @Composable
-            fun getHashCode(%composer: Composer<*>?, %changed: Int): Int {
+            fun getHashCode(%composer: Composer?, %changed: Int): Int {
               val tmp0 = %composer.hashCode()
               return tmp0
             }
@@ -2550,7 +2550,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(wontChange: Int, mightChange: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Example(wontChange: Int, mightChange: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example)P(1)<curren...>,<A(wont...>,<A(migh...>:Test.kt")
               val %dirty = %changed
               val wontChange = wontChange
@@ -2585,7 +2585,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(wontChange, mightChange, %composer, %changed or 0b0001, %default)
               }
             }
@@ -2603,7 +2603,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+            fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Example)<invoke...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -2614,7 +2614,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(content, %composer, %changed or 0b0001)
               }
             }
@@ -2630,9 +2630,9 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             fun B() = A { 123 }
         """,
         """
-            fun A(factory: Function2<Composer<*>, Int, Int>) { }
+            fun A(factory: Function2<Composer, Int, Int>) { }
             fun B() {
-              return A { %composer: Composer<*>?, %changed: Int ->
+              return A { %composer: Composer?, %changed: Int ->
                 %composer.startReplaceableGroup(<>)
                 val tmp0 = 123
                 %composer.endReplaceableGroup()
@@ -2662,7 +2662,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Box2)P(1,2:c#ui.unit.Dp):Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -2704,7 +2704,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Box2(modifier, paddingStart, content, %composer, %changed or 0b0001, %default)
               }
             }
@@ -2730,7 +2730,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(cond: Boolean, %composer: Composer<*>?, %changed: Int) {
+            fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test):Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
@@ -2756,7 +2756,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(cond, %composer, %changed or 0b0001)
               }
             }
