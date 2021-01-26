@@ -44,8 +44,7 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
-            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinCoroutinesExperimentalCompat()),
+            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib()),
             Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources())
     );
 

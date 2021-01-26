@@ -168,7 +168,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             usePreparsedDirectives: Boolean
         ) {
             var explicitLanguageVersionSettings: LanguageVersionSettings? = null
-            var includeCompatExperimentalCoroutines = false
             val kotlinConfigurationFlags: MutableList<String> = ArrayList(0)
             for (testFile in testFilesWithConfigurationDirectives) {
                 val content = testFile.content
@@ -200,23 +199,12 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     """.trimIndent()
                     )
                 }
-                if (directives.contains("COMMON_COROUTINES_TEST")) {
-                    assert(!directives.contains("COROUTINES_PACKAGE")) { "Must replace COROUTINES_PACKAGE prior to tests compilation" }
-                }
-                if (content.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
-                    includeCompatExperimentalCoroutines = true
-                }
                 val fileLanguageVersionSettings: LanguageVersionSettings? = parseLanguageVersionSettings(directives)
                 if (fileLanguageVersionSettings != null) {
                     assert(explicitLanguageVersionSettings == null) { "Should not specify !LANGUAGE directive twice" }
                     explicitLanguageVersionSettings = fileLanguageVersionSettings
                 }
             }
-
-            if (includeCompatExperimentalCoroutines) {
-                configuration.addJvmClasspathRoot(KotlinArtifacts.instance.kotlinCoroutinesExperimentalCompat)
-            }
-
             if (explicitLanguageVersionSettings != null) {
                 configuration.languageVersionSettings = explicitLanguageVersionSettings
             }
