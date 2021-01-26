@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -133,6 +134,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             target.valueParameters.any { it.type.isProhibitedTypeForIndySamConversion() } ||
             target.returnType.isProhibitedTypeForIndySamConversion()
         )
+            return false
+
+        // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
+        if (target.parents.any { it is IrSimpleFunction && it.isInline && it.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA })
             return false
 
         return true

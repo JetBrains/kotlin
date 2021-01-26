@@ -18568,6 +18568,28 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineString.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineContext")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InlineContext extends AbstractIrBlackBoxCodegenTest {
+                @Test
+                public void testAllFilesPresentInInlineContext() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineContext"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("inlineFunInDifferentPackage.kt")
+                public void testInlineFunInDifferentPackage() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineContext/inlineFunInDifferentPackage.kt");
+                }
+
+                @Test
+                @TestMetadata("inlineLambda1.kt")
+                public void testInlineLambda1() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineContext/inlineLambda1.kt");
+                }
+            }
         }
     }
 

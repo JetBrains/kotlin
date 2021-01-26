@@ -16280,6 +16280,29 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/genericFunInterfaceWithInlineString.kt");
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineContext")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InlineContext extends AbstractLightAnalysisModeTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInlineContext() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineContext"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("inlineFunInDifferentPackage.kt")
+                public void testInlineFunInDifferentPackage() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineContext/inlineFunInDifferentPackage.kt");
+                }
+
+                @TestMetadata("inlineLambda1.kt")
+                public void testInlineLambda1() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineContext/inlineLambda1.kt");
+                }
+            }
         }
     }
 
