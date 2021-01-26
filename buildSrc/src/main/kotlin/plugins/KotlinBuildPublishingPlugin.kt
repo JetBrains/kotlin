@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,62 +71,11 @@ class KotlinBuildPublishingPlugin @Inject constructor(
                 create<MavenPublication>(PUBLICATION_NAME) {
                     from(kotlinLibraryComponent)
 
-                    pom {
-                        packaging = "jar"
-                        name.set(humanReadableName(project))
-                        description.set(project.description ?: humanReadableName(project))
-                        url.set("https://kotlinlang.org/")
-                        licenses {
-                            license {
-                                name.set("The Apache License, Version 2.0")
-                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                            }
-                        }
-                        scm {
-                            url.set("https://github.com/JetBrains/kotlin")
-                            connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
-                            developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
-                        }
-                        developers {
-                            developer {
-                                name.set("Kotlin Team")
-                                organization.set("JetBrains")
-                                organizationUrl.set("https://www.jetbrains.com")
-                            }
-                        }
-                    }
-                }
-            }
-
-            repositories {
-                maven {
-                    name = REPOSITORY_NAME
-                    url = file("${project.rootDir}/build/repo").toURI()
+                    configureKotlinPomAttributes(project)
                 }
             }
         }
-
-        val signingRequired = provider {
-            project.findProperty("signingRequired")?.toString()?.toBoolean()
-                ?: project.property("isSonatypeRelease") as Boolean
-        }
-
-        configure<SigningExtension> {
-            setRequired(signingRequired)
-            sign(extensions.getByType<PublishingExtension>().publications[PUBLICATION_NAME])
-            useGpgCmd()
-        }
-
-        tasks.withType<Sign>().configureEach {
-            setOnlyIf { signingRequired.get() }
-        }
-
-        tasks.register("install") {
-            dependsOn(tasks.named("publishToMavenLocal"))
-        }
-
-        tasks.named<PublishToMavenRepository>("publish${PUBLICATION_NAME}PublicationTo${REPOSITORY_NAME}Repository")
-            .configureRepository()
+        configureDefaultPublishing()
     }
 
     companion object {
@@ -137,13 +86,84 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         const val COMPILE_CONFIGURATION = "publishedCompile"
         const val RUNTIME_CONFIGURATION = "publishedRuntime"
 
-        @OptIn(ExperimentalStdlibApi::class)
-        fun humanReadableName(project: Project) =
-            project.name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
     }
 }
 
-fun TaskProvider<PublishToMavenRepository>.configureRepository() = configure {
+@OptIn(ExperimentalStdlibApi::class)
+private fun humanReadableName(name: String) =
+    name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
+
+fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDescription: String? = null) {
+    val publication = this
+    pom {
+        packaging = "jar"
+        name.set(humanReadableName(publication.artifactId))
+        description.set(explicitDescription ?: project.description ?: humanReadableName(publication.artifactId))
+        url.set("https://kotlinlang.org/")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        scm {
+            url.set("https://github.com/JetBrains/kotlin")
+            connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+            developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+        }
+        developers {
+            developer {
+                name.set("Kotlin Team")
+                organization.set("JetBrains")
+                organizationUrl.set("https://www.jetbrains.com")
+            }
+        }
+    }
+}
+
+
+fun Project.configureDefaultPublishing() {
+    configure<PublishingExtension> {
+        repositories {
+            maven {
+                name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
+                url = file("${project.rootDir}/build/repo").toURI()
+            }
+        }
+    }
+
+    configureSigning()
+
+    tasks.register("install") {
+        dependsOn(tasks.named("publishToMavenLocal"))
+    }
+
+    tasks.withType<PublishToMavenRepository>()
+        .matching { it.name.endsWith("PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository") }
+        .all { configureRepository() }
+}
+
+private fun Project.configureSigning() {
+    val signingRequired = provider {
+        project.findProperty("signingRequired")?.toString()?.toBoolean()
+            ?: project.property("isSonatypeRelease") as Boolean
+    }
+
+    configure<SigningExtension> {
+        setRequired(signingRequired)
+        sign(extensions.getByType<PublishingExtension>().publications) // all publications
+        useGpgCmd()
+    }
+
+    tasks.withType<Sign>().configureEach {
+        setOnlyIf { signingRequired.get() }
+    }
+}
+
+fun TaskProvider<PublishToMavenRepository>.configureRepository() =
+    configure { configureRepository() }
+
+private fun PublishToMavenRepository.configureRepository() {
     dependsOn(project.rootProject.tasks.named("preparePublication"))
     doFirst {
         val preparePublication = project.rootProject.tasks.named("preparePublication").get()

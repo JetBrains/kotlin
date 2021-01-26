@@ -1,9 +1,14 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import plugins.configureDefaultPublishing
+import plugins.configureKotlinPomAttributes
+import groovy.util.Node
+import groovy.util.NodeList
 
 plugins {
     `kotlin-multiplatform` apply false
     base
     `maven-publish`
+    signing
 }
 
 open class ComponentsFactoryAccess
@@ -248,42 +253,56 @@ val annotationsMetadataComponent = componentFactory.adhoc("annotations-common").
     }
 }
 
+val emptyJavadocJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
 
+configureDefaultPublishing()
 
 publishing {
     publications {
         create("main", MavenPublication::class) {
             from(rootComponent)
             artifact(combinedSourcesJar)
-            // TODO: Remove all optional dependencies from root pom
+            // Remove all optional dependencies from the root pom
+            pom.withXml {
+                val dependenciesNode = (asNode().get("dependencies") as NodeList).filterIsInstance<Node>().single()
+                val optionalDependencies = (dependenciesNode.get("dependency") as NodeList).filterIsInstance<Node>().filter {
+                    ((it.get("optional") as NodeList).singleOrNull() as Node?)?.text() == "true"
+                }
+                optionalDependencies.forEach { dependenciesNode.remove(it) }
+            }
+            configureKotlinPomAttributes(project, "Kotlin Test Multiplatform library")
         }
         jvmTestFrameworks.forEach { framework ->
             create(framework, MavenPublication::class) {
                 artifactId = "kotlin-test-$framework"
                 from(components[framework])
                 artifact(tasks.getByPath(":kotlin-test:kotlin-test-$framework:sourcesJar") as Jar)
+                configureKotlinPomAttributes(project, "Kotlin Test Support for $framework")
             }
         }
         create("js", MavenPublication::class) {
             artifactId = "kotlin-test-js"
             from(jsComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-js:sourcesJar") as Jar)
+            configureKotlinPomAttributes(project, "Kotlin Test for JS")
         }
         create("common", MavenPublication::class) {
             artifactId = "kotlin-test-common"
             from(commonMetadataComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-common:sourcesJar") as Jar)
+            configureKotlinPomAttributes(project, "Kotlin Test Common")
         }
         create("annotationsCommon", MavenPublication::class) {
             artifactId = "kotlin-test-annotations-common"
             from(annotationsMetadataComponent)
             artifact(tasks.getByPath(":kotlin-test:kotlin-test-annotations-common:sourcesJar") as Jar)
+            configureKotlinPomAttributes(project, "Kotlin Test Common")
         }
-    }
-}
-
-tasks {
-    val install by creating {
-        dependsOn(publishToMavenLocal)
+        withType<MavenPublication> {
+            suppressAllPomMetadataWarnings()
+            artifact(emptyJavadocJar)
+        }
     }
 }
