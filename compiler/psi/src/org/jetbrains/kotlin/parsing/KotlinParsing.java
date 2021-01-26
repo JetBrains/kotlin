@@ -423,6 +423,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
         PsiBuilder.Marker decl = mark();
 
+        if (at(CONTEXT_KEYWORD)) {
+            parseContextReceiver();
+        }
+
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
@@ -610,6 +614,41 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         marker.rollbackTo();
         return false;
+    }
+
+    /*
+     * contextReceiver
+     *   : "context" "(" typeReference{","}+ ")"
+     */
+    private void parseContextReceiver() {
+        assert _at(CONTEXT_KEYWORD);
+        PsiBuilder.Marker contextReceiver = mark();
+        advance(); // CONTEXT_KEYWORD
+        if (at(LPAR)) {
+            advance(); // LPAR
+            while (true) {
+                if (at(COMMA)) {
+                    errorAndAdvance("Expecting a type reference");
+                }
+                parseTypeRef();
+                if (at(RPAR)) {
+                    advance();
+                    break;
+                }
+                if (at(COMMA)) {
+                    advance();
+                }
+                else {
+                    if (!at(RPAR)) {
+                        error("Expecting comma or ')'");
+                    }
+                }
+            }
+            contextReceiver.done(CONTEXT_RECEIVER);
+        } else {
+            errorWithRecovery("Expecting context receivers", TokenSet.EMPTY);
+            contextReceiver.drop();
+        }
     }
 
     /*
@@ -1177,6 +1216,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
             return;
         }
         PsiBuilder.Marker decl = mark();
+
+        if (at(CONTEXT_KEYWORD)) {
+            parseContextReceiver();
+        }
 
         ModifierDetector detector = new ModifierDetector();
         parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
