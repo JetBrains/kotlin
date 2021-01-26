@@ -470,7 +470,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun convertToIrReceiverExpression(
+    internal fun convertToIrReceiverExpression(
         expression: FirExpression?,
         calleeReference: FirReference,
         callableReferenceAccess: FirCallableReferenceAccess? = null

@@ -713,10 +713,9 @@ class CallAndReferenceGenerator(
         if (firReceiver == explicitReceiver) {
             return explicitReceiverExpression
         }
-        if (firReceiver is FirResolvedQualifier) {
-            return convertToGetObject(firReceiver, this as? FirCallableReferenceAccess)
-        }
-        return firReceiver.takeIf { it !is FirNoReceiverExpression }?.let { visitor.convertToIrExpression(it) }
+
+        return firReceiver.takeIf { it !is FirNoReceiverExpression }
+            ?.let { visitor.convertToIrReceiverExpression(it, calleeReference, this as? FirCallableReferenceAccess) }
             ?: explicitReceiverExpression
             ?: run {
                 if (this is FirCallableReferenceAccess) return null
