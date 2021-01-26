@@ -95,4 +95,17 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val SKIP_INLINE_CHECK_IN by stringDirective(
         description = "Skip checking of specific methods in ${BytecodeInliningHandler::class.java}"
     )
+
+    val DUMP_SMAP by directive(
+        description = """Enables ${SMAPDumpHandler::class}"""
+    )
+
+    val SEPARATE_SMAP_DUMPS by directive(
+        description = """
+            If enabled then ${SMAPDumpHandler::class} will dump smap dumps
+              into ${SMAPDumpHandler.SMAP_SEP_EXT} and ${SMAPDumpHandler.SMAP_EXT}
+              files instead of ${SMAPDumpHandler.SMAP_EXT} depending of module
+              structure of test
+        """.trimIndent()
+    )
 }
