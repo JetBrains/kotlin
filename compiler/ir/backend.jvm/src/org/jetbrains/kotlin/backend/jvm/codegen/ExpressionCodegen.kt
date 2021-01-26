@@ -504,10 +504,10 @@ class ExpressionCodegen(
             }
             unboxedInlineClassIrType != null && !irFunction.isInvokeSuspendOfContinuation() ->
                 object : PromisedValue(this, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType) {
-                    override fun materializeAt(target: Type, irTarget: IrType) {
+                    override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
                         mv.checkcast(unboxedInlineClassIrType.asmType)
                         MaterialValue(this@ExpressionCodegen, unboxedInlineClassIrType.asmType, unboxedInlineClassIrType)
-                            .materializeAt(target, irTarget)
+                            .materializeAt(target, irTarget, castForReified)
                     }
 
                     override fun discard() {
@@ -954,7 +954,7 @@ class ExpressionCodegen(
             if (!exhaustive) {
                 result.discard()
             } else {
-                val materializedResult = result.materializedAt(expression.type)
+                val materializedResult = result.materializedAt(typeMapper.mapType(expression.type), expression.type, true)
                 if (branch.condition.isTrueConst()) {
                     // The rest of the expression is dead code.
                     mv.mark(endLabel)
@@ -1086,7 +1086,7 @@ class ExpressionCodegen(
         val isExpression = !aTry.type.isUnit()
         var savedValue: Int? = null
         if (isExpression) {
-            tryResult.materializeAt(tryAsmType, aTry.type)
+            tryResult.materializeAt(tryAsmType, aTry.type, true)
             savedValue = frameMap.enterTemp(tryAsmType)
             mv.store(savedValue, tryAsmType)
         } else {
@@ -1115,7 +1115,7 @@ class ExpressionCodegen(
             val catchBody = clause.result
             val catchResult = catchBody.accept(this, data)
             if (savedValue != null) {
-                catchResult.materializeAt(tryAsmType, aTry.type)
+                catchResult.materializeAt(tryAsmType, aTry.type, true)
                 mv.store(savedValue, tryAsmType)
             } else {
                 catchResult.discard()
@@ -1158,11 +1158,11 @@ class ExpressionCodegen(
         mv.mark(tryCatchBlockEnd)
         // TODO: generate a common `finally` for try & catch blocks here? Right now this breaks the inliner.
         return object : PromisedValue(this, tryAsmType, aTry.type) {
-            override fun materializeAt(target: Type, irTarget: IrType) {
+            override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
                 if (savedValue != null) {
                     mv.load(savedValue, tryAsmType)
                     frameMap.leaveTemp(tryAsmType)
-                    super.materializeAt(target, irTarget)
+                    super.materializeAt(target, irTarget, castForReified)
                 } else {
                     unitValue.materializeAt(target, irTarget)
                 }
