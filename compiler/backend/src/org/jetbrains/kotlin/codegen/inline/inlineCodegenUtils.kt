@@ -224,7 +224,7 @@ internal fun isSamWrapperConstructorCall(internalName: String, methodName: Strin
     isConstructor(methodName) && isSamWrapper(internalName)
 
 internal fun isAnonymousClass(internalName: String) =
-    !isSamWrapper(internalName) &&
+    !internalName.contains("\$sam\$") &&
             internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
