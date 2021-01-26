@@ -43,6 +43,9 @@ object ComposeFqNames {
     val internal = fqNameFor("internal")
     val CurrentComposerIntrinsic = fqNameFor("<get-currentComposer>")
     val ComposableContract = fqNameFor("ComposableContract")
+    val DisallowComposableCalls = fqNameFor("DisallowComposableCalls")
+    val ReadOnlyComposable = fqNameFor("ReadOnlyComposable")
+    val NonRestartableComposable = fqNameFor("NonRestartableComposable")
     val composableLambda = internalFqNameFor("composableLambda")
     val remember = fqNameFor("remember")
     val key = fqNameFor("key")
@@ -80,10 +83,14 @@ fun KotlinType.isMarkedStable(): Boolean =
 fun Annotated.hasComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Composable) != null
 fun Annotated.composableRestartableContract(): Boolean? {
+    val nonrestartable = annotations.findAnnotation(ComposeFqNames.NonRestartableComposable)
+    if (nonrestartable != null) return false
     val contract = annotations.findAnnotation(ComposeFqNames.ComposableContract) ?: return null
     return contract.argumentValue("restartable")?.value as? Boolean
 }
 fun Annotated.composableReadonlyContract(): Boolean? {
+    val readonly = annotations.findAnnotation(ComposeFqNames.ReadOnlyComposable)
+    if (readonly != null) return true
     val contract = annotations.findAnnotation(ComposeFqNames.ComposableContract) ?: return null
     return contract.argumentValue("readonly")?.value as? Boolean
 }
@@ -93,6 +100,8 @@ fun Annotated.composableTrackedContract(): Boolean? {
 }
 
 fun Annotated.composablePreventCaptureContract(): Boolean? {
+    val disallow = annotations.findAnnotation(ComposeFqNames.DisallowComposableCalls)
+    if (disallow != null) return true
     val contract = annotations.findAnnotation(ComposeFqNames.ComposableContract) ?: return null
     return contract.argumentValue("preventCapture")?.value as? Boolean
 }
