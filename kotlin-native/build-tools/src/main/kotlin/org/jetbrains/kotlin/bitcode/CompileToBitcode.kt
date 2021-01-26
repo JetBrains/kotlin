@@ -20,7 +20,7 @@ open class CompileToBitcode @Inject constructor(
         val srcRoot: File,
         val folderName: String,
         val target: String,
-        val outputGroup: String,
+        val outputGroup: String
 ) : DefaultTask() {
 
     enum class Language {

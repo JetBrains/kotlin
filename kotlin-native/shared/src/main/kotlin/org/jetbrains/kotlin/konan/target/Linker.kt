@@ -285,7 +285,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
                 else -> error(target)
             },
             "@loader_path/Frameworks".takeIf { dynamic },
-            compilerRtDir.takeIf { sanitizer != null },
+            compilerRtDir.takeIf { sanitizer != null }
     ).flatMap { listOf("-rpath", it) }
 
     fun dsymUtilCommand(executable: ExecutableFile, outputDsymBundle: String) =

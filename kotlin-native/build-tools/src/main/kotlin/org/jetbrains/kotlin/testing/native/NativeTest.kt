@@ -104,7 +104,7 @@ open class LinkNativeTest @Inject constructor(
         @Internal val target: String,
         @Internal val linkerArgs: List<String>,
         private val  platformManager: PlatformManager,
-        private val mimallocEnabled: Boolean,
+        private val mimallocEnabled: Boolean
 ) : DefaultTask () {
     companion object {
         fun create(
@@ -115,7 +115,7 @@ open class LinkNativeTest @Inject constructor(
                 target: String,
                 outputFile: File,
                 linkerArgs: List<String>,
-                mimallocEnabled: Boolean,
+                mimallocEnabled: Boolean
         ): LinkNativeTest = project.tasks.create(
                 taskName,
                 LinkNativeTest::class.java,
@@ -165,7 +165,7 @@ open class LinkNativeTest @Inject constructor(
                     outputDsymBundle = "",
                     needsProfileLibrary = false,
                     mimallocEnabled = mimallocEnabled,
-                    sanitizer = sanitizer,
+                    sanitizer = sanitizer
             ).map { it.argsWithExecutable }
         }
 
@@ -259,7 +259,7 @@ private fun createTestTask(
             listOf(compileTask.outputFile),
             target,
             testName,
-            mimallocEnabled,
+            mimallocEnabled
     ).apply {
         this.sanitizer = sanitizer
         dependsOn(compileTask)
@@ -302,9 +302,9 @@ fun createTestTasks(
         targetName: String,
         testTaskName: String,
         testedTaskNames: List<String>,
-        configureCompileToBitcode: CompileToBitcode.() -> Unit = {},
+        configureCompileToBitcode: CompileToBitcode.() -> Unit = {}
 ): List<Task> {
-    val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+    val platformManager = project.rootProject.project(":kotlin-native").findProperty("platformManager") as PlatformManager
     val target = platformManager.targetByName(targetName)
     val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
     return sanitizers.map { sanitizer ->

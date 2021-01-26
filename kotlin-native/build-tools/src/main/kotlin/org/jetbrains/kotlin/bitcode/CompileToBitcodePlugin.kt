@@ -48,7 +48,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
             configurationBlock: CompileToBitcode.() -> Unit = {}
     ) {
         targetList.get().forEach { targetName ->
-            val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+            val platformManager = project.rootProject.project(":kotlin-native").findProperty("platformManager") as PlatformManager
             val target = platformManager.targetByName(targetName)
             val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
             sanitizers.forEach { sanitizer ->
