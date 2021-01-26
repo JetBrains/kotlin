@@ -1,4 +1,3 @@
-// IGNORE_FIR
 package testing
 
 annotation class Annotation<T>(val clazz: Class<T>)
