@@ -38,6 +38,9 @@ class SmartPrinter(appendable: Appendable) {
     fun popIndent() {
         printer.popIndent()
     }
+
+    fun getCurrentIndentInUnits() = printer.currentIndentLengthInUnits
+    fun getIndentUnit() = printer.indentUnitLength
 }
 
 inline fun SmartPrinter.withIndent(block: () -> Unit) {

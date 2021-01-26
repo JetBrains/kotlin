@@ -20,16 +20,7 @@ class Generator(
     private val packageName: String,
     private val abstractCheckerName: String
 ) {
-    private val generationPath: File
-
-    init {
-        var path = generationPath
-        packageName.split(".").forEach {
-            path = path.resolve(it)
-        }
-        path.mkdirs()
-        this.generationPath = path
-    }
+    private val generationPath: File = getGenerationPath(generationPath, packageName)
 
     private fun generateAliases() {
         val filename = "${abstractCheckerName}Aliases.kt"
