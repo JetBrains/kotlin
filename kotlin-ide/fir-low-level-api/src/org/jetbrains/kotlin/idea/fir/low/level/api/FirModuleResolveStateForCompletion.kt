@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -83,11 +84,11 @@ internal class FirModuleResolveStateForCompletion(
     }
 
 
-    override fun getDiagnostics(element: KtElement): List<Diagnostic> {
+    override fun getDiagnostics(element: KtElement): List<FirPsiDiagnostic<*>> {
         error("Diagnostics should not be retrieved in completion")
     }
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> {
+    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>> {
         error("Diagnostics should not be retrieved in completion")
     }
 

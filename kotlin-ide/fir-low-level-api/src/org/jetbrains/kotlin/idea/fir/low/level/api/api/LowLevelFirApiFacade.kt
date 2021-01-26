@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
@@ -120,13 +121,13 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
  */
-fun KtElement.getDiagnostics(resolveState: FirModuleResolveState): Collection<Diagnostic> =
+fun KtElement.getDiagnostics(resolveState: FirModuleResolveState): Collection<FirPsiDiagnostic<*>> =
     resolveState.getDiagnostics(this)
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtFile]
  */
-fun KtFile.collectDiagnosticsForFile(resolveState: FirModuleResolveState): Collection<Diagnostic> =
+fun KtFile.collectDiagnosticsForFile(resolveState: FirModuleResolveState): Collection<FirPsiDiagnostic<*>> =
     resolveState.collectDiagnosticsForFile(this)
 
 /**

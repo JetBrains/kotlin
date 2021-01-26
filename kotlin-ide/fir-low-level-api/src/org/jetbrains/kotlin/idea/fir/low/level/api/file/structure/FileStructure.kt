@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
@@ -56,7 +57,7 @@ internal class FileStructure(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun getAllDiagnosticsForFile(): Collection<Diagnostic> {
+    fun getAllDiagnosticsForFile(): Collection<FirPsiDiagnostic<*>> {
         val containersForStructureElement = buildList {
             add(ktFile)
             addAll(ktFile.declarations)

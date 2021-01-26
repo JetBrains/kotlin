@@ -12,6 +12,7 @@ import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
@@ -19,7 +20,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.getMessageWithFactoryName
 import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
 import org.jetbrains.kotlin.psi.KtElement
@@ -37,13 +41,18 @@ class KotlinHighLevelDiagnosticHighlightingPass(
             if (!diagnostic.isValid) return@forEach
             diagnostic.textRanges.forEach { range ->
                 HighlightInfo.newHighlightInfo(HighlightInfoType.ERROR/*TODO*/)
-                    .descriptionAndTooltip(Diagnostic2Annotation.getMessage(diagnostic, IdeErrorMessages::render))
+                    .descriptionAndTooltip(diagnostic.getMessageToRender())
                     .range(range)
                     .create()
                     ?.let(diagnosticInfos::add)
             }
         }
     }
+
+    private fun KtDiagnostic.getMessageToRender(): String =
+        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode)
+            getMessageWithFactoryName()
+        else message
 
 
     override fun doApplyInformationToEditor() {

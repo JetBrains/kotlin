@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 
 internal interface KtFirAnalysisSessionComponent {
@@ -15,6 +19,12 @@ internal interface KtFirAnalysisSessionComponent {
     val firSymbolBuilder get() = analysisSession.firSymbolBuilder
     val firResolveState get() = analysisSession.firResolveState
     fun ConeKotlinType.asKtType() = analysisSession.firSymbolBuilder.buildKtType(this)
+
+    fun FirPsiDiagnostic<*>.asKtDiagnostic(): KtDiagnostic =
+        (analysisSession.diagnosticProvider as KtFirDiagnosticProvider).firDiagnosticAsKtDiagnostic(this)
+
+    fun ConeDiagnostic.asKtDiagnostic(source: FirSourceElement): KtDiagnostic? =
+        (analysisSession.diagnosticProvider as KtFirDiagnosticProvider).coneDiagnosticAsKtDiagnostic(this, source)
 
     fun createTypeCheckerContext() = ConeTypeCheckerContext(
         isErrorTypeEqualsToAnything = true,

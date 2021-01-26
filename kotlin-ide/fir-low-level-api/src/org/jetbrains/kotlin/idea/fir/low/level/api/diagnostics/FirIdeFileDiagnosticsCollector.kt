@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 
 internal class FirIdeFileDiagnosticsCollector private constructor(
@@ -14,14 +15,14 @@ internal class FirIdeFileDiagnosticsCollector private constructor(
 ) : AbstractFirIdeDiagnosticsCollector(
     session,
 ) {
-    private val result = mutableListOf<Diagnostic>()
+    private val result = mutableListOf<FirPsiDiagnostic<*>>()
 
-    override fun onDiagnostic(diagnostic: Diagnostic) {
+    override fun onDiagnostic(diagnostic: FirPsiDiagnostic<*>) {
         result += diagnostic
     }
 
     companion object {
-        fun collectForFile(firFile: FirFile): List<Diagnostic> =
+        fun collectForFile(firFile: FirFile): List<FirPsiDiagnostic<*>> =
             FirIdeFileDiagnosticsCollector(firFile.session).let { collector ->
                 collector.collectDiagnostics(firFile)
                 collector.result

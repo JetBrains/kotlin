@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.psi.KtElement
@@ -15,13 +16,13 @@ internal class DiagnosticsCollector(
     private val fileStructureCache: FileStructureCache,
     private val cache: ModuleFileCache,
 ) {
-    fun getDiagnosticsFor(element: KtElement): List<Diagnostic> =
+    fun getDiagnosticsFor(element: KtElement): List<FirPsiDiagnostic<*>> =
         fileStructureCache
             .getFileStructure(element.containingKtFile, cache)
             .getStructureElementFor(element)
             .diagnostics.diagnosticsFor(element)
 
-    fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
+    fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>> =
         fileStructureCache
             .getFileStructure(ktFile, cache)
             .getAllDiagnosticsForFile()

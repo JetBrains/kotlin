@@ -5,8 +5,21 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.diagnostics
 
-sealed class KtDiagnostic {
-    abstract val message: String
+import com.intellij.openapi.util.TextRange
+
+interface KtDiagnostic {
+    val factoryName: String?
+    val message: String
+    val textRanges: Collection<TextRange>
+    val isValid: Boolean get() = true
 }
 
-data class KtSimpleDiagnostic(override val message: String): KtDiagnostic()
+fun KtDiagnostic.getMessageWithFactoryName(): String =
+    if (factoryName == null) message
+    else "[$factoryName] $message"
+
+data class KtSimpleDiagnostic(
+    override val factoryName: String?,
+    override val message: String,
+    override val textRanges: Collection<TextRange>,
+) : KtDiagnostic

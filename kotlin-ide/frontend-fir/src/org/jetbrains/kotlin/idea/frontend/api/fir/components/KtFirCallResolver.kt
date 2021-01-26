@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -112,13 +113,13 @@ internal class KtFirCallResolver(
     private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            KtSimpleDiagnostic(diagnostic.reason)
+            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, emptyList())
         )
 
     private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            KtSimpleDiagnostic(diagnostic.reason)
+            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, emptyList())
         )
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =
