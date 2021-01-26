@@ -1,8 +1,13 @@
+import org.jetbrains.kotlin.UtilsKt
+
 project.buildscript.repositories {
     maven {
         url project.bootstrapKotlinRepo
     }
-    maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+    if (UtilsKt.getCacheRedirectorEnabled(project))
+        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+    else
+        mavenCentral()
 }
 
 project.buildscript.dependencies {

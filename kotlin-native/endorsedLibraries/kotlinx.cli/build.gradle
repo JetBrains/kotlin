@@ -4,8 +4,13 @@ import org.jetbrains.kotlin.*
 
 buildscript {
     repositories {
-        maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
-        maven { url project.bootstrapKotlinRepo }
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+        else
+            jcenter()
+        maven {
+            url project.bootstrapKotlinRepo
+        }
     }
 
 }
@@ -13,9 +18,10 @@ buildscript {
 apply plugin: 'kotlin-multiplatform'
 
 repositories {
-    maven {
-        url 'https://cache-redirector.jetbrains.com/jcenter'
-    }
+    if (UtilsKt.getCacheRedirectorEnabled(project))
+        maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+    else
+        jcenter()
 }
 
 kotlin {

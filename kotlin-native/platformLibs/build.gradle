@@ -2,14 +2,20 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.KlibInstall
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.UtilsKt
 
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
 
 buildscript {
     repositories {
-        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
-        maven { url project.bootstrapKotlinRepo }
-        maven { url "https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx" }
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/maven-central'}
+        else
+            mavenCentral()
+        maven {
+            url project.bootstrapKotlinRepo
+        }
+        maven { url UtilsKt.redirectIfEnabled(project, "https://kotlin.bintray.com/kotlinx") }
     }
 }
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
