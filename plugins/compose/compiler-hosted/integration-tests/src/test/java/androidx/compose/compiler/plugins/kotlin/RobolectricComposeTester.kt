@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composition
 import androidx.compose.runtime.EmbeddingContext
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.Recomposer
-import androidx.compose.runtime.compositionFor
 import androidx.compose.ui.node.UiApplier
 import androidx.compose.ui.platform.AmbientContext
 import kotlinx.coroutines.CoroutineScope
@@ -50,13 +49,13 @@ private class TestActivity : ComponentActivity() {
 
 private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
 
-fun compose(composable: (Composer<*>, Int) -> Unit) =
+fun compose(composable: (Composer, Int) -> Unit) =
     RobolectricComposeTester(composable)
-fun composeMulti(composable: (Composer<*>, Int) -> Unit, advance: () -> Unit) =
+fun composeMulti(composable: (Composer, Int) -> Unit, advance: () -> Unit) =
     RobolectricComposeTester(composable, advance)
 
 class RobolectricComposeTester internal constructor(
-    val composable: (Composer<*>, Int) -> Unit,
+    val composable: (Composer, Int) -> Unit,
     val advance: (() -> Unit)? = null
 ) {
     inner class ActiveTest(
@@ -97,7 +96,7 @@ class RobolectricComposeTester internal constructor(
         endProviders.isAccessible = true
         setContentMethod.isAccessible = true
 
-        val realComposable: (Composer<*>, Int) -> Unit = { composer, _ ->
+        val realComposable: (Composer, Int) -> Unit = { composer, _ ->
             startProviders.invoke(
                 composer,
                 listOf(AmbientContext provides root.context).toTypedArray()
@@ -108,7 +107,7 @@ class RobolectricComposeTester internal constructor(
 
         @Suppress("DEPRECATION")
         @OptIn(ExperimentalComposeApi::class)
-        val composition = compositionFor(root, UiApplier(root), recomposer)
+        val composition = Composition(root, UiApplier(root), recomposer)
         fun setContent() {
             setContentMethod.invoke(composition, realComposable)
         }

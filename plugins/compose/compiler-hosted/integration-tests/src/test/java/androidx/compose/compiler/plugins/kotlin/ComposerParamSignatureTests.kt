@@ -102,15 +102,15 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         ) {}
         """
     ) {
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Z)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (C)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (B)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (S)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (I)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (F)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (J)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (D)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Z)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (C)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (B)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (S)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (I)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (F)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (J)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (D)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"))
     }
 
     @Test
@@ -122,15 +122,15 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         @Composable fun Foo(a: Bar) {}
         """
     ) {
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Z)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (C)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (B)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (S)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (I)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (F)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (J)Z"))
-        assert(!it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (D)Z"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Z)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (C)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (B)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (S)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (I)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (F)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (J)Z"))
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (D)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"))
     }
 
     @Test
@@ -141,9 +141,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     ) {
         assert(!it.contains("INVOKESTATIC Bar.box-impl (I)LBar;"))
-        assert(it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (I)Z"))
+        assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (I)Z"))
         assert(
-            !it.contains("INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z")
+            !it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z")
         )
     }
 
@@ -167,7 +167,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         )
         assert(
             testClass.contains(
-                "INVOKEVIRTUAL androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"
+                "INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Ljava/lang/Object;)Z"
             )
         )
     }
@@ -381,7 +381,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed1(): Unit = checkComposerParam(
         """
-            var a: Composer<*>? = null
+            var a: Composer? = null
             fun run() {
                 a = makeComposer()
                 invokeComposable(a) {
@@ -394,7 +394,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed2(): Unit = checkComposerParam(
         """
-            var a: Composer<*>? = null
+            var a: Composer? = null
             @Composable fun Foo() {
                 assertComposer(a)
             }
@@ -410,8 +410,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed3(): Unit = checkComposerParam(
         """
-            var a: Composer<*>? = null
-            var b: Composer<*>? = null
+            var a: Composer? = null
+            var b: Composer? = null
             @Composable fun Callback(fn: () -> Unit) {
                 fn()
             }
@@ -433,8 +433,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed4(): Unit = checkComposerParam(
         """
-            var a: Composer<*>? = null
-            var b: Composer<*>? = null
+            var a: Composer? = null
+            var b: Composer? = null
             @Composable fun makeInt(): Int {
                 assertComposer(a)
                 return 10
@@ -459,7 +459,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testCorrectComposerPassed5(): Unit = checkComposerParam(
         """
-            var a: Composer<*>? = null
+            var a: Composer? = null
             @Composable fun Wrap(content: @Composable () -> Unit) {
                 content()
             }
