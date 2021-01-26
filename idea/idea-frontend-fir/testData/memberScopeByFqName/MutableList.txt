@@ -449,8 +449,8 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Boolean
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.MutableList.equals
-  dispatchType: kotlin/collections/MutableList<E>
+  callableIdIfNonLocal: kotlin.Any.equals
+  dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
   isInline: false
@@ -459,7 +459,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: equals
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -470,8 +470,8 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.MutableList.hashCode
-  dispatchType: kotlin/collections/MutableList<E>
+  callableIdIfNonLocal: kotlin.Any.hashCode
+  dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
   isInline: false
@@ -480,7 +480,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: hashCode
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
@@ -491,8 +491,8 @@ KtFirFunctionSymbol:
   annotatedType: [] kotlin/String
   annotationClassIds: []
   annotations: []
-  callableIdIfNonLocal: kotlin.collections.MutableList.toString
-  dispatchType: kotlin/collections/MutableList<E>
+  callableIdIfNonLocal: kotlin.Any.toString
+  dispatchType: kotlin/Any
   isExtension: false
   isExternal: false
   isInline: false
@@ -501,7 +501,7 @@ KtFirFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: toString
-  origin: INTERSECTION_OVERRIDE
+  origin: LIBRARY
   receiverType: null
   symbolKind: MEMBER
   typeParameters: []
