@@ -400,16 +400,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 )
             }
 
-            testClass<AbstractJvmIrAgainstOldBoxTest> {
-                model("codegen/box/compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
-            }
-            testClass<AbstractJvmOldAgainstIrBoxTest> {
-                model(
-                    "codegen/box/compileKotlinAgainstKotlin",
-                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR
-                )
-            }
-
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM_IR)
             }
