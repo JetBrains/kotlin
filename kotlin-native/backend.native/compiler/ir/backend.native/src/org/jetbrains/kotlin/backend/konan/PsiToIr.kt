@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
@@ -38,6 +37,7 @@ internal fun Context.psiToIr(
 ) {
     // Translate AST to high level IR.
     val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER)?:false
+    val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
 
     val translator = Psi2IrTranslator(config.configuration.languageVersionSettings, Psi2IrConfiguration(false))
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
@@ -89,7 +89,7 @@ internal fun Context.psiToIr(
                 moduleDescriptor,
                 functionIrClassFactory,
                 translationContext,
-                this as LoggingContext,
+                messageLogger,
                 generatorContext.irBuiltIns,
                 symbolTable,
                 forwardDeclarationsModuleDescriptor,
@@ -149,7 +149,8 @@ internal fun Context.psiToIr(
                 generatorContext.symbolTable,
                 generatorContext.typeTranslator,
                 generatorContext.irBuiltIns,
-                linker = irDeserializer
+                linker = irDeserializer,
+                diagnosticReporter = messageLogger
         )
         pluginExtensions.forEach { extension ->
             extension.generate(module, pluginContext)

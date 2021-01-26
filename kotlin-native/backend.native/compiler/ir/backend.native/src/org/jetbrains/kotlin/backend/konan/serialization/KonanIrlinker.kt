@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
@@ -71,7 +70,7 @@ internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
         override val functionalInterfaceFactory: IrAbstractFunctionFactory,
         override val translationPluginContext: TranslationPluginContext?,
-        logger: LoggingContext,
+        messageLogger: IrMessageLogger,
         builtIns: IrBuiltIns,
         symbolTable: SymbolTable,
         private val forwardModuleDescriptor: ModuleDescriptor?,
@@ -79,7 +78,7 @@ internal class KonanIrLinker(
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
         private val cachedLibraries: CachedLibraries
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, exportedDependencies) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")
