@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.name.Name
 
@@ -70,70 +69,13 @@ private class TypeAliasShortCircuitingCommonizer(
 
     override fun doCommonizeWith(next: CirTypeAlias): Boolean {
         if (underlyingType == null) {
-            underlyingType = computeUnderlyingType(next.underlyingType) ?: return false
+            underlyingType = computeSuitableUnderlyingType(classifiers, next.underlyingType) ?: return false
         }
 
         return typeParameters.commonizeWith(next.typeParameters)
                 && expandedType.commonizeWith(next.expandedType)
                 && visibility.commonizeWith(next)
     }
-
-    private tailrec fun computeUnderlyingType(underlyingType: CirClassOrTypeAliasType): CirClassOrTypeAliasType? {
-        return when (underlyingType) {
-            is CirClassType -> underlyingType.withCommonizedArguments()
-            is CirTypeAliasType -> if (classifiers.commonDependeeLibraries.hasClassifier(underlyingType.classifierId))
-                underlyingType.withCommonizedArguments()
-            else
-                computeUnderlyingType(underlyingType.underlyingType)
-        }
-    }
-
-    private fun CirClassType.withCommonizedArguments(): CirClassType? {
-        val existingArguments = arguments
-        val newArguments = existingArguments.toCommonizedArguments() ?: return null
-
-        val existingOuterType = outerType
-        val newOuterType = existingOuterType?.let { it.withCommonizedArguments() ?: return null }
-
-        return if (newArguments !== existingArguments || newOuterType !== existingOuterType)
-            CirTypeFactory.createClassType(
-                classId = classifierId,
-                outerType = newOuterType,
-                visibility = visibility,
-                arguments = newArguments,
-                isMarkedNullable = isMarkedNullable
-            )
-        else
-            this
-    }
-
-    private fun CirTypeAliasType.withCommonizedArguments(): CirTypeAliasType? {
-        val existingArguments = arguments
-        val newArguments = existingArguments.toCommonizedArguments() ?: return null
-
-        val existingUnderlyingType = underlyingType
-        val newUnderlyingType = when (existingUnderlyingType) {
-            is CirClassType -> existingUnderlyingType.withCommonizedArguments()
-            is CirTypeAliasType -> existingUnderlyingType.withCommonizedArguments()
-        } ?: return null
-
-        return if (newArguments !== existingArguments || newUnderlyingType !== existingUnderlyingType)
-            CirTypeFactory.createTypeAliasType(
-                typeAliasId = classifierId,
-                underlyingType = newUnderlyingType,
-                arguments = newArguments,
-                isMarkedNullable = isMarkedNullable
-            )
-        else
-            this
-    }
-
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun List<CirTypeProjection>.toCommonizedArguments(): List<CirTypeProjection>? =
-        if (isEmpty())
-            this
-        else
-            TypeArgumentListCommonizer(classifiers).let { if (it.commonizeWith(this)) it.result else null }
 }
 
 private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {

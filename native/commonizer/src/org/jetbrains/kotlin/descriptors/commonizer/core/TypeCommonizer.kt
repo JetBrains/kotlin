@@ -109,7 +109,10 @@ private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifie
             commonizedTypeBuilder = when (val commonClassifier = answer.commonClassifier) {
                 is CirClass -> CommonizedTypeAliasTypeBuilder.forClass(commonClassifier)
                 is CirTypeAlias -> CommonizedTypeAliasTypeBuilder.forTypeAlias(commonClassifier)
-                null -> CommonizedTypeAliasTypeBuilder.forKnownUnderlyingType(next.underlyingType)
+                null -> {
+                    val underlyingType = computeSuitableUnderlyingType(classifiers, next.underlyingType) ?: return false
+                    CommonizedTypeAliasTypeBuilder.forKnownUnderlyingType(underlyingType)
+                }
                 else -> error("Unexpected common classifier type: ${commonClassifier::class.java}, $commonClassifier")
             }
         }
