@@ -97,7 +97,7 @@ class ModuleStructureExtractorImpl(
         private var currentFileName: String? = null
         private var firstFileInModule: Boolean = true
         private var linesOfCurrentFile = mutableListOf<String>()
-        private var startLineNumberOfCurrentFile = 0
+        private var endLineNumberOfLastFile = -1
 
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         private var moduleDirectivesBuilder: RegisteredDirectivesParser = directivesBuilder
@@ -123,7 +123,7 @@ class ModuleStructureExtractorImpl(
                     linesOfCurrentFile.add(line)
                 }
             }
-            finishModule()
+            finishModule(lineNumber = -1)
             val sortedModules = sortModules(modules)
             checkCycles(modules)
             return TestModuleStructureImpl(sortedModules, testDataFiles)
@@ -170,7 +170,7 @@ class ModuleStructureExtractorImpl(
                      * There was previous module, so we should save it
                      */
                     if (currentModuleName != null) {
-                        finishModule()
+                        finishModule(lineNumber)
                     } else {
                         finishGlobalDirectives()
                     }
@@ -213,12 +213,11 @@ class ModuleStructureExtractorImpl(
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
-                        finishFile()
+                        finishFile(lineNumber)
                     } else {
                         resetFileCaches()
                     }
                     currentFileName = (values.first() as String).also(::validateFileName)
-                    startLineNumberOfCurrentFile = lineNumber
                 }
                 else -> return false
             }
@@ -275,8 +274,8 @@ class ModuleStructureExtractorImpl(
             error("Directive $this has $applicability applicability but it declared in $context")
         }
 
-        private fun finishModule() {
-            finishFile()
+        private fun finishModule(lineNumber: Int) {
+            finishFile(lineNumber)
             val isImplicitModule = currentModuleName == null
             val moduleDirectives = moduleDirectivesBuilder.build() + testServices.defaultDirectives + globalDirectives
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
@@ -323,7 +322,8 @@ class ModuleStructureExtractorImpl(
             }
         }
 
-        private fun finishFile() {
+        @OptIn(ExperimentalStdlibApi::class)
+        private fun finishFile(lineNumber: Int) {
             val actualDefaultFileName = if (currentModuleName == null) {
                 defaultFileName
             } else {
@@ -336,17 +336,24 @@ class ModuleStructureExtractorImpl(
             val directives = fileDirectivesBuilder?.build()?.also { directives ->
                 directives.forEach { it.checkDirectiveApplicability(contextIsFile = true) }
             }
+            val fileContent = buildString {
+                for (i in 0 until endLineNumberOfLastFile) {
+                    appendLine()
+                }
+                appendLine(linesOfCurrentFile.joinToString("\n"))
+            }
             filesOfCurrentModule.add(
                 TestFile(
                     relativePath = filename,
-                    originalContent = linesOfCurrentFile.joinToString(separator = "\n", postfix = "\n"),
+                    originalContent = fileContent,
                     originalFile = currentTestDataFile,
-                    startLineNumberInOriginalFile = startLineNumberOfCurrentFile,
+                    startLineNumberInOriginalFile = endLineNumberOfLastFile,
                     isAdditional = false,
                     directives = directives ?: RegisteredDirectives.Empty
                 )
             )
             firstFileInModule = false
+            endLineNumberOfLastFile = lineNumber - 1
             resetFileCaches()
         }
 
@@ -376,7 +383,6 @@ class ModuleStructureExtractorImpl(
                 moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
-            startLineNumberOfCurrentFile = 0
             resetDirectivesBuilder()
             fileDirectivesBuilder = directivesBuilder
         }
