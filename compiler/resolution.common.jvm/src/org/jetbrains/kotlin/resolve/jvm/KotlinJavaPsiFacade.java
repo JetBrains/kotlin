@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
@@ -58,7 +59,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class KotlinJavaPsiFacade {
+public class KotlinJavaPsiFacade implements Disposable {
     private volatile KotlinPsiElementFinderWrapper[] elementFinders;
 
     private static class PackageCache {
@@ -96,9 +97,9 @@ public class KotlinJavaPsiFacade {
         emptyModifierList = new LightModifierList(PsiManager.getInstance(project), KotlinLanguage.INSTANCE);
 
         // drop entire cache when it is low free memory
-        LowMemoryWatcher.register(this::clearPackageCaches, project);
+        LowMemoryWatcher.register(this::clearPackageCaches, this);
 
-        MessageBusConnection connection = project.getMessageBus().connect();
+        MessageBusConnection connection = project.getMessageBus().connect(this);
 
         // VFS changes like create/delete/copy/move directory are subject to clean up short term caches
         connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
@@ -137,6 +138,11 @@ public class KotlinJavaPsiFacade {
                 }
             }
         });
+    }
+
+    @Override
+    public void dispose() {
+        clearPackageCaches();
     }
 
     public void clearPackageCaches() {
