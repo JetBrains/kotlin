@@ -18482,6 +18482,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("streamApi1.kt")
+            public void testStreamApi1() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/streamApi1.kt");
+            }
+
+            @Test
+            @TestMetadata("streamApi2.kt")
+            public void testStreamApi2() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/streamApi2.kt");
+            }
+
+            @Test
             @TestMetadata("suspendFunInterface.kt")
             public void testSuspendFunInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/suspendFunInterface.kt");

@@ -3792,6 +3792,22 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeText/invokedynamic")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Invokedynamic extends AbstractBytecodeTextTest {
+        @Test
+        public void testAllFilesPresentInInvokedynamic() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @Test
+        @TestMetadata("streamApi.kt")
+        public void testStreamApi() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/invokedynamic/streamApi.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeText/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     public class Jvm8 extends AbstractBytecodeTextTest {
