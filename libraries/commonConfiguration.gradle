@@ -9,8 +9,6 @@ ext.configureJavaOnlyJvm6Project = { Project project ->
     }
 }
 
-List<String> tasksWithWarnings = (List<String>) rootProject.ext.get("tasksWithWarnings")
-
 ext.configureJvm6Project = { Project project ->
     project.configure(project) {
         configurations {
@@ -34,14 +32,6 @@ ext.configureJvm6Project = { Project project ->
 
         test {
             executable = "$JDK_16/bin/java"
-        }
-    }
-
-    project.tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile.class) { task ->
-        if (!tasksWithWarnings.contains(task.path)) {
-            task.kotlinOptions {
-                allWarningsAsErrors = true
-            }
         }
     }
 }
