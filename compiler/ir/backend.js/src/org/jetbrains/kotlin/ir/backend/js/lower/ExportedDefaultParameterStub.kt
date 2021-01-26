@@ -32,16 +32,19 @@ private fun IrConstructorCall.isAnnotation(name: FqName): Boolean {
 
 class ExportedDefaultParameterStub(val context: JsIrBackendContext) : DeclarationTransformer {
 
-    private fun IrBuilderWithScope.createDefaultResolutionExpression(value: IrValueParameter): IrExpression? {
-        return value.defaultValue?.let { defaultValue ->
+    private fun IrBuilderWithScope.createDefaultResolutionExpression(
+        fromParameter: IrValueParameter,
+        toParameter: IrValueParameter,
+    ): IrExpression? {
+        return fromParameter.defaultValue?.let { defaultValue ->
             irIfThenElse(
-                value.type,
+                toParameter.type,
                 irEqeqeq(
-                    irGet(value),
+                    irGet(toParameter),
                     irCall(this@ExportedDefaultParameterStub.context.intrinsics.jsUndefined)
                 ),
                 defaultValue.expression,
-                irGet(value)
+                irGet(toParameter)
             )
         }
     }
@@ -52,7 +55,7 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
         val variables = mutableMapOf<IrValueParameter, IrValueDeclaration>()
 
         val defaultResolutionStatements = valueParameters.mapNotNull { valueParameter ->
-            irBuilder.createDefaultResolutionExpression(valueParameter)?.let { initializer ->
+            irBuilder.createDefaultResolutionExpression(valueParameter, valueParameter)?.let { initializer ->
                 JsIrBuilder.buildVar(
                     valueParameter.type,
                     this@introduceDefaultResolution,
@@ -116,7 +119,8 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
                 extensionReceiver = exportedDefaultStubFun.extensionReceiverParameter?.let { irGet(it) }
 
                 declaration.valueParameters.forEachIndexed { index, irValueParameter ->
-                    val value = createDefaultResolutionExpression(irValueParameter) ?: irGet(irValueParameter)
+                    val exportedParameter = exportedDefaultStubFun.valueParameters[index]
+                    val value = createDefaultResolutionExpression(irValueParameter, exportedParameter) ?: irGet(exportedParameter)
                     putValueArgument(index, value)
                 }
             })
