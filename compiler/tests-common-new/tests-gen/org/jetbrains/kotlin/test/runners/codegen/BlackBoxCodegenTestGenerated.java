@@ -18481,6 +18481,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/simpleIndySam.kt");
             }
 
+            @Test
+            @TestMetadata("suspendFunInterface.kt")
+            public void testSuspendFunInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/suspendFunInterface.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
             @TestDataPath("$PROJECT_ROOT")

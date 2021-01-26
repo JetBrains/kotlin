@@ -105,14 +105,15 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
         reference.transformChildrenVoid()
 
-        return if (shouldUseIndySamConversions && canUseIndySamConversion(reference)) {
+        val samSuperType = expression.typeOperand
+        return if (shouldUseIndySamConversions && canUseIndySamConversion(reference, samSuperType)) {
             wrapSamConversionArgumentWithIndySamConversion(expression)
         } else {
-            FunctionReferenceBuilder(reference, expression.typeOperand).build()
+            FunctionReferenceBuilder(reference, samSuperType).build()
         }
     }
 
-    private fun canUseIndySamConversion(reference: IrFunctionReference): Boolean {
+    private fun canUseIndySamConversion(reference: IrFunctionReference, samSuperType: IrType): Boolean {
         // Can't use indy for regular function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
         if (reference.origin != IrStatementOrigin.LAMBDA)
@@ -120,6 +121,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         // TODO wrap intrinsic function in lambda?
         if (context.irIntrinsics.getIntrinsic(reference.symbol) != null)
+            return false
+
+        // Can't use JDK LambdaMetafactory for fun interface with suspend fun
+        if (samSuperType.getSingleAbstractMethod()?.isSuspend == true)
             return false
 
         // Can't use JDK LambdaMetafactory if lambda signature contains an inline class mapped to a non-null reference type.
@@ -201,10 +206,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         if (irLambda.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
             throw AssertionError("Can't patch a signature of a non-lambda: ${irLambda.render()}")
 
-        val samClass = samType.classOrNull?.owner
-            ?: throw AssertionError("SAM type should be a class type: '${samType.render()}'")
-        val samMethod = samClass.functions.singleOrNull { it.modality == Modality.ABSTRACT }
-            ?: throw AssertionError("SAM method not found:\n${samClass.dump()}")
+        val samMethod = samType.getSingleAbstractMethod()
+            ?: throw AssertionError("SAM method not found:\n${samType.render()}")
 
         val samMethodParameters = collectValueParameters(samMethod)
         val irLambdaParameters = collectValueParameters(irLambda)
@@ -265,7 +268,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 else
                     context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
         private val superMethod =
-            functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
+            functionSuperClass.owner.getSingleAbstractMethod()
+                ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
 
         private val useOptimizedSuperClass =
             context.state.generateOptimizedCallableReferenceSuperClasses
@@ -546,12 +550,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         // For functions with inline class return type we need to mangle the invoke method.
                         // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
                         val suffix = InlineClassAbi.hashReturnSuffix(callee)
-                        Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
-                    } else superMethod.owner.name
+                        Name.identifier("${superMethod.name.asString()}-${suffix}")
+                    } else superMethod.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
             }.apply {
-                overriddenSymbols += superMethod
+                overriddenSymbols += superMethod.symbol
                 dispatchReceiverParameter = buildReceiverParameter(
                     this,
                     IrDeclarationOrigin.INSTANCE_RECEIVER,

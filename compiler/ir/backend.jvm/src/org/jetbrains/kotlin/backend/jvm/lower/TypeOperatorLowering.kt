@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -178,9 +177,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
 
         val samType = call.getTypeArgument(0) as? IrSimpleType
             ?: fail("'samType' is expected to be a simple type")
-        val samClassSymbol = samType.classOrNull
-            ?: fail("'samType' is expected to be a class type: '${samType.render()}'")
-        val samMethod = samClassSymbol.owner.functions.singleOrNull { it.modality == Modality.ABSTRACT }
+        val samMethod = samType.getSingleAbstractMethod()
             ?: fail("'${samType.render()}' is not a SAM-type")
 
         val irFunRef = call.getValueArgument(0) as? IrFunctionReference
