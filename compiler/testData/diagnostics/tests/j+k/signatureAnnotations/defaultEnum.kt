@@ -1,5 +1,5 @@
-// FILE: Signs.java
 // ANDROID_ANNOTATIONS
+// FILE: Signs.java
 
 public enum Signs {
     HELLO,

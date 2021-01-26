@@ -221,6 +221,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             forLoopsPhase,
                             flattenStringConcatenationPhase,
                             foldConstantLoweringPhase,
+                            computeStringTrimPhase,
                             stringConcatenationPhase,
                             enumConstructorsPhase,
                             initializersPhase,

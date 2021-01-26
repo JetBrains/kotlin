@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    compile project(':script-template')
+    implementation project(':script-template')
     kotlinScriptDef project(':script-template')
 }

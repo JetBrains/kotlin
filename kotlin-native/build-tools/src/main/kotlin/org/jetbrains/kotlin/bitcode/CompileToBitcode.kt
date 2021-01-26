@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.SanitizerKind
 import java.io.File
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ open class CompileToBitcode @Inject constructor(
         val srcRoot: File,
         val folderName: String,
         val target: String,
-        val outputGroup: String
+        val outputGroup: String,
 ) : DefaultTask() {
 
     enum class Language {
@@ -46,9 +47,22 @@ open class CompileToBitcode @Inject constructor(
     @Input
     var language = Language.CPP
 
-    private val targetDir by lazy { project.buildDir.resolve("bitcode/$outputGroup/$target") }
+    @Input @Optional
+    var sanitizer: SanitizerKind? = null
 
-    val objDir by lazy { File(targetDir, folderName) }
+    private val targetDir: File
+        get() {
+            val sanitizerSuffix = when (sanitizer) {
+                null -> ""
+                SanitizerKind.ADDRESS -> "-asan"
+                SanitizerKind.THREAD -> "-tsan"
+            }
+            return project.buildDir.resolve("bitcode/$outputGroup/$target$sanitizerSuffix")
+        }
+
+    @get:Input
+    val objDir
+        get() = File(targetDir, folderName)
 
     private val KonanTarget.isMINGW
         get() = this.family == Family.MINGW
@@ -63,6 +77,11 @@ open class CompileToBitcode @Inject constructor(
     val compilerFlags: List<String>
         get() {
             val commonFlags = listOf("-c", "-emit-llvm") + headersDirs.map { "-I$it" }
+            val sanitizerFlags = when (sanitizer) {
+                null -> listOf()
+                SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
+                SanitizerKind.THREAD -> listOf("-fsanitize=thread")
+            }
             val languageFlags = when (language) {
                 Language.C ->
                     // Used flags provided by original build of allocator C code.
@@ -73,7 +92,7 @@ open class CompileToBitcode @Inject constructor(
                             "-Wno-unused-parameter",  // False positives with polymorphic functions.
                             "-fPIC".takeIf { !HostManager().targetByName(target).isMINGW })
             }
-            return commonFlags + languageFlags + compilerArgs
+            return commonFlags + sanitizerFlags + languageFlags + compilerArgs
         }
 
     @get:SkipWhenEmpty
@@ -127,8 +146,9 @@ open class CompileToBitcode @Inject constructor(
             }
         }
 
-    @OutputFile
-    val outFile = File(targetDir, "${folderName}.bc")
+    @get:OutputFile
+    val outFile: File
+        get() = File(targetDir, "${folderName}.bc")
 
     @TaskAction
     fun compile() {

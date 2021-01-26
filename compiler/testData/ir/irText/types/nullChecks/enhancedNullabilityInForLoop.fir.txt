@@ -29,10 +29,10 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
               CALL 'public abstract fun next (): T of kotlin.collections.MutableIterator [fake_override,operator] declared in kotlin.collections.MutableIterator' type=<root>.P? origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'val tmp_1: kotlin.collections.MutableIterator<<root>.P?> [val] declared in <root>.testForInListDestructured' type=kotlin.collections.MutableIterator<<root>.P?> origin=null
             VAR name:x type:kotlin.Int [val]
-              CALL 'public final fun component1 (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=null
+              CALL 'public final fun component1 (): kotlin.Int [operator] declared in <root>.P' type=kotlin.Int origin=null
                 $this: GET_VAR 'val <destruct>: <root>.P? [val] declared in <root>.testForInListDestructured' type=<root>.P? origin=null
             VAR name:y type:kotlin.Int [val]
-              CALL 'public final fun component2 (): kotlin.Int declared in <root>.P' type=kotlin.Int origin=null
+              CALL 'public final fun component2 (): kotlin.Int [operator] declared in <root>.P' type=kotlin.Int origin=null
                 $this: GET_VAR 'val <destruct>: <root>.P? [val] declared in <root>.testForInListDestructured' type=<root>.P? origin=null
   FUN name:testDesugaredForInList visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
@@ -146,16 +146,16 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.P'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-y>' type=<root>.P origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.P'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.P'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.P'
+        RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int [operator] declared in <root>.P'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.P, x:kotlin.Int, y:kotlin.Int) returnType:<root>.P

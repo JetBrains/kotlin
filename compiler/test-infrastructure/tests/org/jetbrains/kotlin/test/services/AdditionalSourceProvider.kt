@@ -26,7 +26,14 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) {
     }
 
     protected fun File.toTestFile(): TestFile {
-        return TestFile(this.name, this.readText(), this, startLineNumberInOriginalFile = 0, isAdditional = true)
+        return TestFile(
+            this.name,
+            this.readText(),
+            originalFile = this,
+            startLineNumberInOriginalFile = 0,
+            isAdditional = true,
+            directives = RegisteredDirectives.Empty
+        )
     }
 }
 

@@ -79,6 +79,21 @@ object DBServerConnector : Connector() {
         val accessFileUrl = "$serverUrl/report/$target/$buildNumber"
         return sendGetRequest(accessFileUrl)
     }
+
+    fun getUnstableBenchmarks(): List<String>? {
+        try {
+            val unstableList = sendGetRequest("$serverUrl/unstable")
+            val data = JsonTreeParser.parse(unstableList)
+            if (data !is JsonArray) {
+                return null
+            }
+            return data.jsonArray.map {
+                (it as JsonPrimitive).content
+            }
+        } catch (e: Exception) {
+            return null
+        }
+    }
 }
 
 fun getFileContent(fileName: String, user: String? = null): String {
@@ -155,6 +170,11 @@ fun main(args: Array<String>) {
     val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
 
     argParser.parse(args)
+    // Get unstable benchmarks.
+    val unstableBenchmarks = DBServerConnector.getUnstableBenchmarks()
+
+    unstableBenchmarks ?: println("Failed to get access to server and get unstable benchmarks list!")
+
     // Read contents of file.
     val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport, user))
 
@@ -164,8 +184,8 @@ fun main(args: Array<String>) {
 
     // Generate comparasion report.
     val summaryReport = SummaryBenchmarksReport(mainBenchsReport,
-            compareToBenchsReport,
-            epsValue)
+            compareToBenchsReport, epsValue,
+            unstableBenchmarks ?: emptyList())
 
     var outputFile = output
     renders.forEach {

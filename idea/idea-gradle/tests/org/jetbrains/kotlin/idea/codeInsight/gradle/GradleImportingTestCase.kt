@@ -31,6 +31,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.ProjectJdkTableImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
@@ -140,7 +141,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME)
             TestCase.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
             if (!jdkTable.allJdks.contains(jdk)) {
-                jdkTable.addJdk(jdk!!, testRootDisposable)
+                (jdkTable as ProjectJdkTableImpl).addTestJdk(jdk!!, testRootDisposable)
                 ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
@@ -176,7 +177,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             ThrowableRunnable {
                 runWrite {
                     Arrays.stream(ProjectJdkTable.getInstance().allJdks).forEach { jdk: Sdk ->
-                        ProjectJdkTable.getInstance().removeJdk(jdk)
+                        (ProjectJdkTable.getInstance() as ProjectJdkTableImpl).removeTestJdk(jdk)
                     }
                     for (sdk in removedSdks) {
                         SdkConfigurationUtil.addSdk(sdk)

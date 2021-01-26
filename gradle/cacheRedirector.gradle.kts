@@ -53,6 +53,8 @@ val mirroredUrls = listOf(
     "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev",
     "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap",
     "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide",
     "https://kotlin.bintray.com/dukat",
     "https://kotlin.bintray.com/kotlin-dependencies",
     "https://oss.sonatype.org/content/repositories/releases",

@@ -1251,6 +1251,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 returnType == voidType -> {
                     releaseVars()
                     assert(returnSlot == null)
+                    if (context.memoryModel == MemoryModel.EXPERIMENTAL)
+                        call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
                     LLVMBuildRetVoid(builder)
                 }
                 returns.isNotEmpty() -> {
@@ -1260,6 +1262,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                         updateReturnRef(returnPhi, returnSlot!!)
                     }
                     releaseVars()
+                    if (context.memoryModel == MemoryModel.EXPERIMENTAL)
+                        call(context.llvm.Kotlin_mm_safePointFunctionEpilogue, emptyList())
                     LLVMBuildRet(builder, returnPhi)
                 }
                 // Do nothing, all paths throw.
@@ -1300,6 +1304,8 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
 
             releaseVars()
+            if (context.memoryModel == MemoryModel.EXPERIMENTAL)
+                call(context.llvm.Kotlin_mm_safePointExceptionUnwind, emptyList())
             LLVMBuildResume(builder, landingpad)
         }
 

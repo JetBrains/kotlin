@@ -13,11 +13,11 @@ data class A {
     field = y
     get
 
-  fun component1(): Int {
+  operator fun component1(): Int {
     return <this>.#x
   }
 
-  fun component2(): Int {
+  operator fun component2(): Int {
     return <this>.#y
   }
 
@@ -56,7 +56,6 @@ data class A {
 
 var fn: Function1<A, Int>
   field = local fun <anonymous>(<destruct>: A): Int {
-    val _: Int = <destruct>.component1()
     val y: Int = <destruct>.component2()
     return 42.plus(other = y)
   }

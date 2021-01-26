@@ -380,3 +380,9 @@ internal val foldConstantLoweringPhase = makeKonanFileOpPhase(
         description = "Constant Folding",
         prerequisite = setOf(flattenStringConcatenationPhase)
 )
+
+internal val computeStringTrimPhase = makeKonanFileLoweringPhase(
+        ::StringTrimLowering,
+        name = "StringTrimLowering",
+        description = "Compute trimIndent and trimMargin operations on constant strings"
+)

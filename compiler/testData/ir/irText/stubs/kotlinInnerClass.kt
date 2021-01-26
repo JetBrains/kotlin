@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DUMP_DEPENDENCIES
 
 // FILE: external.kt
@@ -10,5 +11,4 @@ class Outer {
 }
 
 // FILE: kotlinInnerClass.kt
-// FIR_IDENTICAL
 fun test(inner: Outer.Inner) = inner.foo()

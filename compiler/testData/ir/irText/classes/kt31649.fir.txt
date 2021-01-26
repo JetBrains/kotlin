@@ -17,10 +17,10 @@ FILE fqName:<root> fileName:/kt31649.kt
           RETURN type=kotlin.Nothing from='public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.<get-nn>' type=<root>.TestData origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.TestData) returnType:kotlin.Nothing?
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.TestData) returnType:kotlin.Nothing? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Nothing? declared in <root>.TestData'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Nothing? [operator] declared in <root>.TestData'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
             receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.component1' type=<root>.TestData origin=null
     FUN name:copy visibility:public modality:FINAL <> ($this:<root>.TestData, nn:kotlin.Nothing?) returnType:<root>.TestData

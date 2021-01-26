@@ -27,6 +27,7 @@ fun main(args: Array<String>) {
     generateCheckersComponents(generationPath, declarationPackage, "FirDeclarationChecker") {
         alias<FirDeclaration>("BasicDeclarationChecker")
         alias<FirMemberDeclaration>("MemberDeclarationChecker")
+        alias<FirFunction<*>>("FunctionChecker")
         alias<FirProperty>("PropertyChecker")
         alias<FirRegularClass>("RegularClassChecker")
         alias<FirConstructor>("ConstructorChecker")

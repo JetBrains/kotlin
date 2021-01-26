@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -96,6 +97,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return context.withTowerDataCleanup {
             scope?.let { context.addNonLocalTowerDataElement(it.asTowerDataElement(isLocal = false)) }
             l()
+        }
+    }
+
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+            return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
         }
     }
 
@@ -348,7 +355,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return context.withTowerDataCleanup {
             if (!regularClass.isInner && context.containerIfAny is FirRegularClass) {
                 context.replaceTowerDataContext(
-                    context.getTowerDataContextForStaticNestedClassesUnsafe()
+                    if (regularClass.isCompanion) {
+                        context.getTowerDataContextForCompanionUnsafe()
+                    } else {
+                        context.getTowerDataContextForStaticNestedClassesUnsafe()
+                    }
                 )
             }
 
@@ -425,10 +436,30 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         fun transform(): FirAnonymousFunction {
             val expectedReturnType =
                 lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-            val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
+
+            val result = context.withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol) {
+                transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
+            }
+
             val body = result.body
             if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-                result.transformReturnTypeRef(transformer, withExpectedType(body.resultType))
+                // TODO: This part seems unnecessary because for lambdas in dependent context will be completed and their type
+                //  should be replaced there properly
+                val returnType =
+                    dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
+                        .firstNotNullResult { (it as? FirExpression)?.resultType?.coneTypeSafe() }
+
+                if (returnType != null) {
+                    result.transformReturnTypeRef(transformer, withExpectedType(returnType))
+                } else {
+                    result.transformReturnTypeRef(
+                        transformer,
+                        withExpectedType(buildErrorTypeRef {
+                            diagnostic =
+                                ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
+                        })
+                    )
+                }
             }
             return result
         }
@@ -492,11 +523,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
-            if (body != null) {
+            val returnExpression = (body?.statements?.single() as? FirReturnExpression)?.result
+            if (returnExpression != null && returnExpression.typeRef is FirResolvedTypeRef) {
                 result.transformReturnTypeRef(
                     transformer,
                     withExpectedType(
-                        body.resultType.approximatedIfNeededOrSelf(
+                        returnExpression.resultType.approximatedIfNeededOrSelf(
                             inferenceComponents.approximator, simpleFunction?.visibility, simpleFunction?.isInline == true
                         )
                     )
@@ -745,6 +777,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     ConeSubstitutor.Empty,
                     components.returnTypeCalculator,
                     inferenceComponents.approximator,
+                    dataFlowAnalyzer,
                 )
                 lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
                 val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)
@@ -816,17 +849,16 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): T = context.withTowerDataCleanup {
         val towerElementsForClass = components.collectTowerDataElementsForClass(owner, type)
 
-        val staticsAndCompanion =
-            context.towerDataContext
-                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-                .run {
-                    if (towerElementsForClass.companionReceiver != null)
-                        addReceiver(null, towerElementsForClass.companionReceiver)
-                    else
-                        this
-                }
-                .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-                .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+        val base = context.towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+
+        val companionReceiver = towerElementsForClass.companionReceiver
+        val staticsAndCompanion = if (companionReceiver == null) statics else base
+            .addReceiver(null, companionReceiver)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
         val typeParameterScope = (owner as? FirRegularClass)?.let(this::createTypeParameterScope)
 
@@ -856,6 +888,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         val newContexts = FirTowerDataContextsForClassParts(
             newTowerDataContextForStaticNestedClasses,
+            statics,
             scopeForConstructorHeader,
             primaryConstructorPureParametersScope,
             primaryConstructorAllParametersScope

@@ -116,35 +116,38 @@ class ResolvedCallableReferenceAtom(
     val lhs: DoubleColonLHS?,
     private val session: FirSession
 ) : PostponedResolvedAtom(), PostponedCallableReferenceMarker {
-    // TODO: in several places atoms are filtered by the marker interface - potential overhead/errors
-    var postponed: Boolean = false
+
+    var hasBeenResolvedOnce: Boolean = false
+    var hasBeenPostponed: Boolean = false
+
+    val mightNeedAdditionalResolution get() = !hasBeenResolvedOnce || hasBeenPostponed
 
     var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
-            if (!postponed) return emptyList()
+            if (!hasBeenPostponed) return emptyList()
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.inputTypes
                 ?: listOfNotNull(expectedType)
         }
     override val outputType: ConeKotlinType?
         get() {
-            if (!postponed) return null
+            if (!hasBeenPostponed) return null
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.outputType
         }
 
     override val expectedType: ConeKotlinType?
-        get() = if (!postponed)
+        get() = if (!hasBeenPostponed)
             initialExpectedType
         else
             revisedExpectedType ?: initialExpectedType
 
     override var revisedExpectedType: ConeKotlinType? = null
-        get() = if (postponed) field else expectedType
+        get() = if (hasBeenPostponed) field else expectedType
         private set
 
     override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
-        if (!postponed) return
+        if (!mightNeedAdditionalResolution) return
         require(expectedType is ConeKotlinType)
         revisedExpectedType = expectedType
     }

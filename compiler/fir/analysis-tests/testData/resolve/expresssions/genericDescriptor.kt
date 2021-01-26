@@ -1,5 +1,5 @@
-// FILE: Descriptor.java
 // FULL_JDK
+// FILE: Descriptor.java
 
 public interface Descriptor
 

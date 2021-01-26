@@ -112,7 +112,9 @@ TEST_F(KonanAllocatorAwareTest, PlacementAllocated) {
 
 TEST_F(KonanAllocatorAwareTest, PlacementConstructedArray) {
     constexpr size_t kCount = 5;
-    std::array<uint8_t, sizeof(A) * kCount> buffer;
+    // TODO: Consider removing support for placement new[] altogether, since there's no
+    //       portable way to know needed storage size ahead of time.
+    alignas(A) std::array<uint8_t, sizeof(A) * kCount + sizeof(size_t)> buffer;
     A* as = new (buffer.data()) A[kCount];
 
     std::vector<int> actual;

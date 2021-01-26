@@ -1,3 +1,10 @@
+# 1.4.30-RC (Jan 2021)
+  * [KT-44271](https://youtrack.jetbrains.com/issue/KT-44271) Incorrect linking when targeting linux_x64 from mingw_x64 host
+  * [KT-44219](https://youtrack.jetbrains.com/issue/KT-44219) Non-reified type parameters with recursive bounds are not supported yet
+  * [KT-43599](https://youtrack.jetbrains.com/issue/KT-43599) K/N: Unbound symbols not allowed
+  * [KT-42172](https://youtrack.jetbrains.com/issue/KT-42172) Kotlin/Native: StableRef.dispose race condition on Kotlin deinitRuntime
+  * [KT-42482](https://youtrack.jetbrains.com/issue/KT-42482) Kotlin subclasses of Obj-C classes are incompatible with ISA swizzling (it causes crashes)
+
 # 1.4.30-M1 (Dec 2020)
   * [KT-43597](https://youtrack.jetbrains.com/issue/KT-43597) Xcode 12.2 support
   * [KT-43276](https://youtrack.jetbrains.com/issue/KT-43276) Add watchos_x64 target

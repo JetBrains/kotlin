@@ -564,6 +564,16 @@ class FunctionCallNode(
     }
 }
 
+class CallableReferenceNode(
+    owner: ControlFlowGraph,
+    override val fir: FirCallableReferenceAccess,
+    level: Int, id: Int
+) : CFGNode<FirCallableReferenceAccess>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitCallableReferenceNode(this, data)
+    }
+}
+
 class DelegatedConstructorCallNode(
     owner: ControlFlowGraph,
     override val fir: FirDelegatedConstructorCall,

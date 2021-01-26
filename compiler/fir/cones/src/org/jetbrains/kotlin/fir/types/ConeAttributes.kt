@@ -58,7 +58,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
     val hasEnhancedNullability: Boolean
         get() = enhancedNullability != null
 
-    val hasFlexibleNullability: Boolean
+    private val hasFlexibleNullability: Boolean
         get() = flexibleNullability != null
 
     fun union(other: ConeAttributes): ConeAttributes {
@@ -79,10 +79,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         for (index in indices) {
             val a = arrayMap[index]
             val b = other.arrayMap[index]
-            val res = when {
-                a == null -> b?.op(a)
-                else -> a.op(b)
-            }
+            val res = if (a == null) b?.op(a) else a.op(b)
             attributes.addIfNotNull(res)
         }
         return create(attributes)

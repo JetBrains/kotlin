@@ -21,7 +21,7 @@ open class SourceElementPositioningStrategy<in E : PsiElement>(
             @Suppress("UNCHECKED_CAST")
             return psiStrategy.mark(element.psi as E)
         }
-        return lightTreeStrategy.mark(element.lighterASTNode, element.treeStructure)
+        return lightTreeStrategy.mark(element.lighterASTNode, element.startOffset, element.endOffset, element.treeStructure)
     }
 
     fun isValid(element: FirSourceElement): Boolean {

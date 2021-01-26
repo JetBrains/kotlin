@@ -30,17 +30,17 @@ class MyColor(val x: <!UNRESOLVED_REFERENCE!>Color.RED<!>, y: <!UNRESOLVED_REFER
     }
 }
 
-fun create(): <!UNRESOLVED_REFERENCE!>Array<Color.RED>?<!> = null
+fun create(): Array<<!UNRESOLVED_REFERENCE!>Color.RED<!>>? = null
 
 interface Your<T : <!UNRESOLVED_REFERENCE!>Color.RED<!>>
 
-class His : <!UNRESOLVED_REFERENCE!>Your<Color.RED><!>
+class His : Your<<!UNRESOLVED_REFERENCE!>Color.RED<!>>
 
 fun <T : <!UNRESOLVED_REFERENCE!>Color.RED<!>> otherCreate(): Array<T>? = null
 
 typealias RedAlias = <!UNRESOLVED_REFERENCE!>Color.RED<!>
 
-typealias ArrayOfEnumEntry = <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>
+typealias ArrayOfEnumEntry = Array<<!UNRESOLVED_REFERENCE!>Color.RED<!>>
 
 typealias ArrayOfEnumEntryAlias = Array<RedAlias>
 
@@ -52,4 +52,4 @@ fun <T> foo() {
     <!INAPPLICABLE_CANDIDATE!>bar<!><<!UNRESOLVED_REFERENCE!>Color.RED<!>>(Color.RED)
 }
 
-fun <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>.foo(entries: <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>): <!UNRESOLVED_REFERENCE!>Array<Color.RED><!> = null!!
+fun Array<<!UNRESOLVED_REFERENCE!>Color.RED<!>>.foo(entries: Array<<!UNRESOLVED_REFERENCE!>Color.RED<!>>): Array<<!UNRESOLVED_REFERENCE!>Color.RED<!>> = null!!

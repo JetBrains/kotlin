@@ -76,7 +76,14 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
             callBoxMethodAndCheckResult(classLoader, clazz, method, unexpectedBehaviour)
         } catch (e: Throwable) {
             if (reportProblems) {
-                println(factory.createText())
+                try {
+                    println(factory.createText())
+                } catch (_: Throwable) {
+                    // In FIR we have factory which can't print bytecode
+                    //   and it throws exception otherwise. So we need
+                    //   ignore that exception to report original one
+                    // TODO: fix original problem
+                }
             }
             throw e
         } finally {

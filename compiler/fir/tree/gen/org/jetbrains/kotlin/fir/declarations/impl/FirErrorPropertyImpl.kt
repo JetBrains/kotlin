@@ -40,7 +40,7 @@ internal class FirErrorPropertyImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null

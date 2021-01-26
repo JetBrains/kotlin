@@ -86,6 +86,8 @@ class FirSpecificTypeResolverTransformer(
                     typeRef.source
                 }
 
+                delegatedTypeRef = typeRef
+
                 diagnostic = resolvedType.diagnostic
             }
         }.compose()

@@ -30,9 +30,9 @@ FILE: RedundantSingleExpressionStringTemplateChecker.kt
 
             public get(): R|kotlin/String|
 
-        public final fun component1(): R|kotlin/String|
+        public final operator fun component1(): R|kotlin/String|
 
-        public final fun component2(): R|ProductGroup?|
+        public final operator fun component2(): R|ProductGroup?|
 
         public final fun copy(short_name: R|kotlin/String| = this@R|/ProductGroup|.R|/ProductGroup.short_name|, parent: R|ProductGroup?| = this@R|/ProductGroup|.R|/ProductGroup.parent|): R|ProductGroup|
 

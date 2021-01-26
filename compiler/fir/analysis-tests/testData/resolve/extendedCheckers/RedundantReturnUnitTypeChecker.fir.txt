@@ -7,7 +7,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
         public final val x: R|kotlin/Unit| = R|<local>/x|
             public get(): R|kotlin/Unit|
 
-        public final fun component1(): R|kotlin/Unit|
+        public final operator fun component1(): R|kotlin/Unit|
 
         public final fun copy(x: R|kotlin/Unit| = this@R|/My|.R|/My.x|): R|My|
 
@@ -22,7 +22,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun too(): @R|kotlin/Annotation|() R|kotlin/Unit| {
+        public final fun too(): @R|kotlin/Annotation|() R|@R|kotlin/Annotation|()  kotlin/Unit| {
         }
 
         public final fun foo(): R|kotlin/Unit| {

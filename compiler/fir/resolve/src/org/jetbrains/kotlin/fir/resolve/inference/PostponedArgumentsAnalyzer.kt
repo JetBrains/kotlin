@@ -37,7 +37,6 @@ interface LambdaAnalyzer {
         receiverType: ConeKotlinType?,
         parameters: List<ConeKotlinType>,
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
-        rawReturnType: ConeKotlinType,
         stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
     ): ReturnArgumentsAnalysisResult
 }
@@ -68,12 +67,15 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun processCallableReference(atom: ResolvedCallableReferenceAtom, candidate: Candidate) {
-        if (atom.postponed) {
+        if (atom.mightNeedAdditionalResolution) {
             callResolver.resolveCallableReference(candidate.csBuilder, atom)
         }
 
         val callableReferenceAccess = atom.reference
         atom.analyzed = true
+
+        resolutionContext.bodyResolveContext.towerDataContextForCallableReferences.remove(callableReferenceAccess)
+
         val (resultingCandidate, applicability) = atom.resultingCandidate
             ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 
@@ -126,7 +128,6 @@ class PostponedArgumentsAnalyzer(
             receiver,
             parameters,
             expectedTypeForReturnArguments,
-            rawReturnType,
             stubsForPostponedVariables
         )
         applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, candidate, results, expectedTypeForReturnArguments, ::substitute)

@@ -8,9 +8,9 @@ inline fun foo(x: String = "OK"): String {
 }
 
 // MODULE: main(lib, support)
-// FILE: main.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

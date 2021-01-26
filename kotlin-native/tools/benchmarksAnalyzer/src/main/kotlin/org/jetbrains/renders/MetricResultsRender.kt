@@ -14,14 +14,16 @@ class MetricResultsRender: Render() {
         get() = "metrics"
 
     override fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean): String {
-        val results = report.mergedReport.map { entry ->
-            buildString {
-                val metric = entry.value.first!!.metric
-                append("{ \"benchmarkName\": \"${entry.key.removeSuffix(metric.suffix)}\",")
-                append("\"metric\": \"${metric}\",")
-                append("\"value\": \"${entry.value.first!!.score}\" }")
+        val results = report.detailedMetricReports.values.map { it.mergedReport }.map { report ->
+            report.map { entry ->
+                buildString {
+                    val metric = entry.value.first!!.metric
+                    append("{ \"benchmarkName\": \"${entry.key.removeSuffix(metric.suffix)}\",")
+                    append("\"metric\": \"${metric}\",")
+                    append("\"value\": \"${entry.value.first!!.score}\" }")
+                }
             }
-        }.joinToString(", ")
+        }.flatten().joinToString(", ")
         return "[ $results ]"
 
     }

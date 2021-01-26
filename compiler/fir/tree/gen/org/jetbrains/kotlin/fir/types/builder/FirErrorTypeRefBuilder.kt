@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
+    var delegatedTypeRef: FirTypeRef? = null
     lateinit var diagnostic: ConeDiagnostic
 
     override fun build(): FirErrorTypeRef {
         return FirErrorTypeRefImpl(
             source,
+            delegatedTypeRef,
             diagnostic,
         )
     }
@@ -55,6 +57,7 @@ inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRe
     }
     val copyBuilder = FirErrorTypeRefBuilder()
     copyBuilder.source = original.source
+    copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     copyBuilder.diagnostic = original.diagnostic
     return copyBuilder.apply(init).build()
 }

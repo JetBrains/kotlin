@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -406,6 +407,12 @@ private val forLoopsLoweringPhase = makeWasmModulePhase(
     description = "[Optimization] For loops lowering"
 )
 
+private val propertyAccessorInlinerLoweringPhase = makeWasmModulePhase(
+    ::PropertyAccessorInlineLowering,
+    name = "PropertyAccessorInlineLowering",
+    description = "[Optimization] Inline property accessors"
+)
+
 val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
@@ -456,6 +463,7 @@ val wasmPhases = NamedCompilerPhase(
             returnableBlockLoweringPhase then
 
             forLoopsLoweringPhase then
+            propertyAccessorInlinerLoweringPhase then
 
             defaultArgumentStubGeneratorPhase then
             defaultArgumentPatchOverridesPhase then

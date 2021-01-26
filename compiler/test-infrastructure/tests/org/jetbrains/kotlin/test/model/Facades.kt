@@ -13,7 +13,7 @@ abstract class AbstractTestFacade<I : ResultingArtifact<I>, O : ResultingArtifac
     abstract val inputKind: TestArtifactKind<I>
     abstract val outputKind: TestArtifactKind<O>
 
-    abstract fun transform(module: TestModule, inputArtifact: I): O
+    abstract fun transform(module: TestModule, inputArtifact: I): O?
 
     open val additionalServices: List<ServiceRegistrationData>
         get() = emptyList()

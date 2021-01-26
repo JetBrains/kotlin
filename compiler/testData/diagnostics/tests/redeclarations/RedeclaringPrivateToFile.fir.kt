@@ -14,16 +14,16 @@ private val invalidProp0 = 1
 fun useInvalidFun0() = invalidFun0()
 fun useInvalidProp0() = invalidProp0
 
-<!CONFLICTING_OVERLOADS!>private fun invalidFun1() {}<!>
-<!CONFLICTING_OVERLOADS!>private fun invalidFun1() {}<!>
+<!CONFLICTING_OVERLOADS!>private fun invalidFun1()<!> {}
+<!CONFLICTING_OVERLOADS!>private fun invalidFun1()<!> {}
 
-<!CONFLICTING_OVERLOADS!>private fun invalidFun2() {}<!>
-<!CONFLICTING_OVERLOADS!>public fun invalidFun2() {}<!>
+<!CONFLICTING_OVERLOADS!>private fun invalidFun2()<!> {}
+<!CONFLICTING_OVERLOADS!>public fun invalidFun2()<!> {}
 
 public fun invalidFun3() {}
 
-<!CONFLICTING_OVERLOADS!>private fun invalidFun4() {}<!>
-<!CONFLICTING_OVERLOADS!>public fun invalidFun4() {}<!>
+<!CONFLICTING_OVERLOADS!>private fun invalidFun4()<!> {}
+<!CONFLICTING_OVERLOADS!>public fun invalidFun4()<!> {}
 
 public fun validFun2(a: A) = a
 public fun validFun2(b: B) = b

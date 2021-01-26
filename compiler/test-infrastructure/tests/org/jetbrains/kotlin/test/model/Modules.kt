@@ -16,6 +16,7 @@ data class TestModule(
     val targetPlatform: TargetPlatform,
     val targetBackend: TargetBackend?,
     val frontendKind: FrontendKind<*>,
+    val binaryKind: BinaryKind<*>,
     val files: List<TestFile>,
     val dependencies: List<DependencyDescription>,
     val friends: List<DependencyDescription>,
@@ -43,7 +44,8 @@ class TestFile(
      * isAdditional means that this file provided as addition to sources of testdata
      *   and there is no need to apply any handlers or preprocessors over it
      */
-    val isAdditional: Boolean
+    val isAdditional: Boolean,
+    val directives: RegisteredDirectives
 ) {
     val name: String = relativePath.split("/").last()
 }

@@ -7,7 +7,7 @@ FILE: nullable2.kt
         public final val name: R|kotlin/String| = R|<local>/name|
             public get(): R|kotlin/String|
 
-        public final fun component1(): R|kotlin/String|
+        public final operator fun component1(): R|kotlin/String|
 
         public final fun copy(name: R|kotlin/String| = this@R|/Foo|.R|/Foo.name|): R|Foo|
 

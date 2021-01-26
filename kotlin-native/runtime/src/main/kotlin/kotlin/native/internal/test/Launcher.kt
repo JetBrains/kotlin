@@ -23,16 +23,21 @@ fun testLauncherEntryPoint(args: Array<String>): Int {
 }
 
 fun main(args: Array<String>) {
-    exitProcess(testLauncherEntryPoint(args))
+    val exitCode = testLauncherEntryPoint(args)
+    if (exitCode != 0) {
+        exitProcess(exitCode)
+    }
 }
 
 fun worker(args: Array<String>) {
     val worker = Worker.start()
-    val result = worker.execute(TransferMode.SAFE, { args.freeze() }) {
+    val exitCode = worker.execute(TransferMode.SAFE, { args.freeze() }) {
         it -> testLauncherEntryPoint(it)
     }.result
     worker.requestTermination().result
-    exitProcess(result)
+    if (exitCode != 0) {
+        exitProcess(exitCode)
+    }
 }
 
 fun mainNoExit(args: Array<String>) {

@@ -588,6 +588,18 @@ fun router() {
         }
     })
 
+    // Get builds description with additional information.
+    router.get("/unstable", { request, response ->
+        CachableResponseDispatcher.getResponse(request, response) { success, reject ->
+            getUnstableResults(goldenIndex).then { unstableBenchmarks ->
+                success(unstableBenchmarks)
+            }.catch {
+                println("Error during getting unstable benchmarks")
+                reject()
+            }
+        }
+    })
+
     router.get("/report/:target/:buildNumber", { request, response ->
         val target = urlParameterToBaseFormat(request.params.target)
         val buildNumber = request.params.buildNumber.toString()

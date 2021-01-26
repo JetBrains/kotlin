@@ -40,13 +40,15 @@ interface KotlinStdlibCache {
 }
 
 class KotlinStdlibCacheImpl(val project: Project) : KotlinStdlibCache {
-    private val stdlibCache = project.cacheInvalidatingOnRootModifications {
-        ConcurrentHashMap<LibraryInfo, Boolean>()
-    }
+    private val stdlibCache
+        get() = project.cacheInvalidatingOnRootModifications {
+            ConcurrentHashMap<LibraryInfo, Boolean>()
+        }
 
-    private val stdlibDependencyCache = project.cacheInvalidatingOnRootModifications {
-        ConcurrentHashMap<LibraryInfo, Boolean>()
-    }
+    private val stdlibDependencyCache
+        get() = project.cacheInvalidatingOnRootModifications {
+            ConcurrentHashMap<LibraryInfo, Boolean>()
+        }
 
     private class LibraryScope(
         project: Project,

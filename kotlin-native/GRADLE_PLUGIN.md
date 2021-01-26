@@ -170,7 +170,7 @@ kotlin.sourceSets {
     // Configure all native platform sources sets to use it as a common one.
     linuxX64Main.dependsOn(nativeMain)
     macosX64Main.dependsOn(nativeMain)
-    //...
+    // ...
 }
 ```
 
@@ -459,7 +459,7 @@ dependencies {
 </div> 
 
 It's possible to depend on a Kotlin/Native library published earlier in a maven repo. The plugin relies on Gradle's
-[metadata](https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-specification.md)
+[metadata](https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-latest-specification.md)
 support so the corresponding feature must be enabled. Add the following line in your `settings.gradle`:
 
 <div class="sample" markdown="1" theme="idea" mode="groovy">

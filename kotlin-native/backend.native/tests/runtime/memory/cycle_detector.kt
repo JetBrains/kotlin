@@ -1,5 +1,6 @@
 import kotlin.native.concurrent.*
 import kotlin.native.internal.GC
+import kotlin.native.Platform
 import kotlin.test.*
 
 class Holder(var other: Any?)
@@ -30,6 +31,11 @@ fun assertArrayEquals(
     for (i in expected.indices) {
         asserter.assertTrue(lazyMessage, expected[i] == actual[i])
     }
+}
+
+@BeforeTest
+fun enableMemoryChecker() {
+    Platform.isMemoryLeakCheckerActive = true
 }
 
 @Test

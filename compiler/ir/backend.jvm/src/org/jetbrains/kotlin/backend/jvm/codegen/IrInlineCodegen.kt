@@ -110,7 +110,7 @@ class IrInlineCodegen(
                     // Reuse an existing local if possible. NOTE: when stopping at a breakpoint placed
                     // in an inline function, arguments which reuse an existing local will not be visible
                     // in the debugger.
-                -> codegen.genOrGetLocal(argumentExpression, blockInfo)
+                -> codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                 else
                     // Do not reuse locals for receivers. While it's actually completely fine, the non-IR
                     // backend does not do it for internal reasons, and here we replicate the debugging
@@ -128,7 +128,7 @@ class IrInlineCodegen(
     }
 
     private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
-        val onStack = codegen.genOrGetLocal(argumentExpression, BlockInfo())
+        val onStack = codegen.genOrGetLocal(argumentExpression, valueType, argumentExpression.type, BlockInfo())
         val expectedType = JvmKotlinType(valueType, argumentExpression.type.toIrBasedKotlinType())
         putArgumentOrCapturedToLocalVal(expectedType, onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED)
     }

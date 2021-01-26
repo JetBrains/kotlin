@@ -115,14 +115,9 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             val out = StringBuilder()
             val p = Printer(out)
 
-            val year = GregorianCalendar()[Calendar.YEAR]
-            p.println(
-                """/*
-                | * Copyright 2010-$year JetBrains s.r.o. and Kotlin Programming Language contributors.
-                | * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
-                | */
-                |""".trimMargin()
-            )
+            val copyright = File("license/COPYRIGHT_HEADER.txt").readText()
+            p.println(copyright)
+            p.println()
             p.println("package $suiteClassPackage;")
             p.println()
             p.println("import com.intellij.testFramework.TestDataPath;")

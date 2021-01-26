@@ -1,3 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_IR
 // FILE: Processor.java
 
 public interface Processor<T> {
@@ -5,9 +8,6 @@ public interface Processor<T> {
 }
 
 // FILE: test.kt
-// DONT_TARGET_EXACT_BACKEND: WASM
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
 
 interface PsiModifierListOwner
 interface KtClassOrObject {

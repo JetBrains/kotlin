@@ -70,14 +70,6 @@ RUNTIME_NOTHROW OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spi
     TODO();
 }
 
-RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
-    TODO();
-}
-
-RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
-    TODO();
-}
-
 void MutationCheck(ObjHeader* obj) {
     TODO();
 }
@@ -107,6 +99,18 @@ RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
 }
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
+    TODO();
+}
+
+RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionEpilogue() {
+    TODO();
+}
+
+RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
+    TODO();
+}
+
+RUNTIME_NOTHROW void Kotlin_mm_safePointExceptionUnwind() {
     TODO();
 }
 

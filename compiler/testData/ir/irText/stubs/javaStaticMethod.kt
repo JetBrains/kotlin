@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DUMP_DEPENDENCIES
 // FILE: J.java
 
@@ -6,6 +7,5 @@ public class J {
 }
 
 // FILE: javaStaticMethod.kt
-// FIR_IDENTICAL
 
 fun test() = J.bar()

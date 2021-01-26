@@ -10,7 +10,7 @@ data class Tag<out RenderingT : Any?> {
     field = action
     get
 
-  fun component1(): Function1<RenderingT, Unit> {
+  operator fun component1(): Function1<RenderingT, Unit> {
     return <this>.#action
   }
 

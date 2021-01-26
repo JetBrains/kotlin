@@ -30,11 +30,11 @@ FILE: integerLiteralTypes.kt
         }
         ))
         R|/takeByte|(R|kotlin/run|<R|kotlin/Byte|>(<L> = run@fun <anonymous>(): R|kotlin/Byte| <kind=EXACTLY_ONCE>  {
-            ^ Int(1)
+            ^ Byte(1)
         }
         ))
         R|/takeLong|(R|kotlin/run|<R|kotlin/Long|>(<L> = run@fun <anonymous>(): R|kotlin/Long| <kind=EXACTLY_ONCE>  {
-            ^ Int(1)
+            ^ Long(1)
         }
         ))
     }

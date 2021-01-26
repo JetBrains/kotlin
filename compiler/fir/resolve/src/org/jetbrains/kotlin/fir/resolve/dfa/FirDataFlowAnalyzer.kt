@@ -143,6 +143,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return graphBuilder.returnExpressionsOfAnonymousFunction(function)
     }
 
+    fun isThereControlFlowInfoForAnonymousFunction(function: FirAnonymousFunction): Boolean =
+        graphBuilder.isThereControlFlowInfoForAnonymousFunction(function)
+
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         graphBuilder.dropSubgraphFromCall(call)
     }
@@ -1110,6 +1113,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun exitElvis() {
         graphBuilder.exitElvis().mergeIncomingFlow()
+    }
+
+    // Callable reference
+
+    fun exitCallableReference(callableReferenceAccess: FirCallableReferenceAccess) {
+        graphBuilder.exitCallableReference(callableReferenceAccess).mergeIncomingFlow()
     }
 
     // ------------------------------------------------------ Utils ------------------------------------------------------

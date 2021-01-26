@@ -1,5 +1,5 @@
-// FILE: StaticOwner.java
 // FULL_JDK
+// FILE: StaticOwner.java
 
 import org.jetbrains.annotations.NotNull;
 

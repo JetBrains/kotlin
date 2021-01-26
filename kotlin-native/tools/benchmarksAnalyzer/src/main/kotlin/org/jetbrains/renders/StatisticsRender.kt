@@ -20,13 +20,19 @@ class StatisticsRender: Render() {
     private var content = StringBuilder()
 
     override fun render(report: SummaryBenchmarksReport, onlyChanges: Boolean): String {
-        val benchmarksWithChangedStatus = report.getBenchmarksWithChangedStatus()
+        val benchmarksWithChangedStatus = report.benchmarksWithChangedStatus
         val newPasses = benchmarksWithChangedStatus
                 .filter { it.current == BenchmarkResult.Status.PASSED }
         val newFailures = benchmarksWithChangedStatus
                 .filter { it.current == BenchmarkResult.Status.FAILED }
         if (report.failedBenchmarks.isNotEmpty()) {
             content.append("failed: ${report.failedBenchmarks.size}\n")
+        }
+        val regressionsSize = report.detailedMetricReports.values.fold(0) { acc, it ->
+            acc + it.regressions.size
+        }
+        val improvementsSize = report.detailedMetricReports.values.fold(0) { acc, it ->
+            acc + it.improvements.size
         }
         val status = when {
             newFailures.isNotEmpty() -> {
@@ -37,16 +43,16 @@ class StatisticsRender: Render() {
                 content.append("new passes: ${newPasses.size}\n")
                 Status.FIXED
             }
-            report.improvements.isNotEmpty() && report.regressions.isNotEmpty() -> {
-                content.append("regressions: ${report.regressions.size}\nimprovements: ${report.improvements.size}")
+            regressionsSize != 0 && improvementsSize != 0 -> {
+                content.append("regressions: $regressionsSize\nimprovements: $improvementsSize")
                 Status.UNSTABLE
             }
-            report.improvements.isNotEmpty() && report.regressions.isEmpty() ->  {
-                content.append("improvements: ${report.improvements.size}")
+            improvementsSize != 0 && regressionsSize == 0 ->  {
+                content.append("improvements: $improvementsSize")
                 Status.IMPROVED
             }
-            report.improvements.isEmpty() && report.regressions.isNotEmpty() -> {
-                content.append("regressions: ${report.regressions.size}")
+            improvementsSize == 0 && regressionsSize != 0 -> {
+                content.append("regressions: $regressionsSize")
                 Status.REGRESSED
             }
             else -> Status.STABLE

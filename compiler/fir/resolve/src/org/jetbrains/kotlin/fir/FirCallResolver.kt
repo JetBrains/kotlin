@@ -249,12 +249,18 @@ class FirCallResolver(
         )
         // No reset here!
         val localCollector = CandidateCollector(components, components.resolutionStageRunner)
-        val result = towerResolver.runResolver(
-            info,
-            transformer.resolutionContext,
-            collector = localCollector,
-            manager = TowerResolveManager(localCollector),
-        )
+
+        val towerDataContext =
+            transformer.context.towerDataContextForCallableReferences[callableReferenceAccess] ?: transformer.context.towerDataContext
+
+        val result = transformer.context.withTowerDataContext(towerDataContext) {
+            towerResolver.runResolver(
+                info,
+                transformer.resolutionContext,
+                collector = localCollector,
+                manager = TowerResolveManager(localCollector),
+            )
+        }
         val bestCandidates = result.bestCandidates()
         val noSuccessfulCandidates = !result.currentApplicability.isSuccess
         val reducedCandidates = if (noSuccessfulCandidates) {
@@ -263,13 +269,15 @@ class FirCallResolver(
             conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
         }
 
+        resolvedCallableReferenceAtom.hasBeenResolvedOnce = true
+
         when {
             noSuccessfulCandidates -> {
                 return false
             }
             reducedCandidates.size > 1 -> {
-                if (resolvedCallableReferenceAtom.postponed) return false
-                resolvedCallableReferenceAtom.postponed = true
+                if (resolvedCallableReferenceAtom.hasBeenPostponed) return false
+                resolvedCallableReferenceAtom.hasBeenPostponed = true
                 return true
             }
         }
@@ -289,7 +297,7 @@ class FirCallResolver(
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         constructedType: ConeClassLikeType
-    ): FirDelegatedConstructorCall? {
+    ): FirDelegatedConstructorCall {
         val name = Name.special("<init>")
         val symbol = constructedType.lookupTag.toSymbol(components.session)
         val typeArguments =

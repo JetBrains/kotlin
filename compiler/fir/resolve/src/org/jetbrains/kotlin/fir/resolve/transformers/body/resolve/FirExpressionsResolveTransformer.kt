@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
@@ -77,7 +78,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 implicitReceiver?.boundSymbol?.let {
                     callee.replaceBoundSymbol(it)
                 }
-                val implicitType = implicitReceiver?.type
+                val implicitType = implicitReceiver?.originalType
                 qualifiedAccessExpression.resultType = when {
                     implicitReceiver is InaccessibleImplicitReceiverValue -> buildErrorTypeRef {
                         source = qualifiedAccessExpression.source
@@ -450,30 +451,65 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         override fun <T> shouldRunCompletion(call: T): Boolean where T : FirStatement, T : FirResolvable = false
     }
 
-    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
-        // TODO: Everything should also work for case of checked-type itself is a type alias
-        val type = coneTypeSafe<ConeKotlinType>()
-        if (type !is ConeClassLikeType || type.typeArguments.isNotEmpty()) {
-            return this
+    private fun ConeClassLikeType.inheritTypeArguments(
+        base: FirClassLikeDeclaration<*>,
+        arguments: Array<out ConeTypeProjection>
+    ): Array<out ConeTypeProjection>? {
+        val firClass = lookupTag.toSymbol(session)?.fir ?: return null
+        if (firClass !is FirTypeParameterRefsOwner || firClass.typeParameters.isEmpty()) return arrayOf()
+        return when (firClass) {
+            base -> arguments
+            is FirTypeAlias -> firClass.inheritTypeArguments(firClass.expandedTypeRef, base, arguments)
+            // TODO: if many supertypes, check consistency
+            is FirClass<*> -> firClass.superTypeRefs.mapNotNull { firClass.inheritTypeArguments(it, base, arguments) }.firstOrNull()
+            else -> null
         }
-        val baseTypeArguments =
-            argument.typeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.typeArguments
+    }
 
-        return if (baseTypeArguments?.isEmpty() != false) {
-            this
-        } else {
-            val typeParameters = (type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
-            if (typeParameters.isEmpty()) {
-                this
-            } else {
-                withReplacedConeType(
-                    type.withArguments(
-                        if (baseTypeArguments.size > typeParameters.size) baseTypeArguments.take(typeParameters.size).toTypedArray()
-                        else baseTypeArguments
-                    )
-                )
+    private fun FirTypeParameterRefsOwner.inheritTypeArguments(
+        typeRef: FirTypeRef,
+        base: FirClassLikeDeclaration<*>,
+        arguments: Array<out ConeTypeProjection>
+    ): Array<out ConeTypeProjection>? {
+        val type = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
+        val indexMapping = typeParameters.map { parameter ->
+            // TODO: if many, check consistency of the result
+            type.typeArguments.indexOfFirst {
+                val argument = (it as? ConeKotlinType)?.lowerBoundIfFlexible()
+                argument is ConeTypeParameterType && argument.lookupTag.typeParameterSymbol == parameter.symbol
             }
         }
+        if (indexMapping.any { it == -1 }) return null
+
+        val typeArguments = type.inheritTypeArguments(base, arguments) ?: return null
+        return Array(typeParameters.size) { typeArguments[indexMapping[it]] }
+    }
+
+    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression): FirTypeRef {
+        val type = coneTypeSafe<ConeClassLikeType>() ?: return this
+        if (type.typeArguments.isNotEmpty()) return this
+
+        val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
+        if (firClass !is FirTypeParameterRefsOwner || firClass.typeParameters.isEmpty()) return this
+
+        val baseType = argument.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.fullyExpandedType(session) ?: return this
+        if (baseType !is ConeClassLikeType) return this
+        val baseFirClass = baseType.lookupTag.toSymbol(session)?.fir ?: return this
+
+        val newArguments = if (AbstractTypeChecker.isSubtypeOfClass(session.typeCheckerContext, baseType.lookupTag, type.lookupTag)) {
+            // If actual type of declaration is more specific than bare type then we should just find
+            // corresponding supertype with proper arguments
+            with(session.typeContext) {
+                val superType = baseType.fastCorrespondingSupertypes(type.lookupTag)?.firstOrNull() as? ConeKotlinType?
+                superType?.typeArguments
+            }
+        } else {
+            type.inheritTypeArguments(baseFirClass, baseType.typeArguments)
+        } ?: return buildErrorTypeRef {
+            source = this@withTypeArgumentsForBareType.source
+            diagnostic = ConeWrongNumberOfTypeArgumentsError(firClass.typeParameters.size, firClass.symbol)
+        }
+        return if (newArguments.isEmpty()) this else withReplacedConeType(type.withArguments(newArguments))
     }
 
     override fun transformTypeOperatorCall(
@@ -624,9 +660,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     callableReferenceAccess, data.expectedType, resolutionContext,
                 ) ?: callableReferenceAccess
 
+            dataFlowAnalyzer.exitCallableReference(resolvedReference)
             return resolvedReference.compose()
         }
 
+        context.towerDataContextForCallableReferences[callableReferenceAccess] = context.towerDataContext
+
+        dataFlowAnalyzer.exitCallableReference(callableReferenceAccessWithTransformedLHS)
         return callableReferenceAccessWithTransformedLHS.compose()
     }
 
@@ -809,9 +849,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 else -> return delegatedConstructorCall.compose()
             }
 
-            val resolvedCall =
-                callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType)
-                    ?: return delegatedConstructorCall.compose()
+            val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType)
             if (reference is FirThisReference && reference.boundSymbol == null) {
                 resolvedCall.dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
                     reference.replaceBoundSymbol(it)

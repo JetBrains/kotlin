@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Simple.java
 
 interface Simple extends KInterface {
@@ -8,7 +9,6 @@ interface Simple extends KInterface {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
 interface KInterface {
     fun test(): String {
         return "base";

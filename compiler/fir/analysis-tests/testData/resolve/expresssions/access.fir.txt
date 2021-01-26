@@ -36,7 +36,7 @@ FILE: access.kt
             ^plus String()
         }
 
-        public final fun R|Foo|.check(): R|ERROR CLASS: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]| {
+        public final fun R|Foo|.check(): <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
             ^check this@R|/Bar.check|.R|/Foo.abc|().<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
         }
 

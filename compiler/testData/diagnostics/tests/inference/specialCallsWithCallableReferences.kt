@@ -275,7 +275,7 @@ fun poll8() {
 
 fun poll81() {
     val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING!>in<!> setOf(::foo2)
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+    <!DEBUG_INFO_MISSING_UNRESOLVED, FUNCTION_EXPECTED!>inv<!>()
 }
 
 fun poll82() {

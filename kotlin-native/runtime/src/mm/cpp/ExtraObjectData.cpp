@@ -14,9 +14,27 @@
 
 using namespace kotlin;
 
+namespace {
+
+template <typename T>
+ALWAYS_INLINE T UnsafeRead(T* location) noexcept {
+#if __has_feature(thread_sanitizer)
+    // Make TSAN think that this load is fine.
+    return __atomic_load_n(location, __ATOMIC_ACQUIRE);
+#else
+    return *location;
+#endif
+}
+
+} // namespace
+
 // static
 mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
-    TypeInfo* typeInfo = object->typeInfoOrMeta_;
+    // TODO: Consider extracting initialization scheme with speculative load.
+    // `object->typeInfoOrMeta_` is assigned at most once. If we read some old value (i.e. not a meta object),
+    // we will fail at CAS below. If we read the new value, we will immediately return it.
+    TypeInfo* typeInfo = UnsafeRead(&object->typeInfoOrMeta_);
+
     if (auto* metaObject = ObjHeader::AsMetaObject(typeInfo)) {
         return mm::ExtraObjectData::FromMetaObjHeader(metaObject);
     }

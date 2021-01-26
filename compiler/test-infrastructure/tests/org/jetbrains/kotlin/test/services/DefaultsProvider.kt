@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.model.BinaryKind
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 
 /*
  * TODO:
@@ -22,6 +24,7 @@ class DefaultsProvider(
     val defaultLanguageSettings: LanguageVersionSettings,
     private val defaultLanguageSettingsBuilder: LanguageVersionSettingsBuilder,
     val defaultPlatform: TargetPlatform,
+    val defaultArtifactKind: BinaryKind<*>?,
     val defaultTargetBackend: TargetBackend?,
     val defaultDependencyKind: DependencyKind
 ) : TestService {

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Test.java
 
 interface Test<T> {
@@ -11,7 +12,6 @@ interface Test<T> {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
 
 class Child : Test<String> {
     override fun call() : String {

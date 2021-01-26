@@ -83,7 +83,8 @@ class FirCallCompleter(
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
                             session, finalSubstitutor, components.returnTypeCalculator,
-                            session.inferenceComponents.approximator
+                            session.inferenceComponents.approximator,
+                            components.dataFlowAnalyzer,
                         ),
                         null
                     )
@@ -153,6 +154,7 @@ class FirCallCompleter(
         return FirCallCompletionResultsWriterTransformer(
             session, substitutor, components.returnTypeCalculator,
             session.inferenceComponents.approximator,
+            components.dataFlowAnalyzer,
             mode
         )
     }
@@ -173,7 +175,6 @@ class FirCallCompleter(
             receiverType: ConeKotlinType?,
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
-            rawReturnType: ConeKotlinType,
             stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
         ): ReturnArgumentsAnalysisResult {
             val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom

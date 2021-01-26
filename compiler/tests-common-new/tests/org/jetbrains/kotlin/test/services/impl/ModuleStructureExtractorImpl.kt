@@ -17,14 +17,24 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl.Companion.toArtifactKind
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 
+/*
+ * Rules of directives resolving:
+ * - If no `MODULE` or `FILE` was declared in test then all directives belongs to module
+ * - If `FILE` is declared, then all directives after it will belong to
+ *   file until next `FILE` or `MODULE` directive will be declared
+ * - All directives between `MODULE` and `FILE` directives belongs to module
+ * - All directives before first `MODULE` are global and belongs to each declared module
+ */
 class ModuleStructureExtractorImpl(
     testServices: TestServices,
     additionalSourceProviders: List<AdditionalSourceProvider>,
@@ -32,6 +42,7 @@ class ModuleStructureExtractorImpl(
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
+
         /*
          * ([\w-]+) module name
          * \((.*?)\) module dependencies
@@ -82,12 +93,14 @@ class ModuleStructureExtractorImpl(
         private var startLineNumberOfCurrentFile = 0
 
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
+        private var moduleDirectivesBuilder: RegisteredDirectivesParser = directivesBuilder
+        private var fileDirectivesBuilder: RegisteredDirectivesParser? = null
 
         private var globalDirectives: RegisteredDirectives? = null
 
         private val modules = mutableListOf<TestModule>()
 
-        private val moduleDirectiveBuilder = RegisteredDirectivesParser(ModuleStructureDirectives, assertions)
+        private val moduleStructureDirectiveBuilder = RegisteredDirectivesParser(ModuleStructureDirectives, assertions)
 
         fun splitTestDataByModules(): TestModuleStructure {
             for (testDataFile in testDataFiles) {
@@ -143,7 +156,7 @@ class ModuleStructureExtractorImpl(
          */
         private fun tryParseStructureDirective(rawDirective: RegisteredDirectivesParser.RawDirective?, lineNumber: Int): Boolean {
             if (rawDirective == null) return false
-            val (directive, values) = moduleDirectiveBuilder.convertToRegisteredDirective(rawDirective) ?: return false
+            val (directive, values) = moduleStructureDirectiveBuilder.convertToRegisteredDirective(rawDirective) ?: return false
             when (directive) {
                 ModuleStructureDirectives.MODULE -> {
                     /*
@@ -229,21 +242,47 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun finishGlobalDirectives() {
-            globalDirectives = directivesBuilder.build()
+            globalDirectives = directivesBuilder.build().also { directives ->
+                directives.forEach { it.checkDirectiveApplicability(contextIsGlobal = true) }
+            }
             resetModuleCaches()
             resetFileCaches()
         }
 
+        @OptIn(ExperimentalStdlibApi::class)
+        private fun Directive.checkDirectiveApplicability(
+            contextIsGlobal: Boolean = false,
+            contextIsModule: Boolean = false,
+            contextIsFile: Boolean = false
+        ) {
+            when {
+                applicability.forGlobal && contextIsGlobal -> return
+                applicability.forModule && contextIsModule -> return
+                applicability.forFile && contextIsFile -> return
+            }
+            val context = buildList {
+                if (contextIsGlobal) add("Global")
+                if (contextIsModule) add("Module")
+                if (contextIsFile) add("File")
+            }.joinToString("|")
+            error("Directive $this has $applicability applicability but it declared in $context")
+        }
+
         private fun finishModule() {
             finishFile()
-            val moduleDirectives = directivesBuilder.build() + testServices.defaultDirectives + globalDirectives
+            val isImplicitModule = currentModuleName == null
+            val moduleDirectives = moduleDirectivesBuilder.build() + testServices.defaultDirectives + globalDirectives
+            moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
+
             currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators)
             val moduleName = currentModuleName ?: defaultModuleName
+            val targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform
             val testModule = TestModule(
                 name = moduleName,
-                targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform,
+                targetPlatform = targetPlatform,
                 targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend,
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
+                binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(),
                 files = filesOfCurrentModule,
                 dependencies = dependenciesOfCurrentModule,
                 friends = friendsOfCurrentModule,
@@ -287,13 +326,17 @@ class ModuleStructureExtractorImpl(
             if (filesOfCurrentModule.any { it.name == filename }) {
                 error("File with name \"$filename\" already defined in module ${currentModuleName ?: actualDefaultFileName}")
             }
+            val directives = fileDirectivesBuilder?.build()?.also { directives ->
+                directives.forEach { it.checkDirectiveApplicability(contextIsFile = true) }
+            }
             filesOfCurrentModule.add(
                 TestFile(
                     relativePath = filename,
                     originalContent = linesOfCurrentFile.joinToString(separator = "\n", postfix = "\n"),
                     originalFile = currentTestDataFile,
                     startLineNumberInOriginalFile = startLineNumberOfCurrentFile,
-                    isAdditional = false
+                    isAdditional = false,
+                    directives = directives ?: RegisteredDirectives.Empty
                 )
             )
             firstFileInModule = false
@@ -310,6 +353,11 @@ class ModuleStructureExtractorImpl(
             filesOfCurrentModule = mutableListOf()
             dependenciesOfCurrentModule = mutableListOf()
             friendsOfCurrentModule = mutableListOf()
+            resetDirectivesBuilder()
+            moduleDirectivesBuilder = directivesBuilder
+        }
+
+        private fun resetDirectivesBuilder() {
             directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         }
 
@@ -317,8 +365,13 @@ class ModuleStructureExtractorImpl(
             if (!firstFileInModule) {
                 linesOfCurrentFile = mutableListOf()
             }
+            if (firstFileInModule) {
+                moduleDirectivesBuilder = directivesBuilder
+            }
             currentFileName = null
             startLineNumberOfCurrentFile = 0
+            resetDirectivesBuilder()
+            fileDirectivesBuilder = directivesBuilder
         }
 
         private fun tryParseRegularDirective(rawDirective: RegisteredDirectivesParser.RawDirective?) {

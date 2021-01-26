@@ -14,8 +14,8 @@ FILE fqName:<root> fileName:/stringVsTXArray.kt
         CALL 'public final fun useTX <T> (x: T of <root>.useTX, fn: kotlin.Function0<T of <root>.useTX>): T of <root>.useTX declared in <root>' type=java.io.Serializable? origin=null
           <T>: java.io.Serializable?
           x: GET_VAR 'xs: kotlin.Array<kotlin.String> declared in <root>.testNoNullCheck' type=kotlin.Array<kotlin.String> origin=null
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
+          fn: FUN_EXPR type=kotlin.Function0<java.io.Serializable?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:java.io.Serializable?
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.testNoNullCheck'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): java.io.Serializable? declared in <root>.testNoNullCheck'
                   CALL 'public open fun string (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null

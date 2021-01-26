@@ -1,8 +1,8 @@
 // FIR_IDENTICAL
 // IGNORE_BACKEND: JS, NATIVE
 
-// FILE: A.java
 // ANDROID_ANNOTATIONS
+// FILE: A.java
 
 import kotlin.annotations.jvm.internal.*;
 

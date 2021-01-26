@@ -277,6 +277,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitCallableReferenceNode(node: CallableReferenceNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: D): R {
         return visitNode(node, data)
     }

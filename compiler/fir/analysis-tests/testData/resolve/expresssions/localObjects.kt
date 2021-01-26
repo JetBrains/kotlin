@@ -12,9 +12,9 @@ fun test() {
     }
     b.foo()
 
-    <!LOCAL_OBJECT_NOT_ALLOWED{LT}!><!LOCAL_OBJECT_NOT_ALLOWED{PSI}!>object B<!> {
+    <!LOCAL_OBJECT_NOT_ALLOWED!>object B<!> {
         fun foo() {}
-    }<!>
+    }
     B.foo()
 }
 

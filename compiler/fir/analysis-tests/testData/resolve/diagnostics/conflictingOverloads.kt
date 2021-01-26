@@ -1,6 +1,6 @@
-<!CONFLICTING_OVERLOADS!>fun test(x: Int) {}<!>
+<!CONFLICTING_OVERLOADS!>fun test(x: Int)<!> {}
 
-<!CONFLICTING_OVERLOADS!>fun test(y: Int) {}<!>
+<!CONFLICTING_OVERLOADS!>fun test(y: Int)<!> {}
 
 fun test() {}
 
@@ -17,9 +17,9 @@ fun test(z: Int, c: Char) {}
 }<!>
 
 <!REDECLARATION!>class B : A {
-    <!CONFLICTING_OVERLOADS!>override fun rest(s: String) {}<!>
+    <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>fun rest(s: String) {}<!>
+    <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}
 
     fun rest(l: Long) {}
 
@@ -45,11 +45,11 @@ fun <T : Int> kek(t: T) {}
 fun lol(a: Array<Int>) {}
 fun lol(a: Array<Boolean>) {}
 
-<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T) where T : () -> Boolean, T : String {}<!>
-<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T) where T : String, T : () -> Boolean {}<!>
+<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T)<!> where T : () -> Boolean, T : String {}
+<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T)<!> where T : String, T : () -> Boolean {}
 
 class M {
-    <!REDECLARATION{LT}!>companion <!REDECLARATION{PSI}!>object<!> {}<!>
+    companion <!REDECLARATION!>object<!> {}
     <!REDECLARATION!>val Companion = object : Any {}<!>
 }
 
@@ -63,6 +63,6 @@ fun mest()
 
 class mest
 
-fun() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
-private fun() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>private fun()<!> {}

@@ -1,5 +1,5 @@
-// FILE: A.java
 // ANDROID_ANNOTATIONS
+// FILE: A.java
 import kotlin.annotations.jvm.internal.*;
 import kotlin.internal.*;
 

@@ -1,6 +1,6 @@
 FILE: test.kt
     public final fun test(map: R|MyMap|): R|kotlin/Unit| {
-        lval result: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/map|.R|kotlin/collections/getOrPut|<R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|, R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|>(String(key), <L> = getOrPut@fun <anonymous>(): R|kotlin/String| <kind=UNKNOWN>  {
+        lval result: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/map|.R|kotlin/collections/getOrPut|<R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|, R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|>(String(key), <L> = getOrPut@fun <anonymous>(): R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| <kind=UNKNOWN>  {
             ^ String(value)
         }
         )

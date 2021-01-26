@@ -42,18 +42,9 @@ publishing {
 
     repositories {
         maven {
-            name = "bintray"
-            url = uri("https://api.bintray.com/maven/kotlin/kotlin-dependencies/kotlin-build-gradle-plugin")
-            authentication {
-                val mavenUser = findProperty("kotlin.bintray.user") as String?
-                val mavenPass = findProperty("kotlin.bintray.password") as String?
-                if (mavenUser != null && mavenPass != null) {
-                    credentials {
-                        username = mavenUser
-                        password = mavenPass
-                    }
-                }
-            }
+            name = "kotlinSpace"
+            url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+            credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class)
         }
     }
 }

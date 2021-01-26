@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>): KotlinProjectExtension {
-    val kotlinExt = extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java)
+    val kotlinExt = extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
     return kotlinExtension
 }
@@ -43,7 +43,7 @@ internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinMultiplatformExtension
 
-open class KotlinProjectExtension : KotlinSourceSetContainer {
+open class KotlinProjectExtension(internal val project: Project) : KotlinSourceSetContainer {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
@@ -67,32 +67,32 @@ open class KotlinProjectExtension : KotlinSourceSetContainer {
         }
 }
 
-abstract class KotlinSingleTargetExtension : KotlinProjectExtension() {
+abstract class KotlinSingleTargetExtension(project: Project) : KotlinProjectExtension(project) {
     abstract val target: KotlinTarget
 
     open fun target(body: Closure<out KotlinTarget>) = ConfigureUtil.configure(body, target)
 }
 
-abstract class KotlinSingleJavaTargetExtension : KotlinSingleTargetExtension() {
+abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension(project) {
     abstract override val target: KotlinWithJavaTarget<*>
 }
 
-open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
+open class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
     override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions>
         internal set
 
     open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions>.() -> Unit) = target.run(body)
 }
 
-open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
+open class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
     override lateinit var target: KotlinWithJavaTarget<KotlinJsOptions>
         internal set
 
     open fun target(body: KotlinWithJavaTarget<KotlinJsOptions>.() -> Unit) = target.run(body)
 }
 
-open class KotlinJsProjectExtension :
-    KotlinSingleTargetExtension(),
+open class KotlinJsProjectExtension(project: Project) :
+    KotlinSingleTargetExtension(project),
     KotlinJsCompilerTypeHolder {
     lateinit var irPreset: KotlinJsIrSingleTargetPreset
 
@@ -224,14 +224,14 @@ open class KotlinJsProjectExtension :
         }
 }
 
-open class KotlinCommonProjectExtension : KotlinSingleJavaTargetExtension() {
+open class KotlinCommonProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
     override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>
         internal set
 
     open fun target(body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions>.() -> Unit) = target.run(body)
 }
 
-open class KotlinAndroidProjectExtension : KotlinSingleTargetExtension() {
+open class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetExtension(project) {
     override lateinit var target: KotlinAndroidTarget
         internal set
 

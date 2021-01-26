@@ -9,6 +9,7 @@
 
 int main() {
     std::thread t([]() {
+        testlib_symbols()->kotlin.root.enableMemoryChecker();
         testlib_symbols()->kotlin.root.leakMemory();
     });
     t.join();

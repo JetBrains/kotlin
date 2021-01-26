@@ -1586,34 +1586,22 @@ internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): St
         }
     }
 
-    val targetFamily = context.config.target.family
-    val returnTypeEncoding = methodBridge.returnBridge.getObjCEncoding(targetFamily)
+    val returnTypeEncoding = methodBridge.returnBridge.getObjCEncoding(context)
 
     val paramSize = paramOffset
     return "$returnTypeEncoding$paramSize$params"
 }
 
-// https://developer.apple.com/documentation/objectivec/nsuinteger?language=objc
-// `typedef unsigned long NSUInteger` on iOS, macOS, tvOS.
-// `typedef unsigned int NSInteger` on watchOS.
-private val Family.nsUIntegerEncoding: String get() = when (this) {
-    Family.OSX,
-    Family.IOS,
-    Family.TVOS -> "L"
-    Family.WATCHOS -> "I"
-    else -> error("Unexpected target platform: $this")
-}
-
-private fun MethodBridge.ReturnValue.getObjCEncoding(targetFamily: Family): String = when (this) {
+private fun MethodBridge.ReturnValue.getObjCEncoding(context: Context): String = when (this) {
     MethodBridge.ReturnValue.Suspend,
     MethodBridge.ReturnValue.Void -> "v"
-    MethodBridge.ReturnValue.HashCode -> targetFamily.nsUIntegerEncoding
+    MethodBridge.ReturnValue.HashCode -> if (context.is64BitNSInteger()) "Q" else "I"
     is MethodBridge.ReturnValue.Mapped -> this.bridge.objCEncoding
     MethodBridge.ReturnValue.WithError.Success -> ObjCValueType.BOOL.encoding
 
     MethodBridge.ReturnValue.Instance.InitResult,
     MethodBridge.ReturnValue.Instance.FactoryResult -> ReferenceBridge.objCEncoding
-    is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.getObjCEncoding(targetFamily)
+    is MethodBridge.ReturnValue.WithError.ZeroForError -> this.successBridge.getObjCEncoding(context)
 }
 
 private val MethodBridgeParameter.objCEncoding: String get() = when (this) {

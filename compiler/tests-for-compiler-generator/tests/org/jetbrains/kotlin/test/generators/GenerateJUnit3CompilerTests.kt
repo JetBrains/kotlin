@@ -144,10 +144,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/bytecodeText", targetBackend = TargetBackend.JVM)
             }
 
-            testClass<AbstractIrTextTestCase> {
-                model("ir/irText")
-            }
-
             testClass<AbstractIrJsTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
             }
@@ -598,16 +594,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
         testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirOldFrontendLightClassesTest> {
                 model("lightClasses")
-            }
-        }
-
-        testGroup(
-            "compiler/fir/fir2ir/tests-gen", "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
-        ) {
-            testClass<AbstractFir2IrTextTest> {
-                model("ir/irText")
             }
         }
 

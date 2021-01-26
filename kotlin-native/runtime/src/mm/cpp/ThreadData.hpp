@@ -11,6 +11,7 @@
 
 #include "ObjectFactory.hpp"
 #include "GlobalsRegistry.hpp"
+#include "ShadowStack.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
 #include "Utils.hpp"
@@ -46,6 +47,8 @@ public:
 
     ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
 
+    ShadowStack& shadowStack() noexcept { return shadowStack_; }
+
 private:
     const pthread_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
@@ -53,6 +56,7 @@ private:
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;
     std::atomic<ThreadState> state_;
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
+    ShadowStack shadowStack_;
 };
 
 } // namespace mm

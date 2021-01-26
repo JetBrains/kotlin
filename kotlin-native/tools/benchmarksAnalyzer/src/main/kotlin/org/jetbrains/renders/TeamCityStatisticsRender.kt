@@ -29,7 +29,9 @@ class TeamCityStatisticsRender: Render() {
         content.append("##teamcity[testSuiteFinished name='Benchmarks']\n")
 
         // Report geometric mean as build statistic value
-        renderGeometricMean(report.geoMeanBenchmark.first!!)
+        report.detailedMetricReports.forEach { (metric, detailedReport) ->
+            renderGeometricMean(metric.value, detailedReport.geoMeanBenchmark.first!!)
+        }
 
         return content.toString()
     }
@@ -51,8 +53,8 @@ class TeamCityStatisticsRender: Render() {
         content.append("##teamcity[testFinished name='${benchmark.name}' duration='${(duration / 1000).toInt()}']\n")
     }
 
-    private fun renderGeometricMean(geoMeanBenchmark: MeanVarianceBenchmark) {
-        content.append("##teamcity[buildStatisticValue key='Geometric mean' value='${geoMeanBenchmark.score}']\n")
-        content.append("##teamcity[buildStatisticValue key='Geometric mean variance' value='${geoMeanBenchmark.variance}']\n")
+    private fun renderGeometricMean(metricName: String, geoMeanBenchmark: MeanVarianceBenchmark) {
+        content.append("##teamcity[buildStatisticValue key='$metricName Geometric mean' value='${geoMeanBenchmark.score}']\n")
+        content.append("##teamcity[buildStatisticValue key='$metricName Geometric mean variance' value='${geoMeanBenchmark.variance}']\n")
     }
 }

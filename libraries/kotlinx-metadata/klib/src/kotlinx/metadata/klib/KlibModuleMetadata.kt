@@ -10,11 +10,11 @@ import kotlinx.metadata.KmModuleFragment
 import kotlinx.metadata.impl.WriteContext
 import kotlinx.metadata.impl.accept
 import kotlinx.metadata.klib.impl.*
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataStringTable
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
 /**
  * Allows to modify the way fragments of the single package are read by [KlibModuleMetadata.read].
@@ -120,12 +120,12 @@ class KlibModuleMetadata(
         )
         val groupedProtos = groupedFragments.mapValues { (_, fragments) ->
             fragments.map {
-                val c = WriteContext(KlibMetadataStringTable(), listOf(reverseIndex))
-                KlibModuleFragmentWriter(c.strings as KlibMetadataStringTable, c.contextExtensions).also(it::accept).write()
+                val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex))
+                KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also(it::accept).write()
             }
         }
         // This context and string table is only required for module-level annotations.
-        val c = WriteContext(KlibMetadataStringTable(), listOf(reverseIndex))
+        val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex))
         return SerializedKlibMetadata(
             header.writeHeader(c).build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },

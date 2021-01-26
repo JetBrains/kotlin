@@ -47,8 +47,8 @@ fun bar() {
         b checkType { _<String>() }
     }
 
-    foo { (a, b): B ->
-        a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Double>() }
-        b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Short>() }
+    <!INAPPLICABLE_CANDIDATE!>foo<!> { (a, b): B ->
+        a checkType { _<Double>() }
+        b checkType { _<Short>() }
     }
 }

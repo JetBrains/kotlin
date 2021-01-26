@@ -41,39 +41,39 @@ data class Test1 {
     field = doubleArray
     get
 
-  fun component1(): Array<String> {
+  operator fun component1(): Array<String> {
     return <this>.#stringArray
   }
 
-  fun component2(): CharArray {
+  operator fun component2(): CharArray {
     return <this>.#charArray
   }
 
-  fun component3(): BooleanArray {
+  operator fun component3(): BooleanArray {
     return <this>.#booleanArray
   }
 
-  fun component4(): ByteArray {
+  operator fun component4(): ByteArray {
     return <this>.#byteArray
   }
 
-  fun component5(): ShortArray {
+  operator fun component5(): ShortArray {
     return <this>.#shortArray
   }
 
-  fun component6(): IntArray {
+  operator fun component6(): IntArray {
     return <this>.#intArray
   }
 
-  fun component7(): LongArray {
+  operator fun component7(): LongArray {
     return <this>.#longArray
   }
 
-  fun component8(): FloatArray {
+  operator fun component8(): FloatArray {
     return <this>.#floatArray
   }
 
-  fun component9(): DoubleArray {
+  operator fun component9(): DoubleArray {
     return <this>.#doubleArray
   }
 
@@ -149,7 +149,7 @@ data class Test2<T : Any?> {
     field = genericArray
     get
 
-  fun component1(): Array<T> {
+  operator fun component1(): Array<T> {
     return <this>.#genericArray
   }
 
@@ -192,7 +192,7 @@ data class Test3 {
     field = anyArrayN
     get
 
-  fun component1(): Array<Any>? {
+  operator fun component1(): Array<Any>? {
     return <this>.#anyArrayN
   }
 
@@ -226,3 +226,4 @@ data class Test3 {
   }
 
 }
+

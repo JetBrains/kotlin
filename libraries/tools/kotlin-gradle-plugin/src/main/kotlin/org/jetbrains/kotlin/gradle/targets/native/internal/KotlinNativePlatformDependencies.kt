@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSou
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativePlatformDependency.*
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -106,22 +107,13 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
 
         val targetGroups: List<CommonizedCommon> = dependencies.keys.filterIsInstance<CommonizedCommon>()
 
-        val commonizerTaskParams = CommonizerTaskParams.build(
-            kotlinVersion,
-            targetGroups.map { it.targets },
-            distributionDir,
-            distributionDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR).resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
-        )
-
         val commonizerTaskProvider = project.registerTask(
             COMMONIZER_TASK_NAME,
-            CommonizerTask::class.java,
-            listOf(commonizerTaskParams)
-        ) {}
+            CommonizerTask::class.java
+        ) { commonizerTask ->
+            commonizerTask.targetGroups = targetGroups.map { it.targets }.toSet()
+        }
 
-        val commonizedLibsDirs: Map<CommonizedCommon, File> = commonizerTaskParams.subtasks.mapIndexed { index, subtask ->
-            targetGroups[index] to subtask.destinationDir
-        }.toMap()
 
         // then, resolve dependencies one by one
         dependencies.forEach { (dependency, actions) ->
@@ -149,7 +141,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
 
                 is CommonizedCommon -> {
                     /* commonized platform libs with expect declarations */
-                    val commonizedLibsDir = commonizedLibsDirs.getValue(dependency)
+                    val commonizedLibsDir = project.nativeDistributionCommonizerOutputDirectory(dependency.targets)
                     project.files(Callable {
                         libsInCommonDir(commonizedLibsDir)
                     }).builtBy(commonizerTaskProvider)
@@ -158,7 +150,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
 
                 is CommonizedPlatform -> {
                     /* commonized platform libs with actual declarations */
-                    val commonizedLibsDir = commonizedLibsDirs.getValue(dependency.common)
+                    val commonizedLibsDir = project.nativeDistributionCommonizerOutputDirectory(dependency.common.targets)
                     project.files(Callable {
                         libsInPlatformDir(commonizedLibsDir, dependency.target) + libsInCommonDir(commonizedLibsDir)
                     }).builtBy(commonizerTaskProvider)

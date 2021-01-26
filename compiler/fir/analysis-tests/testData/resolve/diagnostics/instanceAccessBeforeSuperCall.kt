@@ -7,10 +7,10 @@ class A {
 class B(other: B = <!NO_THIS!>this<!>)
 
 class C() {
-    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>this<!>({
+    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>this<!>({
         val a = 10
         <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
-    })<!> {}
+    }) {}
 }
 
 class D {

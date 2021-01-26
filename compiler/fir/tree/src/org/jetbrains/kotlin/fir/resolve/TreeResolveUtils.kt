@@ -26,14 +26,7 @@ fun FirClassifierSymbol<*>.constructType(
             ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable, attributes)
         }
         is FirClassSymbol -> {
-            val errorTypeRef = typeArguments.find {
-                it is ConeClassErrorType
-            }
-            if (errorTypeRef is ConeClassErrorType) {
-                ConeClassErrorType(errorTypeRef.diagnostic)
-            } else {
-                ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
-            }
+            ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
         }
         is FirTypeAliasSymbol -> {
             ConeClassLikeTypeImpl(

@@ -9,7 +9,18 @@ import org.jetbrains.kotlin.test.util.joinToArrayString
 
 // --------------------------- Directive declaration ---------------------------
 
-sealed class Directive(val name: String, val description: String) {
+enum class DirectiveApplicability(
+    val forGlobal: Boolean = false,
+    val forModule: Boolean = false,
+    val forFile: Boolean = false
+) {
+    Any(forGlobal = true, forModule = true, forFile = true),
+    Global(forGlobal = true, forModule = true),
+    Module(forModule = true),
+    File(forFile = true)
+}
+
+sealed class Directive(val name: String, val description: String, val applicability: DirectiveApplicability) {
     override fun toString(): String {
         return name
     }
@@ -17,23 +28,26 @@ sealed class Directive(val name: String, val description: String) {
 
 class SimpleDirective(
     name: String,
-    description: String
-) : Directive(name, description)
+    description: String,
+    applicability: DirectiveApplicability
+) : Directive(name, description, applicability)
 
 class StringDirective(
     name: String,
-    description: String
-) : Directive(name, description)
+    description: String,
+    applicability: DirectiveApplicability
+) : Directive(name, description, applicability)
 
 class ValueDirective<T : Any>(
     name: String,
     description: String,
+    applicability: DirectiveApplicability,
     val parser: (String) -> T?
-) : Directive(name, description)
+) : Directive(name, description, applicability)
 
 // --------------------------- Registered directive ---------------------------
 
-abstract class RegisteredDirectives {
+abstract class RegisteredDirectives : Iterable<Directive> {
     companion object {
         val Empty = RegisteredDirectivesImpl(emptyList(), emptyMap(), emptyMap())
     }
@@ -78,6 +92,15 @@ class RegisteredDirectivesImpl(
             valueDirectives.forEach { (d, v) -> appendLine("  $d: ${v.joinToArrayString()}")}
         }
     }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun iterator(): Iterator<Directive> {
+        return buildList {
+            addAll(simpleDirectives)
+            addAll(stringDirectives.keys)
+            addAll(valueDirectives.keys)
+        }.iterator()
+    }
 }
 
 class ComposedRegisteredDirectives(
@@ -108,6 +131,10 @@ class ComposedRegisteredDirectives(
 
     override fun isEmpty(): Boolean {
         return containers.all { it.isEmpty() }
+    }
+
+    override fun iterator(): Iterator<Directive> {
+        return containers.flatten().iterator()
     }
 }
 

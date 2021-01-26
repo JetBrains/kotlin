@@ -1,5 +1,6 @@
 import kotlin.native.concurrent.*
 import kotlin.native.internal.GC
+import kotlin.native.Platform
 import kotlin.test.*
 
 fun test1() {
@@ -175,6 +176,7 @@ fun test9() {
 }
 
 fun main() {
+    Platform.isMemoryLeakCheckerActive = true
     kotlin.native.internal.GC.cyclicCollectorEnabled = true
     test1()
     test2()

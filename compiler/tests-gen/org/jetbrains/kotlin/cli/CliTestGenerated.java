@@ -1180,6 +1180,11 @@ public class CliTestGenerated extends AbstractCliTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), null, false);
         }
 
+        @TestMetadata("anonymousObjectType.args")
+        public void testAnonymousObjectType() throws Exception {
+            runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
+        }
+
         @TestMetadata("kotlinPackage.args")
         public void testKotlinPackage() throws Exception {
             runTest("compiler/testData/cli/metadata/kotlinPackage.args");

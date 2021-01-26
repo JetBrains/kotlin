@@ -1,6 +1,6 @@
 // !SKIP_JAVAC
-// FILE: SLRUMap.java
 // !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
 import java.util.List;

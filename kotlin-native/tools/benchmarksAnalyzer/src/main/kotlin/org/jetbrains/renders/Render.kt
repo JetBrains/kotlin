@@ -54,7 +54,7 @@ class TextRender: Render() {
         renderEnvChanges(report.envChanges, "Environment")
         renderEnvChanges(report.kotlinChanges, "Compiler")
         renderStatusSummary(report)
-        renderStatusChangesDetails(report.getBenchmarksWithChangedStatus())
+        renderStatusChangesDetails(report.benchmarksWithChangedStatus)
         renderPerformanceSummary(report)
         renderPerformanceDetails(report, onlyChanges)
         return content.toString()
@@ -113,18 +113,27 @@ class TextRender: Render() {
     }
 
     fun renderPerformanceSummary(report: SummaryBenchmarksReport) {
-        if (!report.regressions.isEmpty() || !report.improvements.isEmpty()) {
+        if (report.detailedMetricReports.values.any { it.improvements.isNotEmpty() } ||
+                report.detailedMetricReports.values.any { it.regressions.isNotEmpty() }) {
             append("Performance summary")
             append(headerSeparator)
-            if (!report.regressions.isEmpty()) {
-                append("Regressions: Maximum = ${formatValue(report.maximumRegression, true)}," +
-                        " Geometric mean = ${formatValue(report.regressionsGeometricMean, true)}")
-            }
-            if (!report.improvements.isEmpty()) {
-                append("Improvements: Maximum = ${formatValue(report.maximumImprovement, true)}," +
-                        " Geometric mean = ${formatValue(report.improvementsGeometricMean, true)}")
-            }
             append()
+            report.detailedMetricReports.forEach { (metric, detailedReport) ->
+                if (detailedReport.regressions.isNotEmpty() || detailedReport.improvements.isNotEmpty()) {
+                    append(metric.value)
+                    append(headerSeparator)
+                    if (!detailedReport.regressions.isEmpty()) {
+                        append("Regressions: Maximum = ${formatValue(detailedReport.maximumRegression, true)}," +
+                                " Geometric mean = ${formatValue(detailedReport.regressionsGeometricMean, true)}")
+                    }
+                    if (!detailedReport.improvements.isEmpty()) {
+                        append("Improvements: Maximum = ${formatValue(detailedReport.maximumImprovement, true)}," +
+                                " Geometric mean = ${formatValue(detailedReport.improvementsGeometricMean, true)}")
+                    }
+                    append()
+                }
+            }
+
         }
     }
 
@@ -176,25 +185,58 @@ class TextRender: Render() {
         append(headerSeparator)
 
         if (onlyChanges) {
-            if (report.regressions.isEmpty() && report.improvements.isEmpty()) {
+            if (report.detailedMetricReports.values.all { it.improvements.isEmpty() } &&
+                    report.detailedMetricReports.values.all { it.regressions.isEmpty() }) {
                 append("All becnhmarks are stable.")
             }
         }
 
-        val tableWidth = printPerformanceTableHeader()
-        // Print geometric mean.
-        val geoMeanChangeMap = report.geoMeanScoreChange?.
-                let { mapOf(report.geoMeanBenchmark.first!!.name to report.geoMeanScoreChange!!) }
-        printBenchmarksDetails(
-                mutableMapOf(report.geoMeanBenchmark.first!!.name to report.geoMeanBenchmark),
-                geoMeanChangeMap)
-        printTableLineSeparator(tableWidth)
-        printBenchmarksDetails(report.mergedReport, report.regressions)
-        printBenchmarksDetails(report.mergedReport, report.improvements)
+        report.detailedMetricReports.forEach { (metric, detailedReport) ->
+            append()
+            append(metric.value)
+            append(headerSeparator)
+            val tableWidth = printPerformanceTableHeader()
+            // Print geometric mean.
+            val geoMeanChangeMap = detailedReport.geoMeanScoreChange?.let {
+                mapOf(detailedReport.geoMeanBenchmark.first!!.name to detailedReport.geoMeanScoreChange!!)
+            }
+            printBenchmarksDetails(
+                    mutableMapOf(detailedReport.geoMeanBenchmark.first!!.name to detailedReport.geoMeanBenchmark),
+                    geoMeanChangeMap)
+            printTableLineSeparator(tableWidth)
+            val unstableBenchmarks = report.getUnstableBenchmarksForMetric(metric)
+            if (unstableBenchmarks.isNotEmpty()) {
+                append("Stable")
+                printTableLineSeparator(tableWidth)
+            }
+            renderFilteredPerformanceDetails(detailedReport, onlyChanges, unstableBenchmarks, false)
+            if (unstableBenchmarks.isNotEmpty()) {
+                printTableLineSeparator(tableWidth)
+                append("Unstable")
+                printTableLineSeparator(tableWidth)
+            }
+            renderFilteredPerformanceDetails(detailedReport, onlyChanges, unstableBenchmarks,true)
+        }
+    }
+
+    fun renderFilteredPerformanceDetails(detailedReport: DetailedBenchmarksReport,
+                                         onlyChanges: Boolean, unstableBenchmarks: List<String>,
+                                         filterUnstable: Boolean) {
+        fun <T> filterBenchmarks(bucket: Map<String, T>) =
+                bucket.filter { (name, _) ->
+                    if (filterUnstable) name in unstableBenchmarks else name !in unstableBenchmarks
+                }
+
+        val filteredRegressions = filterBenchmarks(detailedReport.regressions)
+        val filteredImprovements = filterBenchmarks(detailedReport.improvements)
+        printBenchmarksDetails(detailedReport.mergedReport, filteredRegressions)
+        printBenchmarksDetails(detailedReport.mergedReport, filteredImprovements)
         if (!onlyChanges) {
             // Print all remaining results.
-            printBenchmarksDetails(report.mergedReport.filter { it.key !in report.regressions.keys &&
-                    it.key !in report.improvements.keys })
+            printBenchmarksDetails(filterBenchmarks(detailedReport.mergedReport).filter {
+                it.key !in detailedReport.regressions.keys &&
+                        it.key !in detailedReport.improvements.keys
+            })
         }
     }
 }

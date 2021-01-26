@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -21,11 +20,14 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
@@ -33,8 +35,8 @@ import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -548,12 +550,14 @@ class FirElementSerializer private constructor(
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
 
     private fun typeProto(typeRef: FirTypeRef, toSuper: Boolean = false): ProtoBuf.Type.Builder {
-        return typeProto(typeRef.coneType, toSuper).also {
-            extension.serializeType(typeRef, it)
+        return typeProto(typeRef.coneType, toSuper, correspondingTypeRef = typeRef).also {
+            for (annotation in typeRef.annotations) {
+                extension.serializeTypeAnnotation(annotation, it)
+            }
         }
     }
 
-    private fun typeProto(type: ConeKotlinType, toSuper: Boolean = false): ProtoBuf.Type.Builder {
+    private fun typeProto(type: ConeKotlinType, toSuper: Boolean = false, correspondingTypeRef: FirTypeRef? = null): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
@@ -574,12 +578,19 @@ class FirElementSerializer private constructor(
             }
             is ConeClassLikeType -> {
                 if (type.isSuspendFunctionType(session)) {
-                    val runtimeFunctionType = transformSuspendFunctionToRuntimeFunctionType(type)
+                    val runtimeFunctionType = type.suspendFunctionTypeToFunctionTypeWithContinuation(
+                        session, CONTINUATION_INTERFACE_CLASS_ID
+                    )
                     val functionType = typeProto(runtimeFunctionType)
                     functionType.flags = Flags.getTypeFlags(true)
                     return functionType
                 }
                 fillFromPossiblyInnerType(builder, type)
+                if (type.isExtensionFunctionType) {
+                    serializeAnnotationFromAttribute(
+                        correspondingTypeRef?.annotations, CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID, builder
+                    )
+                }
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
@@ -629,21 +640,23 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun transformSuspendFunctionToRuntimeFunctionType(type: ConeClassLikeType): ConeClassLikeType {
-        val suspendClassId = type.classId!!
-        val relativeClassName = suspendClassId.relativeClassName.asString()
-        val kind =
-            if (relativeClassName.startsWith("K")) FunctionClassKind.KFunction
-            else FunctionClassKind.Function
-        val runtimeClassId = ClassId(kind.packageFqName, Name.identifier(relativeClassName.replaceFirst("Suspend", "")))
-        val continuationClassId = CONTINUATION_INTERFACE_CLASS_ID
-        return ConeClassLikeLookupTagImpl(runtimeClassId).constructClassType(
-            (type.typeArguments.toList() + ConeClassLikeLookupTagImpl(continuationClassId).constructClassType(
-                arrayOf(type.typeArguments.last()),
-                isNullable = false
-            )).toTypedArray(),
-            type.isNullable
-        )
+    private fun serializeAnnotationFromAttribute(
+        existingAnnotations: List<FirAnnotationCall>?,
+        classId: ClassId,
+        builder: ProtoBuf.Type.Builder
+    ) {
+        if (existingAnnotations?.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId } != true) {
+            extension.serializeTypeAnnotation(
+                buildAnnotationCall {
+                    calleeReference = FirReferencePlaceholderForResolvedAnnotations
+                    annotationTypeRef = buildResolvedTypeRef {
+                        this.type = CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID.constructClassLikeType(
+                            emptyArray(), isNullable = false
+                        )
+                    }
+                }, builder
+            )
+        }
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {

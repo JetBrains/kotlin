@@ -864,7 +864,9 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun markImplicitReceiverOfSuspendLambda(instruction: Instruction) {
-        if (instruction !is MagicInstruction || instruction.kind != MagicKind.IMPLICIT_RECEIVER) return
+        if (instruction !is MagicInstruction ||
+            (instruction.kind != MagicKind.IMPLICIT_RECEIVER && instruction.kind != MagicKind.UNBOUND_CALLABLE_REFERENCE)
+        ) return
 
         fun CallableDescriptor?.markIfNeeded() {
             if (this is AnonymousFunctionDescriptor && isSuspend) {
@@ -872,31 +874,36 @@ class ControlFlowInformationProvider private constructor(
             }
         }
 
-        if (instruction.element is KtDestructuringDeclarationEntry || instruction.element is KtCallExpression) {
-            val visited = mutableSetOf<Instruction>()
-            fun dfs(insn: Instruction) {
-                if (!visited.add(insn)) return
-                if (insn is CallInstruction && insn.element == instruction.element) {
-                    for ((_, receiver) in insn.receiverValues) {
-                        (receiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+        when (val element = instruction.element) {
+            is KtDestructuringDeclarationEntry, is KtCallExpression -> {
+                val visited = mutableSetOf<Instruction>()
+                fun dfs(insn: Instruction) {
+                    if (!visited.add(insn)) return
+                    if (insn is CallInstruction && insn.element == element) {
+                        for ((_, receiver) in insn.receiverValues) {
+                            (receiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                        }
+                    }
+                    for (next in insn.nextInstructions) {
+                        dfs(next)
                     }
                 }
-                for (next in insn.nextInstructions) {
-                    dfs(next)
-                }
-            }
 
-            instruction.next?.let { dfs(it) }
-        } else if (instruction.element is KtNameReferenceExpression || instruction.element is KtBinaryExpression ||
-            instruction.element is KtUnaryExpression
-        ) {
-            val call = instruction.element.getResolvedCall(trace.bindingContext)
-            if (call is VariableAsFunctionResolvedCall) {
-                (call.variableCall.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
-                (call.variableCall.extensionReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                instruction.next?.let { dfs(it) }
             }
-            (call?.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
-            (call?.extensionReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+            is KtNameReferenceExpression, is KtBinaryExpression, is KtUnaryExpression -> {
+                val call = element.getResolvedCall(trace.bindingContext)
+                if (call is VariableAsFunctionResolvedCall) {
+                    (call.variableCall.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                    (call.variableCall.extensionReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                }
+                (call?.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+                (call?.extensionReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+            }
+            is KtCallableReferenceExpression -> {
+                val resolvedCall = element.callableReference.getResolvedCall(trace.bindingContext)
+                (resolvedCall?.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }
+            }
         }
     }
 

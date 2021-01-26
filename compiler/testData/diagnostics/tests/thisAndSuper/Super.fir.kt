@@ -50,7 +50,7 @@ class CG : G<Int> {
     fun test() {
         super<G>.foo() // OK
         super<G<Int>>.foo() // Warning
-        super<G<E>>.<!UNRESOLVED_REFERENCE!>foo<!>() // Error
+        super<G<E>>.foo() // Error
         super<G<String>>.foo() // Error
     }
 }

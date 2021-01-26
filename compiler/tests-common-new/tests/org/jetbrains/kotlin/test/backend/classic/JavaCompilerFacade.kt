@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.nio.file.Paths
 
 class JavaCompilerFacade(private val testServices: TestServices) {
     @OptIn(ExperimentalStdlibApi::class)
@@ -51,7 +50,8 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         )
 
         val javaFiles = module.javaFiles.map { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
-        compileJavaFiles(configuration[JVMConfigurationKeys.JVM_TARGET] ?: JvmTarget.DEFAULT, javaFiles, finalJavacOptions)
+        val ignoreErrors = CodegenTestDirectives.IGNORE_JAVA_ERRORS in module.directives
+        compileJavaFiles(configuration[JVMConfigurationKeys.JVM_TARGET] ?: JvmTarget.DEFAULT, javaFiles, finalJavacOptions, ignoreErrors)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -73,10 +73,15 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         }
     }
 
-    private fun compileJavaFiles(jvmTarget: JvmTarget, files: List<File>, javacOptions: List<String>) {
+    private fun compileJavaFiles(jvmTarget: JvmTarget, files: List<File>, javacOptions: List<String>, ignoreErrors: Boolean) {
         val targetIsJava8OrLower = System.getProperty("java.version").startsWith("1.")
         if (targetIsJava8OrLower) {
-            org.jetbrains.kotlin.test.compileJavaFiles(files, javacOptions, assertions = testServices.assertions)
+            org.jetbrains.kotlin.test.compileJavaFiles(
+                files,
+                javacOptions,
+                assertions = testServices.assertions,
+                ignoreJavaErrors = ignoreErrors
+            )
             return
         }
         val jdkHome = when (jvmTarget) {

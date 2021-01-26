@@ -170,12 +170,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         val errorTypeRefImpl = impl(errorTypeRef) {
             default("type", "ConeClassErrorType(diagnostic)")
-            default("delegatedTypeRef") {
-                value = "null"
-                withGetter = true
-            }
             default("annotations", "mutableListOf()")
             useTypes(coneClassErrorTypeType)
+            default("delegatedTypeRef") {
+                needAcceptAndTransform = false
+            }
         }
 
 
@@ -201,7 +200,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "getter", "setter",
                 withGetter = true
             )
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic)")
             useTypes(errorTypeRefImpl)
         }
 
@@ -392,17 +391,20 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(resolvedTypeRef) {
             publicImplementation()
+            default("delegatedTypeRef") {
+                needAcceptAndTransform = false
+            }
         }
 
         impl(errorExpression) {
             defaultEmptyList("annotations")
-            default("typeRef", "FirErrorTypeRefImpl(source, ConeStubDiagnostic(diagnostic))")
+            default("typeRef", "FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic))")
             useTypes(errorTypeRefImpl, coneStubDiagnosticType)
         }
 
         impl(errorFunction) {
             defaultNull("receiverTypeRef", "body", withGetter = true)
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic)")
             useTypes(errorTypeRefImpl)
         }
 

@@ -71,8 +71,8 @@ void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
   }
 }
 
-KBoolean g_checkLeaks = KonanNeedDebugInfo;
-KBoolean g_checkLeakedCleaners = KonanNeedDebugInfo;
+KBoolean g_checkLeaks = false;
+KBoolean g_checkLeakedCleaners = false;
 KBoolean g_forceCheckedShutdown = false;
 
 constexpr RuntimeState* kInvalidRuntime = nullptr;

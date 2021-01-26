@@ -388,8 +388,11 @@ internal object FirReferenceResolveHelper {
     ): ClassId? {
         val qualifierToResolve = qualifier.parent as KtUserType
         // FIXME make it work with generics in functional types (like () -> AA.BB<CC, AA.DD>)
-        val wholeType =
-            (wholeTypeFir.psi as KtTypeReference).typeElement?.unwrapNullable() as? KtUserType ?: return null
+        val wholeType = when (val psi = wholeTypeFir.psi) {
+            is KtUserType -> psi
+            is KtTypeReference -> psi.typeElement?.unwrapNullable() as? KtUserType
+            else -> null
+        } ?: return null
 
         val qualifiersToDrop = countQualifiersToDrop(wholeType, qualifierToResolve)
         return wholeTypeFir.type.classId?.dropLastNestedClasses(qualifiersToDrop)

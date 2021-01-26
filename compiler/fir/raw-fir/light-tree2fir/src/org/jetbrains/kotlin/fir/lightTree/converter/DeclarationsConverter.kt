@@ -1068,7 +1068,7 @@ class DeclarationsConverter(
      */
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
-        val entries = mutableListOf<FirVariable<*>>()
+        val entries = mutableListOf<FirVariable<*>?>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression =
             buildErrorExpression(null, ConeSimpleDiagnostic("Initializer required for destructuring declaration", DiagnosticKind.Syntax))
@@ -1087,7 +1087,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable<*> {
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable<*>? {
         var modifiers = Modifier()
         var identifier: String? = null
         var firType: FirTypeRef? = null
@@ -1099,6 +1099,7 @@ class DeclarationsConverter(
             }
         }
 
+        if (identifier == "_") return null
         val name = identifier.nameAsSafeName()
         return buildProperty {
             source = entry.toFirSourceElement()

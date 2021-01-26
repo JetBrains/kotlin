@@ -198,21 +198,11 @@ class ExpressionCodegen(
         return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
 
-    internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue {
-        if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            if (expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST) {
-                // inline lambda parameters are passed from `foo$default` to `foo` call with implicit cast,
-                // we need return pure StackValue.local value to be able proper inline this parameter later
-                if (expression.type.makeNullable() == expression.argument.type) {
-                    return genOrGetLocal(expression.argument, data)
-                }
-            }
-        }
-
+    internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue {
         return if (expression is IrGetValue)
             StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toIrBasedKotlinType())
         else
-            gen(expression, typeMapper.mapType(expression.type), expression.type, data)
+            gen(expression, type, parameterType, data)
     }
 
     fun generate() {
@@ -636,7 +626,12 @@ class ExpressionCodegen(
     // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
     private fun unboxResultIfNeeded(arg: IrGetValue) {
         if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        if (!onlyResultInlineClassParameters()) return
         if (irFunction !is IrSimpleFunction) return
+        // Skip Result's methods
+        if (irFunction.parentAsClass.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME) return
+        // Do not unbox, if there is a bridge, which unboxes for us
+        if (hasBridge()) return
 
         val index = (arg.symbol as? IrValueParameterSymbol)?.owner?.index ?: return
         val genericOrAnyOverride = irFunction.overriddenSymbols.any {
@@ -645,7 +640,18 @@ class ExpressionCodegen(
         } || irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
         if (!genericOrAnyOverride) return
 
-        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.toIrBasedKotlinType(), mv)
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
+    }
+
+    private fun onlyResultInlineClassParameters(): Boolean = irFunction.valueParameters.all {
+        !it.type.erasedUpperBound.isInline || it.type.erasedUpperBound.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME
+    }
+
+    private fun hasBridge(): Boolean = irFunction.parentAsClass.declarations.any { function ->
+        function is IrFunction && function != irFunction &&
+                context.methodSignatureMapper.mapSignatureSkipGeneric(function).let {
+                    it.asmMethod.name == signature.asmMethod.name && it.valueParameters == signature.valueParameters
+                }
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {

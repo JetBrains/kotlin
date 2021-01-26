@@ -4,11 +4,13 @@
  */
 
 import kotlin.native.concurrent.*
+import kotlin.native.Platform
 
 @ThreadLocal
 var x = Any()
 
 fun main() {
+    Platform.isMemoryLeakCheckerActive = true
     val worker = Worker.start()
 
     worker.execute(TransferMode.SAFE, {}) {

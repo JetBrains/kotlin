@@ -4,6 +4,6 @@
 
 <!CONFLICTING_OVERLOADS!>expect fun foo()<!>
 
-<!CONFLICTING_OVERLOADS!>expect fun foo() {}<!>
+<!CONFLICTING_OVERLOADS!>expect fun foo()<!> {}
 
 expect fun bar() {}

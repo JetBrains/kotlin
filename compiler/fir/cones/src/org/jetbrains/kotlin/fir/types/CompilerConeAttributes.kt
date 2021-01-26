@@ -39,7 +39,7 @@ object CompilerConeAttributes {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.jvm.internal"), Name.identifier("EnhancedNullability"))
 
         override fun union(other: EnhancedNullability?): EnhancedNullability? = other
-        override fun intersect(other: EnhancedNullability?): EnhancedNullability? = this
+        override fun intersect(other: EnhancedNullability?): EnhancedNullability = this
         override fun isSubtypeOf(other: EnhancedNullability?): Boolean = true
 
         override val key: KClass<out EnhancedNullability> = EnhancedNullability::class
@@ -51,7 +51,7 @@ object CompilerConeAttributes {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
 
         override fun union(other: ExtensionFunctionType?): ExtensionFunctionType? = other
-        override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType? = this
+        override fun intersect(other: ExtensionFunctionType?): ExtensionFunctionType = this
         override fun isSubtypeOf(other: ExtensionFunctionType?): Boolean = true
 
         override val key: KClass<out ExtensionFunctionType> = ExtensionFunctionType::class
@@ -63,7 +63,7 @@ object CompilerConeAttributes {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))
 
         override fun union(other: FlexibleNullability?): FlexibleNullability? = other
-        override fun intersect(other: FlexibleNullability?): FlexibleNullability? = this
+        override fun intersect(other: FlexibleNullability?): FlexibleNullability = this
         override fun isSubtypeOf(other: FlexibleNullability?): Boolean = true
 
         override val key: KClass<out FlexibleNullability> = FlexibleNullability::class

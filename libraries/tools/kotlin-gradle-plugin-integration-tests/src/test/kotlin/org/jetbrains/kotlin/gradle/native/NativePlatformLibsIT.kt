@@ -143,8 +143,9 @@ class NativePlatformLibsIT : BaseGradleIT() {
         deleteInstalledCompilers()
 
         fun buildPlatformLibrariesWithoutAndWithCaches(target: KonanTarget) {
-            with(platformLibrariesProject(target.presetName)) {
-                val targetName = target.name
+            val presetName = target.presetName
+            val targetName = target.name
+            with(platformLibrariesProject(presetName)) {
                 // Build libraries without caches.
                 buildWithLightDist("tasks") {
                     assertSuccessful()
@@ -152,7 +153,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
                 }
 
                 // Change cache kind and check that platform libraries generator was executed.
-                buildWithLightDist("tasks", "-Pkotlin.native.cacheKind.$targetName=static") {
+                buildWithLightDist("tasks", "-Pkotlin.native.cacheKind.$presetName=static") {
                     assertSuccessful()
                     assertContains("Precompile platform libraries for $targetName (precompilation: static)")
                 }

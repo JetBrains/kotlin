@@ -33,9 +33,8 @@ public class TestFiles {
      */
     private static final String MODULE_DELIMITER = ",\\s*";
 
-    private static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
-            "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\n");
+    private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
@@ -55,10 +54,14 @@ public class TestFiles {
             boolean preserveLocations, boolean parseDirectivesPerFile) {
         Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
-        Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
+        Matcher fileMatcher = FILE_PATTERN.matcher(expectedText);
+        Matcher moduleMatcher = MODULE_PATTERN.matcher(expectedText);
         boolean hasModules = false;
         String commonPrefixOrWholeFile;
-        if (!matcher.find()) {
+
+        boolean fileFound = fileMatcher.find();
+        boolean moduleFound = moduleMatcher.find();
+        if (!fileFound && !moduleFound) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
             testFiles.add(factory.createFile(null, testFileName, expectedText, parseDirectives(expectedText)));
@@ -69,45 +72,64 @@ public class TestFiles {
             int processedChars = 0;
             M module = null;
             boolean firstFileProcessed = false;
-            commonPrefixOrWholeFile = expectedText.substring(0, matcher.start());
+
+            int commonStart;
+            if (moduleFound) {
+                commonStart = moduleMatcher.start();
+            } else {
+                commonStart = fileMatcher.start();
+            }
+
+            commonPrefixOrWholeFile = expectedText.substring(0, commonStart);
 
             // Many files
             while (true) {
-                String moduleName = matcher.group(1);
-                String moduleDependencies = matcher.group(2);
-                String moduleFriends = matcher.group(3);
-                if (moduleName != null) {
-                    moduleName = moduleName.trim();
-                    hasModules = true;
-                    module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
-                    M oldValue = modules.put(moduleName, module);
-                    assert oldValue == null : "Module with name " + moduleName + " already present in file";
+                if (moduleFound) {
+                    String moduleName = moduleMatcher.group(1);
+                    String moduleDependencies = moduleMatcher.group(2);
+                    String moduleFriends = moduleMatcher.group(3);
+                    if (moduleName != null) {
+                        moduleName = moduleName.trim();
+                        hasModules = true;
+                        module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
+                        M oldValue = modules.put(moduleName, module);
+                        assert oldValue == null : "Module with name " + moduleName + " already present in file";
+                    }
                 }
 
-                String fileName = matcher.group(4);
-                int start = processedChars;
+                boolean nextModuleExists = moduleMatcher.find();
+                moduleFound = nextModuleExists;
+                while (true) {
+                    String fileName = fileMatcher.group(1);
+                    int start = processedChars;
 
-                boolean nextFileExists = matcher.find();
-                int end;
-                if (nextFileExists) {
-                    end = matcher.start();
+                    boolean nextFileExists = fileMatcher.find();
+                    int end;
+                    if (nextFileExists && nextModuleExists) {
+                        end = Math.min(fileMatcher.start(), moduleMatcher.start());
+                    }
+                    else if (nextFileExists) {
+                        end = fileMatcher.start();
+                    }
+                    else {
+                        end = expectedText.length();
+                    }
+                    String fileText = preserveLocations ?
+                                      substringKeepingLocations(expectedText, start, end) :
+                                      expectedText.substring(start, end);
+
+
+                    String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
+                    testFiles.add(factory.createFile(module, fileName, fileText,
+                                                     parseDirectivesPerFile ?
+                                                     parseDirectives(expectedText1)
+                                                                            : allFilesOrCommonPrefixDirectives));
+                    processedChars = end;
+                    firstFileProcessed = true;
+                    if (!nextFileExists && !nextModuleExists) break;
+                    if (nextModuleExists && fileMatcher.start() > moduleMatcher.start()) break;
                 }
-                else {
-                    end = expectedText.length();
-                }
-                String fileText = preserveLocations ?
-                                  substringKeepingLocations(expectedText, start, end) :
-                                  expectedText.substring(start,end);
-
-
-                String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
-                testFiles.add(factory.createFile(module, fileName, fileText,
-                                                 parseDirectivesPerFile ?
-                                                 parseDirectives(expectedText1)
-                                                                        : allFilesOrCommonPrefixDirectives));
-                processedChars = end;
-                firstFileProcessed = true;
-                if (!nextFileExists) break;
+                if (!nextModuleExists) break;
             }
             assert processedChars == expectedText.length() : "Characters skipped from " +
                                                              processedChars +

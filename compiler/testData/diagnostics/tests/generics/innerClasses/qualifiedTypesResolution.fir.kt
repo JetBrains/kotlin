@@ -42,7 +42,7 @@ fun errorTypeWithArguments(): <!UNRESOLVED_REFERENCE!>Q<A>.W<B, C, D>.R.M<!> = n
 
 fun error1(): Outer<A>.Inner<B>.Inner3<C, D> = null!!
 fun error2(): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<A>.Inner<B, C, D>.Inner2<!> = null!!
-fun error3(): Outer.Inner<A, B>.Inner3<C> = null!!
+fun error3(): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer.Inner<A, B>.Inner3<C><!> = null!!
 
 fun error4(): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<A>.Nested<B>.Inner4<C><!> = null!!
 fun error5(): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer<A>.Obj.Nested2<B>.Inner5<C><!> = null!!

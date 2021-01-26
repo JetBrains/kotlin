@@ -1,6 +1,7 @@
 // !JVM_DEFAULT_MODE: disable
 // JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
+// WITH_RUNTIME
 // FILE: Base.java
 
 public interface Base {
@@ -11,7 +12,6 @@ public interface Base {
 
 
 // FILE: main.kt
-// WITH_RUNTIME
 
 interface LeftBase : Base
 interface Right : Base {

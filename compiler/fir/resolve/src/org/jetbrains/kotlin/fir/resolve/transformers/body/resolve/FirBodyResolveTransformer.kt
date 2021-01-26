@@ -51,6 +51,7 @@ open class FirBodyResolveTransformer(
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
         context.cleanContextForAnonymousFunction()
+        context.towerDataContextForCallableReferences.clear()
         context.cleanDataFlowContext()
         @OptIn(PrivateForInline::class)
         context.file = file
@@ -250,6 +251,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformDeclarationStatus(declarationStatus, data)
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        return declarationsTransformer.transformEnumEntry(enumEntry, data)
+    }
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         return declarationsTransformer.transformProperty(property, data)
     }
@@ -336,6 +341,13 @@ open class FirBodyResolveTransformer(
 
     override fun <E : FirTargetElement> transformJump(jump: FirJump<E>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return controlFlowStatementsTransformer.transformJump(jump, data)
+    }
+
+    override fun transformReturnExpression(
+        returnExpression: FirReturnExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return controlFlowStatementsTransformer.transformReturnExpression(returnExpression, data)
     }
 
     override fun transformThrowExpression(

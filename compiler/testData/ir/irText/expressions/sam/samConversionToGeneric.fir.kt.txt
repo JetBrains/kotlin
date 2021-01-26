@@ -6,14 +6,14 @@ fun test1(): J<String?> {
 }
 
 fun test2(): J<String?> {
-  return local fun <anonymous>(x: String): String {
+  return local fun <anonymous>(x: String): String? {
     return x
   }
  /*-> J<String?> */
 }
 
 fun test3() {
-  return bar<String?>(j = local fun <anonymous>(x: String): String {
+  return bar<String?>(j = local fun <anonymous>(x: String): String? {
     return x
   }
  /*-> J<X?>? */)

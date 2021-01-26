@@ -256,6 +256,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
     fun getGeometricMean(metricName: String, featureValue: String = "",
                          buildNumbers: Iterable<String>? = null, normalize: Boolean = false,
                          excludeNames: List<String> = emptyList()): Promise<List<Pair<String, List<Double?>>>> {
+
         // Filter only with metric or also with names.
         val filterBenchmarks = if (excludeNames.isEmpty())
             """
@@ -264,7 +265,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
         else """
             "bool": { 
                 "must": { "match": { "benchmarks.metric": "$metricName" } },
-                "must_not": { "terms" : { "benchmarks.name" : [${excludeNames.map { "\"$it\"" }.joinToString()}] } }
+                "must_not": [ ${excludeNames.map { """{ "match_phrase" : { "benchmarks.name" : "$it" } }"""}.joinToString() } ]
             }
         """.trimIndent()
         val queryDescription = """

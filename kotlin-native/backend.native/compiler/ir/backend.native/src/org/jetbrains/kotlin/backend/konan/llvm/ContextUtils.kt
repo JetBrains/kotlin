@@ -546,6 +546,10 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_createContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_resumeContinuation by lazyRtFunction
 
+    val Kotlin_mm_safePointFunctionEpilogue by lazyRtFunction
+    val Kotlin_mm_safePointWhileLoopBody by lazyRtFunction
+    val Kotlin_mm_safePointExceptionUnwind by lazyRtFunction
+
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32,

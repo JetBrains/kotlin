@@ -39,7 +39,7 @@ internal class FirErrorFunctionImpl(
     override val symbol: FirErrorFunctionSymbol,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirErrorFunction() {
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val body: FirBlock? get() = null

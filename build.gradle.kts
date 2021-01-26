@@ -426,7 +426,7 @@ allprojects {
         jcenter()
         maven(protobufRepo)
         maven(intellijRepo)
-        maven("https://kotlin.bintray.com/kotlin-dependencies")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
         bootstrapKotlinRepo?.let(::maven)
@@ -466,11 +466,12 @@ allprojects {
 
             if (useJvmFir) {
                 freeCompilerArgs += "-Xuse-fir"
+                freeCompilerArgs += "-Xabi-stability=stable"
             }
         }
     }
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && !kotlinBuildProperties.useFir) {
         // For compiler and stdlib, allWarningsAsErrors is configured in the corresponding "root" projects
         // (compiler/build.gradle.kts and libraries/commonConfiguration.gradle).
         val projectsWithWarningsAsErrors = listOf("core", "plugins").map { File(it).absoluteFile }
@@ -503,7 +504,7 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { !isTestDistributionEnabled() }
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
     }
 
     normalization {

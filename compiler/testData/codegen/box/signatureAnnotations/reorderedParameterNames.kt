@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
+// ANDROID_ANNOTATIONS
 
 // FILE: A.java
-// ANDROID_ANNOTATIONS
 
 import kotlin.annotations.jvm.internal.*;
 

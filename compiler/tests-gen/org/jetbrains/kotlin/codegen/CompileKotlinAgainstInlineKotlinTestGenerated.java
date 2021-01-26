@@ -102,6 +102,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/anonymousObject/changingReturnType.kt");
         }
 
+        @TestMetadata("constructOriginalInRegenerated.kt")
+        public void testConstructOriginalInRegenerated() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/constructOriginalInRegenerated.kt");
+        }
+
         @TestMetadata("constructorVisibility.kt")
         public void testConstructorVisibility() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/constructorVisibility.kt");
@@ -1097,6 +1102,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("forEachLine.kt")
         public void testForEachLine() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complex/forEachLine.kt");
+        }
+
+        @TestMetadata("kt44429.kt")
+        public void testKt44429() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complex/kt44429.kt");
         }
 
         @TestMetadata("lambdaInLambda.kt")
@@ -3544,6 +3554,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("defaultFunctionWithInlineCall.kt")
         public void testDefaultFunctionWithInlineCall() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunctionWithInlineCall.kt");
+        }
+
+        @TestMetadata("forInline.kt")
+        public void testForInline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/forInline.kt");
         }
 
         @TestMetadata("interleavedFiles.kt")

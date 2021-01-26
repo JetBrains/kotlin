@@ -52,7 +52,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
                 property.source?.let {
-                    reporter.report(it, FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS)
+                    reporter.report(FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(it, property, containingDeclaration))
                     return
                 }
             }
@@ -60,21 +60,21 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             if (property.delegate != null) {
                 property.delegate!!.source?.let {
                     if (containingDeclaration.isInterface) {
-                        reporter.report(FirErrors.DELEGATED_PROPERTY_IN_INTERFACE.on(it, property.delegate!!))
+                        reporter.report(it, FirErrors.DELEGATED_PROPERTY_IN_INTERFACE)
                     } else {
-                        reporter.report(FirErrors.ABSTRACT_DELEGATED_PROPERTY.on(it, property.delegate!!))
+                        reporter.report(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY)
                     }
                 }
             }
 
             checkAccessor(property.getter, property.delegate) { src, symbol ->
-                reporter.report(FirErrors.ABSTRACT_PROPERTY_WITH_GETTER.on(src, symbol))
+                reporter.report(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER)
             }
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.report(FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY.on(src, symbol))
+                    reporter.report(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
                 } else {
-                    reporter.report(FirErrors.ABSTRACT_PROPERTY_WITH_SETTER.on(src, symbol))
+                    reporter.report(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER)
                 }
             }
         }
@@ -96,7 +96,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
         if (isOpen) {
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.report(FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY.on(src, symbol))
+                    reporter.report(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
                 }
             }
         }
@@ -110,15 +110,15 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
     ) {
         property.initializer?.source?.let {
             if (propertyIsAbstract) {
-                reporter.report(FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER.on(it, property.initializer!!))
+                reporter.report(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER)
             } else if (containingDeclaration.isInterface) {
-                reporter.report(FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE.on(it, property.initializer!!))
+                reporter.report(it, FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE)
             }
         }
         if (propertyIsAbstract) {
             if (property.initializer == null && property.delegate == null && property.returnTypeRef is FirImplicitTypeRef) {
                 property.source?.let {
-                    reporter.report(FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(it, property.symbol))
+                    reporter.report(it, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER)
                 }
             }
         }

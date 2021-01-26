@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContextsForClassParts
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataElement
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.sure
 
@@ -52,9 +54,12 @@ class BodyResolveContext(
     var containers: PersistentList<FirDeclaration> = persistentListOf()
 
     val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
 
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
+
+    val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
@@ -81,6 +86,9 @@ class BodyResolveContext(
 
     fun getTowerDataContextForStaticNestedClassesUnsafe(): FirTowerDataContext =
         firTowerDataContextsForClassParts().forNestedClasses
+
+    fun getTowerDataContextForCompanionUnsafe(): FirTowerDataContext =
+        firTowerDataContextsForClassParts().forCompanionObject
 
     fun getTowerDataContextForConstructorResolution(): FirTowerDataContext =
         firTowerDataContextsForClassParts().forConstructorHeaders
@@ -119,6 +127,16 @@ class BodyResolveContext(
             l()
         } finally {
             towerDataContext = initialContext
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withLambdaBeingAnalyzedInDependentContext(lambda: FirAnonymousFunctionSymbol, l: () -> R): R {
+        anonymousFunctionsAnalyzedInDependentContext.add(lambda)
+        return try {
+            l()
+        } finally {
+            anonymousFunctionsAnalyzedInDependentContext.remove(lambda)
         }
     }
 
@@ -184,7 +202,9 @@ class BodyResolveContext(
     ): BodyResolveContext = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
         file = this@BodyResolveContext.file
         towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
+        towerDataContextForCallableReferences.putAll(this@BodyResolveContext.towerDataContextForCallableReferences)
         containers = this@BodyResolveContext.containers
         towerDataContext = this@BodyResolveContext.towerDataContext
+        anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
     }
 }

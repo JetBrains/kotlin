@@ -20,28 +20,36 @@ abstract class SimpleDirectivesContainer : DirectivesContainer() {
 
     override operator fun get(name: String): Directive? = registeredDirectives[name]
 
-    protected fun directive(description: String): DirectiveDelegateProvider<SimpleDirective> {
-        return DirectiveDelegateProvider { SimpleDirective(it, description) }
+    protected fun directive(
+        description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global
+    ): DirectiveDelegateProvider<SimpleDirective> {
+        return DirectiveDelegateProvider { SimpleDirective(it, description, applicability) }
     }
 
-    protected fun stringDirective(description: String): DirectiveDelegateProvider<StringDirective> {
-        return DirectiveDelegateProvider { StringDirective(it, description) }
+    protected fun stringDirective(
+        description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global
+    ): DirectiveDelegateProvider<StringDirective> {
+        return DirectiveDelegateProvider { StringDirective(it, description, applicability) }
     }
 
     protected inline fun <reified T : Enum<T>> enumDirective(
         description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global,
         noinline additionalParser: ((String) -> T?)? = null
     ): DirectiveDelegateProvider<ValueDirective<T>> {
         val possibleValues = enumValues<T>()
         val parser: (String) -> T? = { value -> possibleValues.firstOrNull { it.name == value } ?: additionalParser?.invoke(value) }
-        return DirectiveDelegateProvider { ValueDirective(it, description, parser) }
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser) }
     }
 
     protected fun <T : Any> valueDirective(
         description: String,
+        applicability: DirectiveApplicability = DirectiveApplicability.Global,
         parser: (String) -> T?
     ): DirectiveDelegateProvider<ValueDirective<T>> {
-        return DirectiveDelegateProvider { ValueDirective(it, description, parser) }
+        return DirectiveDelegateProvider { ValueDirective(it, description, applicability, parser) }
     }
 
     protected fun registerDirective(directive: Directive) {

@@ -8,6 +8,9 @@ namespace kotlin {
 #if KONAN_WINDOWS
 // TODO: Figure out why creating many threads on windows is so slow.
 constexpr int kDefaultThreadCount = 10;
+#elif __has_feature(thread_sanitizer)
+// TSAN has a huge overhead.
+constexpr int kDefaultThreadCount = 10;
 #else
 constexpr int kDefaultThreadCount = 100;
 #endif

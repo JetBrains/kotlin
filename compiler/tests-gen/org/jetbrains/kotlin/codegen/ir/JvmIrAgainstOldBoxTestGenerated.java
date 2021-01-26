@@ -165,6 +165,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
     }
 
+    @TestMetadata("inlineClassInlineFunctionCall.kt")
+    public void testInlineClassInlineFunctionCall() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineFunctionCall.kt");
+    }
+
     @TestMetadata("inlineClassInlineProperty.kt")
     public void testInlineClassInlineProperty() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineProperty.kt");

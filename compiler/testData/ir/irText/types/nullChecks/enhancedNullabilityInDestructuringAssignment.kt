@@ -1,5 +1,5 @@
-// FILE: enhancedNullabilityInDestructuringAssignment.kt
 // WITH_RUNTIME
+// FILE: enhancedNullabilityInDestructuringAssignment.kt
 
 fun use(x: Any, y: Any) {}
 

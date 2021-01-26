@@ -1,12 +1,12 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: JVM, JS_IR
+// IGNORE_LIGHT_ANALYSIS
+// LANGUAGE: +SuspendFunctionsInFunInterfaces, +JvmIrEnabledByDefault
 
 import helpers.*
 import kotlin.coroutines.*
 
-@Suppress("FUN_INTERFACE_WITH_SUSPEND_FUNCTION")
 fun interface Action {
     suspend fun run()
 }

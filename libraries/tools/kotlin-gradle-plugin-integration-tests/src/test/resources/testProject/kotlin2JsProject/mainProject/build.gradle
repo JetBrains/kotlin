@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    compile project(":libraryProject")
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    implementation project(":libraryProject")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 }
 
 compileKotlin2Js.kotlinOptions.sourceMap = true
