@@ -17238,6 +17238,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/platformTypes/override.kt");
             }
 
+            @TestMetadata("propagateFlexibilityFromOtherConstraints.kt")
+            public void testPropagateFlexibilityFromOtherConstraints() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/platformTypes/propagateFlexibilityFromOtherConstraints.kt");
+            }
+
             @TestMetadata("rawOverrides.kt")
             public void testRawOverrides() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/rawOverrides.kt");

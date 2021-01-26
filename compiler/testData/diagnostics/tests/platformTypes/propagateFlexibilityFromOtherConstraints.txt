@@ -1,0 +1,26 @@
+package
+
+public fun </*0*/ A> comboBox(/*0*/ model: SortedComboBoxModel<A>, /*1*/ graphProperty: GraphProperty<A>): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public abstract class DataView {
+    public constructor DataView()
+    public abstract val presentationName: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class GraphProperty</*0*/ B> {
+    public constructor GraphProperty</*0*/ B>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SortedComboBoxModel</*0*/ C : kotlin.Any!> {
+    public constructor SortedComboBoxModel</*0*/ C : kotlin.Any!>(/*0*/ comparator: java.util.Comparator<in C!>!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
