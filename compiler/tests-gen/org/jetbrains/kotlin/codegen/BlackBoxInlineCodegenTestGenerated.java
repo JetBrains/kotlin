@@ -3128,6 +3128,16 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/reified/kt18977.kt");
         }
 
+        @TestMetadata("kt35511.kt")
+        public void testKt35511() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt35511.kt");
+        }
+
+        @TestMetadata("kt35511_try.kt")
+        public void testKt35511_try() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt35511_try.kt");
+        }
+
         @TestMetadata("kt6988.kt")
         public void testKt6988() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt6988.kt");

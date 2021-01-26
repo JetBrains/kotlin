@@ -28,7 +28,8 @@ import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 class RedundantCheckCastEliminationMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         val insns = methodNode.instructions.toArray()
-        if (!insns.any { it.opcode == Opcodes.CHECKCAST }) return
+        if (!insns.any { it.opcode == Opcodes.CHECKCAST}) return
+        if (insns.any { ReifiedTypeInliner.isOperationReifiedMarker(it) }) return
 
         val redundantCheckCasts = ArrayList<TypeInsnNode>()
 
@@ -36,7 +37,6 @@ class RedundantCheckCastEliminationMethodTransformer : MethodTransformer() {
         for (i in insns.indices) {
             val valueType = frames[i]?.top()?.type ?: continue
             val insn = insns[i]
-            if (ReifiedTypeInliner.isOperationReifiedMarker(insn.previous)) continue
 
             if (insn is TypeInsnNode) {
                 val insnType = Type.getObjectType(insn.desc)
