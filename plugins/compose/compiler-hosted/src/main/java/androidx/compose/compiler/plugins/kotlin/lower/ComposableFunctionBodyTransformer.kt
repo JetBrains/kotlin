@@ -653,10 +653,14 @@ class ComposableFunctionBodyTransformer(
 
     private val collectSourceInformation = sourceInformationEnabled
 
-    override fun visitClass(declaration: IrClass): IrStatement =
-        inScope(Scope.ClassScope(declaration.name)) {
+    override fun visitClass(declaration: IrClass): IrStatement {
+        if (declaration.isComposableSingletonClass()) {
+            return declaration
+        }
+        return inScope(Scope.ClassScope(declaration.name)) {
             super.visitDeclaration(declaration)
         }
+    }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val scope = Scope.FunctionScope(declaration, this)
@@ -2521,6 +2525,23 @@ class ComposableFunctionBodyTransformer(
                 }
                 recordSourceParameter(expression, 3, composableLambdaScope)
                 return expression
+            }
+            expression.isComposableSingletonGetter() -> {
+                // This looks like `ComposableSingletonClass.lambda-123`, which is a static/saved
+                // call of composableLambdaInstance. We want to pass
+                // locations on the top level of the lambda as the startRestartGroup is in the
+                // composable lambda wrapper.
+                val getter = expression.symbol.owner
+                val property = getter.correspondingPropertySymbol?.owner
+                val fieldInitializer = property?.backingField?.initializer?.expression
+                val composableLambdaInstanceCall = fieldInitializer as IrCall
+                val composableLambdaScope = withScope(Scope.ComposableLambdaScope()) {
+                    property.transformChildrenVoid()
+                }
+                if (collectSourceInformation) {
+                    recordSourceParameter(composableLambdaInstanceCall, 2, composableLambdaScope)
+                }
+                return super.visitCall(expression)
             }
             else -> return super.visitCall(expression)
         }

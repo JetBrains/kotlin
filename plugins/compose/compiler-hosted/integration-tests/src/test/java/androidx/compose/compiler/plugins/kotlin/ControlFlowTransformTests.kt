@@ -2311,18 +2311,21 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<W>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                W(composableLambda(%composer, <>, true, "C<A()>:Test.kt") { %composer: Composer?, %changed: Int ->
-                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    A(%composer, 0)
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                }, %composer, 0b0110)
+                W(ComposableSingletons%TestKt.lambda-1, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
+              }
+            }
+            internal class ComposableSingletons%TestKt {
+              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A()>:Test.kt") { %composer: Composer?, %changed: Int ->
+                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  A(%composer, 0)
+                } else {
+                  %composer.skipToGroupEnd()
+                }
               }
             }
         """
@@ -2382,27 +2385,30 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<Wrap>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                Wrap(composableLambda(%composer, <>, true, "C<effect>:Test.kt") { %composer: Composer?, %changed: Int ->
-                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    %composer.startReplaceableGroup(<>, "*<effect>")
-                    repeat(number) { it: Int ->
-                      effects[it] = effect({
-                        0
-                      }, %composer, 0)
-                    }
-                    %composer.endReplaceableGroup()
-                    outside = effect({
-                      "0"
-                    }, %composer, 0)
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                }, %composer, 0b0110)
+                Wrap(ComposableSingletons%TestKt.lambda-1, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
+              }
+            }
+            internal class ComposableSingletons%TestKt {
+              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<effect>:Test.kt") { %composer: Composer?, %changed: Int ->
+                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  %composer.startReplaceableGroup(<>, "*<effect>")
+                  repeat(number) { it: Int ->
+                    effects[it] = effect({
+                      0
+                    }, %composer, 0)
+                  }
+                  %composer.endReplaceableGroup()
+                  outside = effect({
+                    "0"
+                  }, %composer, 0)
+                } else {
+                  %composer.skipToGroupEnd()
+                }
               }
             }
         """,
@@ -3158,32 +3164,35 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<W>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                W(composableLambda(%composer, <>, true, "C<IW>:Test.kt") { %composer: Composer?, %changed: Int ->
-                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    IW({ %composer: Composer?, %changed: Int ->
-                      %composer.startReplaceableGroup(<>, "C<T(2)>,<T(4)>:Test.kt")
-                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
-                        T(2, %composer, 0b0110)
-                        %composer.startReplaceableGroup(<>, "*<T(3)>")
-                        repeat(3) { it: Int ->
-                          T(3, %composer, 0b0110)
-                        }
-                        %composer.endReplaceableGroup()
-                        T(4, %composer, 0b0110)
-                      } else {
-                        %composer.skipToGroupEnd()
-                      }
-                      %composer.endReplaceableGroup()
-                    }, %composer, 0)
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                }, %composer, 0b0110)
+                W(ComposableSingletons%TestKt.lambda-1, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(%composer, %changed or 0b0001)
+              }
+            }
+            internal class ComposableSingletons%TestKt {
+              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<IW>:Test.kt") { %composer: Composer?, %changed: Int ->
+                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  IW({ %composer: Composer?, %changed: Int ->
+                    %composer.startReplaceableGroup(<>, "C<T(2)>,<T(4)>:Test.kt")
+                    if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      T(2, %composer, 0b0110)
+                      %composer.startReplaceableGroup(<>, "*<T(3)>")
+                      repeat(3) { it: Int ->
+                        T(3, %composer, 0b0110)
+                      }
+                      %composer.endReplaceableGroup()
+                      T(4, %composer, 0b0110)
+                    } else {
+                      %composer.skipToGroupEnd()
+                    }
+                    %composer.endReplaceableGroup()
+                  }, %composer, 0)
+                } else {
+                  %composer.skipToGroupEnd()
+                }
               }
             }
         """

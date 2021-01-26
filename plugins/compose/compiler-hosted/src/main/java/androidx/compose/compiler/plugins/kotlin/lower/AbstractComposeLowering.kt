@@ -331,6 +331,14 @@ abstract class AbstractComposeLowering(
         return context.irTrace[ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL, this] == true
     }
 
+    fun IrCall.isComposableSingletonGetter(): Boolean {
+        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true
+    }
+
+    fun IrClass.isComposableSingletonClass(): Boolean {
+        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON_CLASS, this] == true
+    }
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrFunction.isInlinedLambda(): Boolean {
         descriptor.findPsi()?.let { psi ->
