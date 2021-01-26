@@ -12052,6 +12052,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/ExtensionAlias.kt");
         }
 
+        @TestMetadata("FakeOverrideBuilder.kt")
+        public void testFakeOverrideBuilder() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/FakeOverrideBuilder.kt");
+        }
+
         @TestMetadata("IrBuiltIns.kt")
         public void testIrBuiltIns() throws Exception {
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");

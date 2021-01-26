@@ -13713,6 +13713,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("FakeOverrideBuilder.kt")
+        public void testFakeOverrideBuilder() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/FakeOverrideBuilder.kt");
+        }
+
+        @Test
         @TestMetadata("IrBuiltIns.kt")
         public void testIrBuiltIns() throws Exception {
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");
