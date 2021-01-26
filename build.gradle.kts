@@ -333,8 +333,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-testng",
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-    ":kotlin-reflect",
-    ":kotlin-coroutines-experimental-compat"
+    ":kotlin-reflect"
 )
 
 val gradlePluginProjects = listOf(
@@ -944,8 +943,7 @@ tasks {
                 ":kotlin-reflect:publish",
                 ":kotlin-main-kts:publish",
                 ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish",
-                ":kotlin-coroutines-experimental-compat:publish"
+                ":kotlin-test:kotlin-test-js:publish"
             )
         }
     }
