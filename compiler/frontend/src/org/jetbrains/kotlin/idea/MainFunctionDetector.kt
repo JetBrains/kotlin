@@ -137,6 +137,7 @@ class MainFunctionDetector {
             assert(DescriptorUtils.isTopLevelDeclaration(descriptor)) { "main without parameters works only for top-level" }
             val containingFile = DescriptorToSourceUtils.getContainingFile(descriptor)
             // We do not support parameterless entry points having JvmName("name") but different real names
+            // See more at https://github.com/Kotlin/KEEP/blob/master/proposals/enhancing-main-convention.md#parameterless-main
             if (descriptor.name.asString() != "main") return false
             if (containingFile?.declarations?.any { declaration -> isMainWithParameter(declaration, checkJvmStaticAnnotation) } == true) {
                 return false
