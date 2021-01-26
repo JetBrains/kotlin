@@ -20214,6 +20214,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("propagateFlexibilityFromOtherConstraints.kt")
+            public void testPropagateFlexibilityFromOtherConstraints() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/platformTypes/propagateFlexibilityFromOtherConstraints.kt");
+            }
+
+            @Test
             @TestMetadata("rawOverrides.kt")
             public void testRawOverrides() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/rawOverrides.kt");
