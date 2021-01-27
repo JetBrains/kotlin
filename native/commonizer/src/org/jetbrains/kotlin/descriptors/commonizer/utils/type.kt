@@ -66,7 +66,7 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
         val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
         append(abbreviation.declarationDescriptor.classId!!.asString())
 
-        val arguments = type.arguments
+        val arguments = abbreviation.arguments
         if (arguments.isNotEmpty()) {
             append("<")
             arguments.forEachIndexed { index, argument ->
