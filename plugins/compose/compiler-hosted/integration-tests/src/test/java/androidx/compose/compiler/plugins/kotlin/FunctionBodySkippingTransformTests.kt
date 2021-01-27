@@ -2567,16 +2567,16 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
     fun testStaticAndNonStaticDefaultValueSkipping(): Unit = comparisonPropagation(
         """
-            import androidx.compose.runtime.ambientOf
+            import androidx.compose.runtime.compositionLocalOf
 
-            val AmbientColor = ambientOf { 123 }
+            val LocalColor = compositionLocalOf { 123 }
             @Composable fun A(a: Int) {}
         """,
         """
             @Composable
             fun Example(
                 wontChange: Int = 123,
-                mightChange: Int = AmbientColor.current
+                mightChange: Int = LocalColor.current
             ) {
                 A(wontChange)
                 A(mightChange)
@@ -2604,7 +2604,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                     wontChange = 123
                   }
                   if (%default and 0b0010 !== 0) {
-                    mightChange = AmbientColor.current
+                    mightChange = LocalColor.current
                     %dirty = %dirty and 0b01110000.inv()
                   }
                   %composer.endDefaults()

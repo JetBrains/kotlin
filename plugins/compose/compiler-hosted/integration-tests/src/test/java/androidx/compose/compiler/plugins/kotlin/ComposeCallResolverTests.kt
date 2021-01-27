@@ -144,7 +144,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
             import androidx.compose.runtime.*
 
-            val x = Ambient.of<Int> { 123 }
+            val x = CompositionLocal.of<Int> { 123 }
 
             @Composable
             fun test() {
@@ -180,14 +180,14 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
             class Density
 
-            val DensityAmbient = Ambient.of<Density>()
+            val DensityCompositionLocal = CompositionLocal.of<Density>()
 
             @Composable
-            fun ambientDensity() = ambient(DensityAmbient)
+            fun compositionLocalDensity() = compositionLocal(LocalDensity)
 
             @Composable
             fun WithDensity(block: @Composable DensityScope.() -> Unit) {
-                DensityScope(ambientDensity()).<call>block()
+                DensityScope(compositionLocalDensity()).<call>block()
             }
         """
     )
