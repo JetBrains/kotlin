@@ -24,8 +24,8 @@ KtFirFunctionSymbol:
 
 KtFirFunctionSymbol:
   annotatedType: [] kotlin/collections/List<T>
-  annotationClassIds: []
-  annotations: []
+  annotationClassIds: [kotlin/internal/InlineOnly]
+  annotations: [kotlin/internal/InlineOnly()]
   callableIdIfNonLocal: kotlin.collections.listOf
   dispatchType: null
   isExtension: false
