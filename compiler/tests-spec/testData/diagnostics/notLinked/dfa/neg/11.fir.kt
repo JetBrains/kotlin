@@ -26,7 +26,7 @@ fun case_3() {
     if (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!> is Boolean) {
         funWithAnyArg(try { x = null; true } catch (e: Exception) { false })
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
     }
 }
 
@@ -36,7 +36,7 @@ fun case_4() {
     if (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!> != null) {
         false || when { else -> {x = null; true} }
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
     }
 }
 
@@ -58,7 +58,7 @@ fun case_6() {
     x as Boolean
     if (if (true) { x = null; true } else { false }) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
     }
 }
 
@@ -69,5 +69,5 @@ fun case_7() {
     if (if (true) { x = null; true } else { false }) {}
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }

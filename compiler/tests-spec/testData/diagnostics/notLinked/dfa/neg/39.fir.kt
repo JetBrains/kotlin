@@ -13,7 +13,7 @@ fun case_1() {
         println(x ?: break)
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!UNSAFE_CALL!>length<!>
 }
 
 /*
@@ -27,7 +27,7 @@ fun case_2(y: MutableList<Int>) {
         y[x ?: break] = 10
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 /*
@@ -41,7 +41,7 @@ fun case_3(y: MutableList<Int>) {
         y[0] = x ?: break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 // TESTCASE NUMBER: 4
@@ -51,7 +51,7 @@ fun case_4() {
         x ?: break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 // TESTCASE NUMBER: 5
@@ -61,7 +61,7 @@ fun case_5(y: Boolean) {
         y && (x ?: break)
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 6
@@ -71,7 +71,7 @@ fun case_6(y: Boolean) {
         y || (x ?: break)
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 7
@@ -81,7 +81,7 @@ fun case_7(y: Boolean?) {
         y ?: x ?: break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 /*
@@ -96,7 +96,7 @@ fun case_8() {
         y += x ?: break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 /*
@@ -111,7 +111,7 @@ fun case_9() {
         y -= x ?: break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 /*
@@ -126,7 +126,7 @@ fun case_10() {
         val z = y - (x ?: break)
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 /*
@@ -141,7 +141,7 @@ fun case_11() {
         val z = y * (x ?: break)
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 // TESTCASE NUMBER: 12
@@ -152,7 +152,7 @@ fun case_12() {
         y += if (x == null) break else 10
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 // TESTCASE NUMBER: 13

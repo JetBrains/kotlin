@@ -13,7 +13,7 @@ fun case_1() {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
         x++
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
     }
 }
 
@@ -28,7 +28,7 @@ fun case_2() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
     x--
     <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 /*
@@ -42,7 +42,7 @@ fun case_3() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
     --x
     <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 /*
@@ -56,7 +56,7 @@ fun case_4() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
     ++x
     <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 5
@@ -66,7 +66,7 @@ fun case_5() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
     x = x + x
     <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 6
@@ -76,7 +76,7 @@ fun case_6() {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
         x = x - x
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
     }
 }
 
@@ -91,7 +91,7 @@ fun case_7() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
     x += x
     <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 /*
@@ -105,5 +105,5 @@ fun case_8() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
     x -= x
     <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }

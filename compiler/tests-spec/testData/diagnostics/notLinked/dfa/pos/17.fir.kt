@@ -49,13 +49,13 @@ fun case_4(x: Number?) {
 fun case_5(x: Char?, y: Nothing?) {
     if (x != y) else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char?")!>x<!>.funNullableAny()
 }
@@ -64,13 +64,13 @@ fun case_5(x: Char?, y: Nothing?) {
 fun case_6(x: Object?) {
     if (x !== implicitNullableNothingProperty) else { throw Exception() }
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("Object?")!>x<!>.funNullableAny()
 }
@@ -79,13 +79,13 @@ fun case_6(x: Object?) {
 fun case_7(x: Class?) {
     if (x === implicitNullableNothingProperty || false || false || false) { throw Exception() }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.funNullableAny()
 }
@@ -94,7 +94,7 @@ fun case_7(x: Class?) {
 fun case_8(x: Int?) {
     if (false || false || false || x == nullableNothingProperty) throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 // TESTCASE NUMBER: 9
@@ -103,11 +103,11 @@ fun case_9(x: String?) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.equals(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.funNullableAny()
 }
@@ -191,13 +191,13 @@ fun case_14(x: MutableCollection<in Number>?) {
 fun case_15(x: MutableCollection<out Nothing?>?, y: Nothing?) {
     if (x != y) else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableCollection<out kotlin.Nothing?>?")!>x<!>.funNullableAny()
 }
@@ -206,13 +206,13 @@ fun case_15(x: MutableCollection<out Nothing?>?, y: Nothing?) {
 fun case_16(x: Collection<Collection<Collection<Collection<Collection<Collection<Collection<*>>>>>>>?) {
     if (x !== implicitNullableNothingProperty) else { throw Exception() }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<kotlin.collections.Collection<*>>>>>>>?")!>x<!>.funNullableAny()
 }
@@ -221,13 +221,13 @@ fun case_16(x: Collection<Collection<Collection<Collection<Collection<Collection
 fun case_17(x: MutableMap<*, *>?) {
     if (x === implicitNullableNothingProperty || false) { throw Exception() }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<*, *>?")!>x<!>.funNullableAny()
 }
@@ -236,13 +236,13 @@ fun case_17(x: MutableMap<*, *>?) {
 fun case_18(x: MutableMap<out Number, in Number>?) {
     if (false || false || false || x == nullableNothingProperty) throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableMap<out kotlin.Number, in kotlin.Number>?")!>x<!>.funNullableAny()
 }
@@ -318,13 +318,13 @@ fun <T> case_23(x: Inv<in T>?) {
 fun <T> case_24(x: Inv<out T?>?, y: Nothing?) {
     if (x !== y && true) else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.funNullableAny()
 }
@@ -333,13 +333,13 @@ fun <T> case_24(x: Inv<out T?>?, y: Nothing?) {
 fun <T> case_25(x: Inv<out T?>?, y: Nothing?) {
     if (x !== y) else try { throw Exception() } finally { throw Exception() }
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.propT
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.propNullableT
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.propNullableAny
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.funT()
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.funNullableT()
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T?>?")!>x<!>.funNullableAny()
 }

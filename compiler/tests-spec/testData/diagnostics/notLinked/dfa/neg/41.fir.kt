@@ -38,11 +38,11 @@ inline fun <reified T> case_3(x: Any?) {
         is T? -> return
         else -> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -51,11 +51,11 @@ inline fun <reified T> case_4(x: Any?) {
         is T -> return
         else -> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 5
@@ -72,7 +72,7 @@ inline fun <reified T> case_5(x: Any?) {
 inline fun <reified T> case_6(x: Any?) {
     if (x is T?) return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 7

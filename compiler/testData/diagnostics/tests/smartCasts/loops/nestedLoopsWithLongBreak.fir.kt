@@ -13,7 +13,7 @@ public fun foo(p: String?, r: String?, q: String?): Int {
         if (!x(p)) break
     }
     // Long break allows r == null
-    r.<!INAPPLICABLE_CANDIDATE!>length<!>
+    r.<!UNSAFE_CALL!>length<!>
     // Smart cast is possible
     q.length
     return p.length

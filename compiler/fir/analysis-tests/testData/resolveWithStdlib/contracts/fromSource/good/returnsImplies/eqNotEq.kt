@@ -21,7 +21,7 @@ fun test_1(x: String?) {
     if (checkNotNull(x)) {
         x.length // OK
     } else {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!> // Error
+        x.<!INAPPLICABLE_CANDIDATE{LT}, UNSAFE_CALL!>length<!> // Error
     }
 }
 

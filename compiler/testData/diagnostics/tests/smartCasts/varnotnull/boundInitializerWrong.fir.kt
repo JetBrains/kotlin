@@ -23,7 +23,7 @@ fun bar(s: String?) {
     val hashCode = ss?.hashCode()
     ss = null
     if (hashCode != null) {
-        ss.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        ss.<!UNSAFE_CALL!>hashCode<!>()
     }
 }
 
@@ -41,6 +41,6 @@ fun baz(arg: Some?) {
     val ss = arg?.s
     if (ss != null) {
         arg.hashCode()
-        arg.s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        arg.s.<!UNSAFE_CALL!>hashCode<!>()
     }
 }

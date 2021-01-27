@@ -6,5 +6,5 @@ fun <R> callIt(fn: () -> R): R = TODO()
 
 fun smartIt(p1: String?, p2: String?) {
     p1 ?: callIt { TODO() }
-    p1.<!INAPPLICABLE_CANDIDATE!>length<!> // smartcast
+    p1.<!UNSAFE_CALL!>length<!> // smartcast
 }

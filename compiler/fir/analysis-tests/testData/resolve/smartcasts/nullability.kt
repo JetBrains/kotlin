@@ -39,18 +39,18 @@ fun test_1(x: A?) {
     if (x != null) {
         x.foo()
     } else {
-        x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
+        x.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
     }
-    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
+    x.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
 }
 
 fun test_2(x: A?) {
     if (x == null) {
-        x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
+        x.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
     } else {
         x.foo()
     }
-    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!>
+    x.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
 }
 
 fun test_3(x: A?) {
@@ -67,8 +67,8 @@ fun test_5(q: Q?) {
     // `q.data` is a property that has an open getter, so we can NOT smartcast it to non-nullable MyData.
     if (q?.data?.s?.inc() != null) {
         q.data // good
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
+        q.data.<!UNSAFE_CALL!>s<!> // should be bad
+        q.data.<!UNSAFE_CALL!>s<!>.inc() // should be bad
     }
 }
 
@@ -76,15 +76,15 @@ fun test_6(q: Q?) {
     // `q.data` is a property that has an open getter, so we can NOT smartcast it to non-nullable MyData.
     q?.data?.s?.inc() ?: return
     q.data // good
-    q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-    q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
+    q.data.<!UNSAFE_CALL!>s<!> // should be bad
+    q.data.<!UNSAFE_CALL!>s<!>.inc() // should be bad
 }
 
 fun test_7(q: Q?) {
     if (q?.fdata()?.fs()?.inc() != null) {
         q.fdata() // good
-        q.fdata().<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>fs<!>()<!> // bad
-        q.fdata().<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>fs<!>()<!>.inc() // bad
+        q.fdata().<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>fs<!>()<!> // bad
+        q.fdata().<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>fs<!>()<!>.inc() // bad
     }
 }
 
@@ -98,44 +98,44 @@ fun test_9(a: Int, b: Int?) {
     if (a == b) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 
     if (a === b) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 
     if (b == a) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 
     if (b === a) {
         b.inc()
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 }
 
 fun test_10(a: Int?, b: Int?) {
     if (a == b) {
-        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+        b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 
     if (a === b) {
-        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+        b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 
     if (b == a) {
-        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+        b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 
     if (b === a) {
-        b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+        b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
     }
-    b.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>inc<!>()<!>
+    b.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>inc<!>()<!>
 }
 
 fun test_11(q: QImpl?, q2: QImpl) {
@@ -148,8 +148,8 @@ fun test_11(q: QImpl?, q2: QImpl) {
         // Smartcasting of `q.data` should have no effect on `q2.data`.
         // Issue: Smartcasting of QImpl.data affects all instances
         q2.data
-        q2.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q2.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
+        q2.data.<!UNSAFE_CALL!>s<!> // should be bad
+        q2.data.<!UNSAFE_CALL!>s<!>.inc() // should be bad
 
         if (q2.data != null) {
             q2.data.s
@@ -162,8 +162,8 @@ fun test_12(q: QImplWithCustomGetter?) {
     // `q.data` is a property that has an open getter, so we can NOT smartcast it to non-nullable MyData.
     if (q?.data?.s?.inc() != null) {
         q.data // good
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
+        q.data.<!UNSAFE_CALL!>s<!> // should be bad
+        q.data.<!UNSAFE_CALL!>s<!>.inc() // should be bad
     }
 }
 
@@ -171,7 +171,7 @@ fun test_13(q: QImplMutable?) {
     // `q.data` is a property that is mutable, so we can NOT smartcast it to non-nullable MyData.
     if (q?.data?.s?.inc() != null) {
         q.data // good
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!> // should be bad
-        q.data.<!INAPPLICABLE_CANDIDATE!>s<!>.inc() // should be bad
+        q.data.<!UNSAFE_CALL!>s<!> // should be bad
+        q.data.<!UNSAFE_CALL!>s<!>.inc() // should be bad
     }
 }

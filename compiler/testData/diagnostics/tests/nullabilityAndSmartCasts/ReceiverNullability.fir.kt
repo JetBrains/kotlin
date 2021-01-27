@@ -6,8 +6,8 @@ fun A.bar() {}
 fun A?.buzz() {}
 
 fun test(a : A?) {
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>() // error
-    a.<!INAPPLICABLE_CANDIDATE!>bar<!>() // error
+    a.<!UNSAFE_CALL!>foo<!>() // error
+    a.<!UNSAFE_CALL!>bar<!>() // error
     a.buzz()
 
     a?.foo()
@@ -30,12 +30,12 @@ fun A.test2() {
 }
 
 fun A?.test3() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>() // error
-    <!INAPPLICABLE_CANDIDATE!>bar<!>() // error
+    <!UNSAFE_CALL!>foo<!>() // error
+    <!UNSAFE_CALL!>bar<!>() // error
     buzz()
 
-    this.<!INAPPLICABLE_CANDIDATE!>foo<!>() // error
-    this.<!INAPPLICABLE_CANDIDATE!>bar<!>() // error
+    this.<!UNSAFE_CALL!>foo<!>() // error
+    this.<!UNSAFE_CALL!>bar<!>() // error
     this.buzz()
 
     this?.foo()

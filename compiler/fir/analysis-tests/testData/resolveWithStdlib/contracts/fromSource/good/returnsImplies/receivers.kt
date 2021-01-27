@@ -27,7 +27,7 @@ fun test_3(x: A?) {
     with(x) {
         myRequireNotNull()
     }
-    x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    x.<!INAPPLICABLE_CANDIDATE{LT}, UNSAFE_CALL!>foo<!>()
 }
 
 fun test_4(x: A?) {

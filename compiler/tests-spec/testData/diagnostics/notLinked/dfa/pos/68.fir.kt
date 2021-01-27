@@ -14,7 +14,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Any?) {
     (x as Nothing?)!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
 }
 
 // TESTCASE NUMBER: 3
@@ -29,7 +29,7 @@ fun case_3(x: Any?) {
 fun case_4(x: Any?) {
     if (x as Class? is Class) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>prop_1<!>
     }
 }
 
@@ -37,7 +37,7 @@ fun case_4(x: Any?) {
 fun case_5(x: Any?) {
     if (x as Nothing? is Nothing) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>inv<!>()
     }
 }
 
@@ -45,14 +45,14 @@ fun case_5(x: Any?) {
 fun case_6(x: Any?) {
     (x as String?)!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>length<!>
 }
 
 // TESTCASE NUMBER: 7
 fun case_7(x: Any?) {
     if (x as String? != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>length<!>
     }
 }
 
@@ -60,6 +60,6 @@ fun case_7(x: Any?) {
 fun case_8(x: Any?) {
     if (x as String? == null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>length<!>
     }
 }

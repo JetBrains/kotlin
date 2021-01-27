@@ -2,7 +2,7 @@
 fun foo() {
     var v: String? = "xyz"
     // It is possible in principle to provide smart cast here
-    v.<!INAPPLICABLE_CANDIDATE!>length<!>
+    v.<!UNSAFE_CALL!>length<!>
     v = null
-    v.<!INAPPLICABLE_CANDIDATE!>length<!>
+    v.<!UNSAFE_CALL!>length<!>
 }

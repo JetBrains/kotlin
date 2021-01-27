@@ -5,7 +5,7 @@ package e
 fun main() {
     val compareTo = 1
     val s: String? = null
-    s.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
+    s.<!UNSAFE_CALL!>compareTo<!>("")
 
     val bar = 2
     s.<!UNRESOLVED_REFERENCE!>bar<!>()

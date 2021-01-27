@@ -12,7 +12,7 @@ fun testJumpOutInElvis(x: Int?) {
         x.inc()
     }
 
-    x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    x.<!UNSAFE_CALL!>inc<!>()
 }
 
 fun testJumpOutInElvisLikeIf(x: Int?) {
@@ -24,7 +24,7 @@ fun testJumpOutInElvisLikeIf(x: Int?) {
         x.inc()
     }
 
-    x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    x.<!UNSAFE_CALL!>inc<!>()
 }
 
 
@@ -36,7 +36,7 @@ fun testJumpOutInIf(x: Int?) {
             0 -> "0"
             else -> "not 0"
         }
-        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        x.<!UNSAFE_CALL!>inc<!>()
     }
 
     x.inc() // Actually, safe, but it's OK if it's error

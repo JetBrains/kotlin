@@ -310,7 +310,7 @@ private fun checkApplicabilityForArgumentType(
     if (expectedType == null) return
     if (isReceiver && isDispatch) {
         if (!expectedType.isNullable && argumentType.isMarkedNullable) {
-            sink.reportDiagnostic(InapplicableWrongReceiver)
+            sink.reportDiagnostic(InapplicableWrongReceiverWithDetails(expectedType, argumentType))
         }
         return
     }
@@ -323,10 +323,10 @@ private fun checkApplicabilityForArgumentType(
         val nullableExpectedType = expectedType.withNullability(ConeNullability.NULLABLE, context.session.typeContext)
 
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
-            sink.reportDiagnostic(InapplicableWrongReceiver) // TODO
+            sink.reportDiagnostic(InapplicableWrongReceiverWithDetails(expectedType, argumentType)) // TODO
         } else {
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
-            sink.reportDiagnostic(InapplicableWrongReceiver)
+            sink.reportDiagnostic(InapplicableWrongReceiverWithDetails(expectedType, argumentType))
         }
     }
 }

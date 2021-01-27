@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -40,11 +41,13 @@ class ConeHiddenCandidateError(
 class ConeInapplicableCandidateError(
     val applicability: CandidateApplicability,
     val candidateSymbol: AbstractFirBasedSymbol<*>,
+    val diagnostics: List<ResolutionDiagnostic>,
     val errors: List<ConstraintSystemError>
 ) : ConeDiagnostic() {
     constructor(applicability: CandidateApplicability, candidate: Candidate) : this(
         applicability,
         candidate.symbol,
+        candidate.diagnostics,
         candidate.system.errors
     )
 

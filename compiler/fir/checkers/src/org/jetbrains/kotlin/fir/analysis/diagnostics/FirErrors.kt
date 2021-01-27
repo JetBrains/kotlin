@@ -177,9 +177,9 @@ object FirErrors {
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<FirSourceElement, KtDestructuringDeclaration>()
-    val COMPONENT_FUNCTION_MISSING by error2<FirSourceElement, PsiElement, Name, FirTypeRef>()
-    val COMPONENT_FUNCTION_AMBIGUITY by error2<FirSourceElement, PsiElement, Name, Collection<AbstractFirBasedSymbol<*>>>()
-    // TODO: val COMPONENT_FUNCTION_ON_NULLABLE by ...
+    val COMPONENT_FUNCTION_MISSING by error2<FirSourceElement, KtExpression, Name, ConeKotlinType>()
+    val COMPONENT_FUNCTION_AMBIGUITY by error2<FirSourceElement, KtExpression, Name, Collection<AbstractFirBasedSymbol<*>>>()
+    val COMPONENT_FUNCTION_ON_NULLABLE by error1<FirSourceElement, KtExpression, Name>()
     // TODO: val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by ...
 
     // Control flow diagnostics
@@ -187,6 +187,13 @@ object FirErrors {
     val WRONG_INVOCATION_KIND by warning3<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
     val LEAKED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION by warning0<FirSourceElement, PsiElement>()
+
+    // Nullability
+    val UNSAFE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>()
+    // TODO: val UNSAFE_IMPLICIT_INVOKE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>()
+    // TODO: val UNSAFE_INFIX_CALL by ...
+    // TODO: val UNSAFE_OPERATOR_CALL by ...
+    // TODO: val UNEXPECTED_SAFE_CALL by ...
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)

@@ -49,21 +49,21 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     if (contracts.case_1(value_1)!!) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1.<!UNSAFE_CALL!>inv<!>()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     if (!contracts.case_2(value_1)!!) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1.<!UNSAFE_CALL!>inv<!>()
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     if (contracts.case_3(value_1)!!) {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1.<!UNSAFE_CALL!>inv<!>()
     }
 }
 

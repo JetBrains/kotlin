@@ -23,7 +23,7 @@ fun testNoSmartCast1(s: String?) {
         if (s != null) ""
         else noSmartCast1(null) { "" }
     )
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.<!UNSAFE_CALL!>length<!>
 }
 
 fun testNoSmartCast2(s: String?) {
@@ -31,7 +31,7 @@ fun testNoSmartCast2(s: String?) {
         if (s != null) ( {""} )
         else noSmartCast2(null) { "" }
     )
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.<!UNSAFE_CALL!>length<!>
 }
 
 fun testNoSmartCast3(s: String?) {
@@ -39,7 +39,7 @@ fun testNoSmartCast3(s: String?) {
         if (s != null) ""
         else noSmartCast3(null) { "" }
     )
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.<!UNSAFE_CALL!>length<!>
 }
 
 // KT-36069
@@ -48,5 +48,5 @@ fun testNoSmartCast4(s: String?) {
         if (s != null) ( {""} )
         else noSmartCast4(null) { "" }
     )
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.<!UNSAFE_CALL!>length<!>
 }

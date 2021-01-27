@@ -9,7 +9,7 @@
 fun case_1(x: Number?): Long? {
     if (x is Long?) return x
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
-    return <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toLong<!>()
+    return <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>.<!UNSAFE_CALL!>toLong<!>()
 }
 
 /*

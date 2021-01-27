@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
@@ -20,8 +18,9 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiverWithDetails
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -62,7 +61,10 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
             // TODO: if all diagnostics are supported, we don't need the following check, and will bail out based on element type.
-            if (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError) {
+            if (diagnostic is ConeUnresolvedNameError ||
+                diagnostic is ConeAmbiguityError ||
+                diagnostic is ConeInapplicableCandidateError
+            ) {
                 return
             }
         }
@@ -72,7 +74,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.classId.asString())
             is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.name.asString())
             is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, diagnostic.candidateSymbol)
-            is ConeInapplicableCandidateError -> FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidateSymbol)
+            is ConeInapplicableCandidateError -> mapInapplicableCandidateError(diagnostic, source)
             is ConeAmbiguityError -> if (!diagnostic.applicability.isSuccess) {
                 FirErrors.NONE_APPLICABLE.on(source, diagnostic.candidates)
             } else {
@@ -96,6 +98,25 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
         }
         reporter.report(coneDiagnostic)
+    }
+
+    private fun mapInapplicableCandidateError(
+        diagnostic: ConeInapplicableCandidateError,
+        source: FirSourceElement,
+    ): FirDiagnostic<*> {
+        // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
+        // TODO: handle other UNSAFE_* variants: invoke, infix, operator
+        val rootCause = diagnostic.diagnostics.find { it.applicability == diagnostic.applicability }
+        return if (rootCause != null &&
+            rootCause is InapplicableWrongReceiverWithDetails &&
+            rootCause.actualType?.isNullable == true &&
+            (rootCause.expectedType == null || !rootCause.expectedType!!.isMarkedNullable)
+        ) {
+            // TODO: report on call operation node, e.g., x<!>.<!>length instead of x.<!>length<!>
+            FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
+        } else {
+            FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidateSymbol)
+        }
     }
 
     private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {

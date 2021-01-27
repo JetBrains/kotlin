@@ -7,5 +7,5 @@ public fun foo(p: String?): Int {
         if (x()) break
     }
     // Smart cast should not work in this case, see KT-6284
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p.<!UNSAFE_CALL!>length<!>
 }

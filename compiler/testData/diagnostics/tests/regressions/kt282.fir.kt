@@ -14,6 +14,6 @@ fun f(): Unit {
     val i : Int? = null
     i <!NONE_APPLICABLE!>+<!> 1
     set + 1
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> set
+    1 <!UNSAFE_CALL!>in<!> set
     1 in 2
 }

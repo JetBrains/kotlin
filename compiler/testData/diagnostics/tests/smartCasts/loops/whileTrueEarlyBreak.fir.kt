@@ -7,5 +7,5 @@ public fun foo(p: String?): Int {
         p!!.length
     }
     // Here we have while (true) loop but p is nullable due to break before
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p.<!UNSAFE_CALL!>length<!>
 }

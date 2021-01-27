@@ -12,21 +12,21 @@ fun test(x : Int?, a : A?) {
     x.<!NONE_APPLICABLE!>plus<!>(1)
     x?.plus(1)
     x <!NONE_APPLICABLE!>+<!> 1
-    <!INAPPLICABLE_CANDIDATE!>-<!>x
-    x.<!INAPPLICABLE_CANDIDATE!>unaryMinus<!>()
+    <!UNSAFE_CALL!>-<!>x
+    x.<!UNSAFE_CALL!>unaryMinus<!>()
     x?.unaryMinus()
 
-    a.<!INAPPLICABLE_CANDIDATE!>plus<!>(1)
+    a.<!UNSAFE_CALL!>plus<!>(1)
     a?.plus(1)
-    a <!INAPPLICABLE_CANDIDATE!>plus<!> 1
-    a <!INAPPLICABLE_CANDIDATE!>+<!> 1
-    <!INAPPLICABLE_CANDIDATE!>-<!>a
-    a.<!INAPPLICABLE_CANDIDATE!>unaryMinus<!>()
+    a <!UNSAFE_CALL!>plus<!> 1
+    a <!UNSAFE_CALL!>+<!> 1
+    <!UNSAFE_CALL!>-<!>a
+    a.<!UNSAFE_CALL!>unaryMinus<!>()
     a?.unaryMinus()
 
-    a.<!INAPPLICABLE_CANDIDATE!>div<!>(1)
-    a <!INAPPLICABLE_CANDIDATE!>/<!> 1
-    a <!INAPPLICABLE_CANDIDATE!>div<!> 1
+    a.<!UNSAFE_CALL!>div<!>(1)
+    a <!UNSAFE_CALL!>/<!> 1
+    a <!UNSAFE_CALL!>div<!> 1
     a?.div(1)
 
     a.times(1)
@@ -34,8 +34,8 @@ fun test(x : Int?, a : A?) {
     a times 1
     a?.times(1)
 
-    1 <!INAPPLICABLE_CANDIDATE!>in<!> a
-    a <!INAPPLICABLE_CANDIDATE!>contains<!> 1
-    a.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
+    1 <!UNSAFE_CALL!>in<!> a
+    a <!UNSAFE_CALL!>contains<!> 1
+    a.<!UNSAFE_CALL!>contains<!>(1)
     a?.contains(1)
 }

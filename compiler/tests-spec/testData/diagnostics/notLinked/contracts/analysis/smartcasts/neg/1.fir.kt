@@ -11,13 +11,13 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     funWithReturnsAndInvertCondition(value_1 != null)
-    println(value_1.<!INAPPLICABLE_CANDIDATE!>inc<!>())
+    println(value_1.<!UNSAFE_CALL!>inc<!>())
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     funWithReturns(value_1 == null)
-    println(value_1.<!INAPPLICABLE_CANDIDATE!>inc<!>())
+    println(value_1.<!UNSAFE_CALL!>inc<!>())
 }
 
 // TESTCASE NUMBER: 4
@@ -29,13 +29,13 @@ fun case_4(value_1: Any?) {
 // TESTCASE NUMBER: 5
 fun case_5(value_1: String?) {
     funWithReturnsAndNullCheck(value_1)
-    println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    println(value_1.<!UNSAFE_CALL!>length<!>)
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: String?) {
     funWithReturnsAndNullCheck(value_1)
-    println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    println(value_1.<!UNSAFE_CALL!>length<!>)
 }
 
 // TESTCASE NUMBER: 7
@@ -44,7 +44,7 @@ object case_7_object {
 }
 fun case_7() {
     funWithReturns(case_7_object.prop_1 == null)
-    case_7_object.prop_1.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    case_7_object.prop_1.<!UNSAFE_CALL!>inc<!>()
 }
 
 // TESTCASE NUMBER: 8
@@ -61,14 +61,14 @@ fun case_8(value_1: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(value_1: String?) {
-    if (!funWithReturnsTrue(value_1 != null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (!funWithReturnsTrueAndInvertCondition(value_1 == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (funWithReturnsFalse(value_1 != null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (funWithReturnsFalseAndInvertCondition(value_1 == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (funWithReturnsNotNull(value_1 != null) == null) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (funWithReturnsNotNullAndInvertCondition(value_1 == null) == null) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (funWithReturnsNull(value_1 != null) != null) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
-    if (funWithReturnsNullAndInvertCondition(value_1 == null) != null) println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (!funWithReturnsTrue(value_1 != null)) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (!funWithReturnsTrueAndInvertCondition(value_1 == null)) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (funWithReturnsFalse(value_1 != null)) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (funWithReturnsFalseAndInvertCondition(value_1 == null)) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (funWithReturnsNotNull(value_1 != null) == null) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (funWithReturnsNotNullAndInvertCondition(value_1 == null) == null) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (funWithReturnsNull(value_1 != null) != null) println(value_1.<!UNSAFE_CALL!>length<!>)
+    if (funWithReturnsNullAndInvertCondition(value_1 == null) != null) println(value_1.<!UNSAFE_CALL!>length<!>)
 }
 
 // TESTCASE NUMBER: 10
@@ -83,14 +83,14 @@ fun case_10(value_1: Any?) {
 
 // TESTCASE NUMBER: 11
 fun case_11(value_1: Number?) {
-    if (!funWithReturnsTrueAndNotNullCheck(value_1)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (!funWithReturnsTrueAndNotNullCheck(value_1)) println(value_1.<!UNSAFE_CALL!>toByte<!>())
     if (!funWithReturnsTrueAndNullCheck(value_1)) println(value_1)
-    if (funWithReturnsFalseAndNotNullCheck(value_1)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (funWithReturnsFalseAndNotNullCheck(value_1)) println(value_1.<!UNSAFE_CALL!>toByte<!>())
     if (funWithReturnsFalseAndNullCheck(value_1)) println(value_1)
-    if ((funWithReturnsNotNullAndNotNullCheck(value_1) == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
-    if (!!!(funWithReturnsNotNullAndNotNullCheck(value_1) != null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if ((funWithReturnsNotNullAndNotNullCheck(value_1) == null)) println(value_1.<!UNSAFE_CALL!>toByte<!>())
+    if (!!!(funWithReturnsNotNullAndNotNullCheck(value_1) != null)) println(value_1.<!UNSAFE_CALL!>toByte<!>())
     if (!!(funWithReturnsNotNullAndNullCheck(value_1) == null)) println(value_1)
-    if (!(funWithReturnsNullAndNotNullCheck(value_1) == null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
-    if (!!(funWithReturnsNullAndNotNullCheck(value_1) != null)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (!(funWithReturnsNullAndNotNullCheck(value_1) == null)) println(value_1.<!UNSAFE_CALL!>toByte<!>())
+    if (!!(funWithReturnsNullAndNotNullCheck(value_1) != null)) println(value_1.<!UNSAFE_CALL!>toByte<!>())
     if (!!!(funWithReturnsNullAndNullCheck(value_1) == null)) println(value_1)
 }

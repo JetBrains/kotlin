@@ -43,6 +43,6 @@ fun test() {
     platformJ || false
 
     !platformNN
-    <!INAPPLICABLE_CANDIDATE!>!<!>platformN
+    <!UNSAFE_CALL!>!<!>platformN
     !platformJ
 }

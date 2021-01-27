@@ -4,7 +4,7 @@ class C {
 
 fun test(a: C?, nn: () -> Nothing?) {
     a ?: nn()
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a.<!UNSAFE_CALL!>foo<!>()
 
     a ?: return
     a.foo()

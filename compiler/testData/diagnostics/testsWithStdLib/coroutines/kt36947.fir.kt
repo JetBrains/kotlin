@@ -1,6 +1,6 @@
 val foo = iterator {
     yield(0)
     val nullable: String? = null
-    nullable.<!INAPPLICABLE_CANDIDATE!>length<!>
-    nullable.<!INAPPLICABLE_CANDIDATE!>get<!>(2)
+    nullable.<!UNSAFE_CALL!>length<!>
+    nullable.<!UNSAFE_CALL!>get<!>(2)
 }

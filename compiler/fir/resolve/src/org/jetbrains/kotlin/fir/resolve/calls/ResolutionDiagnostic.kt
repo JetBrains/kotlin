@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
@@ -57,7 +58,12 @@ object HiddenCandidate : ResolutionDiagnostic(CandidateApplicability.HIDDEN)
 
 object ResolvedWithLowPriority : ResolutionDiagnostic(CandidateApplicability.RESOLVED_LOW_PRIORITY)
 
-object InapplicableWrongReceiver : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+open class InapplicableWrongReceiverWithDetails(
+    val expectedType: ConeKotlinType? = null,
+    val actualType: ConeKotlinType? = null,
+) : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+
+object InapplicableWrongReceiver : InapplicableWrongReceiverWithDetails()
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 

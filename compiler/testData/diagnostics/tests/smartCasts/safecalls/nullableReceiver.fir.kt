@@ -4,9 +4,9 @@ class Foo(val bar: String)
 fun test(foo: Foo?) {
     foo?.bar.let {
         // Error, foo?.bar is nullable
-        it.<!INAPPLICABLE_CANDIDATE!>length<!>
+        it.<!UNSAFE_CALL!>length<!>
         // Error, foo is nullable
-        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.length
+        foo.<!UNSAFE_CALL!>bar<!>.length
         // Correct
         foo?.bar?.length
     }

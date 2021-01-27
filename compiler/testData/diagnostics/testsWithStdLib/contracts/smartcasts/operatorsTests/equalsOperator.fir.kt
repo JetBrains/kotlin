@@ -20,28 +20,28 @@ fun myEqualsNotNull(x: Int?): Boolean {
 }
 
 fun testBasicEquals(x: Int?) {
-    x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    x.<!UNSAFE_CALL!>inc<!>()
 
     if (myEqualsNull(x)) {
-        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        x.<!UNSAFE_CALL!>inc<!>()
     }
     else {
         x.inc()
     }
 
-    x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    x.<!UNSAFE_CALL!>inc<!>()
 }
 
 fun testBasicNotEquals(x: Int?) {
-    x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    x.<!UNSAFE_CALL!>inc<!>()
 
     if (myEqualsNotNull(x)) {
         x.inc()
     }
     else {
-        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+        x.<!UNSAFE_CALL!>inc<!>()
     }
 
-    x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    x.<!UNSAFE_CALL!>inc<!>()
 }
 

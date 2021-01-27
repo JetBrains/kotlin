@@ -46,7 +46,7 @@ fun case_1(value_1: Int?) {
     if (contracts.case_1(value_1) { value_2 = 10 }) {
         println(<!UNINITIALIZED_VARIABLE!>value_2<!>)
     } else {
-        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
+        value_1.<!UNSAFE_CALL!>inv<!>()
         println(<!UNINITIALIZED_VARIABLE!>value_2<!>)
     }
 }
@@ -58,8 +58,8 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
         true -> {
             <!AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
-            println(value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>())
-            println(value_2.<!INAPPLICABLE_CANDIDATE!>inv<!>())
+            println(value_1.<!UNSAFE_CALL!>inv<!>())
+            println(value_2.<!UNSAFE_CALL!>inv<!>())
         }
         false -> {
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)

@@ -52,8 +52,8 @@ inline fun <reified T : CharSequence>case_4(x: Any?) {
     (x as? T)!!
     if (x is T?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>get<!>(0)
     }
 }
 

@@ -9,5 +9,5 @@ public fun foo(p: String?): Int {
         p!!.length
     } while (!x())
     // Here we have do while loop but p is still nullable due to break before
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p.<!UNSAFE_CALL!>length<!>
 }

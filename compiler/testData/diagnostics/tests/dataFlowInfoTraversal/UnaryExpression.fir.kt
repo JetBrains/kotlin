@@ -4,11 +4,11 @@ fun baz(b: Boolean): Boolean = !b
 fun foo() {
     val x: Int? = null
 
-    bar(<!INAPPLICABLE_CANDIDATE!>-<!>x)
+    bar(<!UNSAFE_CALL!>-<!>x)
     if (x != null) bar(-x)
-    bar(<!INAPPLICABLE_CANDIDATE!>-<!>x)
+    bar(<!UNSAFE_CALL!>-<!>x)
 
     val b: Boolean? = null
-    baz(<!INAPPLICABLE_CANDIDATE!>!<!>b)
+    baz(<!UNSAFE_CALL!>!<!>b)
     if (b != null) baz(!b)
 }

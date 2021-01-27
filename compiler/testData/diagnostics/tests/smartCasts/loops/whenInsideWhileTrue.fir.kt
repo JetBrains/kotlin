@@ -8,5 +8,5 @@ public fun foo(x: String?): Int {
         }         
     }
     // x is null because of the break
-    return x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return x.<!UNSAFE_CALL!>length<!>
 }

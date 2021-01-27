@@ -3,6 +3,6 @@ operator fun Int?.inc(): Int? { return this }
 public fun box(arg: Int?) : Int? {
     var i = arg
     var j = ++i
-    j.<!INAPPLICABLE_CANDIDATE!>toInt<!>()
+    j.<!UNSAFE_CALL!>toInt<!>()
     return ++j
 }

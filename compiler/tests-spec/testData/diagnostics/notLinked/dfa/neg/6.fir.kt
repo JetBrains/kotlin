@@ -105,7 +105,7 @@ inline fun <reified T, reified K>case_12(x: Any?) {
     if (x !is T) {
         if (x is T is K) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
         }
     }
 }
@@ -115,7 +115,7 @@ inline fun <reified T, reified K>case_13(x: Any?) {
     if (x !is T) {
         if (x !is K) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
         }
     }
 }
@@ -125,7 +125,7 @@ inline fun <reified T, reified K>case_14(x: Any?) {
     if (x is K) else {
         if (x !is T) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
         }
     }
 }
@@ -135,7 +135,7 @@ inline fun <reified T, reified K>case_15(x: Any?) {
     if (x !is T) {
         if (x is K) else {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
         }
     }
 }

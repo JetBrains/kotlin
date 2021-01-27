@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -20,8 +21,12 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.isNullable
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -65,8 +70,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         val originalDestructuringDeclarationOrInitializerSource = originalDestructuringDeclarationOrInitializer.source ?: return
         val originalDestructuringDeclarationType =
             when (originalDestructuringDeclarationOrInitializer) {
-                is FirVariable<*> -> originalDestructuringDeclarationOrInitializer.returnTypeRef
-                is FirExpression -> originalDestructuringDeclarationOrInitializer.typeRef
+                is FirVariable<*> -> originalDestructuringDeclarationOrInitializer.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+                is FirExpression -> originalDestructuringDeclarationOrInitializer.typeRef.coneTypeSafe<ConeKotlinType>()
                 else -> null
             } ?: return
 
@@ -89,7 +94,16 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                     )
                 )
             }
-            // TODO: COMPONENT_FUNCTION_ON_NULLABLE
+            is ConeInapplicableCandidateError -> {
+                if (originalDestructuringDeclarationType.isNullable) {
+                    reporter.report(
+                        FirErrors.COMPONENT_FUNCTION_ON_NULLABLE.on(
+                            originalDestructuringDeclarationOrInitializerSource,
+                            (diagnostic.candidateSymbol.fir as FirSimpleFunction).name
+                        )
+                    )
+                }
+            }
             // TODO: COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
         }
     }

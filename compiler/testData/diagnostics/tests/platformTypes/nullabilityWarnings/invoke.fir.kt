@@ -18,6 +18,6 @@ public class J {
 
 fun test() {
     J.staticNN()
-    J.<!INAPPLICABLE_CANDIDATE!>staticN<!>()
+    J.<!UNSAFE_CALL!>staticN<!>()
     J.staticJ()
 }

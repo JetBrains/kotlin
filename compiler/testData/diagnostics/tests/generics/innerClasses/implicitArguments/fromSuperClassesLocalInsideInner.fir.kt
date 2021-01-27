@@ -44,7 +44,7 @@ class Outer<T> {
             x = foobar<String>()
 
             x().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, String, Double, Short, Long>>() }
-            x().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, String, Double, Short, Char>>() }
+            x().bar() <!UNSAFE_CALL!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, String, Double, Short, Char>>() }
 
             x = foobar<Int>()
             x = z.foobar<String>()
@@ -53,7 +53,7 @@ class Outer<T> {
             y = noParameters()
 
             y().foo().a() checkType { _<A<T, F, Any, Double, Short, Long>>() }
-            y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Char>>() }
+            y().bar() <!UNSAFE_CALL!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Char>>() }
         }
     }
 }

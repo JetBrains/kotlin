@@ -4,7 +4,7 @@
 operator fun String.invoke(i: Int) {}
 
 fun foo(s: String?) {
-    <!INAPPLICABLE_CANDIDATE!>s<!>(1)
+    <!UNSAFE_CALL!>s<!>(1)
 
-    <!INAPPLICABLE_CANDIDATE!>(s ?: null)(1)<!>
+    <!UNSAFE_CALL!>(s ?: null)(1)<!>
 }

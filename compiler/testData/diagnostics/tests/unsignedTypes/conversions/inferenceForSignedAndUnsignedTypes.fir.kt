@@ -14,7 +14,7 @@ fun foo() {
     <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(id(1))
 
     1 <!NONE_APPLICABLE!>+<!> 1u
-    (1u <!NONE_APPLICABLE!>+<!> 1) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><UInt>() }
+    (1u <!NONE_APPLICABLE!>+<!> 1) <!UNSAFE_CALL!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><UInt>() }
 
     <!INAPPLICABLE_CANDIDATE!>id<!><UInt>(1)
 }
