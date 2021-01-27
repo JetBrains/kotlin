@@ -1457,6 +1457,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testParenthesizedAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/parenthesizedAnnotations.kt");
                 }
+
+                @Test
+                @TestMetadata("propagteAnyAnnotations.kt")
+                public void testPropagteAnyAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/propagteAnyAnnotations.kt");
+                }
             }
 
             @Nested

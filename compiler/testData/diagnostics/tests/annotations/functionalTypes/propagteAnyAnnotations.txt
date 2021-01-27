@@ -1,0 +1,12 @@
+package
+
+public fun bar(/*0*/ p: @Composable () -> kotlin.Unit): kotlin.Unit
+@Composable public fun foo(): kotlin.Unit
+public fun main(): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.TYPE}) public final annotation class Composable : kotlin.Annotation {
+    public constructor Composable()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
