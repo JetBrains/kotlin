@@ -6,20 +6,28 @@
 package org.jetbrains.kotlin.idea.frontend.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import kotlin.reflect.KClass
 
-interface KtDiagnostic {
+interface KtDiagnostic : ValidityTokenOwner {
     val factoryName: String?
-    val message: String
-    val textRanges: Collection<TextRange>
-    val isValid: Boolean get() = true
+    val defaultMessage: String
 }
 
-fun KtDiagnostic.getMessageWithFactoryName(): String =
-    if (factoryName == null) message
-    else "[$factoryName] $message"
+interface KtDiagnosticWithPsi : KtDiagnostic {
+    val psi: PsiElement
+    val textRanges: Collection<TextRange>
+    val diagnosticClass: KClass<out KtDiagnosticWithPsi>
+}
 
-data class KtSimpleDiagnostic(
+class KtSimpleDiagnostic(
     override val factoryName: String?,
-    override val message: String,
-    override val textRanges: Collection<TextRange>,
+    override val defaultMessage: String,
+    override val token: ValidityToken,
 ) : KtDiagnostic
+
+fun KtDiagnostic.getDefaultMessageWithFactoryName(): String =
+    if (factoryName == null) defaultMessage
+    else "[$factoryName] $defaultMessage"
