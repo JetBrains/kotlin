@@ -6,6 +6,7 @@
 package generators.unicode.ranges.writers
 
 import generators.unicode.ranges.RangesWritingStrategy
+import generators.unicode.writeIntArray
 import java.io.FileWriter
 
 internal class DigitRangesWriter(private val strategy: RangesWritingStrategy) : RangesWriter {

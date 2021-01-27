@@ -5,7 +5,7 @@
 
 package generators.unicode.ranges.patterns
 
-import generators.unicode.ranges.writers.hex
+import generators.unicode.toHexIntLiteral
 
 /**
  * A range of consequent chars.
@@ -76,7 +76,7 @@ internal class PeriodicRangePattern private constructor(
 
     override fun categoryIdOf(charCode: Int): String {
         if (charCode !in start..end) {
-            throw IllegalArgumentException("Char code ${charCode.hex()} is not in $this")
+            throw IllegalArgumentException("Char code ${charCode.toHexIntLiteral()} is not in $this")
         }
         val categoryId = bag.categoryIdOf(charCode)
         check(categoryId != null)
@@ -85,8 +85,8 @@ internal class PeriodicRangePattern private constructor(
 
     override fun toString(): String {
         return "PeriodicRangePattern{" +
-                "start=" + start.hex() +
-                ", end=" + end.hex() +
+                "start=" + start.toHexIntLiteral() +
+                ", end=" + end.toHexIntLiteral() +
                 ", length=" + rangeLength() +
                 ", orderedCategoryIds=" + orderedCategoryIds().contentToString() +
                 ", bag=" + bag +

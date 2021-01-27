@@ -5,7 +5,7 @@
 
 package generators.unicode.ranges.patterns
 
-import generators.unicode.ranges.writers.hex
+import generators.unicode.toHexIntLiteral
 
 /**
  * A range of consequent chars that starts with a letter and ends with a letter, and contains multiple ranges of consequent not-letter chars.
@@ -95,8 +95,8 @@ internal class GapRangePattern private constructor(
 
     override fun toString(): String {
         return "GapPattern{" +
-                "start=" + start.hex() +
-                ", end=" + end.hex() +
+                "start=" + start.toHexIntLiteral() +
+                ", end=" + end.toHexIntLiteral() +
                 ", length=" + rangeLength() +
                 ", gaps=" + gaps +
                 ", categoryId=" + categoryId +
