@@ -664,6 +664,16 @@ __attribute__((swift_name("ArraysInitBlock")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("OverrideMethodsOfAnyKt")))
+@interface KtOverrideMethodsOfAnyKt : KtBase
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)testObj:(id)obj other:(id)other swift:(BOOL)swift error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test(obj:other:swift:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ThrowsEmptyKt")))
 @interface KtThrowsEmptyKt : KtBase
 
