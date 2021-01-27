@@ -27,8 +27,8 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.UsageViewManager
 import com.intellij.util.Query
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightClass
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightElements
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -44,9 +44,9 @@ fun KtDeclaration.processAllExactUsages(
         if (reference is KtReference) return listOf(this)
         return SmartList<PsiElement>().also { list ->
             list += this
-            list += providedToLightElements()
+            list += toLightElements()
             if (this is KtConstructor<*>) {
-                list.addIfNotNull(getContainingClassOrObject().providedToLightClass())
+                list.addIfNotNull(getContainingClassOrObject().toLightClass())
             }
         }
     }

@@ -6,21 +6,15 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.idea.asJava.FirLightClassForFacade
-import org.jetbrains.kotlin.idea.asJava.classes.createFirLightClassNoCache
+import org.jetbrains.kotlin.idea.asJava.KtFirBasedFakeLightClass
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
 class IDEKotlinAsJavaFirSupport(project: Project) : IDEKotlinAsJavaSupport(project) {
@@ -38,4 +32,7 @@ class IDEKotlinAsJavaFirSupport(project: Project) : IDEKotlinAsJavaSupport(proje
 
     override fun createLightClassForSourceDeclaration(classOrObject: KtClassOrObject): KtLightClass? =
         getOrCreateFirLightClass(classOrObject)
+
+    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
+        KtFirBasedFakeLightClass(classOrObject)
 }

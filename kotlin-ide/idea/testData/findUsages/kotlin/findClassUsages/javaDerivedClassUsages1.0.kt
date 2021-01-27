@@ -17,3 +17,4 @@ interface Z: A {
 }
 
 // DISABLE-ERRORS
+// FIR_COMPARISON

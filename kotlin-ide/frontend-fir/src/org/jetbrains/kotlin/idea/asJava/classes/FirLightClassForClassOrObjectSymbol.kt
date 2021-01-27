@@ -132,6 +132,7 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     override fun isValid(): Boolean = kotlinOrigin?.isValid ?: true
 
+    //TODO: Implement inheritance check via symbols
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
         InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
 
