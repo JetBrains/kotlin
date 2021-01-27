@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
@@ -299,8 +301,7 @@ class Fir2IrImplicitCastInserter(
             return implicitCastOrExpression(value, castTypeRef)
         }
 
-        val originalTypeRef = expressionWithSmartcast.originalType
-        if (castTypeRef is FirResolvedTypeRef && originalTypeRef is FirResolvedTypeRef) {
+        if (castTypeRef is FirResolvedTypeRef) {
             val castType = castTypeRef.type
             if (castType is ConeIntersectionType) {
                 val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.baseForIntersectionOverride ?: referencedSymbol
@@ -311,15 +312,7 @@ class Fir2IrImplicitCastInserter(
                 }
             }
         }
-        return if (originalExpression is FirThisReceiverExpression &&
-            originalExpression.calleeReference.boundSymbol is FirAnonymousFunctionSymbol
-        ) {
-            // If the original is a "this" in a local function and original.type is the same as castType,
-            // we still want to keep the cast. See kt-42517
-            implicitCast(value, castTypeRef.toIrType())
-        } else {
-            implicitCastOrExpression(value, castTypeRef.toIrType())
-        }
+        return implicitCastOrExpression(value, castTypeRef.toIrType())
     }
 
     private fun ConeKotlinType.doesContainReferencedSymbolInScope(
