@@ -3138,6 +3138,11 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/reified/kt35511_try.kt");
         }
 
+        @TestMetadata("kt35511_try_valueOf.kt")
+        public void testKt35511_try_valueOf() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt35511_try_valueOf.kt");
+        }
+
         @TestMetadata("kt6988.kt")
         public void testKt6988() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt6988.kt");
