@@ -9033,54 +9033,6 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
-    @TestMetadata("testData/quickfix/obsoleteCoroutines")
-    public static class ObsoleteCoroutines extends AbstractQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        @TestMetadata("buildIteratorImport.kt")
-        public void testBuildIteratorImport() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/buildIteratorImport.kt");
-        }
-
-        @TestMetadata("buildSequence.kt")
-        public void testBuildSequence() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/buildSequence.kt");
-        }
-
-        @TestMetadata("buildSequenceImport.kt")
-        public void testBuildSequenceImport() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/buildSequenceImport.kt");
-        }
-
-        @TestMetadata("inProjectFix.kt")
-        public void testInProjectFix() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/inProjectFix.kt");
-        }
-
-        @TestMetadata("resume.kt")
-        public void testResume() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/resume.kt");
-        }
-
-        @TestMetadata("resumeWithException.kt")
-        public void testResumeWithException() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/resumeWithException.kt");
-        }
-
-        @TestMetadata("starImport.kt")
-        public void testStarImport() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/starImport.kt");
-        }
-
-        @TestMetadata("unresolvedKotlinxImport.kt")
-        public void testUnresolvedKotlinxImport() throws Exception {
-            runTest("testData/quickfix/obsoleteCoroutines/unresolvedKotlinxImport.kt");
-        }
-    }
-
-    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/obsoleteKotlinJsPackages")
     public static class ObsoleteKotlinJsPackages extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
