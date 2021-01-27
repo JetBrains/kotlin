@@ -373,6 +373,8 @@ open class LiveLiteralTransformer(
                     UNDEFINED_OFFSET,
                     literalType,
                     stateGetValue,
+                    stateGetValue.owner.typeParameters.size,
+                    stateGetValue.owner.valueParameters.size,
                     IrStatementOrigin.FOR_LOOP_ITERATOR
                 ).apply {
                     dispatchReceiver = b
@@ -432,7 +434,9 @@ open class LiveLiteralTransformer(
             expression.startOffset,
             expression.endOffset,
             expression.type,
-            getter.symbol
+            getter.symbol,
+            getter.symbol.owner.typeParameters.size,
+            getter.symbol.owner.valueParameters.size
         ).apply {
             dispatchReceiver = irGetLiveLiteralsClass()
         }

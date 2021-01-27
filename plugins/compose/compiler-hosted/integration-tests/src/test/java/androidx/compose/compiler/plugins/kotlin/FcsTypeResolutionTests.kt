@@ -426,7 +426,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 MyNamespace.Bar()
                 MyNamespace.Baz()
                 MyNamespace.<!UNRESOLVED_REFERENCE!>Qoo<!>()
-                MyNamespace.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>someString<!>()
+                MyNamespace.<!FUNCTION_EXPECTED!>someString<!>()
                 MyNamespace.NonComponent()
                 MyNamespace.Bar {}
                 MyNamespace.Baz <!TOO_MANY_ARGUMENTS!>{}<!>

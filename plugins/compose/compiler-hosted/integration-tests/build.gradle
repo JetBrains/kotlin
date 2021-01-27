@@ -73,7 +73,7 @@ android {
 tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn", "-Xallow-jvm-ir-dependencies"]
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
