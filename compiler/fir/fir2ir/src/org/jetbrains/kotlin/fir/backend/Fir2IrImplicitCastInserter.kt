@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.baseForIntersectionOverride
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
@@ -16,15 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
-import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
@@ -36,7 +29,7 @@ import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class Fir2IrImplicitCastInserter(
     private val components: Fir2IrComponents,
@@ -292,61 +285,26 @@ class Fir2IrImplicitCastInserter(
     ): IrExpression {
         val originalExpression = expressionWithSmartcast.originalExpression
         val value = visitor.convertToIrExpression(originalExpression)
-        val castTypeRef = expressionWithSmartcast.typeRef
-        if (calleeReference !is FirResolvedNamedReference) {
-            return implicitCastOrExpression(value, castTypeRef)
-        }
-        val referencedSymbol = calleeReference.resolvedSymbol
-        if (referencedSymbol !is FirPropertySymbol && referencedSymbol !is FirFunctionSymbol && referencedSymbol !is FirFieldSymbol) {
-            return implicitCastOrExpression(value, castTypeRef)
-        }
 
-        if (castTypeRef is FirResolvedTypeRef) {
-            val castType = castTypeRef.type
-            if (castType is ConeIntersectionType) {
-                val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.baseForIntersectionOverride ?: referencedSymbol
-                castType.intersectedTypes.forEach {
-                    if (it.doesContainReferencedSymbolInScope(unwrappedSymbol, calleeReference.name)) {
-                        return implicitCastOrExpression(value, it)
-                    }
-                }
+        val typeRef = expressionWithSmartcast.typeRef
+        val referencedDeclaration =
+            ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>)?.unwrapCallRepresentative()
+                ?.fir as FirCallableMemberDeclaration<*>
+
+        val dispatchReceiverType =
+            referencedDeclaration.dispatchReceiverType as? ConeClassLikeType
+                ?: return implicitCastOrExpression(value, typeRef)
+
+        val starProjectedDispatchReceiver = dispatchReceiverType.replaceArgumentsWithStarProjections()
+
+        val castType = typeRef.coneTypeSafe<ConeIntersectionType>()
+        castType?.intersectedTypes?.forEach { type ->
+            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, type, starProjectedDispatchReceiver)) {
+                return implicitCastOrExpression(value, type)
             }
         }
-        return implicitCastOrExpression(value, castTypeRef.toIrType())
-    }
 
-    private fun ConeKotlinType.doesContainReferencedSymbolInScope(
-        referencedSymbol: AbstractFirBasedSymbol<*>, name: Name
-    ): Boolean {
-        val scope = scope(session, components.scopeSession, FakeOverrideTypeCalculator.Forced) ?: return false
-        if (referencedSymbol is SyntheticPropertySymbol) {
-            return doesContainReferencedSyntheticSymbolInScope(referencedSymbol, name, scope)
-        }
-        var result = false
-        val processor = { it: FirCallableSymbol<*> ->
-            if (!result && it == referencedSymbol) {
-                result = true
-            }
-        }
-        when (referencedSymbol) {
-            is FirPropertySymbol, is FirFieldSymbol -> scope.processPropertiesByName(name, processor)
-            is FirFunctionSymbol -> scope.processFunctionsByName(name, processor)
-        }
-        return result
-    }
-
-    private fun doesContainReferencedSyntheticSymbolInScope(
-        referencedSymbol: SyntheticPropertySymbol, name: Name, baseScope: FirTypeScope
-    ): Boolean {
-        val scope = FirSyntheticPropertiesScope(session, baseScope)
-        var result = false
-        val processor = { it: FirCallableSymbol<*> ->
-            if (!result && it.callableId == referencedSymbol.callableId) {
-                result = true
-            }
-        }
-        scope.processPropertiesByName(name, processor)
-        return result
+        return implicitCastOrExpression(value, typeRef)
     }
 
     private fun implicitCastOrExpression(original: IrExpression, castType: ConeKotlinType): IrExpression {
