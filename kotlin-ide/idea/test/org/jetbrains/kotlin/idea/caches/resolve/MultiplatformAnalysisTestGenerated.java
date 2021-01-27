@@ -33,7 +33,7 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
 
     @TestMetadata("builtinsAndStdlib")
     public void testBuiltinsAndStdlib() throws Exception {
-        runTest("idea/testData/multiplatform/builtinsAndStdlib/");
+        runTest("testData/multiplatform/builtinsAndStdlib/");
     }
 
     @TestMetadata("callableReferences")

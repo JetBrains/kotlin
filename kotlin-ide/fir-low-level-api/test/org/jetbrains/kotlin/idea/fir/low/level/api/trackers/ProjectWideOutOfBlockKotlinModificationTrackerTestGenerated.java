@@ -28,7 +28,7 @@ public class ProjectWideOutOfBlockKotlinModificationTrackerTestGenerated extends
 
     @TestMetadata("funInCompanionObject.kt")
     public void testFunInCompanionObject() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/funInCompanionObject.kt");
+        runTest("testdata/outOfBlockProjectWide/funInCompanionObject.kt");
     }
 
     @TestMetadata("localFun.kt")

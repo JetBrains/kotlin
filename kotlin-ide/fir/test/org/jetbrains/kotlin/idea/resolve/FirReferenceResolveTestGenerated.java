@@ -253,12 +253,12 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
     @TestMetadata("KotlinPropertyAssignment.kt")
     public void testKotlinPropertyAssignment() throws Exception {
-        runTest("idea/testData/resolve/references/KotlinPropertyAssignment.kt");
+        runTest("../idea/testData/resolve/references/KotlinPropertyAssignment.kt");
     }
 
     @TestMetadata("KotlinPropertyWithGetterAndSetterAssignment.kt")
     public void testKotlinPropertyWithGetterAndSetterAssignment() throws Exception {
-        runTest("idea/testData/resolve/references/KotlinPropertyWithGetterAndSetterAssignment.kt");
+        runTest("../idea/testData/resolve/references/KotlinPropertyWithGetterAndSetterAssignment.kt");
     }
 
     @TestMetadata("MultiDeclarationExtension.kt")
@@ -288,7 +288,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
     @TestMetadata("parameterByName.kt")
     public void testParameterByName() throws Exception {
-        runTest("idea/testData/resolve/references/parameterByName.kt");
+        runTest("../idea/testData/resolve/references/parameterByName.kt");
     }
 
     @TestMetadata("PropertyPlaceInClassObjectInObject.kt")

@@ -313,6 +313,11 @@ public abstract class QuickFixMultiFileTestGenerated extends AbstractQuickFixMul
             runTest("testData/quickfix/autoImports/importKotlinStaticPropertyOverloadedSetterFromJava.test");
         }
 
+        @TestMetadata("ImportOperatorInvokeWithConvention.before.Main.kt")
+        public void testImportOperatorInvokeWithConvention() throws Exception {
+            runTest("testData/quickfix/autoImports/ImportOperatorInvokeWithConvention.before.Main.kt");
+        }
+
         @TestMetadata("importTrait.before.Main.kt")
         public void testImportTrait() throws Exception {
             runTest("testData/quickfix/autoImports/importTrait.before.Main.kt");
@@ -643,14 +648,9 @@ public abstract class QuickFixMultiFileTestGenerated extends AbstractQuickFixMul
             runTest("testData/quickfix/autoImports/unaryPlusOperator.before.Main.kt");
         }
 
-        @TestMetadata("ImportOperatorInvokeWithConvention.before.Main.kt")
-        public void testImportOperatorInvokeWithConvention() throws Exception {
-            runTest("idea/testData/quickfix/autoImports/ImportOperatorInvokeWithConvention.before.Main.kt");
-        }
-
-        @TestMetadata("importTrait.before.Main.kt")
-        public void testImportTrait() throws Exception {
-            runTest("idea/testData/quickfix/autoImports/importTrait.before.Main.kt");
+        @TestMetadata("withSmartCastQualifier.before.Main.kt")
+        public void testWithSmartCastQualifier() throws Exception {
+            runTest("testData/quickfix/autoImports/withSmartCastQualifier.before.Main.kt");
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1770,6 +1770,24 @@ public abstract class QuickFixMultiFileTestGenerated extends AbstractQuickFixMul
             public void testFinalJavaUpperBound() throws Exception {
                 runTest("testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaUpperBound.before.Main.kt");
             }
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/quickfix/moveToSealedParent")
+    public static class MoveToSealedParent extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
+        }
+
+        @TestMetadata("nestedDeclarationToSealed.test")
+        public void testNestedDeclarationToSealed() throws Exception {
+            runTest("testData/quickfix/moveToSealedParent/nestedDeclarationToSealed.test");
+        }
+
+        @TestMetadata("topLevelDeclarationToSealed.test")
+        public void testTopLevelDeclarationToSealed() throws Exception {
+            runTest("testData/quickfix/moveToSealedParent/topLevelDeclarationToSealed.test");
         }
     }
 

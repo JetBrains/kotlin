@@ -253,12 +253,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("KotlinPropertyAssignment.kt")
     public void testKotlinPropertyAssignment() throws Exception {
-        runTest("idea/testData/resolve/references/KotlinPropertyAssignment.kt");
+        runTest("testData/resolve/references/KotlinPropertyAssignment.kt");
     }
 
     @TestMetadata("KotlinPropertyWithGetterAndSetterAssignment.kt")
     public void testKotlinPropertyWithGetterAndSetterAssignment() throws Exception {
-        runTest("idea/testData/resolve/references/KotlinPropertyWithGetterAndSetterAssignment.kt");
+        runTest("testData/resolve/references/KotlinPropertyWithGetterAndSetterAssignment.kt");
     }
 
     @TestMetadata("MultiDeclarationExtension.kt")
@@ -288,7 +288,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("parameterByName.kt")
     public void testParameterByName() throws Exception {
-        runTest("idea/testData/resolve/references/parameterByName.kt");
+        runTest("testData/resolve/references/parameterByName.kt");
     }
 
     @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
