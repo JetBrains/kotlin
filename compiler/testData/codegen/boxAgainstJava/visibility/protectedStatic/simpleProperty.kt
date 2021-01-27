@@ -1,9 +1,11 @@
+// MODULE: lib
 // FILE: Base.java
 
 public class Base {
     protected static final String protectedProperty = "OK";
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 class Derived : Base() {

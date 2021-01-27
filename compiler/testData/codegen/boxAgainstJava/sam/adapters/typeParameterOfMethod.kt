@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: WeirdComparator.java
 
 import java.util.*;
@@ -12,6 +13,7 @@ class WeirdComparator {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

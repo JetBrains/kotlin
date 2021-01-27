@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: J.java
 
 public class J<T> {
@@ -6,6 +7,7 @@ public class J<T> {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 class Derived : J<String>() {

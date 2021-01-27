@@ -1,9 +1,11 @@
+// MODULE: lib
 // FILE: JavaClass.java
 
 public class JavaClass {
     protected String getOk() { return "OK"; }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 package p

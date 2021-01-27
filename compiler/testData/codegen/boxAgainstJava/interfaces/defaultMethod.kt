@@ -1,5 +1,6 @@
 // JVM_TARGET: 1.8
 
+// MODULE: lib
 // FILE: A.java
 
 public interface A {
@@ -8,6 +9,7 @@ public interface A {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 interface I : A

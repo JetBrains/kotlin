@@ -1,4 +1,17 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+
+// MODULE: lib
+// FILE: Delegation.java
+
+public class Delegation {
+    public static class ReturnNull {
+        public String foo() {
+            return null;
+        }
+    }
+}
+
+// MODULE: main(lib)
 // FILE: delegation.kt
 
 interface Tr {
@@ -18,15 +31,5 @@ fun box(): String {
     }
     catch(e: NullPointerException) {
         return "OK"
-    }
-}
-
-// FILE: Delegation.java
-
-public class Delegation {
-    public static class ReturnNull {
-        public String foo() {
-            return null;
-        }
     }
 }

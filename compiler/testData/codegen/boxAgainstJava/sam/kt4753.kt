@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: Base.java
 
 interface Base<T> {
@@ -9,6 +10,7 @@ interface Base<T> {
 interface Derived extends Base<String> {
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: JavaClass.java
 
 class JavaClass<T> {
@@ -6,6 +7,7 @@ class JavaClass<T> {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 internal class KotlinClass : JavaClass<String>() {

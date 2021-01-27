@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: Sub.java
 
 class Super {
@@ -9,6 +10,7 @@ class Super {
 class Sub extends Super {
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

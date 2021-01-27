@@ -5,6 +5,7 @@
 // WITH_REFLECT
 // FULL_JDK
 
+// MODULE: lib
 // FILE: ImplicitReturn.java
 
 import java.lang.annotation.ElementType;
@@ -26,6 +27,7 @@ public class ImplicitReturn {
 }
 
 
+// MODULE: main(lib)
 // FILE: Kotlin.kt
 
 import java.lang.reflect.AnnotatedType

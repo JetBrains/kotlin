@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_JDK6
+// MODULE: lib
 // FILE: Custom.java
 
 class Custom<K, V> {
@@ -21,6 +22,7 @@ class Custom<K, V> {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 import java.util.Arrays

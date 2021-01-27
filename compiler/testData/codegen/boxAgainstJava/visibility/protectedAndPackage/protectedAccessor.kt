@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: protectedPack/A.java
 package protectedPack;
 
@@ -9,6 +10,7 @@ public class A {
     }
 }
 
+// MODULE: main(lib)
 // FILE: B.kt
 import protectedPack.A
 

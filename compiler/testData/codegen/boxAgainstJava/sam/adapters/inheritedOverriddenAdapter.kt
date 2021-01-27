@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: Super.java
 
 class Super {
@@ -21,6 +22,7 @@ class Sub extends Super {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

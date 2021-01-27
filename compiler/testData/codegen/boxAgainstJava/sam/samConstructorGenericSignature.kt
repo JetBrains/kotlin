@@ -1,5 +1,6 @@
 // SKIP_JDK6
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: JavaClass.java
 
 class JavaClass {
@@ -12,6 +13,7 @@ class JavaClass {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 import java.util.Arrays

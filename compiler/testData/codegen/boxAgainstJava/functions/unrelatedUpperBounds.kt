@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: Foo.java
 
 import java.util.Collection;
@@ -8,6 +9,7 @@ public class Foo {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

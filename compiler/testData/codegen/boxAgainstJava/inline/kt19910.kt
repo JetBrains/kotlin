@@ -1,7 +1,9 @@
-// FILE: J.java
 // FULL_JDK
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
+
+// MODULE: lib
+// FILE: J.java
 public class J {
     public interface Consumer {
         void accept(String p);
@@ -12,9 +14,8 @@ public class J {
     }
 }
 
+// MODULE: main(lib)
 // FILE: Kotlin.kt
-
-
 inline fun makeRunnable(crossinline lambda: () -> Unit) =
         object : Runnable {
             override fun run() {

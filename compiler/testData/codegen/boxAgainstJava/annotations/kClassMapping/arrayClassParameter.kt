@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: JavaAnn.java
 
 import java.lang.annotation.Retention;
@@ -10,6 +11,7 @@ import java.lang.annotation.RetentionPolicy;
     Class<?>[] args();
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 class O

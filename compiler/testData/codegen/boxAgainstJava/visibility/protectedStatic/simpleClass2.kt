@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: Base.java
 
 public class Base {
@@ -13,6 +14,7 @@ public class Base {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 class Derived : Base.A() {

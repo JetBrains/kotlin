@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: A.java
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ public interface A {
     void foo() throws IOException;
 }
 
+// MODULE: main(lib)
 // FILE: B.kt
 
 class B(a: A) : A by a

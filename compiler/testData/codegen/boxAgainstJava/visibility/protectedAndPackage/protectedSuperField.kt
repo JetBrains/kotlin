@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: test/Foo.java
 package test;
 
@@ -9,6 +10,7 @@ public class Foo {
     }
 }
 
+// MODULE: main(lib)
 // FILE: test.kt
 import test.Foo
 

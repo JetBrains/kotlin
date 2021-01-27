@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: Foo.java
 
 import java.lang.annotation.Retention;
@@ -7,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 @interface Foo {
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 @Foo class Bar

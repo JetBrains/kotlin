@@ -1,9 +1,11 @@
+// MODULE: lib
 // FILE: A.java
 
 interface A {
     void foo();
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 internal interface B : A {

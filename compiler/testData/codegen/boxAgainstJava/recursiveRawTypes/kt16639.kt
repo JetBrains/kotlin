@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: Device.java
 import java.util.Collection;
 
@@ -13,6 +14,7 @@ public class Device<D extends Device, S extends Service> {
 public class Service<D extends Device, S extends Service> {
 }
 
+// MODULE: main(lib)
 // FILE: loop.kt
 
 fun box(): String {

@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: JavaAnn.java
 
 import java.lang.annotation.Retention;
@@ -18,6 +19,7 @@ class K {}
 @JavaAnn(args = {O.class, K.class})
 class MyJavaClass {}
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: A.java
 
 public abstract class A<T> {
@@ -18,6 +19,7 @@ public abstract class A<T> {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 open class Super

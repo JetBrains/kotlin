@@ -113,10 +113,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM)
             }
 
-            testClass<AbstractBlackBoxAgainstJavaCodegenTest> {
-                model("codegen/boxAgainstJava")
-            }
-
             testClass<AbstractJdk15BlackBoxCodegenTest> {
                 model("codegen/java15/box")
             }
@@ -366,10 +362,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/composeLikeBytecodeText", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
-                model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractIrCompileJavaAgainstKotlinTest> {
                 model(
                     "compileJavaAgainstKotlin",
@@ -466,16 +458,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup(
-            "compiler/fir/fir2ir/tests-gen", "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
-        ) {
-            testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
-                model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
         }
 
