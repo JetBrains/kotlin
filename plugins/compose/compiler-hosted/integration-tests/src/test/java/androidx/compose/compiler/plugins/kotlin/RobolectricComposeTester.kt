@@ -24,13 +24,13 @@ import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
-import androidx.compose.runtime.EmbeddingContext
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.Recomposer
 import androidx.compose.ui.node.UiApplier
 import androidx.compose.ui.platform.AmbientContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
@@ -122,9 +122,8 @@ class RobolectricComposeTester internal constructor(
     companion object {
         @OptIn(ExperimentalCoroutinesApi::class)
         private val recomposer = run {
-            val embeddingContext = EmbeddingContext()
             val mainScope = CoroutineScope(
-                NonCancellable + embeddingContext.mainThreadCompositionContext()
+                NonCancellable + Dispatchers.Main
             )
 
             Recomposer(mainScope.coroutineContext).also {
