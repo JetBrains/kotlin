@@ -3560,19 +3560,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/obsoleteCoroutines")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ObsoleteCoroutines extends AbstractQuickFixMultiFileTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestWithExtraFile, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInObsoleteCoroutines() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/obsoleteCoroutines"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), null, true);
-        }
-    }
-
     @TestMetadata("idea/testData/quickfix/obsoleteKotlinJsPackages")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
