@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirValueParameterImp
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
+import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
 import org.jetbrains.kotlin.descriptors.commonizer.utils.strip
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -72,7 +73,7 @@ internal fun addEmptyFragments(fragments: MutableCollection<KmModuleFragment>) {
 }
 
 internal fun CirClass.buildClass(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     className: ClassName,
     directNestedClasses: Collection<KmClass>,
     nestedConstructors: Collection<KmConstructor>,
@@ -122,7 +123,7 @@ internal fun linkSealedClassesWithSubclasses(packageFqName: FqName, classConsume
 }
 
 internal fun CirClassConstructor.buildClassConstructor(
-    context: VisitingContext
+    context: MetadataBuildingVisitorContext
 ): KmConstructor = KmConstructor(
     flags = classConstructorFlags()
 ).also { constructor ->
@@ -131,7 +132,7 @@ internal fun CirClassConstructor.buildClassConstructor(
 }
 
 internal fun CirTypeAlias.buildTypeAlias(
-    context: VisitingContext
+    context: MetadataBuildingVisitorContext
 ): KmTypeAlias = KmTypeAlias(
     flags = typeAliasFlags(),
     name = name.asString()
@@ -143,7 +144,7 @@ internal fun CirTypeAlias.buildTypeAlias(
 }
 
 internal fun CirProperty.buildProperty(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
 ): KmProperty = KmProperty(
     flags = propertyFlags(isExpect = context.isCommon && !isLiftedUp),
     name = name.asString(),
@@ -162,7 +163,7 @@ internal fun CirProperty.buildProperty(
     setter?.takeIf { !it.isDefault }?.let { setter ->
         property.setterParameter = CirValueParameterImpl(
             annotations = setter.parameterAnnotations,
-            name = SETTER_VALUE_NAME,
+            name = DEFAULT_SETTER_VALUE_NAME,
             returnType = returnType,
             varargElementType = null,
             declaresDefaultValue = false,
@@ -174,7 +175,7 @@ internal fun CirProperty.buildProperty(
 }
 
 internal fun CirFunction.buildFunction(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
 ): KmFunction = KmFunction(
     flags = functionFlags(isExpect = context.isCommon),
     name = name.asString()
@@ -231,7 +232,7 @@ private fun ConstantValue<*>.buildAnnotationArgument(): KmAnnotationArgument<*> 
 }
 
 private fun CirValueParameter.buildValueParameter(
-    context: VisitingContext
+    context: MetadataBuildingVisitorContext
 ): KmValueParameter = KmValueParameter(
     flags = valueParameterFlags(),
     name = name.asString()
@@ -244,7 +245,7 @@ private fun CirValueParameter.buildValueParameter(
 }
 
 private fun List<CirTypeParameter>.buildTypeParameters(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     output: MutableList<KmTypeParameter>
 ) {
     mapIndexedTo(output) { index, cirTypeParameter ->
@@ -261,7 +262,7 @@ private fun List<CirTypeParameter>.buildTypeParameters(
 }
 
 private fun CirType.buildType(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion = FOR_TOP_LEVEL_TYPE
 ): KmType = when (this) {
     is CirClassType -> buildType(context, expansion)
@@ -283,7 +284,7 @@ private fun CirTypeParameterType.buildType(): KmType =
     }
 
 private fun CirClassType.buildType(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion
 ): KmType = KmType(typeFlags()).also { type ->
     type.classifier = KmClassifier.Class(classifierId.asString())
@@ -292,7 +293,7 @@ private fun CirClassType.buildType(
 }
 
 private fun CirTypeAliasType.buildType(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion
 ): KmType = when (expansion) {
     ONLY_ABBREVIATIONS -> buildAbbreviationType(context, expansion)
@@ -306,7 +307,7 @@ private fun CirTypeAliasType.buildType(
 }
 
 private fun CirTypeAliasType.buildAbbreviationType(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion
 ): KmType {
     val abbreviationType = KmType(typeFlags())
@@ -317,7 +318,7 @@ private fun CirTypeAliasType.buildAbbreviationType(
 
 @Suppress("UnnecessaryVariable")
 private fun CirTypeAliasType.buildExpandedType(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion
 ): KmType {
     val cirExpandedType = computeExpandedType(underlyingType)
@@ -326,7 +327,7 @@ private fun CirTypeAliasType.buildExpandedType(
 }
 
 private fun CirTypeProjection.buildArgument(
-    context: VisitingContext,
+    context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion
 ): KmTypeProjection {
     val effectiveExpansion = if (expansion == FOR_TOP_LEVEL_TYPE) FOR_NESTED_TYPE else expansion
@@ -353,5 +354,3 @@ private enum class TypeAliasExpansion {
     FOR_TOP_LEVEL_TYPE,
     FOR_NESTED_TYPE
 }
-
-private val SETTER_VALUE_NAME = Name.identifier("value")

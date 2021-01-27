@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.name.Name
 
 /** Used for approximation of [PropertyDescriptor]s before running concrete [Commonizer]s */
 data class PropertyApproximationKey(
-    private val name: Name,
-    private val extensionReceiverParameterType: CirTypeSignature?
+    val name: Name,
+    val extensionReceiverParameterType: CirTypeSignature?
 ) {
     constructor(property: PropertyDescriptor) : this(
         property.name.intern(),
@@ -26,10 +26,10 @@ data class PropertyApproximationKey(
 
 /** Used for approximation of [SimpleFunctionDescriptor]s before running concrete [Commonizer]s */
 data class FunctionApproximationKey(
-    private val name: Name,
-    private val valueParametersTypes: Array<CirTypeSignature>,
+    val name: Name,
+    val valueParametersTypes: Array<CirTypeSignature>,
     private val additionalValueParametersNamesHash: Int,
-    private val extensionReceiverParameterType: CirTypeSignature?
+    val extensionReceiverParameterType: CirTypeSignature?
 ) {
     constructor(function: SimpleFunctionDescriptor) : this(
         function.name.intern(),
@@ -56,7 +56,7 @@ data class FunctionApproximationKey(
 
 /** Used for approximation of [ConstructorDescriptor]s before running concrete [Commonizer]s */
 data class ConstructorApproximationKey(
-    private val valueParametersTypes: Array<CirTypeSignature>,
+    val valueParametersTypes: Array<CirTypeSignature>,
     private val additionalValueParametersNamesHash: Int
 ) {
     constructor(constructor: ConstructorDescriptor) : this(

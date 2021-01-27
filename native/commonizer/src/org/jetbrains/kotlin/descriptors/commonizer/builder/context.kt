@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
@@ -121,8 +120,7 @@ class DeclarationsBuilderCache(private val dimension: Int) {
 class GlobalDeclarationsBuilderComponents(
     val storageManager: StorageManager,
     val targetComponents: List<TargetDeclarationsBuilderComponents>,
-    val cache: DeclarationsBuilderCache,
-    val statsCollector: StatsCollector?
+    val cache: DeclarationsBuilderCache
 ) {
     init {
         check(targetComponents.size > 1)
@@ -274,7 +272,7 @@ fun CirRootNode.createGlobalBuilderComponents(
         )
     }
 
-    return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, parameters.statsCollector)
+    return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache)
 }
 
 interface TypeParameterResolver {

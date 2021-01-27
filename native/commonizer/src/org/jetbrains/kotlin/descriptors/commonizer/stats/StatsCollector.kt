@@ -5,9 +5,17 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import java.io.Closeable
+interface StatsCollector {
+    data class StatsKey(
+        val id: String,
+        val extensionReceiver: String?,
+        val parameterNames: List<String>,
+        val parameterTypes: List<String>,
+        val declarationType: DeclarationType
+    ) {
+        constructor(id: String, declarationType: DeclarationType) : this(id, null, emptyList(), emptyList(), declarationType)
+    }
 
-interface StatsCollector : Closeable {
-    fun logStats(result: List<DeclarationDescriptor?>)
+    fun logDeclaration(targetIndex: Int, lazyStatsKey: () -> StatsKey)
+    fun writeTo(statsOutput: StatsOutput)
 }

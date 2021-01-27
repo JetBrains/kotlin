@@ -30,9 +30,6 @@ internal fun CirClassNode.buildDescriptors(
     }
 
     commonClass?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, classId, isExpect = true)
-
-    // log stats
-    components.statsCollector?.logStats(output)
 }
 
 internal fun CirClass.buildDescriptor(
@@ -86,9 +83,6 @@ internal fun CirClassConstructorNode.buildDescriptors(
     }
 
     commonConstructor?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = true)
-
-    // log stats
-    components.statsCollector?.logStats(output)
 }
 
 private fun CirClassConstructor.buildDescriptor(

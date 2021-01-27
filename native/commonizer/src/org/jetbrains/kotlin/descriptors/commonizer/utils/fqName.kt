@@ -44,6 +44,9 @@ private val OBJC_INTEROP_CALLABLE_ANNOTATIONS = listOf(
     "ObjCFactory"
 )
 
+internal val DEFAULT_CONSTRUCTOR_NAME = Name.identifier("<init>").intern()
+internal val DEFAULT_SETTER_VALUE_NAME = Name.identifier("value").intern()
+
 internal fun Name.strip(): String =
     asString().removeSurrounding("<", ">")
 
