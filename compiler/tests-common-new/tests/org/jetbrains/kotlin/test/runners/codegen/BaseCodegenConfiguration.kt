@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
@@ -48,4 +49,23 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
     useFrontendFacades(frontendFacade)
     useFrontend2BackendConverters(frontendToBackendConverter)
     useBackendFacades(backendFacade)
+}
+
+fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
+    useFrontendHandlers(
+        ::NoCompilationErrorsHandler,
+        ::NoFirCompilationErrorsHandler,
+    )
+
+    useArtifactsHandlers(
+        ::JvmBoxRunner,
+        ::NoJvmSpecificCompilationErrorsHandler,
+        ::DxCheckerHandler,
+    )
+}
+
+fun TestConfigurationBuilder.useInlineHandlers() {
+    useArtifactsHandlers(
+        ::BytecodeInliningHandler
+    )
 }

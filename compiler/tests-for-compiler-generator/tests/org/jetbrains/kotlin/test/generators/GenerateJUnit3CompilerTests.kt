@@ -113,10 +113,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM)
             }
 
-            testClass<AbstractBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM)
-            }
-
             testClass<AbstractBlackBoxAgainstJavaCodegenTest> {
                 model("codegen/boxAgainstJava")
             }
@@ -474,10 +470,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("debug/localVariables", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
-            }
-
             testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM_IR)
             }
@@ -492,34 +484,8 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             testRunnerMethodName = "runTestWithCustomIgnoreDirective",
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
         ) {
-            testClass<AbstractFirBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-
             testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
                 model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
-            }
-        }
-
-        testGroup(
-            "compiler/tests-gen", "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE: \"")
-        ) {
-            testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM)
-            }
-            testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
-            }
-            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
-            }
-            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
-                model(
-                    "codegen/boxInline",
-                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR
-                )
             }
         }
 

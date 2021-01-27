@@ -23,6 +23,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val IGNORE_BACKEND_MULTI_MODULE by enumDirective<TargetBackend>(
+        description = "Ignore failures of multimodule test on target backend",
+        applicability = Global
+    )
+
     val JAVAC_OPTIONS by stringDirective(
         description = "Specify javac options to compile java files"
     )

@@ -79,6 +79,30 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractIrBytecodeTextTest> {
                 model("codegen/bytecodeText", excludeDirs = listOf("oldLanguageVersions"))
             }
+
+            testClass<AbstractBlackBoxInlineCodegenTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrBlackBoxInlineCodegenTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
+                model("codegen/boxInline")
+            }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------
@@ -91,6 +115,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxCodegenTest> {
                 model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenTest> {
+                model("codegen/boxInline", excludeDirs = listOf("oldLanguageVersions"))
             }
         }
 

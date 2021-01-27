@@ -47,8 +47,8 @@ class ModuleTransformerForTwoFilesBoxTests : ModuleStructureTransformer() {
             module.frontendKind,
             module.binaryKind,
             files = listOf(second) + additionalFiles,
-            dependencies = listOf(DependencyDescription("lib", DependencyKind.Binary, DependencyRelation.Dependency)),
-            friends = emptyList(),
+            dependencies = emptyList(),
+            friends = listOf(DependencyDescription("lib", DependencyKind.Binary, DependencyRelation.Dependency)),
             module.directives,
             module.languageVersionSettings
         )
