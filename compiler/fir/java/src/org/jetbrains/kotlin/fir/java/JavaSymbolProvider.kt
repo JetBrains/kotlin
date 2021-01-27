@@ -68,8 +68,7 @@ class JavaSymbolProvider(
     private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
 
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
-    private val parentClassTypeParameterStackCache: SymbolProviderCache<FirRegularClassSymbol, JavaTypeParameterStack> =
-        SymbolProviderCache()
+    private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
 
     private fun findClass(
         classId: ClassId,
