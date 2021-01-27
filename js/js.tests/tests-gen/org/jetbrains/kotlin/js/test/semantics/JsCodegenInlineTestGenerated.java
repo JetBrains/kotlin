@@ -2863,6 +2863,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/reified/kt35511_try_valueOf.kt");
         }
 
+        @TestMetadata("kt35511_try_values.kt")
+        public void testKt35511_try_values() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt35511_try_values.kt");
+        }
+
         @TestMetadata("kt7017.kt")
         public void testKt7017() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt7017.kt");

@@ -88,6 +88,7 @@ private fun createSpecialEnumMethodBody(
     } else {
         node.visitInsn(Opcodes.ICONST_0)
         node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
+        node.visitTypeInsn(Opcodes.CHECKCAST, AsmUtil.getArrayType(ENUM_TYPE).internalName)
     }
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(if (isValueOf) 3 else 2, if (isValueOf) 1 else 0)
