@@ -1,3 +1,4 @@
+// IGNORE_FIR_DIAGNOSTICS
 // FILE: 1.kt
 
 package test
