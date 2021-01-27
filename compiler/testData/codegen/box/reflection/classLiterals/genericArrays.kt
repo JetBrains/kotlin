@@ -19,14 +19,13 @@ fun box(): String {
     assertEquals("Array", arrayClass<Array<Klass>>().simpleName)
     assertEquals("Array", arrayClass<Array<Klass?>>().simpleName)
 
-    // Should not be that way. Fix this test when backend is fixed.
-    assertEquals("[Ljava.lang.Object;", arrayClass<Int>().jvmName)
-    assertEquals("[Ljava.lang.Object;", arrayClass<Int?>().jvmName)
-    assertEquals("[Ljava.lang.Object;", arrayClass<Array<Int>>().jvmName)
-    assertEquals("[Ljava.lang.Object;", arrayClass<Klass>().jvmName)
-    assertEquals("[Ljava.lang.Object;", arrayClass<Klass?>().jvmName)
-    assertEquals("[Ljava.lang.Object;", arrayClass<Array<Klass>>().jvmName)
-    assertEquals("[Ljava.lang.Object;", arrayClass<Array<Klass?>>().jvmName)
+    assertEquals("[Ljava.lang.Integer;", arrayClass<Int>().jvmName)
+    assertEquals("[Ljava.lang.Integer;", arrayClass<Int?>().jvmName)
+    assertEquals("[[Ljava.lang.Integer;", arrayClass<Array<Int>>().jvmName)
+    assertEquals("[LKlass;", arrayClass<Klass>().jvmName)
+    assertEquals("[LKlass;", arrayClass<Klass?>().jvmName)
+    assertEquals("[[LKlass;", arrayClass<Array<Klass>>().jvmName)
+    assertEquals("[[LKlass;", arrayClass<Array<Klass?>>().jvmName)
 
     return "OK"
 }

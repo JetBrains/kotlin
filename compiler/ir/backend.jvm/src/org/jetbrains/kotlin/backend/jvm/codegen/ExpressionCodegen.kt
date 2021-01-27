@@ -984,9 +984,8 @@ class ExpressionCodegen(
                 result.materializeAt(boxedLeftType, expression.argument.type)
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
-                if (typeOperand.isReifiedTypeParameter) {
-                    val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)
+                val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
+                if (putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)) {
                     v.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
@@ -998,8 +997,7 @@ class ExpressionCodegen(
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
-                if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
+                if (putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)) {
                     v.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, kotlinType, type, state.languageVersionSettings.isReleaseCoroutines())
@@ -1287,14 +1285,11 @@ class ExpressionCodegen(
             JavaClassProperty.invokeWith(classReference.argument.accept(this, data))
         } else if (classReference is IrClassReference) {
             val classType = classReference.classType
-            val classifier = classType.classifierOrNull
-            if (classifier is IrTypeParameterSymbol) {
-                assert(classifier.owner.isReified) {
-                    "Non-reified type parameter under ::class should be rejected by type checker: ${classifier.owner.dump()}"
+            if (!putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)) {
+                assert(classType.classifierOrNull !is IrTypeParameterSymbol) {
+                    "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
                 }
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
             }
-
             generateClassInstance(mv, classType, typeMapper)
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")

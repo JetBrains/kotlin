@@ -2823,6 +2823,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/reified/arrayOf.kt");
         }
 
+        @TestMetadata("arrayType.kt")
+        public void testArrayType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/arrayType.kt");
+        }
+
         @TestMetadata("capturedLambda.kt")
         public void testCapturedLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/capturedLambda.kt");

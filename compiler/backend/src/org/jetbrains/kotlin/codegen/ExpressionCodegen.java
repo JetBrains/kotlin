@@ -102,6 +102,7 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.boxType;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.BaseExpressionCodegenKt.putReifiedOperationMarkerIfTypeIsReifiedParameter;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.*;
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.boxType;
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
@@ -3534,14 +3535,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             KotlinType type = lhs.getType();
             if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObjectQualifier()) {
                 JavaClassProperty.INSTANCE.generateImpl(v, gen(receiverExpression));
-            }
-            else {
-                if (TypeUtils.isTypeParameter(type)) {
-                    assert TypeUtils.isReifiedTypeParameter(type) :
+            } else {
+                if (!putReifiedOperationMarkerIfTypeIsReifiedParameter(this, type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)) {
+                    assert !TypeUtils.isTypeParameter(type) :
                             "Non-reified type parameter under ::class should be rejected by type checker: " + type;
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS);
                 }
-
                 putJavaLangClassInstance(v, typeMapper.mapType(type), type, typeMapper);
             }
 
@@ -4913,6 +4911,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (KotlinBuiltIns.isArray(arrayType)) {
             KotlinType elementJetType = arrayType.getArguments().get(0).getType();
             putReifiedOperationMarkerIfTypeIsReifiedParameter(
+                    this,
                     elementJetType,
                     ReifiedTypeInliner.OperationKind.NEW_ARRAY
             );
@@ -5218,10 +5217,9 @@ The "returned" value of try expression with no finally is either the last expres
             }
 
             boolean safeAs = opToken == KtTokens.AS_SAFE;
-            if (TypeUtils.isReifiedTypeParameter(rightKotlinType)) {
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(rightKotlinType,
+            if (putReifiedOperationMarkerIfTypeIsReifiedParameter(this, rightKotlinType,
                                                                   safeAs ? ReifiedTypeInliner.OperationKind.SAFE_AS
-                                                                         : ReifiedTypeInliner.OperationKind.AS);
+                                                                         : ReifiedTypeInliner.OperationKind.AS)) {
                 v.checkcast(boxedRightType);
                 return Unit.INSTANCE;
             }
@@ -5275,8 +5273,7 @@ The "returned" value of try expression with no finally is either the last expres
             }
 
             Type type = boxType(typeMapper.mapTypeAsDeclaration(rhsKotlinType));
-            if (TypeUtils.isReifiedTypeParameter(rhsKotlinType)) {
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(rhsKotlinType, ReifiedTypeInliner.OperationKind.IS);
+            if (putReifiedOperationMarkerIfTypeIsReifiedParameter(this, rhsKotlinType, ReifiedTypeInliner.OperationKind.IS)) {
                 v.instanceOf(type);
                 return null;
             }

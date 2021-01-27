@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -20,20 +21,15 @@ object GetJavaObjectType : IntrinsicMethod() {
 
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
         when (val receiver = expression.extensionReceiver) {
-            is IrClassReference -> {
+            is IrClassReference -> with(codegen) {
                 val symbol = receiver.symbol
-                if (symbol is IrTypeParameterSymbol) {
-                    assert(symbol.owner.isReified) {
-                        "Non-reified type parameter under ::class should be rejected by type checker: ${symbol.owner.dump()}"
+                if (!putReifiedOperationMarkerIfTypeIsReifiedParameter(receiver.classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)) {
+                    assert(symbol !is IrTypeParameterSymbol) {
+                        "Non-reified type parameter under ::class should be rejected by type checker: ${symbol.owner.render()}"
                     }
-                    codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(
-                        receiver.classType,
-                        ReifiedTypeInliner.OperationKind.JAVA_CLASS
-                    )
                 }
-                codegen.mv.aconst(AsmUtil.boxType(codegen.typeMapper.mapTypeAsDeclaration(receiver.classType)))
-
-                with(codegen) { expression.onStack }
+                mv.aconst(AsmUtil.boxType(typeMapper.mapTypeAsDeclaration(receiver.classType)))
+                expression.onStack
             }
 
             is IrGetClass -> {
