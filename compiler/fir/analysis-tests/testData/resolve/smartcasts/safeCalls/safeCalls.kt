@@ -5,7 +5,7 @@ fun String.let(block: () -> Unit) {}
 
 fun test(x: String?) {
     x?.foo(x.length == 1)
-    x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    x.<!UNSAFE_CALL!>length<!>
 }
 
 interface A {
@@ -27,12 +27,12 @@ fun test_3(x: Any) {
 
 fun test_4(x: A?) {
     x?.id()?.bool()
-    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>id<!>()<!>
+    x.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>id<!>()<!>
 }
 
 fun Any?.boo(b: Boolean) {}
 
 fun test_5(x: A?) {
     x?.let { return }?.boo(x.bool())
-    x.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>id<!>()<!>
+    x.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>id<!>()<!>
 }

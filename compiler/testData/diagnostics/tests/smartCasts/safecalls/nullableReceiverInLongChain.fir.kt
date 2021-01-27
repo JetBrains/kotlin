@@ -11,22 +11,22 @@ fun String.notNullLet(f: (String) -> Unit) = f(this)
 fun test(foo: Foo?) {
     foo?.bar?.gav.let {
         // Error, foo?.bar?.gav is nullable
-        it.<!INAPPLICABLE_CANDIDATE!>length<!>
+        it.<!UNSAFE_CALL!>length<!>
         // Error, foo is nullable
-        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.gav.length
+        foo.<!UNSAFE_CALL!>bar<!>.gav.length
         // Correct
         foo?.bar?.gav?.length
     }
     foo?.bar?.gav.call { it }?.notNullLet {
-        foo.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
-        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.hashCode()
+        foo.<!UNSAFE_CALL!>hashCode<!>()
+        foo.<!UNSAFE_CALL!>bar<!>.hashCode()
     }
 }
 
 fun testNotNull(foo: Foo) {
     val s: String? = ""
     foo.baz(s!!)?.gav.let {
-        it.<!INAPPLICABLE_CANDIDATE!>length<!>
+        it.<!UNSAFE_CALL!>length<!>
         // Ok because of foo.
         s.length.hashCode()
     }
@@ -35,7 +35,7 @@ fun testNotNull(foo: Foo) {
 fun testNullable(foo: Foo?) {
     val s: String? = ""
     foo?.baz(s!!)?.gav.let {
-        it.<!INAPPLICABLE_CANDIDATE!>length<!>
+        it.<!UNSAFE_CALL!>length<!>
         // Ok because of foo?.
         s?.length?.hashCode()
     }

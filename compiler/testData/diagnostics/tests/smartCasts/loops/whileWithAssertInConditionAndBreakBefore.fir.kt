@@ -7,7 +7,7 @@ fun foo() {
         break
 
     }
-    x.<!INAPPLICABLE_CANDIDATE!>length<!> // 'x' is unsoundly smartcasted here
+    x.<!UNSAFE_CALL!>length<!> // 'x' is unsoundly smartcasted here
 }
 
 fun bar() {
@@ -17,5 +17,5 @@ fun bar() {
         break
 
     }
-    x.<!INAPPLICABLE_CANDIDATE!>size<!> // 'x' is unsoundly smartcasted here
+    x.<!UNSAFE_CALL!>size<!> // 'x' is unsoundly smartcasted here
 }

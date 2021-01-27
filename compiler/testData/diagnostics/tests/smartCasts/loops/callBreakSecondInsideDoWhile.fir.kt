@@ -9,5 +9,5 @@ public fun foo(x: String?, z: String?): Int {
     // z is not null because of z!!
     z.length
     // x is null because of the break
-    return x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return x.<!UNSAFE_CALL!>length<!>
 }

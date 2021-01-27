@@ -14,7 +14,7 @@ fun case_1() {
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!UNSAFE_CALL!>length<!>
 }
 
 /*
@@ -29,7 +29,7 @@ fun case_3() {
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!UNSAFE_CALL!>length<!>
 }
 
 /*
@@ -44,7 +44,7 @@ fun case_4() {
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 5
@@ -57,7 +57,7 @@ fun case_5() {
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 6
@@ -65,12 +65,12 @@ fun case_6() {
     var x: Boolean? = true
     while (false && x!!) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 7
@@ -78,12 +78,12 @@ fun case_7() {
     var x: Boolean? = true
     while (true || x!!) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 8
@@ -91,12 +91,12 @@ fun case_8() {
     var x: Boolean? = true
     while (!(false && x!!)) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 9
@@ -137,12 +137,12 @@ fun case_12() {
     var x: Boolean? = true
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     } while (true && x!!)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 13
@@ -150,12 +150,12 @@ fun case_13() {
     var x: Boolean? = true
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     } while (false && x!!)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 14
@@ -163,12 +163,12 @@ fun case_14() {
     var x: Boolean? = true
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     } while (true || x!!)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 // TESTCASE NUMBER: 15
@@ -176,12 +176,12 @@ fun case_15() {
     var x: Boolean? = true
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
         x = null
         break
     } while (!(false && x!!))
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 /*
@@ -195,7 +195,7 @@ fun case_16() {
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }
 
 /*
@@ -209,5 +209,5 @@ fun case_17() {
         break
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>not<!>()
 }

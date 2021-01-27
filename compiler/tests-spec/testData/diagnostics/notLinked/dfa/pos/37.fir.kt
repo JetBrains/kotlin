@@ -13,7 +13,7 @@ fun case_1(x: Any?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 2
@@ -24,7 +24,7 @@ fun case_2(a: Any?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 /*
@@ -38,7 +38,7 @@ fun case_3(x: Int?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -48,7 +48,7 @@ fun case_4(x: Boolean?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 /*
@@ -62,7 +62,7 @@ fun case_5(x: Boolean?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 6
@@ -72,7 +72,7 @@ fun case_6(x: Boolean?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 7
@@ -82,7 +82,7 @@ fun case_7(x: Boolean?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 8
@@ -110,7 +110,7 @@ fun case_10(x: Boolean?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 11
@@ -147,7 +147,7 @@ fun case_13(x: Boolean?) {
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>.<!UNSAFE_CALL!>equals<!>(10)
 }
 
 /*

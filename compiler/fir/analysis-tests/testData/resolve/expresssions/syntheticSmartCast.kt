@@ -34,7 +34,7 @@ fun test3(x: AnotherClass?) {
 fun test4(x: SomeClass?) {
     val bar = x?.bar
     if (bar != null) {
-        x.bar.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x.bar.<!UNSAFE_CALL!>length<!>
     }
 }
 

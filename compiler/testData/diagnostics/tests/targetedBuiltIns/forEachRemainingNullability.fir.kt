@@ -36,6 +36,6 @@ fun foo(x: Iterator<String>, y: Iterator<String?>) {
 
     x.forEachRemaining { it -> it.length }
     x.forEachRemaining { it -> it?.length }
-    y.forEachRemaining { it -> it.<!INAPPLICABLE_CANDIDATE!>length<!> }
+    y.forEachRemaining { it -> it.<!UNSAFE_CALL!>length<!> }
     y.forEachRemaining { it -> it?.length }
 }

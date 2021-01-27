@@ -142,7 +142,7 @@ fun case_11() {
     x as? Any ?: null!!
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        x = x.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
+        x = x.<!UNSAFE_CALL!>equals<!>(10)
     } while (x != null)
 }
 

@@ -2,5 +2,5 @@
 fun foo(): Int {
     var s: String? = "abc"
     s = null
-    return s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return s.<!UNSAFE_CALL!>length<!>
 }

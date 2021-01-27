@@ -37,7 +37,7 @@ fun test3() {
     catch (e: B) {
         return
     }
-    a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() // a is nullable here
+    a.<!UNSAFE_CALL!>hashCode<!>() // a is nullable here
 }
 fun test4() {
     var a: Int? = null
@@ -50,7 +50,7 @@ fun test4() {
     catch (e: B) {
         return
     }
-    a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() // a is nullable here
+    a.<!UNSAFE_CALL!>hashCode<!>() // a is nullable here
 }
 fun test5() {
     var a: Int?// = null
@@ -76,5 +76,5 @@ fun test6() {
     finally {
         a = null
     }
-    a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() // a is null here
+    a.<!UNSAFE_CALL!>hashCode<!>() // a is null here
 }

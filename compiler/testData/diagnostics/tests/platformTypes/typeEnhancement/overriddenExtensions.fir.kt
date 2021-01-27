@@ -8,8 +8,8 @@ class E : B1() {
     fun baz() {
         val x: String? = ""
 
-        x.<!INAPPLICABLE_CANDIDATE!>foo<!>(x)
-        x.<!INAPPLICABLE_CANDIDATE!>foo<!>("")
+        x.<!UNSAFE_CALL!>foo<!>(x)
+        x.<!UNSAFE_CALL!>foo<!>("")
         x.<!INAPPLICABLE_CANDIDATE!>bar<!>(x)
         x.bar("")
     }

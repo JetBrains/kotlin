@@ -89,7 +89,7 @@ fun <T : String?> T.case_9() = this
 fun case_9() {
     var x: Int? = 10
     x = null
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>case_9<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>.<!UNSAFE_CALL!>case_9<!>()
 }
 
 /*

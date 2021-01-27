@@ -7,9 +7,9 @@ operator fun <K> Container<K>.iterator(): Iterator<K> = null!!
 fun test() {
     val container: Container<String>? = null
     // Error
-    container.<!INAPPLICABLE_CANDIDATE!>iterator<!>()
+    container.<!UNSAFE_CALL!>iterator<!>()
     // for extension iterator, this code compiles, but should not
-    <!INAPPLICABLE_CANDIDATE!>for (s in container) {}<!>
+    <!UNSAFE_CALL!>for (s in container) {}<!>
 }
 class OtherContainer<K>(val k: K) {
     operator fun iterator(): Iterator<K> = null!!
@@ -18,5 +18,5 @@ class OtherContainer<K>(val k: K) {
 fun test2() {
     val other: OtherContainer<String>? = null
     // Error
-    <!INAPPLICABLE_CANDIDATE!>for (s in other) {}<!>
+    <!UNSAFE_CALL!>for (s in other) {}<!>
 }

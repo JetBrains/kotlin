@@ -22,6 +22,6 @@ fun test_3(a: Any?, b: Boolean) {
 
 fun test_4(a: Any?, b: Boolean) {
     if (a is String || b) {
-        a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>()<!> // Should be Bad
+        a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!> // Should be Bad
     }
 }

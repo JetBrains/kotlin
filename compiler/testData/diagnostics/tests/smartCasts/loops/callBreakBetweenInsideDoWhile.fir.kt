@@ -10,7 +10,7 @@ public fun foo(x: String?, z: String?, w: String?): Int {
     // w is not null because of w!!
     w.length
     // z is nullable despite of z!!
-    z.<!INAPPLICABLE_CANDIDATE!>length<!>
+    z.<!UNSAFE_CALL!>length<!>
     // x is null because of the break
-    return x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return x.<!UNSAFE_CALL!>length<!>
 }

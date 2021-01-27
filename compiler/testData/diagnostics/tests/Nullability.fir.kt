@@ -158,7 +158,7 @@ fun test() {
 
 fun f(out : String?) {
   out?.get(0)
-  out.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+  out.<!UNSAFE_CALL!>get<!>(0)
   if (out != null) else return;
   out.get(0)
 }

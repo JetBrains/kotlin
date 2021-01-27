@@ -16,7 +16,7 @@ fun test() {
     val foo = Foo.create(null)
     foo?.bar.let {
         // Error, foo?.bar is nullable
-        it.<!INAPPLICABLE_CANDIDATE!>length<!>
+        it.<!UNSAFE_CALL!>length<!>
         // Foo is nullable but flexible, so call is considered safe here
         foo.bar.length
         // Correct

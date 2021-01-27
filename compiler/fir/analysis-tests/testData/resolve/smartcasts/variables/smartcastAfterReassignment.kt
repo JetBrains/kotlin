@@ -18,5 +18,5 @@ fun test_3() {
     x = ""
     x.length
     x = null
-    x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    x.<!UNSAFE_CALL!>length<!>
 }

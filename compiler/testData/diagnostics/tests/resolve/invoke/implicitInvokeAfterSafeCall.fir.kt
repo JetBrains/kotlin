@@ -12,7 +12,7 @@ class Another1 {
 
 fun Another1.main(x: Bar1<String>?) {
     x?.value {}
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>({})
+    x?.value.<!UNSAFE_CALL!>invoke<!>({})
 }
 
 // Test case 2: additional receiver, non-generic invoke
@@ -26,7 +26,7 @@ class Another2 {
 
 fun Another2.main(x: Bar2<String>?) {
     x?.value(1)
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>(1)
+    x?.value.<!UNSAFE_CALL!>invoke<!>(1)
 }
 
 // Test case 3: additional generic receiver, generic invoke
@@ -40,7 +40,7 @@ class Another3<T> {
 
 fun <K> Another3<K>.main(x: Bar3<K>?) {
     x?.value(1)
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>(1)
+    x?.value.<!UNSAFE_CALL!>invoke<!>(1)
 }
 
 // Test case 4: additional receiver, generic invoke with nullable receiver
@@ -68,7 +68,7 @@ class Another5 {
 
 fun Another5.main(x: Bar5?) {
     x?.value {}
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>({})
+    x?.value.<!UNSAFE_CALL!>invoke<!>({})
 }
 
 // Test case 6: top-level generic invoke
@@ -96,7 +96,7 @@ operator fun <T> Foo7<T>.invoke(x: Int) {}
 
 fun Another7.main(x: Bar7<String>?) {
     x?.value(1)
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>(1)
+    x?.value.<!UNSAFE_CALL!>invoke<!>(1)
 }
 
 // Test case 8: top-level non-generic invoke
@@ -136,5 +136,5 @@ class Another10 {
 
 fun Another10.main(x: Bar10<String>?) {
     x?.value {}
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>({})
+    x?.value.<!UNSAFE_CALL!>invoke<!>({})
 }

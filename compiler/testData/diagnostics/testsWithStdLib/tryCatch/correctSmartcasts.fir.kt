@@ -15,8 +15,8 @@ fun test1(s: String?) {
         catch (e: Exception) {
             requireNotNull(s)
         }
-        t2.<!INAPPLICABLE_CANDIDATE!>not<!>()
-        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+        t2.<!UNSAFE_CALL!>not<!>()
+        s.<!UNSAFE_CALL!>length<!>
     }
 }
 
@@ -74,7 +74,7 @@ fun test5(s: String?) {
     catch (e: ExcB) {
 
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.<!UNSAFE_CALL!>length<!>
 }
 
 fun test6(s: String?) {

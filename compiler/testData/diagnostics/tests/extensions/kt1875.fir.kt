@@ -9,13 +9,13 @@ interface T {
 }
 
 fun test(t: T) {
-    t.<!INAPPLICABLE_CANDIDATE!>f<!>(1) //unsafe call error
+    t.<!UNSAFE_CALL!>f<!>(1) //unsafe call error
     t.f?.invoke(1)
 }
 
 fun test1(t: T?) {
     t.<!UNRESOLVED_REFERENCE!>f<!>(1) // todo resolve f as value and report UNSAFE_CALL
-    t?.<!INAPPLICABLE_CANDIDATE!>f<!>(1)
-    t.<!INAPPLICABLE_CANDIDATE!>f<!>?.invoke(1)
+    t?.<!UNSAFE_CALL!>f<!>(1)
+    t.<!UNSAFE_CALL!>f<!>?.invoke(1)
     t?.f?.invoke(1)
 }

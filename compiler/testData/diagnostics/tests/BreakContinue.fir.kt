@@ -29,7 +29,7 @@ class C {
         while (a == null) {
             break;
         }
-        a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("2")
+        a.<!UNSAFE_CALL!>compareTo<!>("2")
     }
 
     fun notContainsBreak(a: String?, b: String?) {
@@ -70,7 +70,7 @@ class C {
                 break@l
             }
         }
-        a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("2")
+        a.<!UNSAFE_CALL!>compareTo<!>("2")
     }
 
     fun unresolvedBreak(a: String?, array: Array<Int>) {
@@ -80,7 +80,7 @@ class C {
             }
             if (true) break else <!NOT_A_LOOP_LABEL!>break@l<!>
         }
-        a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("2")
+        a.<!UNSAFE_CALL!>compareTo<!>("2")
     }
 
     fun twoLabelsOnLoop() {

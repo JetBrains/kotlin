@@ -8,5 +8,5 @@ class It {
 }
 
 fun test() {
-  <!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>for (x in Coll()) {}<!>
+  <!UNSAFE_CALL, UNSAFE_CALL!>for (x in Coll()) {}<!>
 }

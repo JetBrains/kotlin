@@ -158,7 +158,7 @@ class Case11 {
         if (y == case_12)
             throw Exception()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>y<!>.<!UNSAFE_CALL!>length<!>
     }
     constructor()
 }

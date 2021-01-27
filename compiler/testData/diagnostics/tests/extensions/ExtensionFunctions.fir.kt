@@ -64,7 +64,7 @@ import outer.*
 
             command.foo
 
-            command.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
+            command.<!UNSAFE_CALL!>equals<!>(null)
             command?.equals(null)
             command.equals1(null)
             command?.equals1(null)

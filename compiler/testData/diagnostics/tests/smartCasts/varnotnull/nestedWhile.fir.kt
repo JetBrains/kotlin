@@ -12,7 +12,7 @@ fun foo(): Bar {
     var y: Bar? = Bar()
     while (x != null) {
         // Here call is unsafe because of initialization and also inner loop
-        y.<!INAPPLICABLE_CANDIDATE!>next<!>()
+        y.<!UNSAFE_CALL!>next<!>()
         while (y != null) {
             if (x == y)
                 // x is not null because of outer while

@@ -39,17 +39,17 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
                 if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver)
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.typeRef.coneTypeSafe()))
                 }
             }
             EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
                 if (explicitReceiver == null) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver)
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver())
                 }
             }
             BOTH_RECEIVERS -> {
                 if (explicitReceiver == null) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver)
+                    return sink.yieldDiagnostic(InapplicableWrongReceiver())
                 }
                 // Here we should also check additional invoke receiver
             }
@@ -105,7 +105,7 @@ object CheckDispatchReceiver : ResolutionStage() {
         val dispatchReceiverValueType = candidate.dispatchReceiverValue?.type ?: return
 
         if (!AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)) {
-            sink.yieldDiagnostic(InapplicableWrongReceiver)
+            sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = dispatchReceiverValueType))
         }
     }
 }

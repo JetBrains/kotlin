@@ -9,5 +9,5 @@ fun checkJump(x: Int?, y: Int?) {
         y.hashCode()
     }
     // Smart cast here is erroneous: y is nullable
-    y.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    y.<!UNSAFE_CALL!>hashCode<!>()
 }

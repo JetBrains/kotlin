@@ -18,5 +18,5 @@ public fun foo(x: String?): Int {
     // y is always Int even here
     checkSubtype<Int>(y)
     // x is null because of the break
-    return x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return x.<!UNSAFE_CALL!>length<!>
 }
