@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersio
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
-import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
-import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
-import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector
+import org.jetbrains.kotlin.descriptors.commonizer.stats.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -132,36 +130,38 @@ class NativeDistributionCommonizer(
 
     private fun commonize(allLibraries: AllNativeLibraries): CommonizerResult {
         val statsCollector = when (statsType) {
-            RAW -> RawStatsCollector(targets, FileStatsOutput(destination, "raw"))
-            AGGREGATED -> AggregatedStatsCollector(targets, FileStatsOutput(destination, "aggregated"))
+            RAW -> RawStatsCollector(targets)
+            AGGREGATED -> AggregatedStatsCollector(targets)
             NONE -> null
         }
-        statsCollector.use {
-            val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
-                val storageManager = LockBasedStorageManager("Commonized modules")
 
-                val stdlibProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
-                dependeeModulesProvider = stdlibProvider
+        val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
+            val storageManager = LockBasedStorageManager("Commonized modules")
 
-                allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
-                    if (librariesToCommonize.libraries.isEmpty()) return@forEach
+            val stdlibProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
+            dependeeModulesProvider = stdlibProvider
 
-                    val modulesProvider = NativeDistributionModulesProvider(storageManager, librariesToCommonize)
+            allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
+                if (librariesToCommonize.libraries.isEmpty()) return@forEach
 
-                    addTarget(
-                        TargetProvider(
-                            target = target,
-                            builtInsClass = KonanBuiltIns::class.java,
-                            builtInsProvider = stdlibProvider,
-                            modulesProvider = modulesProvider,
-                            dependeeModulesProvider = null // stdlib is already set as common dependency
-                        )
+                val modulesProvider = NativeDistributionModulesProvider(storageManager, librariesToCommonize)
+
+                addTarget(
+                    TargetProvider(
+                        target = target,
+                        builtInsClass = KonanBuiltIns::class.java,
+                        builtInsProvider = stdlibProvider,
+                        modulesProvider = modulesProvider,
+                        dependeeModulesProvider = null // stdlib is already set as common dependency
                     )
-                }
+                )
             }
-
-            return runCommonization(parameters)
         }
+
+        val result = runCommonization(parameters)
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
+
+        return result
     }
 
     private fun saveModules(originalLibraries: AllNativeLibraries, result: CommonizerResult) {

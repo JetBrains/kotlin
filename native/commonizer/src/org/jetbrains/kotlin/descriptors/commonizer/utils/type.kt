@@ -58,6 +58,9 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
             }
             append("]")
         }
+
+        if (type.isMarkedNullable)
+            append("?")
     } else {
         // N.B. this is classifier type
         val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
@@ -81,10 +84,10 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
             }
             append(">")
         }
-    }
 
-    if (type.isMarkedNullable)
-        append("?")
+        if (abbreviation.isMarkedNullable)
+            append("?")
+    }
 }
 
 // dedicated to hold unique entries of "signature"

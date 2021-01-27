@@ -41,9 +41,6 @@ internal fun CirTypeAliasNode.buildDescriptors(
     } else if (commonClassifier != null && commonClassifier is CirClass) {
         commonClassifier.buildDescriptor(components, output, indexOfCommon, containingDeclarations, classId, isExpect = true)
     }
-
-    // log stats
-    components.statsCollector?.logStats(output)
 }
 
 private fun CirTypeAlias.buildDescriptor(
