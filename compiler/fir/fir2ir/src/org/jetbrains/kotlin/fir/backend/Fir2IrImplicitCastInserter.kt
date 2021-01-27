@@ -280,31 +280,29 @@ class Fir2IrImplicitCastInserter(
         return implicitCastOrExpression(data as IrExpression, expressionWithSmartcast.typeRef)
     }
 
-    internal fun convertToImplicitCastExpression(
-        expressionWithSmartcast: FirExpressionWithSmartcast, calleeReference: FirReference
+    internal fun implicitCastFromDispatchReceiver(
+        original: IrExpression,
+        originalTypeRef: FirTypeRef,
+        calleeReference: FirReference,
     ): IrExpression {
-        val originalExpression = expressionWithSmartcast.originalExpression
-        val value = visitor.convertToIrExpression(originalExpression)
-
-        val typeRef = expressionWithSmartcast.typeRef
         val referencedDeclaration =
             ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>)?.unwrapCallRepresentative()
-                ?.fir as FirCallableMemberDeclaration<*>
+                ?.fir as? FirCallableMemberDeclaration<*>
 
         val dispatchReceiverType =
-            referencedDeclaration.dispatchReceiverType as? ConeClassLikeType
-                ?: return implicitCastOrExpression(value, typeRef)
+            referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType
+                ?: return implicitCastOrExpression(original, originalTypeRef)
 
         val starProjectedDispatchReceiver = dispatchReceiverType.replaceArgumentsWithStarProjections()
 
-        val castType = typeRef.coneTypeSafe<ConeIntersectionType>()
-        castType?.intersectedTypes?.forEach { type ->
-            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, type, starProjectedDispatchReceiver)) {
-                return implicitCastOrExpression(value, type)
+        val castType = originalTypeRef.coneTypeSafe<ConeIntersectionType>()
+        castType?.intersectedTypes?.forEach { componentType ->
+            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, starProjectedDispatchReceiver)) {
+                return implicitCastOrExpression(original, componentType)
             }
         }
 
-        return implicitCastOrExpression(value, typeRef)
+        return implicitCastOrExpression(original, originalTypeRef)
     }
 
     private fun implicitCastOrExpression(original: IrExpression, castType: ConeKotlinType): IrExpression {

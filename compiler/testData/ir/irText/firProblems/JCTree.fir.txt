@@ -35,7 +35,8 @@ FILE fqName:<root> fileName:/JCTreeUser.kt
                 TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
                   GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:clazz type:kotlin.String? visibility:public' type=kotlin.String? origin=GET_PROPERTY
                     receiver: TYPE_OP type=<root>.JCTree.JCTypeApply origin=IMPLICIT_CAST typeOperand=<root>.JCTree.JCTypeApply
-                      GET_VAR 'var tree: <root>.JCTree [var] declared in <root>.Owner.<get-foo>' type=<root>.JCTree origin=null
+                      TYPE_OP type=T of <root>.Owner origin=IMPLICIT_CAST typeOperand=T of <root>.Owner
+                        GET_VAR 'var tree: <root>.JCTree [var] declared in <root>.Owner.<get-foo>' type=<root>.JCTree origin=null
           RETURN type=kotlin.Nothing from='public final fun <get-foo> (): kotlin.String declared in <root>.Owner'
             CONST String type=kotlin.String value=""
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

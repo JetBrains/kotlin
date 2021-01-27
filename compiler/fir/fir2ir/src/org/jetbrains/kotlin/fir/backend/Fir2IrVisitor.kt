@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -476,10 +477,10 @@ class Fir2IrVisitor(
         callableReferenceAccess: FirCallableReferenceAccess? = null
     ): IrExpression? {
         return when (expression) {
-            null -> null
+            null -> return null
             is FirResolvedQualifier -> callGenerator.convertToGetObject(expression, callableReferenceAccess)
-            is FirExpressionWithSmartcast -> implicitCastInserter.convertToImplicitCastExpression(expression, calleeReference)
-            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess -> convertToIrExpression(expression)
+            is FirFunctionCall, is FirThisReceiverExpression, is FirCallableReferenceAccess, is FirExpressionWithSmartcast ->
+                convertToIrExpression(expression)
             else -> if (expression is FirQualifiedAccessExpression && expression.explicitReceiver == null) {
                 val variableAsFunctionMode = calleeReference is FirResolvedNamedReference &&
                         calleeReference.name != OperatorNameConventions.INVOKE &&
@@ -491,6 +492,10 @@ class Fir2IrVisitor(
             } else {
                 convertToIrExpression(expression)
             }
+        }?.run {
+            if (expression is FirQualifiedAccessExpression && expression.calleeReference is FirSuperReference) return@run this
+
+            implicitCastInserter.implicitCastFromDispatchReceiver(this, expression.typeRef, calleeReference)
         }
     }
 

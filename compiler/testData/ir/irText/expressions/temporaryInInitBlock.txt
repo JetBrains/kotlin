@@ -31,7 +31,8 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                  $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.C' type=kotlin.Any? origin=null
+                  $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.C' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

@@ -35095,6 +35095,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("complexExplicitReceiver.kt")
+        public void testComplexExplicitReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/complexExplicitReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("complexImplicitReceiver.kt")
         public void testComplexImplicitReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/complexImplicitReceiver.kt");

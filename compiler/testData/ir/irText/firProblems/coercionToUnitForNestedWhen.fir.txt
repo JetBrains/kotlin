@@ -35,7 +35,8 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public open fun toChar (): kotlin.Char declared in kotlin.Int' type=kotlin.Char origin=null
-                $this: GET_VAR 'val tmp_0: kotlin.Int? [val] declared in <root>.nextChar' type=kotlin.Int? origin=null
+                $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                  GET_VAR 'val tmp_0: kotlin.Int? [val] declared in <root>.nextChar' type=kotlin.Int? origin=null
   FUN name:consumeRestOfQuotedSequence visibility:public modality:FINAL <> ($receiver:java.io.Reader, sb:java.lang.StringBuilder, quote:kotlin.Char) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:java.io.Reader
     VALUE_PARAMETER name:sb index:0 type:java.lang.StringBuilder
@@ -82,7 +83,8 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                       then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=java.lang.StringBuilder? origin=null
                         <T>: kotlin.Char
                         <R>: java.lang.StringBuilder?
-                        $receiver: GET_VAR 'val tmp_1: kotlin.Char? [val] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                        $receiver: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
+                          GET_VAR 'val tmp_1: kotlin.Char? [val] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                         block: FUN_EXPR type=kotlin.Function1<kotlin.Char, java.lang.StringBuilder?> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Char) returnType:java.lang.StringBuilder?
                             VALUE_PARAMETER name:it index:0 type:kotlin.Char
