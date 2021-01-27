@@ -65,7 +65,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
                 reporter.report(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY)
             }
 
-            checkAccessor(property.getter, property.delegate) { src, symbol ->
+            checkAccessor(property.getter, property.delegate) { src, _ ->
                 reporter.report(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER)
             }
             checkAccessor(property.setter, property.delegate) { src, symbol ->
@@ -99,7 +99,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             }
         }
 
-        checkPrivateExpectedDeclaration(property, reporter)
+        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter)
     }
 
     private fun checkAccessor(
@@ -113,5 +113,4 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             }
         }
     }
-
 }

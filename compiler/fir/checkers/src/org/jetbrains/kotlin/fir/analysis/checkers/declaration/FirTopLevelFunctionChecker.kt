@@ -28,14 +28,13 @@ object FirTopLevelFunctionChecker : FirFileChecker() {
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { source.getModifierList() }
-        val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
-        val isExternal = function.isExternal || modifierList?.modifiers?.any { it.token == KtTokens.EXTERNAL_KEYWORD } == true
+        if (modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true) return
+        if (function.isExternal || modifierList?.modifiers?.any { it.token == KtTokens.EXTERNAL_KEYWORD } == true) return
         val isExpect = function.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
-        if (!function.hasBody && !hasAbstractModifier && !isExternal && !isExpect) {
+        if (!function.hasBody && !isExpect) {
             reporter.report(FirErrors.NON_MEMBER_FUNCTION_NO_BODY.on(source, function))
         }
 
-        checkExpectFunctionHasBody(function, reporter)
-        checkPrivateExpectedDeclaration(function, reporter)
+        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter)
     }
 }

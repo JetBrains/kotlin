@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -21,7 +22,11 @@ object FirTopLevelPropertyChecker : FirFileChecker() {
     }
 
     private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter) {
+        val source = property.source ?: return
+        if (source.kind is FirFakeSourceElementKind) return
+        val modifierList = with(FirModifierList) { source.getModifierList() }
+
         checkPropertyInitializer(null, property, reporter)
-        checkPrivateExpectedDeclaration(property, reporter)
+        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter)
     }
 }

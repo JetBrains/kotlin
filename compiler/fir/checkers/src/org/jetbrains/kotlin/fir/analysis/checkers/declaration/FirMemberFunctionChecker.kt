@@ -61,8 +61,7 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
             }
         }
 
-        checkExpectFunctionHasBody(function, reporter)
-        checkPrivateExpectedDeclaration(function, reporter)
+        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter)
     }
 
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -21,27 +21,23 @@ internal fun isInsideExpectClass(containingDeclaration: FirRegularClass, context
     containingDeclaration.isExpect || context.containingDeclarations.asReversed().any { it is FirRegularClass && it.isExpect }
 
 // TODO: check class too
-internal fun checkPrivateExpectedDeclaration(declaration: FirMemberDeclaration, reporter: DiagnosticReporter) {
-    val source = declaration.source ?: return
-    if (source.kind is FirFakeSourceElementKind) return
-    val modifierList = with(FirModifierList) { source.getModifierList() }
-    val isExpect = declaration.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
-    if (isExpect && Visibilities.isPrivate(declaration.visibility)) {
-        reporter.report(source, FirErrors.EXPECTED_PRIVATE_DECLARATION)
+internal fun checkExpectDeclarationVisibilityAndBody(
+    declaration: FirMemberDeclaration,
+    source: FirSourceElement,
+    modifierList: FirModifierList?,
+    reporter: DiagnosticReporter
+) {
+    if (declaration.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true) {
+        if (Visibilities.isPrivate(declaration.visibility)) {
+            reporter.report(source, FirErrors.EXPECTED_PRIVATE_DECLARATION)
+        }
+        if (declaration is FirSimpleFunction && declaration.hasBody) {
+            reporter.report(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
+        }
     }
 }
 
-internal fun checkExpectFunctionHasBody(function: FirSimpleFunction, reporter: DiagnosticReporter) {
-    val source = function.source ?: return
-    if (source.kind is FirFakeSourceElementKind) return
-    val modifierList = with(FirModifierList) { source.getModifierList() }
-    val isExpect = function.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
-    if (isExpect && function.hasBody) {
-        reporter.report(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY)
-    }
-}
-
-fun checkPropertyInitializer(
+internal fun checkPropertyInitializer(
     containingClass: FirRegularClass?,
     property: FirProperty,
     reporter: DiagnosticReporter
