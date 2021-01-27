@@ -345,14 +345,13 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: Lig
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     // p : T = v
-    return childrenRef.get()?.reversed()?.firstOrNull {
-        it != null &&
-                it.tokenType != KtTokens.WHITE_SPACE &&
-                it.tokenType != KtTokens.EQ &&
-                it.tokenType != KtNodeTypes.TYPE_REFERENCE &&
-                it.tokenType != KtTokens.COLON &&
-                it.tokenType != KtTokens.IDENTIFIER
+    val children = childrenRef.get()?.reversed() ?: return null
+    for (child in children) {
+        if (child == null || child.tokenType == KtTokens.WHITE_SPACE) continue
+        if (child.tokenType == KtNodeTypes.TYPE_REFERENCE || child.tokenType == KtTokens.COLON) return null
+        return child
     }
+    return null
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
