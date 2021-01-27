@@ -84,6 +84,7 @@ private fun createSpecialEnumMethodBody(
             Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
             Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, JAVA_STRING_TYPE), false
         )
+        node.visitTypeInsn(Opcodes.CHECKCAST, ENUM_TYPE.internalName)
     } else {
         node.visitInsn(Opcodes.ICONST_0)
         node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
