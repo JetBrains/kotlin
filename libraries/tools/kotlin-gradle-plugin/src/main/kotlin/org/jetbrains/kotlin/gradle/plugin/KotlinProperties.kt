@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -252,6 +252,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty("kotlin.stdlib.default.dependency") ?: true
+
+    val kotlinTestInferJvmVariant: Boolean
+        get() = booleanProperty("kotlin.test.infer.jvm.variant") ?: true
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)

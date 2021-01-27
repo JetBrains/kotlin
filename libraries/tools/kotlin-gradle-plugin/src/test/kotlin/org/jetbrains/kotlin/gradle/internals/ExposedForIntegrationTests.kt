@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,4 +26,3 @@ const val NO_NATIVE_STDLIB_PROPERTY_WARNING = NO_NATIVE_STDLIB_PROPERTY_WARNING
 
 val KOTLIN_12X_MPP_DEPRECATION_WARNING = KOTLIN_12X_MPP_DEPRECATION_WARNING
 
-const val KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME = org.jetbrains.kotlin.gradle.internal.KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME
