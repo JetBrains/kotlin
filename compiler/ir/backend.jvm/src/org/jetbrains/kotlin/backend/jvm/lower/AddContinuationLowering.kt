@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.continuationParameter
 import org.jetbrains.kotlin.backend.jvm.codegen.hasContinuation
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeSuspendOfContinuation
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
@@ -302,7 +303,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                     }
                 }
 
-                val newFunction = if (function.isOverridable) {
+                val newFunction = if (function.isOverridable && !function.parentAsClass.isJvmInterface) {
                     // Create static method for the suspend state machine method so that reentering the method
                     // does not lead to virtual dispatch to the wrong method.
                     createStaticSuspendImpl(view).also { result += it }
