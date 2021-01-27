@@ -189,7 +189,6 @@ class NativeDistributionCommonizer(
                     }
                 }
 
-                val leafTargetNames = result.leafTargets.map { it.name }
                 val targetsToSerialize = result.leafTargets + result.sharedTarget
                 targetsToSerialize.forEach { target ->
                     val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
@@ -210,8 +209,8 @@ class NativeDistributionCommonizer(
                         }
                     }
 
-                    val targetName = leafTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
-                    serializeTarget(target, targetName, newLibraries, missingModuleLocations, manifestProvider)
+                    val prettyTargetName = target.prettyCommonizedName(result.sharedTarget)
+                    serializeTarget(target, prettyTargetName, newLibraries, missingModuleLocations, manifestProvider)
                 }
             }
         }
@@ -254,7 +253,7 @@ class NativeDistributionCommonizer(
 
     private fun serializeTarget(
         target: CommonizerTarget,
-        targetName: String,
+        prettyTargetName: String,
         newLibraries: Collection<LibraryMetadata>,
         missingModuleLocations: List<File>,
         manifestProvider: NativeManifestDataProvider
@@ -276,7 +275,7 @@ class NativeDistributionCommonizer(
             missingModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
         }
 
-        logProgress("Written libraries for [$targetName]")
+        logProgress("Written libraries for $prettyTargetName")
     }
 
     private fun writeLibrary(

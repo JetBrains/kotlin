@@ -70,7 +70,7 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
 
             ModuleResult.Commonized(moduleDescriptor, libraryMetadata)
         }
-        parameters.progressLogger?.invoke("Built metadata for target [$target]")
+        parameters.progressLogger?.invoke("Built metadata for ${target.prettyCommonizedName(parameters.sharedTarget)}")
 
         val missingModules: List<ModuleResult.Missing> = if (target is LeafTarget)
             mergeResult.missingModuleInfos.getValue(target).map { ModuleResult.Missing(it.originalLocation) }
