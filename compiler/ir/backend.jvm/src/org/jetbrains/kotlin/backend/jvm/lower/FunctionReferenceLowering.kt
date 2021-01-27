@@ -45,6 +45,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     // function reference classes needed.
     private val ignoredFunctionReferences = mutableSetOf<IrCallableReference<*>>()
 
+    private val inlineLambdaToValueParameter = HashMap<IrFunction, IrValueParameter>()
+
     private val IrFunctionReference.isIgnored: Boolean
         get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || ignoredFunctionReferences.contains(this)
 
@@ -56,7 +58,20 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)
 
     override fun lower(irFile: IrFile) {
-        ignoredFunctionReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
+        irFile.accept(
+            object : IrInlineReferenceLocator(context) {
+                override fun visitInlineLambda(
+                    argument: IrFunctionReference,
+                    callee: IrFunction,
+                    parameter: IrValueParameter,
+                    scope: IrDeclaration
+                ) {
+                    ignoredFunctionReferences.add(argument)
+                    inlineLambdaToValueParameter[argument.symbol.owner] = parameter
+                }
+            },
+            null
+        )
         irFile.transformChildrenVoid(this)
     }
 
@@ -137,10 +152,19 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             return false
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
-        if (target.parents.any { it is IrSimpleFunction && it.isInline && it.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA })
+        if (target.parents.any { it.isInlineFunction() || it.isCrossinlineLambda() })
             return false
 
         return true
+    }
+
+    private fun IrDeclarationParent.isInlineFunction() =
+        this is IrSimpleFunction && isInline && origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+
+    private fun IrDeclarationParent.isCrossinlineLambda(): Boolean {
+        val irFun = this as? IrSimpleFunction ?: return false
+        return origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
+                inlineLambdaToValueParameter[irFun]?.isCrossinline == true
     }
 
     private fun IrType.isProhibitedTypeForIndySamConversion(): Boolean {

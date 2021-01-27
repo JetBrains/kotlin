@@ -2,6 +2,7 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
+// FILE: 1.kt
 fun interface IFoo {
     fun foo()
 }
@@ -13,6 +14,7 @@ inline fun twice(fn: () -> Unit) {
     fn()
 }
 
+// FILE: 2.kt
 fun box(): String {
     var test = 0
     twice {

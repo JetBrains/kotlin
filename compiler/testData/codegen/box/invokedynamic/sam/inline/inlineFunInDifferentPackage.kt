@@ -2,12 +2,12 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
-// FILE: inlineFunInDifferentPackage.kt
+// FILE: 2.kt
 import a.*
 
 fun box() = test { k -> "O" + k }
 
-// FILE: a.kt
+// FILE: 1.kt
 package a
 
 fun interface IFoo {
