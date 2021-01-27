@@ -79,7 +79,7 @@ class CirTreeMerger(
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             val commonModuleInfos = allModuleInfos[targetIndex].filterKeys { it in commonModuleNames }
             processTarget(rootNode, targetIndex, targetProvider, commonModuleInfos, dependeeModules)
-            parameters.progressLogger?.invoke("Loaded declarations for [${targetProvider.target.name}]")
+            parameters.progressLogger?.invoke("Loaded declarations for ${targetProvider.target.prettyName}")
             System.gc()
         }
 
