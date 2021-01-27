@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.caches.lightClasses
+package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
@@ -11,44 +11,76 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
 import com.intellij.psi.impl.light.LightMethod
+import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.toFakeLightClass
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.isFakeLightClassInheritor
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import javax.swing.Icon
 
 // Used as a placeholder when actual light class does not exist (expect-classes, for example)
 // The main purpose is to allow search of inheritors within hierarchies containing such classes
-class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
+abstract class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
     AbstractLightClass(kotlinOrigin.manager, KotlinLanguage.INSTANCE),
     KtLightClass {
-    private val _delegate by lazy { DummyJavaPsiFactory.createDummyClass(kotlinOrigin.project) }
-    private val _containingClass by lazy { kotlinOrigin.containingClassOrObject?.let { KtFakeLightClass(it) } }
+
+    private val _delegate: PsiClass by lazy { DummyJavaPsiFactory.createDummyClass(kotlinOrigin.project) }
 
     override val clsDelegate get() = _delegate
     override val originKind get() = LightClassOriginKind.SOURCE
 
-    override fun getName() = kotlinOrigin.name
+    override fun getName(): String? = kotlinOrigin.name
+    override fun getDelegate(): PsiClass = _delegate
+    abstract override fun copy(): KtFakeLightClass
 
-    override fun getDelegate() = _delegate
-    override fun copy() = KtFakeLightClass(kotlinOrigin)
+    override fun getQualifiedName(): String? = kotlinOrigin.fqName?.asString()
+    abstract override fun getContainingClass(): KtFakeLightClass?
+    override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement
+    override fun getIcon(flags: Int): Icon? = kotlinOrigin.getIcon(flags)
+    override fun getContainingFile(): PsiFile = kotlinOrigin.containingFile
+    override fun getUseScope(): SearchScope = kotlinOrigin.useScope
 
-    override fun getQualifiedName() = kotlinOrigin.fqName?.asString()
-    override fun getContainingClass() = _containingClass
-    override fun getNavigationElement() = kotlinOrigin.navigationElement
-    override fun getIcon(flags: Int) = kotlinOrigin.getIcon(flags)
-    override fun getContainingFile() = kotlinOrigin.containingFile
-    override fun getUseScope() = kotlinOrigin.useScope
-
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
-        isFakeLightClassInheritor(baseClass, checkDeep)
+    abstract override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)
+}
+
+class KtDescriptorBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
+
+    override fun copy(): KtFakeLightClass = KtDescriptorBasedFakeLightClass(kotlinOrigin)
+
+    private val _containingClass: KtFakeLightClass? by lazy {
+        kotlinOrigin.containingClassOrObject?.let { KtDescriptorBasedFakeLightClass(it) }
+    }
+    override fun getContainingClass(): KtFakeLightClass? = _containingClass
+
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        if (manager.areElementsEquivalent(baseClass, this)) return false
+        LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
+
+        val baseKtClass = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
+
+        val generationSupport = LightClassGenerationSupport.getInstance(project)
+
+        val baseDescriptor = generationSupport.resolveToDescriptor(baseKtClass) as? ClassDescriptor ?: return false
+        val thisDescriptor = generationSupport.resolveToDescriptor(kotlinOrigin) as? ClassDescriptor ?: return false
+
+        val thisFqName = DescriptorUtils.getFqName(thisDescriptor).asString()
+        val baseFqName = DescriptorUtils.getFqName(baseDescriptor).asString()
+        if (thisFqName == baseFqName) return false
+
+        return if (checkDeep)
+            DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor)
+        else
+            DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
+    }
 }
 
 class KtFakeLightMethod private constructor(
@@ -57,7 +89,7 @@ class KtFakeLightMethod private constructor(
 ) : LightMethod(
     ktDeclaration.manager,
     DummyJavaPsiFactory.createDummyVoidMethod(ktDeclaration.project),
-    KtFakeLightClass(ktClassOrObject),
+    ktClassOrObject.toFakeLightClass(),
     KotlinLanguage.INSTANCE
 ), KtLightElement<KtNamedDeclaration, PsiMethod> {
     override val kotlinOrigin get() = ktDeclaration
@@ -92,7 +124,7 @@ private object DummyJavaPsiFactory {
             ?: throw IncorrectOperationException("Method was not created. Method name: $name; return type: $canonicalText")
     }
 
-    fun createDummyClass(project: Project): PsiClass = PsiElementFactory.SERVICE.getInstance(project).createClass("dummy")
+    fun createDummyClass(project: Project): PsiClass = PsiElementFactory.getInstance(project).createClass("dummy")
 
     private fun createDummyJavaFile(project: Project, text: String): PsiJavaFile {
         return PsiFileFactory.getInstance(project).createFileFromText(

@@ -39,12 +39,14 @@ class IdeLightClassInheritanceHelper : LightClassInheritanceHelper {
         if (lightClass.manager.areElementsEquivalent(baseClass, lightClass)) return NO_MATCH
 
         val classOrObject = lightClass.kotlinOrigin ?: return UNSURE
+
+        if (checkDeep && baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT) {
+            return MATCH
+        }
+
         val entries = classOrObject.superTypeListEntries
         val hasSuperClass = entries.any { it is KtSuperTypeCallEntry }
         if (baseClass.qualifiedName == classOrObject.defaultJavaAncestorQualifiedName() && (!hasSuperClass || checkDeep)) {
-            return MATCH
-        }
-        if (checkDeep && baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT) {
             return MATCH
         }
         val amongEntries = isAmongEntries(baseClass, entries)

@@ -250,6 +250,8 @@ open class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSu
         }
     }
 
+    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
+        KtDescriptorBasedFakeLightClass(classOrObject)
 
     // NOTE: this is a hacky solution to the following problem:
     // when building this light class resolver will be built by the first file in the list

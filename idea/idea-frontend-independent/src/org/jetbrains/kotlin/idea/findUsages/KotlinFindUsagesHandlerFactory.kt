@@ -27,7 +27,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.OverridingMethodsSearch
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightMethods
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundleIndependent
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport.Companion.checkSuperMethods
@@ -92,7 +92,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                     }
                     val function = element.ownerFunction
                     if (function != null && function.isOverridable()) {
-                        val psiMethod = function.providedToLightMethods().singleOrNull()
+                        val psiMethod = function.toLightMethods().singleOrNull()
                         if (psiMethod != null) {
                             val hasOverridden = OverridingMethodsSearch.search(psiMethod).any()
                             if (hasOverridden && askWhetherShouldSearchForParameterInOverridingMethods(element)) {
