@@ -27,7 +27,7 @@ import androidx.compose.runtime.Composition
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.Recomposer
 import androidx.compose.ui.node.UiApplier
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -99,7 +99,7 @@ class RobolectricComposeTester internal constructor(
         val realComposable: (Composer, Int) -> Unit = { composer, _ ->
             startProviders.invoke(
                 composer,
-                listOf(AmbientContext provides root.context).toTypedArray()
+                listOf(LocalContext provides root.context).toTypedArray()
             )
             composable(composer, 0)
             endProviders.invoke(composer)
