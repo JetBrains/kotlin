@@ -1,0 +1,67 @@
+// FILE: 1.kt
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$test$1
++ 2 1.kt
+test/_1Kt
+*L
+1#1,18:1
+6#2,3:19
+*S KotlinDebug
+*F
++ 1 1.kt
+test/_1Kt$test$1
+*L
+13#1:19,3
+*E
+
+// FILE: 2.kt
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+test/_1Kt
+*L
+1#1,31:1
+11#2,6:32
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+25#1:32,6
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$test$1
++ 2 1.kt
+test/_1Kt
++ 3 2.kt
+_2Kt
+*L
+1#1,18:1
+6#2,2:19
+8#2:23
+26#3,2:21
+*S KotlinDebug
+*F
++ 1 1.kt
+test/_1Kt$test$1
+*L
+13#1:19,2
+13#1:23
+*E
+

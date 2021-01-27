@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.model.*
@@ -66,6 +67,13 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
 
 fun TestConfigurationBuilder.useInlineHandlers() {
     useArtifactsHandlers(
-        ::BytecodeInliningHandler
+        ::BytecodeInliningHandler,
+        ::SMAPDumpHandler
     )
+
+    forTestsMatching("compiler/testData/codegen/boxInline/smap/*") {
+        defaultDirectives {
+            +DUMP_SMAP
+        }
+    }
 }

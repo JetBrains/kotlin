@@ -11,5 +11,3 @@ inline fun stub() {
 fun box(): String {
     return "KO".reversed()
 }
-
-// SMAP_FILE: 2.smap

@@ -17,5 +17,3 @@ import test.*
 fun box(): String {
     return prop
 }
-
-// SMAP_FILE: 2.smap

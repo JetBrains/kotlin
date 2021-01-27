@@ -19,6 +19,5 @@ fun box(): String {
     })
 }
 
-// SMAP_FILE: 2.smap
 // See KT-23064 for the problem, InlineOnlySmapSkipper for an explanation, and
 // `stdlibInlineOnlyOneLine.kt` for the case where something should actually happen.

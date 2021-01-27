@@ -29,27 +29,3 @@ fun test(): String {
 fun box(): String {
     return test()
 }
-
-// SMAP_FILE: 1.smap
-
-// SMAP_FILE: 2.smap
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt
-+ 2 1.kt
-builders/_1Kt
-*L
-1#1,23:1
-7#2:24
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt
-*L
-9#1:24
-*E
