@@ -43,7 +43,7 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
     // optional part for generating descriptors: end
 
     for (targetIndex in 0 until mergedTree.dimension) {
-        val (target, metadataModules) = MetadataBuilder.build(mergedTree, targetIndex)
+        val (target, metadataModules) = MetadataBuilder.build(mergedTree, targetIndex, parameters.statsCollector)
 
         // optional part for generating descriptors: begin
         val moduleDescriptors: Map<String, ModuleDescriptor>? = components?.targetComponents?.get(targetIndex)?.let { component ->

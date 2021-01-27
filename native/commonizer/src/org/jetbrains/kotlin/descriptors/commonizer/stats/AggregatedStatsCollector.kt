@@ -5,36 +5,34 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector.AggregatedStatsRow
 import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector.CommonDeclarationStatus.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class AggregatedStatsCollector(
-    targets: List<KonanTarget>,
-    private val output: StatsOutput
+    targets: List<KonanTarget>
 ) : StatsCollector {
-    private val aggregatingOutput = AggregatingOutput()
-    private val wrappedCollector = RawStatsCollector(targets, aggregatingOutput)
+    private val wrappedCollector = RawStatsCollector(targets)
 
-    override fun logStats(result: List<DeclarationDescriptor?>) {
-        wrappedCollector.logStats(result)
+    override fun logDeclaration(targetIndex: Int, lazyStatsKey: () -> StatsCollector.StatsKey) {
+        wrappedCollector.logDeclaration(targetIndex, lazyStatsKey)
     }
 
-    override fun close() {
-        output.writeHeader(AggregatedStatsHeader)
+    override fun writeTo(statsOutput: StatsOutput) {
+        val aggregatingOutput = AggregatingOutput()
+        wrappedCollector.writeTo(aggregatingOutput)
 
-        aggregatingOutput.aggregatedStats.keys.sortedBy { it }.forEach { key ->
-            val row = aggregatingOutput.aggregatedStats.getValue(key)
-            output.writeRow(row)
+        statsOutput.use {
+            statsOutput.writeHeader(AggregatedStatsHeader)
+
+            aggregatingOutput.aggregatedStats.keys.sortedBy { it }.forEach { key ->
+                val row = aggregatingOutput.aggregatedStats.getValue(key)
+                statsOutput.writeRow(row)
+            }
         }
-
-        output.close()
-        wrappedCollector.close()
     }
 
     object AggregatedStatsHeader : StatsOutput.StatsHeader {
-        private val headerItems = listOf(
+        override fun toList(): List<String> = listOf(
             "Declaration Type",
             "Lifted Up",
             "Lifted Up, %%",
@@ -46,11 +44,9 @@ class AggregatedStatsCollector(
             "Failed: Other, %%",
             "Total"
         )
-
-        override fun toList(): List<String> = headerItems
     }
 
-    class AggregatedStatsRow(
+    private class AggregatedStatsRow(
         private val declarationType: DeclarationType
     ) : StatsOutput.StatsRow {
         var liftedUp: Int = 0
@@ -78,33 +74,32 @@ class AggregatedStatsCollector(
         }
     }
 
-}
+    private class AggregatingOutput : StatsOutput {
+        val aggregatedStats = HashMap<DeclarationType, AggregatedStatsRow>()
 
-@Suppress("MoveVariableDeclarationIntoWhen")
-private class AggregatingOutput : StatsOutput {
-    val aggregatedStats = HashMap<DeclarationType, AggregatedStatsRow>()
+        override fun writeHeader(header: StatsOutput.StatsHeader) {
+            check(header is RawStatsCollector.RawStatsHeader)
+            // do nothing
+        }
 
-    override fun writeHeader(header: StatsOutput.StatsHeader) {
-        check(header is RawStatsCollector.RawStatsHeader)
-        // do nothing
-    }
+        override fun writeRow(row: StatsOutput.StatsRow) {
+            check(row is RawStatsCollector.RawStatsRow)
 
-    override fun writeRow(row: StatsOutput.StatsRow) {
-        check(row is RawStatsCollector.RawStatsRow)
-
-        val aggregatedStatsRow = aggregatedStats.getOrPut(row.declarationType) { AggregatedStatsRow(row.declarationType) }
-        when (row.common) {
-            LIFTED_UP -> aggregatedStatsRow.liftedUp++
-            EXPECT -> aggregatedStatsRow.successfullyCommonized++
-            MISSING -> {
-                if (row.platform.any { it == RawStatsCollector.PlatformDeclarationStatus.MISSING }) {
-                    aggregatedStatsRow.failedBecauseMissing++
-                } else {
-                    aggregatedStatsRow.failedOther++
+            val declarationType = row.statsKey.declarationType
+            val aggregatedStatsRow = aggregatedStats.getOrPut(declarationType) { AggregatedStatsRow(declarationType) }
+            when (row.common) {
+                LIFTED_UP -> aggregatedStatsRow.liftedUp++
+                EXPECT -> aggregatedStatsRow.successfullyCommonized++
+                MISSING -> {
+                    if (row.platform.any { it == RawStatsCollector.PlatformDeclarationStatus.MISSING }) {
+                        aggregatedStatsRow.failedBecauseMissing++
+                    } else {
+                        aggregatedStatsRow.failedOther++
+                    }
                 }
             }
         }
-    }
 
-    override fun close() = Unit
+        override fun close() = Unit
+    }
 }

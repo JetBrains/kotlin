@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
+import com.intellij.util.containers.FactoryMap
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.stats.DeclarationType.Companion.declarationType
-import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
-import org.jetbrains.kotlin.descriptors.commonizer.utils.signature
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector.StatsKey
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsOutput.StatsHeader
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsOutput.StatsRow
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Allows printing commonization statistics to the file system.
  *
- * Output format is defined in [RawStatsCollector.output].
+ * Output format is defined in [StatsOutput].
  *
- * Header row: "FQ Name, Extension Receiver, Parameter Names, Parameter Types, Declaration Type, common, <platform1>, <platform2> [<platformN>...]"
+ * Header row: "ID, Extension Receiver, Parameter Names, Parameter Types, Declaration Type, common, <platform1>, <platform2> [<platformN>...]"
  *
  * Possible values for "Declaration Type":
  * - MODULE
@@ -44,113 +46,109 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
  *
  * Example of output:
 
-FQ Name|Extension Receiver|Parameter Names|Parameter Types|Declaration Type|common|macos_x64|ios_x64
-<SystemConfiguration>||||MODULE|E|A|A
-platform.SystemConfiguration.SCPreferencesContext||||CLASS|E|A|A
-platform.SystemConfiguration.SCPreferencesContext.Companion||||COMPANION_OBJECT|E|A|A
-platform.SystemConfiguration.SCNetworkConnectionContext||||CLASS|E|A|A
-platform.SystemConfiguration.SCNetworkConnectionContext.Companion||||COMPANION_OBJECT|E|A|A
-platform.SystemConfiguration.SCDynamicStoreRefVar||||TYPE_ALIAS|-|O|O
-platform.SystemConfiguration.SCVLANInterfaceRef||||TYPE_ALIAS|-|O|O
+ID|Extension Receiver|Parameter Names|Parameter Types|Declaration Type|common|macos_x64|ios_x64
+SystemConfiguration||||MODULE|E|A|A
+platform/SystemConfiguration/SCPreferencesContext||||CLASS|E|A|A
+platform/SystemConfiguration/SCPreferencesContext.Companion||||COMPANION_OBJECT|E|A|A
+platform/SystemConfiguration/SCNetworkConnectionContext||||CLASS|E|A|A
+platform/SystemConfiguration/SCNetworkConnectionContext.Companion||||COMPANION_OBJECT|E|A|A
+platform/SystemConfiguration/SCDynamicStoreRefVar||||TYPE_ALIAS|-|O|O
+platform/SystemConfiguration/SCVLANInterfaceRef||||TYPE_ALIAS|-|O|O
 
  */
-class RawStatsCollector(
-    private val targets: List<KonanTarget>,
-    private val output: StatsOutput
-) : StatsCollector {
-    private var headerWritten = false
+class RawStatsCollector(private val targets: List<KonanTarget>) : StatsCollector {
+    private inline val dimension get() = targets.size + 1
+    private inline val targetNames get() = targets.map { it.name }
 
-    override fun logStats(result: List<DeclarationDescriptor?>) {
-        if (!headerWritten) {
-            writeHeader()
-            headerWritten = true
-        }
+    private inline val indexOfCommon get() = targets.size
+    private inline val platformDeclarationsCount get() = targets.size
 
-        val firstNotNull = result.firstNonNull()
-        val lastIsNull = result.last() == null
+    private val stats = FactoryMap.create<StatsKey, StatsValue> { StatsValue(dimension) }
 
-        val statsRow = RawStatsRow(
-            dimension = targets.size,
-            fqName = if (firstNotNull is ModuleDescriptor) firstNotNull.name.asString() else firstNotNull.fqNameSafe.asString(),
-            declarationType = firstNotNull.declarationType
-        )
+    override fun logDeclaration(targetIndex: Int, lazyStatsKey: () -> StatsKey) {
+        stats.getValue(lazyStatsKey())[targetIndex] = true
+    }
 
-        // extension receiver
-        if (firstNotNull is PropertyDescriptor || firstNotNull is SimpleFunctionDescriptor) {
-            statsRow.extensionReceiver =
-                (firstNotNull as CallableDescriptor).extensionReceiverParameter?.type?.signature.orEmpty()
-        }
-
-        if (firstNotNull is ConstructorDescriptor || firstNotNull is SimpleFunctionDescriptor) {
-            val functionDescriptor = (firstNotNull as FunctionDescriptor)
-            // parameter names
-            statsRow.parameterNames = functionDescriptor.valueParameters.joinToString { it.name.asString() }
-            // parameter types
-            statsRow.parameterTypes = functionDescriptor.valueParameters.joinToString { it.type.signature }
-        }
-
-        var isLiftedUp = !lastIsNull
-        for (index in 0 until result.size - 1) {
-            statsRow.platform += when {
-                result[index] == null -> PlatformDeclarationStatus.MISSING
-                lastIsNull -> PlatformDeclarationStatus.ORIGINAL
-                else -> {
-                    isLiftedUp = false
-                    PlatformDeclarationStatus.ACTUAL
-                }
+    override fun writeTo(statsOutput: StatsOutput) {
+        val mergedStats = stats.filterTo(mutableMapOf()) { (statsKey, _) ->
+            when (statsKey.declarationType) {
+                DeclarationType.TOP_LEVEL_CLASS, DeclarationType.TOP_LEVEL_INTERFACE -> false
+                else -> true
             }
         }
 
-        statsRow.common = when {
-            isLiftedUp -> CommonDeclarationStatus.LIFTED_UP
-            lastIsNull -> CommonDeclarationStatus.MISSING
-            else -> CommonDeclarationStatus.EXPECT
+        stats.forEach { (statsKey, statsValue) ->
+            when (statsKey.declarationType) {
+                DeclarationType.TOP_LEVEL_CLASS, DeclarationType.TOP_LEVEL_INTERFACE -> {
+                    if (statsValue[indexOfCommon]) {
+                        val alternativeKey = statsKey.copy(declarationType = DeclarationType.TYPE_ALIAS)
+                        val alternativeValue = mergedStats[alternativeKey]
+                        if (alternativeValue != null && !alternativeValue[indexOfCommon]) {
+                            alternativeValue[indexOfCommon] = true
+                            return@forEach
+                        }
+                    }
+
+                    mergedStats[statsKey] = statsValue
+                }
+                else -> Unit
+            }
         }
 
-        output.writeRow(statsRow)
-    }
+        statsOutput.use {
+            statsOutput.writeHeader(RawStatsHeader(targetNames))
 
-    override fun close() {
-        output.close()
-    }
+            mergedStats.forEach { (statsKey, statsValue) ->
+                val commonIsMissing = !statsValue[indexOfCommon]
 
-    private fun writeHeader() {
-        output.writeHeader(RawStatsHeader(targets.map { it.name }))
-    }
+                var isLiftedUp = !commonIsMissing
+                val platform = ArrayList<PlatformDeclarationStatus>(platformDeclarationsCount)
 
-    class RawStatsHeader(
-        private val targetNames: List<String>
-    ) : StatsOutput.StatsHeader {
-        override fun toList(): List<String> = mutableListOf<String>().apply {
-            this += "FQ Name"
-            this += "Extension Receiver"
-            this += "Parameter Names"
-            this += "Parameter Types"
-            this += "Declaration Type"
-            this += "common"
-            this += targetNames
+                for (index in 0 until platformDeclarationsCount) {
+                    platform += when {
+                        !statsValue[index] -> PlatformDeclarationStatus.MISSING
+                        commonIsMissing -> PlatformDeclarationStatus.ORIGINAL
+                        else -> {
+                            isLiftedUp = false
+                            PlatformDeclarationStatus.ACTUAL
+                        }
+                    }
+                }
+
+                val common = when {
+                    isLiftedUp -> CommonDeclarationStatus.LIFTED_UP
+                    commonIsMissing -> CommonDeclarationStatus.MISSING
+                    else -> CommonDeclarationStatus.EXPECT
+                }
+
+                statsOutput.writeRow(RawStatsRow(statsKey, common, platform))
+            }
         }
+    }
+
+    class RawStatsHeader(private val targetNames: List<String>) : StatsHeader {
+        override fun toList() =
+            listOf("ID", "Extension Receiver", "Parameter Names", "Parameter Types", "Declaration Type", "common") + targetNames
     }
 
     class RawStatsRow(
-        dimension: Int,
-        val fqName: String,
-        val declarationType: DeclarationType
-    ) : StatsOutput.StatsRow {
-        var extensionReceiver: String = ""
-        var parameterNames: String = ""
-        var parameterTypes: String = ""
-        lateinit var common: CommonDeclarationStatus
-        val platform: MutableList<PlatformDeclarationStatus> = ArrayList(dimension)
+        val statsKey: StatsKey,
+        val common: CommonDeclarationStatus,
+        val platform: List<PlatformDeclarationStatus>
+    ) : StatsRow {
+        override fun toList(): List<String> {
+            val result = mutableListOf(
+                statsKey.id,
+                statsKey.extensionReceiver.orEmpty(),
+                statsKey.parameterNames.joinToString(),
+                statsKey.parameterTypes.joinToString(),
+                statsKey.declarationType.alias,
+                common.alias.toString()
+            )
 
-        override fun toList(): List<String> = mutableListOf<String>().apply {
-            this += fqName
-            this += extensionReceiver
-            this += parameterNames
-            this += parameterTypes
-            this += declarationType.alias
-            this += common.alias.toString()
-            platform.forEach { this += it.alias.toString() }
+            platform.mapTo(result) { it.alias.toString() }
+
+            return result
         }
     }
 
@@ -166,3 +164,5 @@ class RawStatsCollector(
         MISSING('-')
     }
 }
+
+private typealias StatsValue = BitSet

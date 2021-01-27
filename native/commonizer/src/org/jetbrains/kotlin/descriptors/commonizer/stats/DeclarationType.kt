@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-
 enum class DeclarationType(val alias: String) {
     TOP_LEVEL_CONST_VAL("TOP-LEVEL CONST-VAL"),
     TOP_LEVEL_VAL("TOP-LEVEL VAL"),
@@ -23,30 +20,5 @@ enum class DeclarationType(val alias: String) {
     TYPE_ALIAS("TYPE_ALIAS"),
     ENUM_ENTRY("ENUM_ENTRY"),
     ENUM_CLASS("ENUM_CLASS"),
-    MODULE("MODULE"),
-    UNKNOWN("UNKNOWN");
-
-    companion object {
-        val DeclarationDescriptor.declarationType: DeclarationType
-            get() = when (this) {
-                is ClassDescriptor -> {
-                    if (isCompanionObject) {
-                        COMPANION_OBJECT
-                    } else when (kind) {
-                        ClassKind.ENUM_CLASS -> ENUM_CLASS
-                        ClassKind.ENUM_ENTRY -> ENUM_ENTRY
-                        ClassKind.INTERFACE -> if (DescriptorUtils.isTopLevelDeclaration(this)) TOP_LEVEL_INTERFACE else NESTED_INTERFACE
-                        else -> if (DescriptorUtils.isTopLevelDeclaration(this)) TOP_LEVEL_CLASS else NESTED_CLASS
-                    }
-                }
-                is TypeAliasDescriptor -> TYPE_ALIAS
-                is ClassConstructorDescriptor -> CLASS_CONSTRUCTOR
-                is FunctionDescriptor -> if (DescriptorUtils.isTopLevelDeclaration(this)) TOP_LEVEL_FUN else NESTED_FUN
-                is PropertyDescriptor -> if (DescriptorUtils.isTopLevelDeclaration(this)) {
-                    if (isConst) TOP_LEVEL_CONST_VAL else TOP_LEVEL_VAL
-                } else NESTED_VAL
-                is ModuleDescriptor -> MODULE
-                else -> UNKNOWN
-            }
-    }
+    MODULE("MODULE")
 }

@@ -37,9 +37,6 @@ internal fun CirPropertyNode.buildDescriptors(
     }
 
     commonProperty?.buildDescriptor(components, output, indexOfCommon, containingDeclarations, isExpect = markAsExpectAndActual)
-
-    // log stats
-    components.statsCollector?.logStats(output)
 }
 
 private fun CirProperty.buildDescriptor(
