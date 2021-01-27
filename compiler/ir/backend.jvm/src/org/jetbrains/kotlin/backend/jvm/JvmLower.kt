@@ -287,6 +287,7 @@ private fun codegenPhase(generateMultifileFacade: Boolean): NamedCompilerPhase<J
     return performByIrFile(
         name = "CodegenByIrFile$suffix",
         description = "Code generation by IrFile$descriptionSuffix",
+        copyBeforeLowering = false,
         lower = listOf(
             makeIrFilePhase(
                 { context ->
