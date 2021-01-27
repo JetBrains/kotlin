@@ -1939,7 +1939,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               }
               val lambda-2: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:") { %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
-                print(x)
+                print(%this%null.x)
               }
               val lambda-3: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:") { %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
@@ -1953,10 +1953,10 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               val lambda-4: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:") { %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {
-                  %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
+                  %dirty = %dirty or if (%composer.changed(%this%null)) 0b0100 else 0b0010
                 }
                 if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
-                  print(x)
+                  print(%this%null.x)
                 } else {
                   %composer.skipToGroupEnd()
                 }
