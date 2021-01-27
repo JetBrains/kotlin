@@ -6,21 +6,20 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.FileSystemOperations
 import org.jetbrains.kotlin.gradle.targets.js.JS
 import org.jetbrains.kotlin.gradle.targets.js.JS_MAP
 import org.jetbrains.kotlin.gradle.targets.js.META_JS
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import java.io.File
 
 /**
  * Creates fake NodeJS module directory from given gradle [dependency].
  */
 internal class GradleNodeModuleBuilder(
-    val project: Project,
-    val fs: FileSystemOperations,
-    val archiveOperations: Any?,
+    val fs: FileSystemOperationsCompat,
+    val archiveOperations: ArchiveOperationsCompat,
     val moduleName: String,
     val moduleVersion: String,
     val srcFiles: Collection<File>,
@@ -34,12 +33,7 @@ internal class GradleNodeModuleBuilder(
             when {
                 isKotlinJsRuntimeFile(srcFile) -> files.add(srcFile)
                 srcFile.isCompatibleArchive -> {
-                    val archiveFiles = if (archiveOperations != null) {
-                        (archiveOperations as ArchiveOperations).zipTree(srcFile)
-                    } else {
-                        project.zipTree(srcFile)
-                    }
-                    archiveFiles.forEach { innerFile ->
+                    archiveOperations.zipTree(srcFile).forEach { innerFile ->
                         when {
                             innerFile.name == NpmProject.PACKAGE_JSON -> srcPackageJsonFile = innerFile
                             isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)

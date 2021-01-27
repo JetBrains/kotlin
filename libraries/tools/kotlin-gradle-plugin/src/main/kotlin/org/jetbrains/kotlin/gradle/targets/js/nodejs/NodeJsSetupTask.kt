@@ -2,12 +2,12 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
@@ -16,13 +16,8 @@ import java.net.URI
 open class NodeJsSetupTask : DefaultTask() {
     private val settings = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.requireConfigured() }
-    private val fs = services.get(FileSystemOperations::class.java)
-    private val archives: Any? = try {
-        services.get(ArchiveOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.6
-        null
-    }
+    private val fs = FileSystemOperationsCompat(project)
+    private val archiveOperations = ArchiveOperationsCompat(project)
 
     val ivyDependency: String
         @Input get() = env.ivyDependency
@@ -89,22 +84,12 @@ open class NodeJsSetupTask : DefaultTask() {
 
         when {
             archive.name.endsWith("zip") -> fs.copy {
-                val from = if (archives != null) {
-                    (archives as ArchiveOperations).zipTree(archive)
-                } else {
-                    project.zipTree(archive)
-                }
-                it.from(from)
+                it.from(archiveOperations.zipTree(archive))
                 it.into(destination)
             }
             else -> {
                 fs.copy {
-                    val from = if (archives != null) {
-                        (archives as ArchiveOperations).tarTree(archive)
-                    } else {
-                        project.tarTree(archive)
-                    }
-                    it.from(from)
+                    it.from(archiveOperations.tarTree(archive))
                     it.into(destination)
                 }
             }
