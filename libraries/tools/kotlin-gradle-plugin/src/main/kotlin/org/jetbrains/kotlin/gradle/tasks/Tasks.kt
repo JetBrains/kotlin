@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
+import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
@@ -276,7 +277,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     // Input is needed to force rebuild even if source files are not changed
 
     @get:Input
-    internal val coroutinesStr: Provider<String> = project.provider {coroutines.get().name}
+    internal val coroutinesStr: Provider<String> = project.provider { coroutines.get().name }
 
     @get:Input
     internal val coroutines: Provider<Coroutines> = project.provider {
@@ -397,7 +398,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val isMultiplatform: Boolean by lazy { project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper } }
 
     @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by lazy { AbstractKotlinCompileArgumentsContributor(KotlinCompileArgumentsProvider(this)) }
+    internal val abstractKotlinCompileArgumentsContributor by lazy {
+        AbstractKotlinCompileArgumentsContributor(
+            KotlinCompileArgumentsProvider(this)
+        )
+    }
 
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         abstractKotlinCompileArgumentsContributor.contributeArguments(
@@ -496,10 +501,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         K2JVMCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compilerArgumentsContributor.contributeArguments(args, compilerArgumentsConfigurationFlags(
-            defaultsOnly,
-            ignoreClasspathResolutionErrors
-        ))
+        compilerArgumentsContributor.contributeArguments(
+            args, compilerArgumentsConfigurationFlags(
+                defaultsOnly,
+                ignoreClasspathResolutionErrors
+            )
+        )
     }
 
     @get:Internal
@@ -635,22 +642,18 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
 
     @get:Internal
     val outputFile: File
-        get() = outputFilePath?.let(::File) ?: defaultOutputFile
+        get() = kotlinOptions.outputFile?.let(::File) ?: defaultOutputFile
 
     @get:OutputFile
     @get:Optional
     val outputFileOrNull: File?
         get() = outputFile.let { file ->
-            if (file.isFile) {
+            if (!kotlinOptions.isProduceUnzippedKlib()) {
                 file
             } else {
                 null
             }
         }
-
-    @get:Input
-    val outputFilePath: String?
-        get() = kotlinOptions.outputFile
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinJsCompilerClasspath(project)

@@ -128,6 +128,47 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     }
 
     @Test
+    fun testIncrementalCompilation() = Project("kotlin2JsICProject").run {
+        setupWorkingDir()
+        val modules = listOf("app", "lib")
+        val mainFiles = modules.flatMapTo(LinkedHashSet()) {
+            projectDir.resolve("$it/src/main").allKotlinFiles()
+        }
+
+        build("build") {
+            assertSuccessful()
+            checkIrCompilationMessage()
+            assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            if (irBackend) {
+                assertCompiledKotlinSources(project.relativize(mainFiles))
+            } else {
+                assertCompiledKotlinSources(project.relativize(allKotlinFiles))
+            }
+        }
+
+        build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(emptyList())
+        }
+
+        projectFile("A.kt").modify {
+            it.replace("val x = 0", "val x = \"a\"")
+        }
+        build("build") {
+            assertSuccessful()
+            checkIrCompilationMessage()
+            assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            val affectedFiles = project.projectDir.getFilesByNames("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt")
+            if (irBackend) {
+                // only klib ic is supported for now, so tests are generated non-incrementally with ir backend
+                assertCompiledKotlinSources(project.relativize(affectedFiles.filter { it in mainFiles }))
+            } else {
+                assertCompiledKotlinSources(project.relativize(affectedFiles))
+            }
+        }
+    }
+
+    @Test
     fun testKotlinJsBuiltins() {
         val project = Project("kotlinBuiltins")
 
@@ -257,7 +298,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     }
 }
 
-abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) : BaseGradleIT() {
+abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             jsIrBackend = irBackend,
@@ -284,10 +325,12 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             val jarPath = "build/libs/kotlin2JsNoOutputFileProject.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
-            assertEquals(
-                1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
-                "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates"
-            )
+            if (!irBackend) {
+                assertEquals(
+                    1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
+                    "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates"
+                )
+            }
         }
     }
 
@@ -327,9 +370,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         project.build("build") {
             assertSuccessful()
             checkIrCompilationMessage()
-            if (irBackend) {
-                assertFileExists(kotlinClassesDir() + "default/manifest")
-            } else {
+            if (!irBackend) {
                 assertFileExists(kotlinClassesDir() + "kotlin2JsNoOutputFileProject.js")
             }
             assertFileExists(kotlinClassesDir(sourceSet = "test") + "kotlin2JsNoOutputFileProject_test.js")
@@ -442,47 +483,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertTrue("Source map should contain reference to foo.kt") { map.contains("\"./src/main/kotlin/foo.kt\"") }
             assertTrue("Source map should contain source of main.kt") { map.contains("\"fun main(args: Array<String>) {") }
             assertTrue("Source map should contain source of foo.kt") { map.contains("\"inline fun foo(): String {") }
-        }
-    }
-
-    @Test
-    fun testIncrementalCompilation() = Project("kotlin2JsICProject").run {
-        setupWorkingDir()
-        val modules = listOf("app", "lib")
-        val mainFiles = modules.flatMapTo(LinkedHashSet()) {
-            projectDir.resolve("$it/src/main").allKotlinFiles()
-        }
-
-        build("build") {
-            assertSuccessful()
-            checkIrCompilationMessage()
-            assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-            if (irBackend) {
-                assertCompiledKotlinSources(project.relativize(mainFiles))
-            } else {
-                assertCompiledKotlinSources(project.relativize(allKotlinFiles))
-            }
-        }
-
-        build("build") {
-            assertSuccessful()
-            assertCompiledKotlinSources(emptyList())
-        }
-
-        projectFile("A.kt").modify {
-            it.replace("val x = 0", "val x = \"a\"")
-        }
-        build("build") {
-            assertSuccessful()
-            checkIrCompilationMessage()
-            assertContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-            val affectedFiles = project.projectDir.getFilesByNames("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt")
-            if (irBackend) {
-                // only klib ic is supported for now, so tests are generated non-incrementally with ir backend
-                assertCompiledKotlinSources(project.relativize(affectedFiles.filter { it in mainFiles }))
-            } else {
-                assertCompiledKotlinSources(project.relativize(affectedFiles))
-            }
         }
     }
 

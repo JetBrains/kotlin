@@ -262,8 +262,13 @@ internal class Kotlin2JsSourceSetProcessor(
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.whenEvaluated {
             kotlinTask.configure { kotlinTaskInstance ->
-                kotlinTaskInstance.kotlinOptions.outputFile = kotlinTaskInstance.outputFile.absolutePath
-                val outputDir = kotlinTaskInstance.outputFile.parentFile
+                val kotlinOptions = kotlinTaskInstance.kotlinOptions
+                val outputDir: File = kotlinTaskInstance.outputFile.parentFile
+                kotlinOptions.outputFile = if (!kotlinOptions.isProduceUnzippedKlib()) {
+                    kotlinTaskInstance.outputFile.absolutePath
+                } else {
+                    kotlinTaskInstance.outputFile.parentFile.absolutePath
+                }
                 if (outputDir.isParentOf(project.rootDir))
                     throw InvalidUserDataException(
                         "The output directory '$outputDir' (defined by outputFile of $kotlinTaskInstance) contains or " +
@@ -272,6 +277,20 @@ internal class Kotlin2JsSourceSetProcessor(
                                 "To fix this, consider using the default outputFile location instead of providing it explicitly."
                     )
                 kotlinTaskInstance.destinationDir = outputDir
+
+                if (
+                    kotlinOptions.freeCompilerArgs.contains(PRODUCE_JS) ||
+                    kotlinOptions.freeCompilerArgs.contains(PRODUCE_UNZIPPED_KLIB) ||
+                    kotlinOptions.freeCompilerArgs.contains(PRODUCE_ZIPPED_KLIB)
+                ) {
+                    // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
+                    val baseName = if (kotlinCompilation.isMain()) {
+                        project.name
+                    } else {
+                        "${project.name}_${kotlinCompilation.name}"
+                    }
+                    kotlinTaskInstance.kotlinOptions.freeCompilerArgs += "$MODULE_NAME=${project.klibModuleName(baseName)}"
+                }
             }
 
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
