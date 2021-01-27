@@ -402,6 +402,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return false
     }
 
+    override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
+        require(this is ConeKotlinType)
+        return emptyList() // TODO
+    }
+
     override fun SimpleTypeMarker.isStubType(): Boolean {
         return this is StubTypeMarker
     }

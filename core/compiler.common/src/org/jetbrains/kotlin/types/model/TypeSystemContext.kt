@@ -36,6 +36,7 @@ interface IntersectionTypeConstructorMarker : TypeConstructorMarker
 
 interface TypeSubstitutorMarker
 
+interface AnnotationMarker
 
 enum class TypeVariance(val presentation: String) {
     IN("in"),
@@ -73,7 +74,8 @@ interface TypeSystemTypeFactoryContext {
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
-        isExtensionFunction: Boolean = false
+        isExtensionFunction: Boolean = false,
+        annotations: List<AnnotationMarker>? = null
     ): SimpleTypeMarker
 
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
@@ -391,6 +393,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
 
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
+
+    fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker>
 }
 
 enum class CaptureStatus {

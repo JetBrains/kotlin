@@ -1231,6 +1231,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 public void testParenthesizedAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/parenthesizedAnnotations.kt");
                 }
+
+                @TestMetadata("propagteAnyAnnotations.kt")
+                public void testPropagteAnyAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/propagteAnyAnnotations.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/annotations/options")

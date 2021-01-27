@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -222,13 +225,22 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     }
 
-    // TODO: implement taking into account `isExtensionFunction`
     override fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
-        isExtensionFunction: Boolean
-    ): SimpleTypeMarker = IrSimpleTypeImpl(constructor as IrClassifierSymbol, nullable, arguments.map { it as IrTypeArgument }, emptyList())
+        isExtensionFunction: Boolean,
+        annotations: List<AnnotationMarker>?
+    ): SimpleTypeMarker {
+        val ourAnnotations = annotations?.filterIsInstance<IrConstructorCall>()
+        require(ourAnnotations?.size == annotations?.size)
+        return IrSimpleTypeImpl(
+            constructor as IrClassifierSymbol,
+            nullable,
+            arguments.map { it as IrTypeArgument },
+            ourAnnotations ?: emptyList()
+        )
+    }
 
     private fun TypeVariance.convertVariance(): Variance {
         return when (this) {
@@ -282,6 +294,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
         this is IrSimpleType && irTypePredicates_isPrimitiveType()
+
+    override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
+        require(this is IrType)
+        return this.annotations.map { object : AnnotationMarker, IrElement by it {} }
+    }
 
     override fun createErrorType(debugName: String): SimpleTypeMarker {
         TODO("IrTypeSystemContext doesn't support constraint system resolution")

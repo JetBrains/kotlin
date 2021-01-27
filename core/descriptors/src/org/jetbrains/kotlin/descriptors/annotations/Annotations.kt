@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 
 interface Annotated {
     val annotations: Annotations
