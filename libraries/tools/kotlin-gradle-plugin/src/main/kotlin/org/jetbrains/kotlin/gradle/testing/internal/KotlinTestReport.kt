@@ -52,6 +52,7 @@ open class KotlinTestReport : TestReport() {
         computeAllParentTasksPaths()
     }
 
+    // TODO: used in task action when the task is aggregate report, non compatible with configuration cache
     @Internal
     @Transient
     val children = mutableListOf<TaskProvider<KotlinTestReport>>()
