@@ -1,7 +1,6 @@
 // This test depends on line numbers
 // WITH_RUNTIME
 // FILE: 1.kt
-// IGNORE_BACKEND_FIR: JVM_IR
 package test
 
 interface SuspendRunnable {
@@ -48,7 +47,7 @@ fun box(): String {
     return res
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -82,7 +81,7 @@ test/_1Kt$inlineMe1$2$run$1
 1#1,23:1
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

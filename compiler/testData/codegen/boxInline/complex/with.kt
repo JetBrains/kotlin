@@ -1,5 +1,6 @@
-// FILE: 1.kt
 // WITH_RUNTIME
+// NO_CHECK_LAMBDA_INLINING
+// FILE: 1.kt
 package test
 
 
@@ -34,7 +35,6 @@ public inline fun <T> with2(receiver : T, crossinline body :  T.() -> Unit) : Un
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun Data.test1(d: Data) : Long  {

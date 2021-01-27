@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 package test
 
@@ -7,7 +8,6 @@ class B : A
 inline fun <T : A> foo(a: Any) = (a as? T != null).toString()[0]
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun box(): String {
@@ -15,4 +15,3 @@ fun box(): String {
     if (s != "ftt") return "fail: $s"
     return "OK"
 }
-

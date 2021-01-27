@@ -1,6 +1,6 @@
+// SKIP_INLINE_CHECK_IN: inlineFun$default
 
 // FILE: 1.kt
-// SKIP_INLINE_CHECK_IN: inlineFun$default
 
 
 package test
@@ -16,7 +16,7 @@ fun box(): String {
     return inlineFun("OK")
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -28,7 +28,7 @@ test/_1Kt$inlineFun$1
 1#1,11:1
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

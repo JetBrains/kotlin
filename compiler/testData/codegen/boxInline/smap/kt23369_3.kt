@@ -1,5 +1,5 @@
 
-// FILE: + a.kt
+// FILE: a.kt
 
 package test
 
@@ -14,9 +14,9 @@ fun box(): String {
     return inlineFun { "OK" }
 }
 
-// FILE: + a.smap
+// SMAP_FILE: + a.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

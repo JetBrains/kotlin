@@ -1,8 +1,8 @@
-// FILE: test.kt
-// WITH_RUNTIME
-// WITH_COROUTINES
 // CHECK_STATE_MACHINE
+// WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// WITH_RUNTIME
+// FILE: test.kt
 
 import helpers.*
 import kotlin.coroutines.*

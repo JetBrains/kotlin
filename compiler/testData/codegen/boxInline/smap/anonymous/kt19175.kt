@@ -29,7 +29,7 @@ fun box(): String {
 }
 
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
 SMAP
 1.kt
@@ -42,7 +42,7 @@ test/Introspector$SchemaRetriever$inSchema$1
 1#1,12:1
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

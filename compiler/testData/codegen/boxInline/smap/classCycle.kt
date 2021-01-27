@@ -16,7 +16,7 @@ import test.*
 
 fun box() = A().a()
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -65,7 +65,7 @@ test/A
 6#1:18
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

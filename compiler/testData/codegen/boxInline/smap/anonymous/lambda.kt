@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 
 // FILE: 1.kt
 
@@ -13,7 +14,6 @@ inline fun call(crossinline init: () -> Unit) {
 
 import builders.*
 
-//NO_CHECK_LAMBDA_INLINING
 fun test(): String {
     var res = "Fail"
 
@@ -29,7 +29,7 @@ fun box(): String {
     return test()
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
 SMAP
 1.kt
@@ -42,7 +42,7 @@ builders/_1Kt$call$1
 1#1,12:1
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

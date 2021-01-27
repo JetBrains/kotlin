@@ -19,9 +19,9 @@ inline fun test(p: () -> String): String {
     return pd + p()
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 //TODO should be empty
 SMAP

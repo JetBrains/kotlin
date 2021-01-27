@@ -18,9 +18,9 @@ fun box(): String {
     return if (p == 1 && l == 11) "OK" else "fail: $p"
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

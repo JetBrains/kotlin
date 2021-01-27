@@ -27,7 +27,7 @@ fun box(): String {
     return "OK"
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -50,7 +50,7 @@ test/_1Kt
 11#1:17
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

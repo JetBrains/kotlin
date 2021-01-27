@@ -12,7 +12,7 @@ fun box(): String {
     return "OK"
 }
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

@@ -1,6 +1,6 @@
+// WITH_REFLECT
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// WITH_REFLECT
 
 package test
 inline val <reified T : Any> T.className: String; get() = T::class.java.simpleName
@@ -16,7 +16,7 @@ fun box(): String {
     return "OK"
 }
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

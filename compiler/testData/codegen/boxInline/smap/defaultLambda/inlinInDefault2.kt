@@ -1,5 +1,5 @@
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: lParams$default
+// FILE: 1.kt
 
 
 package test
@@ -81,7 +81,7 @@ fun box(): String {
     }
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -102,7 +102,7 @@ test/_1Kt$lParams$1
 51#1:76
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt
