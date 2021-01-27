@@ -183,6 +183,7 @@ class NamedNativeInteropConfig implements Named {
             configuration = project.configurations.create(interopStubs.name)
             project.tasks.getByName(interopStubs.getTaskName("compile", "Kotlin")) {
                 dependsOn genTask
+                kotlinOptions.freeCompilerArgs = ["-Xskip-prerelease-check"]
             }
 
             interopStubs.kotlin.srcDirs generatedSrcDir

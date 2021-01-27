@@ -37,6 +37,10 @@ konanArtifacts {
     }
 }
 
+compileKotlin {
+    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+}
+
 repositories {
     maven {
         url buildKotlinCompilerRepo

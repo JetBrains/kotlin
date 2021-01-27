@@ -5023,6 +5023,10 @@ sourceSets {
     }
 }
 
+compileNopPluginKotlin {
+    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+}
+
 Task pluginTest(String name, String pluginName, Closure configureClosure) {
     def jarTask = project.tasks.register("jar-$pluginName", Jar) {
         it.dependsOn("compile${pluginName.capitalize()}Kotlin")
