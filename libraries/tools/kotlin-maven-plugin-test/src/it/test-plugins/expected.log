@@ -1,3 +1,10 @@
+[WARNING] Runtime JAR files in the classpath should have the same version. These files were found in the classpath:
+/local-repo/org/jetbrains/kotlin/kotlin-stdlib/@snapshot@/kotlin-stdlib-@snapshot@.jar (version 1.5)
+/local-repo/org/jetbrains/kotlin/kotlin-stdlib-common/@snapshot@/kotlin-stdlib-common-@snapshot@.jar (version 1.5)
+/local-repo/org/jetbrains/kotlin/kotlin-script-runtime/@snapshot@/kotlin-script-runtime-@snapshot@.jar (version 1.5)
+/local-repo/org/jetbrains/kotlin/kotlin-reflect/@snapshot@/kotlin-reflect-@snapshot@.jar (version 1.5)
+/local-repo/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.20/kotlin-coroutines-experimental-compat-1.4.20.jar (version 1.4)
+[WARNING] Some runtime JAR files in the classpath have an incompatible version. Consider removing them from the classpath
 [WARNING] No sources found skipping Kotlin compile
 [INFO] Applicability test for project use-test-extension
 [INFO] Applied plugin: 'test-me'
