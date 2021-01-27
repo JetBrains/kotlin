@@ -1,4 +1,5 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.DISABLE_CALL_ASSERTIONS
+// MODULE: lib
 // FILE: C.java
 package test;
 
@@ -18,6 +19,7 @@ public abstract class C<Type> {
     }
 }
 
+// MODULE: main(lib)
 // FILE: B.kt
 import test.C
 

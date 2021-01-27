@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: C.java
 
 interface A {
@@ -17,6 +18,7 @@ class JavaClass implements C {
     public String getOk() { return "OK"; }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

@@ -1,4 +1,5 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.USE_PSI_CLASS_FILES_READING
+// MODULE: lib
 // FILE: J.java
 
 public @interface J {
@@ -13,6 +14,7 @@ public @interface J {
     float divisionByZeroFloat() default 1.0f / 0.0f;
 }
 
+// MODULE: main(lib)
 // FILE: K.kt
 
 fun box(): String {

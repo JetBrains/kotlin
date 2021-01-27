@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: JavaClass.java
 
 class JavaClass {
@@ -12,6 +13,7 @@ class JavaClass {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

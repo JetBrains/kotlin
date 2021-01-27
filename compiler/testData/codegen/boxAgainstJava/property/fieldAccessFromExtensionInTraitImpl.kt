@@ -1,9 +1,11 @@
+// MODULE: lib
 // FILE: D.java
 
 public class D {
     public final String result = "OK";
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 // KT-4878

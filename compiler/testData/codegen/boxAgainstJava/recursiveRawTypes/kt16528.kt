@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: JavaScriptParser.java
 public class JavaScriptParser<T extends JSPsiTypeParser> {
     public String foo() {return "OK";}
@@ -9,6 +10,7 @@ public class JSPsiTypeParser<T extends JavaScriptParser> {}
 
 public class ES6Parser<T extends JSPsiTypeParser> extends JavaScriptParser<T> {}
 
+// MODULE: main(lib)
 // FILE: main.kt
 
 fun createParser(): JavaScriptParser<*> {

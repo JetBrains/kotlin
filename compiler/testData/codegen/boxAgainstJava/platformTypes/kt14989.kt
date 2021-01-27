@@ -1,4 +1,5 @@
 //WITH_RUNTIME
+// MODULE: lib
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -9,6 +10,7 @@ public class JavaClass {
 
 }
 
+// MODULE: main(lib)
 // FILE: b.kt
 
 fun test(s: Double) {

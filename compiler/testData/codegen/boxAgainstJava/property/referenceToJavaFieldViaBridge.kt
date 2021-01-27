@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: test/D.java
 
 package test;
@@ -6,6 +7,7 @@ public class D {
     protected String field = "OK";
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 import test.D

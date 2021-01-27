@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: test/Foo.java
 
 package test;
@@ -6,6 +7,7 @@ public class Foo<T extends Number> {
     public Foo(T number) {}
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 import test.Foo

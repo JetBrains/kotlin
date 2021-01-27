@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: A.java
 
 class A {
@@ -8,6 +9,7 @@ class A {
     public A(long l, double z) {}
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 fun box(): String {

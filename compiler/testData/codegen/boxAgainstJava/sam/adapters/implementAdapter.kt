@@ -1,10 +1,12 @@
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: JavaInterface.java
 
 interface JavaInterface {
     void foo(Runnable r);
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 class Impl: JavaInterface {

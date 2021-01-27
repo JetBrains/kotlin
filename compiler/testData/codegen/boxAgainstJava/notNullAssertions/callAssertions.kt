@@ -1,5 +1,50 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.DISABLE_PARAM_ASSERTIONS
+
+// MODULE: lib
+// FILE: A.java
+
+import org.jetbrains.annotations.NotNull;
+
+public class A {
+    @NotNull
+    public final String NULL = null;
+
+    @NotNull
+    public static final String STATIC_NULL = null;
+
+    public String foo() {
+        return null;
+    }
+
+    public static String staticFoo() {
+        return null;
+    }
+
+    public A plus(A a) {
+        return null;
+    }
+
+    public A inc() {
+        return null;
+    }
+
+    public Object get(Object o) {
+        return null;
+    }
+
+    public A a() { return this; }
+
+    public static class B {
+        public static B b() { return null; }
+    }
+
+    public static class C {
+        public static C c() { return null; }
+    }
+}
+
+// MODULE: main(lib)
 // FILE: callAssertions.kt
 
 class AssertionChecker(val nullPointerExceptionExpected: Boolean) {
@@ -81,46 +126,3 @@ fun box(): String {
     checkAssertions(true)
     return "OK"
 }
-
-// FILE: A.java
-
-import org.jetbrains.annotations.NotNull;
-
-public class A {
-    @NotNull
-    public final String NULL = null;
-
-    @NotNull
-    public static final String STATIC_NULL = null;
-
-    public String foo() {
-        return null;
-    }
-
-    public static String staticFoo() {
-        return null;
-    }
-
-    public A plus(A a) {
-        return null;
-    }
-
-    public A inc() {
-        return null;
-    }
-
-    public Object get(Object o) {
-        return null;
-    }
-
-    public A a() { return this; }
-
-    public static class B {
-        public static B b() { return null; }
-    }
-
-    public static class C {
-        public static C c() { return null; }
-    }
-}
-

@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: test/JavaClass.java
 
 package test;
@@ -8,6 +9,7 @@ public class JavaClass {
     public static String foo() { return "OK"; }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 package test

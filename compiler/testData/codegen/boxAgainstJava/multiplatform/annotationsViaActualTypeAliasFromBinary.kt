@@ -1,5 +1,43 @@
 // !LANGUAGE: +MultiPlatformProjects
 // WITH_REFLECT
+
+// MODULE: lib
+// FILE: Jnno.java
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Jnno {
+    byte b() default 1;
+    char c() default 'x';
+    double d() default 3.14;
+    float f() default -2.72f;
+    int i() default 42424242;
+    int i2() default 21212121 + 32323232;
+    long j() default 239239239239239L;
+    long j2() default 239239;
+    short s() default 42;
+    boolean z() default true;
+    byte[] ba() default {-1};
+    char[] ca() default {'y'};
+    double[] da() default {-3.14159};
+    float[] fa() default {2.7218f};
+    int[] ia() default {424242};
+    long[] ja() default {239239239239L, 239239};
+    short[] sa() default {-43};
+    boolean[] za() default {false, true};
+    String str() default "fi" + "zz";
+    Class<?> k() default Number.class;
+    // E e() default E.E1;
+    // TODO: A a() default @A("1");
+    String[] stra() default {"bu", "zz"};
+    Class<?>[] ka() default {double.class, String.class, long[].class, Integer[][][].class, void.class};
+    // E[] ea() default {E.E2, E.E3};
+    // TODO: A[] aa() default {@A("2"), @A("3")};
+}
+
+// MODULE: main(lib)
 // FILE: main.kt
 
 // See compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias2.kt
@@ -53,39 +91,4 @@ fun box(): String {
     ::test.annotations.toString()
 
     return "OK"
-}
-
-// FILE: Jnno.java
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Jnno {
-    byte b() default 1;
-    char c() default 'x';
-    double d() default 3.14;
-    float f() default -2.72f;
-    int i() default 42424242;
-    int i2() default 21212121 + 32323232;
-    long j() default 239239239239239L;
-    long j2() default 239239;
-    short s() default 42;
-    boolean z() default true;
-    byte[] ba() default {-1};
-    char[] ca() default {'y'};
-    double[] da() default {-3.14159};
-    float[] fa() default {2.7218f};
-    int[] ia() default {424242};
-    long[] ja() default {239239239239L, 239239};
-    short[] sa() default {-43};
-    boolean[] za() default {false, true};
-    String str() default "fi" + "zz";
-    Class<?> k() default Number.class;
-    // E e() default E.E1;
-    // TODO: A a() default @A("1");
-    String[] stra() default {"bu", "zz"};
-    Class<?>[] ka() default {double.class, String.class, long[].class, Integer[][][].class, void.class};
-    // E[] ea() default {E.E2, E.E3};
-    // TODO: A[] aa() default {@A("2"), @A("3")};
 }

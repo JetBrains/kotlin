@@ -1,4 +1,5 @@
 // WITH_REFLECT
+// MODULE: lib
 // FILE: test/J.java
 
 package test;
@@ -13,6 +14,7 @@ public class J {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 package test

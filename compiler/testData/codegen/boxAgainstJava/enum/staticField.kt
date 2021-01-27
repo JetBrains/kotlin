@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: test/E.java
 
 package test;
@@ -13,6 +14,7 @@ public enum E {
     public static final Set<E> INSTANCES = EnumSet.of(INSTANCE);
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 import test.E

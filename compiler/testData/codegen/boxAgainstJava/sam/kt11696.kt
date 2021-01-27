@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: Promise.java
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,7 @@ public abstract class Promise<T> {
     public abstract Promise<T> done(@NotNull Consumer<? super T> done);
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 class User {
     fun use(promise: Promise<*>): Promise<*> {

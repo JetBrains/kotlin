@@ -1,3 +1,4 @@
+// MODULE: lib
 // FILE: J.java
 
 public class J {
@@ -12,6 +13,7 @@ public class J {
     }
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 class A : J(J.protectedFun()) {

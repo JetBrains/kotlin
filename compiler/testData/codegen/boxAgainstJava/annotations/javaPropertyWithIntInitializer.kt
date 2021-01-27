@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// MODULE: lib
 // FILE: Foo.java
 
 class Foo {
@@ -11,6 +12,7 @@ class Foo {
     public static final char c = 99;
 }
 
+// MODULE: main(lib)
 // FILE: 1.kt
 
 @Ann(Foo.i, Foo.s, Foo.f, Foo.d, Foo.l, Foo.b, Foo.c) class MyClass
