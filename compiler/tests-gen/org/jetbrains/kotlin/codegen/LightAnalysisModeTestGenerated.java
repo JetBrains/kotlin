@@ -16125,6 +16125,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sam extends AbstractLightAnalysisModeTest {
+            @TestMetadata("suspendFunInterface.kt")
+            public void ignoreSuspendFunInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/suspendFunInterface.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -16198,6 +16203,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/primitiveVsWrapperInSam.kt");
             }
 
+            @TestMetadata("samConversionInsideSamConvertedLambda.kt")
+            public void testSamConversionInsideSamConvertedLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/samConversionInsideSamConvertedLambda.kt");
+            }
+
             @TestMetadata("samConversionOnFunctionReference.kt")
             public void testSamConversionOnFunctionReference() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/samConversionOnFunctionReference.kt");
@@ -16221,11 +16231,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("streamApi2.kt")
             public void testStreamApi2() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/streamApi2.kt");
-            }
-
-            @TestMetadata("suspendFunInterface.kt")
-            public void testSuspendFunInterface() throws Exception {
-                runTest("compiler/testData/codegen/box/invokedynamic/sam/suspendFunInterface.kt");
             }
 
             @TestMetadata("unboundFunctionReferenceEquality.kt")
@@ -16270,42 +16275,42 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class InlineClassInSignature extends AbstractLightAnalysisModeTest {
+                @TestMetadata("funInterfaceWithInlineAny.kt")
+                public void ignoreFunInterfaceWithInlineAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineAny.kt");
+                }
+
+                @TestMetadata("funInterfaceWithInlineInt.kt")
+                public void ignoreFunInterfaceWithInlineInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineInt.kt");
+                }
+
+                @TestMetadata("funInterfaceWithInlineNAny.kt")
+                public void ignoreFunInterfaceWithInlineNAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNAny.kt");
+                }
+
+                @TestMetadata("funInterfaceWithInlineNInt.kt")
+                public void ignoreFunInterfaceWithInlineNInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNInt.kt");
+                }
+
+                @TestMetadata("funInterfaceWithInlineNString.kt")
+                public void ignoreFunInterfaceWithInlineNString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNString.kt");
+                }
+
+                @TestMetadata("funInterfaceWithInlineString.kt")
+                public void ignoreFunInterfaceWithInlineString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineString.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInInlineClassInSignature() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-                }
-
-                @TestMetadata("funInterfaceWithInlineAny.kt")
-                public void testFunInterfaceWithInlineAny() throws Exception {
-                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineAny.kt");
-                }
-
-                @TestMetadata("funInterfaceWithInlineInt.kt")
-                public void testFunInterfaceWithInlineInt() throws Exception {
-                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineInt.kt");
-                }
-
-                @TestMetadata("funInterfaceWithInlineNAny.kt")
-                public void testFunInterfaceWithInlineNAny() throws Exception {
-                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNAny.kt");
-                }
-
-                @TestMetadata("funInterfaceWithInlineNInt.kt")
-                public void testFunInterfaceWithInlineNInt() throws Exception {
-                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNInt.kt");
-                }
-
-                @TestMetadata("funInterfaceWithInlineNString.kt")
-                public void testFunInterfaceWithInlineNString() throws Exception {
-                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineNString.kt");
-                }
-
-                @TestMetadata("funInterfaceWithInlineString.kt")
-                public void testFunInterfaceWithInlineString() throws Exception {
-                    runTest("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature/funInterfaceWithInlineString.kt");
                 }
 
                 @TestMetadata("genericFunInterfaceWithInlineAny.kt")

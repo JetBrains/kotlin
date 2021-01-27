@@ -18476,6 +18476,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("samConversionInsideSamConvertedLambda.kt")
+            public void testSamConversionInsideSamConvertedLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/samConversionInsideSamConvertedLambda.kt");
+            }
+
+            @Test
             @TestMetadata("samConversionOnFunctionReference.kt")
             public void testSamConversionOnFunctionReference() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/samConversionOnFunctionReference.kt");
