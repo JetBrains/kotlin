@@ -12,17 +12,14 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.isFakeLightClassInheritor
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import javax.swing.Icon
 
 // Used as a placeholder when actual light class does not exist (expect-classes, for example)
@@ -48,23 +45,8 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
     override fun getContainingFile() = kotlinOrigin.containingFile
     override fun getUseScope() = kotlinOrigin.useScope
 
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
-        if (manager.areElementsEquivalent(baseClass, this)) return false
-        LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
-
-        val baseKtClass = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
-        val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() ?: return false
-        val thisDescriptor = kotlinOrigin.resolveToDescriptorIfAny() ?: return false
-
-        val thisFqName = DescriptorUtils.getFqName(thisDescriptor).asString()
-        val baseFqName = DescriptorUtils.getFqName(baseDescriptor).asString()
-        if (thisFqName == baseFqName) return false
-
-        return if (checkDeep)
-            DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor)
-        else
-            DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
-    }
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
+        isFakeLightClassInheritor(baseClass, checkDeep)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)
 }
@@ -110,7 +92,7 @@ private object DummyJavaPsiFactory {
             ?: throw IncorrectOperationException("Method was not created. Method name: $name; return type: $canonicalText")
     }
 
-    fun createDummyClass(project: Project): PsiClass = PsiElementFactory.getInstance(project).createClass("dummy")
+    fun createDummyClass(project: Project): PsiClass = PsiElementFactory.SERVICE.getInstance(project).createClass("dummy")
 
     private fun createDummyJavaFile(project: Project, text: String): PsiJavaFile {
         return PsiFileFactory.getInstance(project).createFileFromText(

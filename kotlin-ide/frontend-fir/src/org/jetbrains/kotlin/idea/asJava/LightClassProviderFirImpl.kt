@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.InheritanceImplUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.psi.*
 
 class LightClassProviderFirImpl : LightClassProvider {
-    override fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
-        return null
-    }
+    override fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? =
+        LightClassUtil.getLightFieldForCompanionObject(companionObject)
 
     override fun getLightClassMethods(function: KtFunction): List<PsiMethod> =
         LightClassUtil.getLightClassMethods(function)
@@ -25,7 +27,7 @@ class LightClassProviderFirImpl : LightClassProvider {
         LightClassUtil.getLightClassPropertyMethods(property).allDeclarations
 
     override fun toLightClassWithBuiltinMapping(classOrObject: KtClassOrObject): PsiClass? =
-        null
+        classOrObject.toLightClassWithBuiltinMapping()
 
     override fun toLightMethods(psiElement: PsiElement): List<PsiMethod> =
         psiElement.toLightMethods()
@@ -36,23 +38,20 @@ class LightClassProviderFirImpl : LightClassProvider {
     override fun toLightElements(ktElement: KtElement): List<PsiNamedElement> =
         ktElement.toLightElements()
 
-    override fun createKtFakeLightClass(kotlinOrigin: KtClassOrObject): PsiClass? {
-        return null
-    }
+    override fun createKtFakeLightClass(kotlinOrigin: KtClassOrObject): PsiClass? =
+        KtFakeLightClass(kotlinOrigin)
 
-    override fun getRepresentativeLightMethod(psiElement: PsiElement): PsiMethod? {
-        return null
-    }
+    override fun getRepresentativeLightMethod(psiElement: PsiElement): PsiMethod? =
+        psiElement.getRepresentativeLightMethod()
 
-    override fun isKtFakeLightClass(psiClass: PsiClass): Boolean {
-        return false
-    }
+    override fun isKtFakeLightClass(psiClass: PsiClass): Boolean =
+        psiClass is KtFakeLightClass
 
-    override fun isKtLightClassForDecompiledDeclaration(psiClass: PsiClass): Boolean {
-        return false
-    }
+    override fun isKtLightClassForDecompiledDeclaration(psiClass: PsiClass): Boolean = false //TODO
 
-    override fun createKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod? {
-        return null
-    }
+    override fun createKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod? =
+        KtFakeLightMethod.get(ktDeclaration)
+
+    override fun isFakeLightClassInheritor(ktFakeLightClass: KtFakeLightClass, baseClass: PsiClass, checkDeep: Boolean): Boolean =
+        InheritanceImplUtil.isInheritor(ktFakeLightClass, baseClass, checkDeep)
 }

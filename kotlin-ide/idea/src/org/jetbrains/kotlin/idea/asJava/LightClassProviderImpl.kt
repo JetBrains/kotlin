@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class LightClassProviderImpl : LightClassProvider {
     override fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? =
@@ -52,4 +55,22 @@ class LightClassProviderImpl : LightClassProvider {
 
     override fun createKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod? =
         KtFakeLightMethod.get(ktDeclaration)
+
+    override fun isFakeLightClassInheritor(ktFakeLightClass: KtFakeLightClass, baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        if (ktFakeLightClass.manager.areElementsEquivalent(baseClass, ktFakeLightClass)) return false
+        LightClassInheritanceHelper.getService(ktFakeLightClass.project).isInheritor(ktFakeLightClass, baseClass, checkDeep).ifSure { return it }
+
+        val baseKtClass = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
+        val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() ?: return false
+        val thisDescriptor = ktFakeLightClass.kotlinOrigin.resolveToDescriptorIfAny() ?: return false
+
+        val thisFqName = DescriptorUtils.getFqName(thisDescriptor).asString()
+        val baseFqName = DescriptorUtils.getFqName(baseDescriptor).asString()
+        if (thisFqName == baseFqName) return false
+
+        return if (checkDeep)
+            DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor)
+        else
+            DescriptorUtils.isDirectSubclass(thisDescriptor, baseDescriptor)
+    }
 }
