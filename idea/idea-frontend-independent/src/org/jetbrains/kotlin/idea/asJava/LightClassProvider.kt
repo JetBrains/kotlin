@@ -9,6 +9,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.psi.*
 
 interface LightClassProvider {
@@ -38,6 +39,8 @@ interface LightClassProvider {
     fun isKtLightClassForDecompiledDeclaration(psiClass: PsiClass): Boolean
 
     fun createKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod?
+
+    fun isFakeLightClassInheritor(ktFakeLightClass: KtFakeLightClass, baseClass: PsiClass, checkDeep: Boolean): Boolean
 
     companion object {
 
@@ -83,5 +86,8 @@ interface LightClassProvider {
 
         fun PsiElement.providedGetRepresentativeLightMethod(): PsiMethod? =
             getInstance(project).getRepresentativeLightMethod(this)
+
+        fun KtFakeLightClass.isFakeLightClassInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
+            getInstance(project).isFakeLightClassInheritor(this, baseClass, checkDeep)
     }
 }
