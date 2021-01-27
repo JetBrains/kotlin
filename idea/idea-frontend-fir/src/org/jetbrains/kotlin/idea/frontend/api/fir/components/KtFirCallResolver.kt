@@ -113,13 +113,13 @@ internal class KtFirCallResolver(
     private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, emptyList())
+            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, emptyList())
+            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =

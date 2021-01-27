@@ -17,18 +17,11 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.getMessageWithFactoryName
-import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
-import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.getDefaultMessageWithFactoryName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 class KotlinHighLevelDiagnosticHighlightingPass(
     private val ktFile: KtFile,
@@ -38,7 +31,6 @@ class KotlinHighLevelDiagnosticHighlightingPass(
 
     override fun doCollectInformation(progress: ProgressIndicator) = analyze(ktFile) {
         ktFile.collectDiagnosticsForFile().forEach { diagnostic ->
-            if (!diagnostic.isValid) return@forEach
             diagnostic.textRanges.forEach { range ->
                 HighlightInfo.newHighlightInfo(HighlightInfoType.ERROR/*TODO*/)
                     .descriptionAndTooltip(diagnostic.getMessageToRender())
@@ -50,9 +42,14 @@ class KotlinHighLevelDiagnosticHighlightingPass(
     }
 
     private fun KtDiagnostic.getMessageToRender(): String =
-        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode)
-            getMessageWithFactoryName()
-        else message
+        if (isInternalOrUnitTestMode())
+            getDefaultMessageWithFactoryName()
+        else defaultMessage
+
+    private fun isInternalOrUnitTestMode(): Boolean {
+        val application = ApplicationManager.getApplication()
+        return application.isInternal || application.isUnitTestMode
+    }
 
 
     override fun doApplyInformationToEditor() {

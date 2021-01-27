@@ -333,6 +333,7 @@ include ":compiler:test-infrastructure",
         ":compiler:tests-common-new"
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
+include ":idea:idea-frontend-fir:idea-frontend-fir-generator"
 include ":idea:idea-fir-performance-tests"
 
 include ":plugins:parcelize:parcelize-compiler",

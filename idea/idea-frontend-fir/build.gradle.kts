@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ideaExt.idea
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -53,4 +55,30 @@ projectTest {
 }
 
 testsJar()
+
+val generatorClasspath by configurations.creating
+
+dependencies {
+    generatorClasspath(project("idea-frontend-fir-generator"))
+}
+
+val generateCode by tasks.registering(NoDebugJavaExec::class) {
+    val generatorRoot = "$projectDir/idea/idea-frontend-fir/idea-frontend-fir-generator/src/"
+
+    val generatorConfigurationFiles = fileTree(generatorRoot) {
+        include("**/*.kt")
+    }
+
+    inputs.files(generatorConfigurationFiles)
+
+    workingDir = rootDir
+    classpath = generatorClasspath
+    main = "org.jetbrains.kotlin.idea.frontend.api.fir.generator.MainKt"
+    systemProperties["line.separator"] = "\n"
+}
+
+val compileKotlin by tasks
+
+compileKotlin.dependsOn(generateCode)
+
 
