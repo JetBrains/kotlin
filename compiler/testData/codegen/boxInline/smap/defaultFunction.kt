@@ -8,22 +8,10 @@ inline fun inlineFun(capturedParam: String, noinline lambda: () -> String = { ca
 }
 
 // FILE: 2.kt
+// NO_SMAP_DUMP
 import test.*
 
 fun box(): String {
     return inlineFun("OK")
 }
 
-// SMAP_FILE: 1.smap
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt$inlineFun$1
-*L
-1#1,9:1
-*E
-
-// SMAP_FILE: 2.TODO

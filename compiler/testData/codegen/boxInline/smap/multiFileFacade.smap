@@ -1,0 +1,40 @@
+// FILE: 1.kt
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+Facade___1Kt
+*L
+1#1,13:1
+8#1:14
+*S KotlinDebug
+*F
++ 1 1.kt
+Facade___1Kt
+*L
+10#1:14
+*E
+
+// FILE: 2.kt
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt
++ 2 1.kt
+Facade___1Kt
+*L
+1#1,16:1
+8#2:17
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt
+*L
+15#1:17
+*E
+

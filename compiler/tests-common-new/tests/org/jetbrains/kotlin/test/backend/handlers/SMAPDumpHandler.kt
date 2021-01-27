@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_SMAP_DUMP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SMAP_DUMPS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -29,13 +30,21 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
-    private val dumper = MultiModuleInfoDumperImpl()
+    private val dumper = MultiModuleInfoDumperImpl(moduleHeaderTemplate = null)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (!GENERATE_SMAP) return
         if (DUMP_SMAP !in module.directives) return
 
-        val compiledSmaps = CommonSMAPTestUtil.extractSMAPFromClasses(info.classFileFactory.getClassFiles())
+        val originalFileNames = module.files.map { it.name }
+
+        val compiledSmaps = CommonSMAPTestUtil.extractSMAPFromClasses(info.classFileFactory.getClassFiles()).mapNotNull {
+            val name = it.sourceFile.removePrefix("/")
+            val index = originalFileNames.indexOf(name)
+            val testFile = module.files[index]
+            if (NO_SMAP_DUMP in testFile.directives) return@mapNotNull null
+            index to it
+        }.sortedBy { it.first }.map { it.second }
 
         CommonSMAPTestUtil.checkNoConflictMappings(compiledSmaps, assertions)
 
@@ -48,7 +57,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
 
         dumper.builderForModule(module).apply {
             for (source in compiledData.values) {
-                appendLine("// FILE: ${source.sourceFile}")
+                appendLine("// FILE: ${source.sourceFile.removePrefix("/")}")
                 appendLine(source.smap ?: "")
             }
         }

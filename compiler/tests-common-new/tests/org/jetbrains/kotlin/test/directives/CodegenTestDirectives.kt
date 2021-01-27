@@ -105,6 +105,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = """Enables ${SMAPDumpHandler::class}"""
     )
 
+    val NO_SMAP_DUMP by directive(
+        description = "Don't dump smap for marked file",
+        applicability = File
+    )
+
     val SEPARATE_SMAP_DUMPS by directive(
         description = """
             If enabled then ${SMAPDumpHandler::class} will dump smap dumps
