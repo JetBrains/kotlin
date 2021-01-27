@@ -5,12 +5,12 @@
 
 package generators.unicode.ranges
 
-import generators.unicode.UnicodeDataGenerator
-import generators.unicode.ranges.writers.writeHeader
+import generators.unicode.UnicodeDataLine
+import generators.unicode.writeHeader
 import java.io.File
 import java.io.FileWriter
 
-internal class CharCategoryTestGenerator(private val outputFile: File) : UnicodeDataGenerator {
+internal class CharCategoryTestGenerator(private val outputFile: File) {
     private var arrayIndex = 0
     private var arraySize = 0
     private var writer: FileWriter? = null
@@ -19,7 +19,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) : Unicode
         outputFile.parentFile.mkdirs()
     }
 
-    override fun appendChar(char: String, name: String, categoryCode: String) {
+    fun appendLine(line: UnicodeDataLine) {
         if (arraySize == 0) {
             writer?.appendLine(")")
             writer?.close()
@@ -27,9 +27,9 @@ internal class CharCategoryTestGenerator(private val outputFile: File) : Unicode
             generateUnicodeDataHeader(arrayIndex)
         }
 
-        val isStart = name.endsWith(", First>")
+        val isStart = line.name.endsWith(", First>")
 
-        writer?.appendLine("    CharProperties(char = '\\u$char', isStartOfARange = $isStart, categoryCode = \"$categoryCode\"),")
+        writer?.appendLine("    CharProperties(char = '\\u${line.char}', isStartOfARange = $isStart, categoryCode = \"${line.categoryCode}\"),")
 
         arraySize++
         if (arraySize == 2048) {
@@ -38,7 +38,7 @@ internal class CharCategoryTestGenerator(private val outputFile: File) : Unicode
         }
     }
 
-    override fun close() {
+    fun generate() {
         writer?.appendLine(")")
         writer?.close()
 

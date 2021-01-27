@@ -5,6 +5,7 @@
 
 package generators.unicode.ranges.writers
 
+import generators.unicode.toHexIntLiteral
 import java.io.FileWriter
 
 internal class WhitespaceRangesWriter : RangesWriter {
@@ -44,15 +45,15 @@ internal class WhitespaceRangesWriter : RangesWriter {
                         tabCount = 6
                         builder.append(tab.repeat(tabCount))
                     }
-                    builder.appendLine("$ch == ${start.hex()}")
+                    builder.appendLine("$ch == ${start.toHexIntLiteral()}")
                 }
                 end - 1 -> {
-                    builder.appendLine("$ch == ${start.hex()}")
+                    builder.appendLine("$ch == ${start.toHexIntLiteral()}")
                     builder.append(tab.repeat(tabCount)).append("|| ")
-                    builder.appendLine("$ch == ${end.hex()}")
+                    builder.appendLine("$ch == ${end.toHexIntLiteral()}")
                 }
                 else -> {
-                    builder.appendLine("$ch in ${start.hex()}..${end.hex()}")
+                    builder.appendLine("$ch in ${start.toHexIntLiteral()}..${end.toHexIntLiteral()}")
                 }
             }
         }

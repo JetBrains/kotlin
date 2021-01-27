@@ -8,6 +8,7 @@ package generators.unicode.ranges.builders
 import generators.unicode.ranges.patterns.PeriodicRangePattern
 import generators.unicode.ranges.patterns.RangePattern
 import generators.unicode.ranges.patterns.rangeLength
+import generators.unicode.hexToInt
 
 /**
  * The base class of character ranges builders.
@@ -20,7 +21,7 @@ internal abstract class RangesBuilder {
      * Appends a line from the UnicodeData.txt file.
      */
     fun append(char: String, name: String, categoryCode: String) {
-        val charCode = char.toInt(radix = 16)
+        val charCode = char.hexToInt()
         val categoryId = categoryId(categoryCode)
 
         when {
@@ -177,16 +178,12 @@ internal abstract class RangesBuilder {
     /**
      * The function to use to transform periodic ranges with period equal to 1 to an Int representation.
      */
-    protected abstract val makeOnePeriodCategory: (Array<String>) -> Int
+    protected open val makeOnePeriodCategory: (Array<String>) -> Int = { 0 }
 
     /**
      * Appends the [charCode] with the specified [categoryId] to the [lastRange] and returns the resulting range,
      * or returns `null` if [charCode] can't be appended to the [lastRange].
      * The [lastRange] can be transformed to another range type to accommodate the [charCode].
      */
-    protected abstract fun evolveLastRange(
-        lastRange: RangePattern,
-        charCode: Int,
-        categoryId: String
-    ): RangePattern?
+    protected open fun evolveLastRange(lastRange: RangePattern, charCode: Int, categoryId: String): RangePattern? = null
 }
