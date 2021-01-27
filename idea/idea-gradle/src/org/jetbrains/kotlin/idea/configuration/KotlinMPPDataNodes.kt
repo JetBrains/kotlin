@@ -27,8 +27,11 @@ import com.intellij.openapi.externalSystem.model.Key as ExternalKey
 var DataNode<out ModuleData>.kotlinSourceSet: KotlinSourceSetInfo?
         by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_SOURCE_SET"))
 
+var DataNode<out ModuleData>.kotlinImportingDiagnosticsContainer: KotlinImportingDiagnosticsContainer?
+        by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_IMPORTING_DIAGNOSTICS_CONTAINER"))
+
 val DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
-        get() = ExternalSystemApiUtil.getChildren(this, KotlinAndroidSourceSetData.KEY).firstOrNull()?.data?.sourceSetInfos
+    get() = ExternalSystemApiUtil.getChildren(this, KotlinAndroidSourceSetData.KEY).firstOrNull()?.data?.sourceSetInfos
 
 class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotlinModule: KotlinModule) : Serializable {
     var moduleId: String? = null

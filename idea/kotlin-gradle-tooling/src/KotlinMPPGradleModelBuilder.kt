@@ -76,7 +76,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             ),
             kotlinNativeHome,
             dependencyMapper.toDependencyMap()
-        )
+        ).apply {
+            kotlinImportingDiagnostics += collectDiagnostics(importingContext)
+        }
     }
 
     private fun filterOrphanSourceSets(
@@ -905,6 +907,17 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
     companion object {
         private val logger = Logging.getLogger(KotlinMPPGradleModelBuilder::class.java)
+
+        private val DEFAULT_IMPORTING_CHECKERS = listOf(
+            OrphanSourceSetImportingChecker
+        )
+
+        private fun KotlinMPPGradleModel.collectDiagnostics(importingContext: MultiplatformModelImportingContext): KotlinImportingDiagnosticsContainer =
+            mutableSetOf<KotlinImportingDiagnostic>().apply {
+                DEFAULT_IMPORTING_CHECKERS.forEach {
+                    it.check(this@collectDiagnostics, this, importingContext)
+                }
+            }
 
         fun Project.getTargets(): Collection<Named>? {
             val kotlinExt = project.extensions.findByName("kotlin") ?: return null

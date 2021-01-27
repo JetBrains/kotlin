@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
@@ -14,13 +15,16 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.ExternalSystemTestRunTask
+import org.jetbrains.kotlin.idea.configuration.kotlinImportingDiagnosticsContainer
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.externalSystemTestRunTasks
+import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.presentableDescription
+import org.jetbrains.plugins.gradle.util.GradleUtil
 
 class MessageCollector {
     private val builder = StringBuilder()
@@ -37,6 +41,7 @@ class MessageCollector {
     }
 }
 
+@Suppress("UnstableApiUsage")
 class ProjectInfo(
     project: Project,
     internal val projectPath: String,
@@ -47,6 +52,7 @@ class ProjectInfo(
 ) {
     internal val messageCollector = MessageCollector()
     private val moduleManager = ModuleManager.getInstance(project)
+    private val projectDataNode = ExternalSystemApiUtil.findProjectData(project, GRADLE_SYSTEM_ID, projectPath)
     private val expectedModuleNames = HashSet<String>()
     private var allModulesAsserter: (ModuleInfo.() -> Unit)? = null
 
@@ -201,7 +207,7 @@ class ModuleInfo(
 
     fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null) {
         val moduleEntries =
-            rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName && it.scope == scope}
+            rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName && it.scope == scope }
         if (moduleEntries.size > 1) {
             projectInfo.messageCollector.report(
                 "Found multiple order entries for module $moduleName: ${rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()}"
@@ -270,6 +276,22 @@ class ModuleInfo(
         }
     }
 
+    @Suppress("UnstableApiUsage")
+    fun diagnostics(vararg expectedByType: Pair<Class<out KotlinImportingDiagnostic>, Int>) {
+        val moduleNode = GradleUtil.findGradleModuleData(module)
+        val diagnostics = moduleNode!!.kotlinImportingDiagnosticsContainer!!
+        expectedByType.forEach { (expectedClazz, expectedCount) ->
+            val typedDiagnostics = diagnostics.filterIsInstance(expectedClazz)
+            if (typedDiagnostics.size != expectedCount) {
+                val actualCount = typedDiagnostics.size
+                projectInfo.messageCollector.report(
+                    "Expected number of ${expectedClazz.simpleName} diagnostics $expectedCount doesn't match the actual one: $actualCount"
+                )
+            }
+        }
+    }
+
+
     fun run(body: ModuleInfo.() -> Unit = {}) {
         body()
 
@@ -287,7 +309,9 @@ class ModuleInfo(
             }
         }
 
-        if ((!module.externalSystemTestRunTasks().containsAll(expectedExternalSystemTestTasks)) || (projectInfo.exhaustiveTestsList && (module.externalSystemTestRunTasks() != expectedExternalSystemTestTasks))) {
+        if ((!module.externalSystemTestRunTasks()
+                .containsAll(expectedExternalSystemTestTasks)) || (projectInfo.exhaustiveTestsList && (module.externalSystemTestRunTasks() != expectedExternalSystemTestTasks))
+        ) {
             projectInfo.messageCollector.report(
                 "Module '${module.name}': Expected tests list $expectedExternalSystemTestTasks doesn't match the actual one: ${module.externalSystemTestRunTasks()}"
             )
