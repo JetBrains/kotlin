@@ -52,7 +52,7 @@ fun poll71(): Flow<String> {
 fun poll72(): Flow<String> {
     return flow {
         val inv = ::bar3!!
-        inv()
+        <!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 

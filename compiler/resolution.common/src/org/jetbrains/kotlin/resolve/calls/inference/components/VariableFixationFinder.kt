@@ -148,10 +148,41 @@ class VariableFixationFinder(
         return constraints.any { isProperArgumentConstraint(it) } && !areThereConstraintsWithUninferredTypeParameter
     }
 
+    // Containing StubType means that it's part of builder inference: not inferred yet, and thus not substituted yet.
+    // The type constraint with this type is not proper to determine whether the type variable of interest is ready for fixation or not.
     private fun Context.isProperArgumentConstraint(c: Constraint) =
-        isProperType(c.type)
-                && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*>
-                && !c.isNullabilityConstraint
+        isProperType(c.type) &&
+                !containsStubType(c.type) &&
+                c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition<*> &&
+                !c.isNullabilityConstraint
+
+    private fun Context.containsStubType(
+        type: KotlinTypeMarker?,
+        visited: MutableSet<KotlinTypeMarker> = mutableSetOf()
+    ): Boolean {
+        if (type == null || !visited.add(type)) {
+            return false
+        }
+        return when {
+            type.isFlexible() ->
+                containsStubType(type.lowerBoundIfFlexible(), visited) || containsStubType(type.upperBoundIfFlexible(), visited)
+            type.isCapturedType() ->
+                containsStubType(type.asSimpleType()?.asCapturedType()?.lowerType(), visited)
+            type.isStubType() -> true
+            type.isSimpleType() -> {
+                for (arg in type.asSimpleType()!!.asArgumentList()) {
+                    if (arg.isStarProjection()) {
+                        continue
+                    }
+                    if (containsStubType(arg.getType(), visited)) {
+                        return true
+                    }
+                }
+                false
+            }
+            else -> false
+        }
+    }
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
         isProperTypeForFixation(type) { t -> !t.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) } }

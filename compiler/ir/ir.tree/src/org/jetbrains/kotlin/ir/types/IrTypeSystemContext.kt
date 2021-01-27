@@ -46,7 +46,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.isError() = this is IrErrorType
 
-    override fun SimpleTypeMarker.isStubType() = false
+    override fun KotlinTypeMarker.isStubType() = false
 
     override fun FlexibleTypeMarker.asDynamicType() = this as? IrDynamicType
 

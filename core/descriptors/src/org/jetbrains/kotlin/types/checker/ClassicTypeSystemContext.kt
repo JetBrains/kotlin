@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as classicIsSignedOrUnsignedNumberType
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
@@ -70,7 +68,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return ErrorUtils.isUninferredParameter(this)
     }
 
-    override fun SimpleTypeMarker.isStubType(): Boolean {
+    override fun KotlinTypeMarker.isStubType(): Boolean {
         require(this is SimpleType, this::errorMessage)
         return this is AbstractStubType
     }
