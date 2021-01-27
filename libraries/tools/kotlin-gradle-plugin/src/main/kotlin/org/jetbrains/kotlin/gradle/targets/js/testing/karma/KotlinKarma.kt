@@ -36,9 +36,15 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
 
-class KotlinKarma(override val compilation: KotlinJsCompilation, private val services: ServiceRegistry, private val basePath: String) :
+class KotlinKarma(
+    @Transient override val compilation: KotlinJsCompilation,
+    private val services: () -> ServiceRegistry,
+    private val basePath: String
+) :
     KotlinJsTestFramework {
+    @Transient
     private val project: Project = compilation.target.project
+    private val npmProject = compilation.npmProject
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
@@ -49,9 +55,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation, private val ser
     private val envJsCollector = mutableMapOf<String, String>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
+    private val defaultConfigDirectory = project.projectDir.resolve("karma.config.d")
     private var configDirectory: File by property {
-        project.projectDir.resolve("karma.config.d")
+        defaultConfigDirectory
     }
+    private val isTeamCity = project.hasProperty(TC_PROJECT_PROPERTY)
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
@@ -277,8 +285,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation, private val ser
         file: String,
         debug: Boolean
     ): File {
-        val npmProject = compilation.npmProject
-
         val adapterJs = npmProject.dir.resolve("adapter-browser.js")
         adapterJs.printWriter().use { writer ->
             val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
@@ -301,8 +307,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation, private val ser
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
-        val npmProject = compilation.npmProject
-
         val file = task.nodeModulesToLoad
             .map { npmProject.require(it) }
             .single()
@@ -341,7 +345,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation, private val ser
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
+            escapeTCMessagesInLog = isTeamCity
         )
 
         config.basePath = npmProject.nodeModulesDir.absolutePath
@@ -407,7 +411,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation, private val ser
             lateinit var progressLogger: ProgressLogger
 
             override fun wrapExecute(body: () -> Unit) {
-                services.operation("Running and building tests with karma and webpack") {
+                services().operation("Running and building tests with karma and webpack") {
                     progressLogger = this
                     body()
                 }

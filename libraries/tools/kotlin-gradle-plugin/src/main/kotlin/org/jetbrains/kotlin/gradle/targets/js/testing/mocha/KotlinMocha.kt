@@ -21,11 +21,14 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import java.io.File
 
-class KotlinMocha(override val compilation: KotlinJsCompilation, private val basePath: String) :
+class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, private val basePath: String) :
     KotlinJsTestFramework {
+    @Transient
     private val project: Project = compilation.target.project
+    private val npmProject = compilation.npmProject
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
+    private val isTeamCity = project.hasProperty(TC_PROJECT_PROPERTY)
 
     override val settingsState: String
         get() = "mocha"
@@ -54,10 +57,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation, private val bas
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
+            escapeTCMessagesInLog = isTeamCity
         )
-
-        val npmProject = compilation.npmProject
 
         val cliArgs = KotlinTestRunnerCliArgs(
             include = task.includePatterns,
@@ -105,8 +106,6 @@ class KotlinMocha(override val compilation: KotlinJsCompilation, private val bas
     private fun createAdapterJs(
         file: String
     ): File {
-        val npmProject = compilation.npmProject
-
         val adapterJs = npmProject.dir.resolve(ADAPTER_NODEJS)
         adapterJs.printWriter().use { writer ->
             val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
