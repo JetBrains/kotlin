@@ -14,7 +14,7 @@ inline fun foo2(l: () -> String): String = foo(l)
 
 fun box(): String = foo { "OK" }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -33,7 +33,7 @@ Facade___1Kt
 10#1:14
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

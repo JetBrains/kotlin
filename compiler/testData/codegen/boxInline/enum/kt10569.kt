@@ -1,5 +1,5 @@
-// FILE: 1.kt
 // WITH_RUNTIME
+// FILE: 1.kt
 package test
 
 var result = ""
@@ -28,4 +28,3 @@ fun box(): String {
     }
     return result
 }
-

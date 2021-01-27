@@ -1,7 +1,5 @@
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
 package builders
 inline fun call(crossinline init: () -> Unit) {
     return init()
@@ -28,11 +26,10 @@ inline fun test(): String {
 fun box(): String {
     return test()
 }
-//NO_CHECK_LAMBDA_INLINING
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 //TODO
 //7#1,3:26

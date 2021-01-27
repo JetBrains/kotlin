@@ -18,7 +18,7 @@ fun box(): String {
     return inlineFun()
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -37,7 +37,7 @@ test/_1Kt
 11#1:15
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

@@ -43,7 +43,7 @@ fun box(): String {
     return expected
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
 SMAP
 1.kt
@@ -65,7 +65,7 @@ builders/_1Kt
 19#1:26,2
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 
 SMAP

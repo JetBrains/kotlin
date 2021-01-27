@@ -32,7 +32,7 @@ inline fun test(z: () -> Unit) {
 }
 
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

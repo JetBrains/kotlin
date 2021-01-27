@@ -1,6 +1,6 @@
-// FILE: test.kt
-// WITH_RUNTIME
 // WITH_COROUTINES
+// WITH_RUNTIME
+// FILE: test.kt
 
 interface Flow<T> {
     abstract suspend fun collect(collector: FlowCollector<T>)

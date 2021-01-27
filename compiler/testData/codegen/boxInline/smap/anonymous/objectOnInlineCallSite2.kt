@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 package builders
@@ -28,9 +29,8 @@ import builders.*
 fun box(): String {
     return test()
 }
-//NO_CHECK_LAMBDA_INLINING
 
-// FILE: 1.sxmap
+// SMAP_FILE: 1.sxmap
 
 //TODO SHOULD BE LESS
 
@@ -56,7 +56,7 @@ builders/BuildersPackage$objectOnInlineCallSite2_2$HASH$test$1$1
 1#1,42:1
 *E
 
-// FILE: 2.sxmap
+// SMAP_FILE: 2.sxmap
 
 SXMAP
 objectOnInlineCallSite2.1.kt

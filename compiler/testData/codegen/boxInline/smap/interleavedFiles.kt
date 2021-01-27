@@ -19,9 +19,9 @@ fun box(): String {
     return "OK"
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 
 // FILE: 1.kt
 
@@ -7,14 +8,13 @@ inline fun inlineFun(capturedParam: String, noinline lambda: () -> String = { ca
 }
 
 // FILE: 2.kt
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 fun box(): String {
     return inlineFun("OK")
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 SMAP
 1.kt
 Kotlin
@@ -26,4 +26,4 @@ test/_1Kt$inlineFun$1
 1#1,9:1
 *E
 
-// FILE: 2.TODO
+// SMAP_FILE: 2.TODO

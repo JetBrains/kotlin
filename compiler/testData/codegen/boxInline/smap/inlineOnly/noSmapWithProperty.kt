@@ -1,5 +1,6 @@
-// FILE: 1.kt
+// IGNORE_FIR_DIAGNOSTICS
 // WITH_RUNTIME
+// FILE: 1.kt
 
 package test
 inline fun stub() {
@@ -17,4 +18,4 @@ fun box(): String {
     return prop
 }
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap

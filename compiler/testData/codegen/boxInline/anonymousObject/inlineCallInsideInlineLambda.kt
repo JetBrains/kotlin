@@ -1,3 +1,5 @@
+// DUMP_SMAP
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 package test
@@ -15,7 +17,6 @@ object B {
 }
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 import test.*
 
 
@@ -32,9 +33,9 @@ fun box(): String {
     return z;
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 SMAP
 2.kt
 Kotlin

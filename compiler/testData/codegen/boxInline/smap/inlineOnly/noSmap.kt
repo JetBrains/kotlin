@@ -1,5 +1,5 @@
-// FILE: 1.kt
 // WITH_RUNTIME
+// FILE: 1.kt
 // KJS_WITH_FULL_RUNTIME
 package test
 inline fun stub() {
@@ -12,4 +12,4 @@ fun box(): String {
     return "KO".reversed()
 }
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap

@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperFinally
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 package test
@@ -26,7 +27,6 @@ fun main(args: Array<String>) {
 }
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 import test.*
 
 

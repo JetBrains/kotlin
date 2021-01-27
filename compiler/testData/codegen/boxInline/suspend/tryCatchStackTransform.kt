@@ -1,7 +1,7 @@
-// FILE: inlined.kt
-// WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// WITH_RUNTIME
+// FILE: inlined.kt
 
 suspend inline fun inlineMe(c: suspend (String) -> String, d: suspend () -> String): String {
     return c(try { d() } catch (e: Exception) { "Exception 1 ${e.message}" })

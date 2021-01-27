@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 
@@ -30,9 +31,8 @@ fun test(): String {
 fun box(): String {
     return test()
 }
-//NO_CHECK_LAMBDA_INLINING
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
 SMAP
 1.kt
@@ -45,7 +45,7 @@ builders/_1Kt$call$1
 1#1,14:1
 *E
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

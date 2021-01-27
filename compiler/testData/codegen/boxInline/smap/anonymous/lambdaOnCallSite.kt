@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 
 // FILE: 1.kt
 
@@ -6,7 +7,6 @@ package builders
 inline fun call(crossinline init: () -> Unit) {
     return init()
 }
-//NO_CHECK_LAMBDA_INLINING
 
 // FILE: 2.kt
 
@@ -30,9 +30,9 @@ fun box(): String {
     return test()
 }
 
-// FILE: 1.smap
+// SMAP_FILE: 1.smap
 
-// FILE: 2.smap
+// SMAP_FILE: 2.smap
 
 SMAP
 2.kt

@@ -1,7 +1,7 @@
-// TARGET_BACKEND: JVM
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
 // WITH_RUNTIME
+// TARGET_BACKEND: JVM
+// FILE: 1.kt
 package test
 
 class K
