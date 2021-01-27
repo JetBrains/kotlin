@@ -305,9 +305,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGra
             jsCompilerType = if (irBackend) KotlinJsCompilerType.IR else KotlinJsCompilerType.LEGACY
         )
 
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.0")
-
     protected fun CompiledProject.checkIrCompilationMessage() {
         if (irBackend) {
             assertContains(USING_JS_IR_BACKEND_MESSAGE)

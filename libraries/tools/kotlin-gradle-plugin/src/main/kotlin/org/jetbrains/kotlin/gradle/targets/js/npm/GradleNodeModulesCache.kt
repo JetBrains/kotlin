@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import java.io.File
 
 /**
@@ -18,20 +17,15 @@ internal class GradleNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNod
     @Transient
     private val project = nodeJs.rootProject
 
-    private val fs = (project as ProjectInternal).services.get(FileSystemOperations::class.java)
-    private val archiveOperations: Any? = try {
-        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.6
-        null
-    }
+    private val fs = FileSystemOperationsCompat(project)
+    private val archiveOperations = ArchiveOperationsCompat(project)
 
     override fun buildImportedPackage(
         name: String,
         version: String,
         file: File
     ): File? {
-        val module = GradleNodeModuleBuilder(project, fs, archiveOperations, name, version, listOf(file), dir)
+        val module = GradleNodeModuleBuilder(fs, archiveOperations, name, version, listOf(file), dir)
         module.visitArtifacts()
         return module.rebuild()
     }
