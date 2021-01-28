@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.dce
 
+import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
@@ -24,6 +25,12 @@ import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.array
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.index
 
 class Context {
+    // Collections per Node consumes too much RAM
+    private val nodeDependencies = LinkedHashMultimap.create<Node, Node>()
+    private val nodeExpressions = LinkedHashMultimap.create<Node, JsExpression>()
+    private val nodeFunctions = LinkedHashMultimap.create<Node, JsFunction>()
+    private val nodeUsedByAstNodes = LinkedHashMultimap.create<Node, JsNode>()
+
     val globalScope = Node()
     val moduleExportsNode = globalScope.member("module").member("exports")
     var currentModule = globalScope
@@ -134,36 +141,24 @@ class Context {
 
     fun visit(n: Node) = n.visit(currentColor)
 
-    class Node private constructor(val localName: JsName?, parent: Node?, val memberName: String?) {
-        private var _dependenciesImpl: MutableSet<Node>? = null
-        private var _expressionsImpl: MutableSet<JsExpression>? = null
-        private var _functionsImpl: MutableSet<JsFunction>? = null
+    inner class Node private constructor(val localName: JsName?, parent: Node?, val memberName: String?) {
         private var _membersImpl: MutableMap<String, Node>? = null
-        private var _usedByAstNodesImpl: MutableSet<JsNode>? = null
 
-        private val dependenciesImpl: MutableSet<Node>
-            get() = _dependenciesImpl ?: mutableSetOf<Node>().also { _dependenciesImpl = it }
-        private val expressionsImpl: MutableSet<JsExpression>
-            get() = _expressionsImpl ?: mutableSetOf<JsExpression>().also { _expressionsImpl = it }
-        private val functionsImpl: MutableSet<JsFunction>
-            get() = _functionsImpl ?: mutableSetOf<JsFunction>().also { _functionsImpl = it }
         private val membersImpl: MutableMap<String, Node>
             get() = _membersImpl ?: mutableMapOf<String, Node>().also { _membersImpl = it }
-        private val usedByAstNodesImpl: MutableSet<JsNode>
-            get() = _usedByAstNodesImpl ?: mutableSetOf<JsNode>().also { _usedByAstNodesImpl = it }
 
         private var rank = 0
         private var hasSideEffectsImpl = false
         private var reachableImpl = false
         private var declarationReachableImpl = false
 
-        val dependencies: Set<Node> get() = original._dependenciesImpl ?: emptySet()
+        val dependencies: Set<Node> get() = nodeDependencies[original]
 
-        val expressions: Set<JsExpression> get() = original._expressionsImpl ?: emptySet()
+        val expressions: Set<JsExpression> get() = nodeExpressions[original]
 
-        val functions: Set<JsFunction> get() = original._functionsImpl ?: emptySet()
+        val functions: Set<JsFunction> get() = nodeFunctions[original]
 
-        val usedByAstNodes: Set<JsNode> get() = original._usedByAstNodesImpl ?: emptySet()
+        val usedByAstNodes: Set<JsNode> get() = nodeUsedByAstNodes[original]
 
         var hasSideEffects: Boolean
             get() = original.hasSideEffectsImpl
@@ -210,19 +205,19 @@ class Context {
         val members: Map<String, Node> get() = original._membersImpl ?: emptyMap()
 
         fun addDependency(node: Node) {
-            original.dependenciesImpl += node
+            nodeDependencies.put(original, node)
         }
 
         fun addFunction(function: JsFunction) {
-            original.functionsImpl += function
+            nodeFunctions.put(original, function)
         }
 
         fun addExpression(expression: JsExpression) {
-            original.expressionsImpl += expression
+            nodeExpressions.put(original, expression)
         }
 
         fun addUsedByAstNode(node: JsNode) {
-            original.usedByAstNodesImpl += node
+            nodeUsedByAstNodes.put(original, node)
         }
 
         fun member(name: String): Node = original.membersImpl.getOrPut(name) { Node(null, this, name) }.original
@@ -247,8 +242,8 @@ class Context {
         }
 
         private fun makeDependencies(other: Node) {
-            dependenciesImpl += other
-            other.dependenciesImpl += this
+            nodeDependencies.put(this, other)
+            nodeDependencies.put(other, this)
         }
 
         private fun evacuateFrom(other: Node) {
@@ -267,23 +262,15 @@ class Context {
             other.membersImpl.clear()
 
             hasSideEffectsImpl = hasSideEffectsImpl || other.hasSideEffectsImpl
-            if (!other._expressionsImpl.isNullOrEmpty()) {
-                expressionsImpl += other.expressionsImpl
-            }
-            if (!other._functionsImpl.isNullOrEmpty()) {
-                functionsImpl += other.functionsImpl
-            }
-            if (!other._dependenciesImpl.isNullOrEmpty()) {
-                dependenciesImpl += other.dependenciesImpl
-            }
-            if (!other._usedByAstNodesImpl.isNullOrEmpty()) {
-                usedByAstNodesImpl += other.usedByAstNodesImpl
-            }
+            nodeExpressions.putAll(this, nodeExpressions[other])
+            nodeFunctions.putAll(this, nodeFunctions[other])
+            nodeDependencies.putAll(this, nodeDependencies[other])
+            nodeUsedByAstNodes.putAll(this, nodeUsedByAstNodes[other])
 
-            other._expressionsImpl = null
-            other._functionsImpl = null
-            other._dependenciesImpl = null
-            other._usedByAstNodesImpl = null
+            nodeExpressions.removeAll(other)
+            nodeFunctions.removeAll(other)
+            nodeDependencies.removeAll(other)
+            nodeUsedByAstNodes.removeAll(other)
         }
 
         private fun merge(other: Node) {
