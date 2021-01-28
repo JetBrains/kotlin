@@ -134,7 +134,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
             !isPublishedApi()
         ) {
-            return this
+            return originalFunction.takeIf { it != this }
+                ?.safeAs<IrSimpleFunction>()
+                ?.getInternalFunctionForManglingIfNeeded()
+                ?: this
         }
         originalForDefaultAdapter?.getInternalFunctionForManglingIfNeeded()?.let { return it }
         return null
