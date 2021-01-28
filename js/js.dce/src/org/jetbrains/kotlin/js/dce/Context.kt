@@ -126,6 +126,14 @@ class Context {
         }
     }
 
+    private var currentColor = 1.toByte()
+
+    fun clearVisited() {
+        currentColor++
+    }
+
+    fun visit(n: Node) = n.visit(currentColor)
+
     class Node private constructor(val localName: JsName?, qualifier: Qualifier?) {
         private var _dependenciesImpl: MutableSet<Node>? = null
         private var _expressionsImpl: MutableSet<JsExpression>? = null
@@ -177,6 +185,14 @@ class Context {
 
         var qualifier: Qualifier? = qualifier
             private set
+
+        private var color: Byte = 0
+
+        fun visit(c: Byte): Boolean {
+            val result = color != c
+            color = c
+            return result
+        }
 
         val memberNames: Set<String> get() = original._membersImpl?.keys ?: emptySet()
 

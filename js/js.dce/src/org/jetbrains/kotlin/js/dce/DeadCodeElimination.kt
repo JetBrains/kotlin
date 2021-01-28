@@ -42,11 +42,14 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
     val moduleMapping = mutableMapOf<JsBlock, String>()
     private val reachableNames = mutableSetOf<String>()
 
-    var reachableNodes = setOf<Node>()
+    var reachableNodes: Iterable<Node> = setOf()
         private set
+
+    var context: Context? = null
 
     fun apply(root: JsNode) {
         val context = Context()
+        this.context = context
 
         val topLevelVars = collectDefinedNames(root)
         context.addNodesForLocalVars(topLevelVars)
@@ -107,7 +110,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 block
             }
 
-            if (hasErrors) return DeadCodeEliminationResult(emptySet(), DeadCodeEliminationStatus.FAILED)
+            if (hasErrors) return DeadCodeEliminationResult(dce.context, emptySet(), DeadCodeEliminationStatus.FAILED)
 
             program.globalBlock.statements += blocks
             program.globalBlock.fixForwardNameReferences()
@@ -139,7 +142,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 }
             }
 
-            return DeadCodeEliminationResult(dce.reachableNodes, DeadCodeEliminationStatus.OK)
+            return DeadCodeEliminationResult(dce.context, dce.reachableNodes, DeadCodeEliminationStatus.OK)
         }
 
         private class Reporter(private val fileName: String, private val logConsumer: (DCELogLevel, String) -> Unit) : ErrorReporter {
