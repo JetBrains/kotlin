@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.spec.parsing;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
     }
 
     public void testAllFilesPresentInPsi() throws Exception {
-        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates");
     }
 
     @TestMetadata("compiler/tests-spec/testData/psi/linked")
@@ -37,7 +38,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions")
@@ -49,7 +50,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
             }
 
             public void testAllFilesPresentInExpressions() throws Exception {
-                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
 
             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals")
@@ -61,7 +62,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                 }
 
                 public void testAllFilesPresentInConstant_literals() throws Exception {
-                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals")
@@ -73,7 +74,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInInteger_literals() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals")
@@ -85,7 +86,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInBinary_integer_literals() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1")
@@ -97,7 +98,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg")
@@ -124,7 +125,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
 
@@ -172,7 +173,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -187,7 +188,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInDecimal_integer_literals() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1")
@@ -199,7 +200,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg")
@@ -216,7 +217,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
 
@@ -249,7 +250,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -263,7 +264,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInP_2() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/neg")
@@ -275,7 +276,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -290,7 +291,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInHexadecimal_integer_literals() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1")
@@ -302,7 +303,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
 
                             @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg")
@@ -329,7 +330,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInNeg() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
 
@@ -372,7 +373,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                                 }
                             }
                         }
@@ -388,7 +389,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInReal_literals() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1")
@@ -400,7 +401,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg")
@@ -457,7 +458,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -490,7 +491,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -504,7 +505,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInP_2() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg")
@@ -536,7 +537,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -579,7 +580,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -593,7 +594,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInP_3() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg")
@@ -640,7 +641,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -703,7 +704,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -717,7 +718,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInP_4() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg")
@@ -749,7 +750,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -812,7 +813,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -826,7 +827,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInP_6() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg")
@@ -843,7 +844,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -858,7 +859,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInThe_types_for_integer_literals() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1")
@@ -870,7 +871,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInP_1() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
                         @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg")
@@ -902,7 +903,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInNeg() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
 
@@ -965,7 +966,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }
@@ -981,7 +982,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                 }
 
                 public void testAllFilesPresentInWhen_expression() throws Exception {
-                    org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
                 @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1")
@@ -993,7 +994,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInP_1() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg")
@@ -1015,7 +1016,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
 
@@ -1038,7 +1039,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1052,7 +1053,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInP_2() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg")
@@ -1084,7 +1085,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1098,7 +1099,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInP_5() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg")
@@ -1125,7 +1126,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-5/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -1139,7 +1140,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     }
 
                     public void testAllFilesPresentInP_6() throws Exception {
-                        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg")
@@ -1176,7 +1177,7 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
-                            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
