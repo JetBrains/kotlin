@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.dce
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.dce.Context.Node
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
-import java.util.concurrent.atomic.AtomicInteger
 
 class ReachabilityTracker(
         private val context: Context,
