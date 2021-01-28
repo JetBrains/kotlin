@@ -3759,6 +3759,22 @@ createInterop("kt43265") {
     it.defFile 'interop/kt43265/kt43265.def'
 }
 
+createInterop("kt43502") {
+    it.defFile 'interop/kt43502/kt43502.def'
+    it.headers "$projectDir/interop/kt43502/kt43502.h"
+    // Note: also hardcoded in def file.
+    final String libDir = "$buildDir/kt43502/"
+    // Construct library that contains actual symbol definition.
+    it.getByTarget(target.name).doFirst {
+        UtilsKt.buildStaticLibrary(
+                project,
+                [file("$projectDir/interop/kt43502/kt43502.c")],
+                file("$libDir/kt43502.a"),
+                file("$libDir/kt43502.objs"),
+        )
+    }
+}
+
 createInterop("leakMemoryWithRunningThread") {
     it.defFile 'interop/leakMemoryWithRunningThread/leakMemory.def'
     it.headers "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.h"
@@ -4078,6 +4094,14 @@ interopTest("interop_kt43265") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'kt43265'
     source = "interop/kt43265/usage.kt"
+}
+
+dynamicTest("interop_kt43502") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = "kt43502"
+    source = "interop/kt43502/main.kt"
+    cSource = "$projectDir/interop/kt43502/main.c"
+    goldValue = "null\n"
 }
 
 interopTest("interop_leakMemoryWithRunningThreadUnchecked") {

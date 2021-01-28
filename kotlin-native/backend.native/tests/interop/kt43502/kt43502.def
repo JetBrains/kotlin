@@ -1,0 +1,2 @@
+libraryPaths = backend.native/tests/build/kt43502
+staticLibraries = kt43502.a
