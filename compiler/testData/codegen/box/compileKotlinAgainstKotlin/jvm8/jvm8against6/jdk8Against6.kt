@@ -1,4 +1,5 @@
 // SKIP_JDK6
+// FULL_JDK
 // MODULE: lib
 // FILE: A.kt
 import java.util.*
@@ -13,7 +14,6 @@ class Jdk6List<F> : AbstractList<F>() {
 }
 
 // MODULE: main(lib)
-// FULL_JDK
 // FILE: B.kt
 
 fun box(): String {

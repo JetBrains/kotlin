@@ -25,6 +25,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-jvm6"))
 
     testImplementation(intellijDep()) {
         // This dependency is needed only for FileComparisonFailure
