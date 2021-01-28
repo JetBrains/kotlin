@@ -180,7 +180,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         import androidx.compose.runtime.*
 
         @Composable inline fun A(
-            lambda: @ComposableContract(preventCapture=true) () -> Unit
+            lambda: @DisallowComposableCalls () -> Unit
         ) { if (Math.random() > 0.5) lambda() }
         @Composable fun B() {}
 
