@@ -220,13 +220,16 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             ) {
                 "${it.groupValues[1]}<>"
             }
-            // composableLambdaInstance(<>, true)
+            // composableLambdaInstance(<>, true, )
             .replace(
                 Regex(
-                    "(composableLambdaInstance\\()([-\\d]+)"
+                    "(composableLambdaInstance\\()([-\\d]+, (true|false), (null|\"(.*)\")\\))"
                 )
             ) {
-                "${it.groupValues[1]}<>"
+                val callStart = it.groupValues[1]
+                val tracked = it.groupValues[3]
+                val sourceInfo = it.groupValues[5]
+                "$callStart<>, $tracked, \"${generateSourceInfo(sourceInfo, source)}\")"
             }
             // composableLambda(%composer, <>, true)
             .replace(

@@ -753,7 +753,13 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
             @Composable
             fun C(items: List<String>, %composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(C)<X(item...>:Test.kt")
-              X(items, composableLambda(%composer, <>, true, "C<A(item...>,<A(Wrap...>:Test.kt") { item: String, %composer: Composer?, %changed: Int ->
+              X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b1000)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                C(items, %composer, %changed or 0b0001)
+              }
+            }
+            internal class ComposableSingletons%TestKt {
+              val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A(item...>,<A(Wrap...>:Test.kt") { item: String, %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {
                   %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
@@ -764,9 +770,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 } else {
                   %composer.skipToGroupEnd()
                 }
-              }, %composer, 0b00111000)
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                C(items, %composer, %changed or 0b0001)
               }
             }
         """
