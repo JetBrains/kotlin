@@ -27,7 +27,6 @@ import org.junit.runner.RunWith
     CompileKotlinAgainstInlineKotlinTestGenerated::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
-@Execution(ExecutionMode.SAME_THREAD)
 @UseTechnicalNames
 abstract class CustomJvmTargetOnJvmBaseTest
 

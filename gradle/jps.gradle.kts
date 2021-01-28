@@ -63,18 +63,9 @@ fun setupGenerateAllTestsRunConfiguration() {
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
 fun setupFirRunConfiguration() {
 
-    val tests = listOf(
-        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirDiagnosticsWithLightTreeTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirDiagnosticTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirDiagnosticTestSpecGenerated",
-        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirOldFrontendDiagnosticsTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.ir\\.Fir2IrTextTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.codegen\\.FirBlackBoxCodegenTestGenerated"
-    )
-
     val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
-    junit.moduleName = "kotlin.compiler.fir.analysis-tests.test"
-    junit.pattern = tests.joinToString(separator = "|", prefix = "^(", postfix = ")\$")
+    junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
+    junit.pattern = """^.*\.Fir\w+TestGenerated$"""
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
 
