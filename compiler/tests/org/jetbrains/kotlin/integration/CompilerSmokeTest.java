@@ -201,4 +201,50 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
                      runCompiler("noReflect.compile", "-include-runtime", "-no-reflect", "noReflect.kt", "-d", jar));
         run("noReflect.run", "-cp", jar, "noReflect.NoReflectKt");
     }
+
+    // related to KT-14772, destination is not a jar, and clashing with an existing file
+    public void testDestinationDirClashingWithExistingFile() throws Exception {
+        String outputDir = tmpdir.getAbsolutePath() + File.separator + "clashingFile";
+        File file = new File(outputDir);
+        file.createNewFile();
+        runCompiler("test.compile", "test.kt", "-d", outputDir);
+    }
+
+    // related to KT-18184, destination is not a jar, and permission denied
+    public void testDestinationDirNoPermission() throws Exception {
+        String outputDir = tmpdir.getAbsolutePath() + File.separator + "noPermissionDir";
+        File file = new File(outputDir, "Test.class");
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        // file.getParentFile().setReadOnly(); // won't work on Windows
+        file.setReadOnly(); // So we use this one as an alternative
+        runCompiler("test.compile", "test.kt", "-d", outputDir);
+    }
+
+    // related to KT-18184, destination is a jar, and output directory does not exist, we should try to create
+    // output directory for it.
+    public void testDestinationDirDoesNotExist() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "nonExistingDir" + File.separator + "test.jar";
+        runCompiler("test.compile", "test.kt", "-d", jar);
+    }
+
+    // related to KT-18184, destination is a jar, and output directory does not exist, and failed to created
+    // output directory due to clash with existing file.
+    public void testDestinationJarClashingWithExistingFile() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "clashingFile" + File.separator + "test.jar";
+        File file = new File(jar);
+        file.getParentFile().createNewFile();
+        runCompiler("test.compile", "test.kt", "-d", jar);
+    }
+
+    // related to KT-18184, Destination is a jar, and output directory exist, and permission denied to write jar.
+    public void testDestinationJarNoPermission() throws Exception {
+        String outputDir = tmpdir.getAbsolutePath() + File.separator + "noPermissionDir";
+        File jar = new File(outputDir, "test.jar");
+        jar.getParentFile().mkdirs();
+        jar.createNewFile();
+        // jar.getParentFile().setReadOnly(); // won't work on Windows
+        jar.setReadOnly(); // So we use this one as an alternative
+        runCompiler("test.compile", "test.kt", "-d", jar.getCanonicalPath());
+    }
 }
