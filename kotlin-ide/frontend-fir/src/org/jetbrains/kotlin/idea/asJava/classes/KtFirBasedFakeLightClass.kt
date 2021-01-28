@@ -9,8 +9,8 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
+import org.jetbrains.kotlin.idea.asJava.classes.checkIsInheritor
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -32,21 +32,6 @@ class KtFirBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
-
-        return analyze(kotlinOrigin) {
-
-            val thisSymbol = kotlinOrigin.getClassOrObjectSymbol()
-            val baseSymbol = baseClassOrigin.getClassOrObjectSymbol()
-
-            if (thisSymbol == baseSymbol) return@analyze false
-
-            val baseType = baseSymbol.buildTypeForSymbol()
-
-            if (checkDeep) {
-                thisSymbol.buildTypeForSymbol().isSubTypeOf(baseType)
-            } else {
-                thisSymbol.superTypes.any { baseType.isEqualTo(it.type) }
-            }
-        }
+        return kotlinOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
     }
 }

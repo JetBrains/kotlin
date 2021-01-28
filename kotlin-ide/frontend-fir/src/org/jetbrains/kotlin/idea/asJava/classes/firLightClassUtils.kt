@@ -10,10 +10,7 @@ import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
-import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -330,4 +327,22 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
     //    result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
     //}
     return result
+}
+
+@OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
+    return analyze(this) {
+        val thisSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
+        val baseSymbol = baseClassOrigin.getClassOrObjectSymbol()
+
+        if (thisSymbol == baseSymbol) return@analyze false
+
+        val baseType = baseSymbol.buildTypeForSymbol()
+
+        if (checkDeep) {
+            thisSymbol.buildTypeForSymbol().isSubTypeOf(baseType)
+        } else {
+            thisSymbol.superTypes.any { baseType.isEqualTo(it.type) }
+        }
+    }
 }

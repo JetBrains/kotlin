@@ -13,10 +13,10 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.idea.asJava.classes.checkIsInheritor
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -131,9 +131,19 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     override fun isValid(): Boolean = kotlinOrigin?.isValid ?: true
 
-    //TODO: Implement inheritance check via symbols
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
-        InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        if (manager.areElementsEquivalent(baseClass, this)) return false
+        LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
+
+        val thisClassOrigin = kotlinOrigin
+        val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin
+
+        return if (baseClassOrigin != null && thisClassOrigin != null) {
+            thisClassOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
+        } else {
+            InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+        }
+    }
 
     override fun toString() =
         "${this::class.java.simpleName}:${kotlinOrigin?.getDebugText()}"
