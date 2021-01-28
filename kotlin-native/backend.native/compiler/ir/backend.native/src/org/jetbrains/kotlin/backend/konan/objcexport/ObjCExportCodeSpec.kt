@@ -69,7 +69,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
                 descriptor.enumEntries.mapTo(methods) {
-                    ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it))
+                    ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
                 }
 
                 descriptor.getEnumValuesFunctionDescriptor()?.let {
@@ -109,7 +109,10 @@ internal class ObjCFactoryMethodForKotlinArrayConstructor(
         val irConstructorSymbol: IrConstructorSymbol
 ) : ObjCMethodSpec()
 
-internal class ObjCGetterForKotlinEnumEntry(val irEnumEntrySymbol: IrEnumEntrySymbol) : ObjCMethodSpec()
+internal class ObjCGetterForKotlinEnumEntry(
+        val irEnumEntrySymbol: IrEnumEntrySymbol,
+        val selector: String
+) : ObjCMethodSpec()
 
 internal class ObjCClassMethodForKotlinEnumValues(
         val valuesFunctionSymbol: IrFunctionSymbol,

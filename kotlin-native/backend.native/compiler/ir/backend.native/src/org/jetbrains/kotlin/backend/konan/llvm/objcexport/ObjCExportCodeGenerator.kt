@@ -1252,7 +1252,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
                 classAdapters += createArrayConstructorAdapter(it.irConstructorSymbol.owner)
             }
             is ObjCGetterForKotlinEnumEntry -> {
-                classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner)
+                classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner, it.selector)
             }
             is ObjCClassMethodForKotlinEnumValues -> {
                 classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
@@ -1480,10 +1480,9 @@ private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
 }
 
 private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
-        irEnumEntry: IrEnumEntry
+        irEnumEntry: IrEnumEntry,
+        selector: String
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
-    val selector = namer.getEnumEntrySelector(irEnumEntry.descriptor)
-
     return generateObjCToKotlinSyntheticGetter(selector) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
