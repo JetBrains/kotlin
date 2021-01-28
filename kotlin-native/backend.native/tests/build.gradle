@@ -4367,6 +4367,19 @@ dynamicTest("produce_dynamic") {
                 "Error handler: kotlin.Error: Expected error\n"
 }
 
+dynamicTest("kt36639") {
+    disabled = (project.target.name != project.hostName)
+    source = "produce_dynamic/kt-36639/main.kt"
+    cSource = "$projectDir/produce_dynamic/kt-36639/main.c"
+    goldValue = """|CFoo1::extfoo
+                   |CFoo1::extfoo
+                   |CFoo2::extfoo
+                   |CFoo2::extfoo
+                   |Int::extfoo
+                   |Int::extfoo
+                   |""".stripMargin()
+}
+
 dynamicTest("interop_concurrentRuntime") {
     disabled = (project.target.name != project.hostName)
     disabled = true  // KT-43180
