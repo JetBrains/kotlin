@@ -102,8 +102,8 @@ class ReachabilityTracker(
             invocation in analysisResult.invocationsToSkip -> {}
             else -> {
                 val node = context.extractNode(invocation.qualifier)
-                if (node != null && node.qualifier?.memberName in CALL_FUNCTIONS) {
-                    val parent = node.qualifier!!.parent
+                if (node != null && node.memberName in CALL_FUNCTIONS) {
+                    val parent = node.parent!!
                     reach(parent)
                     currentNodeWithLocation?.let { parent.addUsedByAstNode(it) }
                 }
@@ -178,15 +178,14 @@ class ReachabilityTracker(
         var current = node
         while (true) {
             for (ancestorDependency in current.dependencies) {
-                if (current in generateSequence(ancestorDependency) { it.qualifier?.parent }) continue
+                if (current in generateSequence(ancestorDependency) { it.parent }) continue
                 val dependency = path.asReversed().fold(ancestorDependency) { n, memberName -> n.member(memberName) }
                 if (!dependency.reachable) {
                     reportAndNest("reach: dependency $dependency", null) { reach(dependency) }
                 }
             }
-            val qualifier = current.qualifier ?: break
-            path += qualifier.memberName
-            current = qualifier.parent
+            path += current.memberName ?: break
+            current = current.parent!! // memberName != null => parent != null
         }
     }
 
@@ -202,7 +201,7 @@ class ReachabilityTracker(
                 reachableNodesImpl += node
             }
 
-            node.original.qualifier?.parent?.let {
+            node.original.parent?.let {
                 reportAndNest("reach-decl: parent $it", null) {
                     reachDeclaration(it)
                 }

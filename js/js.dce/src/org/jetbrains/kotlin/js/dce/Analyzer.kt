@@ -278,7 +278,7 @@ class Analyzer(private val context: Context) : JsVisitor() {
                     leftNode.addFunction(rhs)
                     return leftNode
                 }
-                leftNode.qualifier?.memberName == Namer.METADATA -> {
+                leftNode.memberName == Namer.METADATA -> {
                     // lhs.$metadata$ = expression
                     // During reachability tracking phase: eliminate it if lhs is unreachable, traverse expression
                     // It's commonly used to supply class's metadata

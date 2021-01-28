@@ -83,11 +83,11 @@ fun Iterable<Node>.extractReachableRoots(context: Context): Iterable<Node> {
 
 private fun Node.extractRootsImpl(target: MutableList<Node>, context: Context) {
     if (!context.visit(original)) return
-    val qualifier = original.qualifier
-    if (qualifier == null) {
+    val parent = original.parent
+    if (parent == null) {
         target += original
     }
     else {
-        qualifier.parent.extractRootsImpl(target, context)
+        parent.extractRootsImpl(target, context)
     }
 }
