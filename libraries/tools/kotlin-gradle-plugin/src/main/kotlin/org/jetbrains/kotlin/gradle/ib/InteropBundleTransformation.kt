@@ -47,8 +47,8 @@ private fun Project.setupAttributeSchema() {
     val kotlin = multiplatformExtensionOrNull ?: return
     dependencies.attributesSchema.attribute(COMMONIZER_TARGET_ATTRIBUTE)
 
-    dependencies.artifactTypes.register(ZIPPED_INTEROP_BUNDLE_FILE_EXTENSION) { definition ->
-        definition.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, ZIPPED_INTEROP_BUNDLE_ARTIFACT_TYPE)
+    dependencies.artifactTypes.register(INTEROP_BUNDLE_CKLIB_FILE_EXTENSION) { definition ->
+        definition.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_KLIB_ARTIFACT_TYPE)
         definition.attributes.attribute(COMMONIZER_TARGET_ATTRIBUTE, INTEROP_BUNDLE_COMMONIZIER_TARGET)
     }
 
@@ -82,15 +82,15 @@ private fun Project.setupAttributeSchema(sourceSet: KotlinSourceSet) {
 
 private fun Project.registerUnzipInteropBundleCommonizerTransformation() = dependencies.run {
     registerTransform(UnzipTransform::class.java) { spec ->
-        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, ZIPPED_INTEROP_BUNDLE_ARTIFACT_TYPE)
-        spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_ARTIFACT_TYPE)
+        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_KLIB_ARTIFACT_TYPE)
+        spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE)
     }
 }
 
 private fun Project.registerInteropBundleCommonizerTransformation() = dependencies.run {
     registerTransform(InteropBundleCommonizerTransformation::class.java) { spec ->
-        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_ARTIFACT_TYPE)
-        spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, COMMONIZED_INTEROP_BUNDLE_ARTIFACT_TYPE)
+        spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE)
+        spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, COMMONIZED_INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE)
 
         spec.from.attribute(COMMONIZER_TARGET_ATTRIBUTE, INTEROP_BUNDLE_COMMONIZIER_TARGET)
         spec.to.attribute(COMMONIZER_TARGET_ATTRIBUTE, WILDCARD_COMMONIIZER_TARGET)
@@ -105,9 +105,9 @@ private fun Project.registerInteropBundleCommonizerTransformation() = dependenci
 
 private fun Project.registerCommonizerOutputSelectionTransformation() = dependencies.run {
     for (sharedCommonizerTarget in getAllSharedCommonizerTargets()) {
-        registerTransform(CommonizerOutputSelectionTransformation::class.java) { spec ->
+        registerTransform(InteropBundleCommonizerOutputSelectionTransformation::class.java) { spec ->
 
-            spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, COMMONIZED_INTEROP_BUNDLE_ARTIFACT_TYPE)
+            spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, COMMONIZED_INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE)
             spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, KLIB_ARTIFACT_TYPE)
 
             spec.from.attribute(COMMONIZER_TARGET_ATTRIBUTE, WILDCARD_COMMONIIZER_TARGET)
@@ -125,7 +125,7 @@ private fun Project.registerInteropBundlePlatformSelectionTransformation() = dep
     for ((_, konanTarget) in KonanTarget.predefinedTargets) {
         registerTransform(InteropBundlePlatformSelectionTransformation::class.java) { spec ->
 
-            spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_ARTIFACT_TYPE)
+            spec.from.attribute(ARTIFACT_TYPE_ATTRIBUTE, INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE)
             spec.to.attribute(ARTIFACT_TYPE_ATTRIBUTE, KLIB_ARTIFACT_TYPE)
 
             spec.from.attribute(COMMONIZER_TARGET_ATTRIBUTE, INTEROP_BUNDLE_COMMONIZIER_TARGET)

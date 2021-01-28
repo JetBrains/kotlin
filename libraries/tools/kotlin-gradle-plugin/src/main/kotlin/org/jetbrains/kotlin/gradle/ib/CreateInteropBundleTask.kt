@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ib.InteropBundlePlugin.Companion.konanTargets
 import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import kotlin.system.exitProcess
 
 abstract class CreateInteropBundleTask : DefaultTask() {
 
@@ -27,7 +28,7 @@ abstract class CreateInteropBundleTask : DefaultTask() {
 
     @OutputDirectory
     val outputDirectory: Property<File> = project.objects.property(File::class.java)
-        .convention(project.buildDir.resolve("interopBundle"))
+        .convention(project.buildDir.resolve(project.name))
 
     @get:Nested
     @Suppress("unused")
@@ -38,7 +39,7 @@ abstract class CreateInteropBundleTask : DefaultTask() {
     @TaskAction
     internal fun createInteropBundle() {
         outputDirectory.get().mkdirs()
-        val interopBundle = InteropBundle(outputDirectory.get())
+        val interopBundle = InteropBundleDirectory(outputDirectory.get())
         konanTargetConfigurations.forEach { (konanTarget, configuration) ->
             val libraryFiles = configuration.resolve()
             if (libraryFiles.isEmpty()) return@forEach

@@ -39,7 +39,7 @@ abstract class InteropBundleCommonizerTransformation : TransformAction<Parameter
     abstract val interopBundle: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        val interopBundle = InteropBundle(interopBundle.get().asFile)
+        val interopBundle = InteropBundleDirectory(interopBundle.get().asFile)
         val konanHome = parameters.konanHome ?: error("Missing konanHome")
         val outputHierarchy = parameters.outputHierarchy ?: error("Missing outputHierarchy")
         val commonizerClasspath = parameters.commonizerClasspath ?: error("Missing commonizerClasspath")

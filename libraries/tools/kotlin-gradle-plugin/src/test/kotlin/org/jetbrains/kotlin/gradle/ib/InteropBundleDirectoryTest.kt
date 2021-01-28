@@ -13,13 +13,13 @@ import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class InteropBundleTest {
+class InteropBundleDirectoryTest {
     @get:Rule
     val tmp = TemporaryFolder()
 
     @Test
     fun `putting klib file into target`() {
-        val interopBundle = InteropBundle(tmp.root)
+        val interopBundle = InteropBundleDirectory(tmp.root)
         interopBundle.resolve(KonanTarget.MACOS_X64, "macos.klib").createParentDirectories().writeText("macos")
         interopBundle.resolve(KonanTarget.LINUX_X64, "linux.klib").createParentDirectories().writeText("linux")
 
@@ -31,7 +31,7 @@ class InteropBundleTest {
 
     @Test
     fun `putting txt file into target`() {
-        val interopBundle = InteropBundle(tmp.root)
+        val interopBundle = InteropBundleDirectory(tmp.root)
         interopBundle.resolve(KonanTarget.LINUX_X64, "linux.txt").createParentDirectories().writeText("Text")
 
         assertTrue(interopBundle.listLibraries(KonanTarget.LINUX_X64).isEmpty(), "Expected no library file in bundle")

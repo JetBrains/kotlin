@@ -9,14 +9,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ib.CreateInteropBundleTask
-import org.jetbrains.kotlin.gradle.ib.InteropBundle
+import org.jetbrains.kotlin.gradle.ib.InteropBundleDirectory
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class CreateInteropBundleTaskTest {
+class CreateInteropBundleDirectoryTaskTest {
 
     @Test
     fun createSimpleInteropBundle() {
@@ -52,7 +52,7 @@ class CreateInteropBundleTaskTest {
         task.outputDirectory.set(outputDirectory)
         task.createInteropBundle()
 
-        val interopBundle = InteropBundle(outputDirectory)
+        val interopBundle = InteropBundleDirectory(outputDirectory)
         assertEquals("macos stub", interopBundle.resolve(KonanTarget.MACOS_X64).resolve("macos-content-stub").readText())
         assertEquals("linux stub", interopBundle.resolve(KonanTarget.LINUX_X64).resolve("linux-content-stub").readText())
         assertEquals(2, interopBundle.listLibraries().size, "Expected only two libraries")

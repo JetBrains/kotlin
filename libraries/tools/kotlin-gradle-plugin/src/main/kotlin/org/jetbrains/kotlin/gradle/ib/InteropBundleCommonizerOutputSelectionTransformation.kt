@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.commonizer.api.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.api.HierarchicalCommonizerOutputLayout.getTargetDirectory
@@ -19,12 +20,14 @@ import java.io.File
 import java.io.Serializable
 
 // TODO SELLMAIR TEST
-abstract class CommonizerOutputSelectionTransformation : TransformAction<CommonizerOutputSelectionTransformation.Parameters> {
+abstract class InteropBundleCommonizerOutputSelectionTransformation :
+    TransformAction<InteropBundleCommonizerOutputSelectionTransformation.Parameters> {
     open class Parameters : TransformParameters, Serializable {
         @Input
         var target: CommonizerTarget? = null
     }
 
+    @get:Classpath
     @get:InputArtifact
     abstract val commonizerOutput: Provider<FileSystemLocation>
 

@@ -32,9 +32,9 @@ abstract class InteropBundlePlatformSelectionTransformation : TransformAction<In
 
     override fun transform(outputs: TransformOutputs) {
         val target = parameters.target ?: error("Missing target")
-        val interopBundle = InteropBundle(interopBundle.get().asFile)
-        val platformLibraryFile = interopBundle.resolve(target.konanTarget)
-        val outputFile = outputs.file(File(target.identityString).resolve(platformLibraryFile.name))
-        platformLibraryFile.copyTo(outputFile)
+        val interopBundle = InteropBundleDirectory(interopBundle.get().asFile)
+        val platformLibraryDirectory = interopBundle.resolve(target.konanTarget)
+        val outputFile = outputs.dir(File(target.identityString))
+        platformLibraryDirectory.copyRecursively(outputFile)
     }
 }

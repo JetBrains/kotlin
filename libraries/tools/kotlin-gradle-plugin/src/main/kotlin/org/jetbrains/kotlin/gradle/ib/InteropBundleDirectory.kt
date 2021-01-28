@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.ib
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-internal data class InteropBundle(val root: File) {
+internal data class InteropBundleDirectory(val root: File) {
     fun resolve(target: KonanTarget): File = root.resolve(target.name)
     fun listLibraries(): Set<File> = root.listFiles().orEmpty().filter(::isLibrary).toSet()
 }

@@ -14,7 +14,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.ib.InteropBundlePlugin.Companion.konanTargets
@@ -28,15 +27,15 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 private const val INTEROP_BUNDLE_EXTENSION_NAME = "interopBundle"
 
 private const val INTEROP_BUNDLE_CONFIGURATION_NAME = "interopBundle"
-private const val CREATE_INTEROP_BUNDLE_TASK_NAME = "createInteropBundle"
-private const val CREATE_INTEROP_BUNDLE_KIB_TASK_NAME = "createInteropBundleKib"
+private const val BUILD_INTEROP_BUNDLE_DIRECTORY_TASK_NAME = "buildInteropBundleDirectory"
+private const val BUILD_INTEROP_BUNDLE_KLIB_TASK_NAME = "buildInteropBundleKlib"
 
 internal val ARTIFACT_TYPE_ATTRIBUTE = Attribute.of("artifactType", String::class.java)
 internal const val KLIB_ARTIFACT_TYPE = "org.jetbrains.kotlin.klib"
-internal const val INTEROP_BUNDLE_ARTIFACT_TYPE = "org.jetbrains.kotlin.interopBundle"
-internal const val ZIPPED_INTEROP_BUNDLE_ARTIFACT_TYPE = "org.jetbrains.kotlin.zippedInteropBundle"
-internal const val COMMONIZED_INTEROP_BUNDLE_ARTIFACT_TYPE = "org.jetbrains.kotlin.commonizedInteropBundle"
-internal const val ZIPPED_INTEROP_BUNDLE_FILE_EXTENSION = "klib"
+internal const val INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE = "org.jetbrains.kotlin.interopBundle.dir"
+internal const val INTEROP_BUNDLE_KLIB_ARTIFACT_TYPE = "org.jetbrains.kotlin.interopBundle.cklib"
+internal const val COMMONIZED_INTEROP_BUNDLE_DIRECTORY_ARTIFACT_TYPE = "org.jetbrains.kotlin.commonizedInteropBundle"
+internal const val INTEROP_BUNDLE_CKLIB_FILE_EXTENSION = "cklib"
 
 open class InteropBundleExtension(internal val project: Project) {
     val version: Property<String> = project.objects.property(String::class.java)
@@ -86,27 +85,22 @@ private fun Project.registerInteropBundleConfiguration() {
 }
 
 private fun Project.registerInteropBundleTasks() {
-    val createInteropBundleTask = tasks.register(CREATE_INTEROP_BUNDLE_TASK_NAME, CreateInteropBundleTask::class.java) { task ->
-        task.group = "build"
-    }
+    val buildInteropBundleDirectory = tasks.register(
+        BUILD_INTEROP_BUNDLE_DIRECTORY_TASK_NAME, CreateInteropBundleTask::class.java
+    ) { task -> task.group = "build" }
 
-    tasks.register(CREATE_INTEROP_BUNDLE_KIB_TASK_NAME, Zip::class.java) { task ->
+    tasks.register(BUILD_INTEROP_BUNDLE_KLIB_TASK_NAME, Zip::class.java) { task ->
         task.group = "build"
-        task.dependsOn(createInteropBundleTask)
-        task.from(createInteropBundleTask.flatMap { it.outputDirectory })
-        task.destinationDirectory.set(buildDir)
-        task.archiveBaseName.set("interopBundle")
-        task.archiveExtension.set(ZIPPED_INTEROP_BUNDLE_FILE_EXTENSION)
-    }
-
-    tasks.register("clean", Delete::class.java) { task ->
-        task.group = "build"
-        task.delete(buildDir)
+        task.dependsOn(buildInteropBundleDirectory)
+        task.from(buildInteropBundleDirectory.flatMap { it.outputDirectory })
+        task.destinationDirectory.set(file("build"))
+        task.archiveBaseName.set(project.name)
+        task.archiveExtension.set(INTEROP_BUNDLE_CKLIB_FILE_EXTENSION)
     }
 
     tasks.register("assemble") { task ->
         task.group = "build"
-        task.dependsOn(CREATE_INTEROP_BUNDLE_KIB_TASK_NAME)
+        task.dependsOn(buildInteropBundleKlib)
     }
 
     tasks.register("build") { task ->
@@ -116,10 +110,10 @@ private fun Project.registerInteropBundleTasks() {
 }
 
 private fun Project.registerArtifacts() {
-    artifacts.add(INTEROP_BUNDLE_CONFIGURATION_NAME, createInteropBundleKibTask.flatMap { it.archiveFile }) { artifact ->
-        artifact.builtBy(createInteropBundleKibTask)
-        artifact.type = ZIPPED_INTEROP_BUNDLE_ARTIFACT_TYPE
-        artifact.extension = ZIPPED_INTEROP_BUNDLE_FILE_EXTENSION
+    artifacts.add(interopBundleConfiguration.name, buildInteropBundleKlib.map { it.archiveFile.get().asFile }) { artifact ->
+        artifact.builtBy(buildInteropBundleKlib)
+        artifact.type = INTEROP_BUNDLE_KLIB_ARTIFACT_TYPE
+        artifact.extension = INTEROP_BUNDLE_CKLIB_FILE_EXTENSION
     }
 }
 
@@ -144,8 +138,9 @@ private fun Project.setupPublication() {
     }
 }
 
-private val Project.createInteropBundleKibTask: TaskProvider<Zip>
-    get() = tasks.withType(Zip::class.java).named(CREATE_INTEROP_BUNDLE_KIB_TASK_NAME)
+
+private val Project.buildInteropBundleKlib: TaskProvider<Zip>
+    get() = tasks.withType(Zip::class.java).named(BUILD_INTEROP_BUNDLE_KLIB_TASK_NAME)
 
 private val Project.interopBundleConfiguration get() = configurations.getByName(INTEROP_BUNDLE_CONFIGURATION_NAME)
 
