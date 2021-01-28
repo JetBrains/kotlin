@@ -1,3 +1,4 @@
+// DONT_TARGET_EXACT_BACKEND: JS JS_IR JS_IR_ES6 WASM NATIVE
 // !LANGUAGE: -ThrowNpeOnExplicitEqualsForBoxedNull
 // IGNORE_BACKEND: JVM_IR
 // ^ ThrowNpeOnExplicitEqualsForBoxedNull is introduced in 1.2.
