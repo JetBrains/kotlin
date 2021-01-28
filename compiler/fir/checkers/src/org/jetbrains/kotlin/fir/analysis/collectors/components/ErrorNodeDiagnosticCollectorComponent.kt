@@ -100,6 +100,16 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         reporter.report(coneDiagnostic)
     }
 
+    private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
+        return when (this) {
+            is ConeClassLikeType -> !isMarkedNullable
+            is ConeTypeParameterType -> !isMarkedNullable && lookupTag.typeParameterSymbol.fir.bounds.any {
+                it.coneTypeSafe<ConeKotlinType>()?.isEffectivelyNotNull() == true
+            }
+            else -> false
+        }
+    }
+
     private fun mapInapplicableCandidateError(
         diagnostic: ConeInapplicableCandidateError,
         source: FirSourceElement,
@@ -107,16 +117,19 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
         // TODO: handle other UNSAFE_* variants: invoke, infix, operator
         val rootCause = diagnostic.diagnostics.find { it.applicability == diagnostic.applicability }
-        return if (rootCause != null &&
+        if (rootCause != null &&
             rootCause is InapplicableWrongReceiver &&
             rootCause.actualType?.isNullable == true &&
             (rootCause.expectedType == null || !rootCause.expectedType!!.isMarkedNullable)
         ) {
             // TODO: report on call operation node, e.g., x<!>.<!>length instead of x.<!>length<!>
-            FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
-        } else {
-            FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidateSymbol)
+            val expectedType = rootCause.expectedType
+
+            if (expectedType == null || expectedType.isEffectivelyNotNull()) {
+                return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
+            }
         }
+        return FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidateSymbol)
     }
 
     private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
