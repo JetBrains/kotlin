@@ -169,12 +169,10 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
                       CONSTRUCTOR_CALL 'public constructor <init> (type: kotlin.reflect.KClass<out V of <root>.SettingType>) [primary] declared in <root>.SettingType' type=<root>.SettingType<V of <root>.IdeWizard.setting> origin=null
                         <class: V>: V of <root>.IdeWizard.setting
                         type: GET_CLASS type=kotlin.reflect.KClass<V of <root>.IdeWizard.setting>
-                          TYPE_OP type=V of <root>.IdeWizard.setting origin=IMPLICIT_CAST typeOperand=V of <root>.IdeWizard.setting
-                            GET_VAR 'value: V of <root>.IdeWizard.setting? declared in <root>.IdeWizard.setting.<no name provided>.setValue' type=V of <root>.IdeWizard.setting? origin=null
+                          GET_VAR 'value: V of <root>.IdeWizard.setting? declared in <root>.IdeWizard.setting.<no name provided>.setValue' type=V of <root>.IdeWizard.setting? origin=null
                   CALL 'public final fun <set-v> (<set-?>: V of <root>.SettingReference): kotlin.Unit declared in <root>.SettingReference' type=kotlin.Unit origin=EQ
                     $this: GET_VAR 'reference: <root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> declared in <root>.IdeWizard.setting' type=<root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> origin=null
-                    <set-?>: TYPE_OP type=V of <root>.IdeWizard.setting origin=IMPLICIT_CAST typeOperand=V of <root>.IdeWizard.setting
-                      GET_VAR 'value: V of <root>.IdeWizard.setting? declared in <root>.IdeWizard.setting.<no name provided>.setValue' type=V of <root>.IdeWizard.setting? origin=null
+                    <set-?>: GET_VAR 'value: V of <root>.IdeWizard.setting? declared in <root>.IdeWizard.setting.<no name provided>.setValue' type=V of <root>.IdeWizard.setting? origin=null
               FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.IdeWizard.setting.<no name provided><V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting>, thisRef:kotlin.Any?, property:kotlin.reflect.KProperty<*>) returnType:V of <root>.IdeWizard.setting? [operator]
                 overridden:
                   public abstract fun getValue (thisRef: T of kotlin.properties.ReadWriteProperty, property: kotlin.reflect.KProperty<*>): V of kotlin.properties.ReadWriteProperty [operator] declared in kotlin.properties.ReadWriteProperty

@@ -4,7 +4,7 @@ fun test1(c: Boolean?) {
       val <elvis>: Boolean? = c
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> break@L
-        else -> <elvis> /*as Boolean */
+        else -> <elvis>
       }
     }) { // BLOCK
     }
@@ -17,7 +17,7 @@ fun test2(c: Boolean?) {
       val <elvis>: Boolean? = c
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> continue@L
-        else -> <elvis> /*as Boolean */
+        else -> <elvis>
       }
     }) { // BLOCK
     }
@@ -31,7 +31,7 @@ fun test3(ss: List<String>?) {
         val <elvis>: List<String>? = ss
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> continue@L
-          else -> <elvis> /*as List<String> */
+          else -> <elvis>
         }
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK
@@ -48,7 +48,7 @@ fun test4(ss: List<String>?) {
         val <elvis>: List<String>? = ss
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> break@L
-          else -> <elvis> /*as List<String> */
+          else -> <elvis>
         }
       }.iterator()
       L2@ while (<iterator>.hasNext()) { // BLOCK

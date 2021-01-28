@@ -17,7 +17,7 @@ open enum class En : Enum<En> {
     val tmp0_safe_receiver: Any? = <get-n>()
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver /*as Any */.toString()
+      else -> tmp0_safe_receiver.toString()
     }
   })
 

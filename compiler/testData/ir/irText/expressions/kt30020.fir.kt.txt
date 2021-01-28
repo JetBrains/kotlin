@@ -15,14 +15,14 @@ fun test(x: X, nx: X?) {
     val tmp0_safe_receiver: X? = nx
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver /*as X */.<get-xs>()
+      else -> tmp0_safe_receiver.<get-xs>()
     }
   }).plusAssign<Int>(element = 5)
   CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
     val tmp1_safe_receiver: X? = nx
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver /*as X */.f()
+      else -> tmp1_safe_receiver.f()
     }
   }).plusAssign<Int>(element = 6)
 }

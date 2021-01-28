@@ -42,8 +42,7 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                  $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                    GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.En' type=kotlin.Any? origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.En' type=kotlin.Any? origin=null
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.En>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.En

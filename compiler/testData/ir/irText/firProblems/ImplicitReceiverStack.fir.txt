@@ -249,5 +249,4 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public final fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue' type=kotlin.String origin=GET_PROPERTY
-                  $this: TYPE_OP type=<root>.ImplicitReceiverValue<*> origin=IMPLICIT_CAST typeOperand=<root>.ImplicitReceiverValue<*>
-                    GET_VAR 'val tmp_0: <root>.ImplicitReceiverValue<*>? [val] declared in <root>.box' type=<root>.ImplicitReceiverValue<*>? origin=null
+                  $this: GET_VAR 'val tmp_0: <root>.ImplicitReceiverValue<*>? [val] declared in <root>.box' type=<root>.ImplicitReceiverValue<*>? origin=null

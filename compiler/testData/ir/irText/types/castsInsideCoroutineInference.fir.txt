@@ -114,8 +114,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                                   then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
                                 BRANCH
                                   if: CONST Boolean type=kotlin.Boolean value=true
-                                  then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                                    GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                                  then: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.asFairChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
   FUN name:asChannel visibility:private modality:FINAL <> ($receiver:<root>.CoroutineScope, flow:<root>.Flow<*>) returnType:<root>.ReceiveChannel<kotlin.Any>
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
@@ -150,8 +149,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                                   then: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any' type=kotlin.Any origin=null
                                 BRANCH
                                   if: CONST Boolean type=kotlin.Boolean value=true
-                                  then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                                    GET_VAR 'val tmp_1: kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
+                                  then: GET_VAR 'val tmp_1: kotlin.Any? [val] declared in <root>.asChannel.<anonymous>.<anonymous>' type=kotlin.Any? origin=null
   CLASS CLASS name:SafeCollector modality:FINAL visibility:public superTypes:[<root>.FlowCollector<T of <root>.SafeCollector>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.SafeCollector<T of <root>.SafeCollector>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]

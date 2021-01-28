@@ -22,8 +22,8 @@ fun test2() {
     }
 
   <set-x>(<set-?> = 0)
-  val <unary>: Int = <get-x>() /*as Int */
+  val <unary>: Int = <get-x>()
   <set-x>(<set-?> = <unary>.inc())
   <unary> /*~> Unit */
-  <set-x>(<set-?> = <get-x>() /*as Int */.plus(other = 1))
+  <set-x>(<set-?> = <get-x>().plus(other = 1))
 }

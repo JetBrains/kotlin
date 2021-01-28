@@ -48,8 +48,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
       CALL 'local final fun <set-x> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
         <set-?>: CONST Int type=kotlin.Int value=0
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-        TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-          CALL 'local final fun <get-x> (): kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=GET_LOCAL_PROPERTY
+        CALL 'local final fun <get-x> (): kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=GET_LOCAL_PROPERTY
       CALL 'local final fun <set-x> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
@@ -57,6 +56,5 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
         GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (<set-?>: kotlin.Int?): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-            CALL 'local final fun <get-x> (): kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=GET_LOCAL_PROPERTY
+          $this: CALL 'local final fun <get-x> (): kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=GET_LOCAL_PROPERTY
           other: CONST Int type=kotlin.Int value=1

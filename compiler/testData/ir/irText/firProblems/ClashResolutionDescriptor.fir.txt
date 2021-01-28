@@ -164,8 +164,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
                     then: CONTINUE label=null loop.label=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
-                    then: TYPE_OP type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=IMPLICIT_CAST typeOperand=kotlin.collections.Collection<<root>.ComponentDescriptor>
-                      GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
+                    then: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? [val] declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
             VAR name:substituteDescriptor type:<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> [val]
               CONSTRUCTOR_CALL 'public constructor <init> (container: <root>.ComponentContainer, resolver: <root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor>, clashedComponents: kotlin.collections.List<<root>.ComponentDescriptor>) [primary] declared in <root>.ClashResolutionDescriptor' type=<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> origin=null
                 <class: E>: <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>

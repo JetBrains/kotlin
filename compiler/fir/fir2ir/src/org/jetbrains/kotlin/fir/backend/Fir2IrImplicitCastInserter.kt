@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.classId
@@ -314,7 +315,8 @@ class Fir2IrImplicitCastInserter(
     }
 
     internal fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
-        return original.takeIf { it.type == castType } ?: implicitCast(original, castType)
+        if (original.type.makeNotNull() == castType.makeNotNull()) return original
+        return implicitCast(original, castType)
     }
 
     private fun implicitCast(original: IrExpression, castType: IrType): IrExpression {

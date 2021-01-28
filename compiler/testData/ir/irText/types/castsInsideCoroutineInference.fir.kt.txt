@@ -42,7 +42,7 @@ private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
         val <elvis>: Any? = value
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> Any()
-          else -> <elvis> /*as Any */
+          else -> <elvis>
         }
       })
     }
@@ -58,7 +58,7 @@ private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
         val <elvis>: Any? = value
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> Any()
-          else -> <elvis> /*as Any */
+          else -> <elvis>
         }
       })
     }
@@ -141,4 +141,3 @@ interface SendChannel<in E : Any?> {
   abstract suspend fun send(e: E)
 
 }
-

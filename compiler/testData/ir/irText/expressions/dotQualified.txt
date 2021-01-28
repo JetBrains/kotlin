@@ -21,5 +21,4 @@ FILE fqName:<root> fileName:/dotQualified.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
-                $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                  GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.lengthN' type=kotlin.String? origin=null
+                $this: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.lengthN' type=kotlin.String? origin=null

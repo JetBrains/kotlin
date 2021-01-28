@@ -24,8 +24,7 @@ FILE fqName:<root> fileName:/bangbang.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                  $this: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                    GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
   FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:X of <root>.test3
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
