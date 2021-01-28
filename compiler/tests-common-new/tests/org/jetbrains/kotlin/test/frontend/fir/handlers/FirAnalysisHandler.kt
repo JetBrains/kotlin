@@ -13,8 +13,14 @@ import java.io.File
 
 abstract class FirAnalysisHandler(
     testServices: TestServices,
+    failureDisablesNextSteps: Boolean = false,
     doNotRunIfThereWerePreviousFailures: Boolean = false
-) : FrontendOutputHandler<FirOutputArtifact>(testServices, FrontendKinds.FIR, doNotRunIfThereWerePreviousFailures) {
+) : FrontendOutputHandler<FirOutputArtifact>(
+    testServices,
+    FrontendKinds.FIR,
+    failureDisablesNextSteps,
+    doNotRunIfThereWerePreviousFailures
+) {
     protected val File.nameWithoutFirExtension: String
         get() = nameWithoutExtension.removeSuffix(".fir")
 }
