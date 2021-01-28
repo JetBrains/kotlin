@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 class ReachabilityTracker(
         private val context: Context,
         private val analysisResult: AnalysisResult,
-        private val logConsumer: (DCELogLevel, String) -> Unit
+        private val logConsumer: ((DCELogLevel, String) -> Unit)?
 ) : RecursiveJsVisitor() {
     companion object {
         private val CALL_FUNCTIONS = setOf("call", "apply")
@@ -237,14 +237,15 @@ class ReachabilityTracker(
         currentNodeWithLocation = old
     }
 
-    private fun report(message: String) {
-        logConsumer(DCELogLevel.INFO, "  ".repeat(depth) + message)
-    }
-
     private fun reportAndNest(message: String, dueTo: JsNode?, action: () -> Unit) {
-        val location = dueTo?.extractLocation()
-        val fullMessage = if (location != null) "$message (due to ${location.asString()})" else message
-        report(fullMessage)
+        if (logConsumer != null) {
+            val indent = "  ".repeat(depth)
+            val fullMessage = when (val location = dueTo?.extractLocation()) {
+                null -> "$indent$message"
+                else -> "$indent$message (due to ${location.asString()})"
+            }
+            logConsumer.invoke(DCELogLevel.INFO, fullMessage)
+        }
         nested(action)
     }
 
