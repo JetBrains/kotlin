@@ -1,0 +1,4 @@
+// workaround for https://youtrack.jetbrains.com/issue/IDEA-257366
+if (gradle.startParameter.projectDir?.name == 'buildSrc') {
+    gradle.startParameter.setIncludedBuilds(new ArrayList<File>())
+}
