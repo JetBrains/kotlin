@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.js.util.TextOutputImpl
 import java.io.File
 import java.io.InputStreamReader
 
-class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit) {
+class DeadCodeElimination(
+    private val printReachabilityInfo: Boolean,
+    private val logConsumer: (DCELogLevel, String) -> Unit
+) {
     val moduleMapping = mutableMapOf<JsBlock, String>()
     private val reachableNames = mutableSetOf<String>()
 
@@ -61,7 +64,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
         analyzer.moduleMapping += moduleMapping
         root.accept(analyzer)
 
-        val usageFinder = ReachabilityTracker(context, analyzer.analysisResult, logConsumer)
+        val usageFinder = ReachabilityTracker(context, analyzer.analysisResult, logConsumer.takeIf { printReachabilityInfo })
         root.accept(usageFinder)
 
         for (reachableName in reachableNames) {
@@ -78,10 +81,11 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
         fun run(
                 inputFiles: Collection<InputFile>,
                 rootReachableNames: Set<String>,
+                printReachabilityInfo: Boolean,
                 logConsumer: (DCELogLevel, String) -> Unit
         ): DeadCodeEliminationResult {
             val program = JsProgram()
-            val dce = DeadCodeElimination(logConsumer)
+            val dce = DeadCodeElimination(printReachabilityInfo, logConsumer)
 
             var hasErrors = false
             val blocks = inputFiles.map { file ->
