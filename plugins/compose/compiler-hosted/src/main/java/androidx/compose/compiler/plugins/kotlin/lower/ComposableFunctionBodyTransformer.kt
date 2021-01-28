@@ -717,7 +717,7 @@ class ComposableFunctionBodyTransformer(
     // 1. They are inline
     // 2. They have a return value (may get relaxed in the future)
     // 3. They are a lambda (we use ComposableLambda<...> class for this instead)
-    // 4. They are annotated as @ComposableContract(restartable = false)
+    // 4. They are annotated as @NonRestartableComposable
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldBeRestartable(): Boolean {
         // Only insert observe scopes in non-empty composable function
