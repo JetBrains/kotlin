@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -322,5 +323,5 @@ val FirFunctionCall.isIterator
 /**
  * Returns resolved symbol by reference
  */
-val FirReference.resolvedSymbol
-    get() = (this as? FirResolvedNamedReference)?.resolvedSymbol
+val FirReference.resolvedPropertySymbol: FirPropertySymbol?
+    get() = (this as? FirResolvedNamedReference)?.resolvedSymbol as? FirPropertySymbol

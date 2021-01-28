@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.cfa.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.resolvedSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedPropertySymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKING_THIS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MAY_BE_NOT_INITIALIZED
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -65,8 +67,7 @@ object LeakingThisChecker : FirClassChecker() {
             data: MutableMap<CFGNode<*>, PathAwarePropertyUsageInfo>
         ): PathAwarePropertyUsageInfo {
             val dataForNode = visitNode(node, data)
-            val symbol = node.fir.lValue.resolvedSymbol ?: return dataForNode
-            if (symbol !is FirPropertySymbol) return dataForNode
+            val symbol = node.fir.lValue.resolvedPropertySymbol ?: return dataForNode
             if (symbol !in globalProperties) return dataForNode
             if (node.fir.source?.kind is FirFakeSourceElementKind) return dataForNode
 
@@ -80,13 +81,12 @@ object LeakingThisChecker : FirClassChecker() {
             data: MutableMap<CFGNode<*>, PathAwarePropertyUsageInfo>
         ): PathAwarePropertyUsageInfo {
             val dataForNode = visitNode(node, data)
-            val symbol = node.fir.calleeReference.resolvedSymbol ?: return dataForNode
-            if (symbol !is FirPropertySymbol) return dataForNode
+            val symbol = node.fir.calleeReference.resolvedPropertySymbol ?: return dataForNode
             if (!isAccessNodeMayBeProcessed(symbol, node)) return dataForNode
 
             return data
                 .mapNotNull { (k, v) ->
-                    val resolvedSymbol = (k.fir as? FirVariableAssignment)?.lValue?.resolvedSymbol
+                    val resolvedSymbol = (k.fir as? FirVariableAssignment)?.lValue?.resolvedPropertySymbol
                     if (resolvedSymbol == symbol) v else null
                 }
                 .firstOrNull() ?: dataForNode
@@ -136,10 +136,30 @@ object LeakingThisChecker : FirClassChecker() {
 
         override fun visitNode(node: CFGNode<*>) {}
 
+        override fun visitFunctionCallNode(node: FunctionCallNode) {
+            if (node.owner.declaration !is FirAnonymousInitializer) return
+            var inInlinedFunction = false
+            val source = node.fir.source ?: return
+            val functionCallableSymbol = node.fir.toResolvedCallableSymbol() ?: return
+
+            for ((nodeKey, value) in data) {
+                if (nodeKey == node) {
+                    inInlinedFunction = true
+                } else if (inInlinedFunction) {
+                    if (value[NormalPath]?.isAlwaysInitialized != true) {
+                        reporter.report(source, LEAKING_THIS, functionCallableSymbol)
+                        break
+                    }
+                } else if (nodeKey is FunctionExitNode && nodeKey.owner == node.owner) {
+                    break
+                }
+            }
+        }
+
         override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
             if (node.fir.source?.kind is FirFakeSourceElementKind) return
 
-            val variableSymbol = node.fir.calleeReference.resolvedSymbol as? FirPropertySymbol ?: return
+            val variableSymbol = node.fir.calleeReference.resolvedPropertySymbol ?: return
             val dataForNode = data[node]?.get(NormalPath)
             val variableFir = variableSymbol.fir
 
@@ -147,8 +167,8 @@ object LeakingThisChecker : FirClassChecker() {
             if (variableSymbol !in globalProperties) return
 
             if (dataForNode?.isAlwaysInitialized != true && shouldToReport(variableSymbol, node)) {
-                val reportTo = node.fir.source
-                reporter.report(reportTo, LEAKING_THIS)
+                val source = node.fir.source
+                reporter.report(source, MAY_BE_NOT_INITIALIZED, variableSymbol)
             }
         }
 
@@ -162,7 +182,7 @@ object LeakingThisChecker : FirClassChecker() {
 
         private val FirPropertySymbol.itWillBeInitializedLater: Boolean
             get() = data.any { (k, _) ->
-                k is VariableAssignmentNode && k.fir.lValue.resolvedSymbol == this
+                k is VariableAssignmentNode && k.fir.lValue.resolvedPropertySymbol == this
             }
 
         private val FirProperty.isMustBeInitialized
