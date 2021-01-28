@@ -88,7 +88,7 @@ object KotlinToJVMBytecodeCompiler {
             val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
             val noReflect = configuration.get(JVMConfigurationKeys.NO_REFLECT, false)
             val resetJarTimestamps = !configuration.get(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, false)
-            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, noReflect, resetJarTimestamps, mainClassFqName, outputFiles)
+            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, noReflect, resetJarTimestamps, mainClassFqName, outputFiles, messageCollector)
             if (reportOutputFiles) {
                 val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
                 messageCollector.report(OUTPUT, message)

@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
@@ -104,16 +105,24 @@ public class CompileEnvironmentUtil {
     }
 
     public static void writeToJar(
-            File jarPath, boolean jarRuntime, boolean noReflect, boolean resetJarTimestamps, FqName mainClass, OutputFileCollection outputFiles
+            File jarPath,
+            boolean jarRuntime,
+            boolean noReflect,
+            boolean resetJarTimestamps,
+            FqName mainClass,
+            OutputFileCollection outputFiles,
+            MessageCollector messageCollector
     ) {
         FileOutputStream outputStream = null;
         try {
+            // we should try to create the output dir first
+            jarPath.getParentFile().mkdirs();
             outputStream = new FileOutputStream(jarPath);
             doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, noReflect, resetJarTimestamps);
             outputStream.close();
         }
         catch (FileNotFoundException e) {
-            throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Invalid jar path: " + jarPath, null);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
