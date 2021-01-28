@@ -18,37 +18,37 @@ typealias A1<K> = None<K>
 typealias A2<K> = None<in K>
 typealias A3<K> = None<out K>
 
-typealias A4<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = None<K>
-typealias A5<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = None<in K>
-typealias A6<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = None<out K>
+typealias A4<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = None<K>
+typealias A5<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = None<in K>
+typealias A6<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = None<out K>
 
-typealias A7<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = None<K>
-typealias A8<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = None<in K>
-typealias A9<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = None<out K>
+typealias A7<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = None<K>
+typealias A8<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = None<in K>
+typealias A9<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = None<out K>
 
 typealias A10<K> = In<K>
 typealias A11<K> = In<in K>
 typealias A12<K> = <!CONFLICTING_PROJECTION!>In<out K><!>
 
-typealias A13<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = In<K>
-typealias A14<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = In<in K>
-typealias A15<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = <!CONFLICTING_PROJECTION!>In<out K><!>
+typealias A13<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = In<K>
+typealias A14<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = In<in K>
+typealias A15<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = <!CONFLICTING_PROJECTION!>In<out K><!>
 
-typealias A16<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = In<K>
-typealias A17<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = In<in K>
-typealias A18<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = <!CONFLICTING_PROJECTION!>In<out K><!>
+typealias A16<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = In<K>
+typealias A17<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = In<in K>
+typealias A18<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = <!CONFLICTING_PROJECTION!>In<out K><!>
 
 typealias A19<K> = Out<K>
 typealias A20<K> = <!CONFLICTING_PROJECTION!>Out<in K><!>
 typealias A21<K> = Out<out K>
 
-typealias A22<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = Out<K>
-typealias A23<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = <!CONFLICTING_PROJECTION!>Out<in K><!>
-typealias A24<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in K<!>> = Out<out K>
+typealias A22<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = Out<K>
+typealias A23<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = <!CONFLICTING_PROJECTION!>Out<in K><!>
+typealias A24<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>in<!> K> = Out<out K>
 
-typealias A25<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = Out<K>
-typealias A26<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = <!CONFLICTING_PROJECTION!>Out<in K><!>
-typealias A27<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out K<!>> = Out<out K>
+typealias A25<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = Out<K>
+typealias A26<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = <!CONFLICTING_PROJECTION!>Out<in K><!>
+typealias A27<<!VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED!>out<!> K> = Out<out K>
 
 class Outer<T> {
     inner class Intermediate<K> {
