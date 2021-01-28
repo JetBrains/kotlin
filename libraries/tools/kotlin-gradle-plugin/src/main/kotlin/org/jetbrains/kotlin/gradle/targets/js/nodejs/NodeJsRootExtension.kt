@@ -35,7 +35,7 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     var download by Property(true)
 
     var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
-    var nodeVersion by Property("12.16.1")
+    var nodeVersion by Property("14.15.4")
 
     var nodeCommand by Property("node")
 
