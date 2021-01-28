@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.descriptors.konan.NATIVE_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
+import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 internal class DefaultCommonizerResultSerializer(
     private val destination: File,
@@ -139,14 +141,17 @@ internal class DefaultCommonizerResultSerializer(
         manifestData: NativeSensitiveManifestData,
         destination: File
     ) {
+        val destinationFile = KonanFile(destination.path)
+        val layout = KotlinLibraryLayoutForWriter(destinationFile, destinationFile)
+
         val library = KotlinLibraryWriterImpl(
-            libDir = org.jetbrains.kotlin.konan.file.File(destination.path),
             moduleName = manifestData.uniqueName,
             versions = manifestData.versions,
             builtInsPlatform = BuiltInsPlatform.NATIVE,
             nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
             nopack = true,
-            shortName = manifestData.shortName
+            shortName = manifestData.shortName,
+            layout = layout
         )
         library.addMetadata(metadata)
         manifestData.applyTo(library.base as BaseWriterImpl)
