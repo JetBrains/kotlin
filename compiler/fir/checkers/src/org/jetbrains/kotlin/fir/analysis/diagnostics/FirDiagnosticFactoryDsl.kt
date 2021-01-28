@@ -59,25 +59,6 @@ fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> error3(
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy)
 }
 
-/**
- * Note that those functions can be applicable only for factories
- *   that takes `PsiElement` as first type parameter
- */
-fun <E : FirSourceElement, P : PsiElement> existing0(): DiagnosticFactory0DelegateProvider<E, P> {
-    return DiagnosticFactory0DelegateProvider(Severity.ERROR, SourceElementPositioningStrategy.DEFAULT)
-}
-
-fun <E : FirSourceElement, P : PsiElement, A : Any> existing1(): DiagnosticFactory1DelegateProvider<E, P, A> {
-    return DiagnosticFactory1DelegateProvider(Severity.ERROR, SourceElementPositioningStrategy.DEFAULT)
-}
-
-fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> existing2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
-    return DiagnosticFactory2DelegateProvider(Severity.ERROR, SourceElementPositioningStrategy.DEFAULT)
-}
-
-fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> existing3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
-    return DiagnosticFactory3DelegateProvider(Severity.ERROR, SourceElementPositioningStrategy.DEFAULT)
-}
 
 // ------------------------------ Providers ------------------------------
 
