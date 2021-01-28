@@ -19283,6 +19283,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestDataPath("$PROJECT_ROOT")
         public class Defaults extends AbstractBlackBoxCodegenTest {
             @Test
+            @TestMetadata("26360.kt")
+            public void test26360() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/26360.kt");
+            }
+
+            @Test
             @TestMetadata("accessor.kt")
             public void testAccessor() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/defaults/accessor.kt");
