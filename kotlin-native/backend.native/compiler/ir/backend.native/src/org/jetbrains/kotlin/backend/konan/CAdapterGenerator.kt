@@ -214,7 +214,7 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 val llvmFunction = owner.codegen.llvmFunction(irFunction)
                 // If function is virtual, we need to resolve receiver properly.
-                val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) && !function.isExtension &&
+                val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
                         irFunction.isOverridable) {
                     // We need LLVMGetElementType() as otherwise type is function pointer.
                     generateFunction(owner.codegen, LLVMGetElementType(llvmFunction.type)!!, cname) {
