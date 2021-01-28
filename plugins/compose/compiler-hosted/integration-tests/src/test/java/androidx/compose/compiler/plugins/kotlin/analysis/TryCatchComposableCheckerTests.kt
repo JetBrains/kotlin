@@ -98,7 +98,7 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         doTest(
             """
             import androidx.compose.runtime.*
-            var globalContent = emptyContent()
+            var globalContent = @Composable {}
             fun setContent(content: @Composable () -> Unit) {
                 globalContent = content
             }
