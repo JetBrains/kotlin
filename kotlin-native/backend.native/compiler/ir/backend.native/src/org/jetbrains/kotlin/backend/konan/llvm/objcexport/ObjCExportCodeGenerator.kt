@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.Family
@@ -373,8 +375,8 @@ internal class ObjCExportCodeGenerator(
             methods = listOf("equals", "hashCode", "toString").map { name ->
                 symbols.any.owner.simpleFunctions().single { it.name == Name.identifier(name) }
             }.map {
-                require(mapper.shouldBeExposed(it.descriptor))
-                ObjCMethodForKotlinMethod(it.symbol)
+                val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, it.symbol, it.descriptor)
+                ObjCMethodForKotlinMethod(baseMethod)
             },
             categoryMethods = emptyList(),
             superClassNotAny = null
@@ -957,11 +959,11 @@ private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
 // TODO: cache bridges.
 private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
         irFunction: IrFunction,
-        baseIrFunction: IrFunction
+        baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ConstPointer {
-    val baseMethod = baseIrFunction.descriptor
+    val baseIrFunction = baseMethod.symbol.owner
 
-    val methodBridge = mapper.bridgeMethod(baseMethod)
+    val methodBridge = baseMethod.bridge
 
     val parameterToBase = irFunction.allParameters.zip(baseIrFunction.allParameters).toMap()
 
@@ -991,7 +993,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
                 MethodBridgeReceiver.Instance -> kotlinReferenceToObjC(parameters[parameter]!!)
                 MethodBridgeSelector -> {
-                    val selector = namer.getSelector(baseMethod)
+                    val selector = baseMethod.selector
                     // Selector is referenced thus should be defined to avoid false positive non-public API rejection:
                     selectorsToDefine[selector] = methodBridge
                     genSelector(selector)
@@ -1022,7 +1024,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         val targetResult = callFromBridge(objcMsgSend, objCArgs)
 
-        assert(baseMethod !is ConstructorDescriptor)
+        assert(baseMethod.symbol !is IrConstructorSymbol)
 
         fun rethrow() {
             val error = load(errorOutPtr!!)
@@ -1120,14 +1122,14 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
 private fun ObjCExportCodeGenerator.createReverseAdapter(
         irFunction: IrFunction,
-        baseMethod: IrFunction,
+        baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>,
         functionName: String,
         vtableIndex: Int?,
         itablePlace: ClassLayoutBuilder.InterfaceTablePlace?
 ): ObjCExportCodeGenerator.KotlinToObjCMethodAdapter {
 
     val nameSignature = functionName.localHash.value
-    val selector = namer.getSelector(baseMethod.descriptor)
+    val selector = baseMethod.selector
 
     val kotlinToObjC = generateKotlinToObjCBridge(
             irFunction,
@@ -1141,51 +1143,51 @@ private fun ObjCExportCodeGenerator.createReverseAdapter(
 }
 
 private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
-        baseMethod: IrFunction
+        baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
-    assert(mapper.isBaseMethod(baseMethod.descriptor))
-
-    val selector = namer.getSelector(baseMethod.descriptor)
-
-    val methodBridge = mapper.bridgeMethod(baseMethod.descriptor)
-    val imp = generateObjCImp(baseMethod, baseMethod, methodBridge, isVirtual = true)
+    val selector = baseMethod.selector
+    val methodBridge = baseMethod.bridge
+    val irFunction = baseMethod.symbol.owner
+    val imp = generateObjCImp(irFunction, irFunction, methodBridge, isVirtual = true)
 
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createMethodAdapter(
         implementation: IrFunction?,
-        baseMethod: IrFunction
+        baseMethod: ObjCMethodSpec.BaseMethod<*>
 ) = createMethodAdapter(DirectAdapterRequest(implementation, baseMethod))
 
 private fun ObjCExportCodeGenerator.createFinalMethodAdapter(
-        irFunction: IrSimpleFunction
+        baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    val irFunction = baseMethod.symbol.owner
     require(irFunction.modality == Modality.FINAL)
-    return createMethodAdapter(irFunction, irFunction)
+    return createMethodAdapter(irFunction, baseMethod)
 }
 
 private fun ObjCExportCodeGenerator.createMethodAdapter(
         request: DirectAdapterRequest
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter = this.directMethodAdapters.getOrPut(request) {
 
-    val selectorName = namer.getSelector(request.base.descriptor)
-    val methodBridge = mapper.bridgeMethod(request.base.descriptor)
+    val selectorName = request.base.selector
+    val methodBridge = request.base.bridge
 
-    val imp = generateObjCImp(request.implementation, request.base, methodBridge)
+    val imp = generateObjCImp(request.implementation, request.base.symbol.owner, methodBridge)
 
     objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createConstructorAdapter(
-        irConstructor: IrConstructor
-): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter = createMethodAdapter(irConstructor, irConstructor)
+        baseMethod: ObjCMethodSpec.BaseMethod<IrConstructorSymbol>
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter = createMethodAdapter(baseMethod.symbol.owner, baseMethod)
 
 private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
-        irConstructor: IrConstructor
+        baseMethod: ObjCMethodSpec.BaseMethod<IrConstructorSymbol>
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
-    val selectorName = namer.getSelector(irConstructor.descriptor)
-    val methodBridge = mapper.bridgeMethod(irConstructor.descriptor)
+    val selectorName = baseMethod.selector
+    val methodBridge = baseMethod.bridge
+    val irConstructor = baseMethod.symbol.owner
     val imp = generateObjCImpForArrayConstructor(irConstructor, methodBridge)
 
     return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
@@ -1217,7 +1219,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapterForFileClass(
 ): ObjCExportCodeGenerator.ObjCTypeAdapter {
     val name = fileClass.binaryName
 
-    val adapters = fileClass.methods.map { createFinalMethodAdapter(it.baseMethod.owner) }
+    val adapters = fileClass.methods.map { createFinalMethodAdapter(it.baseMethod) }
 
     return ObjCTypeAdapter(
             irClass = null,
@@ -1246,10 +1248,10 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     type.methods.forEach {
         when (it) {
             is ObjCInitMethodForKotlinConstructor -> {
-                adapters += createConstructorAdapter(it.irConstructorSymbol.owner)
+                adapters += createConstructorAdapter(it.baseMethod)
             }
             is ObjCFactoryMethodForKotlinArrayConstructor -> {
-                classAdapters += createArrayConstructorAdapter(it.irConstructorSymbol.owner)
+                classAdapters += createArrayConstructorAdapter(it.baseMethod)
             }
             is ObjCGetterForKotlinEnumEntry -> {
                 classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner, it.selector)
@@ -1273,9 +1275,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     if (type is ObjCClassForKotlinClass) {
 
         type.categoryMethods.forEach {
-            val irFunction = it.baseMethod.owner
-            adapters += createFinalMethodAdapter(irFunction)
-            reverseAdapters += nonOverridableAdapter(irFunction.descriptor, hasSelectorAmbiguity = false)
+            adapters += createFinalMethodAdapter(it.baseMethod)
+            reverseAdapters += nonOverridableAdapter(it.baseMethod.selector, hasSelectorAmbiguity = false)
         }
 
         adapters += createDirectAdapters(type, superClass)
@@ -1283,9 +1284,11 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
     reverseAdapters += createReverseAdapters(type)
 
-    val virtualAdapters = type.kotlinMethods.map { it.baseMethod.owner }
-            .filter { it.parentAsClass == irClass && it.isOverridable }
-            .map { createMethodVirtualAdapter(it) }
+    val virtualAdapters = type.kotlinMethods
+            .filter {
+                val irFunction = it.baseMethod.symbol.owner
+                irFunction.parentAsClass == irClass && irFunction.isOverridable
+            }.map { createMethodVirtualAdapter(it.baseMethod) }
 
     val typeInfo = constPointer(codegen.typeInfoValue(irClass))
     val objCName = type.binaryName
@@ -1336,13 +1339,13 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
         type: ObjCTypeForKotlinType
 ): List<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter> {
     val result = mutableListOf<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>()
-    val allBaseMethods = type.kotlinMethods.map { it.baseMethod.owner }.toSet()
+    val allBaseMethodsByIr = type.kotlinMethods.map { it.baseMethod }.associateBy { it.symbol.owner }
 
     for (method in type.irClassSymbol.owner.simpleFunctions()) {
-        val baseMethods = method.allOverriddenFunctions.filter { it in allBaseMethods }
+        val baseMethods = method.allOverriddenFunctions.mapNotNull { allBaseMethodsByIr[it] }
         if (baseMethods.isEmpty()) continue
 
-        val hasSelectorAmbiguity = baseMethods.map { namer.getSelector(it.descriptor) }.distinct().size > 1
+        val hasSelectorAmbiguity = baseMethods.map { it.selector }.distinct().size > 1
 
         if (method.isOverridable && !hasSelectorAmbiguity) {
             val baseMethod = baseMethods.first()
@@ -1379,8 +1382,8 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
         } else {
             // Mark it as non-overridable:
-            baseMethods.distinctBy { namer.getSelector(it.descriptor) }.forEach { baseMethod ->
-                result += nonOverridableAdapter(baseMethod.descriptor, hasSelectorAmbiguity)
+            baseMethods.map { it.selector }.distinct().forEach {
+                result += nonOverridableAdapter(it, hasSelectorAmbiguity)
             }
         }
     }
@@ -1389,10 +1392,10 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 }
 
 private fun ObjCExportCodeGenerator.nonOverridableAdapter(
-        baseMethod: FunctionDescriptor,
+        selector: String,
         hasSelectorAmbiguity: Boolean
 ): ObjCExportCodeGenerator.KotlinToObjCMethodAdapter = KotlinToObjCMethodAdapter(
-    namer.getSelector(baseMethod),
+    selector,
     -1,
     vtableIndex = if (hasSelectorAmbiguity) -2 else -1, // Describes the reason.
     kotlinImpl = NullPointer(int8Type),
@@ -1402,7 +1405,7 @@ private fun ObjCExportCodeGenerator.nonOverridableAdapter(
 private val ObjCTypeForKotlinType.kotlinMethods: List<ObjCMethodForKotlinMethod>
     get() = this.methods.filterIsInstance<ObjCMethodForKotlinMethod>()
 
-internal data class DirectAdapterRequest(val implementation: IrFunction?, val base: IrFunction)
+internal data class DirectAdapterRequest(val implementation: IrFunction?, val base: ObjCMethodSpec.BaseMethod<*>)
 
 private fun ObjCExportCodeGenerator.createDirectAdapters(
         typeDeclaration: ObjCClassForKotlinClass,
@@ -1411,15 +1414,15 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
 
     fun ObjCClassForKotlinClass.getAllRequiredDirectAdapters() = this.kotlinMethods.map { method ->
         DirectAdapterRequest(
-                findImplementation(irClassSymbol.owner, method.baseMethod.owner, context),
-                method.baseMethod.owner
+                findImplementation(irClassSymbol.owner, method.baseMethod.symbol.owner, context),
+                method.baseMethod
         )
     }
 
     val inheritedAdapters = superClass?.getAllRequiredDirectAdapters().orEmpty()
     val requiredAdapters = typeDeclaration.getAllRequiredDirectAdapters() - inheritedAdapters
 
-    return requiredAdapters.distinctBy { namer.getSelector(it.base.descriptor) }.map { createMethodAdapter(it) }
+    return requiredAdapters.distinctBy { it.base.selector }.map { createMethodAdapter(it) }
 }
 
 private fun findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
