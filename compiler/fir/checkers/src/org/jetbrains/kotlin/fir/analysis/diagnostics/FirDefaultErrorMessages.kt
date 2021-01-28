@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.PROPERTY_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
@@ -322,35 +323,28 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED,
                 "Variance annotations are only allowed for type parameters of classes and interfaces"
             )
+            map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter may not have a default value")
+            map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter")
+            map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is forbidden for catch parameter")
+
+            // Overrides
             map.put(
                 RETURN_TYPE_MISMATCH_ON_OVERRIDE,
                 "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''",
-                TO_STRING,
-                DECLARATION_NAME
-            ) // #
+                DECLARATION_NAME,
+                FQ_NAMES_IN_TYPES
+            )
             map.put(
                 PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
                 "Type of ''{0}'' is not a subtype of the overridden property ''{1}''",
-                TO_STRING,
-                DECLARATION_NAME
-            ) // #
+                DECLARATION_NAME,
+                FQ_NAMES_IN_TYPES
+            )
             map.put(
                 VAR_TYPE_MISMATCH_ON_OVERRIDE,
                 "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
-                TO_STRING,
-                DECLARATION_NAME
-            ) // #
-            map.put(
-                CATCH_PARAMETER_WITH_DEFAULT_VALUE,
-                "Catch clause parameter may not have a default value"
-            )
-            map.put(
-                REIFIED_TYPE_IN_CATCH_CLAUSE,
-                "Reified type is forbidden for catch parameter"
-            )
-            map.put(
-                TYPE_PARAMETER_IN_CATCH_CLAUSE,
-                "Type parameter is forbidden for catch parameter"
+                DECLARATION_NAME,
+                FQ_NAMES_IN_TYPES
             )
 
             // Redeclarations

@@ -91,6 +91,31 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val DECLARATION_RETURN_TYPE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val (returnTypeRef, nameIdentifierOrPlaceHolder) = when {
+                node.tokenType == KtNodeTypes.PROPERTY_ACCESSOR ->
+                    tree.typeReference(node) to tree.accessorNamePlaceholder(node)
+                node.isDeclaration ->
+                    tree.typeReference(node) to tree.nameIdentifier(node)
+                else ->
+                    null to null
+            }
+            if (returnTypeRef != null) {
+                return markElement(returnTypeRef, startOffset, endOffset, tree, node)
+            }
+            if (nameIdentifierOrPlaceHolder != null) {
+                return markElement(nameIdentifierOrPlaceHolder, startOffset, endOffset, tree, node)
+            }
+            return DEFAULT.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
     val DECLARATION_NAME: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -188,22 +213,22 @@ object LightTreePositioningStrategies {
             } else {
                 DEFAULT.mark(node, startOffset, endOffset, tree)
             }
-
-        private val LighterASTNode.isDeclaration: Boolean
-            get() =
-                when (tokenType) {
-                    KtNodeTypes.PRIMARY_CONSTRUCTOR, KtNodeTypes.SECONDARY_CONSTRUCTOR,
-                    KtNodeTypes.FUN, KtNodeTypes.FUNCTION_LITERAL,
-                    KtNodeTypes.PROPERTY,
-                    KtNodeTypes.PROPERTY_ACCESSOR,
-                    KtNodeTypes.CLASS,
-                    KtNodeTypes.OBJECT_DECLARATION,
-                    KtNodeTypes.CLASS_INITIALIZER ->
-                        true
-                    else ->
-                        false
-                }
     }
+
+    private val LighterASTNode.isDeclaration: Boolean
+        get() =
+            when (tokenType) {
+                KtNodeTypes.PRIMARY_CONSTRUCTOR, KtNodeTypes.SECONDARY_CONSTRUCTOR,
+                KtNodeTypes.FUN, KtNodeTypes.FUNCTION_LITERAL,
+                KtNodeTypes.PROPERTY,
+                KtNodeTypes.PROPERTY_ACCESSOR,
+                KtNodeTypes.CLASS,
+                KtNodeTypes.OBJECT_DECLARATION,
+                KtNodeTypes.CLASS_INITIALIZER ->
+                    true
+                else ->
+                    false
+            }
 
     private class ModifierSetBasedLightTreePositioningStrategy(private val modifierSet: TokenSet) : LightTreePositioningStrategy() {
         override fun mark(

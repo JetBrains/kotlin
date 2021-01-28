@@ -52,27 +52,39 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         val renderLambdaBodies: Boolean,
         val renderCallArguments: Boolean,
         val renderCallableFqNames: Boolean,
-        val renderDeclarationResolvePhase: Boolean
+        val renderDeclarationResolvePhase: Boolean,
+        val renderAnnotation: Boolean,
     ) {
         object Normal : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = false,
-            renderDeclarationResolvePhase = false
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = true,
         )
 
         object WithFqNames : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = true,
-            renderDeclarationResolvePhase = false
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = true,
+        )
+
+        object WithFqNamesExceptAnnotation : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = true,
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = false,
         )
 
         object WithResolvePhases : RenderMode(
             renderLambdaBodies = true,
             renderCallArguments = true,
             renderCallableFqNames = false,
-            renderDeclarationResolvePhase = true
+            renderDeclarationResolvePhase = true,
+            renderAnnotation = true,
         )
     }
 
@@ -154,6 +166,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     private fun List<FirAnnotationCall>.renderAnnotations() {
+        if (!mode.renderAnnotation) return
         for (annotation in this) {
             visitAnnotationCall(annotation)
         }

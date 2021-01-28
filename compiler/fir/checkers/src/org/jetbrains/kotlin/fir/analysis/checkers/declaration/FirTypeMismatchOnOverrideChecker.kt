@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,10 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.utils.addToStdlib.min
@@ -92,6 +88,11 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
         val returnType = returnTypeRef.safeAs<FirResolvedTypeRef>()?.type
             ?: return null
 
+        // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
+        if (returnType is ConeKotlinErrorType) {
+            return null
+        }
+
         val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType.upperBoundIfFlexible() }
 
         for (it in bounds.indices) {
@@ -130,11 +131,7 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
         )
 
         restriction?.let {
-            reporter.reportMismatchOnFunction(
-                function.returnTypeRef.source,
-                function.returnTypeRef.coneType.toString(),
-                it
-            )
+            reporter.reportReturnTypeMismatchOnFunction(function, it)
         }
     }
 
@@ -163,30 +160,31 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
 
         restriction?.let {
             if (property.isVar) {
-                reporter.reportMismatchOnVariable(
-                    property.returnTypeRef.source,
-                    property.returnTypeRef.coneType.toString(),
-                    it
-                )
+                reporter.reportTypeMismatchOnVariable(property, it)
             } else {
-                reporter.reportMismatchOnProperty(
-                    property.returnTypeRef.source,
-                    property.returnTypeRef.coneType.toString(),
-                    it
-                )
+                reporter.reportTypeMismatchOnProperty(property, it)
             }
         }
     }
 
-    private fun DiagnosticReporter.reportMismatchOnFunction(source: FirSourceElement?, type: String, declaration: FirMemberDeclaration) {
-        source?.let { report(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration)) }
+    private fun DiagnosticReporter.reportReturnTypeMismatchOnFunction(
+        overriding: FirMemberDeclaration,
+        overridden: FirMemberDeclaration
+    ) {
+        overriding.source?.let { report(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(it, overriding, overridden)) }
     }
 
-    private fun DiagnosticReporter.reportMismatchOnProperty(source: FirSourceElement?, type: String, declaration: FirMemberDeclaration) {
-        source?.let { report(FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration)) }
+    private fun DiagnosticReporter.reportTypeMismatchOnProperty(
+        overriding: FirMemberDeclaration,
+        overridden: FirMemberDeclaration
+    ) {
+        overriding.source?.let { report(FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(it, overriding, overridden)) }
     }
 
-    private fun DiagnosticReporter.reportMismatchOnVariable(source: FirSourceElement?, type: String, declaration: FirMemberDeclaration) {
-        source?.let { report(FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE.on(it, type, declaration)) }
+    private fun DiagnosticReporter.reportTypeMismatchOnVariable(
+        overriding: FirMemberDeclaration,
+        overridden: FirMemberDeclaration
+    ) {
+        overriding.source?.let { report(FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE.on(it, overriding, overridden)) }
     }
 }

@@ -23,6 +23,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL
     )
 
+    val DECLARATION_RETURN_TYPE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DECLARATION_RETURN_TYPE,
+        PositioningStrategies.DECLARATION_RETURN_TYPE
+    )
+
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
         PositioningStrategies.DECLARATION_NAME
