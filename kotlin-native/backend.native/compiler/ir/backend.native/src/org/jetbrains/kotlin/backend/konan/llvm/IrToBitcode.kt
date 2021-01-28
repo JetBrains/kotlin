@@ -2394,8 +2394,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         when {
             !function.isSuspend && function.returnType.isNothing() ->
                 functionGenerationContext.unreachable()
-            needsNativeThreadState ->
+            needsNativeThreadState -> {
                 functionGenerationContext.switchThreadState(ThreadState.Runnable)
+                call(context.llvm.Kotlin_mm_safePointExternalCallReturn, emptyList())
+            }
         }
 
         if (LLVMGetReturnType(getFunctionType(llvmFunction)) == voidType) {

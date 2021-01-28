@@ -803,6 +803,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
             if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
                 switchThreadState(Runnable)
+                call(context.llvm.Kotlin_mm_safePointExternalCallUnwind, emptyList())
             }
 
             val fatalForeignExceptionBlock = basicBlock("fatalForeignException", position()?.start)
@@ -888,6 +889,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         if (switchThreadState) {
             switchThreadState(Runnable)
+            call(context.llvm.Kotlin_mm_safePointExternalCallUnwind, emptyList())
         }
 
         // TODO: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
@@ -1433,6 +1435,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 val landingpad = gxxLandingpad(numClauses = 0)
                 LLVMSetCleanup(landingpad, 1)
                 switchThreadState(Runnable)
+                call(context.llvm.Kotlin_mm_safePointExternalCallUnwind, emptyList())
 
                 // TODO: Process forwardingForeignExceptionsTerminatedWith
                 //  when thread switching for ObjC calls is supported.

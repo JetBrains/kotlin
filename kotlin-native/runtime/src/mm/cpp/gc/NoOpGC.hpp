@@ -29,6 +29,8 @@ public:
         void SafePointFunctionEpilogue() noexcept {}
         void SafePointLoopBody() noexcept {}
         void SafePointExceptionUnwind() noexcept {}
+        void SafePointExternalCallReturn() noexcept {}
+        void SafePointExternalCallUnwind() noexcept {}
         void SafePointAllocation(size_t size) noexcept {}
 
         void PerformFullGC() noexcept {}

@@ -319,6 +319,8 @@ ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
 void Kotlin_mm_safePointFunctionEpilogue() RUNTIME_NOTHROW;
 void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
 void Kotlin_mm_safePointExceptionUnwind() RUNTIME_NOTHROW;
+void Kotlin_mm_safePointExternalCallReturn() RUNTIME_NOTHROW;
+void Kotlin_mm_safePointExternalCallUnwind() RUNTIME_NOTHROW;
 
 #ifdef __cplusplus
 }
