@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybe
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -372,10 +373,15 @@ internal class ObjCExportCodeGenerator(
     private val objCClassForAny = ObjCClassForKotlinClass(
             namer.kotlinAnyName.binaryName,
             symbols.any,
-            methods = listOf("equals", "hashCode", "toString").map { name ->
-                symbols.any.owner.simpleFunctions().single { it.name == Name.identifier(name) }
-            }.map {
-                val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, it.symbol, it.descriptor)
+            methods = listOf("equals", "hashCode", "toString").map { nameString ->
+                val name = Name.identifier(nameString)
+
+                val irFunction = symbols.any.owner.simpleFunctions().single { it.name == name }
+
+                val descriptor = context.builtIns.any.unsubstitutedMemberScope
+                        .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
+
+                val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, irFunction.symbol, descriptor)
                 ObjCMethodForKotlinMethod(baseMethod)
             },
             categoryMethods = emptyList(),
@@ -631,7 +637,7 @@ private fun ObjCExportCodeGenerator.generateContinuationToCompletionConverter(
 
 private val ObjCExportBlockCodeGenerator.mappedFunctionNClasses get() =
     context.ir.symbols.functionIrClassFactory.builtFunctionNClasses
-        .filter { it.irClass.descriptor.isMappedFunctionClass() }
+        .filter { it.descriptor.isMappedFunctionClass() }
 
 private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
     require(context.producedLlvmModuleContainsStdlib)
@@ -1428,7 +1434,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
 private fun findImplementation(irClass: IrClass, method: IrSimpleFunction, context: Context): IrSimpleFunction? {
     val override = irClass.simpleFunctions().singleOrNull {
         method in it.allOverriddenFunctions
-    } ?: error("no implementation for ${method.descriptor}\nin ${irClass.descriptor}")
+    } ?: error("no implementation for ${method.render()}\nin ${irClass.fqNameWhenAvailable}")
     return OverriddenFunctionInfo(override, method).getImplementation(context)
 }
 
