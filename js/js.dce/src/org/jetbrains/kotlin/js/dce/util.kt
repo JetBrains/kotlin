@@ -73,20 +73,21 @@ fun JsLocation.asString(): String {
     return "$simpleFileName:${startLine + 1}"
 }
 
-fun Set<Node>.extractRoots(): Set<Node> {
-    val result = mutableSetOf<Node>()
-    val visited = mutableSetOf<Node>()
-    forEach { it.original.extractRootsImpl(result, visited) }
+fun Iterable<Node>.extractReachableRoots(context: Context): Iterable<Node> {
+    context.clearVisited()
+
+    val result = mutableListOf<Node>()
+    forEach { if (it.reachable) it.original.extractRootsImpl(result, context) }
     return result
 }
 
-private fun Node.extractRootsImpl(target: MutableSet<Node>, visited: MutableSet<Node>) {
-    if (!visited.add(original)) return
+private fun Node.extractRootsImpl(target: MutableList<Node>, context: Context) {
+    if (!context.visit(original)) return
     val qualifier = original.qualifier
     if (qualifier == null) {
         target += original
     }
     else {
-        qualifier.parent.extractRootsImpl(target, visited)
+        qualifier.parent.extractRootsImpl(target, context)
     }
 }
