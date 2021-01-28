@@ -46,11 +46,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirLocalEntityNotAllowedChecker,
         FirManyCompanionObjectsChecker,
         FirMethodOfAnyImplementedInInterfaceChecker,
+        FirOverrideChecker,
         FirPrimaryConstructorRequiredForDataClassChecker,
         FirSupertypeInitializedInInterfaceChecker,
         FirSupertypeInitializedWithoutPrimaryConstructor,
         FirTypeParametersInObjectChecker,
-        FirTypeMismatchOnOverrideChecker,
         FirMemberFunctionChecker,
         FirMemberPropertyChecker,
     )
