@@ -29,11 +29,15 @@ class ReachabilityTracker(
         private val CALL_FUNCTIONS = setOf("call", "apply")
     }
 
+    init {
+        context.clearVisited()
+    }
+
     private var currentNodeWithLocation: JsNode? = null
     private var depth = 0
-    private val reachableNodesImpl = mutableSetOf<Node>()
+    private val reachableNodesImpl = mutableListOf<Node>()
 
-    val reachableNodes: Set<Node> get() = reachableNodesImpl
+    val reachableNodes: Iterable<Node> get() = reachableNodesImpl
 
     override fun visit(x: JsVars.JsVar) {
         if (shouldTraverse(x)) {
@@ -137,7 +141,9 @@ class ReachabilityTracker(
     fun reach(node: Node) {
         if (node.reachable) return
         node.reachable = true
-        reachableNodesImpl += node
+        if (context.visit(node)) {
+            reachableNodesImpl += node
+        }
 
         reachDeclaration(node)
 
@@ -192,7 +198,9 @@ class ReachabilityTracker(
         }
         else if (!node.declarationReachable) {
             node.declarationReachable = true
-            reachableNodesImpl += node
+            if (context.visit(node)) {
+                reachableNodesImpl += node
+            }
 
             node.original.qualifier?.parent?.let {
                 reportAndNest("reach-decl: parent $it", null) {
