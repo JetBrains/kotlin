@@ -47,6 +47,6 @@ dependencies {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xopt-in=kotlin.ExperimentalUnsignedTypes', '-Xskip-metadata-version-check']
-        allWarningsAsErrors=true
+//        allWarningsAsErrors=true
     }
 }

@@ -143,8 +143,8 @@ kotlinNativeInterop {
 
 compileKotlin {
     kotlinOptions {
-        allWarningsAsErrors=true
-	kotlinOptions.freeCompilerArgs = ["-Xskip-prerelease-check"]
+//        allWarningsAsErrors=true
+	    freeCompilerArgs = ["-Xskip-prerelease-check"]
     }
 }
 
