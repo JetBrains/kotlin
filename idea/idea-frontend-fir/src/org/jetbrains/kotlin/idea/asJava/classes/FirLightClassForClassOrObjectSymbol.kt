@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.util.ifFalse

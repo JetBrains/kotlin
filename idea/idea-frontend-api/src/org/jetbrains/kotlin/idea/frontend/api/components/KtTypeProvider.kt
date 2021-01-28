@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
@@ -13,6 +14,8 @@ abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     abstract fun isBuiltinFunctionalType(type: KtType): Boolean
 
     abstract val builtinTypes: KtBuiltinTypes
+
+    abstract fun buildTypeForSymbol(symbol: KtClassOrObjectSymbol): KtType
 }
 
 
