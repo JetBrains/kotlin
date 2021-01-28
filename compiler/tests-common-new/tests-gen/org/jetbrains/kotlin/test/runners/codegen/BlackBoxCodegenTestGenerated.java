@@ -13725,6 +13725,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("NameHighlighter.kt")
+        public void testNameHighlighter() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/NameHighlighter.kt");
+        }
+
+        @Test
         @TestMetadata("SuspendExtension.kt")
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");

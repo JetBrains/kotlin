@@ -714,11 +714,12 @@ class FirElementSerializer private constructor(
     private fun getAccessorFlags(accessor: FirPropertyAccessor, property: FirProperty): Int {
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
+        val nonSourceAnnotations = accessor.nonSourceAnnotations(session)
         val isDefault = accessor is FirDefaultPropertyAccessor &&
-                accessor.annotations.isEmpty() && accessor.visibility == property.visibility &&
+                nonSourceAnnotations.isEmpty() && accessor.visibility == property.visibility &&
                 !accessor.isExternal && !accessor.isInline
         return Flags.getAccessorFlags(
-            accessor.nonSourceAnnotations(session).isNotEmpty(),
+            nonSourceAnnotations.isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
             ProtoEnumFlags.modality(accessor.modality!!),
             !isDefault,
