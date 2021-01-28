@@ -238,6 +238,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
     }
 
+    @TestMetadata("internalWithInlineClass.kt")
+    public void testInternalWithInlineClass() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithInlineClass.kt");
+    }
+
     @TestMetadata("internalWithOtherModuleName.kt")
     public void testInternalWithOtherModuleName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");
