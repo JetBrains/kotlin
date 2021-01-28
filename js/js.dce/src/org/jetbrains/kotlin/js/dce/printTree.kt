@@ -24,7 +24,7 @@ fun printTree(root: Node, consumer: (String) -> Unit, printNestedMembers: Boolea
 
 private fun printTree(node: Node, consumer: (String) -> Unit, depth: Int, settings: Settings) {
     val sb = StringBuilder()
-    sb.append("  ".repeat(depth)).append(node.qualifier?.memberName ?: node.toString())
+    sb.append("  ".repeat(depth)).append(node.memberName ?: node.toString())
 
     if (node.reachable) {
         sb.append(" (reachable")
