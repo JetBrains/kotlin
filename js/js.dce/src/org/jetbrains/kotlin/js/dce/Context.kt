@@ -127,21 +127,35 @@ class Context {
     }
 
     class Node private constructor(val localName: JsName?, qualifier: Qualifier?) {
-        private val dependenciesImpl = mutableSetOf<Node>()
-        private val expressionsImpl = mutableSetOf<JsExpression>()
-        private val functionsImpl = mutableSetOf<JsFunction>()
+        private var _dependenciesImpl: MutableSet<Node>? = null
+        private var _expressionsImpl: MutableSet<JsExpression>? = null
+        private var _functionsImpl: MutableSet<JsFunction>? = null
+        private var _membersImpl: MutableMap<String, Node>? = null
+        private var _usedByAstNodesImpl: MutableSet<JsNode>? = null
+
+        private val dependenciesImpl: MutableSet<Node>
+            get() = _dependenciesImpl ?: mutableSetOf<Node>().also { _dependenciesImpl = it }
+        private val expressionsImpl: MutableSet<JsExpression>
+            get() = _expressionsImpl ?: mutableSetOf<JsExpression>().also { _expressionsImpl = it }
+        private val functionsImpl: MutableSet<JsFunction>
+            get() = _functionsImpl ?: mutableSetOf<JsFunction>().also { _functionsImpl = it }
+        private val membersImpl: MutableMap<String, Node>
+            get() = _membersImpl ?: mutableMapOf<String, Node>().also { _membersImpl = it }
+        private val usedByAstNodesImpl: MutableSet<JsNode>
+            get() = _usedByAstNodesImpl ?: mutableSetOf<JsNode>().also { _usedByAstNodesImpl = it }
+
+        private var rank = 0
         private var hasSideEffectsImpl = false
         private var reachableImpl = false
         private var declarationReachableImpl = false
-        private val membersImpl = mutableMapOf<String, Node>()
-        private val usedByAstNodesImpl = mutableSetOf<JsNode>()
-        private var rank = 0
 
-        val dependencies: MutableSet<Node> get() = original.dependenciesImpl
+        val dependencies: Set<Node> get() = original._dependenciesImpl ?: emptySet()
 
-        val expressions: MutableSet<JsExpression> get() = original.expressionsImpl
+        val expressions: Set<JsExpression> get() = original._expressionsImpl ?: emptySet()
 
-        val functions: MutableSet<JsFunction> get() = original.functionsImpl
+        val functions: Set<JsFunction> get() = original._functionsImpl ?: emptySet()
+
+        val usedByAstNodes: Set<JsNode> get() = original._usedByAstNodesImpl ?: emptySet()
 
         var hasSideEffects: Boolean
             get() = original.hasSideEffectsImpl
@@ -162,12 +176,9 @@ class Context {
             }
 
         var qualifier: Qualifier? = qualifier
-            get
             private set
 
-        val usedByAstNodes: MutableSet<JsNode> get() = original.usedByAstNodesImpl
-
-        val memberNames: MutableSet<String> get() = original.membersImpl.keys
+        val memberNames: Set<String> get() = original._membersImpl?.keys ?: emptySet()
 
         constructor(localName: JsName? = null) : this(localName, null)
 
@@ -180,7 +191,23 @@ class Context {
             }
             private set
 
-        val members: Map<String, Node> get() = original.membersImpl
+        val members: Map<String, Node> get() = original._membersImpl ?: emptyMap()
+
+        fun addDependency(node: Node) {
+            original.dependenciesImpl += node
+        }
+
+        fun addFunction(function: JsFunction) {
+            original.functionsImpl += function
+        }
+
+        fun addExpression(expression: JsExpression) {
+            original.expressionsImpl += expression
+        }
+
+        fun addUsedByAstNode(node: JsNode) {
+            original.usedByAstNodesImpl += node
+        }
 
         fun member(name: String): Node = original.membersImpl.getOrPut(name) { Node(null, Qualifier(this, name)) }.original
 
@@ -224,15 +251,23 @@ class Context {
             other.membersImpl.clear()
 
             hasSideEffectsImpl = hasSideEffectsImpl || other.hasSideEffectsImpl
-            expressionsImpl += other.expressionsImpl
-            functionsImpl += other.functionsImpl
-            dependenciesImpl += other.dependenciesImpl
-            usedByAstNodesImpl += other.usedByAstNodesImpl
+            if (!other._expressionsImpl.isNullOrEmpty()) {
+                expressionsImpl += other.expressionsImpl
+            }
+            if (!other._functionsImpl.isNullOrEmpty()) {
+                functionsImpl += other.functionsImpl
+            }
+            if (!other._dependenciesImpl.isNullOrEmpty()) {
+                dependenciesImpl += other.dependenciesImpl
+            }
+            if (!other._usedByAstNodesImpl.isNullOrEmpty()) {
+                usedByAstNodesImpl += other.usedByAstNodesImpl
+            }
 
-            other.expressionsImpl.clear()
-            other.functionsImpl.clear()
-            other.dependenciesImpl.clear()
-            other.usedByAstNodesImpl.clear()
+            other._expressionsImpl = null
+            other._functionsImpl = null
+            other._dependenciesImpl = null
+            other._usedByAstNodesImpl = null
         }
 
         private fun merge(other: Node) {
