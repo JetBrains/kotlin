@@ -25,7 +25,6 @@ dependencies {
     compileOnly(intellijDep()) { includeJars("platform-api") }
 
     runtimeOnly(project(":kotlin-reflect"))
-    runtimeOnly( "org.jetbrains.kotlin:kotlin-coroutines-experimental-compat:1.4.20")
 
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:plugin-api"))
