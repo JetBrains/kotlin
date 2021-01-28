@@ -53,6 +53,36 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.MODALITY_MODIFIER
     )
 
+    val ABSTRACT_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ABSTRACT_MODIFIER,
+        PositioningStrategies.ABSTRACT_MODIFIER
+    )
+
+    val OPEN_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OPEN_MODIFIER,
+        PositioningStrategies.OPEN_MODIFIER
+    )
+
+    val OVERRIDE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OVERRIDE_MODIFIER,
+        PositioningStrategies.OVERRIDE_MODIFIER
+    )
+
+    val PRIVATE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PRIVATE_MODIFIER,
+        PositioningStrategies.PRIVATE_MODIFIER
+    )
+
+    val LATEINIT_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.LATEINIT_MODIFIER,
+        PositioningStrategies.LATEINIT_MODIFIER
+    )
+
+    val VARIANCE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VARIANCE_MODIFIER,
+        PositioningStrategies.VARIANCE_MODIFIER
+    )
+
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
