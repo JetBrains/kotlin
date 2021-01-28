@@ -1257,6 +1257,13 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             is ObjCClassMethodForKotlinEnumValues -> {
                 classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
             }
+            is ObjCGetterForObjectInstance -> {
+                classAdapters += if (irClass.isUnit()) {
+                    createUnitInstanceAdapter(it.selector)
+                } else {
+                    createObjectInstanceAdapter(irClass, it.selector)
+                }
+            }
             is ObjCMethodForKotlinMethod -> {} // Handled below.
         }.let {} // Force exhaustive.
     }
@@ -1307,19 +1314,6 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceTableEntries.size)
         irClass.isAbstract() && context.ghaEnabled() -> rttiGenerator.interfaceTableRecords(irClass)
         else -> Pair(emptyList(), -1)
-    }
-
-    when (irClass.kind) {
-        ClassKind.OBJECT -> {
-            classAdapters += if (irClass.isUnit()) {
-                createUnitInstanceAdapter()
-            } else {
-                createObjectInstanceAdapter(irClass)
-            }
-        }
-        else -> {
-            // Nothing special.
-        }
     }
 
     return ObjCTypeAdapter(
@@ -1464,22 +1458,19 @@ private fun ObjCExportCodeGenerator.objCToKotlinMethodAdapter(
     return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), constPointer(imp))
 }
 
-private fun ObjCExportCodeGenerator.createUnitInstanceAdapter() =
-        generateObjCToKotlinSyntheticGetter(
-                namer.getObjectInstanceSelector(context.builtIns.unit)
-        ) {
+private fun ObjCExportCodeGenerator.createUnitInstanceAdapter(selector: String) =
+        generateObjCToKotlinSyntheticGetter(selector) {
             initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
             ret(callFromBridge(context.llvm.Kotlin_ObjCExport_convertUnit, listOf(codegen.theUnitInstanceRef.llvm)))
         }
 
 private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
-        irClass: IrClass
+        irClass: IrClass,
+        selector: String
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     assert(irClass.kind == ClassKind.OBJECT)
     assert(!irClass.isUnit())
-
-    val selector = namer.getObjectInstanceSelector(irClass.descriptor)
 
     return generateObjCToKotlinSyntheticGetter(selector) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.

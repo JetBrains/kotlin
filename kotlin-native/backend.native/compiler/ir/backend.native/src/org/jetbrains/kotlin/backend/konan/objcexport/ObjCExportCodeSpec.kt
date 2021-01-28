@@ -63,6 +63,10 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 }
             }
 
+            if (descriptor.kind == ClassKind.OBJECT) {
+                methods += ObjCGetterForObjectInstance(namer.getObjectInstanceSelector(descriptor))
+            }
+
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
                 descriptor.enumEntries.mapTo(methods) {
                     ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it))
@@ -111,6 +115,8 @@ internal class ObjCClassMethodForKotlinEnumValues(
         val valuesFunctionSymbol: IrFunctionSymbol,
         val selector: String
 ) : ObjCMethodSpec()
+
+internal class ObjCGetterForObjectInstance(val selector: String) : ObjCMethodSpec()
 
 internal sealed class ObjCTypeSpec(val binaryName: String)
 
