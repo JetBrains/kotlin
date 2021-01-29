@@ -104,6 +104,12 @@ internal fun CirTypeAlias.typeAliasFlags(): Flags =
 private inline val CirHasAnnotations.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty()) Flag.Common.HAS_ANNOTATIONS else null
 
+private inline val CirProperty.hasAnnotationsFlag: Flag?
+    get() = if (annotations.isNotEmpty() || !backingFieldAnnotations.isNullOrEmpty() || !delegateFieldAnnotations.isNullOrEmpty())
+        Flag.Common.HAS_ANNOTATIONS
+    else
+        null
+
 private inline val CirHasVisibility.visibilityFlag: Flag
     get() = when (visibility) {
         DescriptorVisibilities.PUBLIC -> Flag.Common.IS_PUBLIC
