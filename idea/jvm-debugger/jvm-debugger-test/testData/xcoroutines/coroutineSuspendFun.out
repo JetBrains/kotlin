@@ -13,7 +13,7 @@ CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, CoroutineSuspendFunKt$main$1 (continuation)
 		()
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
-		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
+		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$resumeWith_u24lambda_u2d0, completion, current, param, result, this)
 	CoroutineStackFrame run:!LINE_NUMBER!, DispatchedTask (kotlinx.coroutines)
 		($i$a$-withCoroutineContext-DispatchedTask$run$1, $i$f$withCoroutineContext, context, continuation, countOrElement$iv, delegate, exception, fatalException, job, oldValue$iv, state, taskContext, this)
 	CoroutineStackFrame processNextEvent:!LINE_NUMBER!, EventLoopImplBase (kotlinx.coroutines)
