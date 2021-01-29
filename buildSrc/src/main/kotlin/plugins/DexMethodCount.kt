@@ -41,7 +41,7 @@ open class DexMethodCount : DefaultTask() {
         dependsOn(jar)
     }
 
-    @Internal // plain output properties are not supported, mark as internal to suppress warning from validateTaskProperties
+    @Internal // plain output properties are not supported, mark as internal to suppress warning from validatePlugins
     lateinit var counts: Counts
 
     @get:OutputFile
