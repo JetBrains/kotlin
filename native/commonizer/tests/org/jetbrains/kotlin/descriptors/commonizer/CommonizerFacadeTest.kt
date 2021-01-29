@@ -120,12 +120,8 @@ class CommonizerFacadeTest {
 
             actualModuleResults.forEach { moduleResult ->
                 when (moduleResult) {
-                    is ModuleResult.Commonized -> {
-                        actualCommonizedModuleNames += moduleResult.metadata.libraryName
-                    }
-                    is ModuleResult.Missing -> {
-                        actualMissingModuleNames += moduleResult.originalLocation.name
-                    }
+                    is ModuleResult.Commonized -> actualCommonizedModuleNames += moduleResult.libraryName
+                    is ModuleResult.Missing -> actualMissingModuleNames += moduleResult.libraryName
                 }
             }
 

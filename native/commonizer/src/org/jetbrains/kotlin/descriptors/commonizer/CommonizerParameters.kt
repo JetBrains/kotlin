@@ -24,9 +24,6 @@ class CommonizerParameters(
             field = value
         }
 
-    // To be removed. Used only for tests now.
-    internal var generateDescriptors: Boolean = false
-
     fun addTarget(targetProvider: TargetProvider): CommonizerParameters {
         require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }
         _targetProviders[targetProvider.target] = targetProvider

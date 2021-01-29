@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
@@ -31,17 +30,6 @@ internal fun createKotlinNativeForwardDeclarationsModule(
             builtIns = builtIns,
             storageManager = storageManager
         )
-
-// similar to org.jetbrains.kotlin.descriptors.DescriptorUtilKt#resolveClassByFqName, but resolves also type aliases
-internal fun ModuleDescriptor.resolveClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters? {
-    val relativeClassName: FqName = classId.relativeClassName
-    if (relativeClassName.isRoot)
-        return null
-
-    return packageFragmentProvider.packageFragments(classId.packageFqName).asSequence().mapNotNull { packageFragment ->
-        packageFragment.getMemberScope().resolveClassOrTypeAlias(relativeClassName)
-    }.firstOrNull()
-}
 
 internal fun MemberScope.resolveClassOrTypeAlias(relativeClassName: FqName): ClassifierDescriptorWithTypeParameters? {
     var memberScope: MemberScope = this
@@ -67,7 +55,5 @@ internal fun MemberScope.resolveClassOrTypeAlias(relativeClassName: FqName): Cla
         NoLookupLocation.FOR_ALREADY_TRACKED
     ) as? ClassifierDescriptorWithTypeParameters
 }
-
-internal const val MODULE_NAME_PREFIX = "module:"
 
 internal val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
