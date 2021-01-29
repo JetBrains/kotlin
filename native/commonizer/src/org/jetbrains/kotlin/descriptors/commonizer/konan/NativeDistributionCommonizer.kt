@@ -192,25 +192,14 @@ class NativeDistributionCommonizer(
                 val targetsToSerialize = result.leafTargets + result.sharedTarget
                 targetsToSerialize.forEach { target ->
                     val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
-                    val newLibraries: Collection<LibraryMetadata> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.metadata }
-                    val missingModuleLocations: List<File> =
-                        moduleResults.mapNotNull { (it as? ModuleResult.Missing)?.originalLocation }
+                    val prettyTargetName = target.prettyCommonizedName(result.sharedTarget)
 
-                    val manifestProvider: NativeManifestDataProvider
-                    val starredTarget: String?
-                    when (target) {
-                        is LeafTarget -> {
-                            manifestProvider = originalLibraries.librariesByTargets.getValue(target)
-                            starredTarget = target.name
-                        }
-                        is SharedTarget -> {
-                            manifestProvider = CommonNativeManifestDataProvider(originalLibraries.librariesByTargets.values)
-                            starredTarget = null
-                        }
+                    val manifestProvider = when (target) {
+                        is LeafTarget -> originalLibraries.librariesByTargets.getValue(target)
+                        is SharedTarget -> CommonNativeManifestDataProvider(originalLibraries.librariesByTargets.values)
                     }
 
-                    val prettyTargetName = target.prettyCommonizedName(result.sharedTarget)
-                    serializeTarget(target, prettyTargetName, newLibraries, missingModuleLocations, manifestProvider)
+                    serializeTarget(target, prettyTargetName, moduleResults, manifestProvider)
                 }
             }
         }
@@ -254,25 +243,29 @@ class NativeDistributionCommonizer(
     private fun serializeTarget(
         target: CommonizerTarget,
         prettyTargetName: String,
-        newLibraries: Collection<LibraryMetadata>,
-        missingModuleLocations: List<File>,
+        moduleResults: Collection<ModuleResult>,
         manifestProvider: NativeManifestDataProvider
     ) {
         val librariesDestination = target.librariesDestination
         librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
-        for (newLibrary in newLibraries) {
-            val libraryName = newLibrary.libraryName
+        for (moduleResult in moduleResults) {
+            when (moduleResult) {
+                is ModuleResult.Commonized -> {
+                    val libraryName = moduleResult.libraryName
 
-            val manifestData = manifestProvider.getManifest(libraryName)
-            val libraryDestination = librariesDestination.resolve(libraryName)
+                    val manifestData = manifestProvider.getManifest(libraryName)
+                    val libraryDestination = librariesDestination.resolve(libraryName)
 
-            writeLibrary(newLibrary.metadata, manifestData, libraryDestination)
-        }
+                    writeLibrary(moduleResult.metadata, manifestData, libraryDestination)
+                }
+                is ModuleResult.Missing -> {
+                    val libraryName = moduleResult.libraryName
+                    val missingModuleLocation = moduleResult.originalLocation
 
-        for (missingModuleLocation in missingModuleLocations) {
-            val libraryName = missingModuleLocation.name
-            missingModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
+                    missingModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
+                }
+            }
         }
 
         logProgress("Written libraries for $prettyTargetName")

@@ -6,18 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1
-import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor2
-import org.jetbrains.kotlin.descriptors.commonizer.builder.createGlobalBuilderComponents
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger.CirTreeMergeResult
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.MetadataBuilder
-import org.jetbrains.kotlin.descriptors.commonizer.utils.strip
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -25,36 +19,17 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
     if (!parameters.hasAnythingToCommonize())
         return CommonizerResult.NothingToDo
 
-    val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
+    val storageManager = LockBasedStorageManager("Declarations commonization")
 
     val mergeResult = mergeAndCommonize(storageManager, parameters)
     val mergedTree = mergeResult.root
 
-    // build resulting descriptors:
+    // build resulting declarations:
     val modulesByTargets = LinkedHashMap<CommonizerTarget, Collection<ModuleResult>>() // use linked hash map to preserve order
     val klibFragmentWriteStrategy = ChunkedKlibModuleFragmentWriteStrategy()
 
-    // optional part for generating descriptors: begin
-    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters)
-    if (components != null) {
-        mergedTree.accept(DeclarationsBuilderVisitor1(components), emptyList())
-        mergedTree.accept(DeclarationsBuilderVisitor2(components), emptyList())
-    }
-    // optional part for generating descriptors: end
-
     for (targetIndex in 0 until mergedTree.dimension) {
         val (target, metadataModules) = MetadataBuilder.build(mergedTree, targetIndex, parameters.statsCollector)
-
-        // optional part for generating descriptors: begin
-        val moduleDescriptors: Map<String, ModuleDescriptor>? = components?.targetComponents?.get(targetIndex)?.let { component ->
-            check(component.target == target)
-            check(component.index == targetIndex)
-
-            components.cache.getAllModules(targetIndex)
-                .filter { it.name != FORWARD_DECLARATIONS_MODULE_NAME }
-                .associateBy { it.name.strip() }
-        }
-        // optional part for generating descriptors: end
 
         val commonizedModules: List<ModuleResult.Commonized> = metadataModules.map { metadataModule ->
             val libraryName = metadataModule.name
@@ -62,13 +37,7 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
                 SerializedMetadata(header, fragments, fragmentNames)
             }
 
-            val libraryMetadata = LibraryMetadata(libraryName, serializedMetadata)
-
-            // optional part for generating descriptors: begin
-            val moduleDescriptor = moduleDescriptors?.get(libraryName)
-            // optional part for generating descriptors: end
-
-            ModuleResult.Commonized(moduleDescriptor, libraryMetadata)
+            ModuleResult.Commonized(libraryName, serializedMetadata)
         }
         parameters.progressLogger?.invoke("Built metadata for ${target.prettyCommonizedName(parameters.sharedTarget)}")
 
