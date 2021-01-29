@@ -103,6 +103,31 @@ object FirOverrideChecker : FirRegularClassChecker() {
         return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
     }
 
+    private fun FirCallableMemberDeclaration<*>.checkVisibility(
+        reporter: DiagnosticReporter,
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+    ) {
+        val visibilities = overriddenSymbols.mapNotNull {
+            if (it.fir !is FirMemberDeclaration) return@mapNotNull null
+            it to (it.fir as FirMemberDeclaration).visibility
+        }.sortedBy { pair ->
+            // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
+            visibility.compareTo(pair.second) ?: Int.MIN_VALUE
+        }
+
+        for ((overridden, overriddenVisibility) in visibilities) {
+            val compare = visibility.compareTo(overriddenVisibility)
+            if (compare == null) {
+                // TODO: not ready yet (even after determinism massage), e.g., a Kotlin class that extends a Java class
+                // reporter.reportCannotChangeAccessPrivilege(this, overridden.fir)
+                return
+            } else if (compare < 0) {
+                reporter.reportCannotWeakenAccessPrivilege(this, overridden.fir)
+                return
+            }
+        }
+    }
+
     private fun FirCallableMemberDeclaration<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
@@ -152,6 +177,8 @@ object FirOverrideChecker : FirRegularClassChecker() {
             reporter.reportOverridingFinalMember(function, it)
         }
 
+        function.checkVisibility(reporter, overriddenFunctionSymbols)
+
         val restriction = function.checkReturnType(
             overriddenSymbols = overriddenFunctionSymbols,
             typeCheckerContext = typeCheckerContext,
@@ -189,6 +216,8 @@ object FirOverrideChecker : FirRegularClassChecker() {
             reporter.reportVarOverriddenByVal(property, it)
         }
 
+        property.checkVisibility(reporter, overriddenPropertySymbols)
+
         val restriction = property.checkReturnType(
             overriddenSymbols = overriddenPropertySymbols,
             typeCheckerContext = typeCheckerContext,
@@ -225,6 +254,28 @@ object FirOverrideChecker : FirRegularClassChecker() {
         overridden: FirMemberDeclaration
     ) {
         overriding.source?.let { report(FirErrors.VAR_OVERRIDDEN_BY_VAL.on(it, overriding, overridden)) }
+    }
+
+    private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(
+        overriding: FirMemberDeclaration,
+        overridden: FirCallableDeclaration<*>,
+    ) {
+        overriding.source?.let { source ->
+            overridden.containingClass()?.let { containingClass ->
+                report(FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE.on(source, overriding.visibility, overridden, containingClass.name))
+            }
+        }
+    }
+
+    private fun DiagnosticReporter.reportCannotChangeAccessPrivilege(
+        overriding: FirMemberDeclaration,
+        overridden: FirCallableDeclaration<*>,
+    ) {
+        overriding.source?.let { source ->
+            overridden.containingClass()?.let { containingClass ->
+                report(FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE.on(source, overriding.visibility, overridden, containingClass.name))
+            }
+        }
     }
 
     private fun DiagnosticReporter.reportReturnTypeMismatchOnFunction(

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -140,6 +141,9 @@ object FirErrors {
     // Overrides
     val NOTHING_TO_OVERRIDE by error1<FirSourceElement, KtModifierListOwner, FirMemberDeclaration>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
     val OVERRIDING_FINAL_MEMBER by error2<FirSourceElement, KtNamedDeclaration, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
+
+    val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error3<FirSourceElement, KtModifierListOwner, Visibility, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val CANNOT_CHANGE_ACCESS_PRIVILEGE by error3<FirSourceElement, KtModifierListOwner, Visibility, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
 
     val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
     val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)

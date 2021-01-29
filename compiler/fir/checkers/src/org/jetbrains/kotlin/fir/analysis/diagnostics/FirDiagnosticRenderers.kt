@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
@@ -53,6 +54,10 @@ object FirDiagnosticRenderers {
             is FirCallableDeclaration<*> -> element.symbol.callableId.callableName.asString()
             else -> "???"
         }
+    }
+
+    val VISIBILITY = Renderer { visibility: Visibility ->
+        visibility.externalDisplayName
     }
 
     val DECLARATION_NAME = Renderer { declaration: FirMemberDeclaration ->
