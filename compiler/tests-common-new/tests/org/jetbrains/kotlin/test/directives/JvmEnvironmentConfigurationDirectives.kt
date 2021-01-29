@@ -54,8 +54,7 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         additionalParser = JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
-    val SAM_CONVERSIONS by enumDirective<JvmSamConversions>(
+    val SAM_CONVERSIONS by enumDirective(
         description = "SAM conversion code generation scheme",
         additionalParser = JvmClosureGenerationScheme.Companion::fromString
     )
