@@ -4,6 +4,10 @@
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
 // FULL_JDK
+
+// no stream api on Android
+// IGNORE_BACKEND: ANDROID
+
 import java.util.stream.*
 
 fun box(): String {
