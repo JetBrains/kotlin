@@ -5,28 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
 class TargetProvider(
     val target: LeafTarget,
-    val builtInsClass: Class<out KotlinBuiltIns>,
-    val builtInsProvider: BuiltInsProvider,
     val modulesProvider: ModulesProvider,
     val dependeeModulesProvider: ModulesProvider?
 )
-
-interface BuiltInsProvider {
-    fun loadBuiltIns(): KotlinBuiltIns
-
-    companion object {
-        val defaultBuiltInsProvider = object : BuiltInsProvider {
-            override fun loadBuiltIns() = DefaultBuiltIns.Instance
-        }
-    }
-}
 
 interface ModulesProvider {
     class ModuleInfo(

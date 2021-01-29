@@ -102,11 +102,7 @@ class CirTreeMerger(
         commonModuleInfos: Map<String, ModuleInfo>,
         dependeeModules: Collection<ModuleDescriptor>
     ) {
-        rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(
-            targetProvider.target,
-            targetProvider.builtInsClass.name,
-            targetProvider.builtInsProvider
-        )
+        rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(targetProvider.target)
 
         val targetDependeeModules = targetProvider.dependeeModulesProvider?.loadModules(dependeeModules)?.values.orEmpty()
         val allDependeeModules = targetDependeeModules + dependeeModules

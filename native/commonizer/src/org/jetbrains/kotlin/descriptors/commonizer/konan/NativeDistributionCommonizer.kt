@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
 import org.jetbrains.kotlin.descriptors.commonizer.stats.*
@@ -138,8 +137,7 @@ class NativeDistributionCommonizer(
         val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
             val storageManager = LockBasedStorageManager("Commonized modules")
 
-            val stdlibProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
-            dependeeModulesProvider = stdlibProvider
+            dependeeModulesProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
 
             allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
                 if (librariesToCommonize.libraries.isEmpty()) return@forEach
@@ -149,8 +147,6 @@ class NativeDistributionCommonizer(
                 addTarget(
                     TargetProvider(
                         target = target,
-                        builtInsClass = KonanBuiltIns::class.java,
-                        builtInsProvider = stdlibProvider,
                         modulesProvider = modulesProvider,
                         dependeeModulesProvider = null // stdlib is already set as common dependency
                     )
