@@ -49,6 +49,7 @@ internal fun textAttributesKeyForTypeDeclaration(declaration: PsiElement): TextA
     declaration is KtClass -> textAttributesForClass(declaration)
     declaration is PsiClass && declaration.isInterface && !declaration.isAnnotationType -> Colors.TRAIT
     declaration.isAnnotationClass() -> Colors.ANNOTATION
+    declaration is KtPrimaryConstructor && declaration.parent.isAnnotationClass() -> Colors.ANNOTATION
     declaration is KtObjectDeclaration -> Colors.OBJECT
     declaration is PsiEnumConstant -> Colors.ENUM_ENTRY
     declaration is PsiClass && declaration.hasModifier(JvmModifier.ABSTRACT) -> Colors.ABSTRACT_CLASS

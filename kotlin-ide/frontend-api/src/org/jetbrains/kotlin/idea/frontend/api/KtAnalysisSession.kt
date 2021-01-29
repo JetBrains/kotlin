@@ -80,7 +80,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     val builtinTypes: KtBuiltinTypes get() = typeProvider.builtinTypes
 
-    fun KtClassOrObjectSymbol.buildTypeForSymbol(): KtType = typeProvider.buildTypeForSymbol(this)
+    fun KtClassOrObjectSymbol.buildSelfClassType(): KtType = typeProvider.buildSelfClassType(this)
 
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 

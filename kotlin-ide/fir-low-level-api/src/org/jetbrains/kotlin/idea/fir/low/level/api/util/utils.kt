@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.util
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -14,10 +15,8 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
@@ -92,3 +91,10 @@ internal fun IdeaModuleInfo.collectTransitiveDependenciesWithSelf(): List<IdeaMo
     collect(this)
     return result.toList()
 }
+
+internal fun KtDeclaration.hasFqName(): Boolean =
+    parentsOfType<KtDeclaration>(withSelf = false).all { it.isNonAnonymousClassOrObject() }
+
+internal fun KtDeclaration.isNonAnonymousClassOrObject() =
+    this is KtClassOrObject
+            && !this.isObjectLiteral()

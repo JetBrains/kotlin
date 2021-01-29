@@ -337,10 +337,10 @@ internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, 
 
         if (thisSymbol == baseSymbol) return@analyze false
 
-        val baseType = baseSymbol.buildTypeForSymbol()
+        val baseType = baseSymbol.buildSelfClassType()
 
         if (checkDeep) {
-            thisSymbol.buildTypeForSymbol().isSubTypeOf(baseType)
+            thisSymbol.buildSelfClassType().isSubTypeOf(baseType)
         } else {
             thisSymbol.superTypes.any { baseType.isEqualTo(it.type) }
         }

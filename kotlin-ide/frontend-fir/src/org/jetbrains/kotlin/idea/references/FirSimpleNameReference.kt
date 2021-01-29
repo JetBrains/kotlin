@@ -18,14 +18,16 @@ internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression
 ) : KtSimpleNameReference(expression), KtFirReference {
 
-    private fun KtAnalysisSession.fixUpAnnotationCallResolveToCtor(resultsToFix: Collection<KtSymbol>): Collection<KtSymbol> {
-        if (resultsToFix.isEmpty()) return resultsToFix
+    private val isAnnotationCall: Boolean
+        get() {
+            val ktUserType = expression.parent as? KtUserType ?: return false
+            val ktTypeReference = ktUserType.parent as? KtTypeReference ?: return false
+            val ktConstructorCalleeExpression = ktTypeReference.parent as? KtConstructorCalleeExpression ?: return false
+            return ktConstructorCalleeExpression.parent is KtAnnotationEntry
+        }
 
-        val isAnnotationCall = (((expression.parent as? KtUserType)
-            ?.parent as? KtTypeReference)
-            ?.parent as? KtConstructorCalleeExpression)
-            ?.parent is KtAnnotationEntry
-        if (!isAnnotationCall) return resultsToFix
+    private fun KtAnalysisSession.fixUpAnnotationCallResolveToCtor(resultsToFix: Collection<KtSymbol>): Collection<KtSymbol> {
+        if (resultsToFix.isEmpty() || !isAnnotationCall) return resultsToFix
 
         return resultsToFix.map { targetSymbol ->
             if (targetSymbol is KtFirClassOrObjectSymbol && targetSymbol.classKind == KtClassKind.ANNOTATION_CLASS) {
@@ -37,6 +39,7 @@ internal class KtFirSimpleNameReference(
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFirAnalysisSession)
         val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KtFirSimpleNameReference, this)
+        //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
         return fixUpAnnotationCallResolveToCtor(results)
     }
 

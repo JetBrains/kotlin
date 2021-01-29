@@ -31,7 +31,7 @@ internal class KtFirTypeProvider(
     override val builtinTypes: KtBuiltinTypes =
         KtFirBuiltInTypes(analysisSession.firResolveState.rootModuleSession.builtinTypes, analysisSession.firSymbolBuilder, token)
 
-    override fun buildTypeForSymbol(symbol: KtClassOrObjectSymbol): KtType {
+    override fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType {
         require(symbol is KtFirClassOrObjectSymbol)
         val type = symbol.firRef.withFir(FirResolvePhase.TYPES) { firClass ->
             ConeClassLikeTypeImpl(

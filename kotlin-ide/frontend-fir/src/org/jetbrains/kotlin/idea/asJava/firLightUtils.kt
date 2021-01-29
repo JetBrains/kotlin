@@ -66,7 +66,7 @@ internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): P
     require(this is KtFirClassOrObjectSymbol)
 
     val types = analyzeWithSymbolAsContext(this) {
-        this@typeForClassSymbol.buildTypeForSymbol()
+        this@typeForClassSymbol.buildSelfClassType()
     }
     require(types is KtFirType)
 
