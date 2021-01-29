@@ -91,7 +91,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         expression.statements.dropLast(1).forEach { it.transform(this, null) }
         reference.transformChildrenVoid(this)
 
-        if (shouldGenerateIndyLambdas && canUseIndySamConversion(reference, reference.type)) {
+        if (shouldGenerateIndyLambdas && canUseIndySamConversion(reference, reference.type, true)) {
             return wrapLambdaReferenceWithIndySamConversion(expression, reference)
         }
 
@@ -139,14 +139,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         reference.transformChildrenVoid()
 
         val samSuperType = expression.typeOperand
-        return if (shouldGenerateIndySamConversions && canUseIndySamConversion(reference, samSuperType)) {
+        return if (shouldGenerateIndySamConversions && canUseIndySamConversion(reference, samSuperType, false)) {
             wrapSamConversionArgumentWithIndySamConversion(expression)
         } else {
             FunctionReferenceBuilder(reference, samSuperType).build()
         }
     }
 
-    private fun canUseIndySamConversion(reference: IrFunctionReference, samSuperType: IrType): Boolean {
+    private fun canUseIndySamConversion(reference: IrFunctionReference, samSuperType: IrType, plainLambda: Boolean): Boolean {
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
         if (reference.origin != IrStatementOrigin.LAMBDA)
@@ -167,6 +167,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             target.returnType.isProhibitedTypeForIndySamConversion()
         )
             return false
+
+        if (plainLambda) {
+            var parametersCount = target.valueParameters.size
+            if (target.extensionReceiverParameter != null) ++parametersCount
+            if (parametersCount > 22)
+                return false
+        }
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
         if (target.parents.any { it.isInlineFunction() || it.isCrossinlineLambda() })
