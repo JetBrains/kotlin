@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
@@ -118,6 +119,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_RETURN_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBILITY_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
@@ -135,6 +137,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
@@ -337,6 +340,18 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 TO_STRING,
                 DECLARATION_NAME
             ) // #
+            map.put(
+                CATCH_PARAMETER_WITH_DEFAULT_VALUE,
+                "Catch clause parameter may not have a default value"
+            )
+            map.put(
+                REIFIED_TYPE_IN_CATCH_CLAUSE,
+                "Reified type is forbidden for catch parameter"
+            )
+            map.put(
+                TYPE_PARAMETER_IN_CATCH_CLAUSE,
+                "Type parameter is forbidden for catch parameter"
+            )
 
             // Redeclarations
             map.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class")

@@ -21,9 +21,11 @@ abstract class ExpressionCheckers {
     open val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker> = emptySet()
     open val functionCallCheckers: Set<FirFunctionCallChecker> = emptySet()
     open val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = emptySet()
+    open val tryExpressionCheckers: Set<FirTryExpressionChecker> = emptySet()
 
     @CheckersComponentInternal internal val allBasicExpressionCheckers: Set<FirBasicExpressionChecker> get() = basicExpressionCheckers
     @CheckersComponentInternal internal val allQualifiedAccessCheckers: Set<FirQualifiedAccessChecker> get() = qualifiedAccessCheckers + allBasicExpressionCheckers
     @CheckersComponentInternal internal val allFunctionCallCheckers: Set<FirFunctionCallChecker> get() = functionCallCheckers + allQualifiedAccessCheckers
     @CheckersComponentInternal internal val allVariableAssignmentCheckers: Set<FirVariableAssignmentChecker> get() = variableAssignmentCheckers + allBasicExpressionCheckers
+    @CheckersComponentInternal internal val allTryExpressionCheckers: Set<FirTryExpressionChecker> get() = tryExpressionCheckers + allBasicExpressionCheckers
 }
