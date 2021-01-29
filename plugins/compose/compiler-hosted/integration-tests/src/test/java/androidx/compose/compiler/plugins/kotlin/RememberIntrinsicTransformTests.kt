@@ -381,18 +381,18 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
-    fun testAmbientCallBeforeRemember(): Unit = comparisonPropagation(
+    fun testCompositionLocalCallBeforeRemember(): Unit = comparisonPropagation(
         """
-            import androidx.compose.runtime.ambientOf
+            import androidx.compose.runtime.compositionLocalOf
 
             class Foo
             class Bar
-            val ambientBar = ambientOf<Bar> { Bar() }
+            val compositionLocalBar = compositionLocalOf<Bar> { Bar() }
         """,
         """
             @Composable
             fun Test() {
-                val bar = ambientBar.current
+                val bar = compositionLocalBar.current
                 val foo = remember(bar) { Foo() }
             }
         """,
@@ -401,7 +401,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<curren...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                val bar = ambientBar.current
+                val bar = compositionLocalBar.current
                 val foo = %composer.cache(%composer.changed(bar)) {
                   val tmp0_return = Foo()
                   tmp0_return
@@ -417,18 +417,18 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
-    fun testAmbientCallAsInput(): Unit = comparisonPropagation(
+    fun testCompositionLocalCallAsInput(): Unit = comparisonPropagation(
         """
-            import androidx.compose.runtime.ambientOf
+            import androidx.compose.runtime.compositionLocalOf
 
             class Foo
             class Bar
-            val ambientBar = ambientOf<Bar> { Bar() }
+            val compositionLocalBar = compositionLocalOf<Bar> { Bar() }
         """,
         """
             @Composable
             fun Test() { 
-                val foo = remember(ambientBar.current) { Foo() }
+                val foo = remember(compositionLocalBar.current) { Foo() }
             }
         """,
         """
@@ -436,7 +436,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(%composer: Composer?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<curren...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                val foo = %composer.cache(%composer.changed(ambientBar.current)) {
+                val foo = %composer.cache(%composer.changed(compositionLocalBar.current)) {
                   val tmp0_return = Foo()
                   tmp0_return
                 }
