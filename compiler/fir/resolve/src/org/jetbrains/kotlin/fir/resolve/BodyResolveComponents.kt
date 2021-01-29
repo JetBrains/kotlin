@@ -180,7 +180,7 @@ fun SessionHolder.collectImplicitReceivers(
             throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
         }
     }
-    return ImplicitReceivers(implicitReceiverValue, implicitCompanionValues.asReversed())
+    return ImplicitReceivers(implicitReceiverValue, implicitCompanionValues)
 }
 
 fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultType: ConeKotlinType): TowerElementsForClass {
@@ -221,8 +221,8 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultTy
         owner.staticScope(this),
         companionReceiver,
         companionObject?.staticScope(this),
-        superClassesStaticsAndCompanionReceivers,
-        allImplicitCompanionValues
+        superClassesStaticsAndCompanionReceivers.asReversed(),
+        allImplicitCompanionValues.asReversed()
     )
 }
 
@@ -234,6 +234,8 @@ class TowerElementsForClass(
     val staticScope: FirScope?,
     val companionReceiver: ImplicitReceiverValue<*>?,
     val companionStaticScope: FirScope?,
+    // Ordered from inner scopes to outer scopes.
     val superClassesStaticsAndCompanionReceivers: List<FirTowerDataElement>,
+    // Ordered from inner scopes to outer scopes.
     val implicitCompanionValues: List<ImplicitReceiverValue<*>>
 )

@@ -35789,6 +35789,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("simpleStaticInJavaSuperChain.kt")
+        public void testSimpleStaticInJavaSuperChain() throws Exception {
+            runTest("compiler/testData/codegen/box/statics/simpleStaticInJavaSuperChain.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/statics/syntheticAccessor.kt");
