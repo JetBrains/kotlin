@@ -53,6 +53,15 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
+            ComposeErrors.MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION,
+            "Parameter {0} cannot be inlined inside of lambda argument {1} of {2} " +
+                "without also being annotated with @DisallowComposableCalls",
+            Renderers.NAME,
+            Renderers.NAME,
+            Renderers.NAME
+        )
+
+        MAP.put(
             ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD,
             "Composable properties are not able to have backing fields"
         )
