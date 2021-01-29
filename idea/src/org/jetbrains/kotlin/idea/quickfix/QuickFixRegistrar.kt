@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative.THROWS_LIST_E
 
 class QuickFixRegistrar : QuickFixContributor {
     override fun registerQuickFixes(quickFixes: QuickFixes) {
-        fun DiagnosticFactory<*>.registerFactory(vararg factory: KotlinIntentionActionsFactory) {
+        fun DiagnosticFactory<*>.registerFactory(vararg factory: QuickFixFactory) {
             quickFixes.register(this, *factory)
         }
 
