@@ -19,6 +19,19 @@ class DiagnosticListBuilder private constructor() {
     @PrivateForInline
     val diagnostics = mutableListOf<Diagnostic>()
 
+    @PrivateForInline
+    var currentGroupName: String? = null
+
+    @OptIn(PrivateForInline::class)
+    inline fun group(groupName: String, inner: () -> Unit) {
+        if (currentGroupName != null) {
+            error("Groups can not be nested ")
+        }
+        currentGroupName = groupName
+        inner()
+        currentGroupName = null
+    }
+
     @OptIn(PrivateForInline::class)
     inline fun <reified E : FirSourceElement, reified P : PsiElement> error(
         positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
@@ -45,6 +58,7 @@ class DiagnosticListBuilder private constructor() {
             sourceElementType = typeOf<E>(),
             psiType = typeOf<P>(),
             positioningStrategy,
+            group = currentGroupName,
         ).apply(init).build()
         AlwaysReturningUnitPropertyDelegate
     }
@@ -68,7 +82,8 @@ class DiagnosticBuilder(
     private val name: String,
     private val sourceElementType: KType,
     private val psiType: KType,
-    private val positioningStrategy: PositioningStrategy
+    private val positioningStrategy: PositioningStrategy,
+    private val group: String?
 ) {
     @PrivateForInline
     val parameters = mutableListOf<DiagnosticParameter>()
@@ -92,5 +107,6 @@ class DiagnosticBuilder(
         psiType,
         parameters,
         positioningStrategy,
+        group
     )
 }

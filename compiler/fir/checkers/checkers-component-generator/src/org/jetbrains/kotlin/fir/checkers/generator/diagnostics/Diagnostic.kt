@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.FirSourceElement
-import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 data class Diagnostic(
@@ -18,6 +15,7 @@ data class Diagnostic(
     val psiType: KType,
     val parameters: List<DiagnosticParameter>,
     val positioningStrategy: PositioningStrategy,
+    val group: String?,
 )
 
 data class DiagnosticParameter(

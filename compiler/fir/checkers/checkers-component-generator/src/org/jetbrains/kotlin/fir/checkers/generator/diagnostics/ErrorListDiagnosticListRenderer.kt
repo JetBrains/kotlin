@@ -33,9 +33,21 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
     private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
         inBracketsWithIndent("object FirErrors") {
-            for (it in diagnosticList.diagnostics) {
-                printDiagnostic(it)
+            val groups = diagnosticList.diagnostics.groupBy { it.group }
+            for ((group, diagnostics) in groups) {
+                printDiagnosticGroup(group, diagnostics)
+                println()
             }
+        }
+    }
+
+    private fun SmartPrinter.printDiagnosticGroup(
+        group: String?,
+        diagnostics: List<Diagnostic>
+    ) {
+        println("// ${group ?: "NO GROUP"}")
+        for (it in diagnostics) {
+            printDiagnostic(it)
         }
     }
 
