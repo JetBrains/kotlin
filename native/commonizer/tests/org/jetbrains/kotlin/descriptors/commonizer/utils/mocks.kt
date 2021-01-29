@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
-import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.descriptors.commonizer.builder.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.types.*
 import java.io.File
 import kotlin.random.Random
+import org.jetbrains.kotlin.storage.getValue
 
 // expected special name for module
 internal fun mockEmptyModule(moduleName: String): ModuleDescriptor {
@@ -40,38 +40,22 @@ internal fun mockClassType(
 ): KotlinType = LazyWrappedType(LockBasedStorageManager.NO_LOCKS) {
     val classFqName = FqName(fqName)
 
-    val targetComponents = TargetDeclarationsBuilderComponents(
-        storageManager = LockBasedStorageManager.NO_LOCKS,
-        target = LeafTarget("Arbitrary target"),
-        builtIns = DefaultBuiltIns.Instance,
-        lazyClassifierLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { LazyClassifierLookupTable(emptyMap()) },
-        index = 0,
-        cache = DeclarationsBuilderCache(1)
+    val classDescriptor = ClassDescriptorImpl(
+        /* containingDeclaration = */ createPackageFragmentForClassifier(classFqName),
+        /* name = */ classFqName.shortName(),
+        /* modality = */ Modality.FINAL,
+        /* classKind = */ ClassKind.CLASS,
+        /* supertypes = */ emptyList(),
+        /* source = */ SourceElement.NO_SOURCE,
+        /* isExternal = */ false,
+        /* storageManager = */ LockBasedStorageManager.NO_LOCKS
     )
 
-    val classDescriptor = CommonizedClassDescriptor(
-        targetComponents = targetComponents,
-        containingDeclaration = createPackageFragmentForClassifier(classFqName),
-        annotations = Annotations.EMPTY,
-        name = classFqName.shortName(),
-        kind = ClassKind.CLASS,
-        modality = Modality.FINAL,
-        visibility = DescriptorVisibilities.PUBLIC,
-        isCompanion = false,
-        isData = false,
-        isInline = false,
-        isInner = false,
-        isExternal = false,
-        isExpect = false,
-        isActual = false,
-        cirDeclaredTypeParameters = emptyList(),
-        companionObjectName = null,
-        cirSupertypes = emptyList()
+    classDescriptor.initialize(
+        /* unsubstitutedMemberScope = */ MemberScope.Empty,
+        /* constructors = */ emptySet(),
+        /* primaryConstructor = */ null
     )
-
-    classDescriptor.unsubstitutedMemberScope = CommonizedMemberScope()
-
-    classDescriptor.initialize(constructors = emptyList())
 
     classDescriptor.defaultType.makeNullableAsSpecified(nullable)
 }
@@ -85,20 +69,31 @@ internal fun mockTAType(
 
     val rightHandSideType = rightHandSideTypeProvider().lowerIfFlexible()
 
-    val typeAliasDescriptor = CommonizedTypeAliasDescriptor(
-        storageManager = LockBasedStorageManager.NO_LOCKS,
+    val typeAliasDescriptor = object : AbstractTypeAliasDescriptor(
         containingDeclaration = createPackageFragmentForClassifier(typeAliasFqName),
         annotations = Annotations.EMPTY,
         name = typeAliasFqName.shortName(),
-        visibility = DescriptorVisibilities.PUBLIC,
-        isActual = false
-    )
+        sourceElement = SourceElement.NO_SOURCE,
+        visibilityImpl = DescriptorVisibilities.PUBLIC
+    ) {
+        override val storageManager get() = LockBasedStorageManager.NO_LOCKS
 
-    typeAliasDescriptor.initialize(
-        declaredTypeParameters = emptyList(),
-        underlyingType = LockBasedStorageManager.NO_LOCKS.createLazyValue { rightHandSideType.getAbbreviation() ?: rightHandSideType },
-        expandedType = LockBasedStorageManager.NO_LOCKS.createLazyValue { rightHandSideType }
-    )
+        private val defaultTypeImpl = storageManager.createLazyValue { computeDefaultType() }
+        override fun getDefaultType() = defaultTypeImpl()
+
+        override val underlyingType by storageManager.createLazyValue { rightHandSideType.getAbbreviation() ?: rightHandSideType }
+        override val expandedType by storageManager.createLazyValue { rightHandSideType }
+
+        override val classDescriptor get() = expandedType.constructor.declarationDescriptor as? ClassDescriptor
+        override val constructors by storageManager.createLazyValue { getTypeAliasConstructors() }
+
+        private val typeConstructorTypeParametersImpl by storageManager.createLazyValue { computeConstructorTypeParameters() }
+        override fun getTypeConstructorTypeParameters() = typeConstructorTypeParametersImpl
+
+        override fun substitute(substitutor: TypeSubstitutor) = error("Unsupported")
+    }
+
+    typeAliasDescriptor.initialize(declaredTypeParameters = emptyList())
 
     (rightHandSideType.getAbbreviatedType()?.expandedType ?: rightHandSideType)
         .withAbbreviation(typeAliasDescriptor.defaultType)
