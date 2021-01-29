@@ -96,6 +96,13 @@ object FirOverrideChecker : FirRegularClassChecker() {
         return null
     }
 
+    private fun FirProperty.checkMutability(
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+    ): FirMemberDeclaration? {
+        if (isVar) return null
+        return overriddenSymbols.find { (it.fir as? FirProperty)?.isVar == true }?.fir?.safeAs()
+    }
+
     private fun FirCallableMemberDeclaration<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
@@ -178,6 +185,10 @@ object FirOverrideChecker : FirRegularClassChecker() {
             reporter.reportOverridingFinalMember(property, it)
         }
 
+        property.checkMutability(overriddenPropertySymbols)?.let {
+            reporter.reportVarOverriddenByVal(property, it)
+        }
+
         val restriction = property.checkReturnType(
             overriddenSymbols = overriddenPropertySymbols,
             typeCheckerContext = typeCheckerContext,
@@ -207,6 +218,13 @@ object FirOverrideChecker : FirRegularClassChecker() {
                 report(FirErrors.OVERRIDING_FINAL_MEMBER.on(source, overridden, containingClass.name))
             }
         }
+    }
+
+    private fun DiagnosticReporter.reportVarOverriddenByVal(
+        overriding: FirMemberDeclaration,
+        overridden: FirMemberDeclaration
+    ) {
+        overriding.source?.let { report(FirErrors.VAR_OVERRIDDEN_BY_VAL.on(it, overriding, overridden)) }
     }
 
     private fun DiagnosticReporter.reportReturnTypeMismatchOnFunction(

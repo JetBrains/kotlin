@@ -154,6 +154,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_INITIALI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_NEVER_READ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_ANNOTATION_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
@@ -350,6 +351,13 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 VAR_TYPE_MISMATCH_ON_OVERRIDE,
                 "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
                 DECLARATION_NAME,
+                FQ_NAMES_IN_TYPES
+            )
+
+            map.put(
+                VAR_OVERRIDDEN_BY_VAL,
+                "Var-property {0} cannot be overridden by val-property {1}",
+                FQ_NAMES_IN_TYPES,
                 FQ_NAMES_IN_TYPES
             )
 
