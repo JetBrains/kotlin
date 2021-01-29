@@ -28,6 +28,14 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val USE_JAVAC_BASED_ON_JVM_TARGET by directive(
+        description = """
+            Determine version of javac for compilation of java files based
+              on JvmTarget of module. If not enabled then javac from
+              current runtime will be used
+        """.trimIndent()
+    )
+
     val JAVAC_OPTIONS by stringDirective(
         description = "Specify javac options to compile java files"
     )
