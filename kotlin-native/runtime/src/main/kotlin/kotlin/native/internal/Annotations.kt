@@ -145,3 +145,9 @@ internal annotation class HasFinalizer
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(value = AnnotationRetention.BINARY)
 internal annotation class InternalForKotlinNative
+
+/**
+ * Marks a class that has a freeze hook.
+ */
+@Target(AnnotationTarget.CLASS)
+internal annotation class HasFreezeHook

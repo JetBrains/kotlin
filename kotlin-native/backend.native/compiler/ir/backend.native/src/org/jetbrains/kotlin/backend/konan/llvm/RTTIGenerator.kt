@@ -75,6 +75,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             result = result or TF_HAS_FINALIZER
         }
 
+        if (irClass.hasAnnotation(KonanFqNames.hasFreezeHook)) {
+            result = result or TF_HAS_FREEZE_HOOK
+        }
+
         return result
     }
 
@@ -638,4 +642,5 @@ private const val TF_OBJC_DYNAMIC = 8
 private const val TF_LEAK_DETECTOR_CANDIDATE = 16
 private const val TF_SUSPEND_FUNCTION = 32
 private const val TF_HAS_FINALIZER = 64
+private const val TF_HAS_FREEZE_HOOK = 128
 

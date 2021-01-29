@@ -206,7 +206,7 @@ private fun createTestTask(
                     ).apply {
                 this.sanitizer = sanitizer
                 excludeFiles = emptyList()
-                includeFiles = listOf("**/*Test.cpp", "**/*Test.mm")
+                includeFiles = listOf("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
                 dependsOn(it)
                 dependsOn("downloadGoogleTest")
                 compilerArgs.addAll(it.compilerArgs)

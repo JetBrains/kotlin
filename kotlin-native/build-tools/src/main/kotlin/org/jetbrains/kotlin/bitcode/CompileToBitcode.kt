@@ -33,7 +33,9 @@ open class CompileToBitcode @Inject constructor(
     val linkerArgs = mutableListOf<String>()
     var excludeFiles: List<String> = listOf(
             "**/*Test.cpp",
+            "**/*TestSupport.cpp",
             "**/*Test.mm",
+            "**/*TestSupport.mm",
     )
     var includeFiles: List<String> = listOf(
             "**/*.cpp",
