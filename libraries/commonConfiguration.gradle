@@ -208,8 +208,10 @@ ext.configureLegacyPublishing = { Project project ->
 ext.configureJvmIrBackend = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {
-            useIR = project.kotlinBuildProperties.useIRForLibraries
-            freeCompilerArgs += "-Xuse-old-backend"
+            if (!project.kotlinBuildProperties.useIRForLibraries) {
+                useIR = false
+                freeCompilerArgs += "-Xuse-old-backend"
+            }
         }
     }
 }
