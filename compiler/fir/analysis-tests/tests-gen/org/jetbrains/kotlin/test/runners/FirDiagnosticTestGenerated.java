@@ -57,6 +57,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("catchParameter.kt")
+        public void testCatchParameter() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/catchParameter.kt");
+        }
+
+        @Test
         @TestMetadata("companion.kt")
         public void testCompanion() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");

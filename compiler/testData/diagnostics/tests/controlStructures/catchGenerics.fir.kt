@@ -17,10 +17,10 @@ fun bar() {
 inline fun <reified E : Exception, R> tryCatch(lazy: () -> R, failure: (E) -> R): R =
     try {
         lazy()
-    } catch (e: E) {
+    } catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE!>e: E<!>) {
         failure(e)
     }
 
 fun <T : Throwable> tryCatch() {
-    try { } catch (e: T) { }
+    try { } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>e: T<!>) { }
 }
