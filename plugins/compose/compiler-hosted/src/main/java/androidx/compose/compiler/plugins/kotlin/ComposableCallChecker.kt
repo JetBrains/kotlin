@@ -83,12 +83,60 @@ open class ComposableCallChecker :
         container.useInstance(this)
     }
 
+    fun checkInlineLambdaCall(
+        resolvedCall: ResolvedCall<*>,
+        reportOn: PsiElement,
+        context: CallCheckerContext
+    ) {
+        if (resolvedCall !is VariableAsFunctionResolvedCall) return
+        val descriptor = resolvedCall.variableCall.resultingDescriptor
+        if (descriptor !is ValueParameterDescriptor) return
+        if (descriptor.type.composablePreventCaptureContract() == true) return
+        val function = descriptor.containingDeclaration
+        if (
+            function is FunctionDescriptor &&
+            function.isInline &&
+            function.isMarkedAsComposable()
+        ) {
+            val bindingContext = context.trace.bindingContext
+            var node: PsiElement? = reportOn
+            loop@while (node != null) {
+                when (node) {
+                    is KtLambdaExpression -> {
+                        val arg = getArgumentDescriptor(node.functionLiteral, bindingContext)
+                        if (arg?.type?.composablePreventCaptureContract() == true) {
+                            val parameterSrc = descriptor.findPsi()
+                            if (parameterSrc != null) {
+                                missingDisallowedComposableCallPropagation(
+                                    context,
+                                    parameterSrc,
+                                    descriptor,
+                                    arg
+                                )
+                            }
+                        }
+                    }
+                    is KtFunction -> {
+                        val fn = bindingContext[BindingContext.FUNCTION, node]
+                        if (fn == function) {
+                            return
+                        }
+                    }
+                }
+                node = node.parent as? KtElement
+            }
+        }
+    }
+
     override fun check(
         resolvedCall: ResolvedCall<*>,
         reportOn: PsiElement,
         context: CallCheckerContext
     ) {
-        if (!resolvedCall.isComposableInvocation()) return
+        if (!resolvedCall.isComposableInvocation()) {
+            checkInlineLambdaCall(resolvedCall, reportOn, context)
+            return
+        }
         val bindingContext = context.trace.bindingContext
         var node: PsiElement? = reportOn
         loop@while (node != null) {
@@ -215,6 +263,22 @@ open class ComposableCallChecker :
             }
             node = node.parent as? KtElement
         }
+    }
+
+    private fun missingDisallowedComposableCallPropagation(
+        context: CallCheckerContext,
+        unmarkedParamEl: PsiElement,
+        unmarkedParamDescriptor: ValueParameterDescriptor,
+        markedParamDescriptor: ValueParameterDescriptor
+    ) {
+        context.trace.report(
+            ComposeErrors.MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION.on(
+                unmarkedParamEl,
+                unmarkedParamDescriptor,
+                markedParamDescriptor,
+                markedParamDescriptor.containingDeclaration
+            )
+        )
     }
 
     private fun illegalCall(
