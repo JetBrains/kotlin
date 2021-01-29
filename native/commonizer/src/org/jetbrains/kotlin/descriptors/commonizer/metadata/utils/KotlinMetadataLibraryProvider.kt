@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 /**
  * Provides access to metadata using default compiler's routine.
  */
-// TODO: move to a separate module (kotlin-native-utils-metadata?) to share with C-interop tool?
-class TrivialLibraryProvider(
-    private val library: MetadataLibrary
-) : KlibModuleMetadata.MetadataLibraryProvider {
-
+// TODO: extract to a separate module (kotlin-native-utils-metadata?) to share with C-interop tool?
+class KotlinMetadataLibraryProvider(private val library: MetadataLibrary) : KlibModuleMetadata.MetadataLibraryProvider {
     override val moduleHeaderData: ByteArray
         get() = library.moduleHeaderData
 
@@ -34,7 +31,7 @@ class TrivialLibraryProvider(
             check(libraryPath.exists()) { "Library does not exist: $libraryPath" }
 
             val library = resolveSingleFileKlib(KFile(libraryPath.absolutePath), strategy = ToolingSingleFileKlibResolveStrategy)
-            return KlibModuleMetadata.read(TrivialLibraryProvider(library))
+            return KlibModuleMetadata.read(KotlinMetadataLibraryProvider(library))
         }
     }
 }
