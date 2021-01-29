@@ -114,8 +114,11 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<JvmStringConcat> STRING_CONCAT =
             CompilerConfigurationKey.create("Specifies string concatenation scheme");
 
-    public static final CompilerConfigurationKey<JvmSamConversions> SAM_CONVERSIONS =
+    public static final CompilerConfigurationKey<JvmClosureGenerationScheme> SAM_CONVERSIONS =
             CompilerConfigurationKey.create("SAM conversions code generation scheme");
+
+    public static final CompilerConfigurationKey<JvmClosureGenerationScheme> LAMBDAS =
+            CompilerConfigurationKey.create("Lambdas code generation scheme");
 
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.config
 
-enum class JvmSamConversions(
+enum class JvmClosureGenerationScheme(
     val description: String,
     val minJvmTarget: JvmTarget
 ) {
