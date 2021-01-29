@@ -1390,9 +1390,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             }
             final class TestKt%Example%1 implements A {
               <init>()V
-              public final compute-etMKIPo-etMKIPo(I)I
+              public final compute-etMKIPo(I)I
               public final static LTestKt%Example%1; INSTANCE
-              public synthetic bridge compute-etMKIPo(I)I
               static <clinit>()V
               final static INNERCLASS TestKt%Example%1 null null
               OUTERCLASS TestKt Example (LA;)V
