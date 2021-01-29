@@ -131,7 +131,16 @@ internal fun applyLanguageSettingsToKotlinOptions(
     }
 }
 
-private val apiVersionValues = ApiVersion.run { listOf(KOTLIN_1_0, KOTLIN_1_1, KOTLIN_1_2, KOTLIN_1_3, KOTLIN_1_4) }
+private val apiVersionValues = ApiVersion.run {
+    listOf(
+        KOTLIN_1_0,
+        KOTLIN_1_1,
+        KOTLIN_1_2,
+        KOTLIN_1_3,
+        KOTLIN_1_4,
+        KOTLIN_1_5
+    )
+}
 
 internal fun parseLanguageVersionSetting(versionString: String) = LanguageVersion.fromVersionString(versionString)
 internal fun parseApiVersionSettings(versionString: String) = apiVersionValues.find { it.versionString == versionString }
