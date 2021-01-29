@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.cfa.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
@@ -18,8 +19,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKING_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MAY_BE_NOT_INITIALIZED
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -29,22 +30,26 @@ object LeakingThisChecker : FirClassChecker() {
     override fun check(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         val properties = declaration.declarations
             .filterIsInstance<FirProperty>()
+            .filter { it.initializer == null && !it.isLateInit }
             .map { it.symbol }
-            .filter { it.fir.initializer == null && !it.fir.isLateInit }
+            .toHashSet()
+
         if (properties.isEmpty()) return
 
         val functions = declaration.declarations
             .filterIsInstance<FirSimpleFunction>()
             .map { it.symbol }
-        val classGraph = (declaration as FirControlFlowGraphOwner).controlFlowGraphReference?.controlFlowGraph ?: return
+            .toHashSet()
+        val originalGraph = (declaration as FirControlFlowGraphOwner).controlFlowGraphReference?.controlFlowGraph ?: return
+        val copiedGraph = originalGraph.copy()
 
-        val data = InterproceduralCollector(properties, functions).collect(classGraph)
-        GraphReporterVisitor(data, properties, reporter).reportForGraph(classGraph)
+        val data = InterproceduralCollector(properties, functions).collect(copiedGraph)
+        GraphReporterVisitor(data, properties, reporter, functions).reportForGraph(copiedGraph)
     }
 
     private class InterproceduralCollector(
-        private val globalProperties: Collection<FirPropertySymbol>,
-        private val functionsWhitelist: List<FirNamedFunctionSymbol>
+        private val globalProperties: HashSet<FirPropertySymbol>,
+        private val functionsWhitelist: HashSet<FirNamedFunctionSymbol>
     ) : InterproceduralVisitor<PathAwarePropertyUsageInfo, PropertyUsageInfo>() {
         fun collect(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwarePropertyUsageInfo> {
             return graph.collectDataForNodeInterprocedural(
@@ -55,16 +60,15 @@ object LeakingThisChecker : FirClassChecker() {
             )
         }
 
-        override fun visitNode(
-            node: CFGNode<*>,
-            data: MutableMap<CFGNode<*>, PathAwarePropertyUsageInfo>
-        ): PathAwarePropertyUsageInfo {
-            return data[node] ?: PathAwarePropertyUsageInfo.EMPTY
+        override fun visitNode(node: CFGNode<*>, data: List<Pair<EdgeLabel, PathAwarePropertyUsageInfo>>): PathAwarePropertyUsageInfo {
+            if (data.isEmpty()) return PathAwarePropertyUsageInfo.EMPTY
+            return data.map { (label, info) -> info.applyLabel(node, label) }
+                .reduce(PathAwarePropertyUsageInfo::merge)
         }
 
         override fun visitVariableAssignmentNode(
             node: VariableAssignmentNode,
-            data: MutableMap<CFGNode<*>, PathAwarePropertyUsageInfo>
+            data: List<Pair<EdgeLabel, PathAwarePropertyUsageInfo>>
         ): PathAwarePropertyUsageInfo {
             val dataForNode = visitNode(node, data)
             val symbol = node.fir.lValue.resolvedPropertySymbol ?: return dataForNode
@@ -78,18 +82,15 @@ object LeakingThisChecker : FirClassChecker() {
 
         override fun visitQualifiedAccessNode(
             node: QualifiedAccessNode,
-            data: MutableMap<CFGNode<*>, PathAwarePropertyUsageInfo>
+            data: List<Pair<EdgeLabel, PathAwarePropertyUsageInfo>>
         ): PathAwarePropertyUsageInfo {
             val dataForNode = visitNode(node, data)
             val symbol = node.fir.calleeReference.resolvedPropertySymbol ?: return dataForNode
             if (!isAccessNodeMayBeProcessed(symbol, node)) return dataForNode
 
-            return data
-                .mapNotNull { (k, v) ->
-                    val resolvedSymbol = (k.fir as? FirVariableAssignment)?.lValue?.resolvedPropertySymbol
-                    if (resolvedSymbol == symbol) v else null
-                }
-                .firstOrNull() ?: dataForNode
+            return dataForNode.update(symbol) {
+                it ?: EventOccurrencesRange.ZERO
+            }
         }
 
         private fun isAccessNodeMayBeProcessed(symbol: FirPropertySymbol, node: QualifiedAccessNode): Boolean {
@@ -110,7 +111,7 @@ object LeakingThisChecker : FirClassChecker() {
                 for (symbol in symbols) {
                     val v = updater.invoke(dataPerLabel[symbol])
                     if (v != null) {
-                        resultMap = resultMap.put(label, dataPerLabel.put(label, v))
+                        resultMap = resultMap.put(label, dataPerLabel.put(symbol, v))
                         changed = true
                     } else {
                         resultMap = resultMap.put(label, dataPerLabel)
@@ -127,49 +128,78 @@ object LeakingThisChecker : FirClassChecker() {
 
     private class GraphReporterVisitor(
         val data: Map<CFGNode<*>, PathAwarePropertyUsageInfo>,
-        val globalProperties: Collection<FirPropertySymbol>,
-        val reporter: DiagnosticReporter
+        val globalProperties: HashSet<FirPropertySymbol>,
+        val reporter: DiagnosticReporter,
+        val functionsWhitelist: HashSet<FirNamedFunctionSymbol>
     ) : InterproceduralVisitorVoid() {
+        private val reported = mutableSetOf<FirSourceElement>()
+
         fun reportForGraph(graph: ControlFlowGraph) {
-            graph.traverseInterprocedural(TraverseDirection.Forward, this)
+            graph.traverseInterprocedural(TraverseDirection.Forward, this, functionsWhitelist)
         }
 
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitFunctionCallNode(node: FunctionCallNode) {
             if (node.owner.declaration !is FirAnonymousInitializer) return
-            var inInlinedFunction = false
+            if ((node.fir.calleeReference as FirResolvedNamedReference).resolvedSymbol.fir.symbol !in functionsWhitelist) return
+
             val source = node.fir.source ?: return
+            if (source in reported) return
             val functionCallableSymbol = node.fir.toResolvedCallableSymbol() ?: return
 
-            for ((nodeKey, value) in data) {
-                if (nodeKey == node) {
-                    inInlinedFunction = true
-                } else if (inInlinedFunction) {
-                    if (value[NormalPath]?.isAlwaysInitialized != true) {
-                        reporter.report(source, LEAKING_THIS, functionCallableSymbol)
-                        break
-                    }
-                } else if (nodeKey is FunctionExitNode && nodeKey.owner == node.owner) {
-                    break
-                }
+            if (isReportNeeds(node)) {
+                reporter.report(source, LEAKING_THIS, functionCallableSymbol)
+                reported.add(source)
             }
         }
 
         override fun visitQualifiedAccessNode(node: QualifiedAccessNode) {
             if (node.fir.source?.kind is FirFakeSourceElementKind) return
 
+            val source = node.fir.source ?: return
+            if (source in reported) return
+
             val variableSymbol = node.fir.calleeReference.resolvedPropertySymbol ?: return
             val dataForNode = data[node]?.get(NormalPath)
             val variableFir = variableSymbol.fir
+
+            // getting the getter enter node for process it like function call
+            val getterEnterNode = node.followingNodes.find { (it.fir as? FirPropertyAccessor)?.isGetter == true }
+            if (getterEnterNode != null && node.owner.declaration is FirAnonymousInitializer) {
+                if (isReportNeeds(getterEnterNode)) {
+                    reporter.report(source, LEAKING_THIS, variableFir.symbol)
+                    reported.add(source)
+                }
+            }
 
             if (!variableFir.isMustBeInitialized) return
             if (variableSymbol !in globalProperties) return
 
             if (dataForNode?.isAlwaysInitialized != true && shouldToReport(variableSymbol, node)) {
-                val source = node.fir.source
                 reporter.report(source, MAY_BE_NOT_INITIALIZED, variableSymbol)
+                reported.add(source)
             }
+        }
+
+        private fun isReportNeeds(node: CFGNode<*>): Boolean {
+            var inInlinedFunction = false
+
+            for ((nodeKey, value) in data) {
+                if (nodeKey == node) {
+                    inInlinedFunction = true
+                } else if (inInlinedFunction && nodeKey is QualifiedAccessNode) {
+                    val property = nodeKey.fir.toResolvedCallableSymbol()
+                    if (property !in globalProperties) continue
+                    if (value[NormalPath]?.isAlwaysInitialized != true) {
+                        return true
+                    }
+                } else if (nodeKey is FunctionExitNode && nodeKey.owner == node.owner) {
+                    break
+                }
+            }
+
+            return false
         }
 
         private fun shouldToReport(symbol: FirPropertySymbol, node: QualifiedAccessNode): Boolean {
@@ -193,9 +223,9 @@ object LeakingThisChecker : FirClassChecker() {
     }
 
     class PropertyUsageInfo(
-        map: PersistentMap<EdgeLabel, EventOccurrencesRange> = persistentMapOf()
-    ) : ControlFlowInfo<PropertyUsageInfo, EdgeLabel, EventOccurrencesRange>(map) {
-        override val constructor: (PersistentMap<EdgeLabel, EventOccurrencesRange>) -> PropertyUsageInfo = ::PropertyUsageInfo
+        map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
+    ) : ControlFlowInfo<PropertyUsageInfo, FirPropertySymbol, EventOccurrencesRange>(map) {
+        override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyUsageInfo = ::PropertyUsageInfo
 
         companion object {
             val empty = PropertyUsageInfo()

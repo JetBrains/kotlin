@@ -11,20 +11,22 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 abstract class InterproceduralVisitorVoid : ControlFlowGraphVisitorVoid() {
     fun onNestedCall(
         direction: TraverseDirection,
         visitedSymbols: List<AbstractFirBasedSymbol<*>>,
-        node: CFGNode<*>
+        node: CFGNode<*>,
+        functionsWhitelist: Set<FirNamedFunctionSymbol>
     ) {
         if (node is FunctionCallNode) {
             val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirNamedFunctionSymbol ?: return
             if (functionSymbol in visitedSymbols) return
             val functionCfg = functionSymbol.fir.controlFlowGraphReference?.controlFlowGraph ?: return
 
-            functionCfg.traverseInterprocedural(direction, this, visitedSymbols + functionSymbol)
+            functionCfg.traverseInterprocedural(direction, this, functionsWhitelist, visitedSymbols + functionSymbol)
         } else if (node is QualifiedAccessNode) {
             val property = node.fir.calleeReference.resolvedPropertySymbol?.fir
             val propertySymbol = property?.symbol as? AbstractFirBasedSymbol<*>
@@ -33,12 +35,12 @@ abstract class InterproceduralVisitorVoid : ControlFlowGraphVisitorVoid() {
             property?.setter?.let {
                 val setterCfg = it.symbol.fir.controlFlowGraphReference?.controlFlowGraph ?: return@let
                 propertySymbol ?: return@let
-                setterCfg.traverseInterprocedural(direction, this, visitedSymbols + propertySymbol)
+                setterCfg.traverseInterprocedural(direction, this, functionsWhitelist, visitedSymbols + propertySymbol)
             }
             property?.getter?.let {
                 val getterCfg = it.symbol.fir.controlFlowGraphReference?.controlFlowGraph ?: return@let
                 propertySymbol ?: return@let
-                getterCfg.traverseInterprocedural(direction, this, visitedSymbols + propertySymbol)
+                getterCfg.traverseInterprocedural(direction, this, functionsWhitelist, visitedSymbols + propertySymbol)
             }
         }
     }

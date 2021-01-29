@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
-import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -16,23 +16,22 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 abstract class InterproceduralVisitor<I : PathAwareControlFlowInfo<I, V>, V : ControlFlowInfo<V, *, *>> :
-    ControlFlowGraphVisitor<I, MutableMap<CFGNode<*>, I>>() {
+    ControlFlowGraphVisitor<I, List<Pair<EdgeLabel, I>>>() {
     internal fun onFunctionCall(
         direction: TraverseDirection,
         initialInfo: I,
         nodeMap: MutableMap<CFGNode<*>, I>,
         changed: MutableMap<CFGNode<*>, Boolean>,
-        functionsWhitelist: Collection<FirNamedFunctionSymbol>,
+        functionsWhitelist: HashSet<FirNamedFunctionSymbol>,
         visitedSymbols: Collection<FirBasedSymbol<*>>,
         callNode: CFGNode<*>,
         visitedNodes: MutableSet<CFGNode<*>>
     ) {
         if (callNode is FunctionCallNode) {
             val functionSymbol = callNode.fir.toResolvedCallableSymbol() as? FirNamedFunctionSymbol
-            val symbol = functionSymbol as? FirBasedSymbol<*> ?: return
-            val function = functionSymbol.fir as? FirControlFlowGraphOwner
-            val functionCfg = function?.controlFlowGraphReference?.controlFlowGraph
-            if (functionSymbol in functionsWhitelist && symbol !in visitedSymbols && function != null && functionCfg != null) {
+            val function = functionSymbol?.fir ?: return
+            val functionCfg = function.controlFlowGraphReference?.controlFlowGraph
+            if (functionSymbol in functionsWhitelist && functionSymbol !in visitedSymbols && functionCfg != null) {
                 processCfg(
                     functionCfg,
                     direction,
@@ -40,7 +39,7 @@ abstract class InterproceduralVisitor<I : PathAwareControlFlowInfo<I, V>, V : Co
                     nodeMap,
                     changed,
                     functionsWhitelist,
-                    visitedSymbols + symbol,
+                    visitedSymbols + functionSymbol,
                     callNode,
                     visitedNodes
                 )
@@ -84,13 +83,19 @@ abstract class InterproceduralVisitor<I : PathAwareControlFlowInfo<I, V>, V : Co
         }
     }
 
+    @OptIn(InterproceduralOnly::class)
+    internal fun connectInitializerParts(previous: CFGNode<*>, next: CFGNode<*>) {
+        CFGNode.addEdgeIfNotExist(previous, next, EdgeKind.Interprocedural, false)
+    }
+
+    @OptIn(InterproceduralOnly::class)
     private fun processCfg(
         cfg: ControlFlowGraph,
         direction: TraverseDirection,
         initialInfo: I,
         nodeMap: MutableMap<CFGNode<*>, I>,
         changed: MutableMap<CFGNode<*>, Boolean>,
-        functionsWhitelist: Collection<FirNamedFunctionSymbol>,
+        functionsWhitelist: HashSet<FirNamedFunctionSymbol>,
         visitedSymbols: Collection<FirBasedSymbol<*>>,
         node: CFGNode<*>,
         visitedNodes: MutableSet<CFGNode<*>>

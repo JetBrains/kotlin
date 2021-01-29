@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 
 class DeclarationCheckersDiagnosticComponent(
     collector: AbstractDiagnosticCollector
