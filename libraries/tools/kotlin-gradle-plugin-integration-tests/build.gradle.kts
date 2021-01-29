@@ -155,7 +155,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     onlyIf { !project.hasProperty("noTest") }
 
-    dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
+    dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinPluginInstall()
 
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
