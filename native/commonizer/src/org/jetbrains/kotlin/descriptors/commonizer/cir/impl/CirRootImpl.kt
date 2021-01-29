@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 
 data class CirRootImpl(
-    override val target: CommonizerTarget,
-    override val builtInsClass: String,
-    override val builtInsProvider: BuiltInsProvider
+    override val target: CommonizerTarget
 ) : CirRoot

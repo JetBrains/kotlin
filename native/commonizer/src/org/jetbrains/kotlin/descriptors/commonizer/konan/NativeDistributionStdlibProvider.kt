@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories
@@ -19,14 +17,13 @@ import java.io.File
 internal class NativeDistributionStdlibProvider(
     private val storageManager: StorageManager,
     private val stdlib: NativeLibrary
-) : BuiltInsProvider, ModulesProvider {
+) : ModulesProvider {
     private val moduleInfo = ModuleInfo(
         name = KONAN_STDLIB_NAME,
         originalLocation = File(stdlib.library.libraryFile.absolutePath),
         cInteropAttributes = null
     )
 
-    override fun loadBuiltIns(): KotlinBuiltIns = loadStdlibModule().builtIns
     override fun loadModuleInfos(): Map<String, ModuleInfo> = mapOf(KONAN_STDLIB_NAME to moduleInfo)
 
     override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> {

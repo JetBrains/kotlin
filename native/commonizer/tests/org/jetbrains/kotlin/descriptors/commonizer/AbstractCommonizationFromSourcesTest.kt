@@ -212,8 +212,6 @@ private class AnalyzedModules(
             parameters.addTarget(
                 TargetProvider(
                     target = leafTarget,
-                    builtInsClass = originalModule.builtIns::class.java,
-                    builtInsProvider = MockBuiltInsProvider(originalModule.builtIns),
                     modulesProvider = MockModulesProvider.create(originalModule),
                     dependeeModulesProvider = dependeeModules[leafTarget]?.let(MockModulesProvider::create)
                 )
