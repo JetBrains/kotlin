@@ -15882,6 +15882,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("supertypeUsesNested.kt")
+            public void testSupertypeUsesNested() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/supertypeUsesNested.kt");
+            }
+
+            @Test
             @TestMetadata("traitDefaultCall.kt")
             public void testTraitDefaultCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/traitDefaultCall.kt");

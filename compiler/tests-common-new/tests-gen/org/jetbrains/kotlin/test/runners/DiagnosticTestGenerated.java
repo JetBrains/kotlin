@@ -15888,6 +15888,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("supertypeUsesNested.kt")
+            public void testSupertypeUsesNested() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/supertypeUsesNested.kt");
+            }
+
+            @Test
             @TestMetadata("traitDefaultCall.kt")
             public void testTraitDefaultCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/traitDefaultCall.kt");
