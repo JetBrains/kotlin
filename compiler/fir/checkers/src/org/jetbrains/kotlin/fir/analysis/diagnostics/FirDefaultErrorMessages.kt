@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_WITH_BODY
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNED_VALUE_IS_NEVER_READ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE
@@ -334,6 +337,21 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             // Overrides
             map.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", DECLARATION_NAME)
             map.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, TO_STRING)
+
+            map.put(
+                CANNOT_WEAKEN_ACCESS_PRIVILEGE,
+                "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''",
+                VISIBILITY,
+                NAME,
+                TO_STRING
+            )
+            map.put(
+                CANNOT_CHANGE_ACCESS_PRIVILEGE,
+                "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''",
+                VISIBILITY,
+                NAME,
+                TO_STRING
+            )
 
             map.put(
                 RETURN_TYPE_MISMATCH_ON_OVERRIDE,

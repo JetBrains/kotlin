@@ -28,11 +28,11 @@ class D : C(), T {
 }
 
 class E : C(), T {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 
 class F : C(), T {
-    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> fun foo() {}
 }
 
 class G : C(), T {
