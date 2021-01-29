@@ -229,13 +229,18 @@ internal class ObjCExportCodeGenerator(
         return callFromBridge(conversion.owner.llvmFunction, listOf(value), resultLifetime)
     }
 
-    private fun generateTypeAdapters(spec: ObjCExportCodeSpec?) {
-        val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
+    private fun generateTypeAdaptersForKotlinTypes(spec: ObjCExportCodeSpec?): List<ObjCTypeAdapter> {
+        val types = spec?.types.orEmpty() + objCClassForAny
 
-        objCTypeAdapters += createTypeAdapter(objCClassForAny, superClass = null)
+        val allReverseAdapters = createReverseAdapters(types)
 
-        spec?.types?.forEach {
-            objCTypeAdapters += when (it) {
+        return types.map {
+            val reverseAdapters = allReverseAdapters.getValue(it)
+            when (it) {
+                objCClassForAny -> {
+                    createTypeAdapter(it, superClass = null, reverseAdapters)
+                }
+
                 is ObjCClassForKotlinClass -> {
                     val superClass = it.superClassNotAny ?: objCClassForAny
 
@@ -243,12 +248,18 @@ internal class ObjCExportCodeGenerator(
                     // Note: it is generated only to be visible for linker.
                     // Methods will be added at runtime.
 
-                    createTypeAdapter(it, superClass)
+                    createTypeAdapter(it, superClass, reverseAdapters)
                 }
 
-                is ObjCProtocolForKotlinInterface -> createTypeAdapter(it, superClass = null)
+                is ObjCProtocolForKotlinInterface -> createTypeAdapter(it, superClass = null, reverseAdapters)
             }
         }
+    }
+
+    private fun generateTypeAdapters(spec: ObjCExportCodeSpec?) {
+        val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
+
+        objCTypeAdapters += generateTypeAdaptersForKotlinTypes(spec)
 
         spec?.files?.forEach {
             objCTypeAdapters += createTypeAdapterForFileClass(it)
@@ -1247,7 +1258,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapterForFileClass(
 
 private fun ObjCExportCodeGenerator.createTypeAdapter(
         type: ObjCTypeForKotlinType,
-        superClass: ObjCClassForKotlinClass?
+        superClass: ObjCClassForKotlinClass?,
+        reverseAdapters: List<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>
 ): ObjCExportCodeGenerator.ObjCTypeAdapter {
     val irClass = type.irClassSymbol.owner
     val adapters = mutableListOf<ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter>()
@@ -1278,19 +1290,17 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         }.let {} // Force exhaustive.
     }
 
-    val reverseAdapters = mutableListOf<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>()
+    val additionalReverseAdapters = mutableListOf<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>()
 
     if (type is ObjCClassForKotlinClass) {
 
         type.categoryMethods.forEach {
             adapters += createFinalMethodAdapter(it.baseMethod)
-            reverseAdapters += nonOverridableAdapter(it.baseMethod.selector, hasSelectorAmbiguity = false)
+            additionalReverseAdapters += nonOverridableAdapter(it.baseMethod.selector, hasSelectorAmbiguity = false)
         }
 
         adapters += createDirectAdapters(type, superClass)
     }
-
-    reverseAdapters += createReverseAdapters(type)
 
     val virtualAdapters = type.kotlinMethods
             .filter {
@@ -1339,8 +1349,14 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             adapters,
             classAdapters,
             virtualAdapters,
-            reverseAdapters
+            reverseAdapters + additionalReverseAdapters
     )
+}
+
+private fun ObjCExportCodeGenerator.createReverseAdapters(
+        types: List<ObjCTypeForKotlinType>
+): Map<ObjCTypeForKotlinType, List<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>> {
+    return types.associateWith { createReverseAdapters(it) }
 }
 
 private fun ObjCExportCodeGenerator.createReverseAdapters(
