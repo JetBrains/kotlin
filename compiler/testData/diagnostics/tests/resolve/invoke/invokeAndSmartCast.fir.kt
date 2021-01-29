@@ -7,7 +7,7 @@ fun test(a: A) {
         (a.x)("")
     }
     "".<!UNRESOLVED_REFERENCE!>(a.x)()<!>
-    a.<!UNSAFE_CALL!>x<!>("")
+    a<!UNSAFE_CALL!>.<!>x("")
     <!UNSAFE_CALL!>(a.x)("")<!>
 
     with("") {

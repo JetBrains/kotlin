@@ -62,4 +62,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
         PositioningStrategies.PARAMETER_VARARG_MODIFIER
     )
+
+    val DOT_BY_SELECTOR = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DOT_BY_SELECTOR,
+        PositioningStrategies.DOT_BY_SELECTOR
+    )
 }

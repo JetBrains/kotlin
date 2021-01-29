@@ -18,5 +18,5 @@ fun test_3() {
     x = ""
     x.length
     x = null
-    x.<!UNSAFE_CALL!>length<!>
+    x<!UNSAFE_CALL!>.<!>length
 }

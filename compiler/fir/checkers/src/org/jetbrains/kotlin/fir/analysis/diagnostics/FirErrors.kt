@@ -209,7 +209,7 @@ object FirErrors {
     val WRONG_IMPLIES_CONDITION by warning0<FirSourceElement, PsiElement>()
 
     // Nullability
-    val UNSAFE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>()
+    val UNSAFE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.DOT_BY_SELECTOR)
     // TODO: val UNSAFE_IMPLICIT_INVOKE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>()
     // TODO: val UNSAFE_INFIX_CALL by ...
     // TODO: val UNSAFE_OPERATOR_CALL by ...

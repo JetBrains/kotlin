@@ -55,7 +55,7 @@ fun case_5() {
     var x: Class? = Class()
     x!!
     <!NONE_APPLICABLE!>x<!>(if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>fun_1<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }
 
 // TESTCASE NUMBER: 6
@@ -76,7 +76,7 @@ fun case_7() {
     var x: Class? = Class()
     x!!
     <!NONE_APPLICABLE!>x<!>(if (true) {x=null;0} else 0)(<!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!UNSAFE_CALL!>fun_1<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }
 
 // TESTCASE NUMBER: 8

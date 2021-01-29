@@ -104,18 +104,18 @@ fun test_7() {
 
     if (x != null) {
         x.length // OK
-        y.<!UNSAFE_CALL!>length<!> // Bad
+        y<!UNSAFE_CALL!>.<!>length // Bad
         z.length // OK
     }
     if (y != null) {
-        x.<!UNSAFE_CALL!>length<!> // Bad
+        x<!UNSAFE_CALL!>.<!>length // Bad
         y.length // OK
-        z.<!UNSAFE_CALL!>length<!> // Bad
+        z<!UNSAFE_CALL!>.<!>length // Bad
     }
 
     if (z != null) {
         x.length // OK
-        y.<!UNSAFE_CALL!>length<!> // Bad
+        y<!UNSAFE_CALL!>.<!>length // Bad
         z.length // OK
     }
 }

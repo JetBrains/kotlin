@@ -34,24 +34,24 @@ fun test_4(a: A?) {
 
 fun test_5(a: A?) {
     a == null || throw Exception()
-    a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
+    a<!UNSAFE_CALL!>.<!>foo()
 }
 
 fun teat_6(a: A?) {
     a != null && throw Exception()
-    a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
+    a<!UNSAFE_CALL!>.<!>foo()
 }
 
 fun test_7(a: A?) {
     if (a == null || throw Exception()) {
-        a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
+        a<!UNSAFE_CALL!>.<!>foo()
     }
-    a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
+    a<!UNSAFE_CALL!>.<!>foo()
 }
 
 fun test_8(a: A?) {
     if (a != null && throw Exception()) {
-        a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
+        a<!UNSAFE_CALL!>.<!>foo()
     }
-    a.<!UNSAFE_CALL{LT}!><!UNSAFE_CALL{PSI}!>foo<!>()<!>
+    a<!UNSAFE_CALL!>.<!>foo()
 }

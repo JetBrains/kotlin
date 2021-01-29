@@ -5,7 +5,7 @@ class A<E> {
 class B(var a: A<*>?) {
     fun bar() {
         if (a != null) {
-            a.<!UNSAFE_CALL!>foo<!>()
+            a<!UNSAFE_CALL!>.<!>foo()
         }
     }
 }

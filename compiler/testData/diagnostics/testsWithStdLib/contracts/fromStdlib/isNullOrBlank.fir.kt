@@ -3,7 +3,7 @@
 
 fun testIsNullOrBlank(x: String?) {
     if (x.isNullOrBlank()) {
-        x.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
     }
     else {
         x.length
@@ -15,6 +15,6 @@ fun testIsNotNullOrBlank(x: String?) {
         x.length
     }
 
-    x.<!UNSAFE_CALL!>length<!>
+    x<!UNSAFE_CALL!>.<!>length
 }
 

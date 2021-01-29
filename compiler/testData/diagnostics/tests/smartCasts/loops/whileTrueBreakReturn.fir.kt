@@ -8,5 +8,5 @@ public fun foo(p: String?): Int {
         p.length
     }
     // p can be null because break is earlier than return
-    return p.<!UNSAFE_CALL!>length<!>
+    return p<!UNSAFE_CALL!>.<!>length
 }

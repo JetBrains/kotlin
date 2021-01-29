@@ -6,6 +6,6 @@ import kotlin.contracts.*
 
 fun f3(value: String?) {
     if (!value.isNullOrEmpty() is Boolean) {
-        value.<!UNSAFE_CALL!>length<!>
+        value<!UNSAFE_CALL!>.<!>length
     }
 }

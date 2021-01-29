@@ -271,6 +271,26 @@ object LightTreePositioningStrategies {
             return markElement(modifier ?: node, startOffset, endOffset, tree, node)
         }
     }
+
+    val DOT_BY_SELECTOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType != KtNodeTypes.REFERENCE_EXPRESSION && node.tokenType != KtNodeTypes.CALL_EXPRESSION) {
+                // TODO: normally CALL_EXPRESSION should not be here. In PSI we have REFERENCE_EXPRESSION even for x.bar() case
+                // Remove CALL_EXPRESSION from here and repeat code below twice (see PSI counterpart) when fixed
+                return super.mark(node, startOffset, endOffset, tree)
+            }
+            val parentNode = tree.getParent(node) ?: return super.mark(node, startOffset, endOffset, tree)
+            if (parentNode.tokenType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
+                return markElement(tree.dotOperator(parentNode) ?: node, startOffset, endOffset, tree, node)
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -284,6 +304,9 @@ fun FirSourceElement.hasPrimaryConstructor(): Boolean =
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.CONSTRUCTOR_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOperator(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.DOT)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.initKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.INIT_KEYWORD)

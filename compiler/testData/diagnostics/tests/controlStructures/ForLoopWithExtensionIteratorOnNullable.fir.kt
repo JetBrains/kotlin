@@ -7,7 +7,7 @@ operator fun <K> Container<K>.iterator(): Iterator<K> = null!!
 fun test() {
     val container: Container<String>? = null
     // Error
-    container.<!UNSAFE_CALL!>iterator<!>()
+    container<!UNSAFE_CALL!>.<!>iterator()
     // for extension iterator, this code compiles, but should not
     <!UNSAFE_CALL!>for (s in container) {}<!>
 }

@@ -30,7 +30,7 @@ fun testNullableReceiver(nullable: Cls?) {
 }
 
 fun testNotNullableReceiver(notNullable: Cls) {
-    notNullable.<!UNSAFE_CALL!>nullableExtensionProperty<!>()
+    notNullable<!UNSAFE_CALL!>.<!>nullableExtensionProperty()
     notNullable?.extensionProperty()
 }
 
@@ -38,6 +38,6 @@ fun testFlexibleReceiver() {
     val flexible = JavaClass.createFlexible()
     flexible.extensionProperty()
     flexible?.extensionProperty()
-    flexible.<!UNSAFE_CALL!>nullableExtensionProperty<!>()
+    flexible<!UNSAFE_CALL!>.<!>nullableExtensionProperty()
     flexible?.<!UNSAFE_CALL!>nullableExtensionProperty<!>()
 }

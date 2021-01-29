@@ -6,5 +6,5 @@ fun foo() {
     try {
         s = null
     } catch (ex: Exception) {}
-    s.<!UNSAFE_CALL!>hashCode<!>()
+    s<!UNSAFE_CALL!>.<!>hashCode()
 }

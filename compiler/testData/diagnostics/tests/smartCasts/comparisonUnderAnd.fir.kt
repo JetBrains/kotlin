@@ -6,30 +6,30 @@ fun foo(x : String?, y : String?) {
         y.length
     }
     else {
-        x.<!UNSAFE_CALL!>length<!>
-        y.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y != null || x == y) {
-        x.<!UNSAFE_CALL!>length<!>
-        y.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
         // y == null but x != y
-        x.<!UNSAFE_CALL!>length<!>
-        y.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y == null && x != y) {
         // y == null but x != y
-        x.<!UNSAFE_CALL!>length<!>
-        y.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
-        x.<!UNSAFE_CALL!>length<!>
-        y.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y == null || x != y) {
-        x.<!UNSAFE_CALL!>length<!>
-        y.<!UNSAFE_CALL!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
         // Both not null

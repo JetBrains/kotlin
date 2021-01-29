@@ -10,11 +10,11 @@ fun <T> case_1(x: T) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!UNSAFE_CALL!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>propAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>funAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
@@ -28,11 +28,11 @@ fun <T> case_1(x: T) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.<!UNSAFE_CALL!>propAny<!> }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!><!UNSAFE_CALL!>.<!>propAny }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propNullableT }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propNullableAny }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.funT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.<!UNSAFE_CALL!>funAny<!>() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!><!UNSAFE_CALL!>.<!>funAny() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.funNullableT() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.funNullableAny() }
     }
@@ -42,13 +42,13 @@ fun <T> case_1(x: T) {
 fun <T> case_2(x: T?, y: Nothing?) {
     if (y != x) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.<!UNSAFE_CALL!>propAny<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>propAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.<!UNSAFE_CALL!>funAny<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!UNSAFE_CALL!>equals<!>(null) }
@@ -59,14 +59,14 @@ fun <T> case_2(x: T?, y: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funT() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!UNSAFE_CALL!>funAny<!>() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funNullableT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.<!UNSAFE_CALL!>equals<!>(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.<!UNSAFE_CALL!>equals<!>(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!><!UNSAFE_CALL!>.<!>equals(null) }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.propT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.<!UNSAFE_CALL!>propAny<!> }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!><!UNSAFE_CALL!>.<!>propAny }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.propNullableT }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.propNullableAny }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.funT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.<!UNSAFE_CALL!>funAny<!>() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!><!UNSAFE_CALL!>.<!>funAny() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.funNullableT() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.funNullableAny() }
     }

@@ -6,5 +6,5 @@ public fun foo(x: String?): Int {
         x.length
     } while (true)
     // x is null because of the break
-    return x.<!UNSAFE_CALL!>length<!>
+    return x<!UNSAFE_CALL!>.<!>length
 }

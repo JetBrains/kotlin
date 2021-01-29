@@ -15,6 +15,6 @@ fun bar(): Int {
     return when(ss) {
         "abc" -> ss
         else -> "xyz"
-    }.<!UNSAFE_CALL!>length<!>
+    }<!UNSAFE_CALL!>.<!>length
 }
 

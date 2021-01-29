@@ -122,7 +122,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             rootCause.actualType?.isNullable == true &&
             (rootCause.expectedType == null || !rootCause.expectedType!!.isMarkedNullable)
         ) {
-            // TODO: report on call operation node, e.g., x<!>.<!>length instead of x.<!>length<!>
             val expectedType = rootCause.expectedType
 
             if (expectedType == null || expectedType.isEffectivelyNotNull()) {

@@ -13,18 +13,18 @@ fun test(x : Int?, a : A?) {
     x?.plus(1)
     x <!NONE_APPLICABLE!>+<!> 1
     <!UNSAFE_CALL!>-<!>x
-    x.<!UNSAFE_CALL!>unaryMinus<!>()
+    x<!UNSAFE_CALL!>.<!>unaryMinus()
     x?.unaryMinus()
 
-    a.<!UNSAFE_CALL!>plus<!>(1)
+    a<!UNSAFE_CALL!>.<!>plus(1)
     a?.plus(1)
     a <!UNSAFE_CALL!>plus<!> 1
     a <!UNSAFE_CALL!>+<!> 1
     <!UNSAFE_CALL!>-<!>a
-    a.<!UNSAFE_CALL!>unaryMinus<!>()
+    a<!UNSAFE_CALL!>.<!>unaryMinus()
     a?.unaryMinus()
 
-    a.<!UNSAFE_CALL!>div<!>(1)
+    a<!UNSAFE_CALL!>.<!>div(1)
     a <!UNSAFE_CALL!>/<!> 1
     a <!UNSAFE_CALL!>div<!> 1
     a?.div(1)
@@ -36,6 +36,6 @@ fun test(x : Int?, a : A?) {
 
     1 <!UNSAFE_CALL!>in<!> a
     a <!UNSAFE_CALL!>contains<!> 1
-    a.<!UNSAFE_CALL!>contains<!>(1)
+    a<!UNSAFE_CALL!>.<!>contains(1)
     a?.contains(1)
 }

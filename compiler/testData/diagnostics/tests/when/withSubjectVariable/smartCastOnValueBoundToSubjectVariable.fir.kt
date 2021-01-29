@@ -18,8 +18,8 @@ fun test2(x: String?) {
 
 fun test3(x: String?, y: String?) {
     when (val z = x ?: y!!) {
-        "foo" -> x.<!UNSAFE_CALL!>length<!>
-        "bar" -> y.<!UNSAFE_CALL!>length<!>
+        "foo" -> x<!UNSAFE_CALL!>.<!>length
+        "bar" -> y<!UNSAFE_CALL!>.<!>length
         "baz" -> z.length
     }
 }
