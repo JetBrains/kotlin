@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDefaultErrorMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderer
@@ -35,4 +36,7 @@ internal interface KtAbstractFirDiagnostic : KtDiagnosticWithPsi {
 
     override val psi: PsiElement
         get() = firDiagnostic.psiElement
+
+    override val severity: Severity
+        get() = firDiagnostic.severity
 }

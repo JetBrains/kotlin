@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.calls.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtSimpleDiagnostic
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -113,13 +112,13 @@ internal class KtFirCallResolver(
     private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, token)
+            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtSimpleDiagnostic(factoryName = null, diagnostic.reason, token)
+            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =
