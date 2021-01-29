@@ -2,6 +2,7 @@
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
 // WITH_RUNTIME
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 fun interface IFoo {
     fun foo()

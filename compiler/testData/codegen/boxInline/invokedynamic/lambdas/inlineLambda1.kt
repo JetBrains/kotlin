@@ -2,6 +2,7 @@
 // JVM_TARGET: 1.8
 // LAMBDAS: INDY
 // WITH_RUNTIME
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 fun foo(fn: () -> Unit) = fn()
