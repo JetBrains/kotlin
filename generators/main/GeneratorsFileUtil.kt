@@ -11,7 +11,7 @@ import java.io.IOException
 import kotlin.io.path.*
 
 object GeneratorsFileUtil {
-    private val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
+    val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
 
     @OptIn(ExperimentalPathApi::class)
     @JvmStatic
@@ -47,7 +47,7 @@ object GeneratorsFileUtil {
         println()
     }
 
-    private fun assertTeamCityMode(): Nothing {
+    fun assertTeamCityMode(): Nothing {
         throw IllegalStateException("You should commit all newly generated files before pushing them to TeamCity")
     }
 

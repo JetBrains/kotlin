@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Element
 
 import java.io.File
 
-fun printTransformer(elements: List<Element>, generationPath: File) {
+fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFile {
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    dir.mkdirs()
-    File(dir, "FirTransformer.kt").useSmartPrinter {
+    val file = File(dir, "FirTransformer.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $VISITOR_PACKAGE")
         println()
@@ -62,4 +63,5 @@ fun printTransformer(elements: List<Element>, generationPath: File) {
         }
         println("}")
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }

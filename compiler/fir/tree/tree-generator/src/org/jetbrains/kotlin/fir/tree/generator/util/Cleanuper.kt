@@ -6,12 +6,25 @@
 package org.jetbrains.kotlin.fir.tree.generator.util
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.GENERATED_MESSAGE
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import java.io.File
 
-fun removePreviousGeneratedFiles(generationPath: File) {
-    generationPath.walkTopDown().forEach {
-        if (it.isFile && it.readText().contains(GENERATED_MESSAGE)) {
-            it.delete()
+fun collectPreviouslyGeneratedFiles(generationPath: File): List<File> {
+    return generationPath.walkTopDown().filter {
+        it.isFile && it.readText().contains(GENERATED_MESSAGE)
+    }.toList()
+}
+
+fun removeExtraFilesFromPreviousGeneration(previouslyGeneratedFiles: List<File>, generatedFiles: List<File>) {
+    val generatedFilesPath = generatedFiles.mapTo(mutableSetOf()) { it.absolutePath }
+
+    for (file in previouslyGeneratedFiles) {
+        if (file.absolutePath !in generatedFilesPath) {
+            if (GeneratorsFileUtil.isTeamCityBuild) {
+                GeneratorsFileUtil.assertTeamCityMode()
+            }
+            println("Deleted: ${file.absolutePath}")
+            file.delete()
         }
     }
 }

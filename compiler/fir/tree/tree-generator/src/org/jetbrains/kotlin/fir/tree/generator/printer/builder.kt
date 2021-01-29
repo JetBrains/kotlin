@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.fir.tree.generator.declarationAttributesType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import java.io.File
 
-fun Builder.generateCode(generationPath: File) {
+fun Builder.generateCode(generationPath: File): GeneratedFile {
     val dir = generationPath.resolve(packageName.replace(".", "/"))
-    dir.mkdirs()
     val file = File(dir, "$type.kt")
-    file.useSmartPrinter {
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $packageName")
         println()
@@ -25,6 +25,7 @@ fun Builder.generateCode(generationPath: File) {
         printGeneratedMessage()
         printBuilder(this@generateCode)
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 private fun SmartPrinter.printBuilder(builder: Builder) {

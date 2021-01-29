@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
-
 import java.io.File
-import java.io.PrintWriter
 
-fun printVisitor(elements: List<Element>, generationPath: File) {
+fun printVisitor(elements: List<Element>, generationPath: File): GeneratedFile {
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    dir.mkdirs()
-    File(dir, "FirVisitor.kt").useSmartPrinter {
+    val file = File(dir, "FirVisitor.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $VISITOR_PACKAGE")
         println()
@@ -37,13 +36,15 @@ fun printVisitor(elements: List<Element>, generationPath: File) {
         popIndent()
         println("}")
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 
-fun printVisitorVoid(elements: List<Element>, generationPath: File) {
+fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFile {
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    dir.mkdirs()
-    File(dir, "FirVisitorVoid.kt").useSmartPrinter {
+    val file = File(dir, "FirVisitorVoid.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $VISITOR_PACKAGE")
         println()
@@ -83,4 +84,5 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File) {
         }
         println("}")
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
