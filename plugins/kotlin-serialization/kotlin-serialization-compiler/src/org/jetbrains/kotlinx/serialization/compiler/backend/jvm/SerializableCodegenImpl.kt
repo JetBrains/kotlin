@@ -289,7 +289,7 @@ class SerializableCodegenImpl(
         val allPresentsLabel = Label()
         val maskSlotCount = properties.serializableProperties.bitMaskSlotCount()
         if (maskSlotCount == 1) {
-            val goldenMask = getGoldenMask()
+            val goldenMask = properties.goldenMask
 
             iconst(goldenMask)
             dup()
@@ -310,7 +310,7 @@ class SerializableCodegenImpl(
         } else {
             val fieldsMissingLabel = Label()
 
-            val goldenMaskList = getGoldenMaskList()
+            val goldenMaskList = properties.goldenMaskList
             goldenMaskList.forEachIndexed { i, goldenMask ->
                 val maskIndex = maskVar + i
                 // if( (goldenMask & seen) != goldenMask )
