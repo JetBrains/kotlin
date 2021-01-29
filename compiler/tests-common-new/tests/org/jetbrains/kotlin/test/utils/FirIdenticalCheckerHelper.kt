@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
 
 abstract class FirIdenticalCheckerHelper(private val testServices: TestServices) {
+    companion object {
+        private val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
+    }
+
     abstract fun getClassicFileToCompare(testDataFile: File): File?
     abstract fun getFirFileToCompare(testDataFile: File): File?
 
@@ -35,21 +39,31 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
     }
 
     fun addDirectiveToClassicFileAndAssert(testDataFile: File) {
-        val classicFileContent = testDataFile.readText()
-        testDataFile.writer().use {
-            it.appendLine("// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}")
-            it.append(classicFileContent)
+        if (!isTeamCityBuild) {
+            val classicFileContent = testDataFile.readText()
+            testDataFile.writer().use {
+                it.appendLine("// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}")
+                it.append(classicFileContent)
+            }
+        }
+
+        val message = if (isTeamCityBuild) {
+            "Please remove .fir.txt dump and add // FIR_IDENTICAL to test source"
+        } else {
+            "Deleted .fir.txt dump, added // FIR_IDENTICAL to test source"
         }
         testServices.assertions.fail {
             """
                     Dumps via FIR & via old FE are the same. 
-                    Deleted .fir.txt dump, added // FIR_IDENTICAL to test source
+                    $message
                     Please re-run the test now
                 """.trimIndent()
         }
     }
 
     fun deleteFirFile(testDataFile: File) {
-        getFirFileToCompare(testDataFile)?.takeIf { it.exists() }?.delete()
+        if (!isTeamCityBuild) {
+            getFirFileToCompare(testDataFile)?.takeIf { it.exists() }?.delete()
+        }
     }
 }
