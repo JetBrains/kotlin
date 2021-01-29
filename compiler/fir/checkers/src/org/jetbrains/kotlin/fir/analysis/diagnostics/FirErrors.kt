@@ -12,16 +12,12 @@ import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.KotlinType
 
 object FirErrors {
     // Miscellaneous
@@ -139,6 +135,9 @@ object FirErrors {
     val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, PsiElement, String, FirMemberDeclaration>()
     val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, PsiElement, String, FirMemberDeclaration>()
     val VAR_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, PsiElement, String, FirMemberDeclaration>()
+    val CATCH_PARAMETER_WITH_DEFAULT_VALUE by error0<FirSourceElement, PsiElement>()
+    val REIFIED_TYPE_IN_CATCH_CLAUSE by error0<FirSourceElement, PsiElement>()
+    val TYPE_PARAMETER_IN_CATCH_CLAUSE by error0<FirSourceElement, PsiElement>()
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
