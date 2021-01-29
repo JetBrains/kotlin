@@ -61,10 +61,11 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
         it.options.fork = true
         it.options.forkOptions.javaHome = file(JDK_9)
         it.options.sourcepath = files(java9SourceSet.srcDirs)
+        def compileClasspath = project.configurations.java9CompileClasspath
 
         doFirst {
             def moduleFiles = files(*moduleOutputs)
-            def modulePath = project.configurations.java9CompileClasspath.filter { !(it in moduleFiles.files) }
+            def modulePath = compileClasspath.filter { !(it in moduleFiles.files) }
 
             options.compilerArgs = [
                     '--module-path', modulePath.asPath,

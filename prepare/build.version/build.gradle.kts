@@ -21,22 +21,26 @@ artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
     builtBy(writeBuildNumber)
 }
 
-fun replaceVersion(versionFile: File, versionPattern: String, replacement: (MatchResult) -> String) {
-    check(versionFile.isFile) { "Version file $versionFile is not found" }
-    val text = versionFile.readText()
-    val pattern = Regex(versionPattern)
-    val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
-    val newValue = replacement(match)
-    versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
-}
+
 
 val writeStdlibVersion by tasks.registering {
+    val kotlinVersionLocal = kotlinVersion
     val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
-    inputs.property("version", kotlinVersion)
+    inputs.property("version", kotlinVersionLocal)
     outputs.file(versionFile)
+
+    fun replaceVersion(versionFile: File, versionPattern: String, replacement: (MatchResult) -> String) {
+        check(versionFile.isFile) { "Version file $versionFile is not found" }
+        val text = versionFile.readText()
+        val pattern = Regex(versionPattern)
+        val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
+        val newValue = replacement(match)
+        versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
+    }
+
     doLast {
         replaceVersion(versionFile, """fun get\(\): KotlinVersion = KotlinVersion\((\d+, \d+, \d+)\)""") {
-            val (major, minor, _, optPatch) = Regex("""^(\d+)\.(\d+)(\.(\d+))?""").find(kotlinVersion)?.destructured ?: error("Cannot parse current version $kotlinVersion")
+            val (major, minor, _, optPatch) = Regex("""^(\d+)\.(\d+)(\.(\d+))?""").find(kotlinVersionLocal)?.destructured ?: error("Cannot parse current version $kotlinVersionLocal")
             val newVersion = "$major, $minor, ${optPatch.takeIf { it.isNotEmpty() } ?: "0" }"
             logger.lifecycle("Writing new standard library version components: $newVersion")
             newVersion

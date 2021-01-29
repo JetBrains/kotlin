@@ -90,7 +90,7 @@ fun Project.configureFormInstrumentation() {
                 project.tasks.register(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java) {
                     dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
                     sourceSet = sourceSetParam
-                    instrumentationClasspath = instrumentationClasspathCfg
+                    instrumentationClasspathConfiguration = instrumentationClasspathCfg
                     originalClassesDirs = classesDirsCopy
                     output = instrumentedClassesDir
                     outputs.dir(instrumentedClassesDir)
@@ -111,8 +111,14 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         private const val LOADER_REF = "java2.loader"
     }
 
-    @Classpath
-    var instrumentationClasspath: Configuration? = null
+    @Transient
+    @Internal
+    lateinit var instrumentationClasspathConfiguration: Configuration
+
+    @get:Classpath
+    val instrumentationClasspath: String by lazy {
+        instrumentationClasspathConfiguration.asPath
+    }
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -121,13 +127,19 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     @get:Input
     var instrumentNotNull: Boolean = false
 
+    @Transient
     @Internal
-    var sourceSet: SourceSet? = null
+    lateinit var sourceSet: SourceSet
+
+    private val compileClasspath by lazy {
+        sourceSet.compileClasspath
+    }
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val sourceDirs: FileCollection
-        get() = project.files(sourceSet!!.allSource.srcDirs.filter { !sourceSet!!.resources.contains(it) && it.exists() })
+    val sourceDirs: FileCollection by lazy {
+        project.files(sourceSet.allSource.srcDirs.filter { !sourceSet.resources.contains(it) && it.exists() })
+    }
 
     @get:OutputDirectory
     lateinit var output: File
@@ -142,12 +154,12 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         output.deleteRecursively()
         copyOriginalClasses()
 
-        val classpath = instrumentationClasspath!!
+        val classpath = instrumentationClasspath
 
         ant.withGroovyBuilder {
             "taskdef"(
                 "name" to "instrumentIdeaExtensions",
-                "classpath" to classpath.asPath,
+                "classpath" to classpath,
                 "loaderref" to LOADER_REF,
                 "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
             )
@@ -155,7 +167,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
 
         logger.info("Compiling forms and instrumenting code with nullability preconditions")
         if (instrumentNotNull) {
-            prepareNotNullInstrumenting(classpath.asPath)
+            prepareNotNullInstrumenting(classpath)
         }
 
         instrumentCode(sourceDirs, instrumentNotNull)
@@ -186,7 +198,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         val depSourceDirectorySets = project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
             .map { p -> p.dependencyProject.mainSourceSet.allSource.sourceDirectories }
         val instrumentationClasspath =
-            depSourceDirectorySets.fold(sourceSet!!.compileClasspath) { acc, v -> acc + v }.asPath.also {
+            depSourceDirectorySets.fold(compileClasspath) { acc, v -> acc + v }.asPath.also {
                 logger.info("Using following dependency source dirs: $it")
             }
 

@@ -39,9 +39,12 @@ def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(sett
 def projectVersions = file("./gradle/versions.properties").text
 
 gradleEnterprise {
+    def buildScanServer = buildProperties.buildScanServer
+    def isTeamCity = buildProperties.isTeamcityBuild
+
     buildScan {
-        if (buildProperties.buildScanServer != null) {
-            server = buildProperties.buildScanServer
+        if (buildScanServer != null) {
+            server = buildScanServer
             captureTaskInputFiles = true
             publishAlways()
         } else {
@@ -52,7 +55,7 @@ gradleEnterprise {
         obfuscation {
             ipAddresses { addresses -> ["0.0.0.0"] }
             hostname { host -> "concealed" }
-            username { name -> buildProperties.isTeamcityBuild ? "TeamCity" : "concealed" }
+            username { name -> isTeamCity ? "TeamCity" : "concealed" }
         }
     }
 }

@@ -42,7 +42,7 @@ noDefaultJar()
 
 // dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
 compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
-    classifier = "dummy"
+    archiveClassifier.set("dummy")
 })
 
 class CoreXmlShadingTransformer : Transformer {

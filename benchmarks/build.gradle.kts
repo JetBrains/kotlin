@@ -92,18 +92,16 @@ benchmark {
     }
 }
 
-tasks.named("classes") {
-    doLast {
-        tasks.named("mainBenchmarkJar", Zip::class.java) {
-            isZip64 = true
-            archiveName = "benchmarks.jar"
-        }
-        listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark").forEach {
-            tasks.named(it, JavaExec::class.java) {
-                systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-            }
-        }
-    }
+tasks.matching { it is Zip && it.name == "mainBenchmarkJar" }.configureEach {
+    this as Zip
+    isZip64 = true
+    archiveFileName.set("benchmarks.jar")
+}
+
+val benchmarkTasks = listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark")
+tasks.matching { it is JavaExec && it.name in benchmarkTasks }.configureEach {
+    this as JavaExec
+    systemProperty("idea.home.path", intellijRootDir().canonicalPath)
 }
 
 tasks.register<JavaExec>("runBenchmark") {
