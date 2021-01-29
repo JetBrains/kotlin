@@ -88,6 +88,7 @@ constructor(
     internal var resolveFromModulesFirst: Boolean = false
 
     @Suppress("unused")
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     val runtimeClasspath: FileCollection by lazy {
         compilation.compileDependencyFiles
@@ -145,6 +146,7 @@ constructor(
 
     private val projectDir = project.projectDir
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:Optional
     @get:InputDirectory
     open val configDirectory: File? by lazy {

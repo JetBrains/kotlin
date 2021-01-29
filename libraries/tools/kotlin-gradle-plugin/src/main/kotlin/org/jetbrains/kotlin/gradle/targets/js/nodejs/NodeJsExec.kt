@@ -39,6 +39,7 @@ constructor(
     var sourceMapStackTraces = true
 
     @Optional
+    @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 

@@ -12,6 +12,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -65,6 +67,7 @@ constructor(
     val testFrameworkSettings: String
         @Input get() = testFramework!!.settingsState
 
+    @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
@@ -72,6 +75,7 @@ constructor(
     var debug: Boolean = false
 
     @Suppress("unused")
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     val runtimeClasspath: FileCollection by lazy {
         compilation.runtimeDependencyFiles
@@ -79,6 +83,7 @@ constructor(
 
     @Suppress("unused")
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     internal val compilationOutputs: FileCollection by lazy {
         compilation.output.allOutputs
     }

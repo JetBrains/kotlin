@@ -105,11 +105,13 @@ open class FatFrameworkTask: DefaultTask() {
     private val fatDsym: IosDsymFiles
         get() = fatFramework.dSYM
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     @get:SkipWhenEmpty
     protected val inputFrameworkFiles: Iterable<FileTree>
         get() = frameworks.map { project.fileTree(it.outputFile) }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     protected val inputDsymFiles: Iterable<FileTree>
         get() = frameworks.mapNotNull { framework ->
