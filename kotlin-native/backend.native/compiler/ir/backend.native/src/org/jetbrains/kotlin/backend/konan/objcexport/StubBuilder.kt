@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-internal class StubBuilder {
-    private val children = mutableListOf<Stub<*>>()
+internal class StubBuilder<S : Stub<*>>(private val warningCollector: ObjCExportWarningCollector) {
+    private val children = mutableListOf<S>()
 
-    operator fun Stub<*>.unaryPlus() {
-        children.add(this)
+    inline fun add(provider: () -> S) {
+        try {
+            children.add(provider())
+        } catch (t: Throwable) {
+            warningCollector.reportException(t)
+        }
     }
 
-    operator fun plusAssign(set: Collection<Stub<*>>) {
+    operator fun plusAssign(set: Collection<S>) {
         children += set
     }
 
-    fun build() = children
-}
-
-internal inline fun buildMembers(block: StubBuilder.() -> Unit): List<Stub<*>> = StubBuilder().let {
-    it.block()
-    it.build()
+    fun build(): List<S> = children
 }

@@ -22,21 +22,26 @@ internal class ObjCExportHeaderGeneratorImpl(
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, WarningCollector(context)) {
+    private class WarningCollector(val context: Context) : ObjCExportWarningCollector {
+        override fun reportWarning(text: String) {
+            context.reportCompilationWarning(text)
+        }
 
-    override fun reportWarning(text: String) {
-        context.reportCompilationWarning(text)
-    }
+        override fun reportWarning(method: FunctionDescriptor, text: String) {
+            val psi = (method as? DeclarationDescriptorWithSource)?.source?.getPsi()
+                    ?: return reportWarning(
+                            "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(method)})"
+                    )
 
-    override fun reportWarning(method: FunctionDescriptor, text: String) {
-        val psi = (method as? DeclarationDescriptorWithSource)?.source?.getPsi()
-                ?: return reportWarning(
-                        "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(method)})"
-                )
+            val location = MessageUtil.psiElementToMessageLocation(psi)
 
-        val location = MessageUtil.psiElementToMessageLocation(psi)
+            context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+        }
 
-        context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+        override fun reportException(throwable: Throwable) {
+            throw throwable
+        }
     }
 
     override fun getAdditionalImports(): List<String> =

@@ -95,7 +95,7 @@ internal class ObjCExportLazyImpl(
             mapper,
             namer,
             warningCollector,
-            objcGenerics = configuration.objcGenerics
+            configuration.objcGenerics
     )
 
     private val isValid: Boolean

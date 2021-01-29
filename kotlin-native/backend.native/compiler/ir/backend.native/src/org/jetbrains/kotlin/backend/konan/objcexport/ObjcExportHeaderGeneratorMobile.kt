@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -11,10 +10,10 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        private val warningCollector: ObjCExportWarningCollector,
+        warningCollector: ObjCExportWarningCollector,
         objcGenerics: Boolean,
         private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, warningCollector) {
 
     companion object {
         fun createInstance(
@@ -42,12 +41,4 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
 
     override fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean =
         !restrictToLocalModules || descriptor.module in moduleDescriptors
-
-    override fun reportWarning(text: String) {
-        warningCollector.reportWarning(text)
-    }
-
-    override fun reportWarning(method: FunctionDescriptor, text: String) {
-        warningCollector.reportWarning(method, text)
-    }
 }
