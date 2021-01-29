@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
@@ -50,10 +51,16 @@ class KotlinHighLevelDiagnosticHighlightingPass(
     private fun addDiagnostic(diagnostic: KtDiagnosticWithPsi) {
         val fixes = service<KtQuickFixService>().getQuickFixesFor(diagnostic as KtFirDiagnostic)
         annotationHolder.runAnnotatorWithContext(diagnostic.psi) { element, annotator ->
-            annotationHolder.newAnnotation(HighlightSeverity.ERROR, diagnostic.getMessageToRender())
+            annotationHolder.newAnnotation(diagnostic.getHighlightSeverity(), diagnostic.getMessageToRender())
                 .addFixes(fixes)
                 .create()
         }
+    }
+
+    private fun KtDiagnosticWithPsi.getHighlightSeverity() = when (severity) {
+        Severity.INFO -> HighlightSeverity.INFORMATION
+        Severity.ERROR -> HighlightSeverity.ERROR
+        Severity.WARNING -> HighlightSeverity.WARNING
     }
 
 

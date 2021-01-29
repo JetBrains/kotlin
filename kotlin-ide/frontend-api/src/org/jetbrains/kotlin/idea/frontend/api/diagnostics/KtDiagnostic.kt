@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.idea.frontend.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import kotlin.reflect.KClass
 
 interface KtDiagnostic : ValidityTokenOwner {
+    val severity: Severity
     val factoryName: String?
     val defaultMessage: String
 }
@@ -22,11 +24,13 @@ interface KtDiagnosticWithPsi : KtDiagnostic {
     val diagnosticClass: KClass<out KtDiagnosticWithPsi>
 }
 
-class KtSimpleDiagnostic(
+class KtNonBoundToPsiErrorDiagnostic(
     override val factoryName: String?,
     override val defaultMessage: String,
     override val token: ValidityToken,
-) : KtDiagnostic
+) : KtDiagnostic {
+    override val severity: Severity get() = Severity.ERROR
+}
 
 fun KtDiagnostic.getDefaultMessageWithFactoryName(): String =
     if (factoryName == null) defaultMessage
