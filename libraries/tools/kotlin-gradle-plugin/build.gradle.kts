@@ -146,8 +146,9 @@ tasks {
         callGroovy("manifestAttributes", manifest, project)
     }
 
-    named<ValidateTaskProperties>("validateTaskProperties") {
-        failOnWarning = true
+    withType<ValidatePlugins>().configureEach {
+        failOnWarning.set(true)
+        enableStricterValidation.set(true)
     }
 
     named("install") {
