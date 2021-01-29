@@ -54,7 +54,7 @@ dependencies {
 
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
 
-    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    compile group: 'org.jetbrains', name: 'annotations', version:'20.1.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
 
