@@ -33,18 +33,18 @@ fun assertCommonizationPerformed(result: CommonizerResult) {
 }
 
 @ExperimentalContracts
-fun assertModulesAreEqual(expected: SerializedMetadata, actual: SerializedMetadata, target: CommonizerTarget) {
-    val expectedModule = with(expected) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
-    val actualModule = with(actual) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
+fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMetadata, target: CommonizerTarget) {
+    val referenceModule = with(reference) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
+    val generatedModule = with(generated) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
 
-    when (val result = MetadataDeclarationsComparator().compare(expectedModule, actualModule)) {
+    when (val result = MetadataDeclarationsComparator().compare(referenceModule, generatedModule)) {
         is Result.Success -> Unit
         is Result.Failure -> {
             val mismatches = result.mismatches.sortedBy { it::class.java.simpleName + "_" + it.kind }
             val digitCount = mismatches.size.toString().length
 
             val failureMessage = buildString {
-                appendLine("${mismatches.size} mismatches found while comparing module ${expectedModule.name} and ${actualModule.name} for target ${target.prettyName}:")
+                appendLine("${mismatches.size} mismatches found while comparing reference module ${referenceModule.name} (A) and generated module ${generatedModule.name} (B) for target ${target.prettyName}:")
                 mismatches.forEachIndexed { index, mismatch ->
                     appendLine((index + 1).toString().padStart(digitCount, ' ') + ". " + mismatch)
                 }
