@@ -175,6 +175,11 @@ public class JsKlibBinaryCompatibilityTestGenerated extends AbstractJsKlibBinary
         runTest("compiler/testData/binaryCompatibility/klibEvolution/moveMemberUpInHierarchy.kt");
     }
 
+    @TestMetadata("newFakeOverride.kt")
+    public void testNewFakeOverride() throws Exception {
+        runTest("compiler/testData/binaryCompatibility/klibEvolution/newFakeOverride.kt");
+    }
+
     @TestMetadata("newOverrideMember.kt")
     public void testNewOverrideMember() throws Exception {
         runTest("compiler/testData/binaryCompatibility/klibEvolution/newOverrideMember.kt");

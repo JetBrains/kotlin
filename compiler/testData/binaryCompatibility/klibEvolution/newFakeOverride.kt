@@ -2,15 +2,12 @@
 // FILE: A.kt
 // VERSION: 1
 
-open class X {
-    val hasFoo = false
-}
+open class X 
 
 // FILE: B.kt
 // VERSION: 2
 
 open class X {
-    val hasFoo = false
     open fun foo(): String = "new member"
 }
 
@@ -32,15 +29,6 @@ fun qux(): String = Y().foo()
 
 // MODULE: mainLib(lib)
 // FILE: mainLib.kt
-
-fun qux(): String  {
-    val y = Y()
-    if (y.hasFoo()) {
-        foo()
-    } else {
-        "no foo"
-    }
-}
 
 fun lib(): String = when {
     qux() != "new member" -> "fail 1"
