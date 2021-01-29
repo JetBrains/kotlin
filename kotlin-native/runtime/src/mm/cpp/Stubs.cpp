@@ -103,15 +103,15 @@ ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
 }
 
 RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionEpilogue() {
-    TODO();
+    // TODO: Unimplemented
 }
 
 RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
-    TODO();
+    // TODO: Unimplemented
 }
 
 RUNTIME_NOTHROW void Kotlin_mm_safePointExceptionUnwind() {
-    TODO();
+    // TODO: Unimplemented
 }
 
 } // extern "C"
