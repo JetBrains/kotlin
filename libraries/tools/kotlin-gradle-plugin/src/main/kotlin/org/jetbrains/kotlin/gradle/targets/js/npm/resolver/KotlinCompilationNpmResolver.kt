@@ -15,6 +15,8 @@ import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -300,9 +302,11 @@ internal class KotlinCompilationNpmResolver(
         @get:Input
         val internalDependencies: Collection<String>,
 
+        @get:PathSensitive(PathSensitivity.ABSOLUTE)
         @get:InputFiles
         val internalCompositeDependencies: Collection<File>,
 
+        @get:PathSensitive(PathSensitivity.ABSOLUTE)
         @get:InputFiles
         val externalGradleDependencies: Collection<File>,
 

@@ -32,6 +32,7 @@ abstract class KotlinNativeTest : KotlinTest() {
     @get:Internal
     val executableProperty: Property<FileCollection> = project.objects.property(FileCollection::class.java)
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
     @get:SkipWhenEmpty
     @Suppress("UNUSED") // Gradle input
