@@ -27,5 +27,3 @@ compileKotlin {
     ]
     kotlinOptions.moduleName = project.name
 }
-
-configureJvmIrBackend(project)

@@ -64,17 +64,6 @@ ext.configurePluginMarkers = { Project project, withEmptyJars = true ->
     PluginMarkersKt.publishPluginMarkers(project, withEmptyJars)
 }
 
-ext.configureJvmIrBackend = { Project project ->
-    project.tasks.withType(KotlinCompile.class) { task ->
-        task.kotlinOptions {
-            if (!project.kotlinBuildProperties.useIRForLibraries) {
-                useIR = false
-                freeCompilerArgs += "-Xuse-old-backend"
-            }
-        }
-    }
-}
-
 allprojects { project ->
     project.ext.configureSourcesJar = { lambda = {} ->
         ArtifactsKt.sourcesJar(project) { task ->
