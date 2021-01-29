@@ -67,6 +67,12 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             }
 
         }
+        // PIC is not required on Windows (and Clang will fail with `error: unsupported option '-fPIC'`)
+        if (configurables !is MingwConfigurables) {
+            // `-fPIC` allows us to avoid some problems when producing dynamic library.
+            // See KT-43502.
+            add(listOf("-fPIC"))
+        }
     }.flatten()
 
     private val osVersionMin: String
