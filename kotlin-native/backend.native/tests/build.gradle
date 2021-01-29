@@ -424,7 +424,16 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
         if (task.enabled) {
             konanArtifacts {
                 def targetName = target.name
+                def lib = task.interop
+                if (lib != null) {
+                    UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
+                }
                 dynamic(name, targets: [targetName]) {
+                    if (lib != null) {
+                        libraries {
+                            artifact lib
+                        }
+                    }
                     srcFiles task.getSources()
                     baseDir  "$testOutputLocal/$name"
                     extraOpts task.flags
