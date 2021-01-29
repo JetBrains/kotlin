@@ -104,6 +104,11 @@ internal fun CirTypeAlias.typeAliasFlags(): Flags =
 private inline val CirHasAnnotations.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty()) Flag.Common.HAS_ANNOTATIONS else null
 
+// Since 1.4.30 a special @JvmInline annotation is generated to distinguish JVM-inline from value classes.
+// This has an effect on class serialization: Every class with isInline == true automatically gets HAS_ANNOTATIONS flag.
+private inline val CirClass.hasAnnotationsFlag: Flag?
+    get() = if (annotations.isNotEmpty() || isInline) Flag.Common.HAS_ANNOTATIONS else null
+
 private inline val CirProperty.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty() || !backingFieldAnnotations.isNullOrEmpty() || !delegateFieldAnnotations.isNullOrEmpty())
         Flag.Common.HAS_ANNOTATIONS
