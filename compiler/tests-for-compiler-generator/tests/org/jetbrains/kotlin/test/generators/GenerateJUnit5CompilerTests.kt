@@ -104,6 +104,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 annotations = listOf(annotation(Execution::class.java, ExecutionMode.SAME_THREAD))
             ) {
                 model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
