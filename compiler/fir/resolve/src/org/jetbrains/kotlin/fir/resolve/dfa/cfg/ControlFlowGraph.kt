@@ -70,6 +70,23 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         }
     }
 
+    fun copy(): ControlFlowGraph {
+        val newCFG = ControlFlowGraph(declaration, name, kind)
+        nodes.forEach {
+            it.copy(newCFG)
+        }
+        val newSubGraphs = subGraphs.map {
+            it.copy()
+        }
+
+        newCFG.enterNode = enterNode
+        newCFG.exitNode = exitNode
+        newCFG.owner = owner
+        newCFG.state = state
+        newCFG._subGraphs.addAll(newSubGraphs)
+        return newCFG
+    }
+
     enum class State {
         Building,
         Completed;
@@ -91,6 +108,7 @@ data class Edge(
     val label: EdgeLabel,
     val kind: EdgeKind,
 ) {
+    @OptIn(InterproceduralOnly::class)
     companion object {
         val Normal_Forward = Edge(NormalPath, EdgeKind.Forward)
         private val Normal_DeadForward = Edge(NormalPath, EdgeKind.DeadForward)
@@ -153,6 +171,8 @@ enum class EdgeKind(
     CfgForward(usedInDfa = false, usedInCfa = true, isBack = false, isDead = false),
     CfgBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = false),
     DeadBackward(usedInDfa = false, usedInCfa = true, isBack = true, isDead = true),
+
+    @InterproceduralOnly
     Interprocedural(usedInDfa = false, usedInCfa = false, isBack = false, isDead = false)
 }
 
@@ -205,3 +225,6 @@ private fun ControlFlowGraph.walkThrowSubGraphs(
         }
     }
 }
+
+@RequiresOptIn("This edge exclusive for Interprocedural Analysis")
+annotation class InterproceduralOnly

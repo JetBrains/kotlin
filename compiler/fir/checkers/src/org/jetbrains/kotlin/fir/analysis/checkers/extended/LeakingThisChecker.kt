@@ -29,22 +29,26 @@ object LeakingThisChecker : FirClassChecker() {
     override fun check(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         val properties = declaration.declarations
             .filterIsInstance<FirProperty>()
+            .filter { it.initializer == null && !it.isLateInit }
             .map { it.symbol }
-            .filter { it.fir.initializer == null && !it.fir.isLateInit }
+            .toHashSet()
+
         if (properties.isEmpty()) return
 
         val functions = declaration.declarations
             .filterIsInstance<FirSimpleFunction>()
             .map { it.symbol }
-        val classGraph = (declaration as FirControlFlowGraphOwner).controlFlowGraphReference?.controlFlowGraph ?: return
+            .toHashSet()
+        val originalGraph = (declaration as FirControlFlowGraphOwner).controlFlowGraphReference?.controlFlowGraph ?: return
+        val copiedGraph = originalGraph.copy()
 
-        val data = InterproceduralCollector(properties, functions).collect(classGraph)
-        GraphReporterVisitor(data, properties, reporter).reportForGraph(classGraph)
+        val data = InterproceduralCollector(properties, functions).collect(copiedGraph)
+        GraphReporterVisitor(data, properties, reporter).reportForGraph(copiedGraph)
     }
 
     private class InterproceduralCollector(
-        private val globalProperties: Collection<FirPropertySymbol>,
-        private val functionsWhitelist: List<FirNamedFunctionSymbol>
+        private val globalProperties: HashSet<FirPropertySymbol>,
+        private val functionsWhitelist: HashSet<FirNamedFunctionSymbol>
     ) : InterproceduralVisitor<PathAwarePropertyUsageInfo, PropertyUsageInfo>() {
         fun collect(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwarePropertyUsageInfo> {
             return graph.collectDataForNodeInterprocedural(
@@ -108,7 +112,7 @@ object LeakingThisChecker : FirClassChecker() {
             var changed = false
             for ((label, dataPerLabel) in this) {
                 for (symbol in symbols) {
-                    val v = updater.invoke(dataPerLabel[symbol])
+                    val v = updater.invoke(dataPerLabel[NormalPath])
                     if (v != null) {
                         resultMap = resultMap.put(label, dataPerLabel.put(label, v))
                         changed = true
@@ -127,7 +131,7 @@ object LeakingThisChecker : FirClassChecker() {
 
     private class GraphReporterVisitor(
         val data: Map<CFGNode<*>, PathAwarePropertyUsageInfo>,
-        val globalProperties: Collection<FirPropertySymbol>,
+        val globalProperties: HashSet<FirPropertySymbol>,
         val reporter: DiagnosticReporter
     ) : InterproceduralVisitorVoid() {
         fun reportForGraph(graph: ControlFlowGraph) {
@@ -145,7 +149,9 @@ object LeakingThisChecker : FirClassChecker() {
             for ((nodeKey, value) in data) {
                 if (nodeKey == node) {
                     inInlinedFunction = true
-                } else if (inInlinedFunction) {
+                } else if (inInlinedFunction && nodeKey is QualifiedAccessNode) {
+                    val property = nodeKey.fir.toResolvedCallableSymbol()
+                    if (property !in globalProperties) continue
                     if (value[NormalPath]?.isAlwaysInitialized != true) {
                         reporter.report(source, LEAKING_THIS, functionCallableSymbol)
                         break

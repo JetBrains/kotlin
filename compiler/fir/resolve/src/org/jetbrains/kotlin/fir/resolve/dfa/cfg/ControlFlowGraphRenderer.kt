@@ -24,6 +24,7 @@ class FirControlFlowGraphRenderVisitor(
         private const val RED = "red"
         private const val BLUE = "blue"
 
+        @OptIn(InterproceduralOnly::class)
         private val EDGE_STYLE = EnumMap(
             mapOf(
                 EdgeKind.Forward to "",

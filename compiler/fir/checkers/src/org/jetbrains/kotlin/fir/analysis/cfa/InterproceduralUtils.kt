@@ -30,7 +30,7 @@ fun <I : PathAwareControlFlowInfo<I, V>, V : ControlFlowInfo<V, *, *>> ControlFl
     direction: TraverseDirection,
     initialInfo: I,
     visitor: InterproceduralVisitor<I, V>,
-    functionsWhitelist: Collection<FirNamedFunctionSymbol>
+    functionsWhitelist: HashSet<FirNamedFunctionSymbol>
 ): Map<CFGNode<*>, I> {
     val nodeMap = LinkedHashMap<CFGNode<*>, I>()
     val startNode = getEnterNode(direction)
@@ -51,7 +51,7 @@ internal fun <I : PathAwareControlFlowInfo<I, V>, V : ControlFlowInfo<V, *, *>> 
     visitor: InterproceduralVisitor<I, V>,
     nodeMap: MutableMap<CFGNode<*>, I>,
     changed: MutableMap<CFGNode<*>, Boolean>,
-    functionsWhitelist: Collection<FirNamedFunctionSymbol> = listOf(),
+    functionsWhitelist: HashSet<FirNamedFunctionSymbol> = hashSetOf(),
     visitedSymbols: Collection<FirBasedSymbol<*>> = listOf(),
     visitedNodes: MutableSet<CFGNode<*>> = mutableSetOf()
 ) {

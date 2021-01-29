@@ -22,17 +22,16 @@ abstract class InterproceduralVisitor<I : PathAwareControlFlowInfo<I, V>, V : Co
         initialInfo: I,
         nodeMap: MutableMap<CFGNode<*>, I>,
         changed: MutableMap<CFGNode<*>, Boolean>,
-        functionsWhitelist: Collection<FirNamedFunctionSymbol>,
+        functionsWhitelist: HashSet<FirNamedFunctionSymbol>,
         visitedSymbols: Collection<FirBasedSymbol<*>>,
         callNode: CFGNode<*>,
         visitedNodes: MutableSet<CFGNode<*>>
     ) {
         if (callNode is FunctionCallNode) {
             val functionSymbol = callNode.fir.toResolvedCallableSymbol() as? FirNamedFunctionSymbol
-            val symbol = functionSymbol as? FirBasedSymbol<*> ?: return
-            val function = functionSymbol.fir as? FirControlFlowGraphOwner
-            val functionCfg = function?.controlFlowGraphReference?.controlFlowGraph
-            if (functionSymbol in functionsWhitelist && symbol !in visitedSymbols && function != null && functionCfg != null) {
+            val function = functionSymbol?.fir ?: return
+            val functionCfg = function.controlFlowGraphReference?.controlFlowGraph
+            if (functionSymbol in functionsWhitelist && functionSymbol !in visitedSymbols && functionCfg != null) {
                 processCfg(
                     functionCfg,
                     direction,
@@ -40,7 +39,7 @@ abstract class InterproceduralVisitor<I : PathAwareControlFlowInfo<I, V>, V : Co
                     nodeMap,
                     changed,
                     functionsWhitelist,
-                    visitedSymbols + symbol,
+                    visitedSymbols + functionSymbol,
                     callNode,
                     visitedNodes
                 )
@@ -84,13 +83,14 @@ abstract class InterproceduralVisitor<I : PathAwareControlFlowInfo<I, V>, V : Co
         }
     }
 
+    @OptIn(InterproceduralOnly::class)
     private fun processCfg(
         cfg: ControlFlowGraph,
         direction: TraverseDirection,
         initialInfo: I,
         nodeMap: MutableMap<CFGNode<*>, I>,
         changed: MutableMap<CFGNode<*>, Boolean>,
-        functionsWhitelist: Collection<FirNamedFunctionSymbol>,
+        functionsWhitelist: HashSet<FirNamedFunctionSymbol>,
         visitedSymbols: Collection<FirBasedSymbol<*>>,
         node: CFGNode<*>,
         visitedNodes: MutableSet<CFGNode<*>>
