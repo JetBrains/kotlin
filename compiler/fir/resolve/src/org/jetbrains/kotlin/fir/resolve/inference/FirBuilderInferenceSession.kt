@@ -36,11 +36,13 @@ class FirBuilderInferenceSession(
 
         val storage = system.getBuilder().currentStorage()
 
-        return !storage.notFixedTypeVariables.keys.any {
+        if (call.hasPostponed()) return true
+
+        return storage.notFixedTypeVariables.keys.all {
             val variable = storage.allTypeVariables[it]
             val isPostponed = variable != null && variable in storage.postponedTypeVariables
-            !isPostponed && !components.callCompleter.completer.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
-        } || call.hasPostponed()
+            isPostponed || components.callCompleter.completer.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
+        }
     }
 
     private fun FirStatement.hasPostponed(): Boolean {
