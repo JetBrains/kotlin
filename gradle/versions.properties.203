@@ -1,5 +1,4 @@
 versions.intellijSdk=203-SNAPSHOT
-versions.androidBuildTools=r23.0.1
 versions.idea.NodeJS=193.6494.7
 versions.jar.asm-all=8.0.1
 versions.jar.guava=29.0-jre

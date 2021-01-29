@@ -65,7 +65,6 @@ dependencies {
     testRuntimeOnly(intellijPluginDep("java"))
 
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(androidDxJar())
     testRuntime(toolsJar())
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
