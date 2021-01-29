@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import org.jetbrains.kotlin.descriptors.*
+import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.test.util.DescriptorValidator.*
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
+import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlin.test.assertFalse
 import kotlin.test.fail
 
 fun assertIsDirectory(file: File) {
@@ -32,47 +33,24 @@ fun assertCommonizationPerformed(result: CommonizerResult) {
 }
 
 @ExperimentalContracts
-fun assertModulesAreEqual(expected: ModuleDescriptor, actual: ModuleDescriptor, designatorMessage: String) {
-    val visitor = ComparingDeclarationsVisitor(designatorMessage)
-    val context = visitor.Context(actual)
+fun assertModulesAreEqual(expected: SerializedMetadata, actual: SerializedMetadata, target: CommonizerTarget) {
+    val expectedModule = with(expected) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
+    val actualModule = with(actual) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
 
-    expected.accept(visitor, context)
-}
+    when (val result = MetadataDeclarationsComparator().compare(expectedModule, actualModule)) {
+        is Result.Success -> Unit
+        is Result.Failure -> {
+            val mismatches = result.mismatches.sortedBy { it::class.java.simpleName + "_" + it.kind }
+            val digitCount = mismatches.size.toString().length
 
-fun assertValidModule(module: ModuleDescriptor) = validate(
-    object : ValidationVisitor() {
-        override fun validateScope(scopeOwner: DeclarationDescriptor?, scope: MemberScope, collector: DiagnosticCollector) = Unit
+            val failureMessage = buildString {
+                appendLine("${mismatches.size} mismatches found while comparing module ${expectedModule.name} and ${actualModule.name} for target ${target.prettyName}:")
+                mismatches.forEachIndexed { index, mismatch ->
+                    appendLine((index + 1).toString().padStart(digitCount, ' ') + ". " + mismatch)
+                }
+            }
 
-        override fun visitModuleDeclaration(descriptor: ModuleDescriptor, collector: DiagnosticCollector): Boolean {
-            assertValid(descriptor)
-            return super.visitModuleDeclaration(descriptor, collector)
+            fail(failureMessage)
         }
-
-        override fun visitClassDescriptor(descriptor: ClassDescriptor, collector: DiagnosticCollector): Boolean {
-            assertValid(descriptor)
-            return super.visitClassDescriptor(descriptor, collector)
-        }
-
-        override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, collector: DiagnosticCollector): Boolean {
-            assertValid(descriptor)
-            return super.visitFunctionDescriptor(descriptor, collector)
-        }
-
-        override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, collector: DiagnosticCollector): Boolean {
-            assertValid(descriptor)
-            return super.visitPropertyDescriptor(descriptor, collector)
-        }
-
-        override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, collector: DiagnosticCollector): Boolean {
-            assertValid(constructorDescriptor)
-            return super.visitConstructorDescriptor(constructorDescriptor, collector)
-        }
-    },
-    module
-)
-
-@Suppress("NOTHING_TO_INLINE")
-private inline fun assertValid(descriptor: DeclarationDescriptor) = when (descriptor) {
-    is ModuleDescriptor -> descriptor.assertValid()
-    else -> assertFalse(ErrorUtils.isError(descriptor), "$descriptor is error")
+    }
 }

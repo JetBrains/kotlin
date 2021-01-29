@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBo
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -74,25 +78,21 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val sharedTarget: SharedTarget = analyzedModules.sharedTarget
         assertEquals(sharedTarget, result.sharedTarget)
 
-        val sharedModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedModules.getValue(sharedTarget)
-        val sharedModuleByCommonizer: ModuleDescriptor =
-            (result.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).module!!
+        val sharedModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(sharedTarget)
+        val sharedModuleByCommonizer: SerializedMetadata =
+            (result.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata.metadata
 
-        assertValidModule(sharedModuleAsExpected)
-        assertValidModule(sharedModuleByCommonizer)
-        assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, "\"$sharedTarget\" target")
+        assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, sharedTarget)
 
         val leafTargets: Set<LeafTarget> = analyzedModules.leafTargets
         assertEquals(leafTargets, result.leafTargets)
 
         for (leafTarget in leafTargets) {
-            val leafTargetModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedModules.getValue(leafTarget)
-            val leafTargetModuleByCommonizer: ModuleDescriptor =
-                (result.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).module!!
+            val leafTargetModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(leafTarget)
+            val leafTargetModuleByCommonizer: SerializedMetadata =
+                (result.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).metadata.metadata
 
-            assertValidModule(leafTargetModuleAsExpected)
-            assertValidModule(leafTargetModuleByCommonizer)
-            assertModulesAreEqual(leafTargetModuleAsExpected, leafTargetModuleByCommonizer, "\"$leafTarget\" target")
+            assertModulesAreEqual(leafTargetModuleAsExpected, leafTargetModuleByCommonizer, leafTarget)
         }
     }
 }
@@ -182,7 +182,7 @@ private class AnalyzedModuleDependencies(
 
 private class AnalyzedModules(
     val originalModules: Map<CommonizerTarget, ModuleDescriptor>,
-    val commonizedModules: Map<CommonizerTarget, ModuleDescriptor>,
+    val commonizedModules: Map<CommonizerTarget, SerializedMetadata>,
     val dependeeModules: Map<CommonizerTarget, List<ModuleDescriptor>>
 ) {
     val leafTargets: Set<LeafTarget>
@@ -232,11 +232,16 @@ private class AnalyzedModules(
             parentDisposable: Disposable
         ): AnalyzedModules = with(sourceModuleRoots) {
             // phase 1: provide the modules that are the dependencies for "original" and "commonized" modules
-            val (dependeeModules, dependencies) = createDependeeModules(sharedTarget, dependeeRoots, parentDisposable)
+            val (dependeeModules: Map<CommonizerTarget, List<ModuleDescriptor>>, dependencies: AnalyzedModuleDependencies) =
+                createDependeeModules(sharedTarget, dependeeRoots, parentDisposable)
 
             // phase 2: build "original" and "commonized" modules
-            val originalModules = createModules(sharedTarget, originalRoots, dependencies, parentDisposable)
-            val commonizedModules = createModules(sharedTarget, commonizedRoots, dependencies, parentDisposable)
+            val originalModules: Map<CommonizerTarget, ModuleDescriptor> =
+                createModules(sharedTarget, originalRoots, dependencies, parentDisposable)
+
+            val commonizedModules: Map<CommonizerTarget, SerializedMetadata> =
+                createModules(sharedTarget, commonizedRoots, dependencies, parentDisposable)
+                    .mapValues { (_, moduleDescriptor) -> serializer.serializeModule(moduleDescriptor) }
 
             return AnalyzedModules(originalModules, commonizedModules, dependeeModules)
         }
@@ -334,6 +339,13 @@ private class AnalyzedModules(
 
             return module
         }
+
+        private val serializer = KlibMetadataMonolithicSerializer(
+            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+            metadataVersion = KlibMetadataVersion.INSTANCE,
+            skipExpects = false,
+            project = null
+        )
     }
 }
 
