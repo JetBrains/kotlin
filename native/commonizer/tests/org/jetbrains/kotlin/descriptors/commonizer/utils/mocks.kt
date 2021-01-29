@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
@@ -149,10 +147,6 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
     },
     dependeeLibraries = emptyMap()
 )
-
-internal class MockBuiltInsProvider(private val builtIns: KotlinBuiltIns) : BuiltInsProvider {
-    override fun loadBuiltIns() = builtIns
-}
 
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, ModuleDescriptor>,
