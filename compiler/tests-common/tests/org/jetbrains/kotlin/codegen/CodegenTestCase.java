@@ -315,8 +315,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             boolean ignoreDexing = myFiles.getPsiFiles().stream().anyMatch(
                 it -> InTextDirectivesUtils.isDirectiveDefined(it.getText(), "IGNORE_DEXING")
             );
-            if (verifyWithDex() && DxChecker.RUN_DX_CHECKER && !ignoreDexing) {
-                DxChecker.check(classFileFactory);
+            if (verifyWithDex() && D8Checker.RUN_D8_CHECKER && !ignoreDexing) {
                 D8Checker.check(classFileFactory);
             }
         }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.D8Checker
-import org.jetbrains.kotlin.codegen.DxChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
@@ -21,7 +20,6 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (RUN_DEX_CHECKER !in module.directives || IGNORE_DEXING in module.directives) return
-        DxChecker.check(info.classFileFactory)
         D8Checker.check(info.classFileFactory)
     }
 
