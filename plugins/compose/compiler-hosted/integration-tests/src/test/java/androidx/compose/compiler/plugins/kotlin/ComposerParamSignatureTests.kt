@@ -295,9 +295,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
-    fun testAmbientCurrent(): Unit = checkApi(
+    fun testCompositionLocalCurrent(): Unit = checkApi(
         """
-            val a = ambientOf { 123 }
+            val a = compositionLocalOf { 123 }
             @Composable fun Foo() {
                 val b = a.current
                 print(b)
@@ -305,8 +305,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """,
         """
             public final class TestKt {
-              private final static Landroidx/compose/runtime/ProvidableAmbient; a
-              public final static getA()Landroidx/compose/runtime/ProvidableAmbient;
+              private final static Landroidx/compose/runtime/ProvidableCompositionLocal; a
+              public final static getA()Landroidx/compose/runtime/ProvidableCompositionLocal;
               final static INNERCLASS TestKt%Foo%1 null null
               public final static Foo(Landroidx/compose/runtime/Composer;I)V
               final static INNERCLASS TestKt%a%1 null null
@@ -825,47 +825,47 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testSealedClassEtc(): Unit = checkApi(
         """
-            sealed class Ambient2<T> {
+            sealed class CompositionLocal2<T> {
                 @Composable
                 inline val current: T get() = error("")
                 @Composable fun foo() {}
             }
 
-            abstract class ProvidableAmbient2<T> : Ambient2<T>() {}
-            class DynamicProvidableAmbient2<T> : ProvidableAmbient2<T>() {}
-            class StaticProvidableAmbient2<T> : ProvidableAmbient2<T>() {}
+            abstract class ProvidableCompositionLocal2<T> : CompositionLocal2<T>() {}
+            class DynamicProvidableCompositionLocal2<T> : ProvidableCompositionLocal2<T>() {}
+            class StaticProvidableCompositionLocal2<T> : ProvidableCompositionLocal2<T>() {}
         """,
         """
-            public abstract class Ambient2 {
+            public abstract class CompositionLocal2 {
               private <init>()V
               public final getCurrent(Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
               public static synthetic getCurrent%annotations()V
-              final static INNERCLASS Ambient2%foo%1 null null
+              final static INNERCLASS CompositionLocal2%foo%1 null null
               public final foo(Landroidx/compose/runtime/Composer;I)V
               public final static I %stable
               public synthetic <init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
               static <clinit>()V
             }
-            final class Ambient2%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
-              <init>(LAmbient2;I)V
+            final class CompositionLocal2%foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+              <init>(LCompositionLocal2;I)V
               public final invoke(Landroidx/compose/runtime/Composer;I)V
-              final synthetic LAmbient2; %tmp0_rcvr
+              final synthetic LCompositionLocal2; %tmp0_rcvr
               final synthetic I %%changed
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-              final static INNERCLASS Ambient2%foo%1 null null
-              OUTERCLASS Ambient2 foo (Landroidx/compose/runtime/Composer;I)V
+              final static INNERCLASS CompositionLocal2%foo%1 null null
+              OUTERCLASS CompositionLocal2 foo (Landroidx/compose/runtime/Composer;I)V
             }
-            public abstract class ProvidableAmbient2 extends Ambient2 {
+            public abstract class ProvidableCompositionLocal2 extends CompositionLocal2 {
               public <init>()V
               public final static I %stable
               static <clinit>()V
             }
-            public final class DynamicProvidableAmbient2 extends ProvidableAmbient2 {
+            public final class DynamicProvidableCompositionLocal2 extends ProvidableCompositionLocal2 {
               public <init>()V
               public final static I %stable
               static <clinit>()V
             }
-            public final class StaticProvidableAmbient2 extends ProvidableAmbient2 {
+            public final class StaticProvidableCompositionLocal2 extends ProvidableCompositionLocal2 {
               public <init>()V
               public final static I %stable
               static <clinit>()V
