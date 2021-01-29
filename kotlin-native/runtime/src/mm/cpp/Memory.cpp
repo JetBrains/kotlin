@@ -142,6 +142,11 @@ extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, cons
 
 extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
 
+extern "C" OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index) {
+    // TODO: Remove when legacy MM is gone.
+    ThrowNotImplementedError();
+}
+
 extern "C" RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     threadData->shadowStack().EnterFrame(start, parameters, count);
@@ -183,9 +188,40 @@ extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
     // Nothing to do
 }
 
+extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
+    // TODO: Remove when legacy MM is gone.
+    ThrowIllegalArgumentException();
+}
+
+extern "C" OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*) {
+    // TODO: Remove when legacy MM is gone.
+    RETURN_OBJ(nullptr);
+}
+
+extern "C" OBJ_GETTER(Kotlin_native_internal_GC_findCycle, ObjHeader*, ObjHeader* root) {
+    // TODO: Remove when legacy MM is gone.
+    RETURN_OBJ(nullptr);
+}
+
+extern "C" bool Kotlin_native_internal_GC_getCyclicCollector(ObjHeader* gc) {
+    // TODO: Remove when legacy MM is gone.
+    return false;
+}
+
+extern "C" void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value) {
+    // TODO: Remove when legacy MM is gone.
+    if (value)
+        ThrowIllegalArgumentException();
+}
+
 extern "C" bool Kotlin_Any_isShareable(ObjHeader* thiz) {
     // TODO: Remove when legacy MM is gone.
     return true;
+}
+
+extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
 }
 
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
