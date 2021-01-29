@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
@@ -24,12 +25,10 @@ internal class FirIdeStructureElementDiagnosticsCollector private constructor(
 ) : AbstractFirIdeDiagnosticsCollector(
     session,
 ) {
-    private val result = mutableMapOf<KtElement, MutableList<FirPsiDiagnostic<*>>>()
+    private val result = mutableMapOf<PsiElement, MutableList<FirPsiDiagnostic<*>>>()
 
     override fun onDiagnostic(diagnostic: FirPsiDiagnostic<*>) {
-        (diagnostic.psiElement as? KtElement)?.let { ktElement ->
-            result.addValueFor(ktElement, diagnostic)
-        }
+        result.addValueFor(diagnostic.psiElement, diagnostic)
     }
 
     override fun onDeclarationEnter(
