@@ -90,6 +90,7 @@ constructor(
     internal var resolveFromModulesFirst: Boolean = false
 
     @Suppress("unused")
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     val runtimeClasspath: FileCollection by lazy {
         compilation.compileDependencyFiles
@@ -138,7 +139,10 @@ constructor(
         get() = destinationDirectory.resolve(outputFileName)
 
     open val configDirectory: File?
-        @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+        @PathSensitive(PathSensitivity.ABSOLUTE)
+        @Optional
+        @InputDirectory
+        get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
 
     @Input
     var report: Boolean = false

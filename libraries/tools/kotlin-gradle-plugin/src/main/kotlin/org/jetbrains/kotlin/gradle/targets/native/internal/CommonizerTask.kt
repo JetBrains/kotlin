@@ -37,12 +37,14 @@ internal open class CommonizerTask : DefaultTask() {
     @get:Input
     var targetGroups: Set<KonanTargetGroup> = emptySet()
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
     @Suppress("unused") // Only for up-to-date checker. The directory with the original common libs.
     val originalCommonLibrariesDirectory = konanHome
         .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
         .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
     @Suppress("unused") // Only for up-to-date checker. The directory with the original platform libs.
     val originalPlatformLibrariesDirectory = konanHome
@@ -53,6 +55,7 @@ internal open class CommonizerTask : DefaultTask() {
     val commonizerTargetOutputDirectories
         get() = targetGroups.map { targets -> project.nativeDistributionCommonizerOutputDirectory(targets) }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     @Suppress("unused") // Only for up-to-date checker.
     val successMarkers
