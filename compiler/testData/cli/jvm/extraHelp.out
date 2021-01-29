@@ -74,6 +74,10 @@ where advanced options include:
                              -Xjvm-default=compatibility      Allow usages of @JvmDefault; generate a compatibility accessor
                                                               in the 'DefaultImpls' class in addition to the default interface method
   -Xklib=<path>              Paths to cross-platform libraries in .klib format
+  -Xlambdas={class|indy}     Select code generation scheme for lambdas.
+                             -Xlambdas=indy                      Generate lambdas using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
+                                                                 Lambda objects created using `LambdaMetafactory.metafactory` will have different `toString()`.
+                             -Xlambdas=class                     Generate lambdas as explicit classes
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-exception-on-explicit-equals-for-boxed-null
                              Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type
@@ -93,7 +97,7 @@ where advanced options include:
                              Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>
   -Xrepeat=<number>          Debug option: Repeats modules compilation <number> times
   -Xsam-conversions={class|indy} Select code generation scheme for SAM conversions.
-                             -Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 8` or greater.
+                             -Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
                              -Xsam-conversions=class             Generate SAM conversions as explicit classes
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
@@ -107,10 +111,10 @@ where advanced options include:
   -Xgenerate-strict-metadata-version
                              Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
   -Xstring-concat={indy-with-constants|indy|inline}
-                             Switch a way in which string concatenation is performed.
-                             -Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
-                             -Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
-                             -Xstring-concat=inline              Performs string concatenation via `StringBuilder`
+                             Select code generation scheme for string concatenation.
+                             -Xstring-concat=indy-with-constants   Concatenate strings using `invokedynamic` ` makeConcatWithConstants`. Requires `-jvm-target 9` or greater.
+                             -Xstring-concat=indy                Concatenate strings using `invokedynamic` `makeConcat`. Requires `-jvm-target 9` or greater.
+                             -Xstring-concat=inline              Concatenate strings using `StringBuilder`
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'

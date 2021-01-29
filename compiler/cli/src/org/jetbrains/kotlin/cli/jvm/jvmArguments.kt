@@ -72,27 +72,37 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (arguments.samConversions != null) {
-        val samConversions = JvmSamConversions.fromString(arguments.samConversions)
-        if (samConversions != null) {
-            put(JVMConfigurationKeys.SAM_CONVERSIONS, samConversions)
-            if (jvmTarget < samConversions.minJvmTarget) {
+    handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS, jvmTarget)
+    handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS, jvmTarget)
+
+    addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
+}
+
+private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
+    flag: String,
+    value: String?,
+    key: CompilerConfigurationKey<JvmClosureGenerationScheme>,
+    jvmTarget: JvmTarget
+) {
+    if (value != null) {
+        val parsedValue = JvmClosureGenerationScheme.fromString(value)
+        if (parsedValue != null) {
+            put(key, parsedValue)
+            if (jvmTarget < parsedValue.minJvmTarget) {
                 messageCollector.report(
                     WARNING,
-                    "`-Xsam-conversions=${arguments.samConversions}` requires JVM target at least " +
-                            "${samConversions.minJvmTarget.description} and is ignored."
+                    "`$flag=$value` requires JVM target at least " +
+                            "${parsedValue.minJvmTarget.description} and is ignored."
                 )
             }
         } else {
             messageCollector.report(
                 ERROR,
-                "Unknown `-Xsam-conversions` argument: ${arguments.samConversions}\n" +
-                        "Supported arguments: ${JvmSamConversions.values().joinToString { it.description }}"
+                "Unknown `$flag` argument: ${value}\n." +
+                        "Supported arguments: ${JvmClosureGenerationScheme.values().joinToString { it.description }}"
             )
         }
     }
-
-    addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
 fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): Boolean {

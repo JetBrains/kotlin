@@ -358,10 +358,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xstring-concat",
         valueDescription = "{indy-with-constants|indy|inline}",
-        description = """Switch a way in which string concatenation is performed.
--Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
--Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
--Xstring-concat=inline              Performs string concatenation via `StringBuilder`"""
+        description = """Select code generation scheme for string concatenation.
+-Xstring-concat=indy-with-constants   Concatenate strings using `invokedynamic` ` makeConcatWithConstants`. Requires `-jvm-target 9` or greater.
+-Xstring-concat=indy                Concatenate strings using `invokedynamic` `makeConcat`. Requires `-jvm-target 9` or greater.
+-Xstring-concat=inline              Concatenate strings using `StringBuilder`"""
     )
     var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
 
@@ -369,10 +369,20 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-Xsam-conversions",
         valueDescription = "{class|indy}",
         description = """Select code generation scheme for SAM conversions.
--Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 8` or greater.
+-Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
 -Xsam-conversions=class             Generate SAM conversions as explicit classes"""
     )
-    var samConversions: String? by NullableStringFreezableVar(JvmSamConversions.CLASS.description)
+    var samConversions: String? by NullableStringFreezableVar(null)
+
+    @Argument(
+        value = "-Xlambdas",
+        valueDescription = "{class|indy}",
+        description = """Select code generation scheme for lambdas.
+-Xlambdas=indy                      Generate lambdas using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
+                                    Lambda objects created using `LambdaMetafactory.metafactory` will have different `toString()`.
+-Xlambdas=class                     Generate lambdas as explicit classes"""
+    )
+    var lambdas: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xklib",

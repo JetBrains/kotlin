@@ -57,7 +57,12 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     @Suppress("RemoveExplicitTypeArguments")
     val SAM_CONVERSIONS by enumDirective<JvmSamConversions>(
         description = "SAM conversion code generation scheme",
-        additionalParser = JvmSamConversions.Companion::fromString
+        additionalParser = JvmClosureGenerationScheme.Companion::fromString
+    )
+
+    val LAMBDAS by enumDirective(
+        description = "Lambdas code generation scheme",
+        additionalParser = JvmClosureGenerationScheme.Companion::fromString
     )
 
     val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME by directive(
