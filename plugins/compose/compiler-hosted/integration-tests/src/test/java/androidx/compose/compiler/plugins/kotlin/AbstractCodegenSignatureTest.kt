@@ -179,7 +179,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                     override fun recordUsed(scope: RecomposeScope) { }
                     override fun recordSideEffect(effect: () -> Unit) { }
                     @Suppress("UNCHECKED_CAST")
-                    override fun <T> consume(key: Ambient<T>): T = null as T
+                    override fun <T> consume(key: CompositionLocal<T>): T = null as T
                     override fun startProviders(values: Array<out ProvidedValue<*>>) { }
                     override fun endProviders() { }
                     override fun recordReadOf(value: Any) { }
