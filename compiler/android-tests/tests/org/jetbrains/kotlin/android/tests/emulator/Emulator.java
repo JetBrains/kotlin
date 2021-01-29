@@ -144,6 +144,10 @@ public class Emulator {
         bootCheckCommand.addParameter("shell");
         bootCheckCommand.addParameter("getprop");
         bootCheckCommand.addParameter("sys.boot_completed");
+        System.out.println("Setting ANDROID_HOME/ANDROID_SDK_ROOT:" + pathManager.getAndroidSdkRoot());
+        bootCheckCommand.withEnvironment("ANDROID_SDK_ROOT", pathManager.getAndroidSdkRoot());
+        bootCheckCommand.withEnvironment("ANDROID_HOME", pathManager.getAndroidSdkRoot());
+
         int counter = 0;
         RunResult execute = RunUtils.execute(bootCheckCommand);
         while (counter < 20) {
