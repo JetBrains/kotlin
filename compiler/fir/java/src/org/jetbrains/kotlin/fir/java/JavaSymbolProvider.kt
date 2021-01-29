@@ -310,7 +310,7 @@ class JavaSymbolProvider(
         if (classIsAnnotation) {
             declarations +=
                 buildConstructorForAnnotationClass(
-                    classSource = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor),
+                    classSource = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor) as? FirFakeSourceElement,
                     constructorId = constructorId,
                     ownerClassBuilder = this,
                     valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor
@@ -511,7 +511,7 @@ class JavaSymbolProvider(
     }
 
     private fun buildConstructorForAnnotationClass(
-        classSource: FirSourceElement?,
+        classSource: FirFakeSourceElement<*>?,
         constructorId: CallableId,
         ownerClassBuilder: FirJavaClassBuilder,
         valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor

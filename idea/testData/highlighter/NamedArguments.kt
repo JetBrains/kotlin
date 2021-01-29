@@ -6,5 +6,3 @@ fun <info descr="null" textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info
 fun <info descr="null" textAttributesKey="KOTLIN_FUNCTION_DECLARATION">bar</info>() {
     <info descr="null" textAttributesKey="KOTLIN_PACKAGE_FUNCTION_CALL">foo</info>(1, <info descr="null" textAttributesKey="KOTLIN_NAMED_ARGUMENT">p2 =</info> "")
 }
-
-// IGNORE_FIR

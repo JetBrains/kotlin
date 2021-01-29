@@ -15,7 +15,7 @@ abstract class KtTypeProvider : KtAnalysisSessionComponent() {
 
     abstract val builtinTypes: KtBuiltinTypes
 
-    abstract fun buildTypeForSymbol(symbol: KtClassOrObjectSymbol): KtType
+    abstract fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType
 }
 
 
