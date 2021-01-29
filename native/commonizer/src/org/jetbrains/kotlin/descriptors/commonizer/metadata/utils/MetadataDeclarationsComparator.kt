@@ -11,8 +11,68 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.KNI_BRIDGE_FUNCTION_PRE
 import java.util.*
 import kotlin.reflect.KProperty0
 
-// TODO: move to kotlinx-metadata library?
+// TODO: extract to kotlinx-metadata-klib library?
 class MetadataDeclarationsComparator(private val config: Config = Config.Default) {
+
+    interface Config {
+        val rootPathElement: String
+            get() = "<root>"
+
+        /**
+         * Certain auxiliary metadata entities may be intentionally excluded from comparison.
+         * Ex: Kotlin/Native interface bridge functions.
+         */
+        fun shouldCheckDeclaration(declaration: Any): Boolean =
+            when (declaration) {
+                is KmFunction -> !declaration.name.startsWith(KNI_BRIDGE_FUNCTION_PREFIX)
+                else -> true
+            }
+
+        companion object Default : Config
+    }
+
+    sealed class Result {
+        object Success : Result() {
+            override fun toString() = "Success"
+        }
+
+        class Failure(val mismatches: Collection<Mismatch>) : Result() {
+            init {
+                check(mismatches.isNotEmpty())
+            }
+
+            override fun toString() = "Failure (${mismatches.size} mismatches)"
+        }
+    }
+
+    sealed class Mismatch {
+        abstract val kind: String
+        abstract val name: String
+        abstract val path: List<String>
+
+        // an entity has different non-nullable values
+        data class DifferentValues(
+            override val kind: String,
+            override val name: String,
+            override val path: List<String>,
+            val valueA: Any,
+            val valueB: Any
+        ) : Mismatch()
+
+        // an entity is missing at one side and present at another side,
+        // or: an entity has nullable value at one side and non-nullable value at another side
+        data class MissingEntity(
+            override val kind: String,
+            override val name: String,
+            override val path: List<String>,
+            val existentValue: Any,
+            val missingInA: Boolean
+        ) : Mismatch() {
+            val missingInB: Boolean
+                get() = !missingInA
+        }
+    }
+
     private val mismatches = mutableListOf<Mismatch>()
 
     private class Context(pathElement: String, parent: Context? = null) {
@@ -829,64 +889,5 @@ class MetadataDeclarationsComparator(private val config: Config = Config.Default
                 }
             }
         }
-    }
-}
-
-interface Config {
-    val rootPathElement: String
-        get() = "<root>"
-
-    /**
-     * Certain auxiliary metadata entities may be intentionally excluded from comparison.
-     * Ex: Kotlin/Native interface bridge functions.
-     */
-    fun shouldCheckDeclaration(declaration: Any): Boolean =
-        when (declaration) {
-            is KmFunction -> !declaration.name.startsWith(KNI_BRIDGE_FUNCTION_PREFIX)
-            else -> true
-        }
-
-    companion object Default : Config
-}
-
-sealed class Result {
-    object Success : Result() {
-        override fun toString() = "Success"
-    }
-
-    class Failure(val mismatches: Collection<Mismatch>) : Result() {
-        init {
-            check(mismatches.isNotEmpty())
-        }
-
-        override fun toString() = "Failure (${mismatches.size} mismatches)"
-    }
-}
-
-sealed class Mismatch {
-    abstract val kind: String
-    abstract val name: String
-    abstract val path: List<String>
-
-    // an entity has different non-nullable values
-    data class DifferentValues(
-        override val kind: String,
-        override val name: String,
-        override val path: List<String>,
-        val valueA: Any,
-        val valueB: Any
-    ) : Mismatch()
-
-    // an entity is missing at one side and present at another side,
-    // or: an entity has nullable value at one side and non-nullable value at another side
-    data class MissingEntity(
-        override val kind: String,
-        override val name: String,
-        override val path: List<String>,
-        val presentValue: Any,
-        val missingInA: Boolean
-    ) : Mismatch() {
-        val missingInB: Boolean
-            get() = !missingInA
     }
 }

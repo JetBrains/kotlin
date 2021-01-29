@@ -36,6 +36,8 @@ dependencies {
 
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    testImplementation(project(":kotlinx-metadata")) { isTransitive = false }
 }
 
 val runCommonizer by tasks.registering(JavaExec::class) {
