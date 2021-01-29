@@ -1516,14 +1516,6 @@ private fun ObjCExportCodeGenerator.createEnumValuesAdapter(
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
-private fun List<CallableMemberDescriptor>.toMethods(): List<FunctionDescriptor> = this.flatMap {
-    when (it) {
-        is PropertyDescriptor -> listOfNotNull(it.getter, it.setter)
-        is FunctionDescriptor -> listOf(it)
-        else -> error(it)
-    }
-}
-
 private fun objCFunctionType(context: Context, methodBridge: MethodBridge): LLVMTypeRef {
     val paramTypes = methodBridge.paramBridges.map { it.objCType }
 
