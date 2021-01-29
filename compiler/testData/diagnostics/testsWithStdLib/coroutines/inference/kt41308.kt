@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-41308
 
 fun main() {

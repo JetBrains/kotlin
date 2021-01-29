@@ -31625,6 +31625,22 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builderInference")
+        @TestDataPath("$PROJECT_ROOT")
+        public class BuilderInference extends AbstractFirDiagnosticTest {
+            @Test
+            public void testAllFilesPresentInBuilderInference() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builderInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("completeIrrelevantCalls.kt")
+            public void testCompleteIrrelevantCalls() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builtins")
         @TestDataPath("$PROJECT_ROOT")
         public class Builtins {
