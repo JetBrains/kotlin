@@ -3,11 +3,11 @@ class InternalCalls {
     val s: String
 
     fun foo() {
-        <!LEAKING_THIS!>s<!>.length
+        <!MAY_BE_NOT_INITIALIZED!>s<!>.length
     }
 
     init {
-        foo()
+        <!LEAKING_THIS!>foo()<!>
         s = ""
     }
 }

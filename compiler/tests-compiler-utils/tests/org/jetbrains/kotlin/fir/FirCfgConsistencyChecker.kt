@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeKind
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.InterproceduralOnly
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.Assertions
 
@@ -52,6 +53,7 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
         }
     }
 
+    @OptIn(InterproceduralOnly::class)
     private fun checkOrder(graph: ControlFlowGraph) {
         val visited = mutableSetOf<CFGNode<*>>()
         for (node in graph.nodes) {

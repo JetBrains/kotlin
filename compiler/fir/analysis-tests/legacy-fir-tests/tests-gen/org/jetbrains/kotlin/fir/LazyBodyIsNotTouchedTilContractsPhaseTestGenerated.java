@@ -1900,6 +1900,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/GetterAndSetterCallsBadFunction.kt");
             }
 
+            @TestMetadata("IfElseBranch.kt")
+            public void testIfElseBranch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/IfElseBranch.kt");
+            }
+
             @TestMetadata("InternalCalls.kt")
             public void testInternalCalls() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/InternalCalls.kt");
@@ -1918,6 +1923,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             @TestMetadata("Recursion.kt")
             public void testRecursion() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/Recursion.kt");
+            }
+
+            @TestMetadata("useOfPropertiesWithPrimary.kt")
+            public void testUseOfPropertiesWithPrimary() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/useOfPropertiesWithPrimary.kt");
             }
         }
 

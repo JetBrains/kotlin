@@ -2200,6 +2200,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("IfElseBranch.kt")
+            public void testIfElseBranch() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/IfElseBranch.kt");
+            }
+
+            @Test
             @TestMetadata("InternalCalls.kt")
             public void testInternalCalls() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/InternalCalls.kt");

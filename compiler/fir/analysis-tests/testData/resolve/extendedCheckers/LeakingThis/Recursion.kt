@@ -2,7 +2,7 @@ class Recursion {
     private val s: String
     fun foo() {
         bar()
-        <!LEAKING_THIS!>s<!>.length
+        <!MAY_BE_NOT_INITIALIZED!>s<!>.length
     }
 
     fun bar() {
@@ -10,7 +10,7 @@ class Recursion {
     }
 
     init {
-        foo()
+        <!LEAKING_THIS!>foo()<!>
         s = ""
     }
 }

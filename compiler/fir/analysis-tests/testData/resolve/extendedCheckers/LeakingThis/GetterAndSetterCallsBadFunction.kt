@@ -4,7 +4,7 @@ class GetterAndSetterCallsBadFunction {
     val s: String
     val property: Int
         get() {
-            <!LEAKING_THIS!>s<!>.length
+            <!MAY_BE_NOT_INITIALIZED!>s<!>.length
             return 1
         }
 
