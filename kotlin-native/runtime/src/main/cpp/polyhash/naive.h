@@ -9,7 +9,7 @@
 #include <cstdint>
 
 inline int polyHash_naive(int length, uint16_t const* str) {
-    int res = 0;
+    uint32_t res = 0;
     for (int i = 0; i < length; ++i)
         res = res * 31 + str[i];
     return res;

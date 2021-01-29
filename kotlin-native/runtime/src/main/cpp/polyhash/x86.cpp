@@ -143,7 +143,7 @@ int polyHash_x86(int length, uint16_t const* str) {
         // Either vectorization is not supported or the string is too short to gain from it.
         return polyHash_naive(length, str);
     }
-    int res;
+    uint32_t res;
     if (length < 32)
         res = SSETraits::polyHashUnalignedUnrollUpTo8(length / 4, str);
     else if (!avx2Supported)

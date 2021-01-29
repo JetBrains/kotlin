@@ -99,7 +99,7 @@ int polyHash_arm(int length, uint16_t const* str) {
         // Vectorization is not supported.
         return polyHash_naive(length, str);
     }
-    int res;
+    uint32_t res;
     if (length < 488)
         res = NeonTraits::polyHashUnalignedUnrollUpTo16(length / 4, str);
     else
