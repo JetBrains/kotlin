@@ -10,6 +10,7 @@ import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -137,6 +138,9 @@ object FirErrors {
     val TYPE_PARAMETER_IN_CATCH_CLAUSE by error0<FirSourceElement, PsiElement>()
 
     // Overrides
+    val NOTHING_TO_OVERRIDE by error1<FirSourceElement, KtModifierListOwner, FirMemberDeclaration>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
+    val OVERRIDING_FINAL_MEMBER by error2<FirSourceElement, KtNamedDeclaration, FirCallableDeclaration<*>, Name>(SourceElementPositioningStrategies.OVERRIDE_MODIFIER)
+
     val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
     val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
     val VAR_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)

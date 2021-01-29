@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -80,6 +82,20 @@ object FirOverrideChecker : FirRegularClassChecker() {
         return substitutorByMap(map).substituteOrSelf(this)
     }
 
+    private fun checkModality(
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+    ): FirCallableDeclaration<*>? {
+        for (overridden in overriddenSymbols) {
+            if (overridden.fir !is FirMemberDeclaration) continue
+            val modality = (overridden.fir as FirMemberDeclaration).status.modality
+            val isEffectivelyFinal = modality == null || modality == Modality.FINAL
+            if (isEffectivelyFinal) {
+                return overridden.fir
+            }
+        }
+        return null
+    }
+
     private fun FirCallableMemberDeclaration<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
@@ -121,7 +137,12 @@ object FirOverrideChecker : FirRegularClassChecker() {
         val overriddenFunctionSymbols = firTypeScope.retrieveDirectOverriddenOf(function)
 
         if (overriddenFunctionSymbols.isEmpty()) {
+            reporter.reportNothingToOverride(function)
             return
+        }
+
+        checkModality(overriddenFunctionSymbols)?.let {
+            reporter.reportOverridingFinalMember(function, it)
         }
 
         val restriction = function.checkReturnType(
@@ -149,7 +170,12 @@ object FirOverrideChecker : FirRegularClassChecker() {
         val overriddenPropertySymbols = firTypeScope.retrieveDirectOverriddenOf(property)
 
         if (overriddenPropertySymbols.isEmpty()) {
+            reporter.reportNothingToOverride(property)
             return
+        }
+
+        checkModality(overriddenPropertySymbols)?.let {
+            reporter.reportOverridingFinalMember(property, it)
         }
 
         val restriction = property.checkReturnType(
@@ -163,6 +189,22 @@ object FirOverrideChecker : FirRegularClassChecker() {
                 reporter.reportTypeMismatchOnVariable(property, it)
             } else {
                 reporter.reportTypeMismatchOnProperty(property, it)
+            }
+        }
+    }
+
+    private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration) {
+        // TODO: not ready yet, e.g., Collections
+        // declaration.source?.let { report(FirErrors.NOTHING_TO_OVERRIDE.on(it, declaration)) }
+    }
+
+    private fun DiagnosticReporter.reportOverridingFinalMember(
+        overriding: FirMemberDeclaration,
+        overridden: FirCallableDeclaration<*>,
+    ) {
+        overriding.source?.let { source ->
+            overridden.containingClass()?.let { containingClass ->
+                report(FirErrors.OVERRIDING_FINAL_MEMBER.on(source, overridden, containingClass.name))
             }
         }
     }
