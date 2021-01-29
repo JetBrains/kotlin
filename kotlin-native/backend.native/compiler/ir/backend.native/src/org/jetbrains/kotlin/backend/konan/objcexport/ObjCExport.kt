@@ -96,12 +96,10 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         if (exportedInterface != null) {
             produceFrameworkSpecific(exportedInterface.headerLines)
 
-            objCCodeGenerator.generate(codeSpec!!)
-
             exportedInterface.generateWorkaroundForSwiftSR10177()
         }
 
-        objCCodeGenerator.emitRtti()
+        objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
     }
 

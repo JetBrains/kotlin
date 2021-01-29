@@ -229,10 +229,12 @@ internal class ObjCExportCodeGenerator(
         return callFromBridge(conversion.owner.llvmFunction, listOf(value), resultLifetime)
     }
 
-    private val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
+    private fun generateTypeAdapters(spec: ObjCExportCodeSpec?) {
+        val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
 
-    internal fun generate(spec: ObjCExportCodeSpec) {
-        spec.types.forEach {
+        objCTypeAdapters += createTypeAdapter(objCClassForAny, superClass = null)
+
+        spec?.types?.forEach {
             objCTypeAdapters += when (it) {
                 is ObjCClassForKotlinClass -> {
                     val superClass = it.superClassNotAny ?: objCClassForAny
@@ -248,13 +250,17 @@ internal class ObjCExportCodeGenerator(
             }
         }
 
-        spec.files.forEach {
+        spec?.files?.forEach {
             objCTypeAdapters += createTypeAdapterForFileClass(it)
             dataGenerator.emitEmptyClass(it.binaryName, namer.kotlinAnyName.binaryName)
         }
+
+        emitTypeAdapters(objCTypeAdapters)
     }
 
-    internal fun emitRtti() {
+    internal fun generate(spec: ObjCExportCodeSpec?) {
+        generateTypeAdapters(spec)
+
         NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
             dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
         }
@@ -263,10 +269,6 @@ internal class ObjCExportCodeGenerator(
         dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
 
         emitSpecialClassesConvertions()
-
-        objCTypeAdapters += createTypeAdapter(objCClassForAny, superClass = null)
-
-        emitTypeAdapters()
 
         // Replace runtime global with weak linkage:
         replaceExternalWeakOrCommonGlobal(
@@ -282,7 +284,7 @@ internal class ObjCExportCodeGenerator(
         emitKt42254Hint()
     }
 
-    private fun emitTypeAdapters() {
+    private fun emitTypeAdapters(objCTypeAdapters: List<ObjCTypeAdapter>) {
         val placedClassAdapters = mutableMapOf<String, ConstPointer>()
         val placedInterfaceAdapters = mutableMapOf<String, ConstPointer>()
 
