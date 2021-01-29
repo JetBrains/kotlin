@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {        
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.1.1'
     }
 }
 apply plugin: 'com.android.application'
@@ -17,7 +17,7 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "28.0.3"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "org.jetbrains.kotlin.android.tests"
