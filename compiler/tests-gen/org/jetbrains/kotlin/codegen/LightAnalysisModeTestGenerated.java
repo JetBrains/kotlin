@@ -29244,6 +29244,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/statics/protectedStaticAndInline.kt");
         }
 
+        @TestMetadata("simpleStaticInJavaSuperChain.kt")
+        public void testSimpleStaticInJavaSuperChain() throws Exception {
+            runTest("compiler/testData/codegen/box/statics/simpleStaticInJavaSuperChain.kt");
+        }
+
         @TestMetadata("syntheticAccessor.kt")
         public void testSyntheticAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/statics/syntheticAccessor.kt");
