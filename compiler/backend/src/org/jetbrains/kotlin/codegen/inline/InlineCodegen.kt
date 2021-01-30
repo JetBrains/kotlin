@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
@@ -597,14 +596,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         private fun getDirectMemberAndCallableFromObject(functionDescriptor: FunctionDescriptor): CallableMemberDescriptor {
             val directMember = JvmCodegenUtil.getDirectMember(functionDescriptor)
             return (directMember as? ImportedFromObjectCallableDescriptor<*>)?.callableFromObject ?: directMember
-        }
-
-        private fun cloneMethodNode(methodNode: MethodNode): MethodNode {
-            methodNode.instructions.resetLabels()
-            return MethodNode(
-                Opcodes.API_VERSION, methodNode.access, methodNode.name, methodNode.desc, methodNode.signature,
-                ArrayUtil.toStringArray(methodNode.exceptions)
-            ).also(methodNode::accept)
         }
 
         private fun doCreateMethodNodeFromCompiled(
