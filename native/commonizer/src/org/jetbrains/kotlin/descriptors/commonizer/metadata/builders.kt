@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.metadata
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirValueParameterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
@@ -178,7 +179,7 @@ internal fun CirProperty.buildProperty(
 internal fun CirFunction.buildFunction(
     context: MetadataBuildingVisitorContext,
 ): KmFunction = KmFunction(
-    flags = functionFlags(isExpect = context.isCommon),
+    flags = functionFlags(isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED),
     name = name.asString()
 ).also { function ->
     annotations.mapTo(function.annotations) { it.buildAnnotation() }
