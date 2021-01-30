@@ -107,6 +107,9 @@ RuntimeState* initRuntime() {
           result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
           result->worker = WorkerInit(true);
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
+          if (CurrentMemoryModel == MemoryModel::kExperimental) {
+              RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
+          }
           break;
       case DESTROY_RUNTIME_ON_SHUTDOWN:
           // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
