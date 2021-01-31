@@ -9,6 +9,7 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -40,7 +41,12 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
     when (val result = MetadataDeclarationsComparator().compare(referenceModule, generatedModule)) {
         is Result.Success -> Unit
         is Result.Failure -> {
-            val mismatches = result.mismatches.sortedBy { it::class.java.simpleName + "_" + it.kind }
+            val mismatches = result.mismatches
+                .filter(FILTER_OUR_ACCEPTABLE_MISMATCHES)
+                .sortedBy { it::class.java.simpleName + "_" + it.kind }
+
+            if (mismatches.isEmpty()) return
+
             val digitCount = mismatches.size.toString().length
 
             val failureMessage = buildString {
@@ -52,5 +58,12 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
 
             fail(failureMessage)
         }
+    }
+}
+
+private val FILTER_OUR_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch ->
+    when (mismatch) {
+        is Mismatch.MissingEntity -> mismatch.kind == "AbbreviationType" && mismatch.missingInA
+        is Mismatch.DifferentValues -> false
     }
 }
