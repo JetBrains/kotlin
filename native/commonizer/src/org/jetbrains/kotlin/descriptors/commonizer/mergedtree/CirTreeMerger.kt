@@ -218,7 +218,11 @@ class CirTreeMerger(
         val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = classNode.functions
         val nestedClasses: MutableMap<Name, CirClassNode> = classNode.classes
 
-        classDescriptor.constructors.forEach { processClassConstructor(constructors, targetIndex, it, parentCommonDeclarationForMembers) }
+        if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
+            classDescriptor.constructors.forEach { constructorDescriptor ->
+                processClassConstructor(constructors, targetIndex, constructorDescriptor, parentCommonDeclarationForMembers)
+            }
+        }
 
         classDescriptor.unsubstitutedMemberScope.collectMembers(
             PropertyCollector { propertyDescriptor ->
