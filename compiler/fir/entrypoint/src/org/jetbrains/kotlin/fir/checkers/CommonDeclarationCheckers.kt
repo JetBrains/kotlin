@@ -28,8 +28,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExposedVisibilityDeclarationChecker,
             FirSealedSupertypeChecker,
             FirTypeAliasChecker,
-        FirCyclicTypeBoundsChecker,
-    )
+            FirCyclicTypeBoundsChecker,
+        )
 
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
@@ -40,8 +40,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
         get() = setOf(
             FirFunctionNameChecker,
-        FirFunctionTypeParametersChecker,
-    )
+            FirFunctionTypeParametersChecker,
+        )
 
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
@@ -110,7 +110,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
         get() = setOf(
             FirTypeParameterBoundsChecker,
-        FirTypeParameterVarianceChecker,
-        FirReifiedTypeParameterChecker,
-    )
+            FirTypeParameterVarianceChecker,
+            FirReifiedTypeParameterChecker,
+        )
 }

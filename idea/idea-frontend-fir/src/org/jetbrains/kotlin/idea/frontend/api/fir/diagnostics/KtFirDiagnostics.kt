@@ -1112,6 +1112,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val actual: KtType
     }
 
+    abstract class GetterVisibilityDiffersFromPropertyVisibility : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = GetterVisibilityDiffersFromPropertyVisibility::class
+    }
+
+    abstract class WrongSetterReturnType : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = WrongSetterReturnType::class
+    }
+
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }
