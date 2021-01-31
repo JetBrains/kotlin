@@ -328,6 +328,8 @@ object FirErrors {
     val CONST_VAL_WITH_NON_CONST_INITIALIZER by error0<KtExpression>()
     val WRONG_SETTER_PARAMETER_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
     val INITIALIZER_TYPE_MISMATCH by error2<KtProperty, ConeKotlinType, ConeKotlinType>(SourceElementPositioningStrategies.ASSIGNMENT_VALUE)
+    val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val WRONG_SETTER_RETURN_TYPE by error0<KtProperty>()
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

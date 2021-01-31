@@ -6,6 +6,11 @@ fun test() : Int {
     val a : () -> Unit = {
         foo(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     }
+
+    val b : (Int) -> Unit = { i ->
+        i
+    }
+
     return 1 <!NONE_APPLICABLE!>-<!> "1"
 }
 

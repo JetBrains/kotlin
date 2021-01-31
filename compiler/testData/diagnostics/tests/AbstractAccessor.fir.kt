@@ -7,7 +7,7 @@ abstract class My {
         protected get
 
     abstract protected var z: Int
-        internal get
+        <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>internal<!> get
         <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract internal val w: Int
