@@ -148,9 +148,7 @@ private class MetadataBuildingVisitor(private val statsCollector: StatsCollector
         val fullClassName = classContext.currentPath.toString()
 
         val directNestedClasses: Collection<KmClass> = node.classes.mapNotNull { (nestedClassName, nestedClassNode) ->
-            val isInnerClass = classContext.get<CirClass>(nestedClassNode)?.isInner ?: return@mapNotNull null
-            val outerClassTypeParametersCount = if (isInnerClass) classTypeParametersCount else 0
-            val nestedClassContext = classContext.classifierContext(nestedClassName, isInnerClass, outerClassTypeParametersCount)
+            val nestedClassContext = classContext.classifierContext(nestedClassName, classTypeParametersCount)
             val nestedClass: KmClass = nestedClassNode.accept(this, nestedClassContext)?.cast() ?: return@mapNotNull null
             classConsumer.consume(nestedClass)
             statsCollector?.logClass(nestedClass, nestedClassContext)
@@ -305,6 +303,7 @@ internal data class MetadataBuildingVisitorContext(
             override fun toString() = ""
         }
 
+        @Suppress("MemberVisibilityCanBePrivate")
         class Module(val moduleName: Name) : Path() {
             override fun toString() = moduleName.strip()
         }
@@ -355,17 +354,15 @@ internal data class MetadataBuildingVisitorContext(
 
     fun classifierContext(
         classifierName: Name,
-        isInner: Boolean = false,
         outerClassTypeParametersCount: Int = 0
     ): MetadataBuildingVisitorContext {
         val newPath = when (currentPath) {
             is Path.Package -> {
-                check(!isInner)
                 check(outerClassTypeParametersCount == 0)
                 currentPath.nestedClassifier(classifierName)
             }
             is Path.Classifier -> {
-                check((isInner && outerClassTypeParametersCount >= 0) || (!isInner && outerClassTypeParametersCount == 0))
+                check(outerClassTypeParametersCount >= 0)
                 currentPath.nestedClassifier(classifierName)
             }
             else -> error("Illegal state")
@@ -375,7 +372,7 @@ internal data class MetadataBuildingVisitorContext(
             targetIndex = targetIndex,
             target = target,
             isCommon = isCommon,
-            typeParameterIndexOffset = if (isInner) typeParameterIndexOffset + outerClassTypeParametersCount else 0,
+            typeParameterIndexOffset = typeParameterIndexOffset + outerClassTypeParametersCount,
             currentPath = newPath
         )
     }

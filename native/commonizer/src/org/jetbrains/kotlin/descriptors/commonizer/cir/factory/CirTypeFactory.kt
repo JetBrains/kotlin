@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.extractExpandedType
-import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.*
 
@@ -118,6 +115,7 @@ object CirTypeFactory {
         )
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun createTypeParameterType(
         index: Int,
         isMarkedNullable: Boolean
@@ -197,7 +195,12 @@ object CirTypeFactory {
             var index = index
             var parent = containingDeclaration
 
-            while ((parent as? ClassifierDescriptorWithTypeParameters)?.isInner != false) {
+            if (parent is CallableMemberDescriptor) {
+                parent = parent.containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: return index
+                index += parent.declaredTypeParameters.size
+            }
+
+            while (parent is ClassifierDescriptorWithTypeParameters) {
                 parent = parent.containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: break
                 index += parent.declaredTypeParameters.size
             }
