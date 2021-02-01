@@ -969,43 +969,6 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         val objcGenerics: Boolean,
         problemCollector: ObjCExportProblemCollector
 ) {
-
-    constructor(
-            moduleDescriptors: List<ModuleDescriptor>,
-            builtIns: KotlinBuiltIns,
-            topLevelNamePrefix: String,
-            problemCollector: ObjCExportProblemCollector
-    ) : this(moduleDescriptors, builtIns, topLevelNamePrefix, ObjCExportMapper(), problemCollector)
-
-    private constructor(
-            moduleDescriptors: List<ModuleDescriptor>,
-            builtIns: KotlinBuiltIns,
-            topLevelNamePrefix: String,
-            mapper: ObjCExportMapper,
-            problemCollector: ObjCExportProblemCollector
-    ) : this(
-            moduleDescriptors,
-            mapper,
-            ObjCExportNamerImpl(moduleDescriptors.toSet(), builtIns, mapper, topLevelNamePrefix, local = false),
-            false,
-            problemCollector
-    )
-
-    constructor(
-            moduleDescriptor: ModuleDescriptor,
-            builtIns: KotlinBuiltIns,
-            topLevelNamePrefix: String = moduleDescriptor.namePrefix,
-            problemCollector: ObjCExportProblemCollector
-    ) : this(moduleDescriptor, emptyList(), builtIns, topLevelNamePrefix, problemCollector)
-
-    constructor(
-            moduleDescriptor: ModuleDescriptor,
-            exportedDependencies: List<ModuleDescriptor>,
-            builtIns: KotlinBuiltIns,
-            topLevelNamePrefix: String = moduleDescriptor.namePrefix,
-            problemCollector: ObjCExportProblemCollector
-    ) : this(listOf(moduleDescriptor) + exportedDependencies, builtIns, topLevelNamePrefix, problemCollector)
-
     private val stubs = mutableListOf<Stub<*>>()
 
     private val classForwardDeclarations = linkedSetOf<String>()
