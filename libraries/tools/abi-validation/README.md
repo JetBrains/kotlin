@@ -18,6 +18,7 @@ The tool allows to dump binary API of a Kotlin library that is public in sense o
 * [What makes an incompatible change to the public binary API](#what-makes-an-incompatible-change-to-the-public-binary-api)
   * [Class changes](#class-changes)
   * [Class member changes](#class-member-changes)
+* [Building locally](#building-the-project-locally)
 
 ## Setup
 
@@ -203,3 +204,11 @@ For a class member a binary incompatible change is:
     - `ACC_FINAL` — making non-final field or method final
     - `ACC_ABSTRACT` — making non-abstract method abstract
     - `ACC_STATIC` — changing instance member to static and vice versa
+
+
+## Building the project locally
+
+In order to build and run tests in the project in IDE, two prerequisites are required:
+
+* Java 11 or above in order to use the latest ASM
+* All build actions in the IDE should be delegated to Gradle
