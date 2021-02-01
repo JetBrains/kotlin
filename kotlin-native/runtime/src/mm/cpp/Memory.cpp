@@ -95,6 +95,10 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     mm::ExtraObjectData::Uninstall(object);
 }
 
+ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
+    return obj->permanent() || isFrozen(obj);
+}
+
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
     // TODO: Remove when legacy MM is gone.
     return true;

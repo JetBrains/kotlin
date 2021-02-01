@@ -8,21 +8,18 @@
 #include "KAssert.h"
 
 ALWAYS_INLINE bool isFrozen(const ObjHeader* obj) {
-    TODO();
-}
-
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
-    TODO();
+    // TODO: Unimplemented
+    return false;
 }
 
 extern "C" {
 
 void MutationCheck(ObjHeader* obj) {
-    TODO();
+    // TODO: Unimplemented
 }
 
 void FreezeSubgraph(ObjHeader* obj) {
-    TODO();
+    // TODO: Unimplemented
 }
 
 void EnsureNeverFrozen(ObjHeader* obj) {
