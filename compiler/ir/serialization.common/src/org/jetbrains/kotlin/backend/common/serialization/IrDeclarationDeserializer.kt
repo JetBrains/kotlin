@@ -62,12 +62,12 @@ class IrDeclarationDeserializer(
     private val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
-    private val symbolDeserializer: IrSymbolDeserializer,
+    val symbolDeserializer: IrSymbolDeserializer,
     private val platformFakeOverrideClassFilter: FakeOverrideClassFilter,
     private val fakeOverrideBuilder: FakeOverrideBuilder,
 ) {
 
-    private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, fileReader, this)
+    val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, fileReader, this)
 
     private fun deserializeName(index: Int): Name {
         val name = fileReader.deserializeString(index)
@@ -83,7 +83,7 @@ class IrDeclarationDeserializer(
         return ProtoType.parseFrom(readType(index), ExtensionRegistryLite.newInstance())
     }
 
-    internal fun deserializeIrType(index: Int): IrType {
+    fun deserializeIrType(index: Int): IrType {
         return irTypeCache.getOrPut(index) {
             val typeData = loadTypeProto(index)
             deserializeIrTypeData(typeData)
@@ -437,7 +437,7 @@ class IrDeclarationDeserializer(
         return ProtoExpression.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
     }
 
-    private fun deserializeExpressionBody(index: Int): IrExpressionBody {
+    fun deserializeExpressionBody(index: Int): IrExpressionBody {
         return irFactory.createExpressionBody(
             if (deserializeBodies) {
                 val bodyData = loadExpressionBodyProto(index)
@@ -449,7 +449,7 @@ class IrDeclarationDeserializer(
         )
     }
 
-    private fun deserializeStatementBody(index: Int): IrElement {
+    fun deserializeStatementBody(index: Int): IrElement {
         return if (deserializeBodies) {
             val bodyData = loadStatementBodyProto(index)
             bodyDeserializer.deserializeStatement(bodyData)
@@ -512,7 +512,7 @@ class IrDeclarationDeserializer(
         }
     }
 
-    internal fun deserializeIrVariable(proto: ProtoVariable): IrVariable =
+    fun deserializeIrVariable(proto: ProtoVariable): IrVariable =
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = LocalVariableFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.nameType)
@@ -661,7 +661,7 @@ class IrDeclarationDeserializer(
             allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
     }
 
-    private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
+    fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
         val originName = fileReader.deserializeString(protoName)
         return declarationOriginIndex[originName] ?: object : IrDeclarationOriginImpl(originName) {}
     }

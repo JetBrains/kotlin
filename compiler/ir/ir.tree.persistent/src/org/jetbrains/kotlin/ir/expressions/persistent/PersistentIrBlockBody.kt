@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
@@ -44,4 +45,9 @@ internal class PersistentIrBlockBody(
 
     override val statements: MutableList<IrStatement>
         get() = checkEnabled { statementsField }
+
+    override fun setState(t: BodyCarrier) {
+        lastModified = t.lastModified
+        containerField = t.containerField
+    }
 }

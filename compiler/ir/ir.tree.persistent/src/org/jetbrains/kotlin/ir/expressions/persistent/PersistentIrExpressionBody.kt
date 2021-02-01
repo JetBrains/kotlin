@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.persistent
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.BodyCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -49,4 +50,9 @@ internal class PersistentIrExpressionBody private constructor(
         set(e) {
             checkEnabled { expressionField = e }
         }
+
+    override fun setState(t: BodyCarrier) {
+        lastModified = t.lastModified
+        containerField = t.containerField
+    }
 }

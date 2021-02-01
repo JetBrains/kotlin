@@ -60,4 +60,12 @@ internal class PersistentIrAnonymousInitializer(
                 bodyField = v
             }
         }
+
+    override fun setState(t: AnonymousInitializerCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        bodyField = t.bodyField
+    }
 }

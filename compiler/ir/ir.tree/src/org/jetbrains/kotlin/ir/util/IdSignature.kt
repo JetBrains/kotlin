@@ -217,6 +217,28 @@ sealed class IdSignature {
 
         override fun hashCode(): Int = id
     }
+
+    class LoweredDeclarationSignature(val original: IdSignature, val stage: Int, val index: Int): IdSignature() {
+        override val isPublic: Boolean get() = true
+
+        override val hasTopLevel: Boolean get() = false
+
+        override fun topLevelSignature(): IdSignature = error("not implemented")
+
+        override fun nearestPublicSig(): IdSignature = error("not implemented")
+
+        override fun packageFqName(): FqName = original.packageFqName()
+
+        override fun render(): String = "ic#$stage:${original.render()}-$index"
+
+        override fun equals(other: Any?): Boolean {
+            return other is LoweredDeclarationSignature && original == other.original && stage == other.stage && index == other.index
+        }
+
+        override fun hashCode(): Int {
+            return (index * 31 + stage) * 31 + original.hashCode()
+        }
+    }
 }
 
 interface IdSignatureComposer {

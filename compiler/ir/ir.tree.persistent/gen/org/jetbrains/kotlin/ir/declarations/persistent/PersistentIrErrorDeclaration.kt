@@ -38,4 +38,10 @@ internal class PersistentIrErrorDeclaration(
     override var originField: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     override var removedOn: Int = Int.MAX_VALUE
     override var annotationsField: List<IrConstructorCall> = emptyList()
+    override fun setState(t: ErrorDeclarationCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+    }
 }

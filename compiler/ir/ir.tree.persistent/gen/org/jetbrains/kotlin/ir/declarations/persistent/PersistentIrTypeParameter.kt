@@ -62,4 +62,12 @@ internal class PersistentIrTypeParameter(
                 superTypesField = v
             }
         }
+
+    override fun setState(t: TypeParameterCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        superTypesField = t.superTypesField
+    }
 }
