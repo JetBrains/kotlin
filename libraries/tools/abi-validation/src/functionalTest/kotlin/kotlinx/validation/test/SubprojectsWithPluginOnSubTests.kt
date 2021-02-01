@@ -14,32 +14,33 @@ import kotlinx.validation.api.runner
 import kotlinx.validation.api.test
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class SubprojectsTests : BaseKotlinGradleTest() {
+internal class SubprojectsWithPluginOnSubTests : BaseKotlinGradleTest() {
 
     /**
      * Sets up a project hierarchy like this:
      * ```
-     * build.gradle.kts (with the plugin)
+     * build.gradle.kts (without the plugin)
      * settings.gradle.kts (including refs to 4 subprojects)
      * sub1/
-     *    build.gradle.kts
+     *    build.gradle.kts (with the plugin)
      *    subsub1/build.gradle.kts
      *    subsub2/build.gradle.kts
      * sub2/build.gradle.kts
      * ```
      */
-    private fun BaseKotlinScope.createProjectHierarchyWithPluginOnRoot() {
+    private fun BaseKotlinScope.createProjectHierarchyWithPluginOnSub1() {
         settingsGradleKts {
             resolve("examples/gradle/settings/settings-with-hierarchy.gradle.kts")
         }
         buildGradleKts {
-            resolve("examples/gradle/base/withPlugin.gradle.kts")
+            resolve("examples/gradle/base/withoutPlugin.gradle.kts")
         }
         dir("sub1") {
             buildGradleKts {
-                resolve("examples/gradle/base/withoutPlugin-noKotlinVersion.gradle.kts")
+                resolve("examples/gradle/base/withPlugin-noKotlinVersion.gradle.kts")
             }
             dir("subsub1") {
                 buildGradleKts {
@@ -62,9 +63,7 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
     @Test
     fun `apiCheck should be run on all subprojects when running check`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
-
-            emptyApiFile(projectName = rootProjectDir.name)
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 emptyApiFile(projectName = "sub1")
@@ -76,10 +75,6 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
                 dir("subsub2") {
                     emptyApiFile(projectName = "subsub2")
                 }
-            }
-
-            dir("sub2") {
-                emptyApiFile(projectName = "sub2")
             }
 
             runner {
@@ -88,20 +83,18 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
         }
 
         runner.build().apply {
-            assertTaskSuccess(":apiCheck")
+            assertTaskNotRun(":apiCheck")
             assertTaskSuccess(":sub1:apiCheck")
             assertTaskSuccess(":sub1:subsub1:apiCheck")
             assertTaskSuccess(":sub1:subsub2:apiCheck")
-            assertTaskSuccess(":sub2:apiCheck")
+            assertTaskNotRun(":sub2:apiCheck")
         }
     }
 
     @Test
     fun `apiCheck should succeed on all subprojects when api files are empty but there are no Kotlin sources`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
-
-            emptyApiFile(projectName = rootProjectDir.name)
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 emptyApiFile(projectName = "sub1")
@@ -115,28 +108,24 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
                 }
             }
 
-            dir("sub2") {
-                emptyApiFile(projectName = "sub2")
-            }
-
             runner {
                 arguments.add("apiCheck")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":apiCheck")
+            assertTaskNotRun(":apiCheck")
             assertTaskSuccess(":sub1:apiCheck")
             assertTaskSuccess(":sub1:subsub1:apiCheck")
             assertTaskSuccess(":sub1:subsub2:apiCheck")
-            assertTaskSuccess(":sub2:apiCheck")
+            assertTaskNotRun(":sub2:apiCheck")
         }
     }
 
     @Test
     fun `apiCheck should succeed on subproject, when api file is empty but there are no sources`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 emptyApiFile(projectName = "sub1")
@@ -155,7 +144,7 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
     @Test
     fun `apiCheck should succeed on sub-subproject, when api file is empty but there are no sources`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 dir("subsub2") {
@@ -176,7 +165,7 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
     @Test
     fun `apiCheck should succeed on sub-subproject, when public classes match api file`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 dir("subsub2") {
@@ -202,9 +191,7 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
     @Test
     fun `apiCheck should succeed on subprojects, when public classes match api files`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
-
-            emptyApiFile(projectName = rootProjectDir.name)
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 emptyApiFile(projectName = "sub1")
@@ -227,28 +214,24 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
                 }
             }
 
-            dir("sub2") {
-                emptyApiFile(projectName = "sub2")
-            }
-
             runner {
                 arguments.add("apiCheck")
             }
         }
 
         runner.build().apply {
-            assertTaskSuccess(":apiCheck")
+            assertTaskNotRun(":apiCheck")
             assertTaskSuccess(":sub1:apiCheck")
             assertTaskSuccess(":sub1:subsub1:apiCheck")
             assertTaskSuccess(":sub1:subsub2:apiCheck")
-            assertTaskSuccess(":sub2:apiCheck")
+            assertTaskNotRun(":sub2:apiCheck")
         }
     }
 
     @Test
     fun `apiDump should succeed and create empty api on subproject, when no kotlin files are included in SourceSet`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
+            createProjectHierarchyWithPluginOnSub1()
 
             runner {
                 arguments.add(":sub1:apiDump")
@@ -268,7 +251,7 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
     @Test
     fun `apiDump should succeed and create correct api dumps on subprojects`() {
         val runner = test {
-            createProjectHierarchyWithPluginOnRoot()
+            createProjectHierarchyWithPluginOnSub1()
 
             dir("sub1") {
                 dir("subsub1") {
@@ -289,14 +272,13 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
         }
 
         runner.build().apply {
-            assertTaskSuccess(":apiDump")
+            assertTaskNotRun(":apiDump")
             assertTaskSuccess(":sub1:apiDump")
             assertTaskSuccess(":sub1:subsub1:apiDump")
             assertTaskSuccess(":sub1:subsub2:apiDump")
-            assertTaskSuccess(":sub2:apiDump")
+            assertTaskNotRun(":sub2:apiDump")
 
-            assertTrue(rootProjectApiDump.exists(), "api dump file ${rootProjectApiDump.path} should exist")
-            Assertions.assertThat(rootProjectApiDump.readText()).isEqualToIgnoringNewLines("")
+            assertFalse(rootProjectApiDump.exists(), "api dump file ${rootProjectApiDump.path} should NOT exist")
 
             val apiSub1 = rootProjectDir.resolve("sub1/api/sub1.api")
             assertTrue(apiSub1.exists(), "api dump file ${apiSub1.path} should exist")
@@ -313,8 +295,7 @@ internal class SubprojectsTests : BaseKotlinGradleTest() {
             Assertions.assertThat(apiSubsub2.readText()).isEqualToIgnoringNewLines(apiSubsub2Expected)
 
             val apiSub2 = rootProjectDir.resolve("sub2/api/sub2.api")
-            assertTrue(apiSub2.exists(), "api dump file ${apiSub2.path} should exist")
-            Assertions.assertThat(apiSub2.readText()).isEqualToIgnoringNewLines("")
+            assertFalse(apiSub2.exists(), "api dump file ${apiSub2.path} should NOT exist")
         }
     }
 }

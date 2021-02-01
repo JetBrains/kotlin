@@ -9,13 +9,12 @@ import kotlinx.validation.api.*
 import org.gradle.api.*
 import org.gradle.api.file.*
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.*
 import java.io.*
+import javax.inject.Inject
 
-open class KotlinApiBuildTask : DefaultTask() {
-
-    private val extension = project.rootProject.extensions.getByType(ApiValidationExtension::class.java)
+open class KotlinApiBuildTask @Inject constructor(
+    private val extension: ApiValidationExtension
+) : DefaultTask() {
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)

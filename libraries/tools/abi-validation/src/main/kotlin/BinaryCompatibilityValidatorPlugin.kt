@@ -17,16 +17,16 @@ const val API_DIR = "api"
 class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
-        extensions.create("apiValidation", ApiValidationExtension::class.java)
-        validateExtension()
+        val extension = extensions.create("apiValidation", ApiValidationExtension::class.java)
+        validateExtension(extension)
         allprojects {
-            configureProject(it)
+            configureProject(it, extension)
         }
     }
 
-    private fun Project.validateExtension() {
-        rootProject.afterEvaluate {
-            val ignored = ignoredProjects()
+    private fun Project.validateExtension(extension: ApiValidationExtension) {
+        afterEvaluate {
+            val ignored = extension.ignoredProjects
             val all = allprojects.map { it.name }
             for (project in ignored) {
                 require(project in all) { "Cannot find excluded project $project in all projects: $all" }
@@ -34,40 +34,40 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         }
     }
 
-    private fun configureProject(project: Project) {
+    private fun configureProject(project: Project, extension: ApiValidationExtension) {
         project.pluginManager.withPlugin("kotlin") {
-            if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
+            if (project.name in extension.ignoredProjects) return@withPlugin
             project.sourceSets.all { sourceSet ->
                 if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
                     return@all
                 }
-                project.configureApiTasks(sourceSet)
+                project.configureApiTasks(sourceSet, extension)
             }
         }
 
         project.pluginManager.withPlugin("kotlin-android") {
-            if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
-            val extension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
-            extension.target.compilations.matching {
+            if (project.name in extension.ignoredProjects) return@withPlugin
+            val androidExtension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
+            androidExtension.target.compilations.matching {
                 it.compilationName == "release"
             }.all {
-                project.configureKotlinCompilation(it, useOutput = true)
+                project.configureKotlinCompilation(it, extension, useOutput = true)
             }
         }
 
         project.pluginManager.withPlugin("kotlin-multiplatform") {
-            if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
+            if (project.name in extension.ignoredProjects) return@withPlugin
             val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
             kotlin.targets.matching {
                 it.platformType == KotlinPlatformType.jvm || it.platformType == KotlinPlatformType.androidJvm
             }.all { target ->
                 if (target.platformType == KotlinPlatformType.jvm) {
                     target.compilations.matching { it.name == "main" }.all {
-                        project.configureKotlinCompilation(it)
+                        project.configureKotlinCompilation(it, extension)
                     }
                 } else if (target.platformType == KotlinPlatformType.androidJvm) {
                     target.compilations.matching { it.name == "release" }.all {
-                        project.configureKotlinCompilation(it, useOutput = true)
+                        project.configureKotlinCompilation(it, extension, useOutput = true)
                     }
                 }
             }
@@ -75,12 +75,16 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
     }
 }
 
-private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<KotlinCommonOptions>, useOutput: Boolean = false) {
+private fun Project.configureKotlinCompilation(
+    compilation: KotlinCompilation<KotlinCommonOptions>,
+    extension: ApiValidationExtension,
+    useOutput: Boolean = false
+) {
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
-    val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
+    val apiBuild = task<KotlinApiBuildTask>("apiBuild", extension) {
         // Do not enable task for empty umbrella modules
-        isEnabled = apiCheckEnabled && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
+        isEnabled = apiCheckEnabled(extension) && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
@@ -94,23 +98,20 @@ private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<Ko
         }
         outputApiDir = apiBuildDir
     }
-    configureCheckTasks(apiBuildDir, apiBuild)
+    configureCheckTasks(apiBuildDir, apiBuild, extension)
 }
 
 val Project.sourceSets: SourceSetContainer
     get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-val Project.apiCheckEnabled: Boolean
-    get() {
-        val extension = project.rootProject.extensions.getByType(ApiValidationExtension::class.java)
-        return project.name !in extension.ignoredProjects && !extension.validationDisabled
-    }
+fun Project.apiCheckEnabled(extension: ApiValidationExtension): Boolean =
+    name !in extension.ignoredProjects && !extension.validationDisabled
 
-private fun Project.configureApiTasks(sourceSet: SourceSet) {
+private fun Project.configureApiTasks(sourceSet: SourceSet, extension: ApiValidationExtension) {
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
-    val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
-        isEnabled = apiCheckEnabled
+    val apiBuild = task<KotlinApiBuildTask>("apiBuild", extension) {
+        isEnabled = apiCheckEnabled(extension)
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
@@ -119,18 +120,18 @@ private fun Project.configureApiTasks(sourceSet: SourceSet) {
         outputApiDir = apiBuildDir
     }
 
-    configureCheckTasks(apiBuildDir, apiBuild)
+    configureCheckTasks(apiBuildDir, apiBuild, extension)
 }
-
 
 private fun Project.configureCheckTasks(
     apiBuildDir: File,
-    apiBuild: TaskProvider<KotlinApiBuildTask>
+    apiBuild: TaskProvider<KotlinApiBuildTask>,
+    extension: ApiValidationExtension
 ) {
     val projectName = project.name
     val apiCheckDir = file(projectDir.resolve(API_DIR))
     val apiCheck = task<ApiCompareCompareTask>("apiCheck") {
-        isEnabled = apiCheckEnabled && apiBuild.map { it.enabled }.getOrElse(true)
+        isEnabled = apiCheckEnabled(extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
         projectApiDir = apiCheckDir
@@ -139,7 +140,7 @@ private fun Project.configureCheckTasks(
     }
 
     task<Sync>("apiDump") {
-        isEnabled = apiCheckEnabled && apiBuild.map { it.enabled }.getOrElse(true)
+        isEnabled = apiCheckEnabled(extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "other"
         description = "Syncs API from build dir to $API_DIR dir for $projectName"
         from(apiBuildDir)
@@ -157,5 +158,10 @@ inline fun <reified T : Task> Project.task(
     noinline configuration: T.() -> Unit
 ): TaskProvider<T> = tasks.register(name, T::class.java, Action(configuration))
 
-private fun Project.ignoredProjects(): Set<String> =
-    extensions.getByType(ApiValidationExtension::class.java).ignoredProjects
+inline fun <reified T : Task> Project.task(
+    name: String,
+    extension: ApiValidationExtension,
+    noinline configuration: T.() -> Unit
+): TaskProvider<T> = tasks.register(name, T::class.java, extension).also {
+    it.configure(Action(configuration))
+}
