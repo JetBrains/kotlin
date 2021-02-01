@@ -11,6 +11,8 @@ where advanced options include:
   -Xir-dce-driven            Perform a more experimental faster dead code elimination
   -Xir-dce-print-reachability-info
                              Print declarations' reachability info to stdout during performing DCE
+  -Xir-dce-runtime-diagnostic={log|exception}
+                             Enable runtime diagnostics when performing DCE instead of removing declarations
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
   -Xir-only                  Disables pre-IR backend
   -Xir-per-module            Splits generated .js per-module

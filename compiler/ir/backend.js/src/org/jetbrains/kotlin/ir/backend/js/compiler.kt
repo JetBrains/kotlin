@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
@@ -45,6 +46,7 @@ fun compile(
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
+    dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
@@ -70,6 +72,7 @@ fun compile(
         exportedDeclarations,
         configuration,
         es6mode = es6mode,
+        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
         propertyLazyInitialization = propertyLazyInitialization,
         irFactory = irFactory
     )
