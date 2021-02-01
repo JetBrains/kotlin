@@ -94,6 +94,10 @@ open class IncrementalJvmCache(
     fun sourcesByInternalName(internalName: String): Collection<File> =
         internalNameToSource[internalName]
 
+    fun getAllPartsOfMultifileFacade(facade: JvmClassName): Collection<String>? {
+        return multifileFacadeToParts[facade]
+    }
+
     fun isMultifileFacade(className: JvmClassName): Boolean =
         className in multifileFacadeToParts
 
