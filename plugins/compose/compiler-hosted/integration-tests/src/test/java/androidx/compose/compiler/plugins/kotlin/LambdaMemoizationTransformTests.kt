@@ -177,7 +177,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             val foo: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
             val bar: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-2
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
@@ -226,7 +226,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 A(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
@@ -271,7 +271,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 A(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
