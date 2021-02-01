@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                     $this: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testImplicitThis.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.Host.testImplicitThis.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testImplicitThis' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testImplicitThis' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host
               $receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.testImplicitThis' type=<root>.Host origin=null
     FUN name:testBoundReceiverLocalVal visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                     $this: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVal.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVal' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVal' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host
               $receiver: GET_VAR 'val h: <root>.Host [val] declared in <root>.Host.testBoundReceiverLocalVal' type=<root>.Host origin=null
     FUN name:testBoundReceiverLocalVar visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                     $this: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverLocalVar.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVar' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverLocalVar' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host
               $receiver: GET_VAR 'var h: <root>.Host [var] declared in <root>.Host.testBoundReceiverLocalVar' type=<root>.Host origin=null
     FUN name:testBoundReceiverParameter visibility:public modality:FINAL <> ($this:<root>.Host, h:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                     $this: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverParameter.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverParameter.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverParameter' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverParameter' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host
               $receiver: GET_VAR 'h: <root>.Host declared in <root>.Host.testBoundReceiverParameter' type=<root>.Host origin=null
     FUN name:testBoundReceiverExpression visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                     $this: GET_VAR 'receiver: <root>.Host declared in <root>.Host.testBoundReceiverExpression.withVararg' type=<root>.Host origin=ADAPTED_FUNCTION_REFERENCE
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.Host.testBoundReceiverExpression.withVararg' type=kotlin.Int origin=null
-            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverExpression' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testBoundReceiverExpression' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host
               $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

@@ -11,9 +11,12 @@ fun withVararg(vararg xs: Int): Int {
 }
 
 fun test() {
-  useFoo(foo = local fun withVararg(p0: Int) {
-    withVararg(xs = [p0]) /*~> Unit */
-  }
- /*-> IFoo */)
+  useFoo(foo = { // BLOCK
+    local fun withVararg(p0: Int) {
+      withVararg(xs = [p0]) /*~> Unit */
+    }
+
+    ::withVararg
+  } /*-> IFoo */)
 }
 

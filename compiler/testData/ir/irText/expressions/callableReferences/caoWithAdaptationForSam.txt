@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.IFoo [val]
           TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-            FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+            BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
               FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
                 BLOCK_BODY
@@ -117,6 +117,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
                     CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                       xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                         GET_VAR 'p0: kotlin.Int declared in <root>.test1.withVararg' type=kotlin.Int origin=null
+              FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
         CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=PLUSEQ
           $receiver: GET_VAR 'val tmp_0: <root>.A [val] declared in <root>.test1' type=<root>.A origin=null
           i: GET_VAR 'val tmp_1: <root>.IFoo [val] declared in <root>.test1' type=<root>.IFoo origin=null
@@ -132,7 +133,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
           GET_OBJECT 'CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.B
         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.IFoo2 [val]
           TYPE_OP type=<root>.IFoo2 origin=SAM_CONVERSION typeOperand=<root>.IFoo2
-            FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+            BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
               FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
                 BLOCK_BODY
@@ -140,6 +141,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
                     CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                       xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                         GET_VAR 'p0: kotlin.Int declared in <root>.test2.withVararg' type=kotlin.Int origin=null
+              FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
         CALL 'public final fun set (i: <root>.IFoo2, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=PLUSEQ
           $receiver: GET_VAR 'val tmp_2: <root>.B [val] declared in <root>.test2' type=<root>.B origin=null
           i: GET_VAR 'val tmp_3: <root>.IFoo2 [val] declared in <root>.test2' type=<root>.IFoo2 origin=null
