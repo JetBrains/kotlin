@@ -280,6 +280,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
                 // TODO: Support jvm assertions
                 if (fullFileText.contains("// ASSERTIONS_MODE: jvm")) continue
+                if (fullFileText.contains("// MODULE: ")) continue
                 val targets = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fullFileText, "// JVM_TARGET:")
                     .also { it.remove(JvmTarget.JVM_1_6.description) }
 
