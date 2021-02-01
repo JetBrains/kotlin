@@ -28,7 +28,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
             val catchParameter = catchEntry.parameter
 
             if (catchParameter.defaultValue != null)
-                catchParameter.source?.let { reporter.report(FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE.on(it)) }
+                catchParameter.source?.let { reporter.report(FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE.on(it), context) }
 
             val typeRef = catchParameter.returnTypeRef
             if (typeRef !is FirResolvedTypeRef) return
@@ -38,14 +38,14 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
                 val isReified = coneType.lookupTag.typeParameterSymbol.fir.isReified
 
                 if (isReified) {
-                    catchParameter.source?.let { reporter.report(FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE.on(it)) }
+                    catchParameter.source?.let { reporter.report(FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE.on(it), context) }
                 } else {
-                    catchParameter.source?.let { reporter.report(FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE.on(it)) }
+                    catchParameter.source?.let { reporter.report(FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE.on(it), context) }
                 }
             }
 
             if (!coneType.isThrowable(context.session))
-                catchParameter.source?.let { reporter.report(FirErrors.TYPE_MISMATCH.on(it, throwable, coneType)) }
+                catchParameter.source?.let { reporter.report(FirErrors.TYPE_MISMATCH.on(it, throwable, coneType), context) }
         }
     }
 

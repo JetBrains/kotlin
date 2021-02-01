@@ -29,27 +29,32 @@ class FirControlFlowAnalyzer(session: FirSession) {
 
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
         if (context.containingDeclarations.any { it is FirProperty || it is FirFunction<*> }) return
-        runAssignmentCfaCheckers(graph, reporter)
+        runAssignmentCfaCheckers(graph, reporter, context)
     }
 
     fun analyzePropertyInitializer(property: FirProperty, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
 
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
-        runAssignmentCfaCheckers(graph, reporter)
+        runAssignmentCfaCheckers(graph, reporter, context)
     }
 
-    fun analyzePropertyAccessor(accessor: FirPropertyAccessor, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
+    fun analyzePropertyAccessor(
+        accessor: FirPropertyAccessor,
+        graph: ControlFlowGraph,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         if (graph.owner != null) return
 
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
-        runAssignmentCfaCheckers(graph, reporter)
+        runAssignmentCfaCheckers(graph, reporter, context)
     }
 
-    private fun runAssignmentCfaCheckers(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
+    private fun runAssignmentCfaCheckers(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         val properties = LocalPropertyCollector.collect(graph)
         if (properties.isEmpty()) return
         val data = PropertyInitializationInfoCollector(properties).getData(graph)
-        variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties) }
+        variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, context) }
     }
 }

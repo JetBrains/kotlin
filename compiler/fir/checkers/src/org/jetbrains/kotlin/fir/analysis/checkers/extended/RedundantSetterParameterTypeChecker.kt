@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SETTER_PARAMETER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -23,7 +24,7 @@ object RedundantSetterParameterTypeChecker : FirMemberDeclarationChecker() {
         val setterParameterTypeSource = valueParameter.returnTypeRef.source ?: return
 
         if (setterParameterTypeSource != propertyTypeSource) {
-            reporter.report(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE)
+            reporter.reportOn(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE, context)
         }
     }
 }

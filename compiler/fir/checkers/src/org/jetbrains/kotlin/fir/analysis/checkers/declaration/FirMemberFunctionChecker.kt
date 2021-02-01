@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -39,10 +39,13 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
         val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
-                reporter.report(FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(source, function, containingDeclaration))
+                reporter.report(
+                    FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(source, function, containingDeclaration),
+                    context
+                )
             }
             if (function.hasBody) {
-                reporter.report(FirErrors.ABSTRACT_FUNCTION_WITH_BODY.on(source, function))
+                reporter.report(FirErrors.ABSTRACT_FUNCTION_WITH_BODY.on(source, function), context)
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
@@ -51,17 +54,16 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
-                    reporter.report(FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY.on(source, function))
+                    reporter.reportOn(source, FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY, function, context)
                 }
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
-                    reporter.report(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
+                    reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
                 }
             } else if (!isInsideExpectClass && !hasAbstractModifier && !isExternal) {
-                reporter.report(FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(source, function))
+                reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, function, context)
             }
         }
 
-        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter)
+        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter, context)
     }
-
 }

@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -64,12 +64,8 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
             val inspector = getInspector(context)
 
             if (it is FirSimpleFunction && inspector.contains(it) && it.body != null && it.isOverride) {
-                reporter.report(it.source)
+                reporter.reportOn(it.source, FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE, context)
             }
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE.on(it)) }
     }
 }

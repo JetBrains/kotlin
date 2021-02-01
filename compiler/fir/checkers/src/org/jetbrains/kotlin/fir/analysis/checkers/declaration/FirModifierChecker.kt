@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -103,7 +103,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         secondModifier: FirModifier<*>,
         reporter: DiagnosticReporter,
         reportedNodes: MutableSet<FirModifier<*>>,
-        owner: FirDeclaration?
+        owner: FirDeclaration?,
+        context: CheckerContext
     ) {
         val firstToken = firstModifier.token
         val secondToken = secondModifier.token
@@ -111,21 +112,21 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             CompatibilityType.COMPATIBLE -> {
             }
             CompatibilityType.REPEATED ->
-                if (reportedNodes.add(secondModifier)) reporter.reportRepeatedModifier(secondModifier, secondToken)
+                if (reportedNodes.add(secondModifier)) reporter.reportRepeatedModifier(secondModifier, secondToken, context)
             CompatibilityType.REDUNDANT_2_TO_1 ->
-                reporter.reportRedundantModifier(secondModifier, secondToken, firstToken)
+                reporter.reportRedundantModifier(secondModifier, secondToken, firstToken, context)
             CompatibilityType.REDUNDANT_1_TO_2 ->
-                reporter.reportRedundantModifier(firstModifier, firstToken, secondToken)
+                reporter.reportRedundantModifier(firstModifier, firstToken, secondToken, context)
             CompatibilityType.DEPRECATED -> {
-                reporter.reportDeprecatedModifierPair(firstModifier, firstToken, secondToken)
-                reporter.reportDeprecatedModifierPair(secondModifier, secondToken, firstToken)
+                reporter.reportDeprecatedModifierPair(firstModifier, firstToken, secondToken, context)
+                reporter.reportDeprecatedModifierPair(secondModifier, secondToken, firstToken, context)
             }
             CompatibilityType.INCOMPATIBLE, CompatibilityType.COMPATIBLE_FOR_CLASSES -> {
                 if (compatibilityType == CompatibilityType.COMPATIBLE_FOR_CLASSES && owner is FirClass<*>) {
                     return
                 }
-                if (reportedNodes.add(firstModifier)) reporter.reportIncompatibleModifiers(firstModifier, firstToken, secondToken)
-                if (reportedNodes.add(secondModifier)) reporter.reportIncompatibleModifiers(secondModifier, secondToken, firstToken)
+                if (reportedNodes.add(firstModifier)) reporter.reportIncompatibleModifiers(firstModifier, firstToken, secondToken, context)
+                if (reportedNodes.add(secondModifier)) reporter.reportIncompatibleModifiers(secondModifier, secondToken, firstToken, context)
             }
         }
     }
@@ -133,7 +134,8 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
     private fun checkModifiers(
         list: FirModifierList,
         owner: FirDeclaration,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        context: CheckerContext
     ) {
         // general strategy: report no more than one error and any number of warnings
         // therefore, a track of nodes with already reported errors should be kept
@@ -145,7 +147,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 if (firstModifier == secondModifier) {
                     break
                 }
-                checkCompatibilityType(firstModifier, secondModifier, reporter, reportedNodes, owner)
+                checkCompatibilityType(firstModifier, secondModifier, reporter, reportedNodes, owner, context)
             }
         }
     }
@@ -168,30 +170,30 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         if (context.containingDeclarations.last() is FirDefaultPropertyAccessor) return
 
         val modifierList = with(FirModifierList) { source.getModifierList() }
-        modifierList?.let { checkModifiers(it, declaration, reporter) }
+        modifierList?.let { checkModifiers(it, declaration, reporter, context) }
     }
 
     private fun DiagnosticReporter.reportRepeatedModifier(
-        modifier: FirModifier<*>, keyword: KtModifierKeywordToken
+        modifier: FirModifier<*>, keyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.REPEATED_MODIFIER.on(modifier.source, keyword))
+        report(FirErrors.REPEATED_MODIFIER.on(modifier.source, keyword), context)
     }
 
     private fun DiagnosticReporter.reportRedundantModifier(
-        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
+        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.REDUNDANT_MODIFIER.on(modifier.source, firstKeyword, secondKeyword))
+        report(FirErrors.REDUNDANT_MODIFIER.on(modifier.source, firstKeyword, secondKeyword), context)
     }
 
     private fun DiagnosticReporter.reportDeprecatedModifierPair(
-        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
+        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.DEPRECATED_MODIFIER_PAIR.on(modifier.source, firstKeyword, secondKeyword))
+        report(FirErrors.DEPRECATED_MODIFIER_PAIR.on(modifier.source, firstKeyword, secondKeyword), context)
     }
 
     private fun DiagnosticReporter.reportIncompatibleModifiers(
-        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken
+        modifier: FirModifier<*>, firstKeyword: KtModifierKeywordToken, secondKeyword: KtModifierKeywordToken, context: CheckerContext
     ) {
-        report(FirErrors.INCOMPATIBLE_MODIFIERS.on(modifier.source, firstKeyword, secondKeyword))
+        report(FirErrors.INCOMPATIBLE_MODIFIERS.on(modifier.source, firstKeyword, secondKeyword), context)
     }
 }

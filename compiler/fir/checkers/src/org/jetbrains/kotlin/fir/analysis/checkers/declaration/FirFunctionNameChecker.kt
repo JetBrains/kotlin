@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -23,7 +23,7 @@ object FirFunctionNameChecker : FirFunctionChecker() {
         val containingDeclaration = context.containingDeclarations.lastOrNull()
         val isNonLocal = containingDeclaration is FirFile || containingDeclaration is FirClass<*>
         if (declaration is FirSimpleFunction && declaration.name == SpecialNames.NO_NAME_PROVIDED && isNonLocal) {
-            reporter.report(source, FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME)
+            reporter.reportOn(source, FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME, context)
         }
     }
 }

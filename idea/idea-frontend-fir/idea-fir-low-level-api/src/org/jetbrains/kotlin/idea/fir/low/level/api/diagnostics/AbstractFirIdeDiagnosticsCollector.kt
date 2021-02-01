@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.registerAllComponents
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -39,7 +40,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
 
 
     private inner class Reporter : DiagnosticReporter() {
-        override fun report(diagnostic: FirDiagnostic<*>?) {
+        override fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext) {
             if (diagnostic !is FirPsiDiagnostic<*>) return
             if (diagnostic.element.psi !is KtElement) return
             onDiagnostic(diagnostic)

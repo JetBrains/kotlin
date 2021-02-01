@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.isLateInit
@@ -23,7 +24,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
         data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
-        properties: Set<FirPropertySymbol>
+        properties: Set<FirPropertySymbol>,
+        context: CheckerContext
     ) {
         val localData = data.filter {
             val symbolFir = (it.key.fir as? FirVariableSymbol<*>)?.fir
@@ -32,14 +34,15 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
 
         val localProperties = properties.filter { it.fir.initializer == null && it.fir.delegate == null }.toSet()
 
-        val reporterVisitor = UninitializedPropertyReporter(localData, localProperties, reporter)
+        val reporterVisitor = UninitializedPropertyReporter(localData, localProperties, reporter, context)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
     }
 
     private class UninitializedPropertyReporter(
         val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         val localProperties: Set<FirPropertySymbol>,
-        val reporter: DiagnosticReporter
+        val reporter: DiagnosticReporter,
+        val context: CheckerContext
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
@@ -61,7 +64,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
             if (!kind.isDefinitelyVisited()) {
                 node.fir.source?.let {
-                    reporter.report(FirErrors.UNINITIALIZED_VARIABLE.on(it, symbol))
+                    reporter.report(FirErrors.UNINITIALIZED_VARIABLE.on(it, symbol), context)
                     return true
                 }
             }

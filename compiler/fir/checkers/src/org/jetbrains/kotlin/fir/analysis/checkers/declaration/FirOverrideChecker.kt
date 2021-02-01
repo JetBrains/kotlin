@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -106,6 +107,7 @@ object FirOverrideChecker : FirRegularClassChecker() {
     private fun FirCallableMemberDeclaration<*>.checkVisibility(
         reporter: DiagnosticReporter,
         overriddenSymbols: List<FirCallableSymbol<*>>,
+        context: CheckerContext
     ) {
         val visibilities = overriddenSymbols.mapNotNull {
             if (it.fir !is FirMemberDeclaration) return@mapNotNull null
@@ -122,7 +124,7 @@ object FirOverrideChecker : FirRegularClassChecker() {
                 // reporter.reportCannotChangeAccessPrivilege(this, overridden.fir)
                 return
             } else if (compare < 0) {
-                reporter.reportCannotWeakenAccessPrivilege(this, overridden.fir)
+                reporter.reportCannotWeakenAccessPrivilege(this, overridden.fir, context)
                 return
             }
         }
@@ -169,15 +171,15 @@ object FirOverrideChecker : FirRegularClassChecker() {
         val overriddenFunctionSymbols = firTypeScope.retrieveDirectOverriddenOf(function)
 
         if (overriddenFunctionSymbols.isEmpty()) {
-            reporter.reportNothingToOverride(function)
+            reporter.reportNothingToOverride(function, context)
             return
         }
 
         checkModality(overriddenFunctionSymbols)?.let {
-            reporter.reportOverridingFinalMember(function, it)
+            reporter.reportOverridingFinalMember(function, it, context)
         }
 
-        function.checkVisibility(reporter, overriddenFunctionSymbols)
+        function.checkVisibility(reporter, overriddenFunctionSymbols, context)
 
         val restriction = function.checkReturnType(
             overriddenSymbols = overriddenFunctionSymbols,
@@ -186,7 +188,7 @@ object FirOverrideChecker : FirRegularClassChecker() {
         )
 
         restriction?.let {
-            reporter.reportReturnTypeMismatchOnFunction(function, it)
+            reporter.reportReturnTypeMismatchOnFunction(function, it, context)
         }
     }
 
@@ -204,19 +206,19 @@ object FirOverrideChecker : FirRegularClassChecker() {
         val overriddenPropertySymbols = firTypeScope.retrieveDirectOverriddenOf(property)
 
         if (overriddenPropertySymbols.isEmpty()) {
-            reporter.reportNothingToOverride(property)
+            reporter.reportNothingToOverride(property, context)
             return
         }
 
         checkModality(overriddenPropertySymbols)?.let {
-            reporter.reportOverridingFinalMember(property, it)
+            reporter.reportOverridingFinalMember(property, it, context)
         }
 
         property.checkMutability(overriddenPropertySymbols)?.let {
-            reporter.reportVarOverriddenByVal(property, it)
+            reporter.reportVarOverriddenByVal(property, it, context)
         }
 
-        property.checkVisibility(reporter, overriddenPropertySymbols)
+        property.checkVisibility(reporter, overriddenPropertySymbols, context)
 
         val restriction = property.checkReturnType(
             overriddenSymbols = overriddenPropertySymbols,
@@ -226,76 +228,91 @@ object FirOverrideChecker : FirRegularClassChecker() {
 
         restriction?.let {
             if (property.isVar) {
-                reporter.reportTypeMismatchOnVariable(property, it)
+                reporter.reportTypeMismatchOnVariable(property, it, context)
             } else {
-                reporter.reportTypeMismatchOnProperty(property, it)
+                reporter.reportTypeMismatchOnProperty(property, it, context)
             }
         }
     }
 
-    private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration) {
+    private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration, context: CheckerContext) {
         // TODO: not ready yet, e.g., Collections
-        // declaration.source?.let { report(FirErrors.NOTHING_TO_OVERRIDE.on(it, declaration)) }
+        // reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE, declaration, context)
     }
 
     private fun DiagnosticReporter.reportOverridingFinalMember(
         overriding: FirMemberDeclaration,
         overridden: FirCallableDeclaration<*>,
+        context: CheckerContext
     ) {
         overriding.source?.let { source ->
             overridden.containingClass()?.let { containingClass ->
-                report(FirErrors.OVERRIDING_FINAL_MEMBER.on(source, overridden, containingClass.name))
+                report(FirErrors.OVERRIDING_FINAL_MEMBER.on(source, overridden, containingClass.name), context)
             }
         }
     }
 
     private fun DiagnosticReporter.reportVarOverriddenByVal(
         overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration
+        overridden: FirMemberDeclaration,
+        context: CheckerContext
     ) {
-        overriding.source?.let { report(FirErrors.VAR_OVERRIDDEN_BY_VAL.on(it, overriding, overridden)) }
+        overriding.source?.let { report(FirErrors.VAR_OVERRIDDEN_BY_VAL.on(it, overriding, overridden), context) }
     }
 
     private fun DiagnosticReporter.reportCannotWeakenAccessPrivilege(
         overriding: FirMemberDeclaration,
         overridden: FirCallableDeclaration<*>,
+        context: CheckerContext
     ) {
-        overriding.source?.let { source ->
-            overridden.containingClass()?.let { containingClass ->
-                report(FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE.on(source, overriding.visibility, overridden, containingClass.name))
-            }
-        }
+        val containingClass = overridden.containingClass() ?: return
+        reportOn(
+            overriding.source,
+            FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE,
+            overriding.visibility,
+            overridden,
+            containingClass.name,
+            context
+        )
     }
 
     private fun DiagnosticReporter.reportCannotChangeAccessPrivilege(
         overriding: FirMemberDeclaration,
         overridden: FirCallableDeclaration<*>,
+        context: CheckerContext
     ) {
-        overriding.source?.let { source ->
-            overridden.containingClass()?.let { containingClass ->
-                report(FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE.on(source, overriding.visibility, overridden, containingClass.name))
-            }
-        }
+        val containingClass = overridden.containingClass() ?: return
+        reportOn(
+            overriding.source,
+            FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE,
+            overriding.visibility,
+            overridden,
+            containingClass.name,
+            context
+        )
     }
 
     private fun DiagnosticReporter.reportReturnTypeMismatchOnFunction(
         overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration
+        overridden: FirMemberDeclaration,
+        context: CheckerContext
     ) {
-        overriding.source?.let { report(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(it, overriding, overridden)) }
+        reportOn(overriding.source, FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
     }
 
     private fun DiagnosticReporter.reportTypeMismatchOnProperty(
         overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration
+        overridden: FirMemberDeclaration,
+        context: CheckerContext
     ) {
-        overriding.source?.let { report(FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(it, overriding, overridden)) }
+        reportOn(overriding.source, FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
     }
 
     private fun DiagnosticReporter.reportTypeMismatchOnVariable(
         overriding: FirMemberDeclaration,
-        overridden: FirMemberDeclaration
+        overridden: FirMemberDeclaration,
+        context: CheckerContext
     ) {
-        overriding.source?.let { report(FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE.on(it, overriding, overridden)) }
+        reportOn(overriding.source, FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE, overriding, overridden, context)
     }
 }

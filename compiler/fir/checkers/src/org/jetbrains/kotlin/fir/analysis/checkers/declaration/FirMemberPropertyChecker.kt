@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -47,37 +47,43 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             (property.getter == null || property.getter is FirDefaultPropertyAccessor)
         ) {
             property.source?.let {
-                reporter.report(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE)
+                reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, context)
             }
         }
 
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
                 property.source?.let {
-                    reporter.report(FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(it, property, containingDeclaration))
+                    reporter.reportOn(
+                        it,
+                        FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
+                        property,
+                        containingDeclaration,
+                        context
+                    )
                     return
                 }
             }
             property.initializer?.source?.let {
-                reporter.report(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER)
+                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
             }
             property.delegate?.source?.let {
-                reporter.report(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY)
+                reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
             }
 
             checkAccessor(property.getter, property.delegate) { src, _ ->
-                reporter.report(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER)
+                reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
             }
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.report(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
+                    reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
                 } else {
-                    reporter.report(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER)
+                    reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
                 }
             }
         }
 
-        checkPropertyInitializer(containingDeclaration, property, reporter)
+        checkPropertyInitializer(containingDeclaration, property, reporter, context)
 
         val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
         if (hasOpenModifier &&
@@ -87,19 +93,19 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             !isInsideExpectClass(containingDeclaration, context)
         ) {
             property.source?.let {
-                reporter.report(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
+                reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
             }
         }
         val isOpen = property.isOpen || hasOpenModifier
         if (isOpen) {
             checkAccessor(property.setter, property.delegate) { src, symbol ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.report(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                    reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
                 }
             }
         }
 
-        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter)
+        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
     }
 
     private fun checkAccessor(

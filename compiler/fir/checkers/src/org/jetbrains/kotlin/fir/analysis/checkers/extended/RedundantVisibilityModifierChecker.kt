@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirFakeSourceElement
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.overrideModifier
-import org.jetbrains.kotlin.fir.analysis.diagnostics.visibilityModifier
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 
@@ -53,7 +50,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             && declaration.setter?.visibility == Visibilities.Public
         ) return
 
-        reporter.report(source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
+        reporter.reportOn(source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
     }
 
     private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {

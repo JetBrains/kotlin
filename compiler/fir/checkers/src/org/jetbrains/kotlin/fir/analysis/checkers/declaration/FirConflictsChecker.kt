@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -25,11 +25,11 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
 
         inspector.functionDeclarations.forEachNonSingle { it, hint ->
-            reporter.reportConflictingOverloads(it.source, hint)
+            reporter.reportOn(it.source, FirErrors.CONFLICTING_OVERLOADS, hint, context)
         }
 
         inspector.otherDeclarations.forEachNonSingle { it, hint ->
-            reporter.reportConflictingDeclarations(it.source, hint)
+            reporter.reportOn(it.source, FirErrors.REDECLARATION, hint, context)
         }
     }
 
@@ -55,13 +55,5 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         for (it in declaration.declarations) {
             inspector.collect(it)
         }
-    }
-
-    private fun DiagnosticReporter.reportConflictingOverloads(source: FirSourceElement?, declarations: String) {
-        source?.let { report(FirErrors.CONFLICTING_OVERLOADS.on(it, declarations)) }
-    }
-
-    private fun DiagnosticReporter.reportConflictingDeclarations(source: FirSourceElement?, declarations: String) {
-        source?.let { report(FirErrors.REDECLARATION.on(it, declarations)) }
     }
 }

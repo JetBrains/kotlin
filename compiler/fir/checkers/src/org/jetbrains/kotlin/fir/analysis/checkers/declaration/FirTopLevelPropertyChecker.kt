@@ -16,17 +16,17 @@ object FirTopLevelPropertyChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         for (topLevelDeclaration in declaration.declarations) {
             if (topLevelDeclaration is FirProperty) {
-                checkProperty(topLevelDeclaration, reporter)
+                checkProperty(topLevelDeclaration, reporter, context)
             }
         }
     }
 
-    private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter) {
+    private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
         val source = property.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
         val modifierList = with(FirModifierList) { source.getModifierList() }
 
-        checkPropertyInitializer(null, property, reporter)
-        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter)
+        checkPropertyInitializer(null, property, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
     }
 }

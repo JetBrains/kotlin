@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -36,8 +37,7 @@ object EmptyRangeChecker : FirBasicExpressionChecker() {
         }
 
         if (needReport) {
-            reporter.report(expression.source, FirErrors.EMPTY_RANGE)
-
+            reporter.reportOn(expression.source, FirErrors.EMPTY_RANGE, context)
         }
     }
 

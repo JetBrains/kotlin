@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -29,7 +29,7 @@ object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
 
         val surrounding = context.findClosestClass(superReference.labelName) ?: return
         if (!targetClass.isSupertypeOf(surrounding)) {
-            reporter.report(expression.source)
+            reporter.reportOn(expression.source, FirErrors.NOT_A_SUPERTYPE, context)
         }
     }
 
@@ -50,11 +50,5 @@ object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
         }
 
         return null
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let {
-            report(FirErrors.NOT_A_SUPERTYPE.on(it))
-        }
     }
 }

@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.getDeclaration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.modality
@@ -42,14 +42,8 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessChecker() {
                 declaration.modality == Modality.ABSTRACT &&
                 item.modality == Modality.ABSTRACT
             ) {
-                reporter.report(expression.calleeReference.source)
+                reporter.reportOn(expression.calleeReference.source, FirErrors.ABSTRACT_SUPER_CALL, context)
             }
-        }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let {
-            report(FirErrors.ABSTRACT_SUPER_CALL.on(it))
         }
     }
 }

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -33,11 +33,7 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
             ?: return
 
         if (typeFir.status.modality == Modality.SEALED) {
-            reporter.report(expression.calleeReference.source)
+            reporter.reportOn(expression.calleeReference.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL, context)
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL.on(it)) }
     }
 }

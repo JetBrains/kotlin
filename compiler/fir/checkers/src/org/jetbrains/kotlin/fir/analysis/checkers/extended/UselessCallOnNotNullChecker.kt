@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -28,7 +29,7 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessChecker() {
         if ("$calleePackageName.$calleeName" !in triggerOn) return
 
         if (calleeOn.getNullability() == ConeNullability.NOT_NULL) {
-            reporter.report(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL)
+            reporter.reportOn(expression.source, FirErrors.USELESS_CALL_ON_NOT_NULL, context)
         }
     }
 

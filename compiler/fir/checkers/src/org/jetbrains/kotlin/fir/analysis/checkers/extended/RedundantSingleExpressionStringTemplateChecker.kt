@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionC
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -32,7 +33,7 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecke
             expression.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
             && expression.stringParentChildrenCount() == 1 // there is no more children in original string template
         ) {
-            reporter.report(expression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
+            reporter.reportOn(expression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, context)
         }
     }
 

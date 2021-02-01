@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
@@ -27,37 +30,42 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
     override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source ?: return
-        reportFirDiagnostic(errorLoop.diagnostic, source, reporter)
+        reportFirDiagnostic(errorLoop.diagnostic, source, reporter, data)
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         val source = errorTypeRef.source ?: return
-        reportFirDiagnostic(errorTypeRef.diagnostic, source, reporter)
+        reportFirDiagnostic(errorTypeRef.diagnostic, source, reporter, data)
     }
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
-        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter)
+        reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data)
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
         val source = errorExpression.source ?: return
-        reportFirDiagnostic(errorExpression.diagnostic, source, reporter)
+        reportFirDiagnostic(errorExpression.diagnostic, source, reporter, data)
     }
 
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
-        reportFirDiagnostic(errorFunction.diagnostic, source, reporter)
+        reportFirDiagnostic(errorFunction.diagnostic, source, reporter, data)
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
         val source = errorResolvedQualifier.source ?: return
-        reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, reporter)
+        reportFirDiagnostic(errorResolvedQualifier.diagnostic, source, reporter, data)
     }
 
-    private fun reportFirDiagnostic(diagnostic: ConeDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {
+    private fun reportFirDiagnostic(
+        diagnostic: ConeDiagnostic,
+        source: FirSourceElement,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
         // Will be handled by [FirDestructuringDeclarationChecker]
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
             // TODO: if all diagnostics are supported, we don't need the following check, and will bail out based on element type.
@@ -97,7 +105,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeIntermediateDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
         }
-        reporter.report(coneDiagnostic)
+        reporter.report(coneDiagnostic, context)
     }
 
     private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {

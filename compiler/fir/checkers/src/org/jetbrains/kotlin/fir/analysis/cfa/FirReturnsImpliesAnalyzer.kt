@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
+    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         val function = graph.declaration as? FirFunction<*> ?: return
         val graphRef = function.controlFlowGraphReference as FirControlFlowGraphReferenceImpl
         val dataFlowInfo = graphRef.dataFlowInfo
@@ -62,7 +62,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
             if (wrongCondition) {
                 function.contractDescription.source?.let {
-                    reporter.report(FirErrors.WRONG_IMPLIES_CONDITION.on(it))
+                    reporter.report(FirErrors.WRONG_IMPLIES_CONDITION.on(it), context)
                 }
             }
         }

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -36,7 +36,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
             assert(declaration.name.isSpecial && declaration.name.asString() == "<destruct>") {
                 "Unexpected name: ${declaration.name.asString()} for destructuring declaration"
             }
-            checkInitializer(source, declaration.initializer, reporter)
+            checkInitializer(source, declaration.initializer, reporter, context)
             return
         }
 
@@ -82,7 +82,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                         originalDestructuringDeclarationOrInitializerSource,
                         diagnostic.name,
                         originalDestructuringDeclarationType
-                    )
+                    ),
+                    context
                 )
             }
             is ConeAmbiguityError -> {
@@ -91,7 +92,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                         originalDestructuringDeclarationOrInitializerSource,
                         diagnostic.name,
                         diagnostic.candidates
-                    )
+                    ),
+                    context
                 )
             }
             is ConeInapplicableCandidateError -> {
@@ -100,7 +102,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                         FirErrors.COMPONENT_FUNCTION_ON_NULLABLE.on(
                             originalDestructuringDeclarationOrInitializerSource,
                             (diagnostic.candidateSymbol.fir as FirSimpleFunction).name
-                        )
+                        ),
+                        context
                     )
                 }
             }
@@ -108,7 +111,12 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         }
     }
 
-    private fun checkInitializer(source: FirSourceElement, initializer: FirExpression?, reporter: DiagnosticReporter) {
+    private fun checkInitializer(
+        source: FirSourceElement,
+        initializer: FirExpression?,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
         val needToReport =
             when (initializer) {
                 null -> true
@@ -116,7 +124,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 else -> false
             }
         if (needToReport) {
-            reporter.report(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION)
+            reporter.reportOn(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, context)
         }
     }
 

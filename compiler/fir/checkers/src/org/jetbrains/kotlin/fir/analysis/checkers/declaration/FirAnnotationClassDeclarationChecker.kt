@@ -5,28 +5,26 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtNodeTypes.FUN
+import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds.primitiveTypes
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds.unsignedTypes
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.KtNodeTypes.FUN
-import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.name.ClassId
 
 object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ANNOTATION_CLASS) return
-        if (declaration.isLocal) reporter.report(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR)
+        if (declaration.isLocal) reporter.reportOn(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR, context)
 
         for (it in declaration.declarations) {
             when {
@@ -34,9 +32,9 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                     for (parameter in it.valueParameters) {
                         val source = parameter.source ?: continue
                         if (!source.hasValOrVar()) {
-                            reporter.report(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
+                            reporter.reportOn(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER, context)
                         } else if (source.hasVar()) {
-                            reporter.report(source, FirErrors.VAR_ANNOTATION_PARAMETER)
+                            reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
                         }
 
                         val typeRef = parameter.returnTypeRef
@@ -48,7 +46,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                                 // TODO: replace with UNRESOLVED_REFERENCE check
                             }
                             coneType.isNullable -> {
-                                reporter.report(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER)
+                                reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER, context)
                             }
                             classId in primitiveTypes -> {
                                 // DO NOTHING: primitives are allowed as annotation class parameter
@@ -67,13 +65,13 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                             }
                             classId == StandardClassIds.Array -> {
                                 if (!isAllowedArray(typeRef, context.session))
-                                    reporter.report(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
+                                    reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
                             }
                             isAllowedClassKind(coneType, context.session) -> {
                                 // DO NOTHING: annotation or enum classes are allowed
                             }
                             else -> {
-                                reporter.report(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
+                                reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
                             }
                         }
                     }
@@ -89,7 +87,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                     // TODO: replace with origin check
                 }
                 else -> {
-                    reporter.report(it.source, FirErrors.ANNOTATION_CLASS_MEMBER)
+                    reporter.reportOn(it.source, FirErrors.ANNOTATION_CLASS_MEMBER, context)
                 }
             }
         }
@@ -133,12 +131,5 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         return false
-    }
-
-    private inline fun <reified T : FirSourceElement, P : PsiElement> DiagnosticReporter.report(
-        source: T?,
-        factory: FirDiagnosticFactory0<T, P>
-    ) {
-        source?.let { report(factory.on(it)) }
     }
 }

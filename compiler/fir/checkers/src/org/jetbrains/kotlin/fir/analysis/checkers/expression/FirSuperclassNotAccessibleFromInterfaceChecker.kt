@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -34,7 +34,7 @@ object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessChecke
                 ?: return
 
             if (origin.source != null && origin.classKind == ClassKind.CLASS) {
-                reporter.report(expression.explicitReceiver?.source)
+                reporter.reportOn(expression.explicitReceiver?.source, FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, context)
             }
         }
     }
@@ -45,11 +45,5 @@ object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessChecke
      */
     private fun getClassLikeDeclaration(functionCall: FirQualifiedAccessExpression, context: CheckerContext): FirClassLikeDeclaration<*>? {
         return functionCall.calleeReference.safeAs<FirResolvedNamedReference>()?.resolvedSymbol?.fir?.getContainingClass(context)
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let {
-            report(FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE.on(it))
-        }
     }
 }
