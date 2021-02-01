@@ -153,7 +153,7 @@ internal class CommonizationVisitor(
         }.orEmpty()
 
         setSupertypes(
-            if (commonSupertypes.isEmpty() && classId !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CIDS)
+            if (commonSupertypes.isEmpty() && classId !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS)
                 listOf(CirTypeFactory.StandardTypes.ANY)
             else
                 commonSupertypes

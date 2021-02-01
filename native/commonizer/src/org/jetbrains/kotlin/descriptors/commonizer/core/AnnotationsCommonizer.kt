@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
-import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CID
+import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapOf
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
@@ -38,7 +38,7 @@ class AnnotationsCommonizer : AbstractStandardCommonizer<List<CirAnnotation>, Li
     override fun initialize(first: List<CirAnnotation>) = Unit
 
     override fun doCommonizeWith(next: List<CirAnnotation>): Boolean {
-        val nextDeprecatedAnnotation = next.firstOrNull { it.type.classifierId == DEPRECATED_ANNOTATION_CID } ?: return true
+        val nextDeprecatedAnnotation = next.firstOrNull { it.type.classifierId == DEPRECATED_ANNOTATION_CLASS_ID } ?: return true
 
         val deprecatedAnnotationCommonizer = deprecatedAnnotationCommonizer
             ?: DeprecatedAnnotationCommonizer().also { this.deprecatedAnnotationCommonizer = it }
@@ -148,14 +148,14 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         ).associateWith { StringValue(it) }
         private val FALLBACK_MESSAGE_VALUE = StringValue(FALLBACK_MESSAGE)
 
-        private val DEPRECATED_ANNOTATION_TYPE = buildAnnotationType(DEPRECATED_ANNOTATION_CID)
+        private val DEPRECATED_ANNOTATION_TYPE = buildAnnotationType(DEPRECATED_ANNOTATION_CLASS_ID)
         private val REPLACE_WITH_ANNOTATION_TYPE = buildAnnotationType(internedClassId(FqName(ReplaceWith::class.java.name)))
 
-        private val DEPRECATION_LEVEL_CID = internedClassId(FqName(DeprecationLevel::class.java.name))
+        private val DEPRECATION_LEVEL_CLASS_ID = internedClassId(FqName(DeprecationLevel::class.java.name))
 
         // Optimization: Keep DeprecationLevel enum constants.
         private val DEPRECATION_LEVEL_ENUM_ENTRY_VALUES: Map<String, EnumValue> = DeprecationLevel.values().associate {
-            it.name to EnumValue(DEPRECATION_LEVEL_CID, Name.identifier(it.name).intern())
+            it.name to EnumValue(DEPRECATION_LEVEL_CLASS_ID, Name.identifier(it.name).intern())
         }
 
         private fun buildAnnotationType(classId: ClassId) = CirTypeFactory.createClassType(
