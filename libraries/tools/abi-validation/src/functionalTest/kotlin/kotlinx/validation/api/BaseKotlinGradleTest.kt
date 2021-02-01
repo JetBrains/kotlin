@@ -5,7 +5,6 @@
 
 package kotlinx.validation.api
 
-import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -14,16 +13,8 @@ internal open class BaseKotlinGradleTest {
     @Rule
     @JvmField
     internal val testProjectDir: TemporaryFolder = TemporaryFolder()
-    internal lateinit var apiDump: File
 
-    @Before
-    fun setup() {
-        apiDump = testProjectDir.newFolder("api")
-                .toPath()
-                .resolve("${testProjectDir.root.name}.api")
-                .toFile()
-                .apply {
-                    createNewFile()
-                }
-    }
+    internal val rootProjectDir: File get() = testProjectDir.root
+
+    internal val rootProjectApiDump: File get() = rootProjectDir.resolve("api/${rootProjectDir.name}.api")
 }
