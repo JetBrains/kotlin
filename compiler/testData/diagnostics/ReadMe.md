@@ -21,19 +21,18 @@ Several directives can be added to the beginning of a test file with the followi
 
 ### 1. DIAGNOSTICS
 
-This directive allows to exclude some irrelevant diagnostics (e.g. unused parameter) from a certain test, or to test only a specific set of diagnostics.
+This directive allows to exclude some irrelevant diagnostics (e.g. unused parameter) from a certain test or to include others.
 
 The syntax is
 
-    '([ + - ! ] DIAGNOSTIC_FACTORY_NAME | ERROR | WARNING | INFO ) +'
+    '([ + - ] DIAGNOSTIC_FACTORY_NAME | ERROR | WARNING | INFO ) +'
 
   where
 
 * `+` means 'include';
-* `-` means 'exclude';
-* `!` means 'exclude everything but this'.
+* `-` means 'exclude'.
 
-  Directives are applied in the order of appearance, i.e. `!FOO +BAR` means include only `FOO` and `BAR`.
+  Directives are applied in the order of appearance, i.e. `+FOO -BAR` means include `FOO` but not `BAR`.
 
 #### Usage:
 
