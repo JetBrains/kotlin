@@ -37,12 +37,12 @@ interface ObjCExportTranslator {
     fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>): ObjCInterface
 }
 
-interface ObjCExportWarningCollector {
+interface ObjCExportProblemCollector {
     fun reportWarning(text: String)
     fun reportWarning(method: FunctionDescriptor, text: String)
     fun reportException(throwable: Throwable)
 
-    object SILENT : ObjCExportWarningCollector {
+    object SILENT : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {}
         override fun reportWarning(method: FunctionDescriptor, text: String) {}
         override fun reportException(throwable: Throwable) {}
@@ -53,7 +53,7 @@ internal class ObjCExportTranslatorImpl(
         private val generator: ObjCExportHeaderGenerator?,
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
-        val warningCollector: ObjCExportWarningCollector,
+        val problemCollector: ObjCExportProblemCollector,
         val objcGenerics: Boolean
 ) : ObjCExportTranslator {
 
@@ -810,7 +810,7 @@ internal class ObjCExportTranslatorImpl(
             val firstType = types[0]
             val secondType = types[1]
 
-            warningCollector.reportWarning(
+            problemCollector.reportWarning(
                     "Exposed type '$kotlinType' is '$firstType' and '$secondType' at the same time. " +
                             "This most likely wouldn't work as expected.")
 
@@ -959,7 +959,7 @@ internal class ObjCExportTranslatorImpl(
     private inline fun buildTopLevel(block: StubBuilder<ObjCTopLevel<*>>.() -> Unit) = buildStubs(block)
     private inline fun buildMembers(block: StubBuilder<Stub<*>>.() -> Unit) = buildStubs(block)
     private inline fun <S : Stub<*>> buildStubs(block: StubBuilder<S>.() -> Unit): List<S> =
-            StubBuilder<S>(warningCollector).apply(block).build()
+            StubBuilder<S>(problemCollector).apply(block).build()
 }
 
 abstract class ObjCExportHeaderGenerator internal constructor(
@@ -967,44 +967,44 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val objcGenerics: Boolean,
-        warningCollector: ObjCExportWarningCollector
+        problemCollector: ObjCExportProblemCollector
 ) {
 
     constructor(
             moduleDescriptors: List<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
             topLevelNamePrefix: String,
-            warningCollector: ObjCExportWarningCollector
-    ) : this(moduleDescriptors, builtIns, topLevelNamePrefix, ObjCExportMapper(), warningCollector)
+            problemCollector: ObjCExportProblemCollector
+    ) : this(moduleDescriptors, builtIns, topLevelNamePrefix, ObjCExportMapper(), problemCollector)
 
     private constructor(
             moduleDescriptors: List<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
             topLevelNamePrefix: String,
             mapper: ObjCExportMapper,
-            warningCollector: ObjCExportWarningCollector
+            problemCollector: ObjCExportProblemCollector
     ) : this(
             moduleDescriptors,
             mapper,
             ObjCExportNamerImpl(moduleDescriptors.toSet(), builtIns, mapper, topLevelNamePrefix, local = false),
             false,
-            warningCollector
+            problemCollector
     )
 
     constructor(
             moduleDescriptor: ModuleDescriptor,
             builtIns: KotlinBuiltIns,
             topLevelNamePrefix: String = moduleDescriptor.namePrefix,
-            warningCollector: ObjCExportWarningCollector
-    ) : this(moduleDescriptor, emptyList(), builtIns, topLevelNamePrefix, warningCollector)
+            problemCollector: ObjCExportProblemCollector
+    ) : this(moduleDescriptor, emptyList(), builtIns, topLevelNamePrefix, problemCollector)
 
     constructor(
             moduleDescriptor: ModuleDescriptor,
             exportedDependencies: List<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
             topLevelNamePrefix: String = moduleDescriptor.namePrefix,
-            warningCollector: ObjCExportWarningCollector
-    ) : this(listOf(moduleDescriptor) + exportedDependencies, builtIns, topLevelNamePrefix, warningCollector)
+            problemCollector: ObjCExportProblemCollector
+    ) : this(listOf(moduleDescriptor) + exportedDependencies, builtIns, topLevelNamePrefix, problemCollector)
 
     private val stubs = mutableListOf<Stub<*>>()
 
@@ -1012,7 +1012,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, warningCollector, objcGenerics)
+    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()

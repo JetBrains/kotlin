@@ -10,15 +10,15 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
-        warningCollector: ObjCExportWarningCollector,
+        problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
         private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, warningCollector) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
 
     companion object {
         fun createInstance(
                 configuration: ObjCExportLazy.Configuration,
-                warningCollector: ObjCExportWarningCollector,
+                problemCollector: ObjCExportProblemCollector,
                 builtIns: KotlinBuiltIns,
                 moduleDescriptors: List<ModuleDescriptor>,
                 deprecationResolver: DeprecationResolver? = null,
@@ -32,7 +32,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 moduleDescriptors,
                 mapper,
                 namer,
-                warningCollector,
+                problemCollector,
                 configuration.objcGenerics,
                 restrictToLocalModules
             )

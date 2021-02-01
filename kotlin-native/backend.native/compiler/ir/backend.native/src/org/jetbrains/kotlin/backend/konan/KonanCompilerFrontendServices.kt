@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpObjCHeader
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -19,7 +19,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 
     if (config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE) != null) {
         this.useImpl<ObjCExportLazyImpl>()
-        this.useInstance(ObjCExportWarningCollector.SILENT)
+        this.useInstance(ObjCExportProblemCollector.SILENT)
 
         useInstance(object : ObjCExportLazy.Configuration {
             override val frameworkName: String

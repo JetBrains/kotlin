@@ -22,8 +22,8 @@ internal class ObjCExportHeaderGeneratorImpl(
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, WarningCollector(context)) {
-    private class WarningCollector(val context: Context) : ObjCExportWarningCollector {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
+    private class ProblemCollector(val context: Context) : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {
             context.reportCompilationWarning(text)
         }
