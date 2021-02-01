@@ -347,5 +347,33 @@ open class A {
             assertCompiledKotlinSources(project.relativize(aaKt))
         }
     }
+
+    /** Regression test for KT-40875. */
+    @Test
+    fun testMoveFunctionFromLibWithRemappedBuildDirs() {
+        val project = defaultProject()
+        project.setupWorkingDir()
+        project.projectDir.resolve("build.gradle").appendText("""
+
+            allprojects {
+                it.buildDir = new File(rootDir,  "../out" + it.path.replace(":", "/") + "/build")
+            }
+        """.trimIndent())
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val barUseABKt = project.projectDir.getFileByName("barUseAB.kt")
+        val barInApp = File(project.projectDir, "app/src/main/kotlin/bar").apply { mkdirs() }
+        barUseABKt.copyTo(File(barInApp, barUseABKt.name))
+        barUseABKt.delete()
+
+        project.build("build") {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("fooCallUseAB.kt", "barUseAB.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+    }
 }
 
