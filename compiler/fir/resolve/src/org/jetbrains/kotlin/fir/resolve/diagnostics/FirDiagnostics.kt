@@ -38,20 +38,11 @@ class ConeHiddenCandidateError(
     override val reason: String get() = "HIDDEN: ${describeSymbol(candidateSymbol)} is invisible"
 }
 
-class ConeInapplicableCandidateError private constructor(
+class ConeInapplicableCandidateError(
     val applicability: CandidateApplicability,
-    val candidateSymbol: AbstractFirBasedSymbol<*>,
-    val diagnostics: List<ResolutionDiagnostic>,
-    val errors: List<ConstraintSystemError>
+    val candidate: Candidate,
 ) : ConeDiagnostic() {
-    constructor(applicability: CandidateApplicability, candidate: Candidate) : this(
-        applicability,
-        candidate.symbol,
-        candidate.diagnostics,
-        candidate.system.errors
-    )
-
-    override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidateSymbol)}"
+    override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidate.symbol)}"
 }
 
 class ConeAmbiguityError(val name: Name, val applicability: CandidateApplicability, val candidates: Collection<AbstractFirBasedSymbol<*>>) : ConeDiagnostic() {

@@ -218,7 +218,6 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
             parameter<Name>("containingClassName")
         }
 
-
         val OVERRIDING_FINAL_MEMBER by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableDeclaration<*>>("overriddenDeclaration")
             parameter<Name>("containingClassName")
@@ -240,7 +239,6 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
             parameter<FirMemberDeclaration>("overridingDeclaration")
             parameter<FirMemberDeclaration>("overriddenDeclaration")
         }
-
     }
 
     group("Redeclarations") {
@@ -282,13 +280,11 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
             parameter<FirMemberDeclaration>("function")
         }
 
-
         val FUNCTION_DECLARATION_WITH_NO_NAME by error<FirSourceElement, KtFunction>(PositioningStrategy.DECLARATION_SIGNATURE)
 
         // TODO: val ANONYMOUS_FUNCTION_WITH_NAME by error1<FirSourceElement, PsiElement, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
         val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error<FirSourceElement, KtParameter>(PositioningStrategy.PARAMETER_DEFAULT_VALUE)
         val USELESS_VARARG_ON_PARAMETER by warning<FirSourceElement, KtParameter>()
-
     }
 
     group("Properties & accessors") {
@@ -324,7 +320,6 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val EXPECTED_DELEGATED_PROPERTY by error<FirSourceElement, KtPropertyDelegate>()
     }
 
-
     group("Destructuring declaration") {
         val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error<FirSourceElement, KtDestructuringDeclaration>()
         val COMPONENT_FUNCTION_MISSING by error<FirSourceElement, PsiElement> {
@@ -340,7 +335,6 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
             parameter<Name>("componentFunctionName")
         }
 
-        // TODO: val COMPONENT_FUNCTION_ON_NULLABLE by ...
         // TODO: val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by ...
     }
 
@@ -363,7 +357,9 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_SELECTOR) {
             parameter<ConeKotlinType>("receiverType")
         }
-        // TODO: val UNSAFE_IMPLICIT_INVOKE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>()
+        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement>() {
+            parameter<ConeKotlinType>("receiverType")
+        }
         // TODO: val UNSAFE_INFIX_CALL by ...
         // TODO: val UNSAFE_OPERATOR_CALL by ...
         // TODO: val UNEXPECTED_SAFE_CALL by ...

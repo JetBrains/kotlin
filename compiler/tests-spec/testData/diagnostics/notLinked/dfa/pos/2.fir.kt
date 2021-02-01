@@ -67,7 +67,7 @@ fun case_3(b: Boolean) {
     val y = if (b) x else null
 
     if (false || false || false || false || y !== null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!><!UNSAFE_CALL!>.<!>propAny
@@ -87,7 +87,7 @@ fun case_3(b: Boolean) {
 // TESTCASE NUMBER: 4
 fun case_4(a: ((Float) -> Int?)?, b: Float?) {
     if (a != null == true && b != null == true || false || false || false || false || false || false || false || false || false) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!><!UNSAFE_CALL!>.<!>propAny
@@ -274,7 +274,7 @@ fun case_11(b: Boolean) {
     val y = if (b) x else null
 
     if (y === null && true) else {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<<anonymous>?>?")!>y<!><!UNSAFE_CALL!>.<!>propAny
@@ -298,7 +298,7 @@ fun case_12(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
     if (true && a == null == true || b == null == true) {
 
     } else {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>?")!>a<!><!UNSAFE_CALL!>.<!>propAny

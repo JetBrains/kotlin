@@ -1231,9 +1231,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(diagnostic: ConeDiagnostic) {
         when (diagnostic) {
             is ConeInapplicableCandidateError -> {
-                describeVerbose(diagnostic.candidateSymbol)
+                describeVerbose(diagnostic.candidate.symbol)
                 br
-                diagnostic.errors.forEach { callDiagnostic ->
+                diagnostic.candidate.system.errors.forEach { callDiagnostic ->
                     when (callDiagnostic) {
                         is NewConstraintError -> {
                             ident()

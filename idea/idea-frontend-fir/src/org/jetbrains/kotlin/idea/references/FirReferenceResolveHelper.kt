@@ -268,7 +268,7 @@ internal object FirReferenceResolveHelper {
         val candidates = when (val diagnostic = fir.diagnostic) {
             is ConeAmbiguityError -> diagnostic.candidates
             is ConeOperatorAmbiguityError -> diagnostic.candidates
-            is ConeInapplicableCandidateError -> listOf(diagnostic.candidateSymbol)
+            is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
             else -> emptyList()
         }
         return candidates.mapNotNull { it.fir.buildSymbol(symbolBuilder) }
