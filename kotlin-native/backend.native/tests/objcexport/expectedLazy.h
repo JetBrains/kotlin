@@ -663,6 +663,76 @@ __attribute__((swift_name("ArraysInitBlock")))
 - (NSString *)log __attribute__((swift_name("log()")));
 @end;
 
+__attribute__((swift_name("OverrideKotlinMethods2")))
+@protocol KtOverrideKotlinMethods2
+@required
+- (int32_t)one __attribute__((swift_name("one()")));
+@end;
+
+__attribute__((swift_name("OverrideKotlinMethods3")))
+@interface KtOverrideKotlinMethods3 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((swift_name("OverrideKotlinMethods4")))
+@interface KtOverrideKotlinMethods4 : KtOverrideKotlinMethods3 <KtOverrideKotlinMethods2>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)one __attribute__((swift_name("one()")));
+@end;
+
+__attribute__((swift_name("OverrideKotlinMethods5")))
+@protocol KtOverrideKotlinMethods5
+@required
+- (int32_t)one __attribute__((swift_name("one()")));
+@end;
+
+__attribute__((swift_name("OverrideKotlinMethods6")))
+@protocol KtOverrideKotlinMethods6 <KtOverrideKotlinMethods5>
+@required
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("OverrideKotlinMethodsKt")))
+@interface KtOverrideKotlinMethodsKt : KtBase
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test0Obj:(id)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test0(obj:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test1Obj:(id)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test1(obj:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test2Obj:(id<KtOverrideKotlinMethods2>)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test2(obj:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test3Obj:(KtOverrideKotlinMethods3 *)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test3(obj:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test4Obj:(KtOverrideKotlinMethods4 *)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test4(obj:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test5Obj:(id<KtOverrideKotlinMethods5>)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test5(obj:)")));
+
+/**
+ @note This method converts all Kotlin exceptions to errors.
+*/
++ (BOOL)test6Obj:(id<KtOverrideKotlinMethods6>)obj error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test6(obj:)")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("OverrideMethodsOfAnyKt")))
 @interface KtOverrideMethodsOfAnyKt : KtBase
