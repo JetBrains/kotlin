@@ -219,7 +219,7 @@ class ModuleStructureExtractorImpl(
             return true
         }
 
-        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependeciens {
+        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependencies {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
             val (name, _, dependencies, _, friends) = matchResult.destructured
@@ -234,7 +234,7 @@ class ModuleStructureExtractorImpl(
                     dependenciesNames = dependenciesNames.filter { it != "support" }
                 }
             }
-            return ModuleNameAndDependeciens(
+            return ModuleNameAndDependencies(
                 name,
                 dependenciesNames,
                 friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
@@ -393,7 +393,7 @@ class ModuleStructureExtractorImpl(
         }
     }
 
-    private data class ModuleNameAndDependeciens(
+    private data class ModuleNameAndDependencies(
         val name: String,
         val dependencies: List<String>,
         val friends: List<String>
