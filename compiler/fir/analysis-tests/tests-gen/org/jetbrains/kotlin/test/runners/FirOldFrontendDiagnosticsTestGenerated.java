@@ -34746,6 +34746,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             public void testSamOverloadsWithKtFunctionWithoutRefinedSams() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/samOverloadsWithKtFunctionWithoutRefinedSams.kt");
             }
+
+            @Test
+            @TestMetadata("sameNameClassesFromSupertypes.kt")
+            public void testSameNameClassesFromSupertypes() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/sameNameClassesFromSupertypes.kt");
+            }
         }
 
         @Nested
