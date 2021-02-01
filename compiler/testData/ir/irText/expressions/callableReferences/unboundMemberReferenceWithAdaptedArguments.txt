@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
   FUN name:testUnbound visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use1 (fn: kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUN_EXPR type=kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+        fn: BLOCK type=kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL <> (p0:<root>.A, p1:kotlin.Int) returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:<root>.A
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
@@ -70,6 +70,7 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
                   $this: GET_VAR 'p0: <root>.A declared in <root>.testUnbound.foo' type=<root>.A origin=null
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p1: kotlin.Int declared in <root>.testUnbound.foo' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun foo (p0: <root>.A, p1: kotlin.Int): kotlin.Unit declared in <root>.testUnbound' type=kotlin.Function2<<root>.A, kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A
   FUN name:testBound visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
@@ -84,7 +85,7 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
                   $this: GET_VAR 'receiver: <root>.A declared in <root>.testBound.foo' type=<root>.A origin=ADAPTED_FUNCTION_REFERENCE
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.testBound.foo' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo (p0: kotlin.Int): kotlin.Unit declared in <root>.testBound' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+          FUNCTION_REFERENCE 'local final fun foo (p0: kotlin.Int): kotlin.Unit declared in <root>.testBound' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A
             $receiver: GET_VAR 'a: <root>.A declared in <root>.testBound' type=<root>.A origin=null
   FUN name:testObject visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
@@ -99,5 +100,5 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
                   $this: GET_VAR 'receiver: <root>.Obj declared in <root>.testObject.foo' type=<root>.Obj origin=ADAPTED_FUNCTION_REFERENCE
                   xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.testObject.foo' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun foo (p0: kotlin.Int): kotlin.Unit declared in <root>.testObject' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+          FUNCTION_REFERENCE 'local final fun foo (p0: kotlin.Int): kotlin.Unit declared in <root>.testObject' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj
             $receiver: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.Obj

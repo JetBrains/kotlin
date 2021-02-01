@@ -49,17 +49,19 @@ FILE fqName:<root> fileName:/kt37131.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testFn (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+          fn: BLOCK type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo visibility:local modality:FINAL <> () returnType:kotlin.String
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun foo (): kotlin.String declared in <root>.testFn'
                   CALL 'public final fun foo (x: kotlin.String): kotlin.String declared in <root>' type=kotlin.String origin=null
+            FUNCTION_REFERENCE 'local final fun foo (): kotlin.String declared in <root>.testFn' type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo (x: kotlin.String): kotlin.String declared in <root>
   FUN name:testCtor visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testCtor (): kotlin.Any declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function0<kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
-          fn: FUN_EXPR type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE
+          fn: BLOCK type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:<init> visibility:local modality:FINAL <> () returnType:<root>.C
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <init> (): <root>.C declared in <root>.testCtor'
                   CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.String) [primary] declared in <root>.C' type=<root>.C origin=null
+            FUNCTION_REFERENCE 'local final fun <init> (): <root>.C declared in <root>.testCtor' type=kotlin.Function0<<root>.C> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public constructor <init> (x: kotlin.String) [primary] declared in <root>.C

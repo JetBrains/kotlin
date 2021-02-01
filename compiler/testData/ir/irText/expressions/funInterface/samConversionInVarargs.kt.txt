@@ -31,9 +31,12 @@ fun withVarargOfInt(vararg xs: Int): String {
 }
 
 fun testAdaptedCR() {
-  useVararg(foos = [local fun withVarargOfInt(p0: Int) {
-    withVarargOfInt(xs = [p0]) /*~> Unit */
-  }
- /*-> IFoo */])
+  useVararg(foos = [{ // BLOCK
+    local fun withVarargOfInt(p0: Int) {
+      withVarargOfInt(xs = [p0]) /*~> Unit */
+    }
+
+    ::withVarargOfInt
+  } /*-> IFoo */])
 }
 

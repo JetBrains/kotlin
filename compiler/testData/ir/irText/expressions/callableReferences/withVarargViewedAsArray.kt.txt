@@ -33,10 +33,13 @@ fun useStringArray(fn: Function1<Array<String>, Unit>) {
 }
 
 fun testPlainArgs() {
-  usePlainArgs(fn = local fun sum(p0: Int, p1: Int): Int {
-    return sum(args = [p0, p1])
-  }
-)
+  usePlainArgs(fn = { // BLOCK
+    local fun sum(p0: Int, p1: Int): Int {
+      return sum(args = [p0, p1])
+    }
+
+    ::sum
+  })
 }
 
 fun testPrimitiveArrayAsVararg() {
@@ -48,9 +51,12 @@ fun testArrayAsVararg() {
 }
 
 fun testArrayAndDefaults() {
-  useStringArray(fn = local fun zap(p0: Array<out String>) {
-    zap(b = [*p0])
-  }
-)
+  useStringArray(fn = { // BLOCK
+    local fun zap(p0: Array<out String>) {
+      zap(b = [*p0])
+    }
+
+    ::zap
+  })
 }
 

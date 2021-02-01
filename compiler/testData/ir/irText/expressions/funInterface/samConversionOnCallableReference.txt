@@ -35,11 +35,12 @@ FILE fqName:<root> fileName:/samConversionOnCallableReference.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testSamCosntructorOnAdapted (): <root>.KRunnable declared in <root>'
         TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
-          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          BLOCK type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            FUNCTION_REFERENCE 'local final fun foo1 (): kotlin.Unit declared in <root>.testSamCosntructorOnAdapted' type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>
   FUN name:testSamConversion visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -49,8 +50,9 @@ FILE fqName:<root> fileName:/samConversionOnCallableReference.kt
     BLOCK_BODY
       CALL 'public final fun use (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
-          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          BLOCK type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo1 visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            FUNCTION_REFERENCE 'local final fun foo1 (): kotlin.Unit declared in <root>.testSamConversionOnAdapted' type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun foo1 (vararg xs: kotlin.Int): kotlin.Int declared in <root>

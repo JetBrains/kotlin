@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
   FUN name:testPlainArgs visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePlainArgs (fn: kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=ADAPTED_FUNCTION_REFERENCE
+        fn: BLOCK type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:sum visibility:local modality:FINAL <> (p0:kotlin.Int, p1:kotlin.Int) returnType:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
@@ -71,6 +71,7 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                   args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                     GET_VAR 'p0: kotlin.Int declared in <root>.testPlainArgs.sum' type=kotlin.Int origin=null
                     GET_VAR 'p1: kotlin.Int declared in <root>.testPlainArgs.sum' type=kotlin.Int origin=null
+          FUNCTION_REFERENCE 'local final fun sum (p0: kotlin.Int, p1: kotlin.Int): kotlin.Int declared in <root>.testPlainArgs' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>
   FUN name:testPrimitiveArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePrimitiveArray (fn: kotlin.Function1<kotlin.IntArray, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -82,7 +83,7 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
   FUN name:testArrayAndDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUN_EXPR type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+        fn: BLOCK type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL <> (p0:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Array<out kotlin.String>
             BLOCK_BODY
@@ -90,3 +91,4 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
                 b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
                   SPREAD_ELEMENT
                     GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null
+          FUNCTION_REFERENCE 'local final fun zap (p0: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.testArrayAndDefaults' type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>

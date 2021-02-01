@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/withAdaptationForSam.kt
     BLOCK_BODY
       CALL 'public final fun useFoo (foo: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         foo: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-          FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          BLOCK type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVararg visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
@@ -37,3 +37,4 @@ FILE fqName:<root> fileName:/withAdaptationForSam.kt
                   CALL 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.test.withVararg' type=kotlin.Int origin=null
+            FUNCTION_REFERENCE 'local final fun withVararg (p0: kotlin.Int): kotlin.Unit declared in <root>.test' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>
