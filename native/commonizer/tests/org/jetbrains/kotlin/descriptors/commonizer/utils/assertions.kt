@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import kotlinx.metadata.klib.KlibModuleMetadata
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
@@ -15,22 +14,11 @@ import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMeta
 import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import kotlin.test.fail
 
 fun assertIsDirectory(file: File) {
     if (!file.isDirectory)
         fail("Not a directory: $file")
-}
-
-@ExperimentalContracts
-fun assertCommonizationPerformed(result: CommonizerResult) {
-    contract {
-        returns() implies (result is CommonizerResult.Done)
-    }
-
-    if (result !is CommonizerResult.Done)
-        fail("$result is not instance of ${CommonizerResult.Done::class}")
 }
 
 @ExperimentalContracts

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
@@ -15,9 +17,12 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
-fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
-    if (!parameters.hasAnythingToCommonize())
-        return CommonizerResult.NothingToDo
+fun runCommonization(parameters: CommonizerParameters) {
+    val resultsConsumer = parameters.resultsConsumer
+    if (!parameters.hasAnythingToCommonize()) {
+        resultsConsumer.successfullyFinished(Status.NOTHING_TO_DO)
+        return
+    }
 
     val storageManager = LockBasedStorageManager("Declarations commonization")
 
@@ -25,7 +30,6 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
     val mergedTree = mergeResult.root
 
     // build resulting declarations:
-    val modulesByTargets = LinkedHashMap<CommonizerTarget, Collection<ModuleResult>>() // use linked hash map to preserve order
     val klibFragmentWriteStrategy = ChunkedKlibModuleFragmentWriteStrategy()
 
     for (targetIndex in 0 until mergedTree.dimension) {
@@ -39,16 +43,15 @@ fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
 
             ModuleResult.Commonized(libraryName, serializedMetadata)
         }
-        parameters.progressLogger?.invoke("Built metadata for ${target.prettyCommonizedName(parameters.sharedTarget)}")
 
         val missingModules: List<ModuleResult.Missing> = if (target is LeafTarget)
             mergeResult.missingModuleInfos.getValue(target).map { ModuleResult.Missing(it.originalLocation) }
         else emptyList()
 
-        modulesByTargets[target] = commonizedModules + missingModules
+        resultsConsumer.consumeResults(target, commonizedModules + missingModules)
     }
 
-    return CommonizerResult.Done(modulesByTargets)
+    resultsConsumer.successfullyFinished(Status.DONE)
 }
 
 private fun mergeAndCommonize(storageManager: StorageManager, parameters: CommonizerParameters): CirTreeMergeResult {
