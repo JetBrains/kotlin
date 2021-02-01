@@ -9,10 +9,13 @@
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.kotlin.dsl.accessors.runtime.addDependencyTo
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
@@ -111,6 +114,50 @@ fun Project.kotlinBuiltins(forJvm: Boolean): Any =
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
+
+fun Project.testApiJUnit5(
+    vintageEngine: Boolean = false,
+    runner: Boolean = false,
+    suiteApi: Boolean = false
+) {
+    with(dependencies) {
+        val platformVersion = commonVer("org.junit", "junit-bom")
+        testApi(platform("org.junit:junit-bom:$platformVersion"))
+        testApi("org.junit.jupiter:junit-jupiter")
+        if (vintageEngine) {
+            testApi("org.junit.vintage:junit-vintage-engine:$platformVersion")
+        }
+        val componentsVersion = commonVer("org.junit.platform", "")
+
+        val components = mutableListOf(
+            "org.junit.platform:junit-platform-commons",
+            "org.junit.platform:junit-platform-launcher"
+        )
+        if (runner) {
+            components += "org.junit.platform:junit-platform-runner"
+        }
+        if (suiteApi) {
+            components += "org.junit.platform:junit-platform-suite-api"
+        }
+
+        for (component in components) {
+            testApi("$component:$componentsVersion")
+        }
+
+        addDependencyTo<ExternalModuleDependency>(this, "testImplementation", intellijDep()) {
+            // This dependency is needed only for FileComparisonFailure
+            includeJars("idea_rt", rootProject = rootProject)
+            isTransitive = false
+        }
+
+        // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
+        add("testRuntimeOnly", commonDep("junit:junit"))
+    }
+}
+
+private fun DependencyHandler.testApi(dependencyNotation: Any) {
+    add("testApi", dependencyNotation)
+}
 
 val Project.protobufVersion: String get() = findProperty("versions.protobuf") as String
 
