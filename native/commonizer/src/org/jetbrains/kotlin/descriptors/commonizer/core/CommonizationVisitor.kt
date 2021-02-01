@@ -148,11 +148,15 @@ internal class CommonizationVisitor(
         classId: ClassId,
         supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
     ) {
+        val commonSupertypes = supertypesMap?.values?.compactMapNotNull { supertypesGroup ->
+            commonize(supertypesGroup, TypeCommonizer(classifiers))
+        }.orEmpty()
+
         setSupertypes(
-            if (supertypesMap.isNullOrEmpty())
-                if (classId in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CIDS) emptyList() else listOf(CirTypeFactory.StandardTypes.ANY)
+            if (commonSupertypes.isEmpty() && classId !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CIDS)
+                listOf(CirTypeFactory.StandardTypes.ANY)
             else
-                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(classifiers)) }
+                commonSupertypes
         )
     }
 }
