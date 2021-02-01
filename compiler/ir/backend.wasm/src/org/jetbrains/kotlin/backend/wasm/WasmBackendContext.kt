@@ -42,7 +42,6 @@ class WasmBackendContext(
     override val builtIns = module.builtIns
     override var inVerbosePhase: Boolean = false
     override val scriptMode = false
-    override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
     override val irFactory: IrFactory = IrFactoryImpl
 
     // Place to store declarations excluded from code generation

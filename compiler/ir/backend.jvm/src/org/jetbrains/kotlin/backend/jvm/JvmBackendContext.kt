@@ -56,8 +56,6 @@ class JvmBackendContext(
     val classNameOverride: MutableMap<IrClass, JvmClassName>
         get() = generatorExtensions.classNameOverride
 
-    override val extractedLocalClasses: MutableSet<IrClass> = ConcurrentHashMap.newKeySet()
-
     override val irFactory: IrFactory = IrFactoryImpl
 
     override val scriptMode: Boolean = false
