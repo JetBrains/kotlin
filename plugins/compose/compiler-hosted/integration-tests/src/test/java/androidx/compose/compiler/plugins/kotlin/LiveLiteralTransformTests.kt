@@ -364,7 +364,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
             }
             @LiveLiteralFileInfo(file = "/Test.kt")
-            internal class LiveLiterals%TestKt {
+            internal object LiveLiterals%TestKt {
               val Int%fun-bar%class-%no-name-provided%%fun-a: Int = 1
               var State%Int%fun-bar%class-%no-name-provided%%fun-a: State<Int>?
               @LiveLiteralInfo(key = "Int%fun-bar%class-%no-name-provided%%fun-a", offset = 159)
@@ -416,7 +416,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               print(LiveLiterals%TestKt.Int%arg-0%call-print-2%fun-A())
             }
             @LiveLiteralFileInfo(file = "/Test.kt")
-            internal class LiveLiterals%TestKt {
+            internal object LiveLiterals%TestKt {
               val Int%arg-0%call-print%fun-A: Int = 1
               var State%Int%arg-0%call-print%fun-A: State<Int>?
               @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 62)
