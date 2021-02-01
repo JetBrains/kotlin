@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public abstract class Test {
-    // source: 'sealedClassConstructorWithDefaultParams.kt'
-    private final field x: int
-    public method <init>(p0: int): void
-    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public final method getX(): int
-}

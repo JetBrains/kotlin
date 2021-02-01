@@ -59,8 +59,8 @@ class IdeWizard {
           when {
             EQEQ(arg0 = value, arg1 = null) -> return Unit
           }
-          reference.<set-t>(<set-?> = SettingType<V>(type = value /*as V */::class) as T)
-          reference.<set-v>(<set-?> = value /*as V */)
+          reference.<set-t>(<set-?> = SettingType<V>(type = value::class) as T)
+          reference.<set-v>(<set-?> = value)
         }
 
         override operator fun getValue(thisRef: Any?, property: KProperty<*>): V? {

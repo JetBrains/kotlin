@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -24,6 +25,7 @@ object JsAnnotations {
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
+    val jsFunFqn = FqName("kotlin.js.JsFun")
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -41,6 +43,9 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.getJsFunAnnotation(): String? =
+    getAnnotation(JsAnnotations.jsFunFqn)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.isJsExport(): Boolean =
     hasAnnotation(JsAnnotations.jsExportFqn)

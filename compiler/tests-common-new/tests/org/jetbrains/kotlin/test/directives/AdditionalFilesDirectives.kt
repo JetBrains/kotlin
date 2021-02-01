@@ -37,4 +37,11 @@ object AdditionalFilesDirectives : SimpleDirectivesContainer() {
             See file ./compiler/testData/diagnostics/helpers/coroutines/TailCallOptimizationChecker.kt
         """.trimIndent()
     )
+
+    val SPEC_HELPERS by directive(
+        description = """
+            Adds util functions from `test-spec` modules
+            See directory ./compiler/tests-spec/helpers/
+        """.trimIndent()
+    )
 }

@@ -39,6 +39,7 @@
 #include "CyclicCollector.h"
 #endif  // USE_CYCLIC_GC
 #include "Exceptions.h"
+#include "FreezeHooks.hpp"
 #include "KString.h"
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
@@ -2861,13 +2862,6 @@ void freezeCyclic(ObjHeader* root,
   }
 }
 
-// These hooks are only allowed to modify `obj` subgraph.
-void runFreezeHooks(ObjHeader* obj) {
-  if (obj->type_info() == theWorkerBoundReferenceTypeInfo) {
-    WorkerBoundReferenceFreezeHook(obj);
-  }
-}
-
 void runFreezeHooksRecursive(ObjHeader* root) {
   KStdUnorderedSet<KRef> seen;
   KStdVector<KRef> toVisit;
@@ -2877,7 +2871,7 @@ void runFreezeHooksRecursive(ObjHeader* root) {
     KRef obj = toVisit.back();
     toVisit.pop_back();
 
-    runFreezeHooks(obj);
+    kotlin::RunFreezeHooks(obj);
 
     traverseReferredObjects(obj, [&seen, &toVisit](ObjHeader* field) {
       auto wasNotSeenYet = seen.insert(field).second;

@@ -21,7 +21,7 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
     override val directives: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
-    override fun check(failedAssertions: List<AssertionError>) {
+    override fun check(failedAssertions: List<Throwable>) {
         val moduleStructure = testServices.moduleStructure
         val testData = moduleStructure.originalTestDataFiles.first()
         if (testData.extension == "kts") return
@@ -31,8 +31,12 @@ class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisC
             runFirTestAndGeneratedTestData(testData, firTestData)
             return
         }
-        val originalFileContent = clearTextFromDiagnosticMarkup(testData.readText())
-        val firFileContent = clearTextFromDiagnosticMarkup(firTestData.readText())
+        var originalFileContent = clearTextFromDiagnosticMarkup(testData.readText()).trim()
+        var firFileContent = clearTextFromDiagnosticMarkup(firTestData.readText()).trim()
+        if (System.lineSeparator() != "\n") {
+            originalFileContent = originalFileContent.replace("\r\n", "\n")
+            firFileContent = firFileContent.replace("\r\n", "\n")
+        }
         testServices.assertions.assertEquals(originalFileContent, firFileContent) {
             "Original and fir test data aren't identical. " +
                     "Please, add changes from ${testData.name} to ${firTestData.name}"

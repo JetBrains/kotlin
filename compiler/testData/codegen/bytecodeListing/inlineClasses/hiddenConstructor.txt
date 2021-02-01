@@ -1,0 +1,58 @@
+@kotlin.Metadata
+public final class Test1 {
+    // source: 'hiddenConstructor.kt'
+    private final field z: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getZ-a_XrcN0(): int
+}
+
+@kotlin.Metadata
+public final class Test2 {
+    // source: 'hiddenConstructor.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Test3 {
+    // source: 'hiddenConstructor.kt'
+    private final field z: int
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getZ-a_XrcN0(): int
+}
+
+@kotlin.Metadata
+public final class Test4 {
+    // source: 'hiddenConstructor.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Z {
+    // source: 'hiddenConstructor.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

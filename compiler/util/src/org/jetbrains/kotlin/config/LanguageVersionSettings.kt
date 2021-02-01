@@ -137,7 +137,7 @@ enum class LanguageFeature(
     AdaptedCallableReferenceAgainstReflectiveType(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
     InferenceCompatibility(KOTLIN_1_5, kind = BUG_FIX),
     RequiredPrimaryConstructorDelegationCallInEnums(KOTLIN_1_5, kind = BUG_FIX),
-    ForbidAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
+    ApproximateAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
     ForbidReferencingToUnderscoreNamedParameterOfCatchBlock(KOTLIN_1_5, kind = BUG_FIX),
     UseCorrectExecutionOrderForVarargArguments(KOTLIN_1_5, kind = BUG_FIX),
     JvmRecordSupport(KOTLIN_1_5),
@@ -317,13 +317,13 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
-        val OLDEST_DEPRECATED = KOTLIN_1_2
+        val OLDEST_DEPRECATED = KOTLIN_1_3
 
         @JvmField
-        val FIRST_SUPPORTED = KOTLIN_1_3
+        val FIRST_SUPPORTED = KOTLIN_1_4
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_1_4
+        val LATEST_STABLE = KOTLIN_1_5
     }
 }
 

@@ -79,6 +79,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         private val INFO_AS_WARNINGS = "kapt.info.as.warnings"
         private val INCLUDE_COMPILE_CLASSPATH = "kapt.include.compile.classpath"
         private val INCREMENTAL_APT = "kapt.incremental.apt"
+        private val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = "kapt.keep.kdoc.comments.in.stubs"
 
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
@@ -118,6 +119,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun includeCompileClasspath(project: Project): Boolean? =
             project.findProperty(INCLUDE_COMPILE_CLASSPATH)?.run { toString().toBoolean() }
+
+        fun Project.isKaptKeepKdocCommentsInStubs(): Boolean {
+            return !(hasProperty(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS) && property(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS) == "false")
+        }
 
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(SourceSet.MAIN_SOURCE_SET_NAME)
 
@@ -392,6 +397,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         pluginOptions += SubpluginOption("mapDiagnosticLocations", "${kaptExtension.mapDiagnosticLocations}")
         pluginOptions += SubpluginOption("strictMode", "${kaptExtension.strictMode}")
         pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
+        pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${project.isKaptKeepKdocCommentsInStubs()}")
         pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorTimings}")
         pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
         pluginOptions += SubpluginOption("infoAsWarnings", "${project.isInfoAsWarnings()}")

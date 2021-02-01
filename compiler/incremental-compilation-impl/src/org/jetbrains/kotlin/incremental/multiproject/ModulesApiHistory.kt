@@ -41,6 +41,11 @@ abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModul
                 extension.equals("jar", ignoreCase = true) -> {
                     jarFiles.add(file)
                 }
+                extension.equals("klib", ignoreCase = true) -> {
+                    // TODO: shouldn't jars and klibs be tracked separately?
+                    // TODO: what to do with `in-directory` klib?
+                    jarFiles.add(file)
+                }
             }
         }
 

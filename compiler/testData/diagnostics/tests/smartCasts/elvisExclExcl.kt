@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Based on KT-9100
 fun test(x: Any?, y: Any?): Any {
     val z = x ?: y!!

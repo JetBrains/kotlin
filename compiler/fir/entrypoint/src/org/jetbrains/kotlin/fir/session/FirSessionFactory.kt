@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -68,6 +70,7 @@ object FirSessionFactory {
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirJavaModuleBasedSession {
         return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
+            registerThreadUnsafeCaches()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents()
             registerJavaSpecificResolveComponents()
@@ -113,6 +116,7 @@ object FirSessionFactory {
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
+            registerThreadUnsafeCaches()
             registerCommonComponents(languageVersionSettings)
 
             val javaSymbolProvider = JavaSymbolProvider(this, project, scope)

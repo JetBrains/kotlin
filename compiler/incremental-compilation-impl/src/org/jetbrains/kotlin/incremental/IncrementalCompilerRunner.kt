@@ -102,7 +102,18 @@ abstract class IncrementalCompilerRunner<
         // If compilation has crashed or we failed to close caches we have to clear them
         var cachesMayBeCorrupted = true
         return try {
-            val changedFiles = providedChangedFiles ?: caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            val changedFiles = when (providedChangedFiles) {
+                is ChangedFiles.Dependencies -> {
+                    val changedSources = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+                    ChangedFiles.Known(
+                        providedChangedFiles.modified + changedSources.modified,
+                        providedChangedFiles.removed + changedSources.removed
+                    )
+                }
+                null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+                else -> providedChangedFiles
+            }
+
             val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector)
 
             val exitCode = when (compilationMode) {
@@ -167,6 +178,7 @@ abstract class IncrementalCompilerRunner<
         when (changedFiles) {
             is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args, messageCollector)
             is ChangedFiles.Unknown -> CompilationMode.Rebuild(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
+            is ChangedFiles.Dependencies -> error("Unexpected ChangedFiles type (ChangedFiles.Dependencies)")
         }
 
     private fun calculateSourcesToCompile(

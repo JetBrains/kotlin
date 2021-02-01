@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import java.io.File
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
@@ -68,18 +69,33 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
             compilation.kotlinOptions {
                 configureOptions()
 
-                freeCompilerArgs += listOf(
-                    DISABLE_PRE_IR,
-                    PRODUCE_UNZIPPED_KLIB
-                )
+                var produceUnzippedKlib = isProduceUnzippedKlib()
+                val produceZippedKlib = isProduceZippedKlib()
+
+                freeCompilerArgs = freeCompilerArgs + DISABLE_PRE_IR
+
+                val isMainCompilation = compilation.isMain()
+
+                if (!produceUnzippedKlib && !produceZippedKlib) {
+                    freeCompilerArgs = freeCompilerArgs + PRODUCE_UNZIPPED_KLIB
+                    produceUnzippedKlib = true
+                }
 
                 // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-                val baseName = if (compilation.isMain()) {
+                val baseName = if (isMainCompilation) {
                     target.project.name
                 } else {
                     "${target.project.name}_${compilation.name}"
                 }
-                freeCompilerArgs += listOf("$MODULE_NAME=${target.project.klibModuleName(baseName)}")
+
+                val destinationDir = compilation.compileKotlinTask.destinationDir
+                outputFile = if (produceUnzippedKlib)
+                    destinationDir.absoluteFile.normalize().absolutePath
+                else
+                    File(destinationDir, "$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
+
+                val klibModuleName = target.project.klibModuleName(baseName)
+                freeCompilerArgs = freeCompilerArgs + "$MODULE_NAME=$klibModuleName"
             }
 
             compilation.binaries

@@ -25,7 +25,7 @@ import org.junit.runners.AllTests;
 
 import java.io.File;
 
-//@RunWith(AllTests.class)
+@RunWith(AllTests.class)
 public class AndroidRunner {
 
     private static PathManager pathManager;

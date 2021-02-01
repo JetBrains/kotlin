@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.spec.utils.tasks
 
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.spec.checkers.AbstractDiagnosticsTestSpec
-import org.jetbrains.kotlin.spec.checkers.AbstractFirDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.codegen.AbstractBlackBoxCodegenTestSpec
 import org.jetbrains.kotlin.spec.parsing.AbstractParsingTestSpec
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
@@ -15,6 +14,8 @@ import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TEST_PATH
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTS_MAP_FILENAME
 import org.jetbrains.kotlin.spec.utils.SectionsJsonMapGenerator
 import org.jetbrains.kotlin.spec.utils.TestsJsonMapGenerator
+import org.jetbrains.kotlin.test.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
 import java.io.File
 import java.nio.file.Files
 
@@ -49,14 +50,6 @@ fun generateTests() {
                 )
             }
 
-            testClass<AbstractFirDiagnosticsTestSpec> {
-                model(
-                    "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                    excludedPattern = excludedFirTestdataPattern
-                )
-            }
-
             testClass<AbstractParsingTestSpec> {
                 model(
                     relativeRootPath = "psi",
@@ -66,6 +59,18 @@ fun generateTests() {
             }
             testClass<AbstractBlackBoxCodegenTestSpec> {
                 model("codegen/box", excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"))
+            }
+        }
+    }
+
+    generateTestGroupSuiteWithJUnit5 {
+        testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = SPEC_TESTDATA_PATH) {
+            testClass<AbstractFirDiagnosticTestSpec> {
+                model(
+                    "diagnostics",
+                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludedPattern = excludedFirTestdataPattern
+                )
             }
         }
     }

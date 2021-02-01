@@ -645,6 +645,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                 "type=${expression.type.render()} origin=${expression.origin} " +
                 "reflectionTarget=${renderReflectionTarget(expression)}"
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: Nothing?): String =
+        "RAW_FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+
     private fun renderReflectionTarget(expression: IrFunctionReference) =
         if (expression.symbol == expression.reflectionTarget)
             "<same>"

@@ -72,7 +72,7 @@ class ApiTest : KotlinTestWithEnvironment() {
             val fullRuntimeKlib: String = System.getProperty("kotlin.js.full.stdlib.path")
 
             val resolvedLibraries =
-                jsResolveLibraries(listOf(File(fullRuntimeKlib).absolutePath), messageCollectorLogger(MessageCollector.NONE))
+                jsResolveLibraries(listOf(File(fullRuntimeKlib).absolutePath), emptyList(), messageCollectorLogger(MessageCollector.NONE))
 
             val project = environment.project
             val configuration = environment.configuration

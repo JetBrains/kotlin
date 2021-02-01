@@ -57,7 +57,11 @@ compileCompilerKotlin {
     dependsOn('generateCompilerProto')
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.allWarningsAsErrors=true
-    kotlinOptions.freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI']
+    kotlinOptions.freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI', '-Xskip-prerelease-check']
+}
+
+compileCli_bcKotlin {
+    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
 }
 
 compileCompilerJava {

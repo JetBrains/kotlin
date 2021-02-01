@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -118,8 +117,9 @@ public class ConstructorCodegen {
     }
 
     private void registerAccessorForHiddenConstructorIfNeeded(ClassConstructorDescriptor descriptor) {
-        if (!InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) return;
-        context.getAccessor(descriptor, AccessorKind.NORMAL, null, null);
+        if (DescriptorAsmUtil.isHiddenConstructor(descriptor)) {
+            context.getAccessor(descriptor, AccessorKind.NORMAL, null, null);
+        }
     }
 
     public void generateSecondaryConstructor(
@@ -371,11 +371,13 @@ public class ConstructorCodegen {
             JvmMethodParameterKind delegatingKind = delegatingParameters.get(index).getKind();
             if (delegatingKind == JvmMethodParameterKind.VALUE) {
                 assert index == parameters.size() || parameters.get(index).getKind() == JvmMethodParameterKind.VALUE:
-                        "Delegating constructor has not enough implicit parameters";
+                        "Delegating constructor has not enough implicit parameters: " + delegatingConstructor;
                 break;
             }
-            assert index < parameters.size() && parameters.get(index).getKind() == delegatingKind :
-                    "Constructors of the same class should have the same set of implicit arguments";
+            if (index >= parameters.size() || parameters.get(index).getKind() != delegatingKind) {
+                throw new AssertionError(
+                        "Constructors of the same class should have the same set of implicit arguments: " + delegatingConstructor);
+            }
             JvmMethodParameterSignature parameter = parameters.get(index);
 
             iv.load(offset, parameter.getAsmType());
@@ -383,7 +385,7 @@ public class ConstructorCodegen {
         }
 
         assert index == parameters.size() || parameters.get(index).getKind() == JvmMethodParameterKind.VALUE :
-                "Delegating constructor has not enough parameters";
+                "Delegating constructor has not enough parameters: " + delegatingConstructor;
 
         return new CallBasedArgumentGenerator(codegen, codegen.defaultCallGenerator, delegatingConstructor.getValueParameters(),
                                               delegatingCallable.getValueParameterTypes());

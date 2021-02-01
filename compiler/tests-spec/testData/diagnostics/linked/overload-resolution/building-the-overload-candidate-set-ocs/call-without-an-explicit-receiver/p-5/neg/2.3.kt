@@ -16,21 +16,21 @@
  */
 
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libPackageCase1
 import testsCase1.*
 
 public fun <T> emptyArray(): Array<T> = TODO()
 fun <T> Case1.emptyArray(): Array<T> = TODO()
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libPackageCase1Explicit
 import testsCase1.*
 
 fun <T> Case1.emptyArray(): Array<T> = TODO()
 
 public fun <T> emptyArray(): Array<T> = TODO()
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libPackageCase1ExplicitDuplicate
 import testsCase1.*
 

@@ -1,3 +1,4 @@
+// !LANGUAGE: +InlineClasses
 // WITH_COROUTINES
 // FILE: a.kt
 

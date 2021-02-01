@@ -1,3 +1,4 @@
+// !LANGUAGE: +InlineClasses
 // FILE: A.kt
 
 inline class A(val x: String) {

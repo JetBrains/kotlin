@@ -209,6 +209,7 @@ ext.configureJvmIrBackend = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {
             useIR = project.kotlinBuildProperties.useIRForLibraries
+            freeCompilerArgs += "-Xuse-old-backend"
         }
     }
 }

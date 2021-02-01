@@ -321,8 +321,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         CodegenTestCase.createTestFilesFromFile(file, expectedText, false, TargetBackend.JVM)
 
     companion object {
-        const val GRADLE_VERSION = "5.6.4" // update GRADLE_SHA_256 on change
-        const val GRADLE_SHA_256 = "1f3067073041bc44554d0efe5d402a33bc3d3c93cc39ab684f308586d732a80d"
+        const val GRADLE_VERSION = "6.8.1" // update GRADLE_SHA_256 on change
+        const val GRADLE_SHA_256 = "fd591a34af7385730970399f473afabdb8b28d57fd97d6625c388d090039d6fd"
         const val testClassPackage = "org.jetbrains.kotlin.android.tests"
         const val testClassName = "CodegenTestCaseOnAndroid"
         const val baseTestClassPackage = "org.jetbrains.kotlin.android.tests"

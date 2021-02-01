@@ -213,7 +213,7 @@ fun case_2(value_1: Any?) {
 
 // TESTCASE NUMBER: 3
 fun case_3(number: Int?) {
-    if (!funWithReturnsTrueAndNullCheck(number)) number.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    if (!funWithReturnsTrueAndNullCheck(number)) number<!UNSAFE_CALL!>.<!>inc()
 }
 
 // TESTCASE NUMBER: 4
@@ -250,8 +250,8 @@ fun case_8(value_1: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(value_1: Number?) {
-    if (!funWithReturnsTrueAndNullCheck(value_1)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
-    if (funWithReturnsFalseAndNullCheck(value_1)) println(value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>())
+    if (!funWithReturnsTrueAndNullCheck(value_1)) println(value_1<!UNSAFE_CALL!>.<!>toByte())
+    if (funWithReturnsFalseAndNullCheck(value_1)) println(value_1<!UNSAFE_CALL!>.<!>toByte())
     if (funWithReturnsFalseAndNotNullCheck(value_1)) println(value_1)
     if (!(funWithReturnsNotNullAndNullCheck(value_1) != null)) println(value_1)
     if (!(funWithReturnsNullAndNullCheck(value_1) == null)) println(value_1)
@@ -284,7 +284,7 @@ fun case_12(value_1: Any?, value_2: Any?) {
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsFalse(value_1 !is Float? || value_1 == null || value_2 == null)) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+        println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNull(value_1 !is String || value_2 !is Number) == null) {
@@ -300,7 +300,7 @@ fun case_12(value_1: Any?, value_2: Any?) {
 // TESTCASE NUMBER: 13
 fun case_13(value_1: Any?, value_2: Any?) {
     if (!funWithReturnsTrueAndInvertCondition(value_1 is Float? && value_1 != null && value_2 != null)) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+        println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsFalseAndInvertCondition(value_1 is String && value_2 is Number)) {
@@ -320,7 +320,7 @@ fun case_13(value_1: Any?, value_2: Any?) {
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNull(value_1 is Float? && value_1 != null && value_2 != null) == null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+        println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNullAndInvertCondition(value_1 is String && value_2 is Number) != null) {
@@ -332,7 +332,7 @@ fun case_13(value_1: Any?, value_2: Any?) {
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNull(value_1 is Float? && value_1 != null && value_2 != null) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+        println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
@@ -344,22 +344,22 @@ class case_14_class {
     fun case_14(value_1: Any?, value_2: Number?) {
         val o = case_14_class()
         if (!funWithReturnsTrueAndInvertCondition(value_1 is Float? && value_1 != null && value_2 != null && o.prop_1 != null)) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (funWithReturnsFalse(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null)) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (funWithReturnsNotNull(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null) == null) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (funWithReturnsNull(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null) != null) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
@@ -413,25 +413,25 @@ class case_17_class {
     fun case_17(value_1: Any?, value_2: Number?) {
         val o = case_17_class()
         if (contracts.case_17_1(value_1, value_2, o.prop_1, this.prop_1)) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
             <!AMBIGUITY!>println<!>(this.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (contracts.case_17_2(value_1, value_2, o.prop_1, this.prop_1)) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
             <!AMBIGUITY!>println<!>(this.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (contracts.case_17_3(value_1, value_2, o.prop_1, this.prop_1) == null) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
             <!AMBIGUITY!>println<!>(this.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (contracts.case_17_4(value_1, value_2, o.prop_1, this.prop_1) != null) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>dec<!>())
             println(value_2?.toByte())
             <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
             <!AMBIGUITY!>println<!>(this.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
@@ -458,9 +458,9 @@ fun case_19(value_1: Number) {
 // TESTCASE NUMBER: 20
 fun case_20(value_1: String?, value_2: String?, value_3: String?, value_4: String?) {
     if (!value_1.case_20_1()) println(value_1)
-    if (!value_2.case_20_2()) println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+    if (!value_2.case_20_2()) println(value_2<!UNSAFE_CALL!>.<!>length)
     when (value_3.case_20_3()) {
-        true -> println(value_4.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        true -> println(value_4<!UNSAFE_CALL!>.<!>length)
         false -> println(value_3)
     }
 }
@@ -468,13 +468,13 @@ fun case_20(value_1: String?, value_2: String?, value_3: String?, value_4: Strin
 // TESTCASE NUMBER: 21
 fun case_21(value_1: String?) {
     when { !value_1.case_21_1() -> println(value_1) }
-    when { !value_1.case_21_2() -> println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>) }
+    when { !value_1.case_21_2() -> println(value_1<!UNSAFE_CALL!>.<!>length) }
     when {
-        value_1.case_21_5() == null ->  println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        value_1.case_21_5() == null ->  println(value_1<!UNSAFE_CALL!>.<!>length)
         value_1.case_21_5() != null ->  println(value_1)
     }
     when {
-        value_1.case_21_7() != null ->  println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        value_1.case_21_7() != null ->  println(value_1<!UNSAFE_CALL!>.<!>length)
         value_1.case_21_7() == null ->  println(value_1)
     }
 }
@@ -505,19 +505,19 @@ fun case_25(value_1: Any?, value_2: Int?, value_3: Any?, value_4: Int?) {
     when {
         value_1.case_25_1(value_2) -> {
             <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-            println(value_2.<!INAPPLICABLE_CANDIDATE!>inv<!>())
+            println(value_2<!UNSAFE_CALL!>.<!>inv())
         }
     }
     when {
         value_3.case_25_2(value_4) == null -> {
             <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
-            println(value_4.<!INAPPLICABLE_CANDIDATE!>inv<!>())
+            println(value_4<!UNSAFE_CALL!>.<!>inv())
         }
     }
     when {
         value_3.case_25_3(value_4) != null -> {
             <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>)
-            println(value_4.<!INAPPLICABLE_CANDIDATE!>inv<!>())
+            println(value_4<!UNSAFE_CALL!>.<!>inv())
         }
     }
 }

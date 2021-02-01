@@ -60,6 +60,8 @@ object FirMemberFunctionChecker : FirRegularClassChecker() {
                 reporter.report(FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(source, function))
             }
         }
+
+        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter)
     }
 
 }

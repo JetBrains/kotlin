@@ -8,10 +8,10 @@ sealed class Base {
     class BaseImpl : Base() {
         override fun foo() = throw UnsupportedOperationException()
     }
+}
 
-    class BaseImpl1 : Base() {
-        override fun foo(): Int {
-            TODO("Not yet implemented")
-        }
+class BaseImpl : Base() {
+    override fun foo(): Int {
+        TODO("Not yet implemented")
     }
 }

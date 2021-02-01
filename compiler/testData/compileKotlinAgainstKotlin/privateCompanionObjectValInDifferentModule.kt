@@ -1,3 +1,4 @@
+// !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
 // WITH_REFLECT
 

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 @ThreadSafeMutableState
 class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
-    private val context = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = true, session = session)
     private val cache = HashMap<ConeClassLikeLookupTag, Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>?>(1000, 0.5f)
 
     fun getCorrespondingSupertypes(
@@ -29,27 +28,30 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     ): List<ConeClassLikeType>? {
         if (type !is ConeClassLikeType || supertypeConstructor !is ConeClassLikeLookupTag) return null
 
+        val context = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = true, session = session)
         val lookupTag = type.lookupTag
-        if (lookupTag == supertypeConstructor) return listOf(captureType(type))
-
+        if (lookupTag == supertypeConstructor) return listOf(captureType(type, context))
         if (lookupTag !in cache) {
-            cache[lookupTag] = computeSupertypesMap(lookupTag)
+            cache[lookupTag] = computeSupertypesMap(lookupTag, context)
         }
 
         val resultTypes = cache[lookupTag]?.getOrDefault(supertypeConstructor, emptyList()) ?: return null
         if (type.typeArguments.isEmpty()) return resultTypes
 
-        val capturedType = captureType(type)
+        val capturedType = captureType(type, context)
         val substitutionSupertypePolicy = context.substitutionSupertypePolicy(capturedType)
         return resultTypes.map {
             substitutionSupertypePolicy.transformType(context, it) as ConeClassLikeType
         }
     }
 
-    private fun captureType(type: ConeClassLikeType): ConeClassLikeType =
+    private fun captureType(type: ConeClassLikeType, context: ConeTypeCheckerContext): ConeClassLikeType =
         (context.captureFromArguments(type, CaptureStatus.FOR_SUBTYPING) ?: type) as ConeClassLikeType
 
-    private fun computeSupertypesMap(subtypeLookupTag: ConeClassLikeLookupTag): Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>? {
+    private fun computeSupertypesMap(
+        subtypeLookupTag: ConeClassLikeLookupTag,
+        context: ConeTypeCheckerContext
+    ): Map<ConeClassLikeLookupTag, List<ConeClassLikeType>>? {
         val resultingMap = HashMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>()
 
         val subtypeFirClass: FirClassLikeDeclaration<*> = subtypeLookupTag.toSymbol(session)?.fir ?: return null
@@ -64,7 +66,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
         if (context.anySupertype(
                 defaultType,
                 { it !is ConeClassLikeType || it.lookupTag.toSymbol(session) !is FirClassLikeSymbol<*> }
-            ) { supertype -> computeSupertypePolicyAndPutInMap(supertype, resultingMap) }
+            ) { supertype -> computeSupertypePolicyAndPutInMap(supertype, resultingMap, context) }
         ) {
             return null
         }
@@ -76,7 +78,8 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
 
     private fun computeSupertypePolicyAndPutInMap(
         supertype: SimpleTypeMarker,
-        resultingMap: MutableMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>
+        resultingMap: MutableMap<ConeClassLikeLookupTag, List<ConeClassLikeType>>,
+        context: ConeTypeCheckerContext
     ): AbstractTypeCheckerContext.SupertypesPolicy {
         val supertypeLookupTag = (supertype as ConeClassLikeType).lookupTag
         val captured = context.captureFromArguments(supertype, CaptureStatus.FOR_SUBTYPING) as ConeClassLikeType? ?: supertype

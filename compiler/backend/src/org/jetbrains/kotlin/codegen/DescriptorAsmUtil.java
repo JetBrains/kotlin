@@ -61,7 +61,8 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineWithReified;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmSyntheticAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -364,6 +365,18 @@ public class DescriptorAsmUtil {
             memberDescriptor instanceof ConstructorDescriptor &&
             !(memberDescriptor instanceof AccessorForConstructorDescriptor) &&
             InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters((ConstructorDescriptor) memberDescriptor)
+        ) {
+            return ACC_PRIVATE;
+        }
+
+        // Sealed class constructors should be ACC_PRIVATE.
+        // In 1.4 and before, sealed class constructors had PRIVATE visibility, and were represented as private methods in bytecode.
+        // In 1.5 (+AllowSealedInheritorsInDifferentFilesOfSamePackage), sealed class constructors became INTERNAL,
+        // but still should be represented as private methods in bytecode in order to prevent inheriting from sealed classes on JVM.
+        if (memberDescriptor instanceof ConstructorDescriptor &&
+            !(memberDescriptor instanceof AccessorForConstructorDescriptor) &&
+            isSealedClass(((ConstructorDescriptor) memberDescriptor).getConstructedClass()) &&
+            memberDescriptor.getVisibility() != DescriptorVisibilities.PUBLIC
         ) {
             return ACC_PRIVATE;
         }
@@ -892,5 +905,20 @@ public class DescriptorAsmUtil {
         OwnerKind kind = context.getContextKind();
         //Trait always should have this descriptor
         return kind != OwnerKind.DEFAULT_IMPLS && isStaticMethod(kind, descriptor) ? 0 : 1;
+    }
+
+    public static boolean isHiddenConstructor(FunctionDescriptor descriptor) {
+        if (!(descriptor instanceof ClassConstructorDescriptor)) return false;
+
+        ClassConstructorDescriptor classConstructorDescriptor = (ClassConstructorDescriptor) descriptor;
+        if (InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
+            return true;
+        }
+        if (isSealedClass(classConstructorDescriptor.getConstructedClass()) &&
+            classConstructorDescriptor.getVisibility() != DescriptorVisibilities.PUBLIC
+        ) {
+            return true;
+        }
+        return false;
     }
 }

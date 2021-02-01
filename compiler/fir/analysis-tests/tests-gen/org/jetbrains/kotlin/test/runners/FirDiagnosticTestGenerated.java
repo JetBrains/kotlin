@@ -1424,6 +1424,22 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             public void testValOnAnnotationParameter() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/valOnAnnotationParameter.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression")
+            @TestDataPath("$PROJECT_ROOT")
+            public class FunctionAsExpression extends AbstractFirDiagnosticTest {
+                @Test
+                public void testAllFilesPresentInFunctionAsExpression() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("Parameters.kt")
+                public void testParameters() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression/Parameters.kt");
+                }
+            }
         }
 
         @Nested

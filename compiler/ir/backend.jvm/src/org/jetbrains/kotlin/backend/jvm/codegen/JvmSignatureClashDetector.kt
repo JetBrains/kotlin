@@ -22,8 +22,8 @@ class JvmSignatureClashDetector(
     private val type: Type,
     private val context: JvmBackendContext
 ) {
-    private val methodsBySignature = HashMap<RawSignature, MutableSet<IrFunction>>()
-    private val fieldsBySignature = HashMap<RawSignature, MutableSet<IrField>>()
+    private val methodsBySignature = LinkedHashMap<RawSignature, MutableSet<IrFunction>>()
+    private val fieldsBySignature = LinkedHashMap<RawSignature, MutableSet<IrField>>()
 
     fun trackField(irField: IrField, rawSignature: RawSignature) {
         fieldsBySignature.getOrPut(rawSignature) { SmartSet.create() }.add(irField)
@@ -49,7 +49,7 @@ class JvmSignatureClashDetector(
     }
 
     private fun getOverriddenFunctions(irFunction: IrSimpleFunction): Set<IrFunction> {
-        val result = HashSet<IrFunction>()
+        val result = LinkedHashSet<IrFunction>()
         collectOverridesOf(irFunction, result)
         return result
     }
@@ -146,7 +146,7 @@ class JvmSignatureClashDetector(
         irDeclarations: Collection<IrDeclaration>,
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
-        val psiElements = irDeclarations.mapNotNullTo(HashSet()) { it.getElementForDiagnostics() }
+        val psiElements = irDeclarations.mapNotNullTo(LinkedHashSet()) { it.getElementForDiagnostics() }
         for (psiElement in psiElements) {
             context.psiErrorBuilder.at(psiElement)
                 .report(diagnosticFactory1, conflictingJvmDeclarationsData)

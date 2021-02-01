@@ -63,7 +63,6 @@ expect enum class RegexOption {
 
 // From char.kt
 
-expect fun Char.isWhitespace(): Boolean
 expect fun Char.isHighSurrogate(): Boolean
 expect fun Char.isLowSurrogate(): Boolean
 

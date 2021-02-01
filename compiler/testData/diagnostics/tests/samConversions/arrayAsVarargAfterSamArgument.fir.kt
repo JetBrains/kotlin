@@ -12,7 +12,7 @@ public class Test {
         return null;
     }
     public Test(Runnable r, String... strs) {}
-    public Test(Runnable r, Runnable r, String... strs) {}
+    public Test(Runnable r1, Runnable r2, String... strs) {}
 }
 
 // FILE: main.kt
@@ -42,13 +42,13 @@ fun main(x2: Runnable) {
     val i5 = Test({}, {}, *arrayOf(""))
     val i6 = <!NONE_APPLICABLE!>Test<!>({}, {}, arrayOf())
 
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, arrayOf())
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, *arrayOf())
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, x2, arrayOf())
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>(x2, {}, *arrayOf())
+    i2.<!INAPPLICABLE_CANDIDATE!>foo2<!>({}, {}, arrayOf())
+    i2.foo2({}, {}, *arrayOf())
+    i2.<!INAPPLICABLE_CANDIDATE!>foo2<!>({}, x2, arrayOf())
+    i2.foo2(x2, {}, *arrayOf())
 
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, arrayOf(""))
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, *x3)
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, x2, x3)
-    i1.<!UNRESOLVED_REFERENCE!>foo2<!>(x2, {}, *arrayOf(""))
+    i2.<!INAPPLICABLE_CANDIDATE!>foo2<!>({}, {}, arrayOf(""))
+    i2.foo2({}, {}, *x3)
+    i2.<!INAPPLICABLE_CANDIDATE!>foo2<!>({}, x2, x3)
+    i2.foo2(x2, {}, *arrayOf(""))
 }

@@ -14,7 +14,7 @@
  */
 
 
-// FILE: LibCase1.kt
+// FILE: LibCase11.kt
 // TESTCASE NUMBER: 1
 package libPackage
 import testPackCase1.Case
@@ -26,7 +26,7 @@ operator fun Case.E.plus(value: Int) =  Inv()
 operator fun Case.Inv.invoke(i: Int) = 1
 
 
-// FILE: TestCase1.kt
+// FILE: TestCase11.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 import libPackage.plus
@@ -53,7 +53,7 @@ class Case() {
     }
 }
 
-// FILE: LibCase1.kt
+// FILE: LibCase12.kt
 // TESTCASE NUMBER: 2
 package libPackage
 import testPackCase2.Case
@@ -64,7 +64,7 @@ operator fun Case.E.plus(value: Int) =  Inv()
 operator fun Case.Inv.invoke(i: Int) = 1
 
 
-// FILE: TestCase1.kt
+// FILE: TestCase12.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 import libPackage.plus

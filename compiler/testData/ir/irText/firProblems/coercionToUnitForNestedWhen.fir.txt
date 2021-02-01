@@ -53,8 +53,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                 arg1: CONST Null type=kotlin.Nothing? value=null
             then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
-                  GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                arg0: GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                 arg1: GET_VAR 'quote: kotlin.Char declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -64,8 +63,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
             WHEN type=@[FlexibleNullability] java.lang.StringBuilder? origin=IF
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
-                    GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                  arg0: GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                   arg1: CALL 'private final fun <get-BACKSLASH> (): kotlin.Char declared in <root>' type=kotlin.Char origin=GET_PROPERTY
                 then: BLOCK type=java.lang.StringBuilder? origin=SAFE_CALL
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Char? [val]
@@ -95,8 +93,7 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun append (p0: kotlin.Char): java.lang.StringBuilder? declared in java.lang.StringBuilder' type=java.lang.StringBuilder? origin=null
                   $this: GET_VAR 'sb: java.lang.StringBuilder declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder origin=null
-                  p0: TYPE_OP type=kotlin.Char origin=IMPLICIT_CAST typeOperand=kotlin.Char
-                    GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
+                  p0: GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
           SET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Unit origin=EQ
             CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
               $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null

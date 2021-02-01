@@ -7,6 +7,6 @@ class A {
     }
 }
 
-// 1 public final g\$test_module\(Lkotlin/coroutines/Continuation;\)Ljava/lang/Object;
-// 1 private final g\$test_module\$\$forInline\(Lkotlin/coroutines/Continuation;\)Ljava/lang/Object;
+// 1 public final g\$main\(Lkotlin/coroutines/Continuation;\)Ljava/lang/Object;
+// 1 private final g\$main\$\$forInline\(Lkotlin/coroutines/Continuation;\)Ljava/lang/Object;
 // 0 g\$\$forInline

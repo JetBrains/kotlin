@@ -9,27 +9,69 @@ import kotlin.IllegalArgumentException
 
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
+ *
+ * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
-@SymbolName("Kotlin_Char_isDefined")
-external public fun Char.isDefined(): Boolean
+public actual fun Char.isDefined(): Boolean {
+    if (this < '\u0080') {
+        return true
+    }
+    return getCategoryValue() != CharCategory.UNASSIGNED.value
+}
 
 /**
  * Returns `true` if this character is a letter.
+ *
+ * A character is considered to be a letter if its [category] is [CharCategory.UPPERCASE_LETTER],
+ * [CharCategory.LOWERCASE_LETTER], [CharCategory.TITLECASE_LETTER], [CharCategory.MODIFIER_LETTER], or [CharCategory.OTHER_LETTER].
+ *
+ * @sample samples.text.Chars.isLetter
  */
-@SymbolName("Kotlin_Char_isLetter")
-external public fun Char.isLetter(): Boolean
+public actual fun Char.isLetter(): Boolean {
+    if (this in 'a'..'z' || this in 'A'..'Z') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isLetterImpl()
+}
 
 /**
  * Returns `true` if this character is a letter or digit.
+ *
+ * @see isLetter
+ * @see isDigit
+ *
+ * @sample samples.text.Chars.isLetterOrDigit
  */
-@SymbolName("Kotlin_Char_isLetterOrDigit")
-external public fun Char.isLetterOrDigit(): Boolean
+public actual fun Char.isLetterOrDigit(): Boolean {
+    if (this in 'a'..'z' || this in 'A'..'Z' || this in '0'..'9') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+
+    return isDigit() || isLetter()
+}
 
 /**
- * Returns `true` if this character (Unicode code point) is a digit.
+ * Returns `true` if this character is a digit.
+ *
+ * A character is considered to be a digit if its [category] is [CharCategory.DECIMAL_DIGIT_NUMBER].
+ *
+ * @sample samples.text.Chars.isDigit
  */
-@SymbolName("Kotlin_Char_isDigit")
-external public fun Char.isDigit(): Boolean
+public actual fun Char.isDigit(): Boolean {
+    if (this in '0'..'9') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isDigitImpl()
+}
 
 /**
  * Returns `true` if this character (Unicode code point) should be regarded as an ignorable
@@ -40,28 +82,69 @@ external public fun Char.isIdentifierIgnorable(): Boolean
 
 /**
  * Returns `true` if this character is an ISO control character.
+ *
+ * A character is considered to be an ISO control character if its code is in the range `'\u0000'..'\u001F'` or in the range `'\u007F'..'\u009F'`.
+ *
+ * @sample samples.text.Chars.isISOControl
  */
 @SymbolName("Kotlin_Char_isISOControl")
-external public fun Char.isISOControl(): Boolean
+external public actual fun Char.isISOControl(): Boolean
 
 /**
  * Determines whether a character is whitespace according to the Unicode standard.
  * Returns `true` if the character is whitespace.
+ *
+ * @sample samples.text.Chars.isWhitespace
  */
-@SymbolName("Kotlin_Char_isWhitespace")
-external public actual fun Char.isWhitespace(): Boolean
+public actual fun Char.isWhitespace(): Boolean = isWhitespaceImpl()
 
 /**
- * Returns `true` if this character is upper case.
+ * Returns `true` if this character is an upper case letter.
+ *
+ * A character is considered to be an upper case letter if its [category] is [CharCategory.UPPERCASE_LETTER].
+ *
+ * @sample samples.text.Chars.isUpperCase
  */
-@SymbolName("Kotlin_Char_isUpperCase")
-external public fun Char.isUpperCase(): Boolean
+public actual fun Char.isUpperCase(): Boolean {
+    if (this in 'A'..'Z') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isUpperCaseImpl()
+}
 
 /**
- * Returns `true` if this character is lower case.
+ * Returns `true` if this character is a lower case letter.
+ *
+ * A character is considered to be a lower case letter if its [category] is [CharCategory.LOWERCASE_LETTER].
+ *
+ * @sample samples.text.Chars.isLowerCase
  */
-@SymbolName("Kotlin_Char_isLowerCase")
-external public fun Char.isLowerCase(): Boolean
+public actual fun Char.isLowerCase(): Boolean {
+    if (this in 'a'..'z') {
+        return true
+    }
+    if (this < '\u0080') {
+        return false
+    }
+    return isLowerCaseImpl()
+}
+
+/**
+ * Returns `true` if this character is a title case letter.
+ *
+ * A character is considered to be a title case letter if its [category] is [CharCategory.TITLECASE_LETTER].
+ *
+ * @sample samples.text.Chars.isTitleCase
+ */
+public actual fun Char.isTitleCase(): Boolean {
+    if (this < '\u0080') {
+        return false
+    }
+    return getCategoryValue() == CharCategory.TITLECASE_LETTER.value
+}
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
@@ -152,13 +235,10 @@ internal actual fun digitOf(char: Char, radix: Int): Int = digitOfChecked(char, 
 external internal fun digitOfChecked(char: Char, radix: Int): Int
 
 /**
- * Returns a value indicating a character's general category.
+ * Returns the Unicode general category of this character.
  */
-public val Char.category: CharCategory get() = CharCategory.valueOf(getType())
-
-/** Retrun a Unicode category of the character as an Int. */
-@SymbolName("Kotlin_Char_getType")
-external internal fun Char.getType(): Int
+public actual val Char.category: CharCategory
+    get() = CharCategory.valueOf(getCategoryValue())
 
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.

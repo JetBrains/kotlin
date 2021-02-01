@@ -86,7 +86,7 @@ open class KonanLibrariesSpec(
             throw InvalidUserDataException("Config ${lib.name} is not a library")
         }
 
-        val libraryTask = lib[target] ?:
+        val libraryTask = lib[target]?.get() ?:
             throw InvalidUserDataException("Library ${lib.name} has no target ${target.visibleName}")
 
         if (libraryTask == task) {

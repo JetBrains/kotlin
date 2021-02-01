@@ -31,7 +31,11 @@ public class MutableData constructor(capacity: Int = 16) {
 
     private var buffer_ = ByteArray(capacity).apply { share() }
     private var buffer: ByteArray
-        get() = readHeapRefNoLock(this, 0) as ByteArray
+        get() =
+            when (kotlin.native.Platform.memoryModel) {
+                kotlin.native.MemoryModel.EXPERIMENTAL -> buffer_
+                else -> readHeapRefNoLock(this, 0) as ByteArray
+            }
         set(value) { buffer_ = value}
     private var size_ = 0
     private val lock = Lock()

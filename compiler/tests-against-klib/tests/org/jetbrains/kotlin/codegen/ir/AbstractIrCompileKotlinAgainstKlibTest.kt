@@ -29,7 +29,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         outputDir = javaSourcesOutputDirectory
-        klibName = Paths.get(outputDir.toString(), wholeFile.name.toString().removeSuffix(".kt")).toString()
+        klibName = Paths.get(outputDir.toString(), wholeFile.name.toString().replace(".kt", ".klib")).toString()
 
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KtTestUtil.getAnnotationsJar())

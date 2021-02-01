@@ -33,11 +33,6 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
-    @Test fun kotlinCoroutinesExperimentalCompat() {
-        snapshotAPIAndCompare("../../stdlib/coroutines-experimental/build/libs", "kotlin-coroutines-experimental-compat")
-    }
-
-
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,

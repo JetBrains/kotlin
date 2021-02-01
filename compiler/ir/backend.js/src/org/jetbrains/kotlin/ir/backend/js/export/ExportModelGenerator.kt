@@ -324,8 +324,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             return Exportability.Prohibited("Suspend function")
         if (function.isFakeOverride)
             return Exportability.NotNeeded
-        if (function.origin == IrDeclarationOrigin.BRIDGE ||
-            function.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
+        if (function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
+            function.origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
             function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
             function.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
@@ -391,11 +391,11 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
     return declaration
 }
 
-private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
-    if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarationNames)
+private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext?): Boolean {
+    if (context?.additionalExportedDeclarationNames?.contains(declaration.fqNameWhenAvailable) == true)
         return true
 
-    if (declaration in context.additionalExportedDeclarations)
+    if (context?.additionalExportedDeclarations?.contains(declaration) == true)
         return true
 
     if (declaration.isJsExport())
@@ -408,7 +408,7 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     }
 }
 
-fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
+fun IrDeclaration.isExported(context: JsIrBackendContext?): Boolean {
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExported(candidate, context)
 }

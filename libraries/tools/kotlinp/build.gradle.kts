@@ -26,7 +26,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":generators:test-generator"))
 
-    testRuntime(project(":kotlinx-metadata-jvm", configuration = "runtime"))
+    testRuntimeOnly(project(":kotlinx-metadata-jvm"/*, configuration = "runtime"*/))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

@@ -467,18 +467,18 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
         // check the arguments are always passed if specified explicitly
-        updateBuildGradle("1.2", "1.2")
+        updateBuildGradle("1.4", "1.4")
         project.build("clean", "compileKotlin") {
             assertSuccessful()
-            assertContains("-language-version 1.2")
-            assertContains("-api-version 1.2")
+            assertContains("-language-version 1.4")
+            assertContains("-api-version 1.4")
         }
 
-        updateBuildGradle("1.3", "1.3")
+        updateBuildGradle("1.5", "1.5")
         project.build("clean", "compileKotlin") {
             assertSuccessful()
-            assertContains("-language-version 1.3")
-            assertContains("-api-version 1.3")
+            assertContains("-language-version 1.5")
+            assertContains("-api-version 1.5")
         }
     }
 
@@ -776,7 +776,7 @@ class KotlinGradleIT : BaseGradleIT() {
             setupWorkingDir()
             // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
             gradleBuildScript().appendText("\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:1.2.71' }")
-            testResolveAllConfigurations(options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+            testResolveAllConfigurations {
                 assertSuccessful()
                 assertContains(">> :compileClasspath --> kotlin-reflect-1.2.71.jar")
                 // Check that the default newer Kotlin version still wins for 'kotlin-stdlib':

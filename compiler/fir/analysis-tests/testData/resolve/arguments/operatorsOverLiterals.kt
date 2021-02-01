@@ -20,7 +20,7 @@ fun test_2(n: Int) {
 
 fun Int.bar(): Int {}
 
-fun Int.baz(): Int
+fun Int.baz(): Int {}
 fun Byte.baz(): Byte {}
 
 fun test_3() {

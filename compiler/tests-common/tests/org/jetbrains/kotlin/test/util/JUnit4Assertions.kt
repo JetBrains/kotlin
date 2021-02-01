@@ -40,7 +40,7 @@ object JUnit4Assertions : Assertions() {
         KtUsefulTestCase.assertSameElements(message?.invoke() ?: "", expected, actual)
     }
 
-    override fun assertAll(exceptions: List<AssertionError>) {
+    override fun assertAll(exceptions: List<Throwable>) {
         exceptions.forEach { throw it }
     }
 

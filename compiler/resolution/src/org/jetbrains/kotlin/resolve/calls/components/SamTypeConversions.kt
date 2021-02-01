@@ -24,11 +24,8 @@ object SamTypeConversions : ParameterTypeConversion {
         expectedParameterType: UnwrappedType
     ): Boolean {
         val callComponents = candidate.callComponents
-        val generatingAdditionalSamCandidateIsEnabled =
-            !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
-                    !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
-        if (generatingAdditionalSamCandidateIsEnabled) return true
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return true
         if (expectedParameterType.isNothing()) return true
         if (expectedParameterType.isFunctionType) return true
 

@@ -56,7 +56,6 @@ test/Introspector$SchemaRetriever
 *L
 1#1,21:1
 8#2:22
-*E
 *S KotlinDebug
 *F
 + 1 2.kt

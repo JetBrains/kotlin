@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.library.*
 
 open class BaseKotlinLibraryImpl(
     val access: BaseLibraryAccess<KotlinLibraryLayout>,
@@ -30,7 +30,7 @@ open class BaseKotlinLibraryImpl(
 
     private val componentListAndHasPre14Manifest by lazy {
         access.inPlace { layout ->
-            val listFiles = layout.libDir.listFiles
+            val listFiles = layout.libFile.listFiles
             listFiles
                 .filter { it.isDirectory }
                 .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
@@ -230,7 +230,11 @@ open class KotlinLibraryImpl(
 ) : KotlinLibrary,
     BaseKotlinLibrary by base,
     MetadataLibrary by metadata,
-    IrLibrary by ir
+    IrLibrary by ir {
+    override fun toString(): String {
+        return "[Klib: ${base.libraryFile.name}, file: ${base.libraryFile.path}]"
+    }
+}
 
 fun createKotlinLibrary(
     libraryFile: File,

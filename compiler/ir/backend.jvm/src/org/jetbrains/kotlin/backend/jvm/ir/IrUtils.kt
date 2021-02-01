@@ -389,3 +389,9 @@ private fun JvmBackendContext.makeRawTypeAnnotation() =
 
 fun IrClass.rawType(context: JvmBackendContext): IrType =
     defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
+
+fun IrType.getSingleAbstractMethod(): IrSimpleFunction? =
+    getClass()?.getSingleAbstractMethod()
+
+fun IrClass.getSingleAbstractMethod(): IrSimpleFunction? =
+    functions.singleOrNull { it.modality == Modality.ABSTRACT }

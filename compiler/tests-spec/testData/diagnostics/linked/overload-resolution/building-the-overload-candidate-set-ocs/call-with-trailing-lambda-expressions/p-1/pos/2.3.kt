@@ -14,12 +14,12 @@
  * DESCRIPTION: call-with-trailing-lambda-expressions,Implicit receiver: sets of explicitly imported, declared in the package scope and star-imported extension callables
  */
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackageExplicit
 
 public fun <T, R> T.let(block: (T) -> R): R = TODO()
 
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 package libPackage
 
 public fun <T, R> T.let(block: (T) -> R): R = TODO()

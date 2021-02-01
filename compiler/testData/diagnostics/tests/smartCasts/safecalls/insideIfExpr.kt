@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-11007: Wrong smart cast to not-null type after safe calls in if / when expression
 
 val String.copy: String

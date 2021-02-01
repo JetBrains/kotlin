@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
@@ -326,6 +327,11 @@ fun IrBuilderWithScope.irString(value: String) =
 fun IrBuilderWithScope.irConcat() =
     IrStringConcatenationImpl(startOffset, endOffset, context.irBuiltIns.stringType)
 
+fun IrBuilderWithScope.irVararg(elementType: IrType, values: List<IrExpression>) =
+    IrVarargImpl(startOffset, endOffset, context.irBuiltIns.arrayClass.typeWith(elementType), elementType, values)
+
+fun IrBuilderWithScope.irRawFunctionReferefence(type: IrType, symbol: IrFunctionSymbol) =
+    IrRawFunctionReferenceImpl(startOffset, endOffset, type, symbol)
 
 inline fun IrBuilderWithScope.irBlock(
     startOffset: Int = this.startOffset,

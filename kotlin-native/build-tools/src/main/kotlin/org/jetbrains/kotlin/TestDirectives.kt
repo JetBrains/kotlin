@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin
 
+import org.jetbrains.kotlin.TestModule.Companion.default
+import org.jetbrains.kotlin.TestModule.Companion.support
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 private const val MODULE_DELIMITER = ",\\s*"
-// This pattern is a copy from the kotlin/compiler/tests-common/tests/org/jetbrains/kotlin/test/TestFiles.java
+// These patterns are copies from
+// kotlin/compiler/tests-common/tests/org/jetbrains/kotlin/test/TestFiles.java
+// kotlin/compiler/tests-common/tests/org/jetbrains/kotlin/test/KotlinTestUtils.java
 private val FILE_OR_MODULE_PATTERN: Pattern = Pattern.compile("(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" +
         "$MODULE_DELIMITER[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:$MODULE_DELIMITER[^()]+)*)\\))?\\s*)?//\\s*FILE:\\s*(.*)$",
         Pattern.MULTILINE)
+private val DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE)
 
 /**
  * Creates test files from the given source file that may contain different test directives.
@@ -82,11 +88,15 @@ private fun String?.parseModuleList() = this
  *  - [support] for a helper sources like Coroutines support.
  */
 data class TestModule(
-        val name: String,
-        val dependencies: List<String>,
-        val friends: List<String>
+    val name: String,
+    val dependencies: List<String>,
+    val friends: List<String>
 ) {
+    val files = mutableListOf<TestFile>()
     fun isDefaultModule() = this == default || name.endsWith(".main")
+
+    val hasVersions get() = this.files.any { it.version != null }
+    fun versionFiles(version: Int) = this.files.filter { it.version == null || it.version == version }
 
     companion object {
         val default = TestModule("default", emptyList(), emptyList())
@@ -97,11 +107,33 @@ data class TestModule(
 /**
  * Represent a single test file that belongs to the [module].
  */
-data class TestFile(val name: String,
-                    val path: String,
-                    var text: String = "",
-                    val module: TestModule = TestModule.default
+data class TestFile(
+    val name: String,
+    val path: String,
+    var text: String = "",
+    val module: TestModule = TestModule.default
 ) {
+    init {
+        this.module.files.add(this)
+    }
+
+    val directives: Map<String, String> by lazy {
+        parseDirectives()
+    }
+
+    val version: Int? get() = this.directives["VERSION"]?.toInt()
+
+    fun parseDirectives(): Map<String, String> {
+        val newDirectives = mutableMapOf<String, String>()
+        val directiveMatcher: Matcher = DIRECTIVE_PATTERN.matcher(text)
+        while (directiveMatcher.find()) {
+            val name = directiveMatcher.group(1)
+            val value = directiveMatcher.group(3)
+            newDirectives.put(name, value)
+        }
+        return newDirectives
+    }
+
     /**
      * Writes [text] to the file created from the [path].
      */

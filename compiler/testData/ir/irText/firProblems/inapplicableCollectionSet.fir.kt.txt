@@ -23,10 +23,10 @@ class Flaf {
             result = Flaf(javaName = javaName)
           }
         }
-        <this>.<get-INSTANCES>().set<String, Flaf>(key = javaName, value = result /*as Flaf */)
+        <this>.<get-INSTANCES>().set<String, Flaf>(key = javaName, value = result)
       }
     }
-    return result /*as Flaf */
+    return result
   }
 
 }

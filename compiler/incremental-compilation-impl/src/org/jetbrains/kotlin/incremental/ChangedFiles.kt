@@ -22,6 +22,7 @@ import java.io.Serializable
 sealed class ChangedFiles : Serializable {
     class Known(val modified: List<File>, val removed: List<File>) : ChangedFiles()
     class Unknown : ChangedFiles()
+    class Dependencies(val modified: List<File>, val removed: List<File>) : ChangedFiles()
 
     companion object {
         const val serialVersionUID: Long = 0

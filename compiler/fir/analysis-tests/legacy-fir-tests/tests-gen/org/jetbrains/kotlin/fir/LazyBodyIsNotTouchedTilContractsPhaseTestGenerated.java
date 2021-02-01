@@ -1231,6 +1231,24 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testValOnAnnotationParameter() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/valOnAnnotationParameter.kt");
         }
+
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FunctionAsExpression extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInFunctionAsExpression() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("Parameters.kt")
+            public void testParameters() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression/Parameters.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions")

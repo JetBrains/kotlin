@@ -220,6 +220,7 @@ void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlo
     int32_t* cookie) RUNTIME_NOTHROW;
 // Reads reference with taken lock.
 OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) RUNTIME_NOTHROW;
+OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index);
 // Called on frame enter, if it has object slots.
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
@@ -257,7 +258,27 @@ void GC_RegisterWorker(void* worker) RUNTIME_NOTHROW;
 void GC_UnregisterWorker(void* worker) RUNTIME_NOTHROW;
 void GC_CollectorCallback(void* worker) RUNTIME_NOTHROW;
 
+void Kotlin_native_internal_GC_collect(ObjHeader*);
+void Kotlin_native_internal_GC_collectCyclic(ObjHeader*);
+void Kotlin_native_internal_GC_suspend(ObjHeader*);
+void Kotlin_native_internal_GC_resume(ObjHeader*);
+void Kotlin_native_internal_GC_stop(ObjHeader*);
+void Kotlin_native_internal_GC_start(ObjHeader*);
+void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value);
+int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*);
+void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value);
+int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*);
+void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value);
+int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*);
+void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, int32_t value);
+bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*);
+OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*);
+OBJ_GETTER(Kotlin_native_internal_GC_findCycle, ObjHeader*, ObjHeader* root);
+bool Kotlin_native_internal_GC_getCyclicCollector(ObjHeader* gc);
+void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value);
+
 bool Kotlin_Any_isShareable(ObjHeader* thiz);
+void Kotlin_Any_share(ObjHeader* thiz);
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 
 bool TryAddHeapRef(const ObjHeader* object);

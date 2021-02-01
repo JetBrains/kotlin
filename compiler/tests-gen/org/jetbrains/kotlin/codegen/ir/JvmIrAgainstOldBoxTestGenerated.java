@@ -50,6 +50,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/callDeserializedPropertyOnInlineClassType.kt");
     }
 
+    @TestMetadata("callDeserializedPropertyOnInlineClassTypeOldMangling.kt")
+    public void testCallDeserializedPropertyOnInlineClassTypeOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/callDeserializedPropertyOnInlineClassTypeOldMangling.kt");
+    }
+
     @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
     public void testCallsToMultifileClassFromOtherPackage() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");
@@ -90,6 +95,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/constructorWithInlineClassParametersInBinaryDependencies.kt");
     }
 
+    @TestMetadata("constructorWithInlineClassParametersInBinaryDependenciesOldMangling.kt")
+    public void testConstructorWithInlineClassParametersInBinaryDependenciesOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/constructorWithInlineClassParametersInBinaryDependenciesOldMangling.kt");
+    }
+
     @TestMetadata("copySamOnInline.kt")
     public void testCopySamOnInline() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/copySamOnInline.kt");
@@ -125,6 +135,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/defaultWithInlineClassAndReceivers.kt");
     }
 
+    @TestMetadata("defaultWithInlineClassAndReceiversOldMangling.kt")
+    public void testDefaultWithInlineClassAndReceiversOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/defaultWithInlineClassAndReceiversOldMangling.kt");
+    }
+
     @TestMetadata("delegatedDefault.kt")
     public void testDelegatedDefault() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/delegatedDefault.kt");
@@ -150,6 +165,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
     }
 
+    @TestMetadata("fakeOverridesForIntersectionTypes.kt")
+    public void testFakeOverridesForIntersectionTypes() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");
+    }
+
     @TestMetadata("importCompanion.kt")
     public void testImportCompanion() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/importCompanion.kt");
@@ -160,9 +180,19 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFakeOverrideMangling.kt");
     }
 
+    @TestMetadata("inlineClassFakeOverrideManglingOldMangling.kt")
+    public void testInlineClassFakeOverrideManglingOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFakeOverrideManglingOldMangling.kt");
+    }
+
     @TestMetadata("inlineClassFromBinaryDependencies.kt")
     public void testInlineClassFromBinaryDependencies() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
+    }
+
+    @TestMetadata("inlineClassFromBinaryDependenciesOldMangling.kt")
+    public void testInlineClassFromBinaryDependenciesOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependenciesOldMangling.kt");
     }
 
     @TestMetadata("inlineClassInlineFunctionCall.kt")
@@ -170,9 +200,19 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineFunctionCall.kt");
     }
 
+    @TestMetadata("inlineClassInlineFunctionCallOldMangling.kt")
+    public void testInlineClassInlineFunctionCallOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineFunctionCallOldMangling.kt");
+    }
+
     @TestMetadata("inlineClassInlineProperty.kt")
     public void testInlineClassInlineProperty() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineProperty.kt");
+    }
+
+    @TestMetadata("inlineClassInlinePropertyOldMangling.kt")
+    public void testInlineClassInlinePropertyOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlinePropertyOldMangling.kt");
     }
 
     @TestMetadata("inlineClassesOldMangling.kt")
@@ -205,9 +245,19 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
     }
 
+    @TestMetadata("internalWithInlineClass.kt")
+    public void testInternalWithInlineClass() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithInlineClass.kt");
+    }
+
     @TestMetadata("internalWithOtherModuleName.kt")
     public void testInternalWithOtherModuleName() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");
+    }
+
+    @TestMetadata("intersectionOverrideProperies.kt")
+    public void testIntersectionOverrideProperies() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/intersectionOverrideProperies.kt");
     }
 
     @TestMetadata("jvmField.kt")
@@ -330,6 +380,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/nestedTypeAliasExpansion.kt");
     }
 
+    @TestMetadata("noExplicitOverrideForDelegatedFromSupertype.kt")
+    public void testNoExplicitOverrideForDelegatedFromSupertype() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/noExplicitOverrideForDelegatedFromSupertype.kt");
+    }
+
     @TestMetadata("optionalAnnotation.kt")
     public void testOptionalAnnotation() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/optionalAnnotation.kt");
@@ -345,9 +400,19 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/privateCompanionObjectValInDifferentModule.kt");
     }
 
+    @TestMetadata("privateCompanionObjectValInDifferentModuleOldMangling.kt")
+    public void testPrivateCompanionObjectValInDifferentModuleOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/privateCompanionObjectValInDifferentModuleOldMangling.kt");
+    }
+
     @TestMetadata("privateTopLevelValInDifferentModule.kt")
     public void testPrivateTopLevelValInDifferentModule() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/privateTopLevelValInDifferentModule.kt");
+    }
+
+    @TestMetadata("privateTopLevelValInDifferentModuleOldMangling.kt")
+    public void testPrivateTopLevelValInDifferentModuleOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/privateTopLevelValInDifferentModuleOldMangling.kt");
     }
 
     @TestMetadata("propertyReference.kt")
@@ -398,6 +463,11 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
     @TestMetadata("suspendFunWithDefaultMangling.kt")
     public void testSuspendFunWithDefaultMangling() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/suspendFunWithDefaultMangling.kt");
+    }
+
+    @TestMetadata("suspendFunWithDefaultOldMangling.kt")
+    public void testSuspendFunWithDefaultOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/suspendFunWithDefaultOldMangling.kt");
     }
 
     @TestMetadata("targetedJvmName.kt")

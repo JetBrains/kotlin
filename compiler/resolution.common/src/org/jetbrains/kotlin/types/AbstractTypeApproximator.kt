@@ -338,6 +338,12 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         val originalType = type.original()
         val approximatedOriginalType =
             if (toSuper) approximateToSuperType(originalType, conf, depth) else approximateToSubType(originalType, conf, depth)
+        val typeWithErasedNullability = originalType.withNullability(false)
+
+        // Approximate T!! into T if T is already not-null (has not-null upper bounds)
+        if (originalType.typeConstructor().isTypeParameterTypeConstructor() && !typeWithErasedNullability.isNullableType()) {
+            return typeWithErasedNullability
+        }
 
         return if (conf.definitelyNotNullType) {
             approximatedOriginalType?.makeDefinitelyNotNullOrNotNull()

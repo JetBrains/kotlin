@@ -31,4 +31,5 @@ object KonanFqNames {
     val typedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
     val hasFinalizer = FqName("kotlin.native.internal.HasFinalizer")
+    val hasFreezeHook = FqName("kotlin.native.internal.HasFreezeHook")
 }

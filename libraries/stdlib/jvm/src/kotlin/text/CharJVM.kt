@@ -11,31 +11,50 @@ package kotlin.text
 import java.util.Locale
 
 /**
+ * Returns the Unicode general category of this character.
+ */
+public actual val Char.category: CharCategory
+    get() = CharCategory.valueOf(Character.getType(this))
+
+/**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
+ *
+ * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isDefined(): Boolean = Character.isDefined(this)
+public actual inline fun Char.isDefined(): Boolean = Character.isDefined(this)
 
 /**
  * Returns `true` if this character is a letter.
+ *
+ * A character is considered to be a letter if its [category] is [CharCategory.UPPERCASE_LETTER],
+ * [CharCategory.LOWERCASE_LETTER], [CharCategory.TITLECASE_LETTER], [CharCategory.MODIFIER_LETTER], or [CharCategory.OTHER_LETTER].
+ *
  * @sample samples.text.Chars.isLetter
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isLetter(): Boolean = Character.isLetter(this)
+public actual inline fun Char.isLetter(): Boolean = Character.isLetter(this)
 
 /**
  * Returns `true` if this character is a letter or digit.
+ *
+ * @see isLetter
+ * @see isDigit
+ *
  * @sample samples.text.Chars.isLetterOrDigit
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this)
+public actual inline fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this)
 
 /**
- * Returns `true` if this character (Unicode code point) is a digit.
+ * Returns `true` if this character is a digit.
+ *
+ * A character is considered to be a digit if its [category] is [CharCategory.DECIMAL_DIGIT_NUMBER].
+ *
  * @sample samples.text.Chars.isDigit
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isDigit(): Boolean = Character.isDigit(this)
+public actual inline fun Char.isDigit(): Boolean = Character.isDigit(this)
 
 
 /**
@@ -47,10 +66,13 @@ public inline fun Char.isIdentifierIgnorable(): Boolean = Character.isIdentifier
 
 /**
  * Returns `true` if this character is an ISO control character.
+ *
+ * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL].
+ *
  * @sample samples.text.Chars.isISOControl
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isISOControl(): Boolean = Character.isISOControl(this)
+public actual inline fun Char.isISOControl(): Boolean = Character.isISOControl(this)
 
 /**
  * Returns `true` if this  character (Unicode code point) may be part of a Java identifier as other than the first character.
@@ -69,6 +91,7 @@ public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdenti
 /**
  * Determines whether a character is whitespace according to the Unicode standard.
  * Returns `true` if the character is whitespace.
+ *
  * @sample samples.text.Chars.isWhitespace
  */
 public actual fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) || Character.isSpaceChar(this)
@@ -78,14 +101,14 @@ public actual fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) ||
  * @sample samples.text.Chars.isUpperCase
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
+public actual inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
 
 /**
  * Returns `true` if this character is lower case.
  * @sample samples.text.Chars.isLowerCase
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
+public actual inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
@@ -192,7 +215,7 @@ public fun Char.lowercase(locale: Locale): String = toString().lowercase(locale)
  * @sample samples.text.Chars.isTitleCase
  */
 @kotlin.internal.InlineOnly
-public inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
+public actual inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
 
 /**
  * Converts this character to title case using Unicode mapping rules of the invariant locale.
@@ -259,11 +282,6 @@ public fun Char.titlecase(locale: Locale): String {
     }
     return titlecaseChar().toString()
 }
-
-/**
- * Returns a value indicating a character's general category.
- */
-public val Char.category: CharCategory get() = CharCategory.valueOf(Character.getType(this))
 
 /**
  * Returns the Unicode directionality property for the given character.

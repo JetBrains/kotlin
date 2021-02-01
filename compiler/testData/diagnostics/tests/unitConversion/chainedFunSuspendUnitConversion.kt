@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface SuspendRunnable {
-    <!FUN_INTERFACE_WITH_SUSPEND_FUNCTION!>suspend<!> fun run()
+    suspend fun run()
 }
 
 fun foo(r: SuspendRunnable) {}

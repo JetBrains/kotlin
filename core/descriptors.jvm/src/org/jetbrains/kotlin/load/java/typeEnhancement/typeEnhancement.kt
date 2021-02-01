@@ -58,6 +58,15 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
     // For flexible types, both bounds are indexed in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`.
     fun KotlinType.enhance(qualifiers: (Int) -> JavaTypeQualifiers) = unwrap().enhancePossiblyFlexible(qualifiers, 0).typeIfChanged
 
+    private fun buildEnhancementByFlexibleTypeBounds(lowerBound: KotlinType, upperBound: KotlinType): KotlinType? {
+        val upperEnhancement = upperBound.getEnhancement()
+        val lowerEnhancement = lowerBound.getEnhancement() ?: upperEnhancement ?: return null
+
+        if (upperEnhancement == null) return lowerEnhancement
+
+        return KotlinTypeFactory.flexibleType(lowerEnhancement.lowerIfFlexible(), upperEnhancement.upperIfFlexible())
+    }
+
     private fun UnwrappedType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
         if (isError) return Result(this, 1, false)
         return when (this) {
@@ -72,12 +81,13 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
                 }
 
                 val wereChanges = lowerResult.wereChanges || upperResult.wereChanges
-                val enhancement = lowerResult.type.getEnhancement() ?: upperResult.type.getEnhancement()
-                val type = if (!wereChanges) this@enhancePossiblyFlexible
-                else when {
-                    this is RawTypeImpl -> RawTypeImpl(lowerResult.type, upperResult.type)
-                    else -> KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
-                }.wrapEnhancement(enhancement)
+                val enhancement = buildEnhancementByFlexibleTypeBounds(lowerResult.type, upperResult.type)
+                val type = if (wereChanges) {
+                    when (this) {
+                        is RawTypeImpl -> RawTypeImpl(lowerResult.type, upperResult.type)
+                        else -> KotlinTypeFactory.flexibleType(lowerResult.type, upperResult.type)
+                    }.wrapEnhancement(enhancement)
+                } else this@enhancePossiblyFlexible
 
                 Result(
                     type,

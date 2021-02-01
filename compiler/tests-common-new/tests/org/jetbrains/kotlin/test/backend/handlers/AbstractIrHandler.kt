@@ -10,4 +10,7 @@ import org.jetbrains.kotlin.test.model.BackendInputHandler
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractIrHandler(testServices: TestServices) : BackendInputHandler<IrBackendInput>(testServices, BackendKinds.IrBackend)
+abstract class AbstractIrHandler(
+    testServices: TestServices,
+    doNotRunIfThereWerePreviousFailures: Boolean = false
+) : BackendInputHandler<IrBackendInput>(testServices, BackendKinds.IrBackend, doNotRunIfThereWerePreviousFailures)

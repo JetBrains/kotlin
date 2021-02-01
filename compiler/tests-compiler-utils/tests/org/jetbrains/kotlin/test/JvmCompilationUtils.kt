@@ -32,14 +32,19 @@ fun compileJavaFiles(
     val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
     javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8")).use { fileManager ->
         val javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(files)
-        val task = javaCompiler.getTask(
-            StringWriter(),  // do not write to System.err
-            fileManager,
-            diagnosticCollector,
-            options,
-            null,
-            javaFileObjectsFromFiles
-        )
+        val task = try {
+            javaCompiler.getTask(
+                StringWriter(),  // do not write to System.err
+                fileManager,
+                diagnosticCollector,
+                options,
+                null,
+                javaFileObjectsFromFiles
+            )
+        } catch (e: Throwable) {
+            if (ignoreJavaErrors) return false
+            else throw e
+        }
         val success = task.call() // do NOT inline this variable, call() should complete before errorsToString()
         if (javaErrorFile == null || !javaErrorFile.exists()) {
             assertions.assertTrue(success || ignoreJavaErrors) { errorsToString(diagnosticCollector, true) }

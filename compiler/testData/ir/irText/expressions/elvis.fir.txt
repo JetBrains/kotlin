@@ -28,8 +28,7 @@ FILE fqName:<root> fileName:/elvis.kt
               then: GET_VAR 'b: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
+              then: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String?, b:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:a index:0 type:kotlin.String?
     VALUE_PARAMETER name:b index:1 type:kotlin.Any
@@ -46,8 +45,7 @@ FILE fqName:<root> fileName:/elvis.kt
               then: GET_VAR 'b: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test2' type=kotlin.String? origin=null
+              then: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test2' type=kotlin.String? origin=null
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any?, b:kotlin.Any?) returnType:kotlin.String
     VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     VALUE_PARAMETER name:b index:1 type:kotlin.Any?
@@ -78,8 +76,7 @@ FILE fqName:<root> fileName:/elvis.kt
                 GET_VAR 'b: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                GET_VAR 'val tmp_2: kotlin.String? [val] declared in <root>.test3' type=kotlin.String? origin=null
+              then: GET_VAR 'val tmp_2: kotlin.String? [val] declared in <root>.test3' type=kotlin.String? origin=null
   FUN name:test4 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -95,8 +92,7 @@ FILE fqName:<root> fileName:/elvis.kt
               then: GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                GET_VAR 'val tmp_3: kotlin.Any? [val] declared in <root>.test4' type=kotlin.Any? origin=null
+              then: GET_VAR 'val tmp_3: kotlin.Any? [val] declared in <root>.test4' type=kotlin.Any? origin=null
   FUN name:test5 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -112,5 +108,4 @@ FILE fqName:<root> fileName:/elvis.kt
               then: GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                GET_VAR 'val tmp_4: kotlin.Any? [val] declared in <root>.test5' type=kotlin.Any? origin=null
+              then: GET_VAR 'val tmp_4: kotlin.Any? [val] declared in <root>.test5' type=kotlin.Any? origin=null

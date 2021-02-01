@@ -63,7 +63,6 @@ actual enum class RegexOption {
 
 // From char.kt
 
-actual fun Char.isWhitespace(): Boolean = TODO("Wasm stdlib: Text")
 actual fun Char.isHighSurrogate(): Boolean = TODO("Wasm stdlib: Text")
 actual fun Char.isLowSurrogate(): Boolean = TODO("Wasm stdlib: Text")
 
@@ -130,6 +129,92 @@ public actual fun Char.uppercaseChar(): Char = TODO("Wasm stdlib: Text")
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 public actual fun Char.uppercase(): String = TODO("Wasm stdlib: Text")
+
+
+/**
+ * Returns the Unicode general category of this character.
+ */
+public actual val Char.category: CharCategory get() = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character (Unicode code point) is defined in Unicode.
+ *
+ * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
+ */
+public actual fun Char.isDefined(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is a letter.
+ *
+ * A character is considered to be a letter if its [category] is [CharCategory.UPPERCASE_LETTER],
+ * [CharCategory.LOWERCASE_LETTER], [CharCategory.TITLECASE_LETTER], [CharCategory.MODIFIER_LETTER], or [CharCategory.OTHER_LETTER].
+ *
+ * @sample samples.text.Chars.isLetter
+ */
+public actual fun Char.isLetter(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is a letter or digit.
+ *
+ * @see isLetter
+ * @see isDigit
+ *
+ * @sample samples.text.Chars.isLetterOrDigit
+ */
+public actual fun Char.isLetterOrDigit(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is a digit.
+ *
+ * A character is considered to be a digit if its [category] is [CharCategory.DECIMAL_DIGIT_NUMBER].
+ *
+ * @sample samples.text.Chars.isDigit
+ */
+public actual fun Char.isDigit(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is an upper case letter.
+ *
+ * A character is considered to be an upper case letter if its [category] is [CharCategory.UPPERCASE_LETTER].
+ *
+ * @sample samples.text.Chars.isUpperCase
+ */
+public actual fun Char.isUpperCase(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is a lower case letter.
+ *
+ * A character is considered to be a lower case letter if its [category] is [CharCategory.LOWERCASE_LETTER].
+ *
+ * @sample samples.text.Chars.isLowerCase
+ */
+public actual fun Char.isLowerCase(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is a title case letter.
+ *
+ * A character is considered to be a title case letter if its [category] is [CharCategory.TITLECASE_LETTER].
+ *
+ * @sample samples.text.Chars.isTitleCase
+ */
+public actual fun Char.isTitleCase(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Returns `true` if this character is an ISO control character.
+ *
+ * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL].
+ *
+ * @sample samples.text.Chars.isISOControl
+ */
+public actual fun Char.isISOControl(): Boolean = TODO("Wasm stdlib: Text")
+
+/**
+ * Determines whether a character is whitespace according to the Unicode standard.
+ * Returns `true` if the character is whitespace.
+ *
+ * @sample samples.text.Chars.isWhitespace
+ */
+public actual fun Char.isWhitespace(): Boolean = TODO("Wasm stdlib: Text")
 
 // From string.kt
 

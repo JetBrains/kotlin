@@ -28,7 +28,7 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
 
     private fun File.readContent(trimLines: Boolean): String {
         return if (trimLines) {
-            this.readLines().map { it.trimEnd() }.joinToString("\n").trimEnd()
+            this.readLines().joinToString("\n") { it.trimEnd() }.trimEnd()
         } else {
             this.readText()
         }

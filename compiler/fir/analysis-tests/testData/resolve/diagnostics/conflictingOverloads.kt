@@ -59,7 +59,7 @@ class L {
     fun B.foo() {}
 }
 
-fun mest()
+fun mest() {}
 
 class mest
 

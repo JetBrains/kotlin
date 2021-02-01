@@ -1,3 +1,4 @@
+// !LANGUAGE: +InlineClasses
 // FILE: A.kt
 
 package a

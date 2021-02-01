@@ -5,7 +5,7 @@
 
 expect interface My {
     open fun bar()
-    open fun bas() {}
+    <!EXPECTED_DECLARATION_WITH_BODY!>open fun bas()<!> {}
     <!REDUNDANT_MODIFIER!>open<!> abstract fun bat(): Int
 
     fun foo()

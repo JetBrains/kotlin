@@ -134,7 +134,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
             !isPublishedApi()
         ) {
-            return this
+            return originalFunction.takeIf { it != this }
+                ?.safeAs<IrSimpleFunction>()
+                ?.getInternalFunctionForManglingIfNeeded()
+                ?: this
         }
         originalForDefaultAdapter?.getInternalFunctionForManglingIfNeeded()?.let { return it }
         return null
@@ -366,7 +369,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
         }
 
-    fun mapToCallableMethod(caller: IrFunction, expression: IrCall): IrCallableMethod {
+    // TODO get rid of 'caller' argument
+    internal fun mapToCallableMethod(expression: IrCall, caller: IrFunction?): IrCallableMethod {
         val callee = expression.symbol.owner
         val calleeParent = expression.superQualifierSymbol?.owner
             ?: expression.dispatchReceiver?.type?.classOrNull?.owner
@@ -385,17 +389,21 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val declaration = findSuperDeclaration(callee, isSuperCall)
-        val signature = mapOverriddenSpecialBuiltinIfNeeded(caller, declaration, isSuperCall)
-            ?: mapSignatureSkipGeneric(declaration)
+        val signature =
+            if (caller != null && caller.isBridge()) {
+                // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
+                // remapped name or signature and forward to the actually declared method.
+                mapSignatureSkipGeneric(declaration)
+            } else {
+                mapOverriddenSpecialBuiltinIfNeeded(declaration, isSuperCall)
+                    ?: mapSignatureSkipGeneric(declaration)
+            }
 
         return IrCallableMethod(owner, invokeOpcode, signature, isInterface)
     }
 
     // TODO: get rid of this (probably via some special lowering)
-    private fun mapOverriddenSpecialBuiltinIfNeeded(caller: IrFunction, callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
-        // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
-        // remapped name or signature and forward to the actually declared method.
-        if (caller.isBridge()) return null
+    private fun mapOverriddenSpecialBuiltinIfNeeded(callee: IrFunction, superCall: Boolean): JvmMethodSignature? {
         // Do not remap calls to static replacements of inline class methods, since they have completely different signatures.
         if (callee.isStaticInlineClassReplacement) return null
         val overriddenSpecialBuiltinFunction =

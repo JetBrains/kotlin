@@ -27,7 +27,7 @@ import java.io.File
 import javax.tools.ToolProvider
 
 abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCompilerRunnerTestBase<K2JVMCompilerArguments>() {
-    override fun make(cacheDir: File, sourceRoots: Iterable<File>, args: K2JVMCompilerArguments): TestCompilationResult {
+    override fun make(cacheDir: File, outDir: File, sourceRoots: Iterable<File>, args: K2JVMCompilerArguments): TestCompilationResult {
         val reporter = TestICReporter()
         val messageCollector = TestMessageCollector()
         makeIncrementally(cacheDir, sourceRoots, args, reporter = reporter, messageCollector = messageCollector)

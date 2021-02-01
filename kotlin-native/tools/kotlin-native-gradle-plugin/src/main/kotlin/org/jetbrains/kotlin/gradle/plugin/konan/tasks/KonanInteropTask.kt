@@ -27,8 +27,6 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
-import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
-import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.library.defaultResolver
@@ -168,29 +166,6 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
         linkFiles.add(files)
     }
 
-    // endregion
-
-    // region IDE model
-    override fun toModelArtifact(): KonanModelArtifact {
-        val repos = libraries.repos
-        val resolver = defaultResolver(
-            repos.map { it.absolutePath },
-            konanTarget,
-            Distribution(project.konanHome)
-        )
-
-        return KonanModelArtifactImpl(
-                artifactName,
-                artifact,
-                CompilerOutputKind.LIBRARY,
-                konanTarget.name,
-                name,
-                listOfNotNull(defFile.parentFile),
-                listOf(defFile),
-                libraries.asFiles(resolver),
-                repos.toList()
-        )
-    }
     // endregion
 
     internal interface RunToolParameters: WorkParameters {

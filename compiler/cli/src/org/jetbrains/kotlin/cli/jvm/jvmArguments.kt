@@ -59,8 +59,28 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown -Xstring-concat mode: ${arguments.jvmTarget}\n" +
-                        "Supported versions: ${JvmStringConcat.values().joinToString { it.description }}"
+                ERROR, "Unknown `-Xstring-concat` mode: ${arguments.stringConcat}\n" +
+                        "Supported modes: ${JvmStringConcat.values().joinToString { it.description }}"
+            )
+        }
+    }
+
+    if (arguments.samConversions != null) {
+        val samConversions = JvmSamConversions.fromString(arguments.samConversions)
+        if (samConversions != null) {
+            put(JVMConfigurationKeys.SAM_CONVERSIONS, samConversions)
+            if (jvmTarget < samConversions.minJvmTarget) {
+                messageCollector.report(
+                    WARNING,
+                    "`-Xsam-conversions=${arguments.samConversions}` requires JVM target at least " +
+                            "${samConversions.minJvmTarget.description} and is ignored."
+                )
+            }
+        } else {
+            messageCollector.report(
+                ERROR,
+                "Unknown `-Xsam-conversions` argument: ${arguments.samConversions}\n" +
+                        "Supported arguments: ${JvmSamConversions.values().joinToString { it.description }}"
             )
         }
     }

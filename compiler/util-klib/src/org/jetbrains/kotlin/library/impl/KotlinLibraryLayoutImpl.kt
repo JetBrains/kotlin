@@ -14,14 +14,14 @@ open class KotlinLibraryLayoutImpl(val klib: File, override val component: Strin
         if (isZipped) zippedKotlinLibraryChecks(klib)
     }
 
-    override val libDir = if (isZipped) File("/") else klib
+    override val libFile = if (isZipped) File("/") else klib
 
     override val libraryName
         get() =
             if (isZipped)
                 klib.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT)
             else
-                libDir.path
+                libFile.path
 
     open val extractingToTemp: KotlinLibraryLayout by lazy {
         ExtractingBaseLibraryImpl(this)
@@ -84,7 +84,7 @@ open class FromZipBaseLibraryImpl(zipped: KotlinLibraryLayoutImpl, zipFileSystem
     KotlinLibraryLayout {
 
     override val libraryName = zipped.libraryName
-    override val libDir = zipFileSystem.file(zipped.libDir)
+    override val libFile = zipFileSystem.file(zipped.libFile)
     override val component = zipped.component
 }
 
@@ -113,7 +113,7 @@ fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = this.klib.withZi
 }
 
 open class ExtractingKotlinLibraryLayout(zipped: KotlinLibraryLayoutImpl) : KotlinLibraryLayout {
-    override val libDir: File get() = error("Extracting layout doesn't extract its own root")
+    override val libFile: File get() = error("Extracting layout doesn't extract its own root")
     override val libraryName = zipped.libraryName
     override val component = zipped.component
 }

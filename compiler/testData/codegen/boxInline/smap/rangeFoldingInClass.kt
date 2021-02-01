@@ -48,7 +48,6 @@ test/B
 4#2:17
 6#3:18
 5#4:19
-*E
 *S KotlinDebug
 *F
 + 1 1.kt
@@ -84,7 +83,6 @@ test/B
 4#3:19
 6#4:21
 5#5:23
-*E
 *S KotlinDebug
 *F
 + 1 2.kt

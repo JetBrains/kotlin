@@ -49,38 +49,37 @@ open class KonanInteropLibrary(name: String,
 
     inner class IncludeDirectoriesSpecImpl: IncludeDirectoriesSpec {
         override fun allHeaders(vararg includeDirs: Any) = allHeaders(includeDirs.toList())
-        override fun allHeaders(includeDirs: Collection<Any>) = forEach {
-            it.includeDirs.allHeaders(includeDirs)
+        override fun allHeaders(includeDirs: Collection<Any>) = tasks().forEach {
+            it.configure { t -> t.includeDirs.allHeaders(includeDirs) }
         }
 
         override fun headerFilterOnly(vararg includeDirs: Any) = headerFilterOnly(includeDirs.toList())
-        override fun headerFilterOnly(includeDirs: Collection<Any>) = forEach {
-            it.includeDirs.headerFilterOnly(includeDirs)
+        override fun headerFilterOnly(includeDirs: Collection<Any>) = tasks().forEach {
+            it.configure { t -> t.includeDirs.headerFilterOnly(includeDirs) }
         }
     }
 
     val includeDirs = IncludeDirectoriesSpecImpl()
 
-    override fun defFile(file: Any) = forEach { it.defFile(file) }
+    override fun defFile(file: Any) = tasks().forEach { it.configure { t -> t.defFile(file) } }
 
-    override fun packageName(value: String) = forEach { it.packageName(value) }
+    override fun packageName(value: String) = tasks().forEach { it.configure { t -> t.packageName(value) } }
 
-    override fun compilerOpts(vararg values: String) = forEach { it.compilerOpts(*values) }
+    override fun compilerOpts(vararg values: String) = tasks().forEach { it.configure { t -> t.compilerOpts(*values) } }
 
-    override fun headers(vararg files: Any) = forEach { it.headers(*files) }
+    override fun headers(vararg files: Any) = tasks().forEach { it.configure { t -> t.headers(*files) } }
 
-    override fun headers(files: FileCollection) = forEach { it.headers(files) }
+    override fun headers(files: FileCollection) = tasks().forEach { it.configure { t -> t.headers(files) } }
 
-    override fun includeDirs(vararg values: Any) = forEach { it.includeDirs(*values) }
+    override fun includeDirs(vararg values: Any) = tasks().forEach { it.configure { t -> t.includeDirs(*values) } }
     override fun includeDirs(closure: Closure<Unit>) = includeDirs(ConfigureUtil.configureUsing(closure))
     override fun includeDirs(action: Action<IncludeDirectoriesSpec>) = includeDirs { action.execute(this) }
     override fun includeDirs(configure: IncludeDirectoriesSpec.() -> Unit) = includeDirs.configure()
 
-    override fun linkerOpts(values: List<String>) = forEach { it.linkerOpts(values) }
+    override fun linkerOpts(values: List<String>) = tasks().forEach { it.configure { t -> t.linkerOpts(values) } }
     override fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
 
-    override fun link(vararg files: Any) = forEach { it.link(*files) }
-    override fun link(files: FileCollection) = forEach { it.link(files) }
-    override fun dependencies(closure: Closure<Unit>) = forEach { it.dependencies(closure) }
-
+    override fun link(vararg files: Any) = tasks().forEach { it.configure { t -> t.link(*files) } }
+    override fun link(files: FileCollection) = tasks().forEach { it.configure { t -> t.link(files) } }
+    override fun dependencies(closure: Closure<Unit>) = tasks().forEach { it.configure { t -> t.dependencies(closure) }}
 }

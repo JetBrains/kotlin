@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions
+// !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument
 // WITH_JDK
 
 // FILE: arrayAsVarargAfterSamArgument.kt

@@ -77,7 +77,7 @@ fun main(a: A) {
     a.field?.length
     a.field.length
 
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("MutableList<String!>?")!>a.baz()<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS("(Mutable)List<String!>?")!>a.baz()<!>.get(0)
     a.baz()!!.get(0).get(0)
     a.baz()!!.get(0)?.get(0)
 }

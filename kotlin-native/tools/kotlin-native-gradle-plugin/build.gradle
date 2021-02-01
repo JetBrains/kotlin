@@ -67,6 +67,10 @@ configurations {
     testImplementation.extendsFrom bundleDependencies
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions.freeCompilerArgs = ["-Xskip-prerelease-check"]
+}
+
 dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib:1.3.0"
 

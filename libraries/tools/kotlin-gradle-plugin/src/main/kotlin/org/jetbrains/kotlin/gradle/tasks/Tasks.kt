@@ -43,10 +43,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
+import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -279,7 +277,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     // Input is needed to force rebuild even if source files are not changed
 
     @get:Input
-    internal val coroutinesStr: Provider<String> = project.provider {coroutines.get().name}
+    internal val coroutinesStr: Provider<String> = project.provider { coroutines.get().name }
 
     @get:Input
     internal val coroutines: Provider<Coroutines> = project.provider {
@@ -400,7 +398,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val isMultiplatform: Boolean by lazy { project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper } }
 
     @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by lazy { AbstractKotlinCompileArgumentsContributor(KotlinCompileArgumentsProvider(this)) }
+    internal val abstractKotlinCompileArgumentsContributor by lazy {
+        AbstractKotlinCompileArgumentsContributor(
+            KotlinCompileArgumentsProvider(this)
+        )
+    }
 
     override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         abstractKotlinCompileArgumentsContributor.contributeArguments(
@@ -499,10 +501,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         K2JVMCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compilerArgumentsContributor.contributeArguments(args, compilerArgumentsConfigurationFlags(
-            defaultsOnly,
-            ignoreClasspathResolutionErrors
-        ))
+        compilerArgumentsContributor.contributeArguments(
+            args, compilerArgumentsConfigurationFlags(
+                defaultsOnly,
+                ignoreClasspathResolutionErrors
+            )
+        )
     }
 
     @get:Internal
@@ -631,15 +635,25 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     override fun isIncrementalCompilationEnabled(): Boolean =
         when {
             "-Xir-produce-js" in kotlinOptions.freeCompilerArgs -> false
-            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> incrementalJsKlib
+            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> false // TODO: it's not supported yet
             "-Xir-produce-klib-file" in kotlinOptions.freeCompilerArgs -> incrementalJsKlib
             else -> incremental
         }
 
-    @Suppress("unused")
-    @get:OutputFile
+    @get:Internal
     val outputFile: File
         get() = kotlinOptions.outputFile?.let(::File) ?: defaultOutputFile
+
+    @get:OutputFile
+    @get:Optional
+    val outputFileOrNull: File?
+        get() = outputFile.let { file ->
+            if (!kotlinOptions.isProduceUnzippedKlib()) {
+                file
+            } else {
+                null
+            }
+        }
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinJsCompilerClasspath(project)
@@ -651,7 +665,14 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.outputFile = outputFile.canonicalPath
+        try {
+            outputFile.canonicalPath
+        } catch (ex: Throwable) {
+            logger.warn("IO EXCEPTION: outputFile: ${outputFile.path}")
+            throw ex
+        }
+
+        args.outputFile = outputFile.absoluteFile.normalize().absolutePath
 
         if (defaultsOnly) return
 

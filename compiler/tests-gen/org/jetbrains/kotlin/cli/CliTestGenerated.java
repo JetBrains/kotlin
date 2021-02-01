@@ -576,11 +576,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kotlinPackage.args");
         }
 
-        @TestMetadata("kt19628_12.args")
-        public void testKt19628_12() throws Exception {
-            runTest("compiler/testData/cli/jvm/kt19628_12.args");
-        }
-
         @TestMetadata("kt19628_13.args")
         public void testKt19628_13() throws Exception {
             runTest("compiler/testData/cli/jvm/kt19628_13.args");
@@ -706,11 +701,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
         }
 
-        @TestMetadata("releaseCoroutinesApiVersion1.2.args")
-        public void testReleaseCoroutinesApiVersion1_2() throws Exception {
-            runTest("compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.args");
-        }
-
         @TestMetadata("resultInReturnTypeUnsupportedByDefault14.args")
         public void testResultInReturnTypeUnsupportedByDefault14() throws Exception {
             runTest("compiler/testData/cli/jvm/resultInReturnTypeUnsupportedByDefault14.args");
@@ -749,11 +739,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("singleJavaFileRoots.args")
         public void testSingleJavaFileRoots() throws Exception {
             runTest("compiler/testData/cli/jvm/singleJavaFileRoots.args");
-        }
-
-        @TestMetadata("standaloneSamConversionsAreDisabledExplicitlyWithNewInference.args")
-        public void testStandaloneSamConversionsAreDisabledExplicitlyWithNewInference() throws Exception {
-            runTest("compiler/testData/cli/jvm/standaloneSamConversionsAreDisabledExplicitlyWithNewInference.args");
         }
 
         @TestMetadata("standaloneSamConversionsAreEnabledWithNewInference.args")

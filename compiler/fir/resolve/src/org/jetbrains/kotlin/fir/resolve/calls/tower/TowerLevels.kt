@@ -29,6 +29,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+enum class ProcessResult {
+    FOUND, SCOPE_EMPTY;
+
+    operator fun plus(other: ProcessResult): ProcessResult {
+        if (this == FOUND || other == FOUND) return FOUND
+        return this
+    }
+}
+
 abstract class TowerScopeLevel {
 
     sealed class Token<out T : AbstractFirBasedSymbol<*>> {
@@ -37,11 +46,11 @@ abstract class TowerScopeLevel {
         object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
-    abstract fun processFunctionsByName(name: Name, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessorAction
+    abstract fun processFunctionsByName(name: Name, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult
 
-    abstract fun processPropertiesByName(name: Name, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessorAction
+    abstract fun processPropertiesByName(name: Name, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessResult
 
-    abstract fun processObjectsByName(name: Name, processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>): ProcessorAction
+    abstract fun processObjectsByName(name: Name, processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>): ProcessResult
 
     interface TowerScopeLevelProcessor<in T : AbstractFirBasedSymbol<*>> {
         fun consumeCandidate(
@@ -79,9 +88,9 @@ class MemberScopeTowerLevel(
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevelProcessor<T>,
         processScopeMembers: FirScope.(processor: (T) -> Unit) -> Unit
-    ): ProcessorAction {
+    ): ProcessResult {
         var empty = true
-        val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessorAction.NONE
+        val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
         scope.processScopeMembers { candidate ->
             empty = false
             if (candidate is FirCallableSymbol<*> &&
@@ -118,16 +127,16 @@ class MemberScopeTowerLevel(
                 output.consumeCandidate(symbol, dispatchReceiverValue, null, scope)
             }
         }
-        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
     override fun processFunctionsByName(
         name: Name,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
-    ): ProcessorAction {
+    ): ProcessResult {
         val isInvoke = name == OperatorNameConventions.INVOKE
         if (implicitExtensionInvokeMode && !isInvoke) {
-            return ProcessorAction.NEXT
+            return ProcessResult.FOUND
         }
         return processMembers(processor) { consumer ->
             this.processFunctionsAndConstructorsByName(
@@ -145,7 +154,7 @@ class MemberScopeTowerLevel(
     override fun processPropertiesByName(
         name: Name,
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
-    ): ProcessorAction {
+    ): ProcessResult {
         return processMembers(processor) { consumer ->
             this.processPropertiesByName(name) {
                 // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
@@ -158,8 +167,8 @@ class MemberScopeTowerLevel(
     override fun processObjectsByName(
         name: Name,
         processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
-    ): ProcessorAction {
-        return ProcessorAction.NEXT
+    ): ProcessResult {
+        return ProcessResult.FOUND
     }
 
     override fun replaceReceiverValue(receiverValue: ReceiverValue): SessionBasedTowerLevel {
@@ -262,7 +271,7 @@ class ScopeTowerLevel(
     override fun processFunctionsByName(
         name: Name,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
-    ): ProcessorAction {
+    ): ProcessResult {
         var empty = true
         scope.processFunctionsAndConstructorsByName(
             name,
@@ -273,25 +282,25 @@ class ScopeTowerLevel(
             empty = false
             consumeCallableCandidate(candidate, processor)
         }
-        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
     override fun processPropertiesByName(
         name: Name,
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
-    ): ProcessorAction {
+    ): ProcessResult {
         var empty = true
         scope.processPropertiesByName(name) { candidate ->
             empty = false
             consumeCallableCandidate(candidate, processor)
         }
-        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 
     override fun processObjectsByName(
         name: Name,
         processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
-    ): ProcessorAction {
+    ): ProcessResult {
         var empty = true
         scope.processClassifiersByName(name) {
             empty = false
@@ -301,7 +310,7 @@ class ScopeTowerLevel(
                 scope = scope
             )
         }
-        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
+        return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
 }
 

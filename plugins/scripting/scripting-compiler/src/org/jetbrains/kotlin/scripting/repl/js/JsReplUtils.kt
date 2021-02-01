@@ -116,6 +116,7 @@ fun readLibrariesFromConfiguration(configuration: CompilerConfiguration): List<M
     val libraries = scriptDependencies.map { (it as JsDependency).path }
     val resolvedLibraries = jsResolveLibraries(
         libraries,
+        emptyList(),
         object : Logger {
             private val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: MessageCollector.NONE
             override fun warning(message: String) = collector.report(CompilerMessageSeverity.STRONG_WARNING, message)

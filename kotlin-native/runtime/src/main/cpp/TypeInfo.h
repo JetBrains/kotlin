@@ -63,6 +63,7 @@ enum Konan_TypeFlags {
   TF_LEAK_DETECTOR_CANDIDATE = 1 << 4,
   TF_SUSPEND_FUNCTION = 1 << 5,
   TF_HAS_FINALIZER = 1 << 6,
+  TF_HAS_FREEZE_HOOK = 1 << 7,
 };
 
 // Flags per object instance.

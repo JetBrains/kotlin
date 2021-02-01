@@ -134,7 +134,7 @@ fun main(args: Array<String>) {
     }
 
     val resolvedLibraries = jsResolveLibraries(
-        dependencies, messageCollectorLogger(MessageCollector.NONE)
+        dependencies, emptyList(), messageCollectorLogger(MessageCollector.NONE)
     )
 
     buildKLib(moduleName, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))

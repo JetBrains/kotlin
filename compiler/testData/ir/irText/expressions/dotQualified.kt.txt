@@ -11,4 +11,3 @@ fun lengthN(s: String?): Int? {
     }
   }
 }
-

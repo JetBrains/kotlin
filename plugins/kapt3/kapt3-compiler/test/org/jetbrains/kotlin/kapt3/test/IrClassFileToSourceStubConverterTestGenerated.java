@@ -75,6 +75,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");
     }
 
+    @TestMetadata("commentsRemoved.kt")
+    public void testCommentsRemoved() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/commentsRemoved.kt");
+    }
+
     @TestMetadata("cyrillicClassName.kt")
     public void testCyrillicClassName() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/cyrillicClassName.kt");

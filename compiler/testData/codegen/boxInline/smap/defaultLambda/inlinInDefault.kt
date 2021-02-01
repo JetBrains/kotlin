@@ -58,7 +58,6 @@ test/_1Kt
 *L
 1#1,39:1
 30#2:40
-*E
 *S KotlinDebug
 *F
 + 1 1.kt
@@ -85,13 +84,12 @@ test/_1Kt$lParams$1
 32#2,5:11
 30#2:17
 33#3:16
-*E
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
-6#1,5:11
+6#1:11,5
 6#1:17
 6#1:16
 *E

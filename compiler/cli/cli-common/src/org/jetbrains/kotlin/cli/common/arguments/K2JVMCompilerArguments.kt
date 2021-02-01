@@ -363,6 +363,15 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
 
     @Argument(
+        value = "-Xsam-conversions",
+        valueDescription = "{class|indy}",
+        description = """Select code generation scheme for SAM conversions.
+-Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 8` or greater.
+-Xsam-conversions=class             Generate SAM conversions as explicit classes"""
+    )
+    var samConversions: String? by NullableStringFreezableVar(JvmSamConversions.CLASS.description)
+
+    @Argument(
         value = "-Xklib",
         valueDescription = "<path>",
         description = "Paths to cross-platform libraries in .klib format"

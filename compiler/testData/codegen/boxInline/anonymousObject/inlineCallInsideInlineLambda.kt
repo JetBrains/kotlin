@@ -47,13 +47,12 @@ test/B
 *L
 1#1,19:1
 13#2,2:20
-*E
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
-9#1,2:20
+9#1:20,2
 *E
 
 SMAP
@@ -68,11 +67,10 @@ test/A
 *L
 1#1,19:1
 7#2,2:20
-*E
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt$box$1$1
 *L
-11#1,2:20
+11#1:20,2
 *E

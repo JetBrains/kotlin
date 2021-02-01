@@ -1457,6 +1457,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testParenthesizedAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/parenthesizedAnnotations.kt");
                 }
+
+                @Test
+                @TestMetadata("propagteAnyAnnotations.kt")
+                public void testPropagteAnyAnnotations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/propagteAnyAnnotations.kt");
+                }
             }
 
             @Nested
@@ -14003,6 +14009,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("kt44440.kt")
+                public void testKt44440() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/regressions/kt44440.kt");
+                }
+
+                @Test
                 @TestMetadata("kt702.kt")
                 public void testKt702() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt702.kt");
@@ -14189,6 +14201,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testSubstitutionIntoInnerClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/substitutions/substitutionIntoInnerClass.kt");
                 }
+
+                @Test
+                @TestMetadata("substitutionOfTypeEnhancement.kt")
+                public void testSubstitutionOfTypeEnhancement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/substitutions/substitutionOfTypeEnhancement.kt");
+                }
             }
 
             @Nested
@@ -14303,6 +14321,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("anonymousObjects.kt")
             public void testAnonymousObjects() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/anonymousObjects.kt");
+            }
+
+            @Test
+            @TestMetadata("approximateReturnedAnonymousObjects.kt")
+            public void testApproximateReturnedAnonymousObjects() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/approximateReturnedAnonymousObjects.kt");
             }
 
             @Test
@@ -20202,6 +20226,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("propagateFlexibilityFromOtherConstraints.kt")
+            public void testPropagateFlexibilityFromOtherConstraints() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/platformTypes/propagateFlexibilityFromOtherConstraints.kt");
+            }
+
+            @Test
             @TestMetadata("rawOverrides.kt")
             public void testRawOverrides() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/rawOverrides.kt");
@@ -20850,6 +20880,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @Test
                 public void testAllFilesPresentInTypeEnhancement() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("buildFlexibleEnhancement.kt")
+                public void testBuildFlexibleEnhancement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/buildFlexibleEnhancement.kt");
                 }
 
                 @Test
@@ -24392,12 +24428,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("NeverInterface.kt")
-            public void testNeverInterface() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/sealed/NeverInterface.kt");
-            }
-
-            @Test
             @TestMetadata("NeverObject.kt")
             public void testNeverObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/NeverObject.kt");
@@ -27229,12 +27259,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("noMultiplatformProjects.kt")
             public void testNoMultiplatformProjects() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noMultiplatformProjects.kt");
-            }
-
-            @Test
-            @TestMetadata("noTopLevelSealedInheritance.kt")
-            public void testNoTopLevelSealedInheritance() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noTopLevelSealedInheritance.kt");
             }
 
             @Nested

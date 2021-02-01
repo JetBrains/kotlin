@@ -464,7 +464,7 @@ fun <T : Number> T?.case_11() {
             equals(this)
             itest1()
             apply {
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>
                 equals(null)
                 propT
                 propAny
@@ -475,29 +475,29 @@ fun <T : Number> T?.case_11() {
                 funNullableT()
                 funNullableAny()
                 itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.funNullableAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>this<!>.itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>this<!>.itest1()
             }
             also {
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T?!!")!>it<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & T")!>it<!>.funNullableAny()
             }
         }
     }

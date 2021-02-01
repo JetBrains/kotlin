@@ -14,7 +14,7 @@ public sealed class SealedClass : R|kotlin/Any| {
 
     }
 
-    private constructor(): R|test/SealedClass|
+    internal constructor(): R|test/SealedClass|
 
 }
 

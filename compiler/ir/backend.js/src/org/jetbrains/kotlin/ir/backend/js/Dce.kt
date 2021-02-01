@@ -407,6 +407,9 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
                 }
             }
         }
+
+        context.additionalExportedDeclarations
+            .forEach { it.enqueue(null, "from additionalExportedDeclarations", altFromFqn = "<ROOT>") }
     }
 
     if (printReachabilityInfo) {

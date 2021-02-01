@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -113,9 +114,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
+        val repositories: List<String> = configureLibraries(arguments.repositries)
 
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
+        configuration.put(JSConfigurationKeys.REPOSITORIES, repositories)
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
@@ -175,6 +178,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val resolvedLibraries = jsResolveLibraries(
             libraries,
+            configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
             messageCollectorLogger(configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: error("Could not find message collector"))
         )
 
@@ -184,11 +188,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
-            val outputKlibPath =
-                if (arguments.irProduceKlibDir)
-                    File(outputFilePath).parent
-                else
-                    outputFilePath
+            if (arguments.irProduceKlibFile) {
+                require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
+            }
 
             try {
                 generateKLib(
@@ -199,7 +201,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
                     irFactory = PersistentIrFactory,
-                    outputKlibPath = outputKlibPath,
+                    outputKlibPath = outputFile.path,
                     nopack = arguments.irProduceKlibDir
                 )
             } catch (e: JsIrCompilationError) {

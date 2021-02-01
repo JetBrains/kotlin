@@ -25,8 +25,8 @@ interface IB {
 
 fun test(a: In<IA>, b: In<IB>, z: Z) {
   z.create<IA>(x = a, y = b).<get-t>().foo()
-  z.create<IA>(x = a, y = b).<get-t>().bar()
+  z.create<IA>(x = a, y = b).<get-t>() /*as IB */.bar()
   val t: IA = z.create<IA>(x = a, y = b).<get-t>()
   t.foo()
-  t.bar()
+  t /*as IB */.bar()
 }

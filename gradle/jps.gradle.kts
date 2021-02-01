@@ -64,16 +64,16 @@ fun setupGenerateAllTestsRunConfiguration() {
 fun setupFirRunConfiguration() {
 
     val tests = listOf(
-        "org\\.jetbrains\\.kotlin\\.fir((?!\\.lightTree\\.benchmark)(\\.\\w+)*)\\.((?!(TreesCompareTest|TotalKotlinTest|RawFirBuilderTotalKotlinTestCase))\\w+)",
-        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxCodegenTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.spec\\.checkers\\.FirDiagnosticsTestSpecGenerated",
-        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBytecodeTextTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxAgainstJavaCodegenTestGenerated",
-        "org\\.jetbrains\\.kotlin\\.codegen\\.ir\\.FirBlackBoxInlineCodegenTestGenerated"
+        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirDiagnosticsWithLightTreeTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirDiagnosticTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirDiagnosticTestSpecGenerated",
+        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.FirOldFrontendDiagnosticsTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.ir\\.Fir2IrTextTestGenerated",
+        "org\\.jetbrains\\.kotlin\\.test\\.runners\\.codegen\\.FirBlackBoxCodegenTestGenerated"
     )
 
     val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
-    junit.moduleName = "kotlin.compiler.tests-spec.test"
+    junit.moduleName = "kotlin.compiler.fir.analysis-tests.test"
     junit.pattern = tests.joinToString(separator = "|", prefix = "^(", postfix = ")\$")
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
@@ -85,7 +85,7 @@ fun setupFirRunConfiguration() {
             |    <module name="${junit.moduleName}" />
             |    <option name="MAIN_CLASS_NAME" value="" />
             |    <option name="METHOD_NAME" value="" />
-            |    <option name="TEST_OBJECT" value="pattern" />
+            |    <option name="TEST_OBJECT" value="directory" />
             |    <option name="VM_PARAMETERS" value="${junit.vmParameters}" />
             |    <option name="PARAMETERS" value="" />
             |    <option name="WORKING_DIRECTORY" value="${junit.workingDirectory}" />
@@ -95,6 +95,7 @@ fun setupFirRunConfiguration() {
             |    <envs>
                    ${junit.envs.entries.joinToString("\n") { (name, value) -> "|      <env name=\"$name\" value=\"$value\" />" }}
             |    </envs>
+            |    <dir value="${'$'}PROJECT_DIR${'$'}/compiler/fir/analysis-tests/tests-gen" />
             |    <patterns>
             |      <pattern testClass="${junit.pattern}" />
             |    </patterns>

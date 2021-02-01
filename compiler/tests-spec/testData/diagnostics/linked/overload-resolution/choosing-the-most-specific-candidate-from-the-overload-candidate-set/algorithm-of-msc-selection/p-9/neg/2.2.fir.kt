@@ -23,7 +23,7 @@ class B {
 }
 class C
 
-// FILE: LibCase1.kt
+// FILE: LibCase11.kt
 package LibPackCase1.b
 import LibPackCase1.a.*
 import testPackCase1.B
@@ -32,7 +32,7 @@ import testPackCase1.C
 fun B?.boo( c: ()->C) {} //(2)
 
 
-// FILE: LibCase1.kt
+// FILE: LibCase12.kt
 package LibPackCase1.a
 import testPackCase1.B
 
@@ -58,7 +58,7 @@ class B {
 }
 class C
 
-// FILE: LibCase2.kt
+// FILE: LibCase21.kt
 package LibPackCase2.b
 import LibPackCase2.a.*
 import testPackCase2.B
@@ -67,7 +67,7 @@ import testPackCase2.C
 fun B?.boo( c: ()->C) {} //(2)
 
 
-// FILE: LibCase2.kt
+// FILE: LibCase22.kt
 package LibPackCase2.a
 import testPackCase2.B
 

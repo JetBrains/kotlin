@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices, doNotRunIfThereWerePreviousFailures = true) {
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

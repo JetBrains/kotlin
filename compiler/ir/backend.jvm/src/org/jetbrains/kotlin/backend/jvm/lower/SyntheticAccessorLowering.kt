@@ -210,28 +210,46 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private val IrConstructor.isOrShouldBeHidden: Boolean
-        get() = this in context.hiddenConstructors || (
-                !DescriptorVisibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters &&
-                        origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-                        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-                        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR)
+        get() {
+            if (this in context.hiddenConstructors)
+                return true
+
+            if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+                origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR
+            ) {
+                return false
+            }
+
+            val constructedClass = constructedClass
+
+            if (!DescriptorVisibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters)
+                return true
+
+            if (visibility != DescriptorVisibilities.PUBLIC && constructedClass.modality == Modality.SEALED)
+                return true
+
+            return false
+        }
 
     private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructor {
         require(declaration.isOrShouldBeHidden, declaration::render)
         return context.hiddenConstructors.getOrPut(declaration) {
             declaration.makeConstructorAccessor(JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR).also { accessor ->
-                // There's a special case in the JVM backend for serializing the metadata of hidden
-                // constructors - we serialize the descriptor of the original constructor, but the
-                // signature of the accessor. We implement this special case in the JVM IR backend by
-                // attaching the metadata directly to the accessor. We also have to move all annotations
-                // to the accessor. Parameter annotations are already moved by the copyTo method.
-                if (declaration.metadata != null) {
-                    accessor.metadata = declaration.metadata
-                    declaration.metadata = null
+                if (declaration.constructedClass.modality != Modality.SEALED) {
+                    // There's a special case in the JVM backend for serializing the metadata of hidden
+                    // constructors - we serialize the descriptor of the original constructor, but the
+                    // signature of the accessor. We implement this special case in the JVM IR backend by
+                    // attaching the metadata directly to the accessor. We also have to move all annotations
+                    // to the accessor. Parameter annotations are already moved by the copyTo method.
+                    if (declaration.metadata != null) {
+                        accessor.metadata = declaration.metadata
+                        declaration.metadata = null
+                    }
+                    accessor.annotations += declaration.annotations
+                    declaration.annotations = emptyList()
+                    declaration.valueParameters.forEach { it.annotations = emptyList() }
                 }
-                accessor.annotations += declaration.annotations
-                declaration.annotations = emptyList()
-                declaration.valueParameters.forEach { it.annotations = emptyList() }
             }
         }
     }
@@ -263,6 +281,12 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            if (source.constructedClass.modality == Modality.SEALED) {
+                for (accessorValueParameter in accessor.valueParameters) {
+                    accessorValueParameter.annotations = emptyList()
+                }
+            }
+
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(

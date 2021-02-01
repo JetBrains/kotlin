@@ -68,11 +68,9 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
                 $receiver: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
                   $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
                 key: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
-                value: TYPE_OP type=<root>.Flaf origin=IMPLICIT_CAST typeOperand=<root>.Flaf
-                  GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
+                value: GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
         RETURN type=kotlin.Nothing from='public final fun forJavaName (javaName: kotlin.String): <root>.Flaf declared in <root>.Flaf'
-          TYPE_OP type=<root>.Flaf origin=IMPLICIT_CAST typeOperand=<root>.Flaf
-            GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
+          GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

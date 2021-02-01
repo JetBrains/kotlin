@@ -127,6 +127,7 @@ class Fir2IrLazyProperty(
     }
 
     override var getter: IrSimpleFunction? by lazyVar {
+        if (fir.isConst) return@lazyVar null
         Fir2IrLazyPropertyAccessor(
             components, startOffset, endOffset,
             when {

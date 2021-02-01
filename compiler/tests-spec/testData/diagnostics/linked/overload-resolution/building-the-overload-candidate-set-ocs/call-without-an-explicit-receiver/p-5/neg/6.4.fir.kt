@@ -2,6 +2,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-401
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-without-an-explicit-receiver -> paragraph 5 -> sentence 6
+ * NUMBER: 4
+ * DESCRIPTION:
+ */
 
 
 
@@ -20,7 +28,7 @@ fun case1() {
     <!DEBUG_INFO_CALL("fqName: libCase1.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libCase1.a
 fun Regex(pattern: String) {}
 
@@ -28,7 +36,7 @@ object Regex {
     operator fun invoke(s: String) {}
 }
 
-// FILE: Lib1.kt
+// FILE: Lib1_1.kt
 package libCase1.b
 
 enum class Regex{
@@ -56,7 +64,7 @@ fun case2() {
     <!DEBUG_INFO_CALL("fqName: libCase2.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libCase2.a
 fun Regex(pattern: String) {}
 
@@ -64,7 +72,7 @@ fun Regex(pattern: String) {}
 //    operator fun invoke(s: String) {}
 //}
 
-// FILE: Lib1.kt
+// FILE: Lib12.kt
 package libCase2.b
 
 enum class Regex{
@@ -91,7 +99,7 @@ fun case3() {
     <!DEBUG_INFO_CALL("fqName: libCase3.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libCase3.a
 fun Regex(pattern: String) {}
 
@@ -99,7 +107,7 @@ object Regex {
     operator fun invoke(s: String) {}
 }
 
-// FILE: Lib1.kt
+// FILE: Lib1_3.kt
 package libCase3.b
 
 class Regex(val s: String)
@@ -117,7 +125,7 @@ fun case4() {
     <!AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package libCase4.a
 fun Regex(pattern: String) {}
 
@@ -125,7 +133,7 @@ fun Regex(pattern: String) {}
 //    operator fun invoke(s: String) {}
 //}
 
-// FILE: Lib1.kt
+// FILE: Lib14.kt
 package libCase4.b
 
 class Regex(val s: String)
@@ -143,14 +151,14 @@ fun case(){
     <!AMBIGUITY!>A<!>()
 }
 
-// FILE: Lib.kt
+// FILE: Lib5.kt
 package libCase5.a
 fun A() {} //(1)
 //object A{
 //    operator fun invoke(){}
 //}
 
-// FILE: Lib.kt
+// FILE: Lib6.kt
 package libCase5.b
 class A()
 
@@ -169,13 +177,13 @@ fun case(){
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>A()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib7.kt
 package libCase6.a
 fun A() : String = " " //(1)
 object A{
     //operator fun invoke(){}
 }
-// FILE: Lib.kt
+// FILE: Lib8.kt
 package libCase6.b
 class A()
 
@@ -193,11 +201,11 @@ fun case7(){
 object A{
     //operator fun invoke(){}
 }
-// FILE: Lib.kt
+// FILE: Lib9.kt
 package libCase7.a
 fun A() : String = " " //(1)
 
-// FILE: Lib.kt
+// FILE: Lib10.kt
 package libCase7.b
 class A()
 
@@ -217,14 +225,14 @@ fun case8(){
     <!AMBIGUITY!>A<!>()
 }
 
-// FILE: Lib.kt
+// FILE: Lib11.kt
 package libCase8.a
 fun A() : String = " " //(1)
 
-// FILE: Lib.kt
+// FILE: Lib1_2.kt
 package libCase8.b
 class A()
-// FILE: Lib.kt
+// FILE: Lib13.kt
 package libCase8.c
 object A{
     //operator fun invoke(){}
@@ -244,14 +252,14 @@ fun case9(){
     <!AMBIGUITY!>A<!>()
 }
 
-// FILE: Lib.kt
+// FILE: Lib1_4.kt
 package libCase9.a
 fun A() : String = " " //(1)
 
-// FILE: Lib.kt
+// FILE: Lib15.kt
 package libCase9.b
 class A()
-// FILE: Lib.kt
+// FILE: Lib16.kt
 package libCase9.c
 object A{
     //operator fun invoke(){}

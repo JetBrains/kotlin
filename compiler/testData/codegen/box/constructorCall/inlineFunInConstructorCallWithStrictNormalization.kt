@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
-// KOTLIN_CONFIGURATION_FLAGS: CONSTRUCTOR_CALL_NORMALIZATION_MODE=preserve-class-initialization
+// CONSTRUCTOR_CALL_NORMALIZATION_MODE: preserve-class-initialization
 // FILE: test.kt
 fun box(): String {
     Foo(

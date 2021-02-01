@@ -41,23 +41,25 @@ fun makeJsIncrementally(
     cachesDir: File,
     sourceRoots: Iterable<File>,
     args: K2JSCompilerArguments,
+    buildHistoryFile: File,
     messageCollector: MessageCollector = MessageCollector.NONE,
     reporter: ICReporter = EmptyICReporter,
-    scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER
+    scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
+    modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
+    providedChangedFiles: ChangedFiles? = null
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
-    val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
     withJsIC {
         val compiler = IncrementalJsCompilerRunner(
             cachesDir, buildReporter,
             buildHistoryFile = buildHistoryFile,
-            modulesApiHistory = EmptyModulesApiHistory,
+            modulesApiHistory = modulesApiHistory,
             scopeExpansion = scopeExpansion
         )
-        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
+        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles)
     }
 }
 

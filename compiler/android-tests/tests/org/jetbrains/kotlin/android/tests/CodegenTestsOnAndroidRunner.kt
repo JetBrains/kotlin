@@ -55,16 +55,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 runTestsOnEmulator(gradleRunner, TestSuite("D8")).apply {
                     rootSuite.addTest(this)
                 }
-
-                renameFlavorFolder()
-                enableD8(false)
-                runTestsOnEmulator(gradleRunner, TestSuite("DX")).apply {
-                    (0 until this.countTestCases()).forEach {
-                        val testCase = testAt(it) as TestCase
-                        testCase.name += "_DX"
-                    }
-                    rootSuite.addTest(this)
-                }
             } catch (e: RuntimeException) {
                 e.printStackTrace()
                 throw e
@@ -79,16 +69,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
 
         return rootSuite
-    }
-
-    private fun enableD8(enable: Boolean) {
-        val file = File(pathManager.androidTmpFolder, "gradle.properties")
-        val lines = file.readLines().map {
-            if (it.startsWith("android.enableD8=")) {
-                "android.enableD8=$enable"
-            } else it
-        }
-        file.writeText(lines.joinToString("\n"))
     }
 
     private fun processReport(suite: TestSuite, resultOutput: String) {

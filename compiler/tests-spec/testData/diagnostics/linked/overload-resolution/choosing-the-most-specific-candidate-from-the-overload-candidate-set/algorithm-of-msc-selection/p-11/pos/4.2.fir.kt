@@ -3,7 +3,7 @@
 // SKIP_TXT
 
 
-// FILE: TestCase1.kt
+// FILE: TestCase11.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 
@@ -28,7 +28,7 @@ private fun Short.boo(x: Short, a: Any = ""): Unit = TODO() //(1.3)
 private fun Byte.boo(x: Byte, a: Any = "", b: Any = 1): Unit = TODO() //(1.4)
 private fun Byte.boo(x: Byte, a: Any = ""): Unit = TODO() //(1.4)
 
-// FILE: TestCase1.kt
+// FILE: TestCase12.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 import testPackCase2.Case2.Companion.boo
@@ -76,7 +76,7 @@ fun case2(case: Case2) {
     case.run { 1.boo(1, 1) }
 }
 
-// FILE: TestCase1.kt
+// FILE: TestCase13.kt
 // TESTCASE NUMBER: 3
 package testPackCase3
 import testPackCase3.Case3.Companion.get

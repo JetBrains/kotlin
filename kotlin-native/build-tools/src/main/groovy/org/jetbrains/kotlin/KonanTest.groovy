@@ -28,7 +28,7 @@ import java.util.function.UnaryOperator
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 
-class RunExternalTestGroup extends JavaExec {
+class RunExternalTestGroup extends JavaExec implements CompilerRunner {
     def platformManager = project.rootProject.platformManager
     def target = platformManager.targetManager(project.testTarget).target
     def dist = UtilsKt.getKotlinNativeDist(project)
@@ -74,7 +74,8 @@ class RunExternalTestGroup extends JavaExec {
         // configuration part at runCompiler.
     }
 
-    protected void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
+    @Override
+    void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
         def log = new ByteArrayOutputStream()
         try {
             classpath = project.fileTree("$dist.canonicalPath/konan/lib/") {
@@ -519,34 +520,15 @@ fun runTest() {
                     List<TestModule> orderedModules = DFS.INSTANCE.topologicalOrder(modules.values()) { module ->
                         module.dependencies.collect { modules[it] }.findAll { it != null }
                     }
-                    Set<String> libs = new HashSet<String>()
+                    def compiler = new MultiModuleCompilerInvocations(this, outputDirectory, executablePath(), modules, flags)
+
                     orderedModules.reverse().each { module ->
                         if (!module.isDefaultModule()) {
-                            def klibModulePath = "${executablePath()}.${module.name}.klib"
-                            libs.addAll(module.dependencies)
-                            def klibs = libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList()
-                            def friends = module.friends ?
-                                    module.friends.collectMany {
-                                        ["-friend-modules", "${executablePath()}.${it}.klib"]
-                                    }.toList() : []
-                            runCompiler(compileList.findAll { it.module == module }.collect { it.path },
-                                    klibModulePath, flags + ["-p", "library"] + klibs + friends)
+                            compiler.produceLibrary(module)
                         }
                     }
 
-                    def compileMain = compileList.findAll {
-                        it.module.isDefaultModule() || it.module == TestModule.support
-                    }
-                    compileMain.forEach { f ->
-                        libs.addAll(f.module.dependencies)
-                    }
-                    def friends = compileMain.collectMany {it.module.friends }.toSet()
-                    if (!compileMain.empty) {
-                        runCompiler(compileMain.collect { it.path }, executablePath(), flags +
-                                libs.collectMany { ["-l", "${executablePath()}.${it}.klib"] }.toList() +
-                                friends.collectMany {["-friend-modules", "${executablePath()}.${it}.klib"]}.toList()
-                        )
-                    }
+                    compiler.produceProgram(compileList)
                 }
             } catch (Exception ex) {
                 project.logger.quiet("ERROR: Compilation failed for test suite: $name with exception", ex)

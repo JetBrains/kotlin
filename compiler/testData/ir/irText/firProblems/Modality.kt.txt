@@ -1,0 +1,72 @@
+interface Substitutable<out T : DeclarationDescriptorNonRoot> {
+
+}
+
+abstract class ResolutionPart {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun KotlinResolutionCandidate.process(): String
+
+}
+
+class KotlinResolutionCandidate {
+  constructor(resolvedCall: Atom) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val resolvedCall: Atom
+    field = resolvedCall
+    get
+
+}
+
+class Atom {
+  constructor(candidateDescriptor: CallableDescriptor) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val candidateDescriptor: CallableDescriptor
+    field = candidateDescriptor
+    get
+
+}
+
+object Owner : ResolutionPart {
+  private constructor() /* primary */ {
+    super/*ResolutionPart*/()
+    /* <init>() */
+
+  }
+
+  override fun KotlinResolutionCandidate.process(): String {
+    val candidateDescriptor: CallableDescriptor = <this>.<get-resolvedCall>().<get-candidateDescriptor>()
+    when {
+      when {
+        candidateDescriptor is MemberDescriptor -> EQEQ(arg0 = candidateDescriptor /*as MemberDescriptor */.getModality(), arg1 = null).not()
+        else -> false
+      } -> { // BLOCK
+        return "OK"
+      }
+    }
+    return "FAIL"
+  }
+
+}
+
+object Final : Modality {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

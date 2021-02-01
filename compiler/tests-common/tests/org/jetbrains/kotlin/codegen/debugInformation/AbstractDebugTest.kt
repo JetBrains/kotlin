@@ -110,6 +110,10 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                 ?: File(javaBin, "java").also { assert(it.exists()) }
         }
 
+        val Location.isInDebugTestInfrastructure: Boolean
+            get() {
+                return this.sourcePath().startsWith("helpers" + File.separatorChar)
+            }
     }
 
     @Before

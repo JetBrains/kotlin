@@ -5,6 +5,11 @@ plugins {
 
 dependencies {
     testCompile(projectTests(":compiler"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testRuntimeOnly(platform("org.junit:junit-bom:5.7.0"))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter")
+
     testCompileOnly(intellijDep()) {
         includeJars("groovy", "groovy-xml", rootProject = rootProject)
     }

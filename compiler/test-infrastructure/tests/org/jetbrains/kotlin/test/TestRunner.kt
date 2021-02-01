@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.*
 import java.io.IOException
 
 class TestRunner(private val testConfiguration: TestConfiguration) {
-    private val failedAssertions = mutableListOf<AssertionError>()
+    private val failedAssertions = mutableListOf<Throwable>()
 
     fun runTest(@TestDataFile testDataFileName: String) {
         try {
@@ -60,8 +60,14 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         } catch (e: Throwable) {
             failedException = e
         }
+
         for (handler in testConfiguration.getAllHandlers()) {
-            withAssertionCatching { handler.processAfterAllModules(failedAssertions.isNotEmpty()) }
+            withAssertionCatching {
+                val thereWasAnException = failedException != null || failedAssertions.isNotEmpty()
+                if (handler.shouldRun(thereWasAnException)) {
+                    handler.processAfterAllModules(thereWasAnException)
+                }
+            }
         }
         if (testConfiguration.metaInfoHandlerEnabled) {
             withAssertionCatching(insertExceptionInStart = true) {
@@ -79,9 +85,10 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         val filteredFailedAssertions = testConfiguration.afterAnalysisCheckers
-            .fold<AfterAnalysisChecker, List<AssertionError>>(failedAssertions) { assertions, checker ->
+            .fold<AfterAnalysisChecker, List<Throwable>>(failedAssertions) { assertions, checker ->
                 checker.suppressIfNeeded(assertions)
             }
+            .map { if (it is ExceptionFromTestError) it.cause else it }
 
         services.assertions.assertAll(filteredFailedAssertions)
     }
@@ -102,7 +109,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         val frontendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(frontendKind)
         for (frontendHandler in frontendHandlers) {
             withAssertionCatching {
-                frontendHandler.hackyProcess(module, frontendArtifacts)
+                if (frontendHandler.shouldRun(failedAssertions.isNotEmpty())) {
+                    frontendHandler.hackyProcess(module, frontendArtifacts)
+                }
             }
         }
 
@@ -114,7 +123,11 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
 
         val backendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(backendKind)
         for (backendHandler in backendHandlers) {
-            withAssertionCatching { backendHandler.hackyProcess(module, backendInputInfo) }
+            withAssertionCatching {
+                if (backendHandler.shouldRun(failedAssertions.isNotEmpty())) {
+                    backendHandler.hackyProcess(module, backendInputInfo)
+                }
+            }
         }
 
         for (artifactKind in moduleStructure.getTargetArtifactKinds(module)) {
@@ -126,7 +139,11 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
 
             val binaryHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(artifactKind)
             for (binaryHandler in binaryHandlers) {
-                withAssertionCatching { binaryHandler.hackyProcess(module, binaryArtifact) }
+                withAssertionCatching {
+                    if (binaryHandler.shouldRun(failedAssertions.isNotEmpty())) {
+                        binaryHandler.hackyProcess(module, binaryArtifact)
+                    }
+                }
             }
         }
     }
@@ -134,13 +151,17 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     private inline fun withAssertionCatching(insertExceptionInStart: Boolean = false, block: () -> Unit) {
         try {
             block()
-        } catch (e: AssertionError) {
+        } catch (e: Throwable) {
             if (insertExceptionInStart) {
                 failedAssertions.add(0, e)
             } else {
                 failedAssertions += e
             }
         }
+    }
+
+    private fun AnalysisHandler<*>.shouldRun(thereWasAnException: Boolean): Boolean {
+        return !(doNotRunIfThereWerePreviousFailures && thereWasAnException)
     }
 }
 

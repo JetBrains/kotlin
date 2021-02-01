@@ -2141,9 +2141,21 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("JCTree.kt")
+        public void testJCTree() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/JCTree.kt");
+        }
+
+        @Test
         @TestMetadata("kt43342.kt")
         public void testKt43342() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt43342.kt");
+        }
+
+        @Test
+        @TestMetadata("Modality.kt")
+        public void testModality() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/Modality.kt");
         }
 
         @Test

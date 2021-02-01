@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -32,16 +33,19 @@ private fun IrConstructorCall.isAnnotation(name: FqName): Boolean {
 
 class ExportedDefaultParameterStub(val context: JsIrBackendContext) : DeclarationTransformer {
 
-    private fun IrBuilderWithScope.createDefaultResolutionExpression(value: IrValueParameter): IrExpression? {
-        return value.defaultValue?.let { defaultValue ->
+    private fun IrBuilderWithScope.createDefaultResolutionExpression(
+        fromParameter: IrValueParameter,
+        toParameter: IrValueParameter,
+    ): IrExpression? {
+        return fromParameter.defaultValue?.let { defaultValue ->
             irIfThenElse(
-                value.type,
+                toParameter.type,
                 irEqeqeq(
-                    irGet(value),
+                    irGet(toParameter),
                     irCall(this@ExportedDefaultParameterStub.context.intrinsics.jsUndefined)
                 ),
                 defaultValue.expression,
-                irGet(value)
+                irGet(toParameter)
             )
         }
     }
@@ -52,7 +56,7 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
         val variables = mutableMapOf<IrValueParameter, IrValueDeclaration>()
 
         val defaultResolutionStatements = valueParameters.mapNotNull { valueParameter ->
-            irBuilder.createDefaultResolutionExpression(valueParameter)?.let { initializer ->
+            irBuilder.createDefaultResolutionExpression(valueParameter, valueParameter)?.let { initializer ->
                 JsIrBuilder.buildVar(
                     valueParameter.type,
                     this@introduceDefaultResolution,
@@ -83,7 +87,7 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
             return null
         }
 
-        if (!declaration.hasStableJsName()) {
+        if (!declaration.hasStableJsName(context)) {
             return null
         }
 
@@ -101,6 +105,8 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
             origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }
 
+        context.additionalExportedDeclarations.add(exportedDefaultStubFun)
+
         exportedDefaultStubFun.returnType = declaration.returnType.remapTypeParameters(declaration, exportedDefaultStubFun)
         exportedDefaultStubFun.parent = declaration.parent
         exportedDefaultStubFun.copyParameterDeclarationsFrom(declaration)
@@ -116,7 +122,8 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
                 extensionReceiver = exportedDefaultStubFun.extensionReceiverParameter?.let { irGet(it) }
 
                 declaration.valueParameters.forEachIndexed { index, irValueParameter ->
-                    val value = createDefaultResolutionExpression(irValueParameter) ?: irGet(irValueParameter)
+                    val exportedParameter = exportedDefaultStubFun.valueParameters[index]
+                    val value = createDefaultResolutionExpression(irValueParameter, exportedParameter) ?: irGet(exportedParameter)
                     putValueArgument(index, value)
                 }
             })

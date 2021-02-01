@@ -21,6 +21,7 @@ where advanced options include:
   -Xir-property-lazy-initialization
                              Perform lazy initialization for properties
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
+  -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info

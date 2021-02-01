@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.visitors.*
 
 internal val removeDeclarationsThatWouldBeInlined = makeIrModulePhase(

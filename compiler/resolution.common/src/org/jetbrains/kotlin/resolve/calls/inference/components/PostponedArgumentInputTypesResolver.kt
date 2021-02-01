@@ -24,6 +24,7 @@ class PostponedArgumentInputTypesResolver(
         val parametersFromDeclaration: List<KotlinTypeMarker?>?,
         val parametersFromDeclarationOfRelatedLambdas: Set<List<KotlinTypeMarker?>>?,
         val parametersFromConstraints: Set<List<TypeWithKind>>?,
+        val annotations: List<AnnotationMarker>?,
         val isExtensionFunction: Boolean,
         val isSuspend: Boolean,
         val isNullable: Boolean
@@ -57,7 +58,7 @@ class PostponedArgumentInputTypesResolver(
         argument: PostponedAtomWithRevisableExpectedType,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
         variableDependencyProvider: TypeVariableDependencyInformationProvider
-    ): ParameterTypesInfo? = with(resolutionTypeSystemContext) {
+    ): ParameterTypesInfo? {
         val expectedType = argument.expectedType ?: return null
         val variableWithConstraints = notFixedTypeVariables[expectedType.typeConstructor()] ?: return null
         val functionalTypesFromConstraints = findFunctionalTypesInConstraints(variableWithConstraints, variableDependencyProvider)
@@ -75,6 +76,8 @@ class PostponedArgumentInputTypesResolver(
                 TypeWithKind(it, typeWithKind.direction.opposite())
             }
         }
+
+        val annotations = functionalTypesFromConstraints?.map { it.type.getAnnotations() }?.flatten()?.distinct()
 
         // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
         val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas) =
@@ -96,6 +99,7 @@ class PostponedArgumentInputTypesResolver(
             parameterTypesFromDeclaration,
             parameterTypesFromDeclarationOfRelatedLambdas,
             parameterTypesFromConstraints,
+            annotations = annotations,
             isExtensionFunction = isThereExtensionFunctionAmongRelatedLambdas || extensionFunctionTypePresentInConstraints,
             isSuspend = isSuspend,
             isNullable = isNullable
@@ -344,7 +348,8 @@ class PostponedArgumentInputTypesResolver(
                 shouldDiscriminateExtensionFunctionAnnotation -> false
                 argument.isFunctionExpressionWithReceiver() -> true
                 else -> parameterTypesInfo.isExtensionFunction
-            }
+            },
+            annotations = parameterTypesInfo.annotations
         )
 
         getBuilder().addSubtypeConstraint(

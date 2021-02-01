@@ -22,7 +22,7 @@ internal class CandidateFactoriesAndCollectors(
 internal class TowerLevelHandler {
 
     // Try to avoid adding additional state here
-    private var processResult = ProcessorAction.NONE
+    private var processResult = ProcessResult.SCOPE_EMPTY
 
     fun handleLevel(
         collector: CandidateCollector,
@@ -31,8 +31,8 @@ internal class TowerLevelHandler {
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
         towerLevel: SessionBasedTowerLevel
-    ): ProcessorAction {
-        processResult = ProcessorAction.NONE
+    ): ProcessResult {
+        processResult = ProcessResult.SCOPE_EMPTY
         val processor =
             TowerScopeLevelProcessor(
                 info,

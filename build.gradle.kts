@@ -74,7 +74,7 @@ val kotlinVersion by extra(
         } ?: buildNumber
 )
 
-val kotlinLanguageVersion by extra("1.4")
+val kotlinLanguageVersion by extra("1.5")
 
 allprojects {
     group = "org.jetbrains.kotlin"
@@ -166,13 +166,12 @@ extra["versions.jansi"] = "1.16"
 extra["versions.jline"] = "3.3.1"
 extra["versions.junit"] = "4.12"
 extra["versions.javaslang"] = "2.0.6"
-extra["versions.ant"] = "1.8.2"
+extra["versions.ant"] = "1.10.7"
 extra["versions.android"] = "2.3.1"
 extra["versions.kotlinx-coroutines-core"] = "1.3.8"
 extra["versions.kotlinx-coroutines-jdk8"] = "1.3.8"
 extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
-extra["versions.ant-launcher"] = "1.8.0"
 extra["versions.robolectric"] = "4.0"
 extra["versions.org.springframework"] = "4.2.0.RELEASE"
 extra["versions.jflex"] = "1.7.0"
@@ -326,11 +325,13 @@ extra["tasksWithWarnings"] = listOf(
     ":kotlin-stdlib:compileTestKotlin",
     ":kotlin-stdlib-jdk7:compileTestKotlin",
     ":kotlin-stdlib-jdk8:compileTestKotlin",
+    ":compiler:cli:compileKotlin",
     ":compiler:frontend:compileKotlin",
     ":compiler:fir:tree:compileKotlin",
     ":compiler:fir:resolve:compileKotlin",
     ":compiler:fir:checkers:compileKotlin",
     ":compiler:fir:java:compileKotlin",
+    ":kotlin-scripting-compiler:compileKotlin",
     ":plugins:uast-kotlin:compileKotlin",
     ":plugins:uast-kotlin:compileTestKotlin",
     ":plugins:uast-kotlin-idea:compileKotlin"
@@ -351,8 +352,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-testng",
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-    ":kotlin-reflect",
-    ":kotlin-coroutines-experimental-compat"
+    ":kotlin-reflect"
 )
 
 val gradlePluginProjects = listOf(
@@ -977,8 +977,7 @@ tasks {
                 ":kotlin-reflect:publish",
                 ":kotlin-main-kts:publish",
                 ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish",
-                ":kotlin-coroutines-experimental-compat:publish"
+                ":kotlin-test:kotlin-test-js:publish"
             )
         }
     }

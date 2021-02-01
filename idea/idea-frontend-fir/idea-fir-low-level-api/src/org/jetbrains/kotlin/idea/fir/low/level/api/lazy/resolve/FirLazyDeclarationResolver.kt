@@ -186,6 +186,7 @@ internal class FirLazyDeclarationResolver(
             targetDeclaration,
             containerFirFile.session,
             scopeSession,
+            towerDataContextCollector,
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
             designation.iterator(),

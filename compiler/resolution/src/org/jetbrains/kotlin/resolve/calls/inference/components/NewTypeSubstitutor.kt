@@ -32,6 +32,19 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         return null
     }
 
+    private fun substituteTypeEnhancement(
+        enhancementType: KotlinType,
+        keepAnnotation: Boolean,
+        runCapturedChecks: Boolean
+    ) = when (val type = enhancementType.unwrap()) {
+        is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks) ?: enhancementType
+        is FlexibleType -> {
+            val substitutedLowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks) ?: type.lowerBound
+            val substitutedUpperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks) ?: type.upperBound
+            KotlinTypeFactory.flexibleType(substitutedLowerBound.lowerIfFlexible(), substitutedUpperBound.upperIfFlexible())
+        }
+    }
+
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
         when (type) {
             is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
@@ -40,6 +53,9 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
             } else {
                 val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
                 val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
+                val enhancement =
+                    if (type is TypeWithEnhancement) substituteTypeEnhancement(type, keepAnnotation, runCapturedChecks) else null
+
                 if (lowerBound == null && upperBound == null) {
                     null
                 } else {
@@ -47,7 +63,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
                     KotlinTypeFactory.flexibleType(
                         lowerBound?.lowerIfFlexible() ?: type.lowerBound,
                         upperBound?.upperIfFlexible() ?: type.upperBound
-                    ).inheritEnhancement(type)
+                    ).wrapEnhancement(enhancement)
                 }
             }
         }

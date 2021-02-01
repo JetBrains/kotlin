@@ -120,6 +120,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.throwTypeCastException.toKey()!! to ThrowException(Type.getObjectType("kotlin/TypeCastException")),
                 symbols.throwUnsupportedOperationException.toKey()!! to ThrowException(Type.getObjectType("java/lang/UnsupportedOperationException")),
                 symbols.throwKotlinNothingValueException.toKey()!! to ThrowKotlinNothingValueException,
+                symbols.jvmIndyIntrinsic.toKey()!! to JvmInvokeDynamic
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +

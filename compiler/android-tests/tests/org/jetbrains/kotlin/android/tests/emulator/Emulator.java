@@ -121,8 +121,11 @@ public class Emulator {
 
     public void startEmulator() {
         startServer();
-        System.out.println("Starting emulator...");
-        RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(getStartCommand(), null, false, "START: ", true));
+        System.out.println("Starting emulator with ANDROID_HOME/ANDROID_SDK_ROOT: " + pathManager.getAndroidSdkRoot());
+        GeneralCommandLine startCommand = getStartCommand();
+        startCommand.withEnvironment("ANDROID_SDK_ROOT", pathManager.getAndroidSdkRoot());
+        startCommand.withEnvironment("ANDROID_HOME", pathManager.getAndroidSdkRoot());
+        RunUtils.executeOnSeparateThread(new RunUtils.RunSettings(startCommand, null, false, "START: ", true));
         printLog();
     }
 
@@ -144,6 +147,7 @@ public class Emulator {
         bootCheckCommand.addParameter("shell");
         bootCheckCommand.addParameter("getprop");
         bootCheckCommand.addParameter("sys.boot_completed");
+
         int counter = 0;
         RunResult execute = RunUtils.execute(bootCheckCommand);
         while (counter < 20) {

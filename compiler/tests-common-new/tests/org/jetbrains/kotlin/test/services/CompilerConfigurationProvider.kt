@@ -104,7 +104,7 @@ class CompilerConfigurationProviderImpl(
         }
         configuration.languageVersionSettings = module.languageVersionSettings
 
-        configurators.forEach { it.configureCompilerConfiguration(configuration, module, project) }
+        configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module, project) }
 
         return configuration
     }

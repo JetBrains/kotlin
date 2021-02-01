@@ -33,7 +33,7 @@ fun case1(){
     <!DEBUG_INFO_CALL("fqName: lib.case1.b.C; typeCall: function")!>B()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package lib.case1.a
 
 fun C() : String = ""
@@ -42,7 +42,7 @@ object C {
     operator fun invoke() : Int = 1
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package lib.case1.b
 
 fun C() : String = ""
@@ -71,7 +71,7 @@ fun case2(){
     <!DEBUG_INFO_CALL("fqName: lib.case2.b.C.invoke; typeCall: variable&invoke")!>B()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package lib.case2.a
 
 //fun C() : String = ""
@@ -79,7 +79,7 @@ package lib.case2.a
 object C {
     operator fun invoke() : Int = 1
 }
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package lib.case2.b
 
 //fun C() : String = ""
@@ -114,7 +114,7 @@ fun case3(){
     B.<!DEBUG_INFO_CALL("fqName: lib.case3.b.C.invoke; typeCall: function")!>invoke()<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib5.kt
 package lib.case3.a
 
 //fun B() : String = ""
@@ -122,7 +122,7 @@ package lib.case3.a
 object C {
     /*operator*/ fun invoke() : Int = 1
 }
-// FILE: Lib.kt
+// FILE: Lib6.kt
 package lib.case3.b
 
 //fun C() : String = ""

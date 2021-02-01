@@ -14,7 +14,7 @@ class MyClass {
         var res = 0
         m = create()
         // See KT-7428
-        <!INAPPLICABLE_CANDIDATE!>for ((k, v) in m)
+        <!UNSAFE_CALL!>for ((k, v) in m)
             res += (k.length + v.length)<!>
         return res
     }
