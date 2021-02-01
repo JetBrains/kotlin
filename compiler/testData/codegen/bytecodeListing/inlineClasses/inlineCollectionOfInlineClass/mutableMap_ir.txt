@@ -40,16 +40,17 @@ public final class InlineMutableMap {
     public method clear(): void
     public static method clear-impl(p0: java.util.Map): void
     public static method constructor-impl(p0: java.util.Map): java.util.Map
-    public synthetic bridge method containsKey(p0: java.lang.Object): boolean
+    public bridge final method containsKey(p0: java.lang.Object): boolean
     public method containsKey-FSIWiWE(p0: int): boolean
     public static method containsKey-FSIWiWE(p0: java.util.Map, p1: int): boolean
-    public synthetic bridge method containsValue(p0: java.lang.Object): boolean
+    public bridge final method containsValue(p0: java.lang.Object): boolean
     public method containsValue-jbX5DO8(p0: double): boolean
     public static method containsValue-jbX5DO8(p0: java.util.Map, p1: double): boolean
     public synthetic bridge method entrySet(): java.util.Set
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.util.Map, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.util.Map, p1: java.util.Map): boolean
+    public bridge final method get(p0: java.lang.Object): IV
     public synthetic bridge method get(p0: java.lang.Object): java.lang.Object
     public method get-qgyy0Jc(p0: int): IV
     public static method get-qgyy0Jc(p0: java.util.Map, p1: int): IV
