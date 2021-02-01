@@ -11256,7 +11256,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("addParenthesisForSealedClass2.kt")
         public void testAddParenthesisForSealedClass2() throws Exception {
-            runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForSealedClass2.kt");
+            runTest("testData/quickfix/supertypeInitialization/addParenthesisForSealedClass2.kt");
         }
 
         @TestMetadata("baseConstructorError.kt")
