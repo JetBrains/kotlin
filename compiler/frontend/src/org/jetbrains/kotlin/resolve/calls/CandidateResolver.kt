@@ -53,7 +53,8 @@ class CandidateResolver(
     private val reflectionTypes: ReflectionTypes,
     private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
     private val smartCastManager: SmartCastManager,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val upperBoundChecker: UpperBoundChecker
 ) {
     fun <D : CallableDescriptor> performResolutionForCandidateCall(
         context: CallCandidateResolutionContext<D>,
@@ -596,7 +597,7 @@ class CandidateResolver(
             val typeArgument = typeArguments[i]
             val typeReference = ktTypeArguments[i].typeReference
             if (typeReference != null) {
-                DescriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor, trace)
+                upperBoundChecker.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor, trace)
             }
         }
     }

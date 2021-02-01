@@ -1,0 +1,15 @@
+package
+
+public fun test0(/*0*/ map: MapLike<kotlin.Int?, kotlin.Int>): kotlin.Unit
+public fun </*0*/ K> test11(/*0*/ map: MapLike<K, K>): kotlin.Unit
+public fun </*0*/ K> test12(/*0*/ map: MapLike<K?, K>): kotlin.Unit
+public fun </*0*/ K : kotlin.Any> test13(/*0*/ map: MapLike<K, K>): kotlin.Unit
+public fun </*0*/ K : kotlin.Any> test14(/*0*/ map: MapLike<K?, K>): kotlin.Unit
+public fun test2(/*0*/ map: MapLike<kotlin.Int, kotlin.Int>): kotlin.Unit
+
+public interface MapLike</*0*/ @org.jetbrains.annotations.NotNull K : kotlin.Any!, /*1*/ V : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun putAll(/*0*/ map: kotlin.collections.(Mutable)Map<K!, V!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

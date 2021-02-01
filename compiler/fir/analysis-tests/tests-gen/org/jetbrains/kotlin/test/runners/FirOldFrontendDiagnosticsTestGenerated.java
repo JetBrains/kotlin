@@ -34328,6 +34328,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("checkEnhancedUpperBounds.kt")
+            public void testCheckEnhancedUpperBounds() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/java/checkEnhancedUpperBounds.kt");
+            }
+
+            @Test
             @TestMetadata("concurrentHashMapContains.kt")
             public void testConcurrentHashMapContains() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/java/concurrentHashMapContains.kt");

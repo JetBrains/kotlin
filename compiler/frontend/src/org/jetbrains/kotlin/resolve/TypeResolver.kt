@@ -70,7 +70,8 @@ class TypeResolver(
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
     private val identifierChecker: IdentifierChecker,
     private val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val upperBoundChecker: UpperBoundChecker
 ) {
     private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
         languageVersionSettings.getFeatureSupport(LanguageFeature.NonParenthesizedAnnotationsOnFunctionalTypes) == LanguageFeature.State.ENABLED
@@ -524,7 +525,7 @@ class TypeResolver(
                 val typeReference = collectedArgumentAsTypeProjections.getOrNull(i)?.typeReference
 
                 if (typeReference != null) {
-                    DescriptorResolver.checkBounds(typeReference, argument, parameter, substitutor, c.trace)
+                    upperBoundChecker.checkBounds(typeReference, argument, parameter, substitutor, c.trace)
                 }
             }
         }
