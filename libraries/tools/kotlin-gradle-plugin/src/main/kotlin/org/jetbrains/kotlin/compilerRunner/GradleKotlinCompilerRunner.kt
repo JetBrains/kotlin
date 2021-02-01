@@ -257,6 +257,7 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
 
             return IncrementalModuleInfo(
                 projectRoot = gradle.rootProject.projectDir,
+                rootProjectBuildDir = gradle.rootProject.buildDir,
                 dirToModule = dirToModule,
                 nameToModules = nameToModules,
                 jarToClassListFile = jarToClassListFile,

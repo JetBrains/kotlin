@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental.multiproject
 
-import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.Either
 import java.io.File
@@ -23,7 +22,14 @@ object EmptyModulesApiHistory : ModulesApiHistory {
 }
 
 abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
-    protected val projectRootPath: Path = Paths.get(modulesInfo.projectRoot.absolutePath)
+    // All project build dirs should have this dir as their parent. For a default project setup, this will
+    // be the same as root project path. Some projects map output outside of the root project dir, typically
+    // with <some_dir>/<project_path>/build, and in that case, this path will be <some_dir>.
+    // This is using set in order to de-dup paths, and avoid duplicate checks when possible.
+    protected val possibleParentsToBuildDirs: Set<Path> = setOf(
+        Paths.get(modulesInfo.rootProjectBuildDir.parentFile.absolutePath),
+        Paths.get(modulesInfo.projectRoot.absolutePath)
+    )
     private val dirToHistoryFileCache = HashMap<File, Set<File>>()
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
@@ -76,7 +82,7 @@ abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModul
             when {
                 module != null ->
                     setOf(module.buildHistoryFile)
-                parent != null && projectRootPath.isParentOf(parent) -> {
+                parent != null && isInProjectBuildDir(parent) -> {
                     val parentHistory = getBuildHistoryForDir(parent)
                     when (parentHistory) {
                         is Either.Success<Set<File>> -> parentHistory.value
@@ -88,6 +94,10 @@ abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModul
             }
         }
         return Either.Success(history)
+    }
+
+    protected fun isInProjectBuildDir(file: File): Boolean {
+        return possibleParentsToBuildDirs.any { it.isParentOf(file) }
     }
 
     protected abstract fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>>
@@ -145,14 +155,14 @@ class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiH
 
     override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         // Module detection is expensive, so we don't don it for jars outside of project dir
-        if (!projectRootPath.isParentOf(jar)) return Either.Error("Non-project jar is modified $jar")
+        if (!isInProjectBuildDir(jar)) return Either.Error("Non-project jar is modified $jar")
 
         val jarPath = Paths.get(jar.absolutePath)
         return getHistoryForModuleNames(jarPath, getPossibleModuleNamesFromJar(jarPath))
     }
 
     override fun getBuildHistoryForDir(file: File): Either<Set<File>> {
-        if (!projectRootPath.isParentOf(file)) return Either.Error("Non-project file while looking for history $file")
+        if (!isInProjectBuildDir(file)) return Either.Error("Non-project file while looking for history $file")
 
         // check both meta-inf and META-INF directories
         val moduleNames =
