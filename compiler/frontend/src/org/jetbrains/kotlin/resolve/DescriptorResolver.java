@@ -1312,61 +1312,6 @@ public class DescriptorResolver {
         return propertyDescriptor;
     }
 
-    public static void checkBounds(@NotNull KtTypeReference typeReference, @NotNull KotlinType type, @NotNull BindingTrace trace) {
-        if (KotlinTypeKt.isError(type)) return;
-
-        KtTypeElement typeElement = typeReference.getTypeElement();
-        if (typeElement == null) return;
-
-        List<TypeParameterDescriptor> parameters = type.getConstructor().getParameters();
-        List<TypeProjection> arguments = type.getArguments();
-        assert parameters.size() == arguments.size();
-
-        List<KtTypeReference> ktTypeArguments = typeElement.getTypeArgumentsAsTypes();
-
-        // A type reference from Kotlin code can yield a flexible type only if it's `ft<T1, T2>`, whose bounds should not be checked
-        if (FlexibleTypesKt.isFlexible(type) && !DynamicTypesKt.isDynamic(type)) {
-            assert ktTypeArguments.size() == 2
-                    : "Flexible type cannot be denoted in Kotlin otherwise than as ft<T1, T2>, but was: "
-                      + PsiUtilsKt.getElementTextWithContext(typeReference);
-            // it's really ft<Foo, Bar>
-            FlexibleType flexibleType = FlexibleTypesKt.asFlexibleType(type);
-            checkBounds(ktTypeArguments.get(0), flexibleType.getLowerBound(), trace);
-            checkBounds(ktTypeArguments.get(1), flexibleType.getUpperBound(), trace);
-            return;
-        }
-
-        // If the numbers of type arguments do not match, the error has been already reported in TypeResolver
-        if (ktTypeArguments.size() != arguments.size()) return;
-
-        TypeSubstitutor substitutor = TypeSubstitutor.create(type);
-        for (int i = 0; i < ktTypeArguments.size(); i++) {
-            KtTypeReference ktTypeArgument = ktTypeArguments.get(i);
-            if (ktTypeArgument == null) continue;
-
-            KotlinType typeArgument = arguments.get(i).getType();
-            checkBounds(ktTypeArgument, typeArgument, trace);
-
-            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-            checkBounds(ktTypeArgument, typeArgument, typeParameterDescriptor, substitutor, trace);
-        }
-    }
-
-    public static void checkBounds(
-            @NotNull KtTypeReference jetTypeArgument,
-            @NotNull KotlinType typeArgument,
-            @NotNull TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull TypeSubstitutor substitutor,
-            @NotNull BindingTrace trace
-    ) {
-        for (KotlinType bound : typeParameterDescriptor.getUpperBounds()) {
-            KotlinType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.report(UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument));
-            }
-        }
-    }
-
     public static boolean checkHasOuterClassInstance(
             @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
