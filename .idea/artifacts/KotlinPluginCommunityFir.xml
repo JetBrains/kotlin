@@ -197,9 +197,6 @@
         </element>
         <element id="library" level="module" name="intellij-markdown" module-name="intellij.markdown" />
         <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
-        <element id="archive" name="kotlin-coroutines-experimental-compat.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.30-dev-local-2/kotlin-coroutines-experimental-compat-1.4.30-dev-local-2.jar" path-in-jar="/" />
-        </element>
         <element id="library" level="project" name="completion-ranking-kotlin" />
         <element id="archive" name="kotlin.fir-low-level-api.jar">
           <element id="module-output" name="kotlin.fir.fir-low-level-api" />

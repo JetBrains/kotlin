@@ -198,9 +198,6 @@
         </element>
         <element id="library" level="module" name="intellij-markdown" module-name="intellij.markdown" />
         <element id="library" level="project" name="kotlinx-coroutines-jdk8" />
-        <element id="archive" name="kotlin-coroutines-experimental-compat.jar">
-          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.10-202-1/kotlin-coroutines-experimental-compat-1.4.10-202-1.jar" path-in-jar="/" />
-        </element>
         <element id="library" level="project" name="completion-ranking-kotlin" />
         <element id="archive" name="kotlin-parcelize.jar">
           <element id="module-output" name="kotlin.compiler-plugins.parcelize" />
