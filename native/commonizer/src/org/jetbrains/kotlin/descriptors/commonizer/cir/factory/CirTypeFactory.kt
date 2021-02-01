@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.types.*
 object CirTypeFactory {
     object StandardTypes {
         val ANY: CirClassType = createClassType(
-            classId = ANY_CID,
+            classId = ANY_CLASS_ID,
             outerType = null,
             visibility = DescriptorVisibilities.PUBLIC,
             arguments = emptyList(),
