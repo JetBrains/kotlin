@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,11 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 
@@ -34,6 +33,12 @@ abstract class AbstractDiagnosticCollector(
     override val scopeSession: ScopeSession = ScopeSession(),
     returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
 ) : SessionHolder {
+    companion object {
+        private const val SUPPRESS_ALL_INFOS = "infos"
+        private const val SUPPRESS_ALL_WARNINGS = "warnings"
+        private const val SUPPRESS_ALL_ERRORS = "errors"
+    }
+
     fun collectDiagnostics(firFile: FirFile): List<FirDiagnostic<*>> {
         if (!componentsInitialized) {
             throw IllegalStateException("Components are not initialized")
@@ -74,13 +79,26 @@ abstract class AbstractDiagnosticCollector(
         }
 
         override fun visitElement(element: FirElement, data: Nothing?) {
+            if (element is FirAnnotationContainer) {
+                visitAnnotationContainer(element, data)
+                return
+            }
             element.runComponents()
             element.acceptChildren(this, null)
         }
 
+        override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
+            withSuppressedDiagnostics(annotationContainer) {
+                annotationContainer.runComponents()
+                annotationContainer.acceptChildren(this, null)
+            }
+        }
+
         private fun visitJump(loopJump: FirLoopJump) {
-            loopJump.runComponents()
-            loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this, null)
+            withSuppressedDiagnostics(loopJump) {
+                loopJump.runComponents()
+                loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this, null)
+            }
         }
 
         override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Nothing?) {
@@ -96,55 +114,74 @@ abstract class AbstractDiagnosticCollector(
                 this.type = type
             }
             visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, typeRef)
-
         }
 
         override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
-            visitClassAndChildren(regularClass, regularClass.defaultType())
+            withSuppressedDiagnostics(regularClass) {
+                visitClassAndChildren(regularClass, regularClass.defaultType())
+            }
         }
 
         override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
-            visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
+            withSuppressedDiagnostics(anonymousObject) {
+                visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
+            }
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
-            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
+            withSuppressedDiagnostics(simpleFunction) {
+                visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
+            }
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
-            visitWithDeclaration(constructor)
+            withSuppressedDiagnostics(constructor) {
+                visitWithDeclaration(constructor)
+            }
         }
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
-            val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            visitWithDeclarationAndReceiver(
-                anonymousFunction,
-                labelName,
-                anonymousFunction.receiverTypeRef
-            )
+            withSuppressedDiagnostics(anonymousFunction) {
+                val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
+                visitWithDeclarationAndReceiver(
+                    anonymousFunction,
+                    labelName,
+                    anonymousFunction.receiverTypeRef
+                )
+            }
         }
 
         override fun visitProperty(property: FirProperty, data: Nothing?) {
-            visitWithDeclaration(property)
+            withSuppressedDiagnostics(property) {
+                visitWithDeclaration(property)
+            }
         }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
             if (propertyAccessor !is FirDefaultPropertyAccessor) {
                 val property = context.containingDeclarations.last() as FirProperty
-                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+                withSuppressedDiagnostics(propertyAccessor) {
+                    visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+                }
             }
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
-            visitWithDeclaration(valueParameter)
+            withSuppressedDiagnostics(valueParameter) {
+                visitWithDeclaration(valueParameter)
+            }
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
-            visitWithDeclaration(enumEntry)
+            withSuppressedDiagnostics(enumEntry) {
+                visitWithDeclaration(enumEntry)
+            }
         }
 
         override fun visitFile(file: FirFile, data: Nothing?) {
-            visitWithDeclaration(file)
+            withSuppressedDiagnostics(file) {
+                visitWithDeclaration(file)
+            }
         }
 
         override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
@@ -152,12 +189,17 @@ abstract class AbstractDiagnosticCollector(
         }
 
         override fun visitBlock(block: FirBlock, data: Nothing?) {
-            visitExpression(block, data)
+            withSuppressedDiagnostics(block) {
+                visitExpression(block, data)
+            }
         }
 
         override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
             if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
-                super.visitTypeRef(typeRef, null)
+                withSuppressedDiagnostics(typeRef) {
+                    typeRef.runComponents()
+                    typeRef.acceptChildren(this, data)
+                }
             }
         }
 
@@ -231,6 +273,35 @@ abstract class AbstractDiagnosticCollector(
         } finally {
             context = existingContext
         }
+    }
+
+    private inline fun <R> withSuppressedDiagnostics(annotationContainer: FirAnnotationContainer, block: () -> R): R {
+        val existingContext = context
+        addSuppressedDiagnosticsToContext(annotationContainer)
+        return try {
+            block()
+        } finally {
+            context = existingContext
+        }
+    }
+
+    private fun addSuppressedDiagnosticsToContext(annotationContainer: FirAnnotationContainer) {
+        val annotations = annotationContainer.annotations.filter {
+            val type = it.annotationTypeRef.coneType as? ConeClassLikeType ?: return@filter false
+            type.lookupTag.classId == StandardClassIds.Suppress
+        }
+        if (annotations.isEmpty()) return
+        val arguments = annotations.flatMap { annotationCall ->
+            annotationCall.arguments.filterIsInstance<FirVarargArgumentsExpression>().flatMap { varargArgument ->
+                varargArgument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String? }
+            }
+        }
+        context = context.addSuppressedDiagnostics(
+            arguments,
+            allInfosSuppressed = SUPPRESS_ALL_INFOS in arguments,
+            allWarningsSuppressed = SUPPRESS_ALL_WARNINGS in arguments,
+            allErrorsSuppressed = SUPPRESS_ALL_ERRORS in arguments
+        )
     }
 
     private inline fun <R> withDiagnosticsAction(action: DiagnosticCollectorDeclarationAction, block: () -> R): R {

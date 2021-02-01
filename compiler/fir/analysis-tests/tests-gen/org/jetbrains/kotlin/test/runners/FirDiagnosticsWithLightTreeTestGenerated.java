@@ -3521,6 +3521,41 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
+        @TestDataPath("$PROJECT_ROOT")
+        @Execution(ExecutionMode.SAME_THREAD)
+        public class Suppress extends AbstractFirDiagnosticsWithLightTreeTest {
+            @Test
+            public void testAllFilesPresentInSuppress() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("allWarnings.kt")
+            public void testAllWarnings() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/allWarnings.kt");
+            }
+
+            @Test
+            @TestMetadata("multipleWarnings.kt")
+            public void testMultipleWarnings() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/multipleWarnings.kt");
+            }
+
+            @Test
+            @TestMetadata("singleError.kt")
+            public void testSingleError() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleError.kt");
+            }
+
+            @Test
+            @TestMetadata("singleWarning.kt")
+            public void testSingleWarning() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleWarning.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/types")
         @TestDataPath("$PROJECT_ROOT")
         @Execution(ExecutionMode.SAME_THREAD)

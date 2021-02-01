@@ -3103,6 +3103,39 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Suppress extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuppress() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("allWarnings.kt")
+        public void testAllWarnings() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/allWarnings.kt");
+        }
+
+        @TestMetadata("multipleWarnings.kt")
+        public void testMultipleWarnings() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/multipleWarnings.kt");
+        }
+
+        @TestMetadata("singleError.kt")
+        public void testSingleError() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleError.kt");
+        }
+
+        @TestMetadata("singleWarning.kt")
+        public void testSingleWarning() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleWarning.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/types")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -51,11 +51,3 @@ inline fun <reified T : FirSourceElement, P : PsiElement, A : Any, B : Any, C : 
     source?.let { report(factory.on(it, a, b, c), context) }
 }
 
-class SimpleDiagnosticReporter : DiagnosticReporter() {
-    val diagnostics: MutableList<FirDiagnostic<*>> = mutableListOf()
-
-    override fun report(diagnostic: FirDiagnostic<*>?, context: CheckerContext) {
-        if (diagnostic == null) return
-        diagnostics += diagnostic
-    }
-}
