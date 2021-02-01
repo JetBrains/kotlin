@@ -536,6 +536,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jsr305Warn.args");
         }
 
+        @TestMetadata("jvm6Target.args")
+        public void testJvm6Target() throws Exception {
+            runTest("compiler/testData/cli/jvm/jvm6Target.args");
+        }
+
         @TestMetadata("jvm8Target.args")
         public void testJvm8Target() throws Exception {
             runTest("compiler/testData/cli/jvm/jvm8Target.args");

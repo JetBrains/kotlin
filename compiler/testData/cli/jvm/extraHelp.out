@@ -114,6 +114,8 @@ where advanced options include:
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'
+  -Xsuppress-deprecated-jvm-target-warning
+                             Suppress deprecation warning about deprecated JVM target versions
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with -no-stdlib)
   -Xuse-ir                   Use the IR backend

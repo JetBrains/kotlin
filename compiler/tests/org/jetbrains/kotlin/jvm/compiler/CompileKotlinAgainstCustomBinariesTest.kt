@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.inline.remove
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.valid
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.ByteArrayInputStream
@@ -609,11 +611,13 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testInlineAnonymousObjectWithDifferentTarget() {
-        val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "1.6"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8"))
-        val classLoader =
-            URLClassLoader(arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
-        classLoader.loadClass("SourceKt").getDeclaredMethod("main").invoke(null)
+        val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", JvmTarget.JVM_1_8.description))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", JvmTarget.JVM_9.description))
+        for (name in listOf("SourceKt", "SourceKt\$main\$\$inlined\$foo$1")) {
+            val node = ClassNode()
+            ClassReader(File(tmpdir, "$name.class").readBytes()).accept(node, 0)
+            assertEquals(JvmTarget.JVM_9.majorVersion, node.version)
+        }
     }
 
     fun testFirAgainstFir() {
