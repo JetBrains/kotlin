@@ -121,11 +121,6 @@ enum class KotlinTestFramework(
         dependencyNames = listOf("test-junit5"),
         additionalDependencies = listOf(
             ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "org.junit.jupiter", "junit-jupiter-api"),
-                version = Versions.JUNIT5,
-                dependencyType = DependencyType.TEST,
-            ),
-            ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "org.junit.jupiter", "junit-jupiter-engine"),
                 version = Versions.JUNIT5,
                 dependencyType = DependencyType.TEST,
