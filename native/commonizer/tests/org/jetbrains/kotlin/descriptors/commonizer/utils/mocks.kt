@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.*
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
@@ -173,5 +174,25 @@ internal class MockModulesProvider private constructor(
         fun create(module: ModuleDescriptor) = MockModulesProvider(
             mapOf(module.name.strip() to module)
         )
+    }
+}
+
+internal class MockResultsConsumer : ResultsConsumer {
+    private val _modulesByTargets = LinkedHashMap<CommonizerTarget, Collection<ModuleResult>>() // use linked hash map to preserve order
+    val modulesByTargets: Map<CommonizerTarget, Collection<ModuleResult>>
+        get() = _modulesByTargets
+
+    val sharedTarget: SharedTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedTarget>().single() }
+    val leafTargets: Set<LeafTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafTarget>().toSet() }
+
+    lateinit var status: ResultsConsumer.Status
+
+    override fun consumeResults(target: CommonizerTarget, moduleResults: Collection<ModuleResult>) {
+        val oldValue = _modulesByTargets.put(target, moduleResults)
+        check(oldValue == null)
+    }
+
+    override fun successfullyFinished(status: ResultsConsumer.Status) {
+        this.status = status
     }
 }

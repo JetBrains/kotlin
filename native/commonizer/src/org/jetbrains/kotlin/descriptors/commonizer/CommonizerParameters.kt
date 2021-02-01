@@ -13,7 +13,6 @@ class CommonizerParameters(
 ) {
     // use linked hash map to preserve order
     private val _targetProviders = LinkedHashMap<LeafTarget, TargetProvider>()
-
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
     val sharedTarget: SharedTarget get() = SharedTarget(_targetProviders.keys)
 
@@ -30,6 +29,14 @@ class CommonizerParameters(
 
         return this
     }
+
+    private var _resultsConsumer: ResultsConsumer? = null
+    var resultsConsumer: ResultsConsumer
+        get() = _resultsConsumer ?: error("Results consumer has not been set")
+        set(value) {
+            check(_resultsConsumer == null)
+            _resultsConsumer = value
+        }
 
     fun hasAnythingToCommonize(): Boolean = _targetProviders.size >= 2
 }
