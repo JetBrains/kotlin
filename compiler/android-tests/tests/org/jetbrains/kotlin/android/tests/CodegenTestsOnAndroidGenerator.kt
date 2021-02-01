@@ -275,7 +275,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
                 // TODO: Support jvm assertions
-                if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
                 if (fullFileText.contains("// ASSERTIONS_MODE: jvm")) continue
                 val targets = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fullFileText, "// JVM_TARGET:")
 
