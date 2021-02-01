@@ -1,3 +1,2 @@
 warning: JVM target 1.6 is deprecated and will be removed in a future release. Please migrate to JVM target 1.8 or above
-error: '-Xjvm-default=all' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'
-COMPILATION_ERROR
+OK

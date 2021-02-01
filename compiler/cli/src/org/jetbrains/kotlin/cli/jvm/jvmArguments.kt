@@ -29,6 +29,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val jvmTarget = JvmTarget.fromString(arguments.jvmTarget!!)
         if (jvmTarget != null) {
             put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+            if (jvmTarget == JvmTarget.JVM_1_6 && !arguments.suppressDeprecatedJvmTargetWarning) {
+                messageCollector.report(
+                    STRONG_WARNING,
+                    "JVM target 1.6 is deprecated and will be removed in a future release. Please migrate to JVM target 1.8 or above"
+                )
+            }
         } else {
             messageCollector.report(
                 ERROR, "Unknown JVM target version: ${arguments.jvmTarget}\n" +
