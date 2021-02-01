@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.DFS
 
 internal fun TypeBridge.makeNothing() = when (this) {
     is ReferenceBridge, is BlockPointerBridge -> kNullInt8Ptr
@@ -235,7 +236,7 @@ internal class ObjCExportCodeGenerator(
         val allReverseAdapters = createReverseAdapters(types)
 
         return types.map {
-            val reverseAdapters = allReverseAdapters.getValue(it)
+            val reverseAdapters = allReverseAdapters.getValue(it).adapters
             when (it) {
                 objCClassForAny -> {
                     createTypeAdapter(it, superClass = null, reverseAdapters)
@@ -1355,14 +1356,51 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
 private fun ObjCExportCodeGenerator.createReverseAdapters(
         types: List<ObjCTypeForKotlinType>
-): Map<ObjCTypeForKotlinType, List<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>> {
-    return types.associateWith { createReverseAdapters(it) }
+): Map<ObjCTypeForKotlinType, ReverseAdapters> {
+    val irClassSymbolToType = types.associateBy { it.irClassSymbol }
+
+    val result = mutableMapOf<ObjCTypeForKotlinType, ReverseAdapters>()
+
+    fun getOrCreateFor(type: ObjCTypeForKotlinType): ReverseAdapters = result.getOrPut(type) {
+        // Each type also inherits reverse adapters from super types.
+        // This is handled in runtime when building TypeInfo for Swift or Obj-C type
+        // subclassing Kotlin classes or interfaces. See [createTypeInfo] in ObjCExport.mm.
+        val allSuperClasses = DFS.dfs(
+                type.irClassSymbol.owner.superClasses,
+                { it.owner.superClasses },
+                object : DFS.NodeHandlerWithListResult<IrClassSymbol, IrClassSymbol>() {
+                    override fun afterChildren(current: IrClassSymbol) {
+                        this.result += current
+                    }
+                }
+        )
+
+        val inheritsAdaptersFrom = allSuperClasses.mapNotNull { irClassSymbolToType[it] }
+
+        val inheritedAdapters = inheritsAdaptersFrom.map { getOrCreateFor(it) }
+
+        createReverseAdapters(type, inheritedAdapters)
+    }
+
+    types.forEach { getOrCreateFor(it) }
+
+    return result
 }
 
+private class ReverseAdapters(
+        val adapters: List<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>,
+        val coveredMethods: Set<IrSimpleFunction>
+)
+
 private fun ObjCExportCodeGenerator.createReverseAdapters(
-        type: ObjCTypeForKotlinType
-): List<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter> {
+        type: ObjCTypeForKotlinType,
+        inheritedAdapters: List<ReverseAdapters>
+): ReverseAdapters {
     val result = mutableListOf<ObjCExportCodeGenerator.KotlinToObjCMethodAdapter>()
+    val coveredMethods = mutableSetOf<IrSimpleFunction>()
+
+    val methodsCoveredByInheritedAdapters = inheritedAdapters.flatMapTo(mutableSetOf()) { it.coveredMethods }
+
     val allBaseMethodsByIr = type.kotlinMethods.map { it.baseMethod }.associateBy { it.symbol.owner }
 
     for (method in type.irClassSymbol.owner.simpleFunctions()) {
@@ -1381,7 +1419,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
             val allOverriddenMethods = method.allOverriddenFunctions
 
             val (inherited, uninherited) = allOverriddenMethods.partition {
-                it != method && mapper.shouldBeExposed(it.descriptor)
+                it in methodsCoveredByInheritedAdapters
             }
 
             inherited.forEach {
@@ -1401,6 +1439,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
                     presentMethodTableBridges += functionName
                     presentItableBridges += itablePlace
                     result += createReverseAdapter(it, baseMethod, functionName, vtableIndex, itablePlace)
+                    coveredMethods += it
                 }
             }
 
@@ -1412,7 +1451,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
         }
     }
 
-    return result
+    return ReverseAdapters(result, coveredMethods)
 }
 
 private fun ObjCExportCodeGenerator.nonOverridableAdapter(
