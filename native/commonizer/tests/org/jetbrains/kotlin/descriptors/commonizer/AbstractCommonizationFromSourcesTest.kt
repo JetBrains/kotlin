@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.descriptors.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassCollector
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.FunctionCollector
@@ -72,25 +74,26 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val sourceModuleRoots: SourceModuleRoots = SourceModuleRoots.load(getTestDataDir())
         val analyzedModules: AnalyzedModules = AnalyzedModules.create(sourceModuleRoots, testRootDisposable)
 
-        val result: CommonizerResult = runCommonization(analyzedModules.toCommonizationParameters())
-        assertCommonizationPerformed(result)
+        val results = MockResultsConsumer()
+        runCommonization(analyzedModules.toCommonizerParameters(results))
+        assertEquals(Status.DONE, results.status)
 
         val sharedTarget: SharedTarget = analyzedModules.sharedTarget
-        assertEquals(sharedTarget, result.sharedTarget)
+        assertEquals(sharedTarget, results.sharedTarget)
 
         val sharedModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(sharedTarget)
         val sharedModuleByCommonizer: SerializedMetadata =
-            (result.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata
+            (results.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata
 
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, sharedTarget)
 
         val leafTargets: Set<LeafTarget> = analyzedModules.leafTargets
-        assertEquals(leafTargets, result.leafTargets)
+        assertEquals(leafTargets, results.leafTargets)
 
         for (leafTarget in leafTargets) {
             val leafTargetModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(leafTarget)
             val leafTargetModuleByCommonizer: SerializedMetadata =
-                (result.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).metadata
+                (results.modulesByTargets.getValue(leafTarget).single() as ModuleResult.Commonized).metadata
 
             assertModulesAreEqual(leafTargetModuleAsExpected, leafTargetModuleByCommonizer, leafTarget)
         }
@@ -203,25 +206,23 @@ private class AnalyzedModules(
         check(allTargets.containsAll(dependeeModules.keys))
     }
 
-    fun toCommonizationParameters(): CommonizerParameters {
-        val parameters = CommonizerParameters()
+    fun toCommonizerParameters(resultsConsumer: ResultsConsumer) =
+        CommonizerParameters().also { parameters ->
+            parameters.resultsConsumer = resultsConsumer
+            parameters.dependeeModulesProvider = dependeeModules[sharedTarget]?.let(MockModulesProvider::create)
 
-        leafTargets.forEach { leafTarget ->
-            val originalModule = originalModules.getValue(leafTarget)
+            leafTargets.forEach { leafTarget ->
+                val originalModule = originalModules.getValue(leafTarget)
 
-            parameters.addTarget(
-                TargetProvider(
-                    target = leafTarget,
-                    modulesProvider = MockModulesProvider.create(originalModule),
-                    dependeeModulesProvider = dependeeModules[leafTarget]?.let(MockModulesProvider::create)
+                parameters.addTarget(
+                    TargetProvider(
+                        target = leafTarget,
+                        modulesProvider = MockModulesProvider.create(originalModule),
+                        dependeeModulesProvider = dependeeModules[leafTarget]?.let(MockModulesProvider::create)
+                    )
                 )
-            )
+            }
         }
-
-        parameters.dependeeModulesProvider = dependeeModules[sharedTarget]?.let(MockModulesProvider::create)
-
-        return parameters
-    }
 
     companion object {
         fun create(
