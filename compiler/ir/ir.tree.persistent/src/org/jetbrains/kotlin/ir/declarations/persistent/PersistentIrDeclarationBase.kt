@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
     var removedOn: Int
@@ -120,12 +122,21 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
         return this as T
     }
+
+    // Sets the state from the carrier. Used in deserialization.
+    fun setState(t: T)
 }
 
 interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElementBase<BodyCarrier>, BodyCarrier {
     var initializer: (B.() -> Unit)?
 
     override var containerField: IrDeclaration?
+
+    override var containerFieldSymbol: IrSymbol?
+        get() = (containerField as? IrSymbolOwner)?.symbol
+        set(s) {
+            containerField = s?.owner?.cast()
+        }
 
     var container: IrDeclaration
         get() = getCarrier().containerField!!

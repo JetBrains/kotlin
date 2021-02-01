@@ -80,15 +80,7 @@ internal class PersistentIrField(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     override var typeField: IrType = type
 
@@ -99,4 +91,14 @@ internal class PersistentIrField(
                 setCarrier().typeField = v
             }
         }
+
+    override fun setState(t: FieldCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        typeField = t.typeField
+        initializerField = t.initializerField
+        correspondingPropertySymbolField = t.correspondingPropertySymbolField
+    }
 }

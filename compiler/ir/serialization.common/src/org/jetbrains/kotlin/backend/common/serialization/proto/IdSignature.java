@@ -97,6 +97,19 @@ public final class IdSignature extends
             idsig_ = input.readInt32();
             break;
           }
+          case 42: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.Builder subBuilder = null;
+            if (idsigCase_ == 5) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_).toBuilder();
+            }
+            idsig_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_);
+              idsig_ = subBuilder.buildPartial();
+            }
+            idsigCase_ = 5;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -139,6 +152,7 @@ public final class IdSignature extends
     PRIVATE_SIG(2),
     ACCESSOR_SIG(3),
     SCOPED_LOCAL_SIG(4),
+    IC_SIG(5),
     IDSIG_NOT_SET(0);
     private int value = 0;
     private IdsigCase(int value) {
@@ -150,6 +164,7 @@ public final class IdSignature extends
         case 2: return PRIVATE_SIG;
         case 3: return ACCESSOR_SIG;
         case 4: return SCOPED_LOCAL_SIG;
+        case 5: return IC_SIG;
         case 0: return IDSIG_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -234,6 +249,23 @@ public final class IdSignature extends
     return 0;
   }
 
+  public static final int IC_SIG_FIELD_NUMBER = 5;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+   */
+  public boolean hasIcSig() {
+    return idsigCase_ == 5;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature getIcSig() {
+    if (idsigCase_ == 5) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.getDefaultInstance();
+  }
+
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -250,6 +282,12 @@ public final class IdSignature extends
     }
     if (hasAccessorSig()) {
       if (!getAccessorSig().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    if (hasIcSig()) {
+      if (!getIcSig().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -273,6 +311,9 @@ public final class IdSignature extends
     if (idsigCase_ == 4) {
       output.writeInt32(
           4, (int)((java.lang.Integer) idsig_));
+    }
+    if (idsigCase_ == 5) {
+      output.writeMessage(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -299,6 +340,10 @@ public final class IdSignature extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(
             4, (int)((java.lang.Integer) idsig_));
+    }
+    if (idsigCase_ == 5) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -431,6 +476,9 @@ public final class IdSignature extends
       if (idsigCase_ == 4) {
         result.idsig_ = idsig_;
       }
+      if (idsigCase_ == 5) {
+        result.idsig_ = idsig_;
+      }
       result.bitField0_ = to_bitField0_;
       result.idsigCase_ = idsigCase_;
       return result;
@@ -455,6 +503,10 @@ public final class IdSignature extends
           setScopedLocalSig(other.getScopedLocalSig());
           break;
         }
+        case IC_SIG: {
+          mergeIcSig(other.getIcSig());
+          break;
+        }
         case IDSIG_NOT_SET: {
           break;
         }
@@ -473,6 +525,12 @@ public final class IdSignature extends
       }
       if (hasAccessorSig()) {
         if (!getAccessorSig().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasIcSig()) {
+        if (!getIcSig().isInitialized()) {
           
           return false;
         }
@@ -734,6 +792,70 @@ public final class IdSignature extends
      */
     public Builder clearScopedLocalSig() {
       if (idsigCase_ == 4) {
+        idsigCase_ = 0;
+        idsig_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+     */
+    public boolean hasIcSig() {
+      return idsigCase_ == 5;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature getIcSig() {
+      if (idsigCase_ == 5) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+     */
+    public Builder setIcSig(org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      idsig_ = value;
+
+      idsigCase_ = 5;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+     */
+    public Builder setIcSig(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.Builder builderForValue) {
+      idsig_ = builderForValue.build();
+
+      idsigCase_ = 5;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+     */
+    public Builder mergeIcSig(org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature value) {
+      if (idsigCase_ == 5 &&
+          idsig_ != org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.getDefaultInstance()) {
+        idsig_ = org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature) idsig_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        idsig_ = value;
+      }
+
+      idsigCase_ = 5;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+     */
+    public Builder clearIcSig() {
+      if (idsigCase_ == 5) {
         idsigCase_ = 0;
         idsig_ = null;
         

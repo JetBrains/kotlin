@@ -42,4 +42,13 @@ public interface IdSignatureOrBuilder extends
    * <code>optional int32 scoped_local_sig = 4;</code>
    */
   int getScopedLocalSig();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+   */
+  boolean hasIcSig();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature ic_sig = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IcDeclarationSignature getIcSig();
 }

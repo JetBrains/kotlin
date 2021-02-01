@@ -460,13 +460,6 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private val ByteArray.codedInputStream: CodedInputStream
-        get() {
-            val codedInputStream = CodedInputStream.newInstance(this)
-            codedInputStream.setRecursionLimit(65535) // The default 64 is blatantly not enough for IR.
-            return codedInputStream
-        }
-
     protected open fun handleNoModuleDeserializerFound(idSignature: IdSignature): IrModuleDeserializer {
         error("Deserializer for declaration $idSignature is not found")
     }
@@ -723,3 +716,10 @@ enum class DeserializationStrategy(
     ONLY_DECLARATION_HEADERS(false, false, false, false),
     WITH_INLINE_BODIES(false, false, false, true)
 }
+
+val ByteArray.codedInputStream: CodedInputStream
+    get() {
+        val codedInputStream = CodedInputStream.newInstance(this)
+        codedInputStream.setRecursionLimit(65535) // The default 64 is blatantly not enough for IR.
+        return codedInputStream
+    }

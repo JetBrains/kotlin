@@ -88,4 +88,14 @@ internal class PersistentIrValueParameter(
                 setCarrier().varargElementTypeField = v
             }
         }
+
+    override fun setState(t: ValueParameterCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        defaultValueField = t.defaultValueField
+        typeField = t.typeField
+        varargElementTypeField = t.varargElementTypeField
+    }
 }

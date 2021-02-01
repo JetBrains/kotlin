@@ -33,6 +33,7 @@ internal fun PersistentIrGenerator.generateErrorDeclaration() {
                 +"override var originField: " + IrDeclarationOrigin + " = IrDeclarationOrigin.DEFINED",
                 removedOn,
                 annotationsField,
+                setState("ErrorDeclaration")
             ),
             id,
         )()
@@ -43,4 +44,6 @@ internal fun PersistentIrGenerator.generateErrorDeclaration() {
             "ErrorDeclaration",
         )()
     })
+
+    addCarrierProtoMessage("ErrorDeclaration")
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.TypeAliasCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -55,6 +56,12 @@ internal class PersistentIrTypeAlias(
 
     override var typeParametersField: List<IrTypeParameter> = emptyList()
 
+    override var typeParametersSymbolField: List<IrTypeParameterSymbol>
+        get() = typeParametersField.map { it.symbol }
+        set(v) {
+            typeParametersField = v.map { it.owner }
+        }
+
     override var typeParameters: List<IrTypeParameter>
         get() = getCarrier().typeParametersField
         set(v) {
@@ -72,4 +79,13 @@ internal class PersistentIrTypeAlias(
                 setCarrier().expandedTypeField = v
             }
         }
+
+    override fun setState(t: TypeAliasCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        typeParametersField = t.typeParametersField
+        expandedTypeField = t.expandedTypeField
+    }
 }

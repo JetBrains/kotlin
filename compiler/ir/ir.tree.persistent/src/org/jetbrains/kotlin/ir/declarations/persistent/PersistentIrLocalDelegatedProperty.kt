@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.LocalDelegatedPropertyCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -76,6 +77,12 @@ internal class PersistentIrLocalDelegatedProperty(
 
     override var getterField: IrSimpleFunction? = null
 
+    override var getterSymbolField: IrSimpleFunctionSymbol?
+        get() = getterField?.symbol
+        set(v) {
+            getterField = v?.owner
+        }
+
     override var getter: IrSimpleFunction
         get() = getCarrier().getterField!!
         set(v) {
@@ -86,6 +93,12 @@ internal class PersistentIrLocalDelegatedProperty(
 
     override var setterField: IrSimpleFunction? = null
 
+    override var setterSymbolField: IrSimpleFunctionSymbol?
+        get() = setterField?.symbol
+        set(v) {
+            setterField = v?.owner
+        }
+
     override var setter: IrSimpleFunction?
         get() = getCarrier().setterField
         set(v) {
@@ -94,13 +107,16 @@ internal class PersistentIrLocalDelegatedProperty(
             }
         }
 
-    override var metadataField: MetadataSource? = null
+    override var metadata: MetadataSource? = null
 
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override fun setState(t: LocalDelegatedPropertyCarrier) {
+        lastModified = t.lastModified
+        parentSymbolField = t.parentSymbolField
+        originField = t.originField
+        annotationsField = t.annotationsField
+        typeField = t.typeField
+        delegateField = t.delegateField
+        getterField = t.getterField
+        setterField = t.setterField
+    }
 }

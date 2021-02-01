@@ -6,11 +6,30 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateProperty() {
-    val backingFieldField = Field("backingField", irDeclaration("IrField") + "?")
-    val getterField = Field("getter", irDeclaration("IrSimpleFunction") + "?")
-    val setterField = Field("setter", irDeclaration("IrSimpleFunction") + "?")
-    val metadataField = Field("metadata", MetadataSource + "?")
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
+    val backingFieldField = Field(
+        "backingField",
+        IrField + "?",
+        fieldProto,
+        propSymbolType = IrFieldSymbol + "?",
+        symbolToDeclaration = +"?.owner",
+        declarationToSymbol = +"?.symbol"
+    )
+    val getterField = Field(
+        "getter",
+        IrSimpleFunction + "?",
+        simpleFunctionProto,
+        propSymbolType = IrSimpleFunctionSymbol + "?",
+        symbolToDeclaration = +"?.owner",
+        declarationToSymbol = +"?.symbol"
+    )
+    val setterField = Field(
+        "setter",
+        IrSimpleFunction + "?",
+        simpleFunctionProto,
+        propSymbolType = IrSimpleFunctionSymbol + "?",
+        symbolToDeclaration = +"?.owner",
+        declarationToSymbol = +"?.symbol"
+    )
 
     writeFile("PersistentIrPropertyCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -36,11 +55,14 @@ internal fun PersistentIrGenerator.generateProperty() {
                 backingFieldField.toPersistentField(+"null"),
                 getterField.toPersistentField(+"null"),
                 setterField.toPersistentField(+"null"),
-                metadataField.toPersistentField(+"null"),
-                lines(
-                    +"@Suppress(\"LeakingThis\")",
-                    attributeOwnerIdField.toPersistentField(+"this"),
-                ),
+                +"override var metadata: " + MetadataSource + "? = null",
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
+                setState(
+                    "Property",
+                    backingFieldField,
+                    getterField,
+                    setterField,
+                )
             ),
             id,
         )()
@@ -52,8 +74,13 @@ internal fun PersistentIrGenerator.generateProperty() {
             backingFieldField,
             getterField,
             setterField,
-            metadataField,
-            attributeOwnerIdField,
         )()
     })
+
+    addCarrierProtoMessage(
+        "Property",
+        backingFieldField,
+        getterField,
+        setterField,
+    )
 }
