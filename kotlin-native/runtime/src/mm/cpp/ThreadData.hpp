@@ -9,13 +9,16 @@
 #include <atomic>
 #include <pthread.h>
 
-#include "ObjectFactory.hpp"
 #include "GlobalsRegistry.hpp"
+#include "ObjectFactory.hpp"
 #include "ShadowStack.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
-#include "Utils.hpp"
 #include "ThreadState.hpp"
+#include "Types.h"
+#include "Utils.hpp"
+
+struct ObjHeader;
 
 namespace kotlin {
 namespace mm {
@@ -49,6 +52,8 @@ public:
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
+    KStdVector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+
 private:
     const pthread_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
@@ -57,6 +62,7 @@ private:
     std::atomic<ThreadState> state_;
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
     ShadowStack shadowStack_;
+    KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
 };
 
 } // namespace mm

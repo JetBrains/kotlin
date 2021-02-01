@@ -140,6 +140,12 @@ public:
             owner_.AssertCorrectUnsafe();
         }
 
+        void ClearForTests() noexcept {
+            // Since it's only for tests, no need to worry about stack overflows.
+            root_.reset();
+            last_ = nullptr;
+        }
+
     private:
         friend class ObjectFactoryStorage;
 
@@ -258,6 +264,8 @@ public:
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept;
 
         void Publish() noexcept { producer_.Publish(); }
+
+        void ClearForTests() noexcept { producer_.ClearForTests(); }
 
     private:
         Storage::Producer producer_;

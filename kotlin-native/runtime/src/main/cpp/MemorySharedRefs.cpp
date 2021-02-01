@@ -173,6 +173,7 @@ void BackRefFromAssociatedObject::releaseRef() {
     DeinitForeignRef(obj_, context);
     // From this moment [context] is generally a dangling pointer.
     // This is handled in [IsForeignRefAccessible] and [addRef].
+    // TODO: This probably isn't fine in new MM. Make sure it works.
   }
 }
 
