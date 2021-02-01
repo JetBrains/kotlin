@@ -84,7 +84,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         private fun AbstractInsnNode.getIndex() = methodNode.instructions.indexOf(this)
 
         private fun createRefValues() {
-            for (insn in methodNode.instructions) {
+            for (insn in methodNode.instructions.asSequence()) {
                 if (insn.opcode == Opcodes.NEW && insn is TypeInsnNode) {
                     val type = Type.getObjectType(insn.desc)
                     if (AsmTypes.isSharedVarType(type)) {
@@ -124,7 +124,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         }
 
         private fun trackPops(frames: Array<out Frame<BasicValue>?>) {
-            for ((i, insn) in methodNode.instructions.withIndex()) {
+            for ((i, insn) in methodNode.instructions.asSequence().withIndex()) {
                 val frame = frames[i] ?: continue
                 when (insn.opcode) {
                     Opcodes.POP -> {
