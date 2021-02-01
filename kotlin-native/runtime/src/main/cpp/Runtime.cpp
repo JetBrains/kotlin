@@ -120,6 +120,9 @@ RuntimeState* initRuntime() {
               RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
           }
           firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
+          if (CurrentMemoryModel == MemoryModel::kExperimental) {
+              RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
+          }
           result->memoryState = InitMemory(firstRuntime);
           result->worker = WorkerInit(true);
   }
