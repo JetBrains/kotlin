@@ -46,7 +46,7 @@ internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolBy
 
 internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     when (val diagnostic = diagnostic) {
-        is ConeInapplicableCandidateError -> listOf(diagnostic.candidateSymbol)
+        is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
         is ConeHiddenCandidateError -> listOf(diagnostic.candidateSymbol)
         is ConeAmbiguityError -> diagnostic.candidates
         is ConeOperatorAmbiguityError -> diagnostic.candidates
