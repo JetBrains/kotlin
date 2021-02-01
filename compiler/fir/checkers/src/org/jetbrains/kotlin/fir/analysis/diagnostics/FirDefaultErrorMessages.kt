@@ -154,6 +154,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
@@ -498,11 +499,11 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}",
                 RENDER_TYPE
             )
-            //map.put(
-            //    UNSAFE_IMPLICIT_INVOKE_CALL,
-            //    "Reference has a nullable type ''{0}'', use explicit \"?.invoke\" to make a function-like call instead.",
-            //    RENDER_TYPE
-            //)
+            map.put(
+                UNSAFE_IMPLICIT_INVOKE_CALL,
+                "Reference has a nullable type ''{0}'', use explicit \"?.invoke\" to make a function-like call instead.",
+                RENDER_TYPE
+            )
 
             // When expressions
             map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", WHEN_MISSING_CASES)

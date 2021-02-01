@@ -101,7 +101,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                     reporter.report(
                         FirErrors.COMPONENT_FUNCTION_ON_NULLABLE.on(
                             originalDestructuringDeclarationOrInitializerSource,
-                            (diagnostic.candidateSymbol.fir as FirSimpleFunction).name
+                            (diagnostic.candidate.symbol.fir as FirSimpleFunction).name
                         ),
                         context
                     )

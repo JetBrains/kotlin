@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
@@ -156,7 +155,9 @@ internal class FirInvokeResolveTowerExtension(
 
             val invokeFunctionInfo =
                 info.copy(
-                    explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE,
+                    explicitReceiver = invokeReceiverExpression,
+                    name = OperatorNameConventions.INVOKE,
+                    isImplicitInvoke = true,
                     candidateForCommonInvokeReceiver = invokeReceiverCandidate.takeUnless { invokeBuiltinExtensionMode }
                 ).let {
                     when {

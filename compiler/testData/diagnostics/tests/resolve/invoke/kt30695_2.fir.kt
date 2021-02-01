@@ -14,7 +14,7 @@ class MemberInvokeOwner {
 
 class Cls {
     fun testImplicitReceiver() {
-        <!UNSAFE_CALL!>nullableExtensionProperty<!>()
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
     }
 }
 
@@ -30,7 +30,7 @@ fun testNullableReceiver(nullable: Cls?) {
 }
 
 fun testNotNullableReceiver(notNullable: Cls) {
-    notNullable<!UNSAFE_CALL!>.<!>nullableExtensionProperty()
+    notNullable.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
     notNullable?.extensionProperty()
 }
 
@@ -38,6 +38,6 @@ fun testFlexibleReceiver() {
     val flexible = JavaClass.createFlexible()
     flexible.extensionProperty()
     flexible?.extensionProperty()
-    flexible<!UNSAFE_CALL!>.<!>nullableExtensionProperty()
-    flexible?.<!UNSAFE_CALL!>nullableExtensionProperty<!>()
+    flexible.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
+    flexible?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
 }

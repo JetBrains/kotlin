@@ -58,20 +58,19 @@ private fun mapInapplicableCandidateError(
     source: FirSourceElement,
 ): FirDiagnostic<*> {
     // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
-    // TODO: handle other UNSAFE_* variants: invoke, infix, operator
-    val rootCause = diagnostic.diagnostics.find { it.applicability == diagnostic.applicability }
+    // TODO: handle other UNSAFE_* variants: infix, operator
+    val rootCause = diagnostic.candidate.diagnostics.find { it.applicability == diagnostic.applicability }
     if (rootCause != null &&
         rootCause is InapplicableWrongReceiver &&
         rootCause.actualType?.isNullable == true &&
-        (rootCause.expectedType == null || !rootCause.expectedType!!.isMarkedNullable)
+        (rootCause.expectedType == null || rootCause.expectedType!!.isEffectivelyNotNull())
     ) {
-        val expectedType = rootCause.expectedType
-
-        if (expectedType == null || expectedType.isEffectivelyNotNull()) {
-            return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
+        if (diagnostic.candidate.callInfo.isImplicitInvoke) {
+            return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType!!)
         }
+        return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
     }
-    return FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidateSymbol)
+    return FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
 }
 
 private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
