@@ -687,6 +687,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("SafeCallUnknownType.kt")
+        public void testSafeCallUnknownType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/SafeCallUnknownType.kt");
+        }
+
+        @Test
         @TestMetadata("Serializable.kt")
         public void testSerializable() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Serializable.kt");

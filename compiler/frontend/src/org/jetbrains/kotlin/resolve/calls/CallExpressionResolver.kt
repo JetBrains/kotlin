@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import javax.inject.Inject
 
@@ -534,15 +535,17 @@ class CallExpressionResolver(
             } ?: false
 
         fun reportUnnecessarySafeCall(
-            trace: BindingTrace, type: KotlinType,
-            callOperationNode: ASTNode, explicitReceiver: Receiver?
-        ) = trace.report(
+            trace: BindingTrace,
+            type: KotlinType,
+            callOperationNode: ASTNode,
+            explicitReceiver: Receiver?
+        ) {
             if (explicitReceiver is ExpressionReceiver && explicitReceiver.expression is KtSuperExpression) {
-                UNEXPECTED_SAFE_CALL.on(callOperationNode.psi)
-            } else {
-                UNNECESSARY_SAFE_CALL.on(callOperationNode.psi, type)
+                trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.psi))
+            } else if (!type.isError) {
+                trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.psi, type))
             }
-        )
+        }
 
         private fun checkNestedClassAccess(
             expression: KtQualifiedExpression,
