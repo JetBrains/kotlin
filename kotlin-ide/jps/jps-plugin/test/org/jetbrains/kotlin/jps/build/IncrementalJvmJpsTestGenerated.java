@@ -1221,6 +1221,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
                 runTest("testData/incremental/withJava/other/multifilePartsWithProperties/");
             }
 
+            @TestMetadata("multifileDependantUsage")
+            public void testMultifileDependantUsage() throws Exception {
+                runTest("jps-plugin/testData/incremental/withJava/other/multifileDependantUsage/");
+            }
+
             @TestMetadata("optionalParameter")
             public void testOptionalParameter() throws Exception {
                 runTest("testData/incremental/withJava/other/optionalParameter/");
