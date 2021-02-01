@@ -37,6 +37,8 @@ class TestConfigurationImpl(
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
 
+    compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+
     override val metaInfoHandlerEnabled: Boolean,
 
     directives: List<DirectivesContainer>,
@@ -96,7 +98,9 @@ class TestConfigurationImpl(
             val sourceFileProvider = SourceFileProviderImpl(this, sourceFilePreprocessors)
             register(SourceFileProvider::class, sourceFileProvider)
 
-            val environmentProvider = CompilerConfigurationProviderImpl(rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
+            val environmentProvider =
+                compilerConfigurationProvider?.invoke(rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
+                    ?: CompilerConfigurationProviderImpl(rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)

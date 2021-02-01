@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.builders
 
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -40,6 +41,8 @@ class TestConfigurationBuilder {
 
     private val configurationsByTestDataCondition: MutableList<Pair<Regex, TestConfigurationBuilder.() -> Unit>> = mutableListOf()
     private val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
+
+    private var compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)? = null
 
     lateinit var testInfo: KotlinTestInfo
 
@@ -123,6 +126,11 @@ class TestConfigurationBuilder {
         moduleStructureTransformers += transformers
     }
 
+    @TestInfrastructureInternals
+    fun useCustomCompilerConfigurationProvider(provider: (Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider) {
+        compilerConfigurationProvider = provider
+    }
+
     fun useMetaTestConfigurators(vararg configurators: Constructor<MetaTestConfigurator>) {
         metaTestConfigurators += configurators
     }
@@ -158,6 +166,7 @@ class TestConfigurationBuilder {
             moduleStructureTransformers,
             metaTestConfigurators,
             afterAnalysisCheckers,
+            compilerConfigurationProvider,
             metaInfoHandlerEnabled,
             directives,
             defaultRegisteredDirectivesBuilder.build(),
