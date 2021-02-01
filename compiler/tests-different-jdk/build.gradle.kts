@@ -12,20 +12,12 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
-    testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common-new"))
 
-    testApi(platform("org.junit:junit-bom:5.7.0"))
-    testApi("org.junit.jupiter:junit-jupiter")
-    testApi("org.junit.vintage:junit-vintage-engine:5.7.0")
-    testApi("org.junit.platform:junit-platform-commons:1.7.0")
-    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
-    testApi("org.junit.platform:junit-platform-runner:1.7.0")
-    testApi("org.junit.platform:junit-platform-suite-api:1.7.0")
+    testApiJUnit5(vintageEngine = true, runner = true, suiteApi = true)
 
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(intellijDep())
     testRuntime(intellijDep())
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
 }
