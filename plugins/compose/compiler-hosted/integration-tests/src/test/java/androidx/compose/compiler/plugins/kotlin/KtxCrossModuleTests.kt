@@ -241,6 +241,37 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
+    fun testFunInterfaceWithInlineClass(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf(
+                    "x/A.kt" to """
+                        package x
+
+                        inline class A(val value: Int)
+                        fun interface B {
+                          fun method(a: A)
+                        }
+                    """.trimIndent()
+                ),
+                "Main" to mapOf(
+                    "y/B.kt" to """
+                        package y
+
+                        import x.*
+
+                        val b = B { }
+                    """
+                )
+            )
+        ) {
+            assert(it.contains("public abstract method-C8LvVsQ(I)V"))
+            assert(it.contains("public final method-C8LvVsQ(I)V"))
+            assert(!it.contains("public final method(I)V"))
+        }
+    }
+
+    @Test
     fun testParentNotInitializedBug(): Unit = ensureSetup {
         compile(
             mapOf(
