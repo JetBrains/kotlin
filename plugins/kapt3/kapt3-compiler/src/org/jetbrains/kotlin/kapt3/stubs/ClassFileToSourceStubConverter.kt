@@ -692,7 +692,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val name = field.name
         if (!isValidIdentifier(name)) return null
 
-        val type = fieldType(field, origin)
+        val type = getFieldType(field, origin)
 
         if (!checkIfValidTypeName(containingClass, type)) {
             return null
@@ -1424,14 +1424,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         return this
     }
 
-    private fun fieldType(field: FieldNode, origin: JvmDeclarationOrigin?): Type {
-        val signType = Type.getType(field.desc)
+    private fun getFieldType(field: FieldNode, origin: JvmDeclarationOrigin?): Type {
+        val fieldType = Type.getType(field.desc)
         return when (val declaration = origin?.element) {
             is KtProperty -> {
+                //replace anonymous type in delegate (if any)
                 val delegateType = kaptContext.bindingContext[BindingContext.EXPRESSION_TYPE_INFO, declaration.delegateExpression]?.type
-                delegateType?.let(::replaceAnonymousTypeWithSuperType)?.let(::convertKotlinType) ?: signType
+                delegateType?.let {
+                    val replaced = replaceAnonymousTypeWithSuperType(it)
+                    //not changed => not anonymous type => use type from field
+                    if (replaced != it) replaced else null
+                }?.let(::convertKotlinType) ?: fieldType
             }
-            else -> signType
+            else -> fieldType
         }
     }
 
