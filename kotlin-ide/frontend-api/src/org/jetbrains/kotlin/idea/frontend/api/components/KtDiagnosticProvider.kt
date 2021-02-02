@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
-    abstract fun getDiagnosticsForElement(element: KtElement): Collection<KtDiagnosticWithPsi>
-    abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<KtDiagnosticWithPsi>
+    abstract fun getDiagnosticsForElement(element: KtElement): Collection<KtDiagnosticWithPsi<*>>
+    abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<KtDiagnosticWithPsi<*>>
 }

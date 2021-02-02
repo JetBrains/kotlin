@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
-import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import kotlin.reflect.KClass
 
 @RequiresOptIn
@@ -16,9 +16,9 @@ annotation class ForKtQuickFixesListBuilder()
 
 
 class KtQuickFixesListBuilder private constructor() {
-    val quickFixes = mutableMapOf<KClass<out KtDiagnosticWithPsi>, MutableList<QuickFixFactory>>()
+    val quickFixes = mutableMapOf<KClass<out KtDiagnosticWithPsi<*>>, MutableList<QuickFixFactory>>()
 
-    inline fun <reified D : KtDiagnosticWithPsi> register(quickFixFactory: QuickFixFactory) {
+    inline fun <reified PSI : PsiElement, reified D : KtDiagnosticWithPsi<PSI>> register(quickFixFactory: QuickFixFactory) {
         quickFixes.getOrPut(D::class) { mutableListOf() }.add(quickFixFactory)
     }
 
@@ -30,17 +30,22 @@ class KtQuickFixesListBuilder private constructor() {
     }
 }
 
-class KtQuickFixesList @ForKtQuickFixesListBuilder constructor(private val quickFixes: Map<KClass<out KtDiagnosticWithPsi>, List<QuickFixFactory>>) {
-    fun getQuickFixesFor(diagnostic: KtDiagnosticWithPsi): List<IntentionAction> {
+class KtQuickFixesList @ForKtQuickFixesListBuilder constructor(private val quickFixes: Map<KClass<out KtDiagnosticWithPsi<*>>, List<QuickFixFactory>>) {
+    fun KtAnalysisSession.getQuickFixesFor(diagnostic: KtDiagnosticWithPsi<*>): List<IntentionAction> {
         val factories = quickFixes[diagnostic.diagnosticClass] ?: return emptyList()
-        return factories.mapNotNull { it.createQuickFix(diagnostic) }
+        return factories.flatMap { createQuickFixes(it, diagnostic) }
     }
 
-    private fun QuickFixFactory.createQuickFix(
-        diagnostic: KtDiagnosticWithPsi
-    ) = when (this) {
-        is QuickFixesPsiBasedFactory -> createQuickFix(diagnostic.psi)
-        else -> error("Unsupported QuickFixFactory $this")
+    @Suppress("UNCHECKED_CAST")
+    private fun KtAnalysisSession.createQuickFixes(
+        quickFixFactory: QuickFixFactory,
+        diagnostic: KtDiagnosticWithPsi<PsiElement>
+    ): List<IntentionAction> = when (quickFixFactory) {
+        is QuickFixesPsiBasedFactory<*> -> quickFixFactory.createQuickFix(diagnostic.psi)
+        is QuickFixesHLApiBasedFactory<*, *> -> with(quickFixFactory as QuickFixesHLApiBasedFactory<PsiElement, KtDiagnosticWithPsi<*>>) {
+            createQuickFix(diagnostic)
+        }
+        else -> error("Unsupported QuickFixFactory $quickFixFactory")
     }
 
     companion object {

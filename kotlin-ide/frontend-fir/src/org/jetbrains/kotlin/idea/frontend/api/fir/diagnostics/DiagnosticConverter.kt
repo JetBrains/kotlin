@@ -12,23 +12,23 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 internal interface KtFirDiagnosticCreator
 
 internal fun interface KtFirDiagnostic0Creator : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirSimpleDiagnostic<*>): KtFirDiagnostic
+    fun KtFirAnalysisSession.create(diagnostic: FirSimpleDiagnostic<*>): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic1Creator<A : Any> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters1<*, A>): KtFirDiagnostic
+    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters1<*, A>): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic2Creator<A : Any, B : Any> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters2<*, A, B>): KtFirDiagnostic
+    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters2<*, A, B>): KtFirDiagnostic<*>
 }
 
 internal fun interface KtFirDiagnostic3Creator<A : Any, B : Any, C : Any> : KtFirDiagnosticCreator {
-    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters3<*, A, B, C>): KtFirDiagnostic
+    fun KtFirAnalysisSession.create(diagnostic: FirDiagnosticWithParameters3<*, A, B, C>): KtFirDiagnostic<*>
 }
 
 internal class KtDiagnosticConverter(private val conversions: Map<AbstractFirDiagnosticFactory<*, *, *>, KtFirDiagnosticCreator>) {
-    fun convert(analysisSession: KtFirAnalysisSession, diagnostic: FirDiagnostic<*>): KtFirDiagnostic {
+    fun convert(analysisSession: KtFirAnalysisSession, diagnostic: FirDiagnostic<*>): KtFirDiagnostic<*> {
         val creator = conversions[diagnostic.factory]
             ?: error("No conversion was found for ${diagnostic.factory}")
 

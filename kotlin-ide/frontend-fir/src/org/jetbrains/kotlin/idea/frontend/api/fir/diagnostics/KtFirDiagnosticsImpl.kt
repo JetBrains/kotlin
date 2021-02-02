@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -40,462 +41,405 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 internal class SyntaxImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class OtherErrorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.OtherError(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.OtherError(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class IllegalConstExpressionImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.IllegalConstExpression(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.IllegalConstExpression(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class IllegalUnderscoreImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.IllegalUnderscore(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.IllegalUnderscore(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ExpressionRequiredImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpressionRequired(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExpressionRequired(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class BreakOrContinueOutsideALoopImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.BreakOrContinueOutsideALoop(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.BreakOrContinueOutsideALoop(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class NotALoopLabelImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NotALoopLabel(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NotALoopLabel(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class VariableExpectedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.VariableExpected(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.VariableExpected(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ReturnNotAllowedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ReturnNotAllowed(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ReturnNotAllowed(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class DelegationInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.DelegationInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.DelegationInInterface(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class HiddenImpl(
     override val hidden: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.Hidden(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.Hidden(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class UnresolvedReferenceImpl(
     override val reference: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UnresolvedReference(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UnresolvedReference(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class UnresolvedLabelImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UnresolvedLabel(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UnresolvedLabel(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class DeserializationErrorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.DeserializationError(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.DeserializationError(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ErrorFromJavaResolutionImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ErrorFromJavaResolution(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ErrorFromJavaResolution(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class UnknownCallableKindImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UnknownCallableKind(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UnknownCallableKind(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class MissingStdlibClassImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.MissingStdlibClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.MissingStdlibClass(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class NoThisImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NoThis(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NoThis(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SuperIsNotAnExpression(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SuperIsNotAnExpression(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SuperNotAvailableImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SuperNotAvailable(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SuperNotAvailable(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class AbstractSuperCallImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractSuperCall(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractSuperCall(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class InstanceAccessBeforeSuperCallImpl(
     override val target: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InstanceAccessBeforeSuperCall(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InstanceAccessBeforeSuperCall(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class TypeParameterAsSupertypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeParameterAsSupertype(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.TypeParameterAsSupertype(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class EnumAsSupertypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.EnumAsSupertype(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.EnumAsSupertype(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RecursionInSupertypesImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RecursionInSupertypes(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RecursionInSupertypes(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class NotASupertypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NotASupertype(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NotASupertype(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SuperclassNotAccessibleFromInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SuperclassNotAccessibleFromInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SuperclassNotAccessibleFromInterface(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class QualifiedSupertypeExtendedByOtherSupertypeImpl(
     override val otherSuperType: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.QualifiedSupertypeExtendedByOtherSupertype(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.QualifiedSupertypeExtendedByOtherSupertype(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SupertypeInitializedInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SupertypeInitializedInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SupertypeInitializedInInterface(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class InterfaceWithSuperclassImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InterfaceWithSuperclass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InterfaceWithSuperclass(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ClassInSupertypeForEnumImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ClassInSupertypeForEnum(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ClassInSupertypeForEnum(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SealedSupertypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SealedSupertype(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SealedSupertype(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SealedSupertypeInLocalClassImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SealedSupertypeInLocalClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SealedSupertypeInLocalClass(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ConstructorInObjectImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ConstructorInObject(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ConstructorInObject(), KtAbstractFirDiagnostic<KtDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtDeclaration get() = super.psi as KtDeclaration
 }
 
 internal class ConstructorInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ConstructorInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ConstructorInInterface(), KtAbstractFirDiagnostic<KtDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtDeclaration get() = super.psi as KtDeclaration
 }
 
 internal class NonPrivateConstructorInEnumImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NonPrivateConstructorInEnum(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NonPrivateConstructorInEnum(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class NonPrivateConstructorInSealedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NonPrivateConstructorInSealed(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NonPrivateConstructorInSealed(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class CyclicConstructorDelegationCallImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.CyclicConstructorDelegationCall(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.CyclicConstructorDelegationCall(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class PrimaryConstructorDelegationCallExpectedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrimaryConstructorDelegationCallExpected(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PrimaryConstructorDelegationCallExpected(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SupertypeInitializedWithoutPrimaryConstructorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SupertypeInitializedWithoutPrimaryConstructor(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SupertypeInitializedWithoutPrimaryConstructor(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class DelegationSuperCallInEnumConstructorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.DelegationSuperCallInEnumConstructor(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.DelegationSuperCallInEnumConstructor(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class PrimaryConstructorRequiredForDataClassImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrimaryConstructorRequiredForDataClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PrimaryConstructorRequiredForDataClass(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ExplicitDelegationCallRequiredImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExplicitDelegationCallRequired(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExplicitDelegationCallRequired(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class SealedClassConstructorCallImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.SealedClassConstructorCall(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.SealedClassConstructorCall(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class AnnotationArgumentKclassLiteralOfTypeParameterErrorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationArgumentKclassLiteralOfTypeParameterError(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnnotationArgumentKclassLiteralOfTypeParameterError(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class AnnotationArgumentMustBeConstImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationArgumentMustBeConst(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnnotationArgumentMustBeConst(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class AnnotationArgumentMustBeEnumConstImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationArgumentMustBeEnumConst(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnnotationArgumentMustBeEnumConst(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class AnnotationArgumentMustBeKclassLiteralImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationArgumentMustBeKclassLiteral(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnnotationArgumentMustBeKclassLiteral(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class AnnotationClassMemberImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationClassMember(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnnotationClassMember(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class AnnotationParameterDefaultValueMustBeConstantImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnnotationParameterDefaultValueMustBeConstant(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnnotationParameterDefaultValueMustBeConstant(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class InvalidTypeOfAnnotationMemberImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InvalidTypeOfAnnotationMember(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InvalidTypeOfAnnotationMember(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtTypeReference get() = super.psi as KtTypeReference
 }
 
 internal class LocalAnnotationClassErrorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.LocalAnnotationClassError(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.LocalAnnotationClassError(), KtAbstractFirDiagnostic<KtClassOrObject> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtClassOrObject get() = super.psi as KtClassOrObject
 }
 
 internal class MissingValOnAnnotationParameterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.MissingValOnAnnotationParameter(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.MissingValOnAnnotationParameter(), KtAbstractFirDiagnostic<KtParameter> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtParameter get() = super.psi as KtParameter
 }
 
 internal class NonConstValUsedInConstantExpressionImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NonConstValUsedInConstantExpression(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NonConstValUsedInConstantExpression(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class NotAnAnnotationClassImpl(
     override val annotationName: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NotAnAnnotationClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NotAnAnnotationClass(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class NullableTypeOfAnnotationMemberImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NullableTypeOfAnnotationMember(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NullableTypeOfAnnotationMember(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtTypeReference get() = super.psi as KtTypeReference
 }
 
 internal class VarAnnotationParameterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.VarAnnotationParameter(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.VarAnnotationParameter(), KtAbstractFirDiagnostic<KtParameter> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtParameter get() = super.psi as KtParameter
 }
 
 internal class ExposedTypealiasExpandedTypeImpl(
@@ -504,9 +448,8 @@ internal class ExposedTypealiasExpandedTypeImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedTypealiasExpandedType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedTypealiasExpandedType(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class ExposedFunctionReturnTypeImpl(
@@ -515,9 +458,8 @@ internal class ExposedFunctionReturnTypeImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedFunctionReturnType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedFunctionReturnType(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class ExposedReceiverTypeImpl(
@@ -526,9 +468,8 @@ internal class ExposedReceiverTypeImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedReceiverType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedReceiverType(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtTypeReference get() = super.psi as KtTypeReference
 }
 
 internal class ExposedPropertyTypeImpl(
@@ -537,9 +478,8 @@ internal class ExposedPropertyTypeImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedPropertyType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedPropertyType(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class ExposedParameterTypeImpl(
@@ -548,9 +488,8 @@ internal class ExposedParameterTypeImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedParameterType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedParameterType(), KtAbstractFirDiagnostic<KtParameter> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtParameter get() = super.psi as KtParameter
 }
 
 internal class ExposedSuperInterfaceImpl(
@@ -559,9 +498,8 @@ internal class ExposedSuperInterfaceImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedSuperInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedSuperInterface(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtTypeReference get() = super.psi as KtTypeReference
 }
 
 internal class ExposedSuperClassImpl(
@@ -570,9 +508,8 @@ internal class ExposedSuperClassImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedSuperClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedSuperClass(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtTypeReference get() = super.psi as KtTypeReference
 }
 
 internal class ExposedTypeParameterBoundImpl(
@@ -581,27 +518,24 @@ internal class ExposedTypeParameterBoundImpl(
     override val restrictingVisibility: Visibility,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExposedTypeParameterBound(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExposedTypeParameterBound(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtTypeReference get() = super.psi as KtTypeReference
 }
 
 internal class InapplicableInfixModifierImpl(
     override val modifier: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InapplicableInfixModifier(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InapplicableInfixModifier(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RepeatedModifierImpl(
     override val modifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RepeatedModifier(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RepeatedModifier(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RedundantModifierImpl(
@@ -609,9 +543,8 @@ internal class RedundantModifierImpl(
     override val conflictingModifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantModifier(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantModifier(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class DeprecatedModifierPairImpl(
@@ -619,9 +552,8 @@ internal class DeprecatedModifierPairImpl(
     override val conflictingModifier: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.DeprecatedModifierPair(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.DeprecatedModifierPair(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class IncompatibleModifiersImpl(
@@ -629,62 +561,55 @@ internal class IncompatibleModifiersImpl(
     override val modifier2: KtModifierKeywordToken,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.IncompatibleModifiers(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.IncompatibleModifiers(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RedundantOpenInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantOpenInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantOpenInInterface(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtModifierListOwner get() = super.psi as KtModifierListOwner
 }
 
 internal class NoneApplicableImpl(
     override val candidates: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NoneApplicable(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NoneApplicable(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class InapplicableCandidateImpl(
     override val candidate: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InapplicableCandidate(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InapplicableCandidate(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class InapplicableLateinitModifierImpl(
     override val reason: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InapplicableLateinitModifier(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InapplicableLateinitModifier(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class AmbiguityImpl(
     override val candidates: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.Ambiguity(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.Ambiguity(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class AssignOperatorAmbiguityImpl(
     override val candidates: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AssignOperatorAmbiguity(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AssignOperatorAmbiguity(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class TypeMismatchImpl(
@@ -692,33 +617,29 @@ internal class TypeMismatchImpl(
     override val actualType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeMismatch(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.TypeMismatch(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RecursionInImplicitTypesImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RecursionInImplicitTypes(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RecursionInImplicitTypes(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class InferenceErrorImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InferenceError(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InferenceError(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ProjectionOnNonClassTypeArgumentImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ProjectionOnNonClassTypeArgument(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ProjectionOnNonClassTypeArgument(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class UpperBoundViolatedImpl(
@@ -726,17 +647,15 @@ internal class UpperBoundViolatedImpl(
     override val violatedType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UpperBoundViolated(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UpperBoundViolated(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class TypeArgumentsNotAllowedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeArgumentsNotAllowed(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.TypeArgumentsNotAllowed(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class WrongNumberOfTypeArgumentsImpl(
@@ -744,140 +663,124 @@ internal class WrongNumberOfTypeArgumentsImpl(
     override val classifier: KtClassLikeSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.WrongNumberOfTypeArguments(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.WrongNumberOfTypeArguments(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class NoTypeForTypeParameterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NoTypeForTypeParameter(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NoTypeForTypeParameter(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class TypeParametersInObjectImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeParametersInObject(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.TypeParametersInObject(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class IllegalProjectionUsageImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.IllegalProjectionUsage(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.IllegalProjectionUsage(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class TypeParametersInEnumImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.TypeParametersInEnum(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.TypeParametersInEnum(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ConflictingProjectionImpl(
     override val type: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ConflictingProjection(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ConflictingProjection(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class VarianceOnTypeParameterNotAllowedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.VarianceOnTypeParameterNotAllowed(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.VarianceOnTypeParameterNotAllowed(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ReturnTypeMismatchOnOverrideImpl(
-    override val returnType: String,
+    override val function: KtSymbol,
     override val superFunction: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ReturnTypeMismatchOnOverride(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ReturnTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtCallableDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class PropertyTypeMismatchOnOverrideImpl(
-    override val propertyType: String,
+    override val property: KtSymbol,
     override val targetProperty: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PropertyTypeMismatchOnOverride(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PropertyTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtCallableDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class VarTypeMismatchOnOverrideImpl(
-    override val variableType: String,
+    override val variable: KtSymbol,
     override val targetVariable: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.VarTypeMismatchOnOverride(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.VarTypeMismatchOnOverride(), KtAbstractFirDiagnostic<KtCallableDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ManyCompanionObjectsImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ManyCompanionObjects(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ManyCompanionObjects(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ConflictingOverloadsImpl(
     override val conflictingOverloads: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ConflictingOverloads(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ConflictingOverloads(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RedeclarationImpl(
     override val conflictingDeclaration: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.Redeclaration(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.Redeclaration(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class AnyMethodImplementedInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnyMethodImplementedInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnyMethodImplementedInInterface(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class LocalObjectNotAllowedImpl(
     override val objectName: Name,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.LocalObjectNotAllowed(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.LocalObjectNotAllowed(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class LocalInterfaceNotAllowedImpl(
     override val interfaceName: Name,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.LocalInterfaceNotAllowed(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.LocalInterfaceNotAllowed(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class AbstractFunctionInNonAbstractClassImpl(
@@ -885,69 +788,61 @@ internal class AbstractFunctionInNonAbstractClassImpl(
     override val containingClass: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractFunctionInNonAbstractClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractFunctionInNonAbstractClass(), KtAbstractFirDiagnostic<KtFunction> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtFunction get() = super.psi as KtFunction
 }
 
 internal class AbstractFunctionWithBodyImpl(
     override val function: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractFunctionWithBody(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractFunctionWithBody(), KtAbstractFirDiagnostic<KtFunction> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtFunction get() = super.psi as KtFunction
 }
 
 internal class NonAbstractFunctionWithNoBodyImpl(
     override val function: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NonAbstractFunctionWithNoBody(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NonAbstractFunctionWithNoBody(), KtAbstractFirDiagnostic<KtFunction> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtFunction get() = super.psi as KtFunction
 }
 
 internal class PrivateFunctionWithNoBodyImpl(
     override val function: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrivateFunctionWithNoBody(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PrivateFunctionWithNoBody(), KtAbstractFirDiagnostic<KtFunction> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtFunction get() = super.psi as KtFunction
 }
 
 internal class NonMemberFunctionNoBodyImpl(
     override val function: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NonMemberFunctionNoBody(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.NonMemberFunctionNoBody(), KtAbstractFirDiagnostic<KtFunction> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtFunction get() = super.psi as KtFunction
 }
 
 internal class FunctionDeclarationWithNoNameImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.FunctionDeclarationWithNoName(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.FunctionDeclarationWithNoName(), KtAbstractFirDiagnostic<KtFunction> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtFunction get() = super.psi as KtFunction
 }
 
 internal class AnonymousFunctionParameterWithDefaultValueImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AnonymousFunctionParameterWithDefaultValue(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AnonymousFunctionParameterWithDefaultValue(), KtAbstractFirDiagnostic<KtParameter> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtParameter get() = super.psi as KtParameter
 }
 
 internal class UselessVarargOnParameterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UselessVarargOnParameter(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UselessVarargOnParameter(), KtAbstractFirDiagnostic<KtParameter> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtParameter get() = super.psi as KtParameter
 }
 
 internal class AbstractPropertyInNonAbstractClassImpl(
@@ -955,129 +850,113 @@ internal class AbstractPropertyInNonAbstractClassImpl(
     override val containingClass: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractPropertyInNonAbstractClass(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractPropertyInNonAbstractClass(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtModifierListOwner get() = super.psi as KtModifierListOwner
 }
 
 internal class PrivatePropertyInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrivatePropertyInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PrivatePropertyInInterface(), KtAbstractFirDiagnostic<KtProperty> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtProperty get() = super.psi as KtProperty
 }
 
 internal class AbstractPropertyWithInitializerImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractPropertyWithInitializer(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractPropertyWithInitializer(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class PropertyInitializerInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PropertyInitializerInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PropertyInitializerInInterface(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class PropertyWithNoTypeNoInitializerImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PropertyWithNoTypeNoInitializer(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PropertyWithNoTypeNoInitializer(), KtAbstractFirDiagnostic<KtProperty> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtProperty get() = super.psi as KtProperty
 }
 
 internal class AbstractDelegatedPropertyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractDelegatedProperty(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractDelegatedProperty(), KtAbstractFirDiagnostic<KtPropertyDelegate> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtPropertyDelegate get() = super.psi as KtPropertyDelegate
 }
 
 internal class DelegatedPropertyInInterfaceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.DelegatedPropertyInInterface(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.DelegatedPropertyInInterface(), KtAbstractFirDiagnostic<KtPropertyDelegate> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtPropertyDelegate get() = super.psi as KtPropertyDelegate
 }
 
 internal class AbstractPropertyWithGetterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractPropertyWithGetter(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractPropertyWithGetter(), KtAbstractFirDiagnostic<KtPropertyAccessor> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtPropertyAccessor get() = super.psi as KtPropertyAccessor
 }
 
 internal class AbstractPropertyWithSetterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AbstractPropertyWithSetter(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AbstractPropertyWithSetter(), KtAbstractFirDiagnostic<KtPropertyAccessor> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtPropertyAccessor get() = super.psi as KtPropertyAccessor
 }
 
 internal class PrivateSetterForAbstractPropertyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrivateSetterForAbstractProperty(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PrivateSetterForAbstractProperty(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class PrivateSetterForOpenPropertyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrivateSetterForOpenProperty(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.PrivateSetterForOpenProperty(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ExpectedPrivateDeclarationImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpectedPrivateDeclaration(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExpectedPrivateDeclaration(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtModifierListOwner get() = super.psi as KtModifierListOwner
 }
 
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpectedDeclarationWithBody(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExpectedDeclarationWithBody(), KtAbstractFirDiagnostic<KtDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtDeclaration get() = super.psi as KtDeclaration
 }
 
 internal class ExpectedPropertyInitializerImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpectedPropertyInitializer(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExpectedPropertyInitializer(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class ExpectedDelegatedPropertyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ExpectedDelegatedProperty(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ExpectedDelegatedProperty(), KtAbstractFirDiagnostic<KtPropertyDelegate> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtPropertyDelegate get() = super.psi as KtPropertyDelegate
 }
 
 internal class InitializerRequiredForDestructuringDeclarationImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InitializerRequiredForDestructuringDeclaration(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.InitializerRequiredForDestructuringDeclaration(), KtAbstractFirDiagnostic<KtDestructuringDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtDestructuringDeclaration get() = super.psi as KtDestructuringDeclaration
 }
 
 internal class ComponentFunctionMissingImpl(
@@ -1085,9 +964,8 @@ internal class ComponentFunctionMissingImpl(
     override val destructingType: KtType,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ComponentFunctionMissing(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ComponentFunctionMissing(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ComponentFunctionAmbiguityImpl(
@@ -1095,18 +973,16 @@ internal class ComponentFunctionAmbiguityImpl(
     override val candidates: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ComponentFunctionAmbiguity(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ComponentFunctionAmbiguity(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class UninitializedVariableImpl(
     override val variable: KtVariableSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UninitializedVariable(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UninitializedVariable(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class WrongInvocationKindImpl(
@@ -1115,153 +991,134 @@ internal class WrongInvocationKindImpl(
     override val actualRange: EventOccurrencesRange,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.WrongInvocationKind(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.WrongInvocationKind(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class LeakedInPlaceLambdaImpl(
     override val lambda: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.LeakedInPlaceLambda(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.LeakedInPlaceLambda(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class WrongImpliesConditionImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.WrongImpliesCondition(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.WrongImpliesCondition(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RedundantVisibilityModifierImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantVisibilityModifier(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantVisibilityModifier(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtModifierListOwner get() = super.psi as KtModifierListOwner
 }
 
 internal class RedundantModalityModifierImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantModalityModifier(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantModalityModifier(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtModifierListOwner get() = super.psi as KtModifierListOwner
 }
 
 internal class RedundantReturnUnitTypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantReturnUnitType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantReturnUnitType(), KtAbstractFirDiagnostic<PsiTypeElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiTypeElement get() = super.psi as PsiTypeElement
 }
 
 internal class RedundantExplicitTypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantExplicitType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantExplicitType(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RedundantSingleExpressionStringTemplateImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantSingleExpressionStringTemplate(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantSingleExpressionStringTemplate(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class CanBeValImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.CanBeVal(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.CanBeVal(), KtAbstractFirDiagnostic<KtDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtDeclaration get() = super.psi as KtDeclaration
 }
 
 internal class CanBeReplacedWithOperatorAssignmentImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.CanBeReplacedWithOperatorAssignment(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.CanBeReplacedWithOperatorAssignment(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class RedundantCallOfConversionMethodImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantCallOfConversionMethod(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantCallOfConversionMethod(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class ArrayEqualityOperatorCanBeReplacedWithEqualsImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.ArrayEqualityOperatorCanBeReplacedWithEquals(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.ArrayEqualityOperatorCanBeReplacedWithEquals(), KtAbstractFirDiagnostic<KtExpression> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtExpression get() = super.psi as KtExpression
 }
 
 internal class EmptyRangeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.EmptyRange(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.EmptyRange(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class RedundantSetterParameterTypeImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.RedundantSetterParameterType(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.RedundantSetterParameterType(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class UnusedVariableImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UnusedVariable(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UnusedVariable(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class AssignedValueIsNeverReadImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.AssignedValueIsNeverRead(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.AssignedValueIsNeverRead(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class VariableInitializerIsRedundantImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.VariableInitializerIsRedundant(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.VariableInitializerIsRedundant(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 
 internal class VariableNeverReadImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.VariableNeverRead(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.VariableNeverRead(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: KtNamedDeclaration get() = super.psi as KtNamedDeclaration
 }
 
 internal class UselessCallOnNotNullImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.UselessCallOnNotNull(), KtAbstractFirDiagnostic {
+) : KtFirDiagnostic.UselessCallOnNotNull(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-    override val psi: PsiElement get() = super.psi
 }
 

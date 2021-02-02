@@ -18,10 +18,10 @@ interface KtDiagnostic : ValidityTokenOwner {
     val defaultMessage: String
 }
 
-interface KtDiagnosticWithPsi : KtDiagnostic {
-    val psi: PsiElement
+interface KtDiagnosticWithPsi<out PSI: PsiElement> : KtDiagnostic {
+    val psi: PSI
     val textRanges: Collection<TextRange>
-    val diagnosticClass: KClass<out KtDiagnosticWithPsi>
+    val diagnosticClass: KClass<out KtDiagnosticWithPsi<PSI>>
 }
 
 class KtNonBoundToPsiErrorDiagnostic(

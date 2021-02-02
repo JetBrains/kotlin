@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.extensions.ExtensionPointName
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 
 class KtQuickFixService {
     private val list = KtQuickFixesList.createCombined(KtQuickFixRegistrar.allQuickFixesList())
 
-    fun getQuickFixesFor(diagnostic: KtFirDiagnostic): List<IntentionAction> =
-        list.getQuickFixesFor(diagnostic)
+    fun KtAnalysisSession.getQuickFixesFor(diagnostic: KtDiagnosticWithPsi<*>): List<IntentionAction> =
+        with(list) { getQuickFixesFor(diagnostic) }
 }
 
 abstract class KtQuickFixRegistrar {

@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
@@ -48,16 +49,19 @@ class KotlinHighLevelDiagnosticHighlightingPass(
         }
     }
 
-    private fun addDiagnostic(diagnostic: KtDiagnosticWithPsi) {
-        val fixes = service<KtQuickFixService>().getQuickFixesFor(diagnostic as KtFirDiagnostic)
-        annotationHolder.runAnnotatorWithContext(diagnostic.psi) { element, annotator ->
-            annotationHolder.newAnnotation(diagnostic.getHighlightSeverity(), diagnostic.getMessageToRender())
-                .addFixes(fixes)
-                .create()
+    private fun KtAnalysisSession.addDiagnostic(diagnostic: KtDiagnosticWithPsi<*>) {
+        val fixes = with(service<KtQuickFixService>()) { getQuickFixesFor(diagnostic as KtFirDiagnostic) }
+        annotationHolder.runAnnotatorWithContext(diagnostic.psi) { _, _ ->
+            diagnostic.textRanges.forEach { range ->
+                annotationHolder.newAnnotation(diagnostic.getHighlightSeverity(), diagnostic.getMessageToRender())
+                    .addFixes(fixes)
+                    .range(range)
+                    .create()
+            }
         }
     }
 
-    private fun KtDiagnosticWithPsi.getHighlightSeverity() = when (severity) {
+    private fun KtDiagnosticWithPsi<*>.getHighlightSeverity() = when (severity) {
         Severity.INFO -> HighlightSeverity.INFORMATION
         Severity.ERROR -> HighlightSeverity.ERROR
         Severity.WARNING -> HighlightSeverity.WARNING

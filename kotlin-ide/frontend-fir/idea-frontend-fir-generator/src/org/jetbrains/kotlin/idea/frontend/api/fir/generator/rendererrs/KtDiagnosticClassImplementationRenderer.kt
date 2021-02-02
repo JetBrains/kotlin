@@ -31,9 +31,11 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         withIndent {
             printParameters(diagnostic)
         }
-        inBracketsWithIndent(") : KtFirDiagnostic.${diagnostic.className}(), KtAbstractFirDiagnostic") {
+        print(") : KtFirDiagnostic.${diagnostic.className}(), KtAbstractFirDiagnostic<")
+        printTypeWithShortNames(diagnostic.original.psiType)
+        print(">")
+        inBracketsWithIndent {
             println("override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)")
-            printOverridePsiProperty(diagnostic)
         }
     }
 
@@ -43,19 +45,6 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
         }
         println("firDiagnostic: FirPsiDiagnostic<*>,")
         println("override val token: ValidityToken,")
-    }
-
-    private fun SmartPrinter.printOverridePsiProperty(diagnostic: HLDiagnostic) {
-        print("override val psi: ")
-        printTypeWithShortNames(diagnostic.original.psiType)
-        withIndent {
-            print(" get() = super.psi")
-            if (diagnostic.original.psiType.classifier != PsiElement::class) {
-                print(" as ")
-                printTypeWithShortNames(diagnostic.original.psiType)
-            }
-        }
-        println()
     }
 
     private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter) {
