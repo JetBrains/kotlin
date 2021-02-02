@@ -50,7 +50,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
     }
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
-        val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
+        val tasksProvider = KotlinTasksProvider()
         return Kotlin2JsSourceSetProcessor(tasksProvider, compilation, kotlinPluginVersion)
     }
 

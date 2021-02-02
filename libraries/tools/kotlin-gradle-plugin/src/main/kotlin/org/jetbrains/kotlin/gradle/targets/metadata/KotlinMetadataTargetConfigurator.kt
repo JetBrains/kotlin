@@ -109,7 +109,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
     override fun buildCompilationProcessor(compilation: AbstractKotlinCompilation<*>): KotlinCompilationProcessor<*> = when (compilation) {
         is KotlinCommonCompilation -> {
-            val tasksProvider = KotlinTasksProvider(compilation.target.targetName)
+            val tasksProvider = KotlinTasksProvider()
             KotlinCommonSourceSetProcessor(compilation, tasksProvider, kotlinPluginVersion)
         }
         is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)

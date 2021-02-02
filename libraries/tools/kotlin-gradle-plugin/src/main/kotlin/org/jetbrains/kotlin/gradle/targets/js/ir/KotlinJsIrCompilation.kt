@@ -36,7 +36,7 @@ class KotlinJsIrCompilation(
                     target.disambiguationClassifierInPlatform
                 else
                     target.disambiguationClassifier,
-                compilationName
+                compilationPurpose
             )
         }
 }

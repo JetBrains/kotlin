@@ -35,7 +35,7 @@ open class KotlinJvmCompilation(
         get() = if (target.withJavaEnabled) {
             val project = target.project
             val javaSourceSets = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-            val javaSourceSet = javaSourceSets.getByName(compilationName)
+            val javaSourceSet = javaSourceSets.getByName(compilationPurpose)
             project.tasks.withType(JavaCompile::class.java).named(javaSourceSet.compileJavaTaskName)
         } else null
 }

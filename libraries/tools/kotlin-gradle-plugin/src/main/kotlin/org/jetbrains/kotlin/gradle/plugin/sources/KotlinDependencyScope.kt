@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
@@ -26,7 +27,7 @@ internal enum class KotlinDependencyScope(val scopeName: String) {
     }
 }
 
-internal fun Project.sourceSetDependencyConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration =
+internal fun Project.sourceSetDependencyConfigurationByScope(sourceSet: HasKotlinDependencies, scope: KotlinDependencyScope): Configuration =
     project.configurations.getByName(
         when (scope) {
             API_SCOPE -> sourceSet.apiConfigurationName

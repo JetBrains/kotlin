@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformA
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
@@ -173,7 +174,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val javaCompile: TaskProvider<out AbstractCompile>?,
         val variantData: Any?,
         val sourceSetName: String,
-        val kotlinCompilation: KotlinCompilation<*>,
+        val kotlinCompilation: AbstractKotlinCompilation<*>,
         val kaptExtension: KaptExtension,
         val kaptClasspathConfigurations: List<Configuration>
     ) {
@@ -225,7 +226,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         val context = Kapt3SubpluginContext(
             project, javaCompileOrNull,
-            androidVariantData, sourceSetName, kotlinCompilation, kaptExtension, nonEmptyKaptConfigurations
+            androidVariantData, sourceSetName, kotlinCompilation as AbstractKotlinCompilation<*>/*TODO?*/, kaptExtension, nonEmptyKaptConfigurations
         )
 
         val kaptGenerateStubsTaskProvider: TaskProvider<KaptGenerateStubsTask> = context.createKaptGenerateStubsTask()

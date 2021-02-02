@@ -35,13 +35,10 @@ import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformPluginBase
-import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
-import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
@@ -255,7 +252,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     @field:Transient
-    internal val kotlinExtProvider: KotlinProjectExtension = project.extensions.findByType(KotlinProjectExtension::class.java)!!
+    internal val kotlinExtProvider: KotlinTopLevelExtension = project.extensions.findByType(KotlinTopLevelExtension::class.java)!!
 
     override fun getDestinationDir(): File =
         taskData.destinationDir.get()
@@ -295,7 +292,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     internal val sourceSetName: String
-        get() = taskData.compilation.name
+        get() = taskData.compilation.compilationPurpose
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -310,7 +307,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     val friendPaths: FileCollection = project.files(
         project.provider {
             taskData.compilation.run {
-                if (this !is AbstractKotlinCompilation<*>) return@run project.files()
+                if (this !is AbstractKotlinCompilation<*>) return@run project.files() // FIXME support PM20
                 mutableListOf<FileCollection>().also { allCollections ->
                     associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
                     allCollections.add(friendArtifacts)
@@ -395,7 +392,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal abstract fun callCompilerAsync(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
     @get:Input
-    internal val isMultiplatform: Boolean by lazy { project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper } }
+    internal val isMultiplatform: Boolean by lazy {
+        project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
+    }
 
     @get:Internal
     internal val abstractKotlinCompileArgumentsContributor by lazy {
