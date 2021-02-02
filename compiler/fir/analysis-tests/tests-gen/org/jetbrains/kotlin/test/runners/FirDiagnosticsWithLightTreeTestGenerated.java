@@ -5016,6 +5016,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("valueOfOrNull.kt")
+            public void testValueOfOrNull() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/valueOfOrNull.kt");
+            }
+
+            @Test
             @TestMetadata("weakHashMap.kt")
             public void testWeakHashMap() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/weakHashMap.kt");
