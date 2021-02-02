@@ -197,7 +197,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                         override val isEmpty: Boolean  get() = true
                     }
                     override fun collectParameterInformation() { }
-                    override fun buildReference(): CompositionReference = error("Not mockable")
+                    override fun buildContext(): CompositionContext = error("Not mockable")
                     override val applyCoroutineContext: CoroutineContext get() = EmptyCoroutineContext
                     override val composition: ControlledComposition = FakeComposition()
                }
