@@ -86,7 +86,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     idea {
         this.module.generatedSourceDirs.add(generationRoot)
     }
-} else if (!kotlinBuildProperties.useFir) {
+} else if (!kotlinBuildProperties.useFir && !kotlinBuildProperties.disableWerror) {
     allprojects {
         tasks.withType<KotlinCompile<*>> {
             if (path !in tasksWithWarnings) {
