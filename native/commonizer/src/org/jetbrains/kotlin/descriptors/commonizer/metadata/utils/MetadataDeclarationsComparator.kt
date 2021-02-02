@@ -11,8 +11,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.KNI_BRIDGE_FUNCTION_PRE
 import java.util.*
 import kotlin.reflect.KProperty0
 
+/**
+ * Compares two metadata modules ([KlibModuleMetadata]). Returns [Result], which may hold a list
+ * of found [Mismatch]s.
+ *
+ * The entry point is [MetadataDeclarationsComparator.Companion.compareModules] function.
+ */
 // TODO: extract to kotlinx-metadata-klib library?
-class MetadataDeclarationsComparator(private val config: Config = Config.Default) {
+class MetadataDeclarationsComparator private constructor(private val config: Config) {
 
     interface Config {
         val rootPathElement: String
@@ -82,7 +88,7 @@ class MetadataDeclarationsComparator(private val config: Config = Config.Default
 
     private fun toResult() = if (mismatches.isEmpty()) Result.Success else Result.Failure(mismatches)
 
-    fun compare(
+    private fun compareModules(
         metadataA: KlibModuleMetadata,
         metadataB: KlibModuleMetadata
     ): Result {
@@ -748,6 +754,12 @@ class MetadataDeclarationsComparator(private val config: Config = Config.Default
     }
 
     companion object {
+        fun compare(
+            metadataA: KlibModuleMetadata,
+            metadataB: KlibModuleMetadata,
+            config: Config = Config.Default
+        ): Result = MetadataDeclarationsComparator(config).compareModules(metadataA, metadataB)
+
         private val VISIBILITY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
             Flag.Common::IS_INTERNAL,
             Flag.Common::IS_PRIVATE,
