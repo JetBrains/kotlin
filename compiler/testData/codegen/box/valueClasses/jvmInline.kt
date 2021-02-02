@@ -994,7 +994,9 @@ suspend fun test() {
 }
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(Continuation(EmptyCoroutineContext) {})
+    c.startCoroutine(Continuation(EmptyCoroutineContext) {
+        it.getOrThrow()
+    })
 }
 
 fun box(): String {
