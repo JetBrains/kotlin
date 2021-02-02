@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -120,7 +121,9 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
     )
 
     fun verifyCrossModuleComposeIrTransform(
+        @Language("kotlin")
         dependencySource: String,
+        @Language("kotlin")
         source: String,
         expectedTransformed: String,
         dumpTree: Boolean = false,
@@ -155,6 +158,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
     }
 
     fun verifyComposeIrTransform(
+        @Language("kotlin")
         source: String,
         expectedTransformed: String,
         extra: String = "",

@@ -16,13 +16,14 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 
 class StabilityPropagationTransformTests : ComposeIrTransformTest() {
     private fun stabilityPropagation(
-        @org.intellij.lang.annotations.Language("kotlin")
+        @Language("kotlin")
         unchecked: String,
-        @org.intellij.lang.annotations.Language("kotlin")
+        @Language("kotlin")
         checked: String,
         expectedTransformed: String,
         dumpTree: Boolean = false
