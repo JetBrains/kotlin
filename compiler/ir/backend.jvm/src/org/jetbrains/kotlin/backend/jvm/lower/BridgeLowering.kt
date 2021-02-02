@@ -558,7 +558,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         target, IrDeclarationOrigin.BRIDGE,
         type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),
         // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
-        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters)
+        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters),
+        startOffset = target.startOffset,
+        endOffset = target.endOffset,
     )
 
     private fun IrBuilderWithScope.delegatingCall(
