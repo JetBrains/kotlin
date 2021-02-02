@@ -37981,6 +37981,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("typeAliasFunction.kt")
+            public void testTypeAliasFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/typealias/typeAliasFunction.kt");
+            }
+
+            @Test
             @TestMetadata("typeAliasInAnonymousObjectType.kt")
             public void testTypeAliasInAnonymousObjectType() throws Exception {
                 runTest("compiler/testData/codegen/box/typealias/typeAliasInAnonymousObjectType.kt");
