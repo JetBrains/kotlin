@@ -139,8 +139,17 @@ object FirIdeDeserializedDeclarationSourceProvider {
 
 private fun KtElement.isCompiled(): Boolean = containingKtFile.isCompiled
 
+private val allowedFakeElementKinds = setOf(FirFakeSourceElementKind.PropertyFromParameter)
+
+private fun FirElement.getAllowedPsi() = when (val source = source) {
+    null -> null
+    is FirRealPsiSourceElement<*> -> source.psi
+    is FirFakeSourceElement<*> -> if (source.kind in allowedFakeElementKinds) psi else null
+    else -> null
+}
+
 fun FirElement.findPsi(project: Project): PsiElement? =
-    realPsi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
+    getAllowedPsi() ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
 
 fun FirElement.findPsi(session: FirSession): PsiElement? =
     findPsi((session as FirIdeSession).project)
