@@ -14340,12 +14340,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("callWithIncorrectNumberOfArguments_1_6.kt")
-            public void testCallWithIncorrectNumberOfArguments_1_6() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/callWithIncorrectNumberOfArguments_1_6.kt");
-            }
-
-            @Test
             @TestMetadata("function255.kt")
             public void testFunction255() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/bigArity/function255.kt");
@@ -36122,12 +36116,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("interfaceHashCode.kt")
         public void testInterfaceHashCode() throws Exception {
             runTest("compiler/testData/codegen/box/super/interfaceHashCode.kt");
-        }
-
-        @Test
-        @TestMetadata("interfaceHashCode_1_6.kt")
-        public void testInterfaceHashCode_1_6() throws Exception {
-            runTest("compiler/testData/codegen/box/super/interfaceHashCode_1_6.kt");
         }
 
         @Test
