@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
 import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
 import org.jetbrains.kotlin.fir.tree.generator.printer.withIndent
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.collectClassNamesTo
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.printTypeWithShortNames
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 
 object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRenderer() {
     override fun SmartPrinter.render(diagnosticList: HLDiagnosticList, packageName: String) {

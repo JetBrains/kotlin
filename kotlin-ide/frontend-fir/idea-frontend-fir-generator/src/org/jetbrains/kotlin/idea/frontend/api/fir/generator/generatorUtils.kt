@@ -9,13 +9,6 @@ import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
-@OptIn(ExperimentalStdlibApi::class)
-internal fun KType.collectClassNamesTo(set: MutableSet<String>) {
-    (classifier as? KClass<*>)?.qualifiedName?.let(set::add)
-    for (argument in arguments) {
-        argument.type?.collectClassNamesTo(set)
-    }
-}
 
 internal fun SmartPrinter.printTypeWithShortNames(type: KType) {
     print((type.classifier as KClass<*>).simpleName!!)

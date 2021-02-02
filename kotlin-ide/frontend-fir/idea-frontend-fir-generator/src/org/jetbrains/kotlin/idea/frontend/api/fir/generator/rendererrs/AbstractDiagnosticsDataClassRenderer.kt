@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
 
+import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.printImports
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.tree.generator.printer.useSmartPrinter
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticConverter
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.collectClassNamesTo
 import java.io.File
 
 abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
