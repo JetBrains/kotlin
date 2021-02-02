@@ -2973,6 +2973,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/block.kt");
             }
 
+            @TestMetadata("blockHasBothComments.kt")
+            public void testBlockHasBothComments() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/blockHasBothComments.kt");
+            }
+
             @TestMetadata("blockHasComment.kt")
             public void testBlockHasComment() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/blockHasComment.kt");
@@ -3026,9 +3031,19 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/ifElse/block.kt");
             }
 
+            @TestMetadata("blockHasBothComments.kt")
+            public void testBlockHasBothComments() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/ifElse/blockHasBothComments.kt");
+            }
+
             @TestMetadata("blockHasComment.kt")
             public void testBlockHasComment() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/ifElse/blockHasComment.kt");
+            }
+
+            @TestMetadata("blockHasCommentWithIf.kt")
+            public void testBlockHasCommentWithIf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/ifElse/blockHasCommentWithIf.kt");
             }
 
             @TestMetadata("blockHasStatement.kt")
