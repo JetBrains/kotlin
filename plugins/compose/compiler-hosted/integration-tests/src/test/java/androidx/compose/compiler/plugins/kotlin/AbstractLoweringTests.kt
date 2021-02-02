@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.snapshots.Snapshot
+import org.intellij.lang.annotations.Language
 import org.robolectric.RuntimeEnvironment
 import java.net.URLClassLoader
 
@@ -58,7 +59,9 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
     }
 
     fun compose(
+        @Language("kotlin")
         supportingCode: String,
+        @Language("kotlin")
         composeCode: String,
         valuesFactory: () -> Map<String, Any> = { emptyMap() },
         dumpClasses: Boolean = false

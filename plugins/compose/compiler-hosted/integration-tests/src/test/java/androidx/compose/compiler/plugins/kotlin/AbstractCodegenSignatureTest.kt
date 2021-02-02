@@ -20,6 +20,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.widget.LinearLayout
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.robolectric.Robolectric
 import java.net.URLClassLoader
@@ -75,7 +76,11 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         return printPublicApi(asText(), relativePath)
     }
 
-    fun checkApi(src: String, expected: String, dumpClasses: Boolean = false): Unit = ensureSetup {
+    fun checkApi(
+        @Language("kotlin") src: String,
+        expected: String,
+        dumpClasses: Boolean = false
+    ): Unit = ensureSetup {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val fileName = "$className.kt"
 
@@ -104,7 +109,10 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         assertEquals(expectedApiString, apiString)
     }
 
-    fun checkComposerParam(src: String, dumpClasses: Boolean = false): Unit = ensureSetup {
+    fun checkComposerParam(
+        @Language("kotlin") src: String,
+        dumpClasses: Boolean = false
+    ): Unit = ensureSetup {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val compiledClasses = classLoader(
             """
@@ -251,7 +259,10 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         }
     }
 
-    fun codegen(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {
+    fun codegen(
+        @Language("kotlin") text: String,
+        dumpClasses: Boolean = false
+    ): Unit = ensureSetup {
         codegenNoImports(
             """
            import android.content.Context
@@ -265,7 +276,10 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         )
     }
 
-    fun codegenNoImports(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {
+    fun codegenNoImports(
+        @Language("kotlin") text: String,
+        dumpClasses: Boolean = false
+    ): Unit = ensureSetup {
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
