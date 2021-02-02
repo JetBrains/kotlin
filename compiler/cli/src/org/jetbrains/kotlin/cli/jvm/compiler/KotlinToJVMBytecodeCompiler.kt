@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.fir.createSessionWithDependencies
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
@@ -308,6 +309,8 @@ object KotlinToJVMBytecodeCompiler {
         val projectConfiguration = environment.configuration
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
+        val targetIds = environment.configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
+        val incrementalComponents = environment.configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         for (module in chunk) {
             performanceManager?.notifyAnalysisStarted()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -334,7 +337,14 @@ object KotlinToJVMBytecodeCompiler {
                 sourceScope,
                 librariesScope,
                 lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-                environment::createPackagePartProvider
+                getPackagePartProvider = { environment.createPackagePartProvider(it) },
+                getAdditionalModulePackagePartProvider = {
+                    if (targetIds == null || incrementalComponents == null) null
+                    else IncrementalPackagePartProvider(
+                        environment.createPackagePartProvider(it),
+                        targetIds.map(incrementalComponents::getIncrementalCache)
+                    )
+                }
             ) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()

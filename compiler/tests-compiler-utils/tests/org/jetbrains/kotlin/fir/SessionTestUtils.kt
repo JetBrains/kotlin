@@ -37,7 +37,8 @@ fun createSessionForTests(
     moduleName: String = "TestModule",
     friendPaths: List<String> = emptyList(),
     lookupTracker: LookupTracker? = null,
-    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+    getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    getAdditionalModulePackagePartProvider: (GlobalSearchScope) -> PackagePartProvider? = { null }
 ): FirSession {
     return createSessionWithDependencies(
         Name.identifier(moduleName),
@@ -48,7 +49,8 @@ fun createSessionForTests(
         sourceScope,
         librariesScope,
         lookupTracker,
-        packagePartProvider
+        getPackagePartProvider,
+        getAdditionalModulePackagePartProvider
     )
 }
 
