@@ -129,8 +129,8 @@ open class KotlinNativeTarget @Inject constructor(
             "org.jetbrains.kotlin.native.target",
             String::class.java
         )
-        val konanBuildTypeAttribute = Attribute.of(
-            "org.jetbrains.kotlin.native.type",
+        val kotlinNativeBuildTypeAttribute = Attribute.of(
+            "org.jetbrains.kotlin.native.build.type",
             String::class.java
         )
     }

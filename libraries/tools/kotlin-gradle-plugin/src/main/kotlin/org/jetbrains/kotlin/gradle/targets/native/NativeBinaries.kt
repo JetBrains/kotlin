@@ -12,7 +12,6 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
@@ -234,7 +233,7 @@ class Framework(
     compilation: KotlinNativeCompilation
 ) : AbstractNativeLibrary(name, baseName, buildType, compilation), HasAttributes {
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+    private val attributeContainer = HierarchyAttributeContainer(parent = compilation.attributes)
 
     override fun getAttributes() = attributeContainer
 
@@ -280,6 +279,13 @@ class Framework(
 
         /** Embed placeholder LLVM IR data as a marker. */
         MARKER,
+    }
+
+    companion object {
+        val frameworkTargets = Attribute.of(
+            "org.jetbrains.kotlin.native.framework.targets",
+            Set::class.java
+        )
     }
 }
 

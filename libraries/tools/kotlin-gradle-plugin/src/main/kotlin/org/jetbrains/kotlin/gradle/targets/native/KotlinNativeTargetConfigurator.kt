@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -151,8 +152,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         binary: Framework,
         linkTask: TaskProvider<KotlinNativeLink>
     ) {
-        fun <T: Task> Configuration.configureConfiguration(fat: Boolean, taskProvider: TaskProvider<T>) {
-            usesPlatformOf(binary.target)
+        fun <T : Task> Configuration.configureConfiguration(taskProvider: TaskProvider<T>) {
             project.afterEvaluate {
                 val task = taskProvider.get()
                 val artifactFile = when (task) {
@@ -169,38 +169,38 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                 project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
                     .addCandidate(linkArtifact)
                 artifacts.add(linkArtifact)
+                attributes.attribute(KotlinPlatformType.attribute, binary.target.platformType)
                 attributes.attribute(
-                    org.gradle.api.internal.artifacts.ArtifactAttributes.ARTIFACT_FORMAT,
-                    org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK
+                    ArtifactAttributes.ARTIFACT_FORMAT,
+                    NativeArtifactFormat.FRAMEWORK
                 )
                 attributes.attribute(
-                    org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.konanBuildTypeAttribute,
+                    KotlinNativeTarget.kotlinNativeBuildTypeAttribute,
                     binary.buildType.name
                 )
+                if (attributes.getAttribute(Framework.frameworkTargets) == null) {
+                    attributes.attribute(
+                        Framework.frameworkTargets,
+                        setOf(binary.target.konanTarget.name)
+                    )
+                }
                 // capture type parameter T
                 fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
                     to.attribute(key, from.getAttribute(key)!!)
                 }
-                binary.target.getAttributes().keySet().forEach {
-                    copyAttribute(it, binary.target.getAttributes(), this.attributes)
-                }
-                if (fat) {
-                    attributes.attribute(KotlinNativeTarget.konanTargetAttribute, "fat")
-                    // else is already set to real konan target
-                }
-                binary.attributes.keySet().forEach {
+                binary.attributes.keySet().filter { it != KotlinNativeTarget.konanTargetAttribute }.forEach {
                     copyAttribute(it, binary.attributes, this.attributes)
                 }
             }
         }
 
-        configurations.create(frameworkConfigurationName(binary.target.name, binary.buildType.name.toLowerCase()) + binary.baseName) {
+        configurations.create(lowerCamelCaseName(binary.name, binary.target.name)) {
             it.isCanBeConsumed = true
             it.isCanBeResolved = false
-            it.configureConfiguration(false, linkTask)
+            it.configureConfiguration(linkTask)
         }
 
-        val fatFrameworkConfigurationName = frameworkConfigurationName(binary.baseName, binary.buildType.name.toLowerCase() + "Fat")
+        val fatFrameworkConfigurationName = lowerCamelCaseName(binary.name, binary.target.konanTarget.family.name.toLowerCase(), "fat")
         val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalize()}"
 
         val fatFrameworkTask = try {
@@ -220,17 +220,19 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             }
         }
 
-        if (configurations.findByName(fatFrameworkConfigurationName) == null) {
-            configurations.create(fatFrameworkConfigurationName) {
+        // maybeCreate is not used as it does not provide way to configure once
+        val fatConfiguration =
+            configurations.findByName(fatFrameworkConfigurationName) ?: configurations.create(fatFrameworkConfigurationName) {
                 it.isCanBeConsumed = true
                 it.isCanBeResolved = false
-                it.configureConfiguration(true, fatFrameworkTask)
+                it.configureConfiguration(fatFrameworkTask)
             }
-        }
-    }
 
-    private fun frameworkConfigurationName(name: String, type: String): String =
-        listOf(name, type, "framework").joinToString("") { it.capitalize() }.decapitalize()
+        fatConfiguration.attributes.attribute(
+            Framework.frameworkTargets,
+            (fatConfiguration.attributes.getAttribute(Framework.frameworkTargets) ?: setOf<String>()) + binary.target.konanTarget.name
+        )
+    }
 
     private fun Project.createRunTask(binary: Executable) {
         val taskName = binary.runTaskName ?: return
