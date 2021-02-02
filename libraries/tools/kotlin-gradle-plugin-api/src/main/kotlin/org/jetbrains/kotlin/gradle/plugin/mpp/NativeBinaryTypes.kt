@@ -1,8 +1,12 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Named
-import org.jetbrains.kotlin.gradle.plugin.mpp.Framework.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.konan.target.Architecture.ARM32
 import org.jetbrains.kotlin.konan.target.Architecture.ARM64
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -71,4 +75,15 @@ enum class NativeOutputKind(
     };
 
     open fun availableFor(target: KonanTarget) = true
+}
+
+enum class BitcodeEmbeddingMode {
+    /** Don't embed LLVM IR bitcode. */
+    DISABLE,
+
+    /** Embed LLVM IR bitcode as data. */
+    BITCODE,
+
+    /** Embed placeholder LLVM IR data as a marker. */
+    MARKER,
 }

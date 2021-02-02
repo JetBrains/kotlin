@@ -578,8 +578,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     }
 
     @get:Input
-    val embedBitcode: Framework.BitcodeEmbeddingMode by project.provider {
-        (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
+    val embedBitcode: BitcodeEmbeddingMode by project.provider {
+        (binary as? Framework)?.embedBitcode ?: BitcodeEmbeddingMode.DISABLE
     }
 
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {
@@ -590,8 +590,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         addKey("-tr", processTests)
         addArgIfNotNull("-entry", entryPoint)
         when (embedBitcode) {
-            Framework.BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")
-            Framework.BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
+            BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")
+            BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
             else -> { /* Do nothing. */
             }
         }

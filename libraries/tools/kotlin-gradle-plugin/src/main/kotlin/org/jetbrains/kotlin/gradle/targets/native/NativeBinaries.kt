@@ -270,17 +270,6 @@ class Framework(
      */
     var isStatic = false
 
-    enum class BitcodeEmbeddingMode {
-        /** Don't embed LLVM IR bitcode. */
-        DISABLE,
-
-        /** Embed LLVM IR bitcode as data. */
-        BITCODE,
-
-        /** Embed placeholder LLVM IR data as a marker. */
-        MARKER,
-    }
-
     companion object {
         val frameworkTargets = Attribute.of(
             "org.jetbrains.kotlin.native.framework.targets",
