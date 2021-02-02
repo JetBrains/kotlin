@@ -3765,13 +3765,15 @@ createInterop("kt43502") {
     // Note: also hardcoded in def file.
     final String libDir = "$buildDir/kt43502/"
     // Construct library that contains actual symbol definition.
-    it.getByTarget(target.name).doFirst {
-        UtilsKt.buildStaticLibrary(
-                project,
-                [file("$projectDir/interop/kt43502/kt43502.c")],
-                file("$libDir/kt43502.a"),
-                file("$libDir/kt43502.objs"),
-        )
+    it.getByTarget(target.name).configure {
+        doFirst {
+            UtilsKt.buildStaticLibrary(
+                    project,
+                    [file("$projectDir/interop/kt43502/kt43502.c")],
+                    file("$libDir/kt43502.a"),
+                    file("$libDir/kt43502.objs"),
+            )
+        }
     }
 }
 
