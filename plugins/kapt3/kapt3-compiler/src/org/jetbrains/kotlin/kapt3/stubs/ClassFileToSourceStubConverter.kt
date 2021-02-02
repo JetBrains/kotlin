@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAM
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -690,7 +692,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val name = field.name
         if (!isValidIdentifier(name)) return null
 
-        val type = Type.getType(field.desc)
+        val type = fieldType(field, origin)
+
         if (!checkIfValidTypeName(containingClass, type)) {
             return null
         }
@@ -1420,6 +1423,20 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         lineMappings.registerSignature(this, node)
         return this
     }
+
+    private fun fieldType(field: FieldNode, origin: JvmDeclarationOrigin?): Type {
+        val signType = Type.getType(field.desc)
+        return when (val declaration = origin?.element) {
+            is KtProperty -> {
+                val delegateType = kaptContext.bindingContext[BindingContext.EXPRESSION_TYPE_INFO, declaration.delegateExpression]?.type
+                delegateType?.let(::replaceAnonymousTypeWithSuperType)?.let(::convertKotlinType) ?: signType
+            }
+            else -> signType
+        }
+    }
+
+    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT)
+
 }
 
 private fun Any?.isOfPrimitiveType(): Boolean = when (this) {
