@@ -498,6 +498,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
+        @TestMetadata("throwableSubclass.kt")
+        public void testThrowableSubclass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/throwableSubclass.kt");
+        }
+
+        @Test
         @TestMetadata("treeSet.kt")
         public void testTreeSet() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/treeSet.kt");
