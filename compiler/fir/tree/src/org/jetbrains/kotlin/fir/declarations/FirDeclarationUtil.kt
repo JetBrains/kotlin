@@ -162,6 +162,20 @@ val FirProperty.hasBackingField: Boolean
             delegate != null ||
             isReferredViaField == true
 
+// See [BindingContext.BACKING_FIELD_REQUIRED]
+val FirProperty.backingFieldRequired: Boolean
+    get() {
+        if (isAbstract) return false
+        if (delegate != null) return false
+
+        if (getter == null) return true
+        if (isVar && setter == null) return true
+        if (setter != null && !setter!!.hasBody && !setter!!.isAbstract) return true
+        if (!getter!!.hasBody && !getter!!.isAbstract) return true
+
+        return isReferredViaField == true
+    }
+
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library
 inline val FirDeclaration.isSynthetic: Boolean

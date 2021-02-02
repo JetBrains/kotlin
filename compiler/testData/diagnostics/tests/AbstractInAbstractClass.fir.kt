@@ -18,7 +18,7 @@ abstract class MyAbstractClass() {
     abstract var c3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
 
     val e: Int                               get() = a
-    val e1: Int = 0;          get() = a
+    val e1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;          get() = a
     abstract val e2: Int                     <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = a<!>
     abstract val e3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = a<!>
 
@@ -30,7 +30,7 @@ abstract class MyAbstractClass() {
 
     //property accessors
     var i: Int                       abstract get  abstract set
-    var i1: Int = 0;  abstract get  abstract set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  abstract get  abstract set
 
     var j: Int                       get() = i;    abstract set
     var j1: Int                      get() = i;    abstract set
@@ -39,7 +39,7 @@ abstract class MyAbstractClass() {
     var k1: Int = 0;                 abstract set
 
     var l: Int                       abstract get  abstract set
-    var l1: Int = 0;  abstract get  abstract set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  abstract get  abstract set
 
     var n: Int                       abstract get abstract set(v: Int) {}
 }

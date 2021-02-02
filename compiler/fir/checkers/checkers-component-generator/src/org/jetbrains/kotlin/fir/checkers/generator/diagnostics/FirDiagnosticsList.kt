@@ -303,6 +303,10 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val PROPERTY_INITIALIZER_IN_INTERFACE by error<FirSourceElement, KtExpression>()
         val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
 
+        val EXTENSION_PROPERTY_WITH_BACKING_FIELD by error<FirSourceElement, KtExpression>()
+        val PROPERTY_INITIALIZER_NO_BACKING_FIELD by error<FirSourceElement, KtExpression>()
+        val BACKING_FIELD_IN_INTERFACE by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+
         val ABSTRACT_DELEGATED_PROPERTY by error<FirSourceElement, KtPropertyDelegate>()
         val DELEGATED_PROPERTY_IN_INTERFACE by error<FirSourceElement, KtPropertyDelegate>()
         // TODO: val ACCESSOR_FOR_DELEGATED_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()

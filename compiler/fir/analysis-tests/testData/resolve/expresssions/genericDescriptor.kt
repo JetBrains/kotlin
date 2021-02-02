@@ -18,7 +18,7 @@ public interface ResolvedCall<D extends Descriptor> {
 
 // FILE: test.kt
 
-val Descriptor.name = "123"
+val Descriptor.name = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>"123"<!>
 fun Descriptor.correct(): Boolean = true
 fun Descriptor.foo() {}
 

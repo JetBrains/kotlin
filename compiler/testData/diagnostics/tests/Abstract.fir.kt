@@ -17,7 +17,7 @@ package MyPackage
     abstract var c3: Int = 0; set(v: Int) { field = v }
 
     val e: Int                               get() = a
-    val e1: Int = 0;          get() = a
+    val e1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;          get() = a
     abstract val e2: Int      get() = a
     abstract val e3: Int = 0; get() = a
 
@@ -29,16 +29,16 @@ package MyPackage
 
     //property accessors
     var i: Int                       abstract get  abstract set
-    var i1: Int = 0;  abstract get  abstract set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  abstract get  abstract set
 
     var j: Int                       get() = i;    abstract set
-    var j1: Int = 0;  get() = i;    abstract set
+    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    abstract set
 
     var k: Int        abstract set
     var k1: Int = 0;                 abstract set
 
     var l: Int                       abstract get  abstract set
-    var l1: Int = 0;  abstract get  abstract set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  abstract get  abstract set
 
     var n: Int                       abstract get abstract set(v: Int) {}
 

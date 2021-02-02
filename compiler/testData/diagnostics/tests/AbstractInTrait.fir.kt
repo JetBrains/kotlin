@@ -12,8 +12,8 @@ interface MyTrait {
     abstract var b2: Int                                               private set
     abstract var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; private set
 
-    var c: Int                                   set(v: Int) { field = v }
-    var c1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;              set(v: Int) { field = v }
+    <!BACKING_FIELD_IN_INTERFACE!>var c: Int<!>                                   set(v: Int) { field = v }
+    <!BACKING_FIELD_IN_INTERFACE!>var c1: Int<!> = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;              set(v: Int) { field = v }
     abstract var c2: Int                     <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
     abstract var c3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!ABSTRACT_PROPERTY_WITH_SETTER!>set(v: Int) { field = v }<!>
 
