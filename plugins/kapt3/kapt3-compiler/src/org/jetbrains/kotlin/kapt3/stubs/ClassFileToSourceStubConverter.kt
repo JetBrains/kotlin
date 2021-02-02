@@ -130,7 +130,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
+    private val kdocCommentKeeper = if (keepKdocComments) KDocCommentKeeper(kaptContext) else null
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
@@ -209,7 +209,9 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
-        topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
+        if (kdocCommentKeeper != null) {
+            topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
+        }
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
@@ -440,11 +442,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             superTypes.superClass,
             superTypes.interfaces,
             enumValues + sortedFields + sortedMethods + nestedClasses
-        ).also {
-            if (keepKdocComments) {
-                it.keepKdocComments(clazz)
-            }
-        }
+        ).keepKdocCommentsIfNecessary(clazz)
     }
 
     private class MemberData(val name: String, val descriptor: String, val position: KotlinPosition?)
@@ -734,11 +732,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         lineMappings.registerField(containingClass, field)
 
         val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
-        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).also {
-            if (keepKdocComments) {
-                it.keepKdocComments(field)
-            }
-        }
+        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocCommentsIfNecessary(field)
     }
 
     private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): JCExpression? {
@@ -986,11 +980,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
             genericSignature.parameterTypes, genericSignature.exceptionTypes,
             body, defaultValue
-        ).keepSignature(lineMappings, method).also {
-            if (keepKdocComments) {
-                it.keepKdocComments(method)
-            }
-        }
+        ).keepSignature(lineMappings, method).keepKdocCommentsIfNecessary(method)
     }
 
     private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {
@@ -1455,8 +1445,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         else -> null
     }
 
-    private fun <T : JCTree> T.keepKdocComments(node: Any): T {
-        kdocCommentKeeper.saveKDocComment(this, node)
+    private fun <T : JCTree> T.keepKdocCommentsIfNecessary(node: Any): T {
+        kdocCommentKeeper?.saveKDocComment(this, node)
         return this
     }
 

@@ -150,7 +150,9 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         }
 
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
-        compiler.keepComments = true
+        if (options.flags[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]) {
+            compiler.keepComments = true
+        }
 
         ClassReader.instance(context).saveParameterNames = true
 
