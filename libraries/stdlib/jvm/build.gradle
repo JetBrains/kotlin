@@ -120,7 +120,8 @@ compileKotlin {
                 "-Xopt-in=kotlin.ExperimentalMultiplatform",
                 "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xinline-classes",
-                "-Xuse-14-inline-classes-mangling-scheme"
+                "-Xuse-14-inline-classes-mangling-scheme",
+                "-Xsuppress-deprecated-jvm-target-warning",
         ]
         moduleName = "kotlin-stdlib"
     }

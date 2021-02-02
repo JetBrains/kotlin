@@ -41,6 +41,7 @@ ext.configureJvm6Project = { Project project ->
         if (!tasksWithWarnings.contains(task.path)) {
             task.kotlinOptions {
                 allWarningsAsErrors = true
+                freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
             }
         }
     }
