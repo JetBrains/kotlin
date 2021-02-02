@@ -26065,6 +26065,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/typealias/typeAliasConstructorInSuperCall.kt");
         }
 
+        @TestMetadata("typeAliasFunction.kt")
+        public void testTypeAliasFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/typeAliasFunction.kt");
+        }
+
         @TestMetadata("typeAliasInAnonymousObjectType.kt")
         public void testTypeAliasInAnonymousObjectType() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/typeAliasInAnonymousObjectType.kt");
