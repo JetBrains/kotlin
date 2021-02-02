@@ -111,7 +111,7 @@ fun test3() { // to non-extension lambda 1
 //    val i32: L1 = id { this } // this or it: oi- ni-
 //    val j32 = id<L1> { this } // this or it: oi- ni-
 
-    val w33 = W3(fun Int.(): Int = <!ARGUMENT_TYPE_MISMATCH!>this<!>) // oi- ni+
+    val w33 = W3(fun Int.(): Int = this) // oi- ni+
     val i33: L1 = id(fun Int.(): Int = this) // oi+ ni+
 
     // yet unsupported cases with ambiguity for the lambda conversion (commented constructors in wrappers above)

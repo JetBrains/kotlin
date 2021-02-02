@@ -31,7 +31,7 @@ fun test1() {
 
 
     foo2 {
-        ""
+        <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo2 {
         s: String -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
@@ -40,6 +40,6 @@ fun test1() {
         x -> <!ARGUMENT_TYPE_MISMATCH!>""<!>
     }
     foo2 {
-         -> 42
+         -> <!ARGUMENT_TYPE_MISMATCH!>42<!>
     }
 }
