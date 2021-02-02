@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
@@ -78,19 +80,25 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
     }
 
     private fun outputPathsFromMetadataCompilationsOf(sourceSets: Iterable<KotlinSourceSet>): List<File> {
-        val target = taskData.compilation.target
-        return sourceSets
-            .mapNotNull { sourceSet -> target.compilations.findByName(sourceSet.name)?.output?.classesDirs }
-            .flatten()
+        val target = taskData.compilation.owner
+        return when (target) {
+            is KotlinTarget -> sourceSets
+                .mapNotNull { sourceSet -> target.compilations.findByName(sourceSet.name)?.output?.classesDirs }
+                .flatten()
+            else -> error("unexpected compilation owner") // FIXME support PM20 variant
+        }
     }
-
-    private val defaultKotlinSourceSet: KotlinSourceSet
-        get() = taskData.compilation.defaultSourceSet
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
     internal val refinesMetadataPaths by project.provider {
-        outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.resolveAllDependsOnSourceSets())
+        when (val compilation = taskData.compilation) {
+            is KotlinCompilation<*> -> {
+                val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
+                outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.resolveAllDependsOnSourceSets())
+            }
+            else -> error("unexpected compilation type") // FIXME support PM20 variant
+        }
     }
 
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {

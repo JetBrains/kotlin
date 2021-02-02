@@ -57,7 +57,7 @@ open class DefaultCInteropSettings @Inject constructor(
     val interopProcessingTaskName: String
         get() = lowerCamelCaseName(
             "cinterop",
-            compilation.compilationName.takeIf { it != "main" }.orEmpty(),
+            compilation.compilationPurpose.takeIf { it != "main" }.orEmpty(),
             name,
             target.disambiguationClassifier
         )

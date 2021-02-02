@@ -158,7 +158,6 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                             variant.variantAttributes[KotlinAttributeKey(key.name)] =
                                 attributeString(compileDependenciesConfiguration.attributes, key)
                         }
-                        variant.isExported = compilation.isMain()
                     }
                 }
                 // Once all fragments are created, add dependencies between them

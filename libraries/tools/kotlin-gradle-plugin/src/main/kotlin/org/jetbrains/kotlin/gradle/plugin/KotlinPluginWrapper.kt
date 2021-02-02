@@ -23,12 +23,15 @@ import org.gradle.api.Project
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20GradlePlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -52,7 +55,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
     private val log = Logging.getLogger(this.javaClass)
     val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
-    open val projectExtensionClass: KClass<out KotlinProjectExtension> get() = KotlinProjectExtension::class
+    open val projectExtensionClass: KClass<out KotlinTopLevelExtension> get() = KotlinProjectExtension::class
 
     internal open fun kotlinSourceSetFactory(project: Project): NamedDomainObjectFactory<KotlinSourceSet> =
         DefaultKotlinSourceSetFactory(project)
@@ -83,12 +86,18 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
         project.createKotlinExtension(projectExtensionClass).apply {
+            if (this is KotlinPm20ProjectExtension)
+                this.project = project // refactor this code to remove the specific plugin class?
+
             coreLibrariesVersion = kotlinPluginVersion
 
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
                 project.container(KotlinSourceSet::class.java, factory)
 
-            project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
+            val topLevelExtension = project.topLevelExtension
+            if (topLevelExtension is KotlinProjectExtension) {
+                project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
+            }
         }
 
         project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
@@ -235,6 +244,14 @@ open class KotlinMultiplatformPluginWrapper @Inject constructor(
             )
         }
     }
+}
+
+open class KotlinPm20PluginWrapper @Inject constructor(private val objectFactory: ObjectFactory) : KotlinBasePluginWrapper() {
+    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
+        objectFactory.newInstance(KotlinPm20GradlePlugin::class.java)
+
+    override val projectExtensionClass: KClass<out KotlinPm20ProjectExtension>
+        get() = KotlinPm20ProjectExtension::class
 }
 
 fun Project.getKotlinPluginVersion(): String? =

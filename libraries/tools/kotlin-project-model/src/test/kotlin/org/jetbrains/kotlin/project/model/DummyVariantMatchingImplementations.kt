@@ -9,7 +9,7 @@ class MatchVariantsByExactAttributes : ModuleVariantResolver {
     override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
         val candidates = dependencyModule.variants
         return candidates.filter { candidate ->
-            candidate.isExported && candidate.variantAttributes.all { (attributeKey, candidateValue) ->
+            candidate.variantAttributes.all { (attributeKey, candidateValue) ->
                 attributeKey !in requestingVariant.variantAttributes.keys ||
                         candidateValue == requestingVariant.variantAttributes.getValue(attributeKey)
             }

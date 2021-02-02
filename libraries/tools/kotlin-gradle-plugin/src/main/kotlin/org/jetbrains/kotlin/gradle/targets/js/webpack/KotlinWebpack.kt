@@ -62,7 +62,7 @@ constructor(
     val compilationId: String by lazy {
         compilation.let {
             val target = it.target
-            target.project.path + "@" + target.name + ":" + it.compilationName
+            target.project.path + "@" + target.name + ":" + it.compilationPurpose
         }
     }
 

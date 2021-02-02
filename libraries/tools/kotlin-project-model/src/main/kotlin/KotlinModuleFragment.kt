@@ -17,13 +17,12 @@ interface KotlinModuleFragment {
     // TODO: scopes
     val declaredModuleDependencies: Iterable<KotlinModuleDependency>
 
+    // TODO: should this be source roots or source files?
     val kotlinSourceRoots: Iterable<File>
 }
 
 interface KotlinModuleVariant : KotlinModuleFragment {
     val variantAttributes: Map<KotlinAttributeKey, String>
-
-    var isExported: Boolean
 }
 
 val KotlinModuleFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<String>>
@@ -65,7 +64,6 @@ class BasicKotlinModuleVariant(
     containingModule,
     fragmentName
 ), KotlinModuleVariant {
-    override var isExported: Boolean = true
     override val variantAttributes: MutableMap<KotlinAttributeKey, String> = mutableMapOf()
     override fun toString(): String = "variant $fragmentName"
 }

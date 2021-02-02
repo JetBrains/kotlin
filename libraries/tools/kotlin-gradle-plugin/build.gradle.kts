@@ -226,6 +226,11 @@ pluginBundle {
         id = "org.jetbrains.kotlin.native.cocoapods",
         display = "Kotlin Native plugin for CocoaPods integration"
     )
+    create(
+        name = "kotlinMultiplatformPluginPm20",
+        id = "org.jetbrains.kotlin.multiplatform.pm20",
+        display = "Kotlin Multiplatform plugin with PM2.0"
+    )
 }
 
 publishPluginMarkers()
