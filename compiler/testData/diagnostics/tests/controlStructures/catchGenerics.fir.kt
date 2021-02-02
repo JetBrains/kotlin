@@ -2,11 +2,11 @@
 // See KT-9816, KT-9742
 
 // Not allowed in Java
-class ZException<T>(val p: T) : Exception()
+class ZException<<!GENERIC_THROWABLE_SUBCLASS!>T<!>>(val p: T) : Exception()
 
-class YException<T>(val p: T): java.lang.RuntimeException()
+class YException<<!GENERIC_THROWABLE_SUBCLASS!>T<!>>(val p: T): java.lang.RuntimeException()
 
-class XException<T>(val p: T): Throwable()
+class XException<<!GENERIC_THROWABLE_SUBCLASS!>T<!>>(val p: T): Throwable()
 
 fun bar() {
     try {

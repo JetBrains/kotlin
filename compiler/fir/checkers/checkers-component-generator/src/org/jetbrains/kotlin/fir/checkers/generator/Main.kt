@@ -31,6 +31,7 @@ fun main(args: Array<String>) {
         alias<FirMemberDeclaration>("MemberDeclarationChecker")
         alias<FirFunction<*>>("FunctionChecker")
         alias<FirProperty>("PropertyChecker")
+        alias<FirClass<*>>("ClassChecker")
         alias<FirRegularClass>("RegularClassChecker")
         alias<FirConstructor>("ConstructorChecker")
         alias<FirFile>("FileChecker")

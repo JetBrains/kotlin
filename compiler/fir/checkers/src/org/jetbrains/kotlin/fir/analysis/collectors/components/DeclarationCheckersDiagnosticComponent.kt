@@ -25,6 +25,10 @@ class DeclarationCheckersDiagnosticComponent(
         (checkers.memberDeclarationCheckers + checkers.propertyCheckers).check(property, data, reporter)
     }
 
+    override fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: CheckerContext) {
+        checkers.classCheckers.check(klass, data, reporter)
+    }
+
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
         checkers.regularClassCheckers.check(regularClass, data, reporter)
     }
@@ -62,7 +66,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
-        checkers.basicDeclarationCheckers.check(anonymousObject, data, reporter)
+        (checkers.classCheckers + checkers.basicDeclarationCheckers).check(anonymousObject, data, reporter)
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {

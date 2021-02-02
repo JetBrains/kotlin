@@ -138,6 +138,8 @@ object FirErrors {
     val CATCH_PARAMETER_WITH_DEFAULT_VALUE by error0<FirSourceElement, PsiElement>()
     val REIFIED_TYPE_IN_CATCH_CLAUSE by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETER_IN_CATCH_CLAUSE by error0<FirSourceElement, PsiElement>()
+    val GENERIC_THROWABLE_SUBCLASS by error0<FirSourceElement, KtTypeParameterList>()
+    val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS by error0<FirSourceElement, KtClassOrObject>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
