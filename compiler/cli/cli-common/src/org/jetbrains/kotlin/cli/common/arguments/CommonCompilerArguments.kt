@@ -351,6 +351,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var inferenceCompatibility: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xsuppress-version-warnings",
+        description = "Suppress warnings about outdated, inconsistent or experimental language or API versions"
+    )
+    var suppressVersionWarnings: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -496,9 +502,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val apiVersion = parseVersion(collector, apiVersion, "API") ?: languageVersion
 
         checkApiVersionIsNotGreaterThenLanguageVersion(languageVersion, apiVersion, collector)
-        checkLanguageVersionIsStable(languageVersion, collector)
-        checkOutdatedVersions(languageVersion, apiVersion, collector)
-        checkProgressiveMode(languageVersion, collector)
 
         val languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion,
@@ -507,7 +510,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             configureLanguageFeatures(collector)
         )
 
-        checkIrSupport(languageVersionSettings, collector)
+        if (!suppressVersionWarnings) {
+            checkLanguageVersionIsStable(languageVersion, collector)
+            checkOutdatedVersions(languageVersion, apiVersion, collector)
+            checkProgressiveMode(languageVersion, collector)
+
+            checkIrSupport(languageVersionSettings, collector)
+        }
 
         return languageVersionSettings
     }
