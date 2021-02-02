@@ -1,3 +1,6 @@
+# 1.4.30 (Feb 2021)
+  * [KT-44083](https://youtrack.jetbrains.com/issue/KT-44083) Fix NSUInteger size for Watchos x64
+
 # 1.4.30-RC (Jan 2021)
   * [KT-44271](https://youtrack.jetbrains.com/issue/KT-44271) Incorrect linking when targeting linux_x64 from mingw_x64 host
   * [KT-44219](https://youtrack.jetbrains.com/issue/KT-44219) Non-reified type parameters with recursive bounds are not supported yet
