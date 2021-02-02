@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 
-internal interface KtAbstractFirDiagnostic : KtDiagnosticWithPsi {
+internal interface KtAbstractFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     val firDiagnostic: FirPsiDiagnostic<*>
 
     override val factoryName: String
@@ -34,8 +34,9 @@ internal interface KtAbstractFirDiagnostic : KtDiagnosticWithPsi {
     override val textRanges: Collection<TextRange>
         get() = firDiagnostic.textRanges
 
-    override val psi: PsiElement
-        get() = firDiagnostic.psiElement
+    @Suppress("UNCHECKED_CAST")
+    override val psi: PSI
+        get() = firDiagnostic.psiElement as PSI
 
     override val severity: Severity
         get() = firDiagnostic.severity

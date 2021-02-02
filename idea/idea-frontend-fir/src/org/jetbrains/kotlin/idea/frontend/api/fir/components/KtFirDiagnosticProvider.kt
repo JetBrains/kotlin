@@ -26,18 +26,18 @@ internal class KtFirDiagnosticProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtDiagnosticProvider(), KtFirAnalysisSessionComponent {
-    override fun getDiagnosticsForElement(element: KtElement): Collection<KtDiagnosticWithPsi> = withValidityAssertion {
+    override fun getDiagnosticsForElement(element: KtElement): Collection<KtDiagnosticWithPsi<*>> = withValidityAssertion {
         element.getDiagnostics(firResolveState).map { it.asKtDiagnostic() }
     }
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<KtDiagnosticWithPsi> =
+    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<KtDiagnosticWithPsi<*>> =
         ktFile.collectDiagnosticsForFile(firResolveState).map { it.asKtDiagnostic() }
 
-    fun firDiagnosticAsKtDiagnostic(diagnostic: FirPsiDiagnostic<*>): KtDiagnosticWithPsi {
+    fun firDiagnosticAsKtDiagnostic(diagnostic: FirPsiDiagnostic<*>): KtDiagnosticWithPsi<*> {
         return KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, diagnostic as FirDiagnostic<*>)
     }
 
-    fun coneDiagnosticAsKtDiagnostic(coneDiagnostic: ConeDiagnostic, source: FirSourceElement): KtDiagnosticWithPsi? {
+    fun coneDiagnosticAsKtDiagnostic(coneDiagnostic: ConeDiagnostic, source: FirSourceElement): KtDiagnosticWithPsi<*>? {
         val firDiagnostic = coneDiagnostic.toFirDiagnostic(source) ?: return null
         check(firDiagnostic is FirPsiDiagnostic<*>)
         return firDiagnosticAsKtDiagnostic(firDiagnostic)

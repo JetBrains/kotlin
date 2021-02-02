@@ -85,7 +85,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtElement.getDiagnostics(): Collection<KtDiagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 
-    fun KtFile.collectDiagnosticsForFile(): Collection<KtDiagnosticWithPsi> = diagnosticProvider.collectDiagnosticsForFile(this)
+    fun KtFile.collectDiagnosticsForFile(): Collection<KtDiagnosticWithPsi<*>> = diagnosticProvider.collectDiagnosticsForFile(this)
 
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
