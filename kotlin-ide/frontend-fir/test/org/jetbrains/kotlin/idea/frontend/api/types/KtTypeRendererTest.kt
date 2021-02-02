@@ -83,7 +83,7 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
             type = "Map<List<Int?>, V?>?",
             expected = "Map<List<Int?>, V?>?",
             typeArguments = listOf("V"),
-            rendererOptions = KtTypeRendererOptions(renderFqNames = false)
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
         )
     }
 
@@ -91,7 +91,55 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
         doTestByExpression(
             expression = "java.lang.String.CASE_INSENSITIVE_ORDER",
             expected = "(Comparator<(String..String?)>..Comparator<(String..String?)>?)",
-            rendererOptions = KtTypeRendererOptions(renderFqNames = false)
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
+        )
+    }
+
+    fun testFunctionalType() {
+        doTestByTypeText(
+            type = "(String, Int?) -> Long",
+            expected = "(String, Int?) -> Long",
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
+        )
+    }
+
+    fun testNullableFunctionalType() {
+        doTestByTypeText(
+            type = "((String, Int?) -> Long)?",
+            expected = "((String, Int?) -> Long)?",
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
+        )
+    }
+
+    fun testFunctionalTypeNoArguments() {
+        doTestByTypeText(
+            type = "() -> Long",
+            expected = "() -> Long",
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
+        )
+    }
+
+    fun testFunctionalTypeReceiver() {
+        doTestByTypeText(
+            type = "Int.(String) -> Long",
+            expected = "Int.(String) -> Long",
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
+        )
+    }
+
+    fun testFunctionalTypeUnitReturnType() {
+        doTestByTypeText(
+            type = "(String) -> Unit",
+            expected = "(String) -> Unit",
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
+        )
+    }
+
+    fun testFunctionalTypeRenderAsUsualClassType() {
+        doTestByTypeText(
+            type = "Int.(String, Long) -> Char",
+            expected = "Function3<Int, String, Long, Char>",
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES.copy(renderFunctionTypes = false)
         )
     }
 
@@ -103,7 +151,7 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
                 if (x is String && x is Int) x else null
             }""".trimIndent(),
             expected = "(String?&Int?)",
-            rendererOptions = KtTypeRendererOptions(renderFqNames = false)
+            rendererOptions = KtTypeRendererOptions.SHORT_NAMES
         )
     }
 }
