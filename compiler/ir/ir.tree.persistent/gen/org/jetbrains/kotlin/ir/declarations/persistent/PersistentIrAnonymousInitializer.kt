@@ -56,7 +56,8 @@ internal class PersistentIrAnonymousInitializer(
                 if (v is PersistentIrBodyBase<*>) {
                     v.container = this
                 }
-                setCarrier().bodyField = v
+                setCarrier()
+                bodyField = v
             }
         }
 }

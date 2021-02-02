@@ -55,7 +55,8 @@ internal class PersistentIrEnumEntry(
         get() = getCarrier().correspondingClassField
         set(v) {
             if (correspondingClass !== v) {
-                setCarrier().correspondingClassField = v
+                setCarrier()
+                correspondingClassField = v
             }
         }
 
@@ -68,7 +69,8 @@ internal class PersistentIrEnumEntry(
                 if (v is PersistentIrBodyBase<*>) {
                     v.container = this
                 }
-                setCarrier().initializerExpressionField = v
+                setCarrier()
+                initializerExpressionField = v
             }
         }
 }
