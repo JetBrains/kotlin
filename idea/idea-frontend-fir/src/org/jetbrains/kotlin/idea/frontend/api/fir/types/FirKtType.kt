@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.types
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.*
@@ -26,11 +25,11 @@ internal interface KtFirType : KtType, ValidityTokenOwner {
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.render() }
 }
 
-internal class KtFirClassType(
+internal class KtFirUsualClassType(
     coneType: ConeClassLikeTypeImpl,
     override val token: ValidityToken,
     private val firBuilder: KtSymbolByFirBuilder,
-) : KtClassType(), KtFirType {
+) : KtUsualClassType(), KtFirType {
     override val coneType by weakRef(coneType)
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
@@ -44,6 +43,52 @@ internal class KtFirClassType(
     }
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
+
+    override fun asString(): String = withValidityAssertion {
+        coneType.render() //todo
+    }
+}
+
+internal class KtFirFunctionalType(
+    coneType: ConeClassLikeTypeImpl,
+    override val token: ValidityToken,
+    private val firBuilder: KtSymbolByFirBuilder,
+) : KtFunctionalType(), KtFirType {
+    override val coneType by weakRef(coneType)
+
+    override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
+    override val classSymbol: KtClassLikeSymbol by cached {
+        firBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag) ?: error("Class ${coneType.lookupTag} was not found")
+    }
+    override val typeArguments: List<KtTypeArgument> by cached {
+        coneType.typeArguments.map { typeArgument ->
+            firBuilder.buildTypeArgument(typeArgument)
+        }
+    }
+
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
+
+    override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendFunctionType(firBuilder.rootSession) }
+    override val arity: Int
+        get() = withValidityAssertion {
+            if (coneType.isExtensionFunctionType) coneType.typeArguments.size - 2
+            else coneType.typeArguments.size - 1
+        }
+
+    override val receiverType: KtType?
+        get() = withValidityAssertion {
+            if (coneType.isExtensionFunctionType) (typeArguments.first() as KtTypeArgumentWithVariance).type
+            else null
+        }
+
+    override val parameterTypes: List<KtType> by cached {
+        val parameterTypeArgs = if (coneType.isExtensionFunctionType) typeArguments.subList(1, typeArguments.lastIndex)
+        else typeArguments.subList(0, typeArguments.lastIndex)
+        parameterTypeArgs.map { (it as KtTypeArgumentWithVariance).type }
+    }
+
+    override val returnType: KtType
+        get() = withValidityAssertion { (typeArguments.last() as KtTypeArgumentWithVariance).type }
 
     override fun asString(): String = withValidityAssertion {
         coneType.render() //todo

@@ -77,8 +77,6 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun PsiElement.getExpectedType(): KtType? = expressionTypeProvider.getExpectedType(this)
 
-    fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
-
     val builtinTypes: KtBuiltinTypes get() = typeProvider.builtinTypes
 
     fun KtClassOrObjectSymbol.buildSelfClassType(): KtType = typeProvider.buildSelfClassType(this)
