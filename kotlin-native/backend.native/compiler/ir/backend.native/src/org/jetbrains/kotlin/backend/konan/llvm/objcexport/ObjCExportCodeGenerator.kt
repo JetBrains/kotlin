@@ -208,7 +208,7 @@ internal class ObjCExportCodeGenerator(
     }
 
     fun FunctionGenerationContext.initRuntimeIfNeeded() {
-        callFromBridge(context.llvm.initRuntimeIfNeeded, emptyList())
+        this.needsRuntimeInit = true
     }
 
     inline fun FunctionGenerationContext.convertKotlin(

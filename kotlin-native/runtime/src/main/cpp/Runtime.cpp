@@ -189,7 +189,7 @@ void AppendToInitializersTail(InitNode *next) {
   initTailNode = next;
 }
 
-void Kotlin_initRuntimeIfNeeded() {
+RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
   if (!isValidRuntime()) {
     initRuntime();
     // Register runtime deinit function at thread cleanup.

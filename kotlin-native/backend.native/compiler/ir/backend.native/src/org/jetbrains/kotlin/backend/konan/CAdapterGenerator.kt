@@ -361,8 +361,8 @@ private class ExportedElement(val kind: ElementKind,
             |
             |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
             |static $objectClassC ${cname}_instance_impl(void) {
-            |  KObjHolder result_holder;
             |  Kotlin_initRuntimeIfNeeded();
+            |  KObjHolder result_holder;
             |  KObjHeader* result = ${cname}_instance(result_holder.slot());
             |  return $objectClassC { .pinned = CreateStablePointer(result)};
             |}
@@ -379,8 +379,8 @@ private class ExportedElement(val kind: ElementKind,
         return """
               |extern "C" KObjHeader* $cname(KObjHeader**);
               |static $enumClassC ${cname}_impl(void) {
-              |  KObjHolder result_holder;
               |  Kotlin_initRuntimeIfNeeded();
+              |  KObjHolder result_holder;
               |  KObjHeader* result = $cname(result_holder.slot());
               |  return $enumClassC { .pinned = CreateStablePointer(result)};
               |}
@@ -996,8 +996,8 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             val argument = if (needArgument) "value, " else ""
             output("extern \"C\" KObjHeader* Kotlin_box${it.shortNameForPredefinedType}($parameter$maybeComma KObjHeader**);")
             output("static ${translateType(nullableIt)} ${it.createNullableNameForPredefinedType}Impl($parameter) {")
-            output("KObjHolder result_holder;", 1)
             output("Kotlin_initRuntimeIfNeeded();", 1)
+            output("KObjHolder result_holder;", 1)
             output("KObjHeader* result = Kotlin_box${it.shortNameForPredefinedType}($argument result_holder.slot());", 1)
             output("return ${translateType(nullableIt)} { .pinned = CreateStablePointer(result) };", 1)
             output("}")
