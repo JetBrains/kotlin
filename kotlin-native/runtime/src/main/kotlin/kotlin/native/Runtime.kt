@@ -45,7 +45,7 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * with custom exception hooks.
  */
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
-    if (!hook.isFrozen) {
+    if (Platform.memoryModel != MemoryModel.EXPERIMENTAL && !hook.isFrozen) {
         throw InvalidMutabilityException("Unhandled exception hook must be frozen")
     }
     return setUnhandledExceptionHook0(hook)
