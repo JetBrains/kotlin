@@ -2865,6 +2865,10 @@ task initializers7(type: KonanLocalTest) {
     source = "runtime/basic/initializers7.kt"
 }
 
+task initializers8(type: KonanLocalTest) {
+    source = "runtime/basic/initializers8.kt"
+}
+
 task expression_as_statement(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // uses exceptions.
     goldValue = "Ok\n"

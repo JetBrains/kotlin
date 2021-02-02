@@ -144,7 +144,10 @@ extern "C" ALWAYS_INLINE OBJ_GETTER(InitSingleton, ObjHeader** location, const T
 extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
-    mm::SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+    // Null `initialValue` means that the appropriate value was already set by static initialization.
+    if (initialValue != nullptr) {
+        mm::SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+    }
 }
 
 extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
