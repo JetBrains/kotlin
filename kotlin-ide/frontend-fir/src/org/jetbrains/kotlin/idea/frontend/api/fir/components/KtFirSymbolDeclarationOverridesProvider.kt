@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 
 internal class KtFirSymbolDeclarationOverridesProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -68,6 +69,11 @@ internal class KtFirSymbolDeclarationOverridesProvider(
                 overriddenElement.toList()
             }
         }
+    }
+
+    override fun <T : KtSymbol> getOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> = with(analysisSession) {
+        val containingDeclaration = (callableSymbol as? KtSymbolWithKind)?.getContainingSymbol() as? KtClassOrObjectSymbol ?: return emptyList()
+        getOverriddenSymbols(callableSymbol, containingDeclaration)
     }
 
     override fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): Collection<KtCallableSymbol> {

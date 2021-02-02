@@ -56,8 +56,12 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     abstract fun createContextDependentCopy(originalKtFile: KtFile, fakeKtElement: KtElement): KtAnalysisSession
 
+    //TODO get rid of it
     fun KtCallableSymbol.getOverriddenSymbols(containingDeclaration: KtClassOrObjectSymbol): List<KtCallableSymbol> =
         symbolDeclarationOverridesProvider.getOverriddenSymbols(this, containingDeclaration)
+
+    fun KtCallableSymbol.getOverriddenSymbols(): List<KtCallableSymbol> =
+        symbolDeclarationOverridesProvider.getOverriddenSymbols(this)
 
     fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
         symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
@@ -74,6 +78,8 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     infix fun KtType.isEqualTo(other: KtType): Boolean = subtypingComponent.isEqualTo(this, other)
 
     infix fun KtType.isSubTypeOf(superType: KtType): Boolean = subtypingComponent.isSubTypeOf(this, superType)
+
+    infix fun KtType.isNotSubTypeOf(superType: KtType): Boolean = !subtypingComponent.isSubTypeOf(this, superType)
 
     fun PsiElement.getExpectedType(): KtType? = expressionTypeProvider.getExpectedType(this)
 
