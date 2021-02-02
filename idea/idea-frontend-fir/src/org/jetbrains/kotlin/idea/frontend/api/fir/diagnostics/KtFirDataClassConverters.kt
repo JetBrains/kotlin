@@ -1338,6 +1338,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CANNOT_INFER_PARAMETER_TYPE) { firDiagnostic ->
+        CannotInferParameterTypeImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.FUN_INTERFACE_CONSTRUCTOR_REFERENCE) { firDiagnostic ->
         FunInterfaceConstructorReferenceImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

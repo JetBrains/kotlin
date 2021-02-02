@@ -295,6 +295,7 @@ object FirErrors {
     val MULTIPLE_VARARG_PARAMETERS by error0<FirSourceElement, KtParameter>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
     val FORBIDDEN_VARARG_PARAMETER_TYPE by error1<FirSourceElement, KtParameter, ConeKotlinType>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
     val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error0<FirSourceElement, KtParameter>()
+    val CANNOT_INFER_PARAMETER_TYPE by error0<FirSourceElement, KtParameter>()
 
     // Fun interfaces
     val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by error0<FirSourceElement, KtExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

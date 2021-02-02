@@ -1529,6 +1529,13 @@ internal class ValueParameterWithNoTypeAnnotationImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class CannotInferParameterTypeImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CannotInferParameterType(), KtAbstractFirDiagnostic<KtParameter> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class FunInterfaceConstructorReferenceImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
