@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -141,6 +139,7 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
 }
 
 private object SourceElementKey : FirDeclarationDataKey()
+
 var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
 val FirMemberDeclaration.containerSource: SourceElement?
@@ -151,16 +150,31 @@ val FirMemberDeclaration.containerSource: SourceElement?
     }
 
 private object IsFromVarargKey : FirDeclarationDataKey()
-var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
+
 private object IsReferredViaField : FirDeclarationDataKey()
+
+var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
 
+// See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean
-    get() = initializer != null ||
-            getter is FirDefaultPropertyGetter ||
-            isVar && setter is FirDefaultPropertySetter ||
-            delegate != null ||
-            isReferredViaField == true
+    get() {
+        if (isAbstract) return false
+        if (delegate != null) return false
+        when (origin) {
+            FirDeclarationOrigin.SubstitutionOverride -> return false
+            FirDeclarationOrigin.IntersectionOverride -> return false
+            FirDeclarationOrigin.Delegated -> return false
+            else -> {
+                val getter = getter ?: return true
+                if (isVar && setter == null) return true
+                if (setter?.hasBody == false) return true
+                if (!getter.hasBody) return true
+
+                return isReferredViaField == true
+            }
+        }
+    }
 
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library

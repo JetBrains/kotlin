@@ -29,7 +29,7 @@ class WithCPI(x : Int) {
 
 class NoCPI {
   val a = 1
-  var ab = 1
+  var ab = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
     set(v) {}
 }

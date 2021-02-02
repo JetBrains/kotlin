@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -302,6 +301,10 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val ABSTRACT_PROPERTY_WITH_INITIALIZER by error<FirSourceElement, KtExpression>()
         val PROPERTY_INITIALIZER_IN_INTERFACE by error<FirSourceElement, KtExpression>()
         val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+
+        val BACKING_FIELD_IN_INTERFACE by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val EXTENSION_PROPERTY_WITH_BACKING_FIELD by error<FirSourceElement, KtExpression>()
+        val PROPERTY_INITIALIZER_NO_BACKING_FIELD by error<FirSourceElement, KtExpression>()
 
         val ABSTRACT_DELEGATED_PROPERTY by error<FirSourceElement, KtPropertyDelegate>()
         val DELEGATED_PROPERTY_IN_INTERFACE by error<FirSourceElement, KtPropertyDelegate>()
