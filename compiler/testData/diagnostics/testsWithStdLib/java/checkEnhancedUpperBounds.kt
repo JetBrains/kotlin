@@ -1,4 +1,3 @@
-// !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FULL_JDK
 
