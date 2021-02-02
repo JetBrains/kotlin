@@ -26,7 +26,7 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
     val referenceModule = with(reference) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
     val generatedModule = with(generated) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
 
-    when (val result = MetadataDeclarationsComparator().compare(referenceModule, generatedModule)) {
+    when (val result = MetadataDeclarationsComparator.compare(referenceModule, generatedModule)) {
         is Result.Success -> Unit
         is Result.Failure -> {
             val mismatches = result.mismatches
