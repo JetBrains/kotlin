@@ -78,6 +78,31 @@ enum class PositioningStrategy(val expressionToCreate: String, val import: Strin
         "SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER",
         positioningStrategiesImport
     ),
+
+    DECLARATION_RETURN_TYPE(
+        "SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE",
+        positioningStrategiesImport
+    ),
+
+    OVERRIDE_MODIFIER(
+        "SourceElementPositioningStrategies.OVERRIDE_MODIFIER",
+        positioningStrategiesImport
+    ),
+
+    DOT_BY_SELECTOR(
+        "SourceElementPositioningStrategies.DOT_BY_SELECTOR",
+        positioningStrategiesImport
+    ),
+
+    OPEN_MODIFIER(
+        "SourceElementPositioningStrategies.OPEN_MODIFIER",
+        positioningStrategiesImport
+    ),
+
+    VARIANCE_MODIFIER(
+        "SourceElementPositioningStrategies.VARIANCE_MODIFIER",
+        positioningStrategiesImport
+    ),
 }
 
 private const val positioningStrategiesImport = "org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies"

@@ -111,7 +111,9 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     @OptIn(ExperimentalStdlibApi::class)
     private fun collectImports(diagnosticList: DiagnosticList): Collection<String> = buildSet {
         diagnosticList.diagnostics.forEach { diagnostic ->
-            diagnostic.getAllTypeArguments().mapTo(this) { it.kClass.qualifiedName!! }
+            for (typeArgument in diagnostic.getAllTypeArguments()) {
+                typeArgument.collectClassNamesTo(this)
+            }
             if (!diagnostic.hasDefaultPositioningStrategy()) {
                 add(diagnostic.positioningStrategy.import)
             }

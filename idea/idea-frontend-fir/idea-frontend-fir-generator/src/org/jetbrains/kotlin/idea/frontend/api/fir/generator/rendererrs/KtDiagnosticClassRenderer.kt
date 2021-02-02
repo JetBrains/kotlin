@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator.rendererrs
 
+import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.inBracketsWithIndent
 import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.generator.collectClassNamesTo
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.printTypeWithShortNames
 
 object KtDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
