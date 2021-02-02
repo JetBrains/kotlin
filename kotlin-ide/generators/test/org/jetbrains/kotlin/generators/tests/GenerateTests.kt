@@ -99,6 +99,7 @@ import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProje
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.perf.*
+import org.jetbrains.kotlin.idea.quickfix.AbstractHighLevelQuickFixTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiModuleTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
@@ -731,6 +732,20 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractCommonDecompiledTextTest> {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""".toRegex())
+            testClass<AbstractFirKotlinHighlightingPassTest> {
+                model("checker", recursive = false)
+                model("checker/regression")
+                model("checker/recovery")
+                model("checker/rendering")
+                model("checker/infos")
+                model("checker/diagnosticsMessage")
+            }
+
+
+            testClass<AbstractHighLevelQuickFixTest> {
+                val pattern = "^([\\w\\-_]+)\\.kt$"
+                model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
+            }
         }
 
         testClass<AbstractJvmDecompiledTextTest> {
