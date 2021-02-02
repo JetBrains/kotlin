@@ -74,12 +74,20 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
             File(project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
 
-        private val VERBOSE_OPTION_NAME = "kapt.verbose"
-        private val USE_WORKER_API = "kapt.use.worker.api"
-        private val INFO_AS_WARNINGS = "kapt.info.as.warnings"
-        private val INCLUDE_COMPILE_CLASSPATH = "kapt.include.compile.classpath"
-        private val INCREMENTAL_APT = "kapt.incremental.apt"
-        private val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = "kapt.keep.kdoc.comments.in.stubs"
+        // Pairs of names and default values of properties
+        // The default values should typically match those defined in org.jetbrains.kotlin.base.kapt3.KaptFlag.
+        private val VERBOSE_OPTION_NAME = Pair("kapt.verbose", false)
+        private val USE_WORKER_API = Pair(
+            "kapt.use.worker.api", // Currently doesn't have a matching KaptFlag
+            true
+        )
+        private val INCREMENTAL_APT = Pair(
+            "kapt.incremental.apt",
+            true // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT, but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
+        )
+        private val INFO_AS_WARNINGS = Pair("kapt.info.as.warnings", false)
+        private val INCLUDE_COMPILE_CLASSPATH = Pair("kapt.include.compile.classpath", true)
+        private val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = Pair("kapt.keep.kdoc.comments.in.stubs", true)
 
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
@@ -102,26 +110,27 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
 
         fun Project.isKaptVerbose(): Boolean {
-            return hasProperty(VERBOSE_OPTION_NAME) && property(VERBOSE_OPTION_NAME) == "true"
+            return getBooleanProperty(VERBOSE_OPTION_NAME.first, VERBOSE_OPTION_NAME.second)
         }
 
         fun Project.isUseWorkerApi(): Boolean {
-            return !(hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "false")
+            return getBooleanProperty(USE_WORKER_API.first, USE_WORKER_API.second)
         }
 
         fun Project.isIncrementalKapt(): Boolean {
-            return !(hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "false")
+            return getBooleanProperty(INCREMENTAL_APT.first, INCREMENTAL_APT.second)
         }
 
         fun Project.isInfoAsWarnings(): Boolean {
-            return hasProperty(INFO_AS_WARNINGS) && property(INFO_AS_WARNINGS) == "true"
+            return getBooleanProperty(INFO_AS_WARNINGS.first, INFO_AS_WARNINGS.second)
         }
 
-        fun includeCompileClasspath(project: Project): Boolean? =
-            project.findProperty(INCLUDE_COMPILE_CLASSPATH)?.run { toString().toBoolean() }
+        fun Project.isIncludeCompileClasspath(): Boolean {
+            return getBooleanProperty(INCLUDE_COMPILE_CLASSPATH.first, INCLUDE_COMPILE_CLASSPATH.second)
+        }
 
         fun Project.isKaptKeepKdocCommentsInStubs(): Boolean {
-            return !(hasProperty(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS) && property(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS) == "false")
+            return getBooleanProperty(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS.first, KAPT_KEEP_KDOC_COMMENTS_IN_STUBS.second)
         }
 
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(SourceSet.MAIN_SOURCE_SET_NAME)
@@ -149,6 +158,18 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun isEnabled(project: Project) =
             project.plugins.any { it is Kapt3GradleSubplugin }
+
+        private fun Project.getBooleanProperty(name: String, defaultValue: Boolean): Boolean {
+            return when (val value = findProperty(name)) {
+                is Boolean -> value
+                is String -> when {
+                    value.equals("true", ignoreCase = true) -> true
+                    value.equals("false", ignoreCase = true) -> false
+                    else -> defaultValue // Can also consider throwing an exception here for invalid values
+                }
+                else -> defaultValue // Can also consider throwing an exception here for invalid values (if the value is not null)
+            }
+        }
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) =
@@ -182,8 +203,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val classesOutputDir = getKaptGeneratedClassesDir(project, sourceSetName)
         val includeCompileClasspath =
             kaptExtension.includeCompileClasspath
-                ?: includeCompileClasspath(project)
-                ?: true
+                ?: project.isIncludeCompileClasspath()
 
         val kotlinCompile: TaskProvider<KotlinCompile>
             // Can't use just kotlinCompilation.compileKotlinTaskProvider, as the latter is not statically-known to be KotlinCompile
@@ -391,11 +411,15 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             project.logger.warn("'kapt.generateStubs' is not used by the 'kotlin-kapt' plugin")
         }
 
+        // These option names must match those defined in org.jetbrains.kotlin.kapt.cli.KaptCliOption.
         pluginOptions += SubpluginOption("useLightAnalysis", "${kaptExtension.useLightAnalysis}")
         pluginOptions += SubpluginOption("correctErrorTypes", "${kaptExtension.correctErrorTypes}")
         pluginOptions += SubpluginOption("dumpDefaultParameterValues", "${kaptExtension.dumpDefaultParameterValues}")
         pluginOptions += SubpluginOption("mapDiagnosticLocations", "${kaptExtension.mapDiagnosticLocations}")
-        pluginOptions += SubpluginOption("strictMode", "${kaptExtension.strictMode}")
+        pluginOptions += SubpluginOption(
+            "strictMode", // Currently doesn't match KaptCliOption.STRICT_MODE_OPTION, is it a typo introduced in https://github.com/JetBrains/kotlin/commit/c83581e6b8155c6d89da977be6e3cd4af30562e5?
+            "${kaptExtension.strictMode}"
+        )
         pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
         pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${project.isKaptKeepKdocCommentsInStubs()}")
         pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorTimings}")
