@@ -52,7 +52,6 @@ dependencies {
     testCompile(project(":kotlin-scripting-compiler-impl"))
     testCompile(projectTests(":compiler:test-infrastructure-utils"))
     testCompile(commonDep("junit:junit"))
-    testCompile(androidDxJar()) { isTransitive = false }
     testCompile(commonDep("com.android.tools:r8"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(toolsJar())

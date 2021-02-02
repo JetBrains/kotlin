@@ -39,7 +39,6 @@ class TestStdlibWithDxTest {
             for (entry in generateSequence { zip.nextEntry }) {
                 if (entry.name.endsWith(".class") && !entry.name.startsWith("META-INF/")) {
                     val bytes = zip.readBytes()
-                    DxChecker.checkFileWithDx(bytes, entry.name)
                     files.add(Pair(bytes, entry.name))
                 }
             }

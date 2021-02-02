@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
-import org.jetbrains.kotlin.js.test.es6.semantics.*
+import org.jetbrains.kotlin.js.test.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrBoxJsES6Test
+import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsCodegenBoxES6Test
+import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsCodegenInlineES6Test
+import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsTypeScriptExportES6Test
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
@@ -122,6 +126,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
                 model("codegen/box/arrays", targetBackend = TargetBackend.JS)
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
+            testClass<AbstractJsKlibBinaryCompatibilityTest> {
+                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
             }
         }
     }

@@ -52,7 +52,6 @@ pill {
     excludedDirs(
         "out",
         "buildSrc/build",
-        "buildSrc/prepare-deps/android-dx/build",
         "buildSrc/prepare-deps/intellij-sdk/build"
     )
 }
@@ -332,6 +331,7 @@ extra["tasksWithWarnings"] = listOf(
     ":compiler:fir:checkers:compileKotlin",
     ":compiler:fir:java:compileKotlin",
     ":kotlin-scripting-compiler:compileKotlin",
+    ":kotlin-scripting-compiler:compileTestKotlin",
     ":plugins:uast-kotlin:compileKotlin",
     ":plugins:uast-kotlin:compileTestKotlin",
     ":plugins:uast-kotlin-idea:compileKotlin"

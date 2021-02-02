@@ -20,6 +20,8 @@ import java.util.function.Consumer;
 
 public class D8Checker {
 
+    public static final boolean RUN_D8_CHECKER = true;
+
     private D8Checker() {
     }
 

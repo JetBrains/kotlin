@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 
 import java.io.File
 
-fun Implementation.generateCode(generationPath: File) {
+fun Implementation.generateCode(generationPath: File): GeneratedFile {
     val dir = generationPath.resolve(packageName.replace(".", "/"))
-    dir.mkdirs()
     val file = File(dir, "$type.kt")
-    file.useSmartPrinter {
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $packageName")
         println()
@@ -26,6 +26,7 @@ fun Implementation.generateCode(generationPath: File) {
         printGeneratedMessage()
         printImplementation(this@generateCode)
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 fun SmartPrinter.printImplementation(implementation: Implementation) {

@@ -81,8 +81,6 @@ extra["intellijReleaseType"] = when {
     else -> "releases"
 }
 
-extra["versions.androidDxSources"] = "5.0.0_r2"
-
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
