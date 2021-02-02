@@ -41,13 +41,20 @@ configureSourcesJar()
 configureJavadocJar()
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
-                                      "-Xopt-in=kotlin.contracts.ExperimentalContracts"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+        "-Xnormalize-constructor-calls=enable",
+        "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+        "-Xsuppress-deprecated-jvm-target-warning",
+    ]
     kotlinOptions.moduleName = project.archivesBaseName
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+        "-Xsuppress-deprecated-jvm-target-warning",
+    ]
 }
 
 configureJvmIrBackend(project)

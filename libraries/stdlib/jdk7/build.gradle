@@ -77,6 +77,7 @@ compileKotlin {
             "-Xnormalize-constructor-calls=enable",
             "-Xopt-in=kotlin.RequiresOptIn",
             "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+            "-Xsuppress-deprecated-jvm-target-warning",
     ]
     kotlinOptions.moduleName = project.name
 }
@@ -90,6 +91,7 @@ compileTestKotlin {
             "-Xopt-in=kotlin.ExperimentalStdlibApi",
             "-Xopt-in=kotlin.io.path.ExperimentalPathApi",
             "-Xcommon-sources=${fileTree('../test').join(',')}",
+            "-Xsuppress-deprecated-jvm-target-warning",
     ]
 }
 
