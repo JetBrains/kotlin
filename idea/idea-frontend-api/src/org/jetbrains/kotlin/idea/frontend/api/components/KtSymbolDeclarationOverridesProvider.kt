@@ -19,6 +19,13 @@ abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionComponent
     ): List<KtCallableSymbol>
 
     /**
+     * Returns symbols that overridden by requested
+     */
+    abstract fun <T : KtSymbol> getOverriddenSymbols(
+        callableSymbol: T,
+    ): List<KtCallableSymbol>
+
+    /**
      * If [symbol] origin is [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE]
      * Then returns the symbols which [symbol] overrides, otherwise empty collection
      */
