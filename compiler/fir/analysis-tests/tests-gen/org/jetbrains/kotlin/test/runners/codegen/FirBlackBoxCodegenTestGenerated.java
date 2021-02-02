@@ -8728,6 +8728,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("genericParameterResult.kt")
+            public void testGenericParameterResult() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/inlineClasses/genericParameterResult.kt");
+            }
+
+            @Test
             @TestMetadata("nonLocalReturn.kt")
             public void testNonLocalReturn() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/inlineClasses/nonLocalReturn.kt");

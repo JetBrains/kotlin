@@ -39,7 +39,8 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         // Boxing and unboxing kotlin.Result leads to CCE in generated code
         val doNotCoerceKotlinResultInContinuation =
             (codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
-                    codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA)
+                    (codegen.irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA &&
+                            !codegen.irFunction.isInvokeSuspendOfLambda()))
                     && (irType.isKotlinResult() || irTarget.isKotlinResult())
 
         // Coerce inline classes
