@@ -104,7 +104,7 @@ object GenerationUtils {
         val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSessionForTests(project, scope, librariesScope, "main", packagePartProvider = packagePartProvider)
+        val session = createSessionForTests(project, scope, librariesScope, "main", getPackagePartProvider = packagePartProvider)
 
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)

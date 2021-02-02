@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
-import org.jetbrains.kotlin.fir.caches.FirCachesFactory
-import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
@@ -67,6 +65,8 @@ object FirSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         scope: GlobalSearchScope,
         project: Project,
+        additionalPackagePartProvider: PackagePartProvider? = null,
+        additionalScope: GlobalSearchScope? = null,
         dependenciesProvider: FirSymbolProvider? = null,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
@@ -83,14 +83,25 @@ object FirSessionFactory {
             val firProvider = FirProviderImpl(this, kotlinScopeProvider)
             register(FirProvider::class, firProvider)
 
+            val deserializedJvmSymbolsProvider =
+                if (additionalPackagePartProvider == null) null
+                else {
+                    val javaSymbolProvider = JavaSymbolProvider(this, project, additionalScope ?: scope)
+
+                    makeDeserializedJvmSymbolsProvider(
+                        project, additionalScope ?: scope, additionalPackagePartProvider, javaSymbolProvider, kotlinScopeProvider
+                    )
+                }
+
             register(
                 FirSymbolProvider::class,
                 FirCompositeSymbolProvider(
                     this,
-                    listOf(
+                    listOfNotNull(
                         firProvider.symbolProvider,
                         JavaSymbolProvider(this, project, scope),
-                        dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                        dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this),
+                        deserializedJvmSymbolsProvider
                     )
                 ) as FirSymbolProvider
             )
@@ -113,12 +124,6 @@ object FirSessionFactory {
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirLibrarySession {
-        val javaClassFinder = JavaClassFinderImpl().apply {
-            this.setProjectInstance(project)
-            this.setScope(scope)
-        }
-
-        val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
             registerThreadUnsafeCaches()
             registerCommonComponents(languageVersionSettings)
@@ -127,17 +132,14 @@ object FirSessionFactory {
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
+            val deserializedJvmSymbolsProvider = makeDeserializedJvmSymbolsProvider(
+                project, scope, packagePartProvider, javaSymbolProvider, kotlinScopeProvider
+            )
+
             val symbolProvider = FirCompositeSymbolProvider(
                 this,
                 listOf(
-                    KotlinDeserializedJvmSymbolsProvider(
-                        this, project,
-                        packagePartProvider,
-                        javaSymbolProvider,
-                        kotlinClassFinder,
-                        javaClassFinder,
-                        kotlinScopeProvider
-                    ),
+                    deserializedJvmSymbolsProvider,
                     FirBuiltinSymbolProvider(this, kotlinScopeProvider),
                     FirCloneableSymbolProvider(this, kotlinScopeProvider),
                     javaSymbolProvider,
@@ -147,6 +149,25 @@ object FirSessionFactory {
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
         }
+    }
+
+    private fun FirSession.makeDeserializedJvmSymbolsProvider(
+        project: Project,
+        scope: GlobalSearchScope,
+        packagePartProvider: PackagePartProvider,
+        javaSymbolProvider: JavaSymbolProvider,
+        kotlinScopeProvider: KotlinScopeProvider
+    ): KotlinDeserializedJvmSymbolsProvider {
+
+        val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)
+        val javaClassFinder = JavaClassFinderImpl().apply {
+            this.setProjectInstance(project)
+            this.setScope(scope)
+        }
+
+        return KotlinDeserializedJvmSymbolsProvider(
+            this, project, packagePartProvider, javaSymbolProvider, kotlinClassFinder, javaClassFinder, kotlinScopeProvider
+        )
     }
 
     @TestOnly

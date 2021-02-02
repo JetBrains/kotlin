@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 
 abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, MetadataPartProvider {
@@ -17,6 +18,8 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, Me
     protected data class ModuleMappingInfo<MappingsKey>(val key: MappingsKey, val mapping: ModuleMapping, val name: String)
 
     protected abstract val loadedModules: MutableList<ModuleMappingInfo<MappingsKey>>
+
+    abstract val deserializationConfiguration : DeserializationConfiguration
 
     override fun findPackageParts(packageFqName: String): List<String> {
         val rootToPackageParts: Collection<PackageParts> = getPackageParts(packageFqName)

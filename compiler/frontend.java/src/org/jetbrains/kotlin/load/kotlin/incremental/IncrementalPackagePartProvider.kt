@@ -24,16 +24,21 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.storage.StorageManager
 
 class IncrementalPackagePartProvider(
     private val parent: PackagePartProvider,
-    incrementalCaches: List<IncrementalCache>,
-    storageManager: StorageManager
+    incrementalCaches: List<IncrementalCache>
 ) : PackagePartProvider {
+
     lateinit var deserializationConfiguration: DeserializationConfiguration
 
-    private val moduleMappings = storageManager.createLazyValue {
+    init {
+        (parent as? JvmPackagePartProviderBase<*>)?.deserializationConfiguration?.let {
+            deserializationConfiguration = it
+        }
+    }
+
+    private val moduleMappings by lazy {
         incrementalCaches.map { cache ->
             ModuleMapping.loadModuleMapping(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration) { version ->
                 // Incremental compilation should fall back to full rebuild if the minor component of the metadata version has changed
@@ -43,7 +48,7 @@ class IncrementalPackagePartProvider(
     }
 
     override fun findPackageParts(packageFqName: String): List<String> {
-        return (moduleMappings().mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts } +
+        return (moduleMappings.mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts } +
                 parent.findPackageParts(packageFqName)).distinct()
     }
 
@@ -52,6 +57,6 @@ class IncrementalPackagePartProvider(
     }
 
     override fun getAllOptionalAnnotationClasses(): List<ClassData> =
-        moduleMappings().flatMap((JvmPackagePartProviderBase)::getAllOptionalAnnotationClasses) +
+        moduleMappings.flatMap((JvmPackagePartProviderBase)::getAllOptionalAnnotationClasses) +
                 parent.getAllOptionalAnnotationClasses()
 }
