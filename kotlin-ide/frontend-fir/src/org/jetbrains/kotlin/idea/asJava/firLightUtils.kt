@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
@@ -161,7 +160,7 @@ internal fun KtType.mapSupertype(
     annotations: List<KtAnnotationCall>
 ): PsiClassType? {
     if (this !is KtClassType) return null
-    require(this is KtFirClassType)
+    require(this is KtFirType)
     val contextSymbol = classSymbol
     require(contextSymbol is KtFirSymbol<*>)
 

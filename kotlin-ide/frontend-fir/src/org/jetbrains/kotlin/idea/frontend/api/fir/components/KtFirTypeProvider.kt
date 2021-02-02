@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -23,11 +22,6 @@ internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtTypeProvider(), KtFirAnalysisSessionComponent {
-    override fun isBuiltinFunctionalType(type: KtType): Boolean = withValidityAssertion {
-        check(type is KtFirType)
-        type.coneType.isBuiltinFunctionalType(analysisSession.firResolveState.rootModuleSession) //TODO use correct session here
-    }
-
     override val builtinTypes: KtBuiltinTypes =
         KtFirBuiltInTypes(analysisSession.firResolveState.rootModuleSession.builtinTypes, analysisSession.firSymbolBuilder, token)
 

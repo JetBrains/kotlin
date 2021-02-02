@@ -9,10 +9,12 @@ import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -47,6 +49,8 @@ internal class KtSymbolByFirBuilder private constructor(
     private val resolveState by weakRef(resolveState)
 
     private val firProvider get() = resolveState.rootModuleSession.symbolProvider
+    val rootSession: FirSession = resolveState.rootModuleSession
+
 
     constructor(
         resolveState: FirModuleResolveState,
@@ -205,7 +209,10 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildKtType(coneType: ConeKotlinType): KtType = typesCache.cache(coneType) {
         when (coneType) {
-            is ConeClassLikeTypeImpl -> KtFirClassType(coneType, token, this)
+            is ConeClassLikeTypeImpl -> {
+                if (coneType.isFunctionalType(rootSession)) KtFirFunctionalType(coneType, token, this)
+                else KtFirUsualClassType(coneType, token, this)
+            }
             is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this)
             is ConeClassErrorType -> KtFirErrorType(coneType, token)
             is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this)
