@@ -17,6 +17,22 @@ interface KtSymbol : ValidityTokenOwner {
 }
 
 /**
+ * Get symbol [PsiElement] if its type is [PSI], otherwise throws ClassCastException
+ *
+ * @see KtSymbol.psi
+ */
+inline fun <reified PSI : PsiElement> KtSymbol.psi(): PSI =
+    psi as PSI
+
+/**
+ * Get symbol [PsiElement] if its type is [PSI], otherwise null
+ *
+ * @see KtSymbol.psi
+ */
+inline fun <reified PSI : PsiElement> KtSymbol.psiSafe(): PSI? =
+    psi as? PSI
+
+/**
  * A place where [KtSymbol] came from
  */
 enum class KtSymbolOrigin {
