@@ -319,7 +319,7 @@ class FirSignatureEnhancement(
             session,
             jsr305State,
             predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
-            forAnnotationValueParameter = owner.classKind == ClassKind.ANNOTATION_CLASS
+            forAnnotationMember = owner.classKind == ClassKind.ANNOTATION_CLASS
         )
         val firResolvedTypeRef = signatureParts.type
         val defaultValueExpression = when (val defaultValue = ownerParameter.getDefaultValueFromAnnotation()) {
@@ -345,7 +345,10 @@ class FirSignatureEnhancement(
             if (owner is FirJavaField) AnnotationQualifierApplicabilityType.FIELD
             else AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
-        ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
+        ).enhance(
+            session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo,
+            forAnnotationMember = this.owner.classKind == ClassKind.ANNOTATION_CLASS
+        )
         return signatureParts.type
     }
 

@@ -51,7 +51,7 @@ internal class EnhancementSignatureParts(
         session: FirSession,
         javaTypeEnhancementState: JavaTypeEnhancementState,
         predefined: TypeEnhancementInfo? = null,
-        forAnnotationValueParameter: Boolean = false
+        forAnnotationMember: Boolean = false
     ): PartEnhancementResult {
         val qualifiers = computeIndexedQualifiersForOverride(session, javaTypeEnhancementState)
 
@@ -64,7 +64,7 @@ internal class EnhancementSignatureParts(
         val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(
             session,
             javaTypeParameterStack,
-            forAnnotationValueParameter,
+            forAnnotationMember,
             attributes = attributesCache.getValue(current)
         )
         val containsFunctionN = typeWithoutEnhancement.contains {

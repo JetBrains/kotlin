@@ -34610,6 +34610,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("classArrayInAnnotation.kt")
+            public void testClassArrayInAnnotation() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/classArrayInAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("noReflectionInClassPath.kt")
             public void testNoReflectionInClassPath() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/noReflectionInClassPath.kt");
