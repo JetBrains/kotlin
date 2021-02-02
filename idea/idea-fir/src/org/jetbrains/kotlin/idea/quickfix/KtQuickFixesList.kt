@@ -18,8 +18,16 @@ annotation class ForKtQuickFixesListBuilder()
 class KtQuickFixesListBuilder private constructor() {
     val quickFixes = mutableMapOf<KClass<out KtDiagnosticWithPsi<*>>, MutableList<QuickFixFactory>>()
 
-    inline fun <reified PSI : PsiElement, reified D : KtDiagnosticWithPsi<PSI>> register(quickFixFactory: QuickFixFactory) {
-        quickFixes.getOrPut(D::class) { mutableListOf() }.add(quickFixFactory)
+    inline fun <reified PSI : PsiElement, reified DIAGNOSTIC : KtDiagnosticWithPsi<PSI>> register(
+        quickFixFactory: QuickFixesPsiBasedFactory<PSI>
+    ) {
+        quickFixes.getOrPut(DIAGNOSTIC::class) { mutableListOf() }.add(quickFixFactory)
+    }
+
+    inline fun <reified PSI : PsiElement, reified DIAGNOSTIC : KtDiagnosticWithPsi<PSI>> register(
+        quickFixFactory: QuickFixesHLApiBasedFactory<PSI, DIAGNOSTIC>
+    ) {
+        quickFixes.getOrPut(DIAGNOSTIC::class) { mutableListOf() }.add(quickFixFactory)
     }
 
     @OptIn(ForKtQuickFixesListBuilder::class)
