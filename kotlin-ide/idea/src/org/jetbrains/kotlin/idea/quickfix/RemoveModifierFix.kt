@@ -53,13 +53,17 @@ class RemoveModifierFix(
         fun createRemoveModifierFromListOwnerFactory(
             modifier: KtModifierKeywordToken,
             isRedundant: Boolean = false
-        ): QuickFixesPsiBasedFactory {
-            return object : QuickFixesPsiBasedFactory() {
-                override fun createQuickFix(psiElement: PsiElement): RemoveModifierFix? {
-                    val modifierListOwner = PsiTreeUtil.getParentOfType(psiElement, KtModifierListOwner::class.java, false) ?: return null
-                    return RemoveModifierFix(modifierListOwner, modifier, isRedundant)
-                }
-            }
+        ): QuickFixesPsiBasedFactory<PsiElement> =
+            createRemoveModifierFromListOwnerFactoryByModifierListOwner(
+                modifier,
+                isRedundant
+            ).coMap { PsiTreeUtil.getParentOfType(it, KtModifierListOwner::class.java, false) }
+
+        fun createRemoveModifierFromListOwnerFactoryByModifierListOwner(
+            modifier: KtModifierKeywordToken,
+            isRedundant: Boolean = false
+        ) = quickFixesPsiBasedFactory<KtModifierListOwner> {
+            listOf(RemoveModifierFix(it, modifier, isRedundant))
         }
 
         fun createRemoveModifierFactory(isRedundant: Boolean = false): QuickFixesPsiBasedFactory<PsiElement> {
