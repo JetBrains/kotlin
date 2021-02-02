@@ -292,23 +292,35 @@ extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool ch
 }
 
 extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
+    if (!object)
+        return nullptr;
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     return mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
 }
 
 extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
+    if (!pointer)
+        return;
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
+    if (!pointer)
+        RETURN_OBJ(nullptr);
+
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     ObjHeader* object = **node;
     RETURN_OBJ(object);
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
+    if (!pointer)
+        RETURN_OBJ(nullptr);
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     ObjHeader* object = **node;
