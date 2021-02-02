@@ -477,7 +477,7 @@ allprojects {
         }
     }
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && !kotlinBuildProperties.useFir) {
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && !kotlinBuildProperties.useFir && !kotlinBuildProperties.disableWerror) {
         // For compiler and stdlib, allWarningsAsErrors is configured in the corresponding "root" projects
         // (compiler/build.gradle.kts and libraries/commonConfiguration.gradle).
         val projectsWithWarningsAsErrors = listOf("core", "plugins").map { File(it).absoluteFile }
