@@ -67,11 +67,11 @@ class Fir2IrLazyConstructor(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override var returnType: IrType by lazyVar {
+    override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
+    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         val outerClass = containingClass?.parentClassOrNull
         if (containingClass?.isInner == true && outerClass != null) {
@@ -92,7 +92,7 @@ class Fir2IrLazyConstructor(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override var valueParameters: List<IrValueParameter> by lazyVar {
+    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->
             declarationStorage.createIrParameter(

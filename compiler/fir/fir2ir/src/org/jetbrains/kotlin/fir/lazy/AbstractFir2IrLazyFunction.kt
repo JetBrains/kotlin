@@ -68,7 +68,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirMemberDeclaration>(
         get() = null
         set(_) = error("We should never need to store body of external functions.")
 
-    override var visibility: DescriptorVisibility by lazyVar {
+    override var visibility: DescriptorVisibility by lazyVar(lock) {
         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
 

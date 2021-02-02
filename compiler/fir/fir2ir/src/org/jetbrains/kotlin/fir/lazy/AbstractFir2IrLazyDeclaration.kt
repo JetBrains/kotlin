@@ -38,7 +38,7 @@ interface AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrDeclarat
         }
     }
 
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar {
+    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }

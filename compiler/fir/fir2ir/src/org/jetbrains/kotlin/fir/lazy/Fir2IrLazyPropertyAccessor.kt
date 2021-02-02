@@ -45,11 +45,11 @@ class Fir2IrLazyPropertyAccessor(
     override val name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")
 
-    override var returnType: IrType by lazyVar {
+    override var returnType: IrType by lazyVar(lock) {
         if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
+    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty)
         ) {
@@ -57,13 +57,13 @@ class Fir2IrLazyPropertyAccessor(
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar {
+    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
         firParentProperty.receiverTypeRef?.let {
             createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext))
         }
     }
 
-    override var valueParameters: List<IrValueParameter> by lazyVar {
+    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         if (!isSetter) emptyList()
         else {
             declarationStorage.enterScope(this)
@@ -81,7 +81,7 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         firParentProperty.generateOverriddenAccessorSymbols(
             firParentClass,
             !isSetter,

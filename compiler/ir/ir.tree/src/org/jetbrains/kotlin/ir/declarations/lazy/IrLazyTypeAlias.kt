@@ -37,13 +37,13 @@ class IrLazyTypeAlias(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override var typeParameters: List<IrTypeParameter> by lazyVar {
+    override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
             stubGenerator.generateOrGetTypeParameterStub(it)
         }
     }
 
-    override var expandedType: IrType by lazyVar {
+    override var expandedType: IrType by lazyVar(stubGenerator.lock) {
         typeTranslator.buildWithScope(this) {
             descriptor.expandedType.toIrType()
         }
