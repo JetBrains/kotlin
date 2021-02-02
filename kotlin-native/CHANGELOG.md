@@ -14,6 +14,7 @@
   * [KT-43198](https://youtrack.jetbrains.com/issue/KT-43198) Init blocks inside of inline classes
   * [KT-42649](https://youtrack.jetbrains.com/issue/KT-42649) Fix secondary constructors of generic inline classes
   * [KT-38772](https://youtrack.jetbrains.com/issue/KT-38772) Support non-reified type parameters in typeOf
+  * [KT-42428](https://youtrack.jetbrains.com/issue/KT-42428) Inconsistent behavior of map.entries on Kotlin.Native
   * Compiler customization
     * [KT-40584](https://youtrack.jetbrains.com/issue/KT-40584) Untie Kotlin/Native from the fixed LLVM distribution
     * [KT-42234](https://youtrack.jetbrains.com/issue/KT-42234) Move LLVM optimization parameters into konan.properties
