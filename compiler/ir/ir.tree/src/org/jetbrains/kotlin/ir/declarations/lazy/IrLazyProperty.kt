@@ -50,7 +50,7 @@ class IrLazyProperty(
         descriptor.compileTimeInitializer != null || descriptor.getter == null ||
                 stubGenerator.extensions.isPropertyWithPlatformField(descriptor)
 
-    override var backingField: IrField? by lazyVar {
+    override var backingField: IrField? by lazyVar(stubGenerator.lock) {
         if (hasBackingField) {
             stubGenerator.generateFieldStub(descriptor).apply {
                 correspondingPropertySymbol = this@IrLazyProperty.symbol
@@ -58,13 +58,13 @@ class IrLazyProperty(
         } else null
     }
 
-    override var getter: IrSimpleFunction? by lazyVar {
+    override var getter: IrSimpleFunction? by lazyVar(stubGenerator.lock) {
         descriptor.getter?.let { stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
             correspondingPropertySymbol = this@IrLazyProperty.symbol
         }
     }
 
-    override var setter: IrSimpleFunction? by lazyVar {
+    override var setter: IrSimpleFunction? by lazyVar(stubGenerator.lock) {
         descriptor.setter?.let { stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
             correspondingPropertySymbol = this@IrLazyProperty.symbol
         }

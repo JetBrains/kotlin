@@ -47,11 +47,11 @@ interface IrLazyDeclarationBase : IrDeclaration {
         }
     }
 
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar {
+    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationConstructorCall).toMutableList()
     }
 
-    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar {
+    fun createLazyParent(): ReadWriteProperty<Any?, IrDeclarationParent> = lazyVar(stubGenerator.lock) {
         val currentDescriptor = descriptor
 
         val containingDeclaration =

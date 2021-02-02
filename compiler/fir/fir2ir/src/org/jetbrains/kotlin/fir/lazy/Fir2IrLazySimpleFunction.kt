@@ -37,24 +37,24 @@ class Fir2IrLazySimpleFunction(
     override val name: Name
         get() = fir.name
 
-    override var returnType: IrType by lazyVar {
+    override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
+    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass, fir)) {
             createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
         } else null
     }
 
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar {
+    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
         fir.receiverTypeRef?.let {
             createThisReceiverParameter(it.toIrType(typeConverter))
         }
     }
 
-    override var valueParameters: List<IrValueParameter> by lazyVar {
+    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->
             declarationStorage.createIrParameter(
@@ -67,7 +67,7 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         val parent = parent
         if (isFakeOverride && parent is Fir2IrLazyClass) {
             fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(

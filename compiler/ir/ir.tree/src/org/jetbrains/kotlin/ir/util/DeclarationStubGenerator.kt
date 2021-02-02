@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,6 +44,9 @@ abstract class DeclarationStubGenerator(
     val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : IrProvider {
     protected val lazyTable = symbolTable.lazyWrapper
+
+    val lock: IrLock
+        get() = symbolTable.lock
 
     var unboundSymbolGeneration: Boolean
         get() = lazyTable.stubGenerator != null

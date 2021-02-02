@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
+import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -36,4 +37,7 @@ class Fir2IrComponentsStorage(
     override lateinit var annotationGenerator: AnnotationGenerator
     override lateinit var callGenerator: CallAndReferenceGenerator
     override lateinit var fakeOverrideGenerator: FakeOverrideGenerator
+
+    override val lock: IrLock
+        get() = symbolTable.lock
 }
