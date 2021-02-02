@@ -1,0 +1,13 @@
+<idea-plugin>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.ktQuickFixRegistrar"
+                    interface="org.jetbrains.kotlin.idea.quickfix.KtQuickFixRegistrar"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <ktQuickFixRegistrar implementation="org.jetbrains.kotlin.idea.quickfix.MainKtQuickFixRegistrar"/>
+  </extensions>
+
+</idea-plugin>
