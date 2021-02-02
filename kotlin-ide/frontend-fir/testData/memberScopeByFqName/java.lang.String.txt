@@ -80,7 +80,7 @@ KtFirKotlinPropertySymbol:
   callableIdIfNonLocal: kotlin.CharSequence.length
   dispatchType: kotlin/CharSequence
   getter: KtFirPropertyGetterSymbol(<getter>)
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: false
   initializer: null
