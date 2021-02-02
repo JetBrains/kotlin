@@ -745,6 +745,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             testClass<AbstractHighLevelQuickFixTest> {
                 val pattern = "^([\\w\\-_]+)\\.kt$"
                 model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
+                model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
             }
         }
 
