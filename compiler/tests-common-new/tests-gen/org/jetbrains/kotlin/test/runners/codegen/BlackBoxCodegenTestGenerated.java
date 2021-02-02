@@ -16961,6 +16961,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("lambdaWithStarReturn.kt")
+        public void testLambdaWithStarReturn() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/lambdaWithStarReturn.kt");
+        }
+
+        @Test
         @TestMetadata("lambdasWithExtensionFunctionType.kt")
         public void testLambdasWithExtensionFunctionType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/lambdasWithExtensionFunctionType.kt");

@@ -165,7 +165,7 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
 
     return when {
         expectedType.isBuiltinFunctionalType(session) ->
-            extractInputOutputTypesFromFunctionType(expectedType, session)
+            InputOutputTypes(expectedType.valueParameterTypesIncludingReceiver(session), expectedType.returnType(session))
 
 //        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
 //            InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
@@ -187,23 +187,4 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
 
         else -> null
     }
-}
-
-private fun extractInputOutputTypesFromFunctionType(
-    functionType: ConeKotlinType,
-    session: FirSession
-): InputOutputTypes {
-    val parameters = functionType.valueParameterTypesIncludingReceiver(session).map {
-        it ?: ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(StandardClassIds.Nothing), emptyArray(),
-            isNullable = false
-        )
-    }
-
-    val outputType = functionType.returnType(session) ?: ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(),
-        isNullable = true
-    )
-
-    return InputOutputTypes(parameters, outputType)
 }
