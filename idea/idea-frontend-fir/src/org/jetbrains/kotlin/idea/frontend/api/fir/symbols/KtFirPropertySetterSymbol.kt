@@ -54,6 +54,10 @@ internal class KtFirPropertySetterSymbol(
         builder.buildFirSetterParameter(fir.valueParameters.single())
     }
 
+    override val annotatedType: KtTypeAndAnnotations by cached {
+        firRef.returnTypeAndAnnotations(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
+    }
+
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->
             when (fir.symbol.callableId.classId) {
