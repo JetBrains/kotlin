@@ -44,8 +44,7 @@ import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 class KotlinMultiplatformPlugin(
-    private val kotlinPluginVersion: String,
-    private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once we don't need it
+    private val kotlinPluginVersion: String
 ) : Plugin<Project> {
 
     private class TargetFromPresetExtension(val targetsContainer: KotlinTargetsContainerWithPresets) {

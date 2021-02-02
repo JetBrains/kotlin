@@ -24,7 +24,6 @@ import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPom
-import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -49,6 +48,7 @@ import java.io.File
 import java.net.URL
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
+import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
 
 const val PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinCompilerPluginClasspath"
 const val NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME = "kotlinNativeCompilerPluginClasspath"

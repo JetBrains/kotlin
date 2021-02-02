@@ -15,6 +15,7 @@ val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("
 
 dependencies {
     testImplementation(project(":kotlin-gradle-plugin"))
+    testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
     testImplementation(project(":kotlin-allopen"))
