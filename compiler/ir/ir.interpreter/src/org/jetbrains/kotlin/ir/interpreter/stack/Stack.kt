@@ -151,11 +151,6 @@ internal class StackImpl : Stack {
 }
 
 private class FrameContainer(val irFile: IrFile? = null, private val entryPoint: IrFunction? = null, current: Frame = InterpreterFrame()) {
-    /*var lineNumber: Int
-        get() = getTopFrame().lineOfCall
-        set(value) {
-            getTopFrame().lineOfCall = value
-        }*/
     var lineNumber: Int = -1
     private val innerStack = mutableListOf(current)
     private fun getTopFrame() = innerStack.first()

@@ -104,7 +104,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
                 is IrCall -> interpretCall(this)
                 is IrConstructorCall -> interpretConstructorCall(this)
                 is IrEnumConstructorCall -> interpretEnumConstructorCall(this)
-                is IrDelegatingConstructorCall -> interpretDelegatedConstructorCall(this)
+                is IrDelegatingConstructorCall -> interpretDelegatingConstructorCall(this)
                 is IrInstanceInitializerCall -> interpretInstanceInitializerCall(this)
                 is IrBody -> interpretBody(this)
                 is IrBlock -> interpretBlock(this)
@@ -442,7 +442,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         return interpretConstructor(enumConstructorCall)
     }
 
-    private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
+    private fun interpretDelegatingConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
         if (delegatingConstructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) {
             val anyAsStateObject = Common(irBuiltIns.anyClass.owner)
             stack.pushReturnValue(anyAsStateObject)
@@ -605,12 +605,12 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         return Next
     }
 
-    private fun interpretVariable(expression: IrVariable): ExecutionResult {
-        if (expression.initializer == null) {
-            return Next.apply { stack.addVar(Variable(expression.symbol)) }
+    private fun interpretVariable(declaration: IrVariable): ExecutionResult {
+        if (declaration.initializer == null) {
+            return Next.apply { stack.addVar(Variable(declaration.symbol)) }
         }
-        expression.initializer?.interpret()?.check { return it } //?: return Next
-        stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
+        declaration.initializer?.interpret()?.check { return it } //?: return Next
+        stack.addVar(Variable(declaration.symbol, stack.popReturnValue()))
         return Next
     }
 
