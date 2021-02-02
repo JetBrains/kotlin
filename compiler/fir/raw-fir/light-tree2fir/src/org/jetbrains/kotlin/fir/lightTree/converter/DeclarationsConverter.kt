@@ -1149,7 +1149,7 @@ class DeclarationsConverter(
         }
         val status =
             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
-            FirDeclarationStatusImpl(accessorVisibility, Modality.FINAL).apply {
+            FirDeclarationStatusImpl(accessorVisibility, modifiers.getModality()).apply {
                 isInline = propertyModifiers.hasInline() || modifiers.hasInline()
                 isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             }
