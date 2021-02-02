@@ -65,7 +65,8 @@ internal class PersistentIrValueParameter(
                 if (v is PersistentIrBodyBase<*>) {
                     v.container = this
                 }
-                setCarrier().defaultValueField = v
+                setCarrier()
+                defaultValueField = v
             }
         }
 
@@ -75,7 +76,8 @@ internal class PersistentIrValueParameter(
         get() = getCarrier().typeField
         set(v) {
             if (type !== v) {
-                setCarrier().typeField = v
+                setCarrier()
+                typeField = v
             }
         }
 
@@ -85,7 +87,8 @@ internal class PersistentIrValueParameter(
         get() = getCarrier().varargElementTypeField
         set(v) {
             if (varargElementType !== v) {
-                setCarrier().varargElementTypeField = v
+                setCarrier()
+                varargElementTypeField = v
             }
         }
 }

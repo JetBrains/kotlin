@@ -55,7 +55,8 @@ internal abstract class PersistentIrPropertyCommon(
         get() = getCarrier().backingFieldField
         set(v) {
             if (backingField !== v) {
-                setCarrier().backingFieldField = v
+                setCarrier()
+                backingFieldField = v
             }
         }
 
@@ -65,7 +66,8 @@ internal abstract class PersistentIrPropertyCommon(
         get() = getCarrier().getterField
         set(v) {
             if (getter !== v) {
-                setCarrier().getterField = v
+                setCarrier()
+                getterField = v
             }
         }
 
@@ -75,7 +77,8 @@ internal abstract class PersistentIrPropertyCommon(
         get() = getCarrier().setterField
         set(v) {
             if (setter !== v) {
-                setCarrier().setterField = v
+                setCarrier()
+                setterField = v
             }
         }
 
@@ -85,7 +88,8 @@ internal abstract class PersistentIrPropertyCommon(
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {
-                setCarrier().metadataField = v
+                setCarrier()
+                metadataField = v
             }
         }
 
@@ -96,7 +100,8 @@ internal abstract class PersistentIrPropertyCommon(
         get() = getCarrier().attributeOwnerIdField
         set(v) {
             if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
+                setCarrier()
+                attributeOwnerIdField = v
             }
         }
 
@@ -106,7 +111,8 @@ internal abstract class PersistentIrPropertyCommon(
         get() = getCarrier().isExternalField
         set(v) {
             if (isExternal != v) {
-                setCarrier().isExternalField = v
+                setCarrier()
+                isExternalField = v
             }
         }
 }

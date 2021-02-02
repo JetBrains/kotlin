@@ -17,12 +17,20 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElementBase<T>, IrDeclaration, DeclarationCarrier {
     var removedOn: Int
 
+
+    override var parentField: IrDeclarationParent?
+
+    override var originField: IrDeclarationOrigin
+
+    override var annotationsField: List<IrConstructorCall>
+
     // TODO reduce boilerplate
     override var parent: IrDeclarationParent
         get() = getCarrier().parentField ?: throw UninitializedPropertyAccessException("Parent not initialized: $this")
         set(p) {
             if (getCarrier().parentField !== p) {
-                setCarrier().parentField = p
+                setCarrier()
+                parentField = p
             }
         }
 
@@ -30,7 +38,8 @@ interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElem
         get() = getCarrier().originField
         set(p) {
             if (getCarrier().originField !== p) {
-                setCarrier().originField = p
+                setCarrier()
+                originField = p
             }
         }
 
@@ -38,7 +47,8 @@ interface PersistentIrDeclarationBase<T : DeclarationCarrier> : PersistentIrElem
         get() = getCarrier().annotationsField
         set(v) {
             if (getCarrier().annotationsField !== v) {
-                setCarrier().annotationsField = v
+                setCarrier()
+                annotationsField = v
             }
         }
 
@@ -96,7 +106,7 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
     // TODO naming? e.g. `mutableCarrier`
     @Suppress("UNCHECKED_CAST")
-    fun setCarrier(): T {
+    fun setCarrier() {
         val stage = factory.stageController.currentStage
 
         ensureLowered()
@@ -111,14 +121,12 @@ interface PersistentIrElementBase<T : Carrier> : IrElement, Carrier {
 
         // TODO move up? i.e. fast path
         if (stage == lastModified) {
-            return this as T
+            return
         } else {
             values = (values ?: emptyArray()) + this.clone() as T
         }
 
         this.lastModified = stage
-
-        return this as T
     }
 }
 
@@ -131,7 +139,8 @@ interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElemen
         get() = getCarrier().containerField!!
         set(p) {
             if (getCarrier().containerField !== p) {
-                setCarrier().containerField = p
+                setCarrier()
+                containerField = p
             }
         }
 

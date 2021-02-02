@@ -60,7 +60,8 @@ internal class PersistentIrLocalDelegatedProperty(
         get() = getCarrier().typeField
         set(v) {
             if (type !== v) {
-                setCarrier().typeField = v
+                setCarrier()
+                typeField = v
             }
         }
 
@@ -70,7 +71,8 @@ internal class PersistentIrLocalDelegatedProperty(
         get() = getCarrier().delegateField!!
         set(v) {
             if (getCarrier().delegateField !== v) {
-                setCarrier().delegateField = v
+                setCarrier()
+                delegateField = v
             }
         }
 
@@ -80,7 +82,8 @@ internal class PersistentIrLocalDelegatedProperty(
         get() = getCarrier().getterField!!
         set(v) {
             if (getCarrier().getterField !== v) {
-                setCarrier().getterField = v
+                setCarrier()
+                getterField = v
             }
         }
 
@@ -90,7 +93,8 @@ internal class PersistentIrLocalDelegatedProperty(
         get() = getCarrier().setterField
         set(v) {
             if (setter !== v) {
-                setCarrier().setterField = v
+                setCarrier()
+                setterField = v
             }
         }
 
@@ -100,7 +104,8 @@ internal class PersistentIrLocalDelegatedProperty(
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {
-                setCarrier().metadataField = v
+                setCarrier()
+                metadataField = v
             }
         }
 }
