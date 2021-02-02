@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
 import org.jetbrains.kotlin.backend.jvm.codegen.materialized
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
@@ -46,12 +47,11 @@ object EnumValueOf : IntrinsicMethod() {
 object EnumValues : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val type = expression.getTypeArgument(0)!!
-        if (type.isReifiedTypeParameter) {
+        if (putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED)) {
             // Note that the inliner expects exactly the following sequence of instructions.
             // <REIFIED-OPERATIONS-MARKER>
             // ICONST_0
             // ANEWARRAY Ljava/lang/Enum;
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED)
             mv.iconst(0)
             mv.newarray(AsmTypes.ENUM_TYPE)
             MaterialValue(codegen, ENUM_ARRAY_TYPE, expression.type)

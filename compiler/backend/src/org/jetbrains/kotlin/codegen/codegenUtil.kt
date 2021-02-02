@@ -389,18 +389,16 @@ fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
 fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: KotlinTypeMarker): Pair<TypeParameterMarker, ReificationArgument>? {
     var type = initialType
     var arrayDepth = 0
-    val isNullable = type.isMarkedNullable()
     while (type.isArrayOrNullableArray()) {
         arrayDepth++
         val argument = type.getArgument(0)
-        type =
-            if (argument.isStarProjection()) nullableAnyType()
-            else argument.getType()
+        if (argument.isStarProjection()) return null
+        type = argument.getType()
     }
 
     val typeParameter = type.typeConstructor().getTypeParameterClassifier() ?: return null
-
-    return Pair(typeParameter, ReificationArgument(typeParameter.getName().asString(), isNullable, arrayDepth))
+    if (!typeParameter.isReified()) return null
+    return Pair(typeParameter, ReificationArgument(typeParameter.getName().asString(), initialType.isMarkedNullable(), arrayDepth))
 }
 
 fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =

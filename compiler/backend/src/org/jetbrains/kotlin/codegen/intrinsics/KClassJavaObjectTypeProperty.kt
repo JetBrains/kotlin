@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -43,11 +44,10 @@ class KClassJavaObjectTypeProperty : IntrinsicPropertyGetter() {
                     }
                 }
             } else {
-                if (TypeUtils.isTypeParameter(lhs.type)) {
-                    assert(TypeUtils.isReifiedTypeParameter(lhs.type)) {
+                if (!codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(lhs.type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)) {
+                    assert(!TypeUtils.isTypeParameter(lhs.type)) {
                         "Non-reified type parameter under ::class should be rejected by type checker: ${lhs.type}"
                     }
-                    codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(lhs.type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
                 }
                 iv.aconst(AsmUtil.boxType(codegen.mapTypeAsDeclaration(lhs.type)))
             }
