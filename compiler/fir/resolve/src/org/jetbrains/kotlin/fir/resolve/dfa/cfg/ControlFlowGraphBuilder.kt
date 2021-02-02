@@ -58,7 +58,7 @@ class ControlFlowGraphBuilder {
     private val shouldPassFlowFromInplaceLambda: Stack<Boolean> = stackOf(true)
 
     private enum class Mode {
-        Function, TopLevel, Body, ClassInitializer, PropertyInitializer
+        Function, TopLevel, Body, ClassInitializer, PropertyInitializer, FieldInitializer
     }
 
     // ----------------------------------- Node caches -----------------------------------
@@ -516,6 +516,35 @@ class ControlFlowGraphBuilder {
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
         if (property.initializer == null && property.delegate == null) return null
         val exitNode = exitTargetsForTry.pop() as PropertyInitializerExitNode
+        popAndAddEdge(exitNode)
+        val graph = popGraph()
+        assert(exitNode == graph.exitNode)
+        return exitNode to graph
+    }
+
+    // ----------------------------------- Field -----------------------------------
+
+    fun enterField(field: FirField): FieldInitializerEnterNode? {
+        if (field.initializer == null) return null
+
+        val graph = ControlFlowGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer)
+        pushGraph(graph, Mode.FieldInitializer)
+
+        val enterNode = createFieldInitializerEnterNode(field)
+        val exitNode = createFieldInitializerExitNode(field)
+        exitTargetsForTry.push(exitNode)
+
+        enterToLocalClassesMembers[field.symbol]?.let {
+            addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward)
+        }
+
+        lastNodes.push(enterNode)
+        return enterNode
+    }
+
+    fun exitField(field: FirField): Pair<FieldInitializerExitNode, ControlFlowGraph>? {
+        if (field.initializer == null) return null
+        val exitNode = exitTargetsForTry.pop() as FieldInitializerExitNode
         popAndAddEdge(exitNode)
         val graph = popGraph()
         assert(exitNode == graph.exitNode)

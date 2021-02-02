@@ -108,14 +108,6 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                           BLOCK_BODY
                             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Visitor]'
-                            SET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Visitor visibility:local [final]' type=kotlin.Unit origin=EQ
-                              receiver: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>' type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> origin=null
-                              value: GET_VAR 'val visitor: <root>.Visitor [val] declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation' type=<root>.Visitor origin=null
-                        FUN name:visit visibility:public modality:FINAL <> ($this:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>) returnType:kotlin.Unit
-                          overridden:
-                            public abstract fun visit (): kotlin.Unit declared in <root>.Visitor
-                          $this: VALUE_PARAMETER name:<this> type:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>
-                          BLOCK_BODY
                         FUN DELEGATED_MEMBER name:visitArray visibility:public modality:OPEN <> ($this:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>) returnType:<root>.Visitor?
                           overridden:
                             public open fun visitArray (): <root>.Visitor? declared in <root>.Visitor
@@ -135,6 +127,13 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                                 $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.Visitor visibility:local [final]' type=<root>.Visitor origin=null
                                   receiver: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>.visitAnnotation' type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> origin=null
                         FIELD DELEGATE name:<$$delegate_0> type:<root>.Visitor visibility:local [final]
+                          EXPRESSION_BODY
+                            GET_VAR 'val visitor: <root>.Visitor [val] declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation' type=<root>.Visitor origin=null
+                        FUN name:visit visibility:public modality:FINAL <> ($this:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>) returnType:kotlin.Unit
+                          overridden:
+                            public abstract fun visit (): kotlin.Unit declared in <root>.Visitor
+                          $this: VALUE_PARAMETER name:<this> type:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>
+                          BLOCK_BODY
                         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                           overridden:
                             public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

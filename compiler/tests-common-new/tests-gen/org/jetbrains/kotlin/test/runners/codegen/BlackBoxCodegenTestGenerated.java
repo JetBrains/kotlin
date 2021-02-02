@@ -14841,6 +14841,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("Fir2IrClassifierStorage.kt")
+        public void testFir2IrClassifierStorage() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/Fir2IrClassifierStorage.kt");
+        }
+
+        @Test
         @TestMetadata("IrBuiltIns.kt")
         public void testIrBuiltIns() throws Exception {
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");

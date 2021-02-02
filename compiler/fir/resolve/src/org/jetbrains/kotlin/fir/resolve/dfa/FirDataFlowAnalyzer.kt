@@ -268,6 +268,18 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return graph
     }
 
+    // ----------------------------------- Field -----------------------------------
+
+    fun enterField(field: FirField) {
+        graphBuilder.enterField(field)?.mergeIncomingFlow()
+    }
+
+    fun exitField(field: FirField): ControlFlowGraph? {
+        val (node, graph) = graphBuilder.exitField(field) ?: return null
+        node.mergeIncomingFlow()
+        return graph
+    }
+
     // ----------------------------------- Delegate -----------------------------------
 
     fun enterDelegateExpression() {

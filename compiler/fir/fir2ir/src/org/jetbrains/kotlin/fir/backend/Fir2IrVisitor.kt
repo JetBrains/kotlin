@@ -67,7 +67,9 @@ class Fir2IrVisitor(
 
     override fun visitField(field: FirField, data: Any?): IrField {
         if (field.isSynthetic) {
-            return declarationStorage.getCachedIrField(field)!!
+            return declarationStorage.getCachedIrField(field)!!.apply {
+                memberGenerator.convertFieldContent(this, field)
+            }
         } else {
             throw AssertionError("Unexpected field: ${field.render()}")
         }

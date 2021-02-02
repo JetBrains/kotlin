@@ -34,7 +34,7 @@ class FirClassDeclaredMemberScope(
                 is FirCallableMemberDeclaration<*> -> {
                     val name = when (declaration) {
                         is FirConstructor -> CONSTRUCTOR_NAME
-                        is FirVariable<*> -> declaration.name
+                        is FirVariable<*> -> if (declaration.isSynthetic) continue@loop else declaration.name
                         is FirSimpleFunction -> declaration.name
                         else -> continue@loop
                     }

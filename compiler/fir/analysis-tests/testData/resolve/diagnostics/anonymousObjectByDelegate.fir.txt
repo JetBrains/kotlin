@@ -9,24 +9,22 @@ FILE: anonymousObjectByDelegate.kt
     }
     public final fun R|A|.test_1(): R|kotlin/Unit| {
         object : R|B| {
-            local final field <$$delegate_0>: R|B|
-
             private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
-                this@R|/<anonymous>|.R|<local>/<$$delegate_0>| = this@R|/test_1|.R|/A.b|
             }
+
+            local final field <$$delegate_0>: R|B| = this@R|/test_1|.R|/A.b|
 
         }
 
     }
     public final fun R|A|.test_2(): R|kotlin/Unit| {
         object : R|B| {
-            local final field <$$delegate_0>: R|B|
-
             private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
-                this@R|/<anonymous>|.R|<local>/<$$delegate_0>| = this@R|/test_2|.R|/A.b|
             }
+
+            local final field <$$delegate_0>: R|B| = this@R|/test_2|.R|/A.b|
 
         }
 

@@ -160,6 +160,36 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    override fun transformField(field: FirField, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        val returnTypeRef = field.returnTypeRef
+        if (implicitTypeOnly) return field.compose()
+        if (field.resolvePhase == transformerPhase) return field.compose()
+        if (field.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
+            transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
+            return field.compose()
+        }
+        dataFlowAnalyzer.enterField(field)
+        return withFullBodyResolve {
+            withLocalScopeCleanup {
+                val primaryConstructorParametersScope = context.getPrimaryConstructorAllParametersScope()
+                context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                    context.withContainer(field) {
+                        withLocalScopeCleanup {
+                            addLocalScope(primaryConstructorParametersScope)
+                            field.transformChildren(transformer, withExpectedType(returnTypeRef))
+                        }
+                        if (field.initializer != null) {
+                            storeVariableReturnType(field)
+                        }
+                    }
+                }
+                transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
+                dataFlowAnalyzer.exitField(field)
+                field.compose()
+            }
+        }
+    }
+
     private fun FirFunctionCall.replacePropertyReferenceTypeInDelegateAccessors(property: FirProperty) {
         // var someProperty: SomeType
         //     get() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>)

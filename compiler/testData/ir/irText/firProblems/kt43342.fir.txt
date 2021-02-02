@@ -8,20 +8,6 @@ FILE fqName:<root> fileName:/kt43342.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ControlFlowInfo modality:OPEN visibility:public superTypes:[kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>]'
-        SET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
-          value: GET_VAR 'map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<init>' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
-    PROPERTY name:map visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<init>' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> visibility:public modality:FINAL <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
-        correspondingProperty: PROPERTY name:map visibility:public modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-map> (): kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
-              receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-map>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     FUN DELEGATED_MEMBER name:containsKey visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo) returnType:kotlin.Boolean
       overridden:
         public abstract fun containsKey (key: K of kotlin.collections.Map): kotlin.Boolean declared in kotlin.collections.Map
@@ -125,6 +111,19 @@ FILE fqName:<root> fileName:/kt43342.kt
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
                 receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-values>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     FIELD DELEGATE name:<$$delegate_0> type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:local [final]
+      EXPRESSION_BODY
+        GET_VAR 'map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<init>' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+    PROPERTY name:map visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'map: kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<init>' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> visibility:public modality:FINAL <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>) returnType:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
+        correspondingProperty: PROPERTY name:map visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-map> (): kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> visibility:private [final]' type=kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
+              receiver: GET_VAR '<this>: <root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> declared in <root>.ControlFlowInfo.<get-map>' type=<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

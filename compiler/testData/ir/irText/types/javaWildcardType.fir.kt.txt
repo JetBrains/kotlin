@@ -11,8 +11,6 @@ class C : J, K {
     super/*Any*/()
     /* <init>() */
 
-    <this>.#<$$delegate_0> = j
-    <this>.#<$$delegate_1> = k
   }
 
   override fun jf1(): Collection<out CharSequence?>? {
@@ -31,7 +29,7 @@ class C : J, K {
     <this>.#<$$delegate_0>.jg2(c = c)
   }
 
-  local /* final field */ val <$$delegate_0>: J
+  local /* final field */ val <$$delegate_0>: J = j
   override fun kf1(): Collection<out CharSequence> {
     return <this>.#<$$delegate_1>.kf1()
   }
@@ -48,7 +46,7 @@ class C : J, K {
     <this>.#<$$delegate_1>.kg2(c = c)
   }
 
-  local /* final field */ val <$$delegate_1>: K
+  local /* final field */ val <$$delegate_1>: K = k
 
 }
 

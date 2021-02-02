@@ -93,7 +93,7 @@ class Fir2IrConverter(
         }
         val processedCallableNames = mutableSetOf<Name>()
         val classes = mutableListOf<FirRegularClass>()
-        for (declaration in sortBySynthetic(anonymousObject.declarations)) {
+        for (declaration in syntheticPropertiesLast(anonymousObject.declarations)) {
             val irDeclaration = if (declaration is FirRegularClass) {
                 classes += declaration
                 registerClassAndNestedClasses(declaration, irClass)
@@ -129,7 +129,7 @@ class Fir2IrConverter(
             irClass.declarations += irConstructor
         }
         val allDeclarations = regularClass.declarations.toMutableList()
-        for (declaration in sortBySynthetic(regularClass.declarations)) {
+        for (declaration in syntheticPropertiesLast(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
             irClass.declarations += irDeclaration
         }
@@ -167,8 +167,8 @@ class Fir2IrConverter(
     // Sort declarations so that all non-synthetic declarations are before synthetic ones.
     // This is needed because converting synthetic fields for implementation delegation needs to know
     // existing declarations in the class to avoid adding redundant delegated members.
-    private fun sortBySynthetic(declarations: List<FirDeclaration>): Iterable<FirDeclaration> {
-        return declarations.sortedBy { it.isSynthetic }
+    private fun syntheticPropertiesLast(declarations: List<FirDeclaration>): Iterable<FirDeclaration> {
+        return declarations.sortedBy { it !is FirField && it.isSynthetic }
     }
 
     private fun registerClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
@@ -273,7 +273,7 @@ class Fir2IrConverter(
             val classifierStorage = Fir2IrClassifierStorage(components)
             val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
-            val declarationStorage = Fir2IrDeclarationStorage(components, fir2irVisitor, moduleDescriptor)
+            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
             val builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
             val annotationGenerator = AnnotationGenerator(components)

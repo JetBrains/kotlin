@@ -85,6 +85,8 @@ fun CFGNode<*>.render(): String =
                 is PartOfClassInitializationNode -> "Part of class initialization"
                 is PropertyInitializerEnterNode -> "Enter property"
                 is PropertyInitializerExitNode -> "Exit property"
+                is FieldInitializerEnterNode -> "Enter field"
+                is FieldInitializerExitNode -> "Exit field"
                 is InitBlockEnterNode -> "Enter init block"
                 is InitBlockExitNode -> "Exit init block"
                 is AnnotationEnterNode -> "Enter annotation"

@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
-    private val visitor: Fir2IrVisitor,
     private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
 
@@ -850,12 +848,11 @@ class Fir2IrDeclarationStorage(
                 isExternal = false,
                 isStatic = field.isStatic
             ).apply {
-                field.initializer?.let {
-                    val expression = visitor.convertToIrExpression(it)
-                    expression.type = type
-                    initializer = irFactory.createExpressionBody(expression)
-                }
                 fieldCache[field] = this
+                val initializer = field.initializer
+                if (initializer is FirConstExpression<*>) {
+                    this.initializer = factory.createExpressionBody(initializer.toIrConst(type))
+                }
             }
         }
     }

@@ -32,12 +32,6 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J; <root>.K]'
-        SET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
-          value: GET_VAR 'j: <root>.J declared in <root>.C.<init>' type=<root>.J origin=null
-        SET_FIELD 'FIELD DELEGATE name:<$$delegate_1> type:<root>.K visibility:local [final]' type=kotlin.Unit origin=EQ
-          receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
-          value: GET_VAR 'k: <root>.K declared in <root>.C.<init>' type=<root>.K origin=null
     FUN DELEGATED_MEMBER name:jf1 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<out kotlin.CharSequence?>?
       overridden:
         public abstract fun jf1 (): kotlin.collections.Collection<out kotlin.CharSequence?>? declared in <root>.J
@@ -77,6 +71,8 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.jg2' type=<root>.C origin=null
           c: GET_VAR 'c: kotlin.collections.Collection<kotlin.CharSequence?>? declared in <root>.C.jg2' type=kotlin.collections.Collection<kotlin.CharSequence?>? origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]
+      EXPRESSION_BODY
+        GET_VAR 'j: <root>.J declared in <root>.C.<init>' type=<root>.J origin=null
     FUN DELEGATED_MEMBER name:kf1 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.Collection<out kotlin.CharSequence>
       overridden:
         public abstract fun kf1 (): kotlin.collections.Collection<out kotlin.CharSequence> declared in <root>.K
@@ -116,6 +112,8 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.kg2' type=<root>.C origin=null
           c: GET_VAR 'c: kotlin.collections.Collection<kotlin.CharSequence> declared in <root>.C.kg2' type=kotlin.collections.Collection<kotlin.CharSequence> origin=null
     FIELD DELEGATE name:<$$delegate_1> type:<root>.K visibility:local [final]
+      EXPRESSION_BODY
+        GET_VAR 'k: <root>.K declared in <root>.C.<init>' type=<root>.K origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
