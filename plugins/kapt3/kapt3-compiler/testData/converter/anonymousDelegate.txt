@@ -1,0 +1,60 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class AnonymousDelegateKt {
+
+    public AnonymousDelegateKt() {
+        super();
+    }
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.Object delegate$delegate = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.Object getDelegate() {
+        return null;
+    }
+
+    public static final void setDelegate(@org.jetbrains.annotations.NotNull()
+    java.lang.Object p0) {
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Test {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.Object broken$delegate = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.io.Serializable overridden$delegate = null;
+    private final kotlin.Lazy lazyProp$delegate = null;
+
+    public Test() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object getBroken() {
+        return null;
+    }
+
+    public final void setBroken(@org.jetbrains.annotations.NotNull()
+    java.lang.Object p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object getOverridden() {
+        return null;
+    }
+
+    public final void setOverridden(@org.jetbrains.annotations.NotNull()
+    java.lang.Object p0) {
+    }
+
+    private final java.lang.Runnable getLazyProp() {
+        return null;
+    }
+}
