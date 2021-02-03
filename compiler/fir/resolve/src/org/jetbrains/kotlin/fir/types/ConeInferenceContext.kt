@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -32,19 +32,19 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     val symbolProvider: FirSymbolProvider get() = session.symbolProvider
 
     override fun nullableNothingType(): SimpleTypeMarker {
-        return session.builtinTypes.nullableNothingType.type//StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), true)
+        return session.builtinTypes.nullableNothingType.type
     }
 
     override fun nullableAnyType(): SimpleTypeMarker {
-        return session.builtinTypes.nullableAnyType.type//StandardClassIds.Any(symbolProvider).constructType(emptyArray(), true)
+        return session.builtinTypes.nullableAnyType.type
     }
 
     override fun nothingType(): SimpleTypeMarker {
-        return session.builtinTypes.nothingType.type//StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), false)
+        return session.builtinTypes.nothingType.type
     }
 
     override fun anyType(): SimpleTypeMarker {
-        return session.builtinTypes.anyType.type//StandardClassIds.Any(symbolProvider).constructType(emptyArray(), false)
+        return session.builtinTypes.anyType.type
     }
 
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
@@ -102,14 +102,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {
         require(this is ConeKotlinType)
-        return this is ConeCapturedType /*|| this is ConeTypeVariable // TODO */
+        return this is ConeCapturedType || this is ConeTypeVariableType
                 || this is ConeTypeParameterType
     }
 
-    // TODO: implement checking for extension function
     override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
         require(this is ConeKotlinType)
-        return false
+        return this.isExtensionFunctionType
     }
 
     override fun KotlinTypeMarker.typeDepth() = when (this) {
@@ -150,11 +149,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     ): Boolean {
         if (this == null) return false
         if (!visited.add(this)) return false
-
-        /*
-        TODO:?
-        UnwrappedType unwrappedType = type.unwrap();
-         */
 
         if (predicate(this)) return true
 
@@ -300,15 +294,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): ConeSubstitutor {
-        if (map.isEmpty()) return createEmptySubstitutor()
-        return object : AbstractConeSubstitutor(),
-            TypeSubstitutorMarker {
-            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-                if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
-                val new = map[type.typeConstructor()] ?: return null
-                return (new as ConeKotlinType).approximateIntegerLiteralType().updateNullabilityIfNeeded(type)
-            }
-        }
+        @Suppress("UNCHECKED_CAST")
+        return createTypeSubstitutorByTypeConstructor(map as Map<TypeConstructorMarker, ConeKotlinType>, this)
     }
 
     override fun createEmptySubstitutor(): ConeSubstitutor {
@@ -328,7 +315,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.isSpecial(): Boolean {
-        // TODO
+        // Cone type system doesn't have special types
         return false
     }
 

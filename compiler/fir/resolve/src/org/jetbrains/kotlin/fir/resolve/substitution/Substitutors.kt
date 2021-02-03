@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.typeConstructor
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     private fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
@@ -160,5 +164,17 @@ data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, Co
             ) as? ConeKotlinType ?: result
         }
         return result
+    }
+}
+
+fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeKotlinType>, context: ConeTypeContext): ConeSubstitutor {
+    if (map.isEmpty()) return ConeSubstitutor.Empty
+    return object : AbstractConeSubstitutor(),
+        TypeSubstitutorMarker {
+        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+            if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
+            val new = map[type.typeConstructor(context)] ?: return null
+            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)
+        }
     }
 }
