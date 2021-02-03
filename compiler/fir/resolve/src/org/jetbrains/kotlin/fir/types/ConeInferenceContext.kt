@@ -340,10 +340,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return false
     }
 
-    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
-        return type
-    }
-
     override fun createErrorType(debugName: String): ConeClassErrorType {
         return ConeClassErrorType(ConeIntermediateDiagnostic(debugName))
     }

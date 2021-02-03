@@ -246,11 +246,11 @@ fun <T>case_18(x: T, f: Boolean) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
     }
@@ -263,21 +263,21 @@ fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!><!UNSAFE_CALL!>.<!>propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!><!UNSAFE_CALL!>.<!>funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!><!UNSAFE_CALL!>.<!>propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.propNullableT
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.propNullableAny
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!><!UNSAFE_CALL!>.<!>funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.funNullableAny()
     }

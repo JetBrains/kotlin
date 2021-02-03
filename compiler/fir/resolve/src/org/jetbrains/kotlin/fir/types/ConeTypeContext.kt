@@ -228,9 +228,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     private fun TypeConstructorMarker.toClassLikeSymbol(): FirClassLikeSymbol<*>? = (this as? ConeClassLikeLookupTag)?.toSymbol(session)
 
-    override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
+    override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
         if (this is ErrorTypeConstructor) return emptyList()
-        //require(this is ConeSymbol)
         return when (this) {
             is ConeTypeVariableTypeConstructor -> emptyList()
             is ConeTypeParameterLookupTag -> symbol.fir.bounds.map { it.coneType }
@@ -307,56 +306,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 fir.classKind != ClassKind.ANNOTATION_CLASS
     }
 
+    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
+        require(type is ConeKotlinType)
+        return captureFromExpressionInternal(type)
+    }
+
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
         require(type is ConeKotlinType)
-        val argumentsCount = type.typeArguments.size
-        if (argumentsCount == 0) return null
-
-        val typeConstructor = type.typeConstructor()
-        if (argumentsCount != typeConstructor.parametersCount()) return null
-
-        if (type.typeArguments.all { it !is ConeStarProjection && it.kind == ProjectionKind.INVARIANT }) return null
-
-        val newArguments = Array(argumentsCount) { index ->
-            val argument = type.typeArguments[index]
-            if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT) return@Array argument
-
-            val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
-                (argument as ConeKotlinTypeProjection).type
-            } else {
-                null
-            }
-
-            ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
-        }
-
-        val substitutor = substitutorByMap((0 until argumentsCount).map { index ->
-            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index] as ConeKotlinType)
-        }.toMap())
-
-        for (index in 0 until argumentsCount) {
-            val oldArgument = type.typeArguments[index]
-            val newArgument = newArguments[index]
-
-            if (oldArgument !is ConeStarProjection && oldArgument.kind == ProjectionKind.INVARIANT) continue
-
-            val parameter = typeConstructor.getParameter(index)
-            val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
-                substitutor.safeSubstitute(
-                    this as TypeSystemInferenceExtensionContext, parameter.getUpperBound(paramIndex)
-                )
-            }
-
-            if (!oldArgument.isStarProjection() && oldArgument.getVariance() == TypeVariance.OUT) {
-                upperBounds += oldArgument.getType()
-            }
-
-            require(newArgument is ConeCapturedType)
-            @Suppress("UNCHECKED_CAST")
-            newArgument.constructor.supertypes = upperBounds as List<ConeKotlinType>
-        }
-
-        return type.withArguments(newArguments)
+        return captureFromArgumentsInternal(type, status) as SimpleTypeMarker?
     }
 
     override fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker {
@@ -392,10 +349,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 typeConstructor is ConeTypeParameterLookupTag
     }
 
-    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
-        TODO("not implemented")
-    }
-
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
         if (this is ConeClassLikeType) {
             return StandardClassIds.primitiveTypes.contains(this.lookupTag.classId)
@@ -417,7 +370,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>) as SimpleTypeMarker
     }
 
-    override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
+    override fun intersectTypes(types: List<KotlinTypeMarker>): ConeKotlinType {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>)
     }

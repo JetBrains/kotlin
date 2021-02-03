@@ -143,7 +143,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         if (types.any { it.isEmpty() }) return mutableSetOf()
         val intersectedTypes = types.map {
             if (it.size > 1) {
-                context.intersectTypes(it.toList()) as ConeKotlinType
+                context.intersectTypes(it.toList())
             } else {
                 assert(it.size == 1) { "We've already checked each set of types is not empty." }
                 it.single()
