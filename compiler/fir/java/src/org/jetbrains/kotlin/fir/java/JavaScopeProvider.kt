@@ -36,7 +36,7 @@ class JavaScopeProvider(
         scopeSession: ScopeSession
     ): FirTypeScope {
         val symbol = klass.symbol as FirRegularClassSymbol
-        val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
+        val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
         if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
             return buildSyntheticScopeForAnnotations(useSiteSession, symbol, scopeSession, enhancementScope)
         }
@@ -57,14 +57,13 @@ class JavaScopeProvider(
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
         symbol: FirRegularClassSymbol,
-        scopeSession: ScopeSession,
-        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
+        scopeSession: ScopeSession
     ): JavaClassMembersEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
             JavaClassMembersEnhancementScope(
                 useSiteSession,
                 symbol,
-                buildUseSiteMemberScopeWithJavaTypes(symbol.fir, useSiteSession, scopeSession, visitedSymbols)
+                buildUseSiteMemberScopeWithJavaTypes(symbol.fir, useSiteSession, scopeSession)
             )
         }
     }
@@ -81,27 +80,20 @@ class JavaScopeProvider(
         regularClass: FirRegularClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession,
-        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(regularClass)
             val wrappedDeclaredScope = declaredMemberScopeDecorator(regularClass, declaredScope, useSiteSession, scopeSession)
-            val superTypeEnhancementScopes =
-                lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
-                    .mapNotNull { useSiteSuperType ->
-                        if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
-                        val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                        if (symbol is FirRegularClassSymbol && visitedSymbols.add(symbol)) {
-                            // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
-                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
-                            visitedSymbols.remove(symbol)
-                            useSiteSuperType.wrapSubstitutionScopeIfNeed(
-                                useSiteSession, scope, symbol.fir, scopeSession, derivedClass = regularClass
-                            )
-                        } else {
-                            null
-                        }
-                    }
+            val superTypes =
+                if (regularClass.isThereLoopInSupertypes(useSiteSession))
+                    listOf(StandardClassIds.Any.toConeKotlinType(emptyArray(), isNullable = false))
+                else
+                    lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
+
+            val superTypeScopes = superTypes.mapNotNull {
+                it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass, wrappedDeclaredScope, delegateFields = null)
+            }
+
             JavaClassUseSiteMemberScope(
                 regularClass, useSiteSession,
                 FirTypeIntersectionScope.prepareIntersectionScope(
@@ -111,7 +103,7 @@ class JavaScopeProvider(
                         if (regularClass is FirJavaClass) regularClass.javaTypeParameterStack
                         else JavaTypeParameterStack.EMPTY
                     ),
-                    superTypeEnhancementScopes,
+                    superTypeScopes,
                     regularClass.defaultType(),
                 ), wrappedDeclaredScope
             )
