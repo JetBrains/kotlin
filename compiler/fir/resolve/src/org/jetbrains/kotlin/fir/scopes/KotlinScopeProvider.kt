@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 
@@ -40,21 +41,7 @@ class KotlinScopeProvider(
             val delegateFields = klass.declarations.filterIsInstance<FirField>().filter { it.isSynthetic }
             val scopes = lookupSuperTypes(klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                 .mapNotNull { useSiteSuperType ->
-                    if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
-                    val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                    if (symbol is FirRegularClassSymbol) {
-                        val delegateField = delegateFields.find { it.returnTypeRef.coneType == useSiteSuperType }
-                        symbol.fir.scopeForSupertype(
-                            substitutor(symbol, useSiteSuperType, useSiteSession),
-                            useSiteSession, scopeSession, delegateField,
-                            subClass = klass,
-                            decoratedDeclaredMemberScope
-                        ).let {
-                            it as? FirTypeScope ?: error("$it is expected to be FirOverrideAwareScope")
-                        }
-                    } else {
-                        null
-                    }
+                    useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass, decoratedDeclaredMemberScope, delegateFields)
                 }
             FirClassUseSiteMemberScope(
                 useSiteSession,
@@ -65,12 +52,6 @@ class KotlinScopeProvider(
                 decoratedDeclaredMemberScope,
             )
         }
-    }
-
-    private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
-        if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
-        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type, useSiteSession)
-        return substitutorByMap(originalSubstitution)
     }
 
     override fun getStaticMemberScopeForCallables(
@@ -118,7 +99,38 @@ fun FirClass<*>.scopeForClass(
     isFromExpectClass = false
 )
 
-private fun FirClass<*>.scopeForSupertype(
+fun ConeKotlinType.scopeForSupertype(
+    useSiteSession: FirSession,
+    scopeSession: ScopeSession,
+    subClass: FirClass<*>,
+    declaredMemberScope: FirScope,
+    delegateFields: List<FirField>?,
+): FirTypeScope? {
+    if (this !is ConeClassLikeType) return null
+    if (this is ConeClassErrorType) return null
+    val symbol = lookupTag.toSymbol(useSiteSession)
+    return if (symbol is FirRegularClassSymbol) {
+        val delegateField = delegateFields?.find { it.returnTypeRef.coneType == this }
+        symbol.fir.scopeForSupertype(
+            substitutor(symbol, this, useSiteSession),
+            useSiteSession, scopeSession, delegateField,
+            subClass = subClass,
+            declaredMemberScope
+        ).let {
+            it as? FirTypeScope ?: error("$it is expected to be FirOverrideAwareScope")
+        }
+    } else {
+        null
+    }
+}
+
+private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
+    if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
+    val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type, useSiteSession)
+    return substitutorByMap(originalSubstitution)
+}
+
+fun FirClass<*>.scopeForSupertype(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
