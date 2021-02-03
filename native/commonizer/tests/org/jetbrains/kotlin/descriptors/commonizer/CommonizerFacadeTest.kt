@@ -46,7 +46,7 @@ class CommonizerFacadeTest {
     )
 
     @Test
-    fun commonizedWithDifferentModules() = doTestSuccessfulCommonization(
+    fun commonizedWithDifferentModules() = doTestNothingToCommonize(
         mapOf(
             "target1" to listOf("foo"),
             "target2" to listOf("bar")

@@ -38,5 +38,14 @@ class CommonizerParameters(
             _resultsConsumer = value
         }
 
-    fun hasAnythingToCommonize(): Boolean = _targetProviders.size >= 2
+    fun hasAnythingToCommonize(): Boolean {
+        if (_targetProviders.size < 2) return false // too few targets
+
+        val allModuleNames: List<Set<String>> = _targetProviders.values.map { targetProvider ->
+            targetProvider.modulesProvider.loadModuleInfos().keys
+        }
+        val commonModuleNames: Set<String> = allModuleNames.reduce { a, b -> a intersect b }
+
+        return commonModuleNames.isNotEmpty() // there are modules that are present in every target
+    }
 }

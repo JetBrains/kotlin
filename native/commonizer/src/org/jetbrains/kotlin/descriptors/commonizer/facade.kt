@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 fun runCommonization(parameters: CommonizerParameters) {
     if (!parameters.hasAnythingToCommonize()) {
-        parameters.resultsConsumer.successfullyFinished(Status.NOTHING_TO_DO)
+        parameters.resultsConsumer.allConsumed(Status.NOTHING_TO_DO)
         return
     }
 
@@ -31,10 +31,9 @@ fun runCommonization(parameters: CommonizerParameters) {
     // build resulting declarations:
     for (targetIndex in 0 until mergedTree.dimension) {
         serializeTarget(mergeResult, targetIndex, parameters)
-        System.gc()
     }
 
-    parameters.resultsConsumer.successfullyFinished(Status.DONE)
+    parameters.resultsConsumer.allConsumed(Status.DONE)
 }
 
 private fun mergeAndCommonize(storageManager: StorageManager, parameters: CommonizerParameters): CirTreeMergeResult {
@@ -60,23 +59,25 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
 }
 
 private fun serializeTarget(mergeResult: CirTreeMergeResult, targetIndex: Int, parameters: CommonizerParameters) {
+    val mergedTree = mergeResult.root
+    val target = mergedTree.getTarget(targetIndex)
 
-    val (target, metadataModules) = MetadataBuilder.build(mergeResult.root, targetIndex, parameters.statsCollector)
-
-    val commonizedModules: List<ModuleResult.Commonized> = metadataModules.map { metadataModule ->
+    MetadataBuilder.build(mergedTree, targetIndex, parameters.statsCollector) { metadataModule ->
         val libraryName = metadataModule.name
         val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
             SerializedMetadata(header, fragments, fragmentNames)
         }
 
-        ModuleResult.Commonized(libraryName, serializedMetadata)
+        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata))
     }
 
-    val missingModules: List<ModuleResult.Missing> = if (target is LeafTarget)
-        mergeResult.missingModuleInfos.getValue(target).map { ModuleResult.Missing(it.originalLocation) }
-    else emptyList()
+    if (target is LeafTarget) {
+        mergeResult.missingModuleInfos.getValue(target).forEach {
+            parameters.resultsConsumer.consume(target, ModuleResult.Missing(it.originalLocation))
+        }
+    }
 
-    parameters.resultsConsumer.consumeResults(target, commonizedModules + missingModules)
+    parameters.resultsConsumer.targetConsumed(target)
 }
 
 private val KLIB_FRAGMENT_WRITE_STRATEGY = ChunkedKlibModuleFragmentWriteStrategy()
