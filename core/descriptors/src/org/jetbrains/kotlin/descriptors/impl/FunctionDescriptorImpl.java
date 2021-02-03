@@ -370,6 +370,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @Nullable FunctionDescriptor original = null;
         protected @NotNull Kind kind;
         protected @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors;
+        protected @NotNull List<ReceiverParameterDescriptor> newContextReceiverParameters;
         protected @Nullable ReceiverParameterDescriptor newExtensionReceiverParameter;
         protected @Nullable ReceiverParameterDescriptor dispatchReceiverParameter = FunctionDescriptorImpl.this.dispatchReceiverParameter;
         protected @NotNull KotlinType newReturnType;
@@ -393,6 +394,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 @NotNull DescriptorVisibility newVisibility,
                 @NotNull Kind kind,
                 @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
+                @NotNull List<ReceiverParameterDescriptor> newContextReceiverParameters,
                 @Nullable ReceiverParameterDescriptor newExtensionReceiverParameter,
                 @NotNull KotlinType newReturnType,
                 @Nullable Name name
@@ -403,6 +405,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.newVisibility = newVisibility;
             this.kind = kind;
             this.newValueParameterDescriptors = newValueParameterDescriptors;
+            this.newContextReceiverParameters = newContextReceiverParameters;
             this.newExtensionReceiverParameter = newExtensionReceiverParameter;
             this.newReturnType = newReturnType;
             this.name = name;
@@ -468,6 +471,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         @Override
         public CopyConfiguration setReturnType(@NotNull KotlinType type) {
             this.newReturnType = type;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public CopyBuilder<FunctionDescriptor> setContextReceiverParameters(@NotNull List<ReceiverParameterDescriptor> contextReceiverParameters) {
+            this.newContextReceiverParameters = contextReceiverParameters;
             return this;
         }
 
@@ -586,9 +596,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected CopyConfiguration newCopyBuilder(@NotNull TypeSubstitutor substitutor) {
         return new CopyConfiguration(
                 substitutor.getSubstitution(),
-                getContainingDeclaration(), getModality(), getVisibility(), getKind(), getValueParameters(),
-                getExtensionReceiverParameter(), getReturnType(), null
-        );
+                getContainingDeclaration(), getModality(), getVisibility(), getKind(), getValueParameters(), getContextReceiverParameters(),
+                getExtensionReceiverParameter(), getReturnType(), null);
     }
 
     @Nullable
@@ -614,6 +623,27 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters, wereChanges
         );
         if (substitutor == null) return null;
+
+        List<ReceiverParameterDescriptor> substitutedContextReceiverParameters = new ArrayList<ReceiverParameterDescriptor>();
+        if (!configuration.newContextReceiverParameters.isEmpty()) {
+            for (ReceiverParameterDescriptor newContextReceiverParameter : configuration.newContextReceiverParameters) {
+                KotlinType substitutedContextReceiverType =
+                        substitutor.substitute(newContextReceiverParameter.getType(), Variance.IN_VARIANCE);
+                if (substitutedContextReceiverType == null) {
+                    return null;
+                }
+                ReceiverParameterDescriptor substitutedContextReceiverParameter = new ReceiverParameterDescriptorImpl(
+                        substitutedDescriptor,
+                        new ExtensionReceiver(
+                                substitutedDescriptor, substitutedContextReceiverType, newContextReceiverParameter.getValue()
+                        ),
+                        newContextReceiverParameter.getAnnotations()
+                );
+                substitutedContextReceiverParameters.add(substitutedContextReceiverParameter);
+
+                wereChanges[0] |= substitutedContextReceiverType != newContextReceiverParameter.getType();
+            }
+        }
 
         ReceiverParameterDescriptor substitutedReceiverParameter = null;
         if (configuration.newExtensionReceiverParameter != null) {
@@ -672,9 +702,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             return this;
         }
 
-        // TODO: Substitute context receivers
         substitutedDescriptor.initialize(
-                substitutedReceiverParameter, substitutedExpectedThis, CollectionsKt.<ReceiverParameterDescriptor>emptyList(),
+                substitutedReceiverParameter, substitutedExpectedThis, substitutedContextReceiverParameters,
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
