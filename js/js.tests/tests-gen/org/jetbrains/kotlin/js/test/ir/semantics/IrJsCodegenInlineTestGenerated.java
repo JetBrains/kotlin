@@ -506,6 +506,16 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_3.kt");
             }
 
+            @TestMetadata("kt8668_nested.kt")
+            public void testKt8668_nested() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_nested.kt");
+            }
+
+            @TestMetadata("kt8668_nested_2.kt")
+            public void testKt8668_nested_2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_nested_2.kt");
+            }
+
             @TestMetadata("twoDifferentDispatchReceivers.kt")
             public void testTwoDifferentDispatchReceivers() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/twoDifferentDispatchReceivers.kt");
