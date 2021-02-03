@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirJavaSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.syntheticNamesProvider
@@ -28,18 +27,16 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.name.Name
 
 class JavaClassUseSiteMemberScope(
-    klass: FirRegularClass,
+    klass: FirJavaClass,
     session: FirSession,
     superTypesScope: FirTypeScope,
     declaredMemberScope: FirScope
 ) : AbstractFirUseSiteMemberScope(
     session,
-    JavaOverrideChecker(session, if (klass is FirJavaClass) klass.javaTypeParameterStack else JavaTypeParameterStack.EMPTY),
+    JavaOverrideChecker(session, klass.javaTypeParameterStack),
     superTypesScope,
     declaredMemberScope
 ) {
-    internal val symbol = klass.symbol
-
     internal fun bindOverrides(name: Name) {
         val overrideCandidates = mutableSetOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) {
@@ -141,18 +138,11 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        val getterNames = if (symbol.fir is FirJavaClass) {
-            FirJavaSyntheticNamesProvider.possibleGetterNamesByPropertyName(name)
-        } else {
-            emptyList()
-        }
+        val getterNames = FirJavaSyntheticNamesProvider.possibleGetterNamesByPropertyName(name)
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, processor)
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (symbol.fir !is FirJavaClass) {
-            return super.processFunctionsByName(name, processor)
-        }
         val potentialPropertyNames = session.syntheticNamesProvider.possiblePropertyNamesByAccessorName(name)
         val accessors = mutableListOf<FirAccessorSymbol>()
         val getterName by lazy { session.syntheticNamesProvider.getterNameBySetterName(name) ?: name }

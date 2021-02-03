@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.scopes.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -54,10 +51,14 @@ class JavaScopeProvider(
         scopeSession: ScopeSession
     ): JavaClassMembersEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
+            val firJavaClass = symbol.fir
+            require(firJavaClass is FirJavaClass) {
+                "${firJavaClass.classId} is expected to be FirJavaClass, but ${firJavaClass::class} found"
+            }
             JavaClassMembersEnhancementScope(
                 useSiteSession,
                 symbol,
-                buildUseSiteMemberScopeWithJavaTypes(symbol.fir, useSiteSession, scopeSession)
+                buildUseSiteMemberScopeWithJavaTypes(firJavaClass, useSiteSession, scopeSession)
             )
         }
     }
@@ -71,7 +72,7 @@ class JavaScopeProvider(
     }
 
     private fun buildUseSiteMemberScopeWithJavaTypes(
-        regularClass: FirRegularClass,
+        regularClass: FirJavaClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession,
     ): JavaClassUseSiteMemberScope {
@@ -93,8 +94,7 @@ class JavaScopeProvider(
                     useSiteSession,
                     JavaOverrideChecker(
                         useSiteSession,
-                        if (regularClass is FirJavaClass) regularClass.javaTypeParameterStack
-                        else JavaTypeParameterStack.EMPTY
+                        regularClass.javaTypeParameterStack
                     ),
                     superTypeScopes,
                     regularClass.defaultType(),
