@@ -121,6 +121,11 @@ class IrCompileTimeChecker(
         return visitStatements(body.statements, data)
     }
 
+    // We need this separate method to explicitly indicate that IrExpressionBody can be interpreted in any evaluation mode
+    override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): Boolean {
+        return body.expression.accept(this, data)
+    }
+
     override fun visitBlock(expression: IrBlock, data: Nothing?): Boolean {
         return visitStatements(expression.statements, data)
     }
