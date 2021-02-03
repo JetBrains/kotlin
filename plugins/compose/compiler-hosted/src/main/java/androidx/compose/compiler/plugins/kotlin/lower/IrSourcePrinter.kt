@@ -102,6 +102,7 @@ import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
@@ -109,8 +110,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
-import kotlin.math.abs
 import java.util.Locale
+import kotlin.math.abs
 
 fun IrElement.dumpSrc(): String {
     val sb = StringBuilder()
@@ -1009,8 +1010,13 @@ private class IrSourcePrinterVisitor(
         if (declaration.isInner) {
             print("inner ")
         }
+        if (declaration.isData) {
+            print("data ")
+        }
         if (declaration.isInterface) {
             print("interface ")
+        } else if (declaration.isObject) {
+            print("object ")
         } else {
             if (declaration.modality != Modality.FINAL) {
                 print(declaration.modality.toString().toLowerCase(Locale.ROOT))

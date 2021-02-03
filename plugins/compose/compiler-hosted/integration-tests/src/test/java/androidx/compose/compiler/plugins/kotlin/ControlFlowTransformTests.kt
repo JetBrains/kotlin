@@ -2319,7 +2319,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 Test(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A()>:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   A(%composer, 0)
@@ -2393,7 +2393,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 Test(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<effect>:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   %composer.startReplaceableGroup(<>, "*<effect>")
@@ -3172,7 +3172,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 Test(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<IW>:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   IW({ %composer: Composer?, %changed: Int ->
