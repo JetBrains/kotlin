@@ -27,31 +27,35 @@ internal object MetadataBuilder {
     fun build(
         node: CirRootNode,
         targetIndex: Int,
-        statsCollector: StatsCollector?
-    ): Pair<CommonizerTarget, Collection<KlibModuleMetadata>> {
-        return node.accept(
-            MetadataBuildingVisitor(statsCollector),
+        statsCollector: StatsCollector?,
+        moduleConsumer: (KlibModuleMetadata) -> Unit
+    ) {
+        node.accept(
+            MetadataBuildingVisitor(statsCollector, moduleConsumer),
             MetadataBuildingVisitorContext.rootContext(node, targetIndex)
-        ).cast()
+        )
     }
 }
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-private class MetadataBuildingVisitor(private val statsCollector: StatsCollector?) : CirNodeVisitor<MetadataBuildingVisitorContext, Any?> {
+private class MetadataBuildingVisitor(
+    private val statsCollector: StatsCollector?,
+    private val moduleConsumer: (KlibModuleMetadata) -> Unit
+) : CirNodeVisitor<MetadataBuildingVisitorContext, Any?> {
     private val classConsumer = ClassConsumer()
 
     override fun visitRootNode(
         node: CirRootNode,
         rootContext: MetadataBuildingVisitorContext
-    ): Pair<CommonizerTarget, Collection<KlibModuleMetadata>> {
-        val modules: List<KlibModuleMetadata> = node.modules.mapNotNull { (moduleName, moduleNode) ->
+    ) {
+        node.modules.forEach { (moduleName, moduleNode) ->
             val moduleContext = rootContext.moduleContext(moduleName)
-            val module: KlibModuleMetadata? = moduleNode.accept(this, moduleContext)?.cast()
+            val module: KlibModuleMetadata = moduleNode.accept(this, moduleContext)?.cast() ?: return@forEach
             statsCollector?.logModule(moduleContext)
-            module
+            moduleConsumer(module)
         }
 
-        return rootContext.target to modules
+        System.gc()
     }
 
     override fun visitModuleNode(
@@ -415,18 +419,14 @@ internal data class MetadataBuildingVisitorContext(
     }
 
     companion object {
-        fun rootContext(rootNode: CirRootNode, targetIndex: Int): MetadataBuildingVisitorContext {
-            val isCommon = rootNode.indexOfCommon == targetIndex
-            val target = (if (isCommon) rootNode.commonDeclaration() else rootNode.targetDeclarations[targetIndex])!!.target
-
-            return MetadataBuildingVisitorContext(
+        fun rootContext(rootNode: CirRootNode, targetIndex: Int): MetadataBuildingVisitorContext =
+            MetadataBuildingVisitorContext(
                 targetIndex = targetIndex,
-                target = target,
-                isCommon = isCommon,
+                target = rootNode.getTarget(targetIndex),
+                isCommon = rootNode.indexOfCommon == targetIndex,
                 typeParameterIndexOffset = 0,
                 currentPath = Path.Empty
             )
-        }
     }
 }
 
