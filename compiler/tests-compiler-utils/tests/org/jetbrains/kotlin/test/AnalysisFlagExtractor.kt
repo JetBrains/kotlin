@@ -36,6 +36,11 @@ private val patterns = buildList {
         JvmSamConversions.Companion::fromString
     )
     createPattern(
+        "LAMBDAS",
+        JVMConfigurationKeys.LAMBDAS,
+        JvmClosureGenerationScheme.Companion::fromString
+    )
+    createPattern(
         "USE_OLD_INLINE_CLASSES_MANGLING_SCHEME",
         JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME,
     )
