@@ -1637,6 +1637,16 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
         }
 
+        @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
+        public void testOverriddenExternalMethodWithSameNameMethod() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameNameMethod.kt");
+        }
+
+        @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
+        public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameStableNameMethod.kt");
+        }
+
         @TestMetadata("overridenMethod.kt")
         public void testOverridenMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
