@@ -6,27 +6,34 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.codegen.InlineTestUtil
-import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_CHECK_LAMBDA_INLINING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_INLINE_CHECK_IN
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.dependencyProvider
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 class BytecodeInliningHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        InlineTestUtil.checkNoCallsToInline(
-            info.classFileFactory.getClassFiles(),
-            skipParameterCheckingInDirectives = NO_CHECK_LAMBDA_INLINING in module.directives,
-            skippedMethods = module.directives[SKIP_INLINE_CHECK_IN].toSet()
-        )
-    }
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {}
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        val classFiles = testServices.moduleStructure.modules.flatMap {
+            testServices.dependencyProvider.getArtifact(it, ArtifactKinds.Jvm).classFileFactory.getClassFiles()
+        }
+        val allDirectives = testServices.moduleStructure.allDirectives
+        InlineTestUtil.checkNoCallsToInline(
+            classFiles,
+            skipParameterCheckingInDirectives = NO_CHECK_LAMBDA_INLINING in allDirectives,
+            skippedMethods = allDirectives[SKIP_INLINE_CHECK_IN].toSet()
+        )
+
+    }
 }

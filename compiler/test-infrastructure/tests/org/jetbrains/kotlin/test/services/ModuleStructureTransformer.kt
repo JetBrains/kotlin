@@ -11,3 +11,8 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 abstract class ModuleStructureTransformer {
     abstract fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure
 }
+
+class ExceptionFromModuleStructureTransformer(
+    override val cause: Throwable,
+    val alreadyParsedModuleStructure: TestModuleStructure
+) : Exception(cause)

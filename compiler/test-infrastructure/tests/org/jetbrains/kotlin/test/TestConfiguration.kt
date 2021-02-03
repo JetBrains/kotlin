@@ -42,3 +42,8 @@ abstract class TestConfiguration {
     abstract fun getAllHandlers(): List<AnalysisHandler<*>>
 }
 
+// ---------------------------- Utils ----------------------------
+
+fun <T, R> ((TestServices, T) -> R).bind(value: T): Constructor<R> {
+    return { this.invoke(it, value) }
+}

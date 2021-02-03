@@ -13,23 +13,32 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
 
-class BlackBoxCodegenSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class BlackBoxCodegenSuppressor(
+    testServices: TestServices,
+    val customIgnoreDirective: ValueDirective<TargetBackend>? = null
+) : AfterAnalysisChecker(testServices) {
     override val directives: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
+    @OptIn(ExperimentalStdlibApi::class)
     override fun suppressIfNeeded(failedAssertions: List<Throwable>): List<Throwable> {
         val moduleStructure = testServices.moduleStructure
-        val targetBackends = moduleStructure.modules.mapNotNull { it.targetBackend }
-        return when (moduleStructure.modules.map { it.frontendKind }.first()) {
-            FrontendKinds.ClassicFrontend -> processIgnoreBackend(moduleStructure, IGNORE_BACKEND, targetBackends, failedAssertions)
-            FrontendKinds.FIR -> processIgnoreBackend(moduleStructure, IGNORE_BACKEND_FIR, targetBackends, failedAssertions)
-            else -> failedAssertions
+        val targetBackends = buildList {
+            testServices.defaultsProvider.defaultTargetBackend?.let {
+                add(it)
+                return@buildList
+            }
+            moduleStructure.modules.mapNotNullTo(this) { it.targetBackend }
         }
+        val ignoreDirective = when (moduleStructure.modules.map { it.frontendKind }.first()) {
+            FrontendKinds.ClassicFrontend -> customIgnoreDirective ?: IGNORE_BACKEND
+            FrontendKinds.FIR -> IGNORE_BACKEND_FIR
+            else -> return failedAssertions
+        }
+        return processIgnoreBackend(moduleStructure, ignoreDirective, targetBackends, failedAssertions)
     }
 
     private fun processIgnoreBackend(

@@ -62,7 +62,11 @@ class ModuleStructureExtractorImpl(
         val extractor = ModuleStructureExtractorWorker(listOf(testDataFile), directivesContainer)
         var result = extractor.splitTestDataByModules()
         for (transformer in moduleStructureTransformers) {
-            result = transformer.transformModuleStructure(result)
+            result = try {
+                transformer.transformModuleStructure(result)
+            } catch (e: Throwable) {
+                throw ExceptionFromModuleStructureTransformer(e, result)
+            }
         }
         return result
     }

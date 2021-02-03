@@ -35,11 +35,17 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             configurator.transformTestDataPath(fileName)
         }
 
-        val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
-            testDataFileName,
-            testConfiguration.directives,
-        ).also {
-            services.register(TestModuleStructure::class, it)
+        val moduleStructure = try {
+            testConfiguration.moduleStructureExtractor.splitTestDataByModules(
+                testDataFileName,
+                testConfiguration.directives,
+            ).also {
+                services.register(TestModuleStructure::class, it)
+            }
+        } catch (e: ExceptionFromModuleStructureTransformer) {
+            services.register(TestModuleStructure::class, e.alreadyParsedModuleStructure)
+            val exception = filterFailedExceptions(listOf(e.cause)).singleOrNull() ?: return
+            throw exception
         }
 
         testConfiguration.metaTestConfigurators.forEach {
@@ -84,14 +90,16 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         }
 
-        val filteredFailedAssertions = testConfiguration.afterAnalysisCheckers
-            .fold<AfterAnalysisChecker, List<Throwable>>(failedAssertions) { assertions, checker ->
-                checker.suppressIfNeeded(assertions)
-            }
-            .map { if (it is ExceptionFromTestError) it.cause else it }
+        val filteredFailedAssertions = filterFailedExceptions(failedAssertions)
 
         services.assertions.assertAll(filteredFailedAssertions)
     }
+
+    private fun filterFailedExceptions(failedExceptions: List<Throwable>): List<Throwable> = testConfiguration.afterAnalysisCheckers
+        .fold(failedExceptions) { assertions, checker ->
+            checker.suppressIfNeeded(assertions)
+        }
+        .map { if (it is ExceptionFromTestError) it.cause else it }
 
     private fun processModule(
         services: TestServices,
