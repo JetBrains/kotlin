@@ -18,6 +18,7 @@ data class KotlinToolingMetadata(
      *  - org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
      *  - org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
      *  - ...
+     *  )
      */
     val buildPlugin: String,
     val buildPluginVersion: String,
@@ -34,8 +35,36 @@ data class KotlinToolingMetadata(
     data class ProjectTargetMetadata(
         val target: String,
         val platformType: String,
-        val extras: Map<String, String>
-    )
+        val extras: Extras
+    ) {
+        data class Extras(
+            val jvm: JvmExtras? = null,
+            val android: AndroidExtras? = null,
+            val js: JsExtras? = null,
+            val native: NativeExtras? = null
+        )
+
+        data class JvmExtras(
+            val jvmTarget: String?,
+            val withJavaEnabled: Boolean
+        )
+
+        data class AndroidExtras(
+            val sourceCompatibility: String,
+            val targetCompatibility: String,
+        )
+
+        data class JsExtras(
+            val isBrowserConfigured: Boolean,
+            val isNodejsConfigured: Boolean,
+        )
+
+        data class NativeExtras(
+            val konanTarget: String,
+            val konanVersion: String,
+            val konanAbiVersion: String
+        )
+    }
 
     companion object
 }

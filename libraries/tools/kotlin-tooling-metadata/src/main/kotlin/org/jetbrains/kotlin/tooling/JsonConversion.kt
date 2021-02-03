@@ -25,14 +25,14 @@ internal fun KotlinToolingMetadata.toJsonObject(): JsonObject {
     }
 }
 
-internal fun KotlinToolingMetadata.ProjectSettings.toJsonObject(): JsonObject {
+private fun KotlinToolingMetadata.ProjectSettings.toJsonObject(): JsonObject {
     return JsonObject().apply {
         addProperty("isHmppEnabled", isHmppEnabled)
         addProperty("isCompatibilityMetadataVariantEnabled", isCompatibilityMetadataVariantEnabled)
     }
 }
 
-internal fun List<KotlinToolingMetadata.ProjectTargetMetadata>.toJsonArray(): JsonArray {
+private fun List<KotlinToolingMetadata.ProjectTargetMetadata>.toJsonArray(): JsonArray {
     return JsonArray().apply {
         this@toJsonArray.forEach { targetMetadata ->
             add(targetMetadata.toJsonObject())
@@ -40,17 +40,51 @@ internal fun List<KotlinToolingMetadata.ProjectTargetMetadata>.toJsonArray(): Js
     }
 }
 
-internal fun KotlinToolingMetadata.ProjectTargetMetadata.toJsonObject(): JsonObject {
+private fun KotlinToolingMetadata.ProjectTargetMetadata.toJsonObject(): JsonObject {
     return JsonObject().apply {
         addProperty("target", target)
         addProperty("platformType", platformType)
-        if (extras.isNotEmpty()) {
-            add("extras", JsonObject().apply {
-                for (extra in extras) {
-                    addProperty(extra.key, extra.value)
-                }
-            })
+        extras.toJsonObject().takeIf { it.size() > 0 }?.let { extrasJsonObject ->
+            add("extras", extrasJsonObject)
         }
+    }
+}
+
+private fun KotlinToolingMetadata.ProjectTargetMetadata.Extras.toJsonObject(): JsonObject {
+    return JsonObject().apply {
+        jvm?.let { add("jvm", it.toJsonObject()) }
+        android?.let { add("android", it.toJsonObject()) }
+        js?.let { add("js", it.toJsonObject()) }
+        native?.let { add("native", it.toJsonObject()) }
+    }
+}
+
+private fun KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras.toJsonObject(): JsonObject {
+    return JsonObject().apply {
+        jvmTarget?.let { addProperty("jvmTarget", it) }
+        addProperty("withJavaEnabled", withJavaEnabled)
+    }
+}
+
+private fun KotlinToolingMetadata.ProjectTargetMetadata.JsExtras.toJsonObject(): JsonObject {
+    return JsonObject().apply {
+        addProperty("isBrowserConfigured", isBrowserConfigured)
+        addProperty("isNodejsConfigured", isNodejsConfigured)
+    }
+}
+
+private fun KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras.toJsonObject(): JsonObject {
+    return JsonObject().apply {
+        addProperty("konanTarget", konanTarget)
+        addProperty("konanVersion", konanVersion)
+        addProperty("konanAbiVersion", konanAbiVersion)
+    }
+}
+
+private fun KotlinToolingMetadata.ProjectTargetMetadata.AndroidExtras.toJsonObject(): JsonObject {
+    return JsonObject().apply {
+        addProperty("sourceCompatibility", sourceCompatibility)
+        addProperty("targetCompatibility", targetCompatibility)
     }
 }
 
@@ -104,19 +138,47 @@ private fun JsonObject.toTargetMetadataOrThrow(): KotlinToolingMetadata.ProjectT
     return KotlinToolingMetadata.ProjectTargetMetadata(
         target = getOrThrow("target").asString,
         platformType = getOrThrow("platformType").asString,
-        extras = (get("extras") as? JsonObject)?.toTargetMetadataExtrasOrThrow() ?: emptyMap()
+        extras = (get("extras") as? JsonObject)?.toTargetMetadataExtrasOrThrow()
+            ?: KotlinToolingMetadata.ProjectTargetMetadata.Extras()
     )
 }
 
-private fun JsonObject.toTargetMetadataExtrasOrThrow(): Map<String, String> {
-    val map = mutableMapOf<String, String>()
-    this.keySet().forEach { key ->
-        val primitive = this[key] as? JsonPrimitive
-        if (primitive != null) {
-            map[key] = primitive.asString
-        }
-    }
-    return map.toMap()
+private fun JsonObject.toTargetMetadataExtrasOrThrow(): KotlinToolingMetadata.ProjectTargetMetadata.Extras {
+    return KotlinToolingMetadata.ProjectTargetMetadata.Extras(
+        jvm = get("jvm")?.asJsonObject?.toJvmExtrasOrThrow(),
+        android = get("android")?.asJsonObject?.toAndroidExtrasOrThrow(),
+        js = get("js")?.asJsonObject?.toJsExtrasOrThrow(),
+        native = get("native")?.asJsonObject?.toNativeExtrasOrThrow()
+    )
+}
+
+private fun JsonObject.toJvmExtrasOrThrow(): KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras {
+    return KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras(
+        jvmTarget = get("jvmTarget")?.asString,
+        withJavaEnabled = getOrThrow("withJavaEnabled").asBoolean
+    )
+}
+
+private fun JsonObject.toJsExtrasOrThrow(): KotlinToolingMetadata.ProjectTargetMetadata.JsExtras {
+    return KotlinToolingMetadata.ProjectTargetMetadata.JsExtras(
+        isBrowserConfigured = getOrThrow("isBrowserConfigured").asBoolean,
+        isNodejsConfigured = getOrThrow("isNodejsConfigured").asBoolean
+    )
+}
+
+private fun JsonObject.toNativeExtrasOrThrow(): KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras {
+    return KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras(
+        konanTarget = getOrThrow("konanTarget").asString,
+        konanVersion = getOrThrow("konanVersion").asString,
+        konanAbiVersion = getOrThrow("konanAbiVersion").asString
+    )
+}
+
+private fun JsonObject.toAndroidExtrasOrThrow(): KotlinToolingMetadata.ProjectTargetMetadata.AndroidExtras {
+    return KotlinToolingMetadata.ProjectTargetMetadata.AndroidExtras(
+        sourceCompatibility = getOrThrow("sourceCompatibility").asString,
+        targetCompatibility = getOrThrow("targetCompatibility").asString
+    )
 }
 
 private fun JsonObject.getOrThrow(key: String): JsonElement {

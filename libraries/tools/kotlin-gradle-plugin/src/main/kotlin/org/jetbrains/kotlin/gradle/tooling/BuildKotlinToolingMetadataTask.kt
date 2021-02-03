@@ -102,29 +102,46 @@ private fun buildTargetMetadata(target: KotlinTarget): KotlinToolingMetadata.Pro
     )
 }
 
-private fun buildTargetMetadataExtras(target: KotlinTarget): Map<String, String> {
-    val extras = mutableMapOf<String, String>()
-    when (target) {
-        is KotlinJvmTarget -> {
-            extras["withJavaEnabled"] = target.withJavaEnabled.toString()
-            target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                extras["jvmTarget"] = mainCompilation.kotlinOptions.jvmTarget
-            }
-        }
-        is KotlinAndroidTarget -> {
-            val androidExtension = target.project.extensions.findByType(BaseExtension::class.java)
-            extras["sourceCompatibility"] = androidExtension?.compileOptions?.sourceCompatibility.toString()
-            extras["targetCompatibility"] = androidExtension?.compileOptions?.targetCompatibility.toString()
-        }
-        is KotlinJsSubTargetContainerDsl -> {
-            extras["isBrowserConfigured"] = target.isBrowserConfigured.toString()
-            extras["isNodejsConfigured"] = target.isNodejsConfigured.toString()
-        }
-        is KotlinNativeTarget -> {
-            extras["konanTarget"] = target.konanTarget.name
-            extras["konanVersion"] = target.project.konanVersion.toString()
-            extras["abiVersion"] = KotlinAbiVersion.CURRENT.toString()
-        }
-    }
-    return extras.toMap()
+private fun buildTargetMetadataExtras(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.Extras {
+    return KotlinToolingMetadata.ProjectTargetMetadata.Extras(
+        jvm = buildJvmExtrasOrNull(target),
+        android = buildAndroidExtrasOrNull(target),
+        js = buildJsExtrasOrNull(target),
+        native = buildNativeExtrasOrNull(target)
+    )
 }
+
+private fun buildJvmExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras? {
+    if (target !is KotlinJvmTarget) return null
+    return KotlinToolingMetadata.ProjectTargetMetadata.JvmExtras(
+        withJavaEnabled = target.withJavaEnabled,
+        jvmTarget = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.kotlinOptions?.jvmTarget
+    )
+}
+
+private fun buildAndroidExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.AndroidExtras? {
+    if (target !is KotlinAndroidTarget) return null
+    val androidExtension = target.project.extensions.findByType(BaseExtension::class.java)
+    return KotlinToolingMetadata.ProjectTargetMetadata.AndroidExtras(
+        sourceCompatibility = androidExtension?.compileOptions?.sourceCompatibility.toString(),
+        targetCompatibility = androidExtension?.compileOptions?.targetCompatibility.toString()
+    )
+}
+
+private fun buildJsExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.JsExtras? {
+    if (target !is KotlinJsSubTargetContainerDsl) return null
+    return KotlinToolingMetadata.ProjectTargetMetadata.JsExtras(
+        isBrowserConfigured = target.isBrowserConfigured,
+        isNodejsConfigured = target.isNodejsConfigured
+    )
+}
+
+private fun buildNativeExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras? {
+    if (target !is KotlinNativeTarget) return null
+    return KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras(
+        konanTarget = target.konanTarget.name,
+        konanVersion = target.project.konanVersion.toString(),
+        konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
+    )
+}
+

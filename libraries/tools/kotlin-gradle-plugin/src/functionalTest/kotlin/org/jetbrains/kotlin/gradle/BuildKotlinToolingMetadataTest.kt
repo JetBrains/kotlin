@@ -98,8 +98,8 @@ class BuildKotlinToolingMetadataTest {
         val androidTargetMetadata = getKotlinToolingMetadata()
             .projectTargets.single { it.platformType == androidJvm.name }
 
-        assertEquals("1.6", androidTargetMetadata.extras["sourceCompatibility"])
-        assertEquals("1.8", androidTargetMetadata.extras["targetCompatibility"])
+        assertEquals("1.6", androidTargetMetadata.extras.android?.sourceCompatibility)
+        assertEquals("1.8", androidTargetMetadata.extras.android?.targetCompatibility)
     }
 
     @Test
@@ -112,7 +112,7 @@ class BuildKotlinToolingMetadataTest {
 
         assertEquals(
             "12", getKotlinToolingMetadata().projectTargets
-                .single { it.platformType == KotlinPlatformType.jvm.name }.extras["jvmTarget"],
+                .single { it.platformType == KotlinPlatformType.jvm.name }.extras.jvm?.jvmTarget,
             "Expected jvmTarget of main compilation"
         )
     }
@@ -125,9 +125,9 @@ class BuildKotlinToolingMetadataTest {
 
         val metadata = getKotlinToolingMetadata()
         val linuxTarget = metadata.projectTargets.single { it.platformType == native.name }
-        assertEquals(KonanTarget.LINUX_X64.name, linuxTarget.extras["konanTarget"])
-        assertEquals(project.konanVersion.toString(), linuxTarget.extras["konanVersion"])
-        assertEquals(KotlinAbiVersion.CURRENT.toString(), linuxTarget.extras["abiVersion"])
+        assertEquals(KonanTarget.LINUX_X64.name, linuxTarget.extras.native?.konanTarget)
+        assertEquals(project.konanVersion.toString(), linuxTarget.extras.native?.konanVersion)
+        assertEquals(KotlinAbiVersion.CURRENT.toString(), linuxTarget.extras.native?.konanAbiVersion)
     }
 
     @Test
@@ -140,8 +140,8 @@ class BuildKotlinToolingMetadataTest {
         assertEquals(org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
 
         val jsTarget = metadata.projectTargets.single { it.platformType == js.name }
-        assertEquals("true", jsTarget.extras["isNodejsConfigured"])
-        assertEquals("false", jsTarget.extras["isBrowserConfigured"])
+        assertEquals(true, jsTarget.extras.js?.isNodejsConfigured)
+        assertEquals(false, jsTarget.extras.js?.isBrowserConfigured)
     }
 
     @Test

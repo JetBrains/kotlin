@@ -69,7 +69,7 @@ class KotlinToolingMetadataIT : BaseGradleIT() {
             val metadata = KotlinToolingMetadata.parseJsonOrThrow(projectDir.resolve(defaultKotlinToolingMetadataJsonPath).readText())
             assertEquals(
                 listOf(KonanTarget.LINUX_X64.name, KonanTarget.MACOS_X64.name).sorted(),
-                metadata.projectTargets.mapNotNull { it.extras["konanTarget"] }.sorted()
+                metadata.projectTargets.mapNotNull { it.extras.native?.konanTarget }.sorted()
             )
         }
 

@@ -28,10 +28,7 @@ class SerializeAndDeserializeTest {
                 ProjectTargetMetadata(
                     target = "generic target",
                     platformType = "generic platform type",
-                    extras = mapOf(
-                        "extra0" to "extra value0",
-                        "extra1" to "extra value1"
-                    )
+                    extras = ProjectTargetMetadata.Extras()
                 )
             )
         )
@@ -44,15 +41,35 @@ class SerializeAndDeserializeTest {
                 ProjectTargetMetadata(
                     target = "generic target",
                     platformType = "generic platform type",
-                    extras = mapOf(
-                        "extra0" to "{ some extra value %\" with, chars to escape",
-                        "extra1" to "extra value1"
+                    extras = ProjectTargetMetadata.Extras(
+                        jvm = ProjectTargetMetadata.JvmExtras(
+                            jvmTarget = null,
+                            withJavaEnabled = true
+                        ),
+                        android = ProjectTargetMetadata.AndroidExtras(
+                            sourceCompatibility = "1.8",
+                            targetCompatibility = "1.6"
+                        ),
+                        js = ProjectTargetMetadata.JsExtras(
+                            isBrowserConfigured = true,
+                            isNodejsConfigured = false
+                        ),
+                        native = ProjectTargetMetadata.NativeExtras(
+                            konanTarget = "linuxX64",
+                            konanVersion = "1.0-generic",
+                            konanAbiVersion = "1.4.2"
+                        )
                     )
                 ),
                 ProjectTargetMetadata(
                     target = "generic target 2 (with no extras)",
                     platformType = "generic platform type 2",
-                    extras = emptyMap()
+                    extras = ProjectTargetMetadata.Extras(
+                        jvm = ProjectTargetMetadata.JvmExtras(
+                            jvmTarget = "1.8",
+                            withJavaEnabled = true
+                        )
+                    )
                 )
             )
         )
