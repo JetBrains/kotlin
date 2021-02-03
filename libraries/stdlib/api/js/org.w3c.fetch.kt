@@ -166,16 +166,19 @@ public open external class Request : org.w3c.fetch.Body {
     public open override fun text(): kotlin.js.Promise<kotlin.String>
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface RequestCache {
     public companion object of RequestCache {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface RequestCredentials {
     public companion object of RequestCredentials {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface RequestDestination {
     public companion object of RequestDestination {
     }
@@ -207,16 +210,19 @@ public external interface RequestInit {
     public open var window: kotlin.Any? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface RequestMode {
     public companion object of RequestMode {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface RequestRedirect {
     public companion object of RequestRedirect {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface RequestType {
     public companion object of RequestType {
     }
@@ -272,6 +278,7 @@ public external interface ResponseInit {
     public open var statusText: kotlin.String? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ResponseType {
     public companion object of ResponseType {
     }
