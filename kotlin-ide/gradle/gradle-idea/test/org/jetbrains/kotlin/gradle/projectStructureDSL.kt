@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
-import org.jetbrains.kotlin.platform.presentableDescription
 import org.jetbrains.plugins.gradle.util.GradleUtil
 import kotlin.test.fail
 
@@ -52,7 +51,8 @@ class ProjectInfo(
     internal val exhaustiveDependencyList: Boolean,
     internal val exhaustiveTestsList: Boolean
 ) {
-    internal val messageCollector = MessageCollector()
+    val messageCollector = MessageCollector()
+
     private val moduleManager = ModuleManager.getInstance(project)
     private val projectDataNode = ExternalSystemApiUtil.findProjectData(project, GRADLE_SYSTEM_ID, projectPath)
     private val expectedModuleNames = HashSet<String>()
@@ -91,7 +91,7 @@ class ProjectInfo(
     }
 }
 
-class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
+class ModuleInfo(val module: Module, val projectInfo: ProjectInfo) {
     private val rootModel = module.rootManager
     private val expectedDependencyNames = HashSet<String>()
     private val expectedDependencies = HashSet<OrderEntry>()
@@ -323,17 +323,14 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
     }
 
     @Suppress("UnstableApiUsage")
-    fun diagnostics(vararg expectedByType: Pair<Class<out KotlinImportingDiagnostic>, Int>) {
+    inline fun <reified T : KotlinImportingDiagnostic> assertDiagnosticsCount(count: Int) {
         val moduleNode = GradleUtil.findGradleModuleData(module)
         val diagnostics = moduleNode!!.kotlinImportingDiagnosticsContainer!!
-        expectedByType.forEach { (expectedClazz, expectedCount) ->
-            val typedDiagnostics = diagnostics.filterIsInstance(expectedClazz)
-            if (typedDiagnostics.size != expectedCount) {
-                val actualCount = typedDiagnostics.size
-                projectInfo.messageCollector.report(
-                    "Expected number of ${expectedClazz.simpleName} diagnostics $expectedCount doesn't match the actual one: $actualCount"
-                )
-            }
+        val typedDiagnostics = diagnostics.filterIsInstance<T>()
+        if (typedDiagnostics.size != count) {
+            projectInfo.messageCollector.report(
+                "Expected number of ${T::class.java.simpleName} diagnostics $count doesn't match the actual one: ${typedDiagnostics.size}"
+            )
         }
     }
 

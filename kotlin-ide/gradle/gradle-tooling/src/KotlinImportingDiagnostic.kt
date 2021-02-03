@@ -8,12 +8,18 @@ package org.jetbrains.kotlin.gradle
 import java.io.Serializable
 
 
-interface KotlinImportingDiagnostic : Serializable
+interface KotlinImportingDiagnostic : Serializable {
+    fun deepCopy(cache: MutableMap<Any, Any>): KotlinImportingDiagnostic
+}
+
+typealias KotlinImportingDiagnosticsContainer = MutableSet<KotlinImportingDiagnostic>
 
 interface KotlinSourceSetImportingDiagnostic : KotlinImportingDiagnostic {
     val kotlinSourceSet: KotlinSourceSet
 }
 
-typealias KotlinImportingDiagnosticsContainer = MutableSet<KotlinImportingDiagnostic>
-
-data class OrphanSourceSetsImportingDiagnostic(override val kotlinSourceSet: KotlinSourceSet) : KotlinSourceSetImportingDiagnostic
+data class OrphanSourceSetsImportingDiagnostic(override val kotlinSourceSet: KotlinSourceSet) : KotlinSourceSetImportingDiagnostic {
+    override fun deepCopy(cache: MutableMap<Any, Any>): OrphanSourceSetsImportingDiagnostic =
+        (cache[kotlinSourceSet] as? KotlinSourceSet)?.let { OrphanSourceSetsImportingDiagnostic(it) }
+            ?: OrphanSourceSetsImportingDiagnostic(KotlinSourceSetImpl(kotlinSourceSet, cache).apply { cache[kotlinSourceSet] = this })
+}
