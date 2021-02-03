@@ -16,11 +16,14 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     private fun comparisonPropagation(
+        @Language("kotlin")
         unchecked: String,
+        @Language("kotlin")
         checked: String,
         expectedTransformed: String,
         dumpTree: Boolean = false

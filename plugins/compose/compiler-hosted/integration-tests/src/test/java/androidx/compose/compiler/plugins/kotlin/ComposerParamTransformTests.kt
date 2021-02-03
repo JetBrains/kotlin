@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -25,6 +26,7 @@ import org.junit.Test
 
 class ComposerParamTransformTests : ComposeIrTransformTest() {
     private fun composerParam(
+        @Language("kotlin")
         source: String,
         expectedTransformed: String,
         validator: (element: IrElement) -> Unit = { },

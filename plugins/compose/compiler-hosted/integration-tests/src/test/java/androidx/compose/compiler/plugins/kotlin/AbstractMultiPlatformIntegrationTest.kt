@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -75,7 +76,9 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
 
 abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
     fun multiplatform(
+        @Language("kotlin")
         common: String,
+        @Language("kotlin")
         jvm: String,
         output: String
     ) {
