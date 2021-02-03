@@ -460,6 +460,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
                 }
 
+                // TODO NOW: This is called during configuration time, which prevents initial artifact of being built!
                 val artifactView = fromFiles.incoming.artifactView { view ->
                     view.attributes.attribute(
                         COMMONIZER_TARGET_ATTRIBUTE, project.getCommonizerTarget(compilation)?.identityString ?: "**none**"
