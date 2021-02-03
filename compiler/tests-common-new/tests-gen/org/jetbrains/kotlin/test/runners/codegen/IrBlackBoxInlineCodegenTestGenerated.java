@@ -630,6 +630,18 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             }
 
             @Test
+            @TestMetadata("kt8668_nested.kt")
+            public void testKt8668_nested() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_nested.kt");
+            }
+
+            @Test
+            @TestMetadata("kt8668_nested_2.kt")
+            public void testKt8668_nested_2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_nested_2.kt");
+            }
+
+            @Test
             @TestMetadata("twoDifferentDispatchReceivers.kt")
             public void testTwoDifferentDispatchReceivers() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/twoDifferentDispatchReceivers.kt");
