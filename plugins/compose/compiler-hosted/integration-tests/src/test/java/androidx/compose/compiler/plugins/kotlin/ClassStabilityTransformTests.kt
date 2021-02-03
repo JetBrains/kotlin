@@ -758,7 +758,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
                 C(items, %composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A(item...>,<A(Wrap...>:Test.kt") { item: String, %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {

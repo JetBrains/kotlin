@@ -721,7 +721,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 SimpleBox(modifier, content, %composer, %changed or 0b0001, %default)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
@@ -750,7 +750,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A(x)>,<B(y)>:") { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {
@@ -785,7 +785,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             val foo: Function4<Int, Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function4<Int, Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A(x)>,<B(y)>:") { x: Int, y: Foo, %composer: Composer?, %changed: Int ->
                 A(x, %composer, 0b1110 and %changed)
                 B(y, %composer, 0b1000)
@@ -836,7 +836,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 Example(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   val id = object
@@ -1177,7 +1177,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             val test: Function3<Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C<A(x)>:") { x: Int, %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 if (%changed and 0b1110 === 0) {
@@ -1552,7 +1552,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 B(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
@@ -1587,7 +1587,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 Example(%composer, %changed or 0b0001)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
@@ -1927,7 +1927,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             val unstableUsed: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-2
             val stableUnused: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-3
             val stableUsed: @[ExtensionFunctionType] Function3<StableFoo, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-4
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: @[ExtensionFunctionType] Function3<Foo, Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:") { %composer: Composer?, %changed: Int ->
                 val %dirty = %changed
                 %dirty = %dirty or 0b0110
@@ -2743,7 +2743,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 Box2(modifier, paddingStart, content, %composer, %changed or 0b0001, %default)
               }
             }
-            internal class ComposableSingletons%TestKt {
+            internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
