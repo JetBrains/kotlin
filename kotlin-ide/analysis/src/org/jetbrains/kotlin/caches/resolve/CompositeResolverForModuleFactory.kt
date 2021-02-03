@@ -266,5 +266,6 @@ class CompositePlatformConigurator(private val componentConfigurators: List<Plat
         // Unfortunately, it is declared in base class, so repeating call to 'configureModuleDependentCheckers' will lead
         // to multiple registrrations.
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
+        container.useImpl<UpperBoundChecker>()
     }
 }
