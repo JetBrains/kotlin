@@ -18,28 +18,29 @@ package androidx.compose.compiler.plugins.kotlin
 
 class KtxTransformationTest : AbstractCodegenTest() {
 
-    fun testObserveLowering() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-            import androidx.compose.runtime.MutableState
-            import androidx.compose.runtime.mutableStateOf
-
-            @Composable
-            fun SimpleComposable() {
-                FancyButton(state=mutableStateOf(0))
-            }
-
-            @Composable
-            fun FancyButton(state: MutableState<Int>) {
-               Button(
-                 text=("Clicked "+state.value+" times"),
-                 onClick={state.value++},
-                 id=42
-               )
-            }
-        """
-        )
-    }
+//    b/179279455
+//    fun testObserveLowering() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//            import androidx.compose.runtime.MutableState
+//            import androidx.compose.runtime.mutableStateOf
+//
+//            @Composable
+//            fun SimpleComposable() {
+//                FancyButton(state=mutableStateOf(0))
+//            }
+//
+//            @Composable
+//            fun FancyButton(state: MutableState<Int>) {
+//               Button(
+//                 text=("Clicked "+state.value+" times"),
+//                 onClick={state.value++},
+//                 id=42
+//               )
+//            }
+//        """
+//        )
+//    }
 
     fun testEmptyComposeFunction() = ensureSetup {
         testCompile(
@@ -54,52 +55,55 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testSingleViewCompose() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        class Foo {
-            @Composable
-            operator fun invoke() {
-                TextView()
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testSingleViewCompose() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        class Foo {
+//            @Composable
+//            operator fun invoke() {
+//                TextView()
+//            }
+//        }
+//        """
+//        )
+//    }
 
-    fun testMultipleRootViewCompose() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        class Foo {
-            @Composable
-            operator fun invoke() {
-                TextView()
-                TextView()
-                TextView()
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testMultipleRootViewCompose() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        class Foo {
+//            @Composable
+//            operator fun invoke() {
+//                TextView()
+//                TextView()
+//                TextView()
+//            }
+//        }
+//        """
+//        )
+//    }
 
-    fun testNestedViewCompose() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        class Foo {
-            @Composable
-            operator fun invoke() {
-                LinearLayout {
-                    TextView()
-                    LinearLayout {
-                        TextView()
-                        TextView()
-                    }
-                }
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testNestedViewCompose() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        class Foo {
+//            @Composable
+//            operator fun invoke() {
+//                LinearLayout {
+//                    TextView()
+//                    LinearLayout {
+//                        TextView()
+//                        TextView()
+//                    }
+//                }
+//            }
+//        }
+//        """
+//        )
+//    }
 
     fun testSingleComposite() = ensureSetup {
         testCompile(
@@ -139,23 +143,24 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testViewAndComposites() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        @Composable
-        fun Bar() {}
-
-        class Foo {
-            @Composable
-            operator fun invoke() {
-                LinearLayout {
-                    Bar()
-                }
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testViewAndComposites() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        @Composable
+//        fun Bar() {}
+//
+//        class Foo {
+//            @Composable
+//            operator fun invoke() {
+//                LinearLayout {
+//                    Bar()
+//                }
+//            }
+//        }
+//        """
+//        )
+//    }
 
     fun testForEach() = ensureSetup {
         testCompile(
@@ -244,49 +249,51 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testChildrenWithTypedParameters() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        @Composable fun HelperComponent(
-            content: @Composable (title: String, rating: Int) -> Unit
-        ) {
-            content("Hello World!", 5)
-            content("Kompose is awesome!", 5)
-            content("Bitcoin!", 4)
-        }
+//    "b/179279455"
+//    fun testChildrenWithTypedParameters() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        @Composable fun HelperComponent(
+//            content: @Composable (title: String, rating: Int) -> Unit
+//        ) {
+//            content("Hello World!", 5)
+//            content("Kompose is awesome!", 5)
+//            content("Bitcoin!", 4)
+//        }
+//
+//        class MainComponent {
+//            var name = "World"
+//            @Composable
+//            operator fun invoke() {
+//                HelperComponent { title: String, rating: Int ->
+//                    TextView(text=(title+" ("+rating+" stars)"))
+//                }
+//            }
+//        }
+//        """
+//        )
+//    }
 
-        class MainComponent {
-            var name = "World"
-            @Composable
-            operator fun invoke() {
-                HelperComponent { title: String, rating: Int ->
-                    TextView(text=(title+" ("+rating+" stars)"))
-                }
-            }
-        }
-        """
-        )
-    }
-
-    fun testChildrenCaptureVariables() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        @Composable fun HelperComponent(content: @Composable () -> Unit) {
-        }
-
-        class MainComponent {
-            var name = "World"
-            @Composable
-            operator fun invoke() {
-                val childText = "Hello World!"
-                HelperComponent {
-                    TextView(text=childText + name)
-                }
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testChildrenCaptureVariables() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        @Composable fun HelperComponent(content: @Composable () -> Unit) {
+//        }
+//
+//        class MainComponent {
+//            var name = "World"
+//            @Composable
+//            operator fun invoke() {
+//                val childText = "Hello World!"
+//                HelperComponent {
+//                    TextView(text=childText + name)
+//                }
+//            }
+//        }
+//        """
+//        )
+//    }
 
     fun testChildrenDeepCaptureVariables() = ensureSetup {
         testCompile(
@@ -348,42 +355,44 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testChildrenOfNativeView() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        class MainComponent {
-            @Composable
-            operator fun invoke() {
-                LinearLayout {
-                    TextView(text="some child content2!")
-                    TextView(text="some child content!3")
-                }
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testChildrenOfNativeView() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        class MainComponent {
+//            @Composable
+//            operator fun invoke() {
+//                LinearLayout {
+//                    TextView(text="some child content2!")
+//                    TextView(text="some child content!3")
+//                }
+//            }
+//        }
+//        """
+//        )
+//    }
 
-    fun testIrSpecial() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        @Composable fun HelperComponent(content: @Composable () -> Unit) {}
-
-        class MainComponent {
-            @Composable
-            operator fun invoke() {
-                val x = "Hello"
-                val y = "World"
-                HelperComponent {
-                    for(i in 1..100) {
-                        TextView(text=x+y+i)
-                    }
-                }
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testIrSpecial() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        @Composable fun HelperComponent(content: @Composable () -> Unit) {}
+//
+//        class MainComponent {
+//            @Composable
+//            operator fun invoke() {
+//                val x = "Hello"
+//                val y = "World"
+//                HelperComponent {
+//                    for(i in 1..100) {
+//                        TextView(text=x+y+i)
+//                    }
+//                }
+//            }
+//        }
+//        """
+//        )
+//    }
 
     fun testGenericsInnerClass() = ensureSetup {
         testCompile(
@@ -608,23 +617,24 @@ class KtxTransformationTest : AbstractCodegenTest() {
         )
     }
 
-    fun testKtxLambdaInIfElse() = ensureSetup {
-        testCompileWithViewStubs(
-            """
-        @Composable
-        fun foo(x: Boolean) {
-            val lambda = @Composable { TextView(text="Hello World") }
-            if(true) {
-                lambda()
-                lambda()
-                lambda()
-            } else {
-                lambda()
-            }
-        }
-        """
-        )
-    }
+//    "b/179279455"
+//    fun testKtxLambdaInIfElse() = ensureSetup {
+//        testCompileWithViewStubs(
+//            """
+//        @Composable
+//        fun foo(x: Boolean) {
+//            val lambda = @Composable { TextView(text="Hello World") }
+//            if(true) {
+//                lambda()
+//                lambda()
+//                lambda()
+//            } else {
+//                lambda()
+//            }
+//        }
+//        """
+//        )
+//    }
 
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = ensureSetup {
         testCompile(
