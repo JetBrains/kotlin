@@ -110,8 +110,11 @@ int Konan_DebugBufferSizeWithObjectImpl(KRef obj) {
 
 // Auxilary function which can be called by developer/debugger to inspect an object.
 int32_t Konan_DebugObjectToUtf8ArrayImpl(KRef obj, char* buffer, int32_t bufferSize) {
+  // Call a Kotlin method and modify the root set -> switch thread state.
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
   ObjHolder stringHolder;
-  auto data = KonanObjectToUtf8Array(obj, stringHolder.slot())->array();
+  // Kotlin call.
+  ArrayHeader* data = KonanObjectToUtf8Array(obj, stringHolder.slot())->array();
   if (data == nullptr) return 0;
   if (bufferSize < 1) return 0;
   KInt toCopy = data->count_ > static_cast<uint32_t>(bufferSize - 1) ? bufferSize - 1 : data->count_;
