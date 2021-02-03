@@ -890,6 +890,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt18728_4.kt");
             }
 
+            @TestMetadata("kt30933.kt")
+            public void testKt30933() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/callableReference/bound/kt30933.kt");
+            }
+
             @TestMetadata("lambdaOnLhs.kt")
             public void testLambdaOnLhs() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/callableReference/bound/lambdaOnLhs.kt");
