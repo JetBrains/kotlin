@@ -19,4 +19,4 @@ val KotlinBuildProperties.jarCompression: Boolean get() = getBoolean("kotlin.bui
 
 val KotlinBuildProperties.ignoreTestFailures: Boolean get() = getBoolean("ignoreTestFailures", isTeamcityBuild)
 
-val KotlinBuildProperties.disableWerror: Boolean get() = getBoolean("kotlin.build.disable.werror", isTeamcityBuild)
+val KotlinBuildProperties.disableWerror: Boolean get() = getBoolean("kotlin.build.disable.werror", false)
