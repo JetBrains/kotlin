@@ -10,7 +10,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object IgnoreTests {
-    private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
+    private const val INSERT_DIRECTIVE_AUTOMATICALLY = true // TODO use environment variable instead
     private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
     fun runTestIfEnabledByFileDirective(
@@ -136,6 +136,7 @@ object IgnoreTests {
 
     object DIRECTIVES {
         const val FIR_COMPARISON = "// FIR_COMPARISON"
+        const val FIR_COMPARISON_MUTLTILINE_COMMENT = "/* FIR_COMPARISON */"
         const val IGNORE_FIR = "// IGNORE_FIR"
         const val FIX_ME = "// FIX_ME: "
     }

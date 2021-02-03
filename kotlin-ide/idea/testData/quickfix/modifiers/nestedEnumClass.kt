@@ -7,3 +7,4 @@ class A() {
         enum class <caret>C
     }
 }
+/* FIR_COMPARISON */
