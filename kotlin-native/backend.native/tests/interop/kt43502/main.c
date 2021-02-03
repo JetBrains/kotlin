@@ -1,5 +1,5 @@
-#include "libinterop_kt43502_api.h"
+#include "testlib_api.h"
 
 int main() {
-    libinterop_kt43502_symbols()->kotlin.root.printExternPtr();
+    testlib_symbols()->kotlin.root.printExternPtr();
 }
