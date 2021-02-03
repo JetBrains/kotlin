@@ -30639,6 +30639,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("buildLazyValueForMap.kt")
+        public void testBuildLazyValueForMap() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/buildLazyValueForMap.kt");
+        }
+
+        @Test
         @TestMetadata("CallCompanionProtectedNonStatic.kt")
         public void testCallCompanionProtectedNonStatic() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/CallCompanionProtectedNonStatic.kt");
