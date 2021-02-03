@@ -225,6 +225,15 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     }
 
     private fun TestSuite.run() {
+        // Do not run @BeforeClass/@AfterClass hooks if all test cases are ignored.
+        if (testCases.values.all { it.ignored }) {
+            testCases.values.forEach { testCase ->
+                sendToListeners { ignore(testCase) }
+            }
+            return
+        }
+
+        // Normal path: run all hooks and execute test cases.
         doBeforeClass()
         testCases.values.forEach { testCase ->
             if (testCase.ignored) {
