@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -169,8 +168,8 @@ fun IrClass.addFunction(
         this.origin = origin
     }.apply {
         if (!isStatic) {
-            copyTypeParametersFrom(parentAsClass)
-            dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
+            val thisReceiver = parentAsClass.thisReceiver!!
+            dispatchReceiverParameter = thisReceiver.copyTo(this, type = thisReceiver.type)
         }
     }
 
