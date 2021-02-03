@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -59,11 +60,23 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
-        annotations: List<AnnotationMarker>? // TODO: process annotations
+        annotations: List<AnnotationMarker>?
     ): SimpleTypeMarker {
-        val attributes = if (isExtensionFunction) // TODO: assert correct type constructor
-            ConeAttributes.WithExtensionFunctionType
-        else ConeAttributes.Empty
+        val attributesList = annotations?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
+        val attributes: ConeAttributes = if (isExtensionFunction) {
+            require(constructor is ConeClassLikeLookupTag && constructor.isBuiltinFunctionalType())
+            // We don't want to create new instance of ConeAttributes which
+            //   contains only CompilerConeAttributes.ExtensionFunctionType
+            //   to avoid memory consumption
+            if (attributesList != null) {
+                attributesList += CompilerConeAttributes.ExtensionFunctionType
+                ConeAttributes.create(attributesList)
+            } else {
+                ConeAttributes.WithExtensionFunctionType
+            }
+        } else {
+            attributesList?.let { ConeAttributes.create(it) } ?: ConeAttributes.Empty
+        }
         @Suppress("UNCHECKED_CAST")
         return when (constructor) {
             is ConeClassLikeLookupTag -> ConeClassLikeTypeImpl(
@@ -74,7 +87,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             )
             is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(
                 constructor,
-                nullable
+                nullable,
+                attributes
             )
             else -> error("!")
         }
@@ -245,7 +259,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker {
-        return this // TODO
+        require(this is ConeKotlinType)
+        return withAttributes(ConeAttributes.Empty)
     }
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {
@@ -349,8 +364,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
-        // TODO
-        return this
+        require(this is ConeKotlinType)
+        return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
     }
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
@@ -384,8 +399,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             this,
             {
                 // FIXME supertypes of type constructor contain unsubstituted arguments
-                @Suppress("UNCHECKED_CAST")
-                it.typeConstructor().supertypes() as Collection<ConeKotlinType>
+                it.typeConstructor().supertypes()
             },
             DFS.VisitedWithSet(),
             object : DFS.AbstractNodeHandler<ConeKotlinType, Boolean>() {

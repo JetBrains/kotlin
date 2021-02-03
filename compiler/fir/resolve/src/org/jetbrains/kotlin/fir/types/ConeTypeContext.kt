@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.resolve.correspondingSupertypesCache
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -349,7 +353,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.getAnnotations(): List<AnnotationMarker> {
         require(this is ConeKotlinType)
-        return emptyList() // TODO
+        return attributes.arrayMap.toList()
     }
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
@@ -425,13 +429,30 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
-        // TODO support annotations
-        return false
+        require(this is ConeKotlinType)
+        val compilerAttribute = CompilerConeAttributes.compilerAttributeByFqName[fqName]
+        if (compilerAttribute != null) {
+            return compilerAttribute in attributes
+        }
+        val customAnnotations = attributes.customAnnotations
+        return customAnnotations.any {
+            it.typeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.classId?.asSingleFqName() == fqName
+        }
     }
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
-        // TODO support annotations
-        return null
+        require(this is ConeKotlinType)
+        // We don't check for compiler attributes because all of them doesn't have parameters
+        val customAnnotations = attributes.customAnnotations
+        val annotationCall = customAnnotations.firstOrNull {
+            it.typeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.classId?.asSingleFqName() == fqName
+        } ?: return null
+        val argument = when (val argument = annotationCall.arguments.firstOrNull() ?: return null) {
+            is FirVarargArgumentsExpression -> argument.arguments.firstOrNull()
+            is FirNamedArgumentExpression -> argument.expression
+            else -> argument
+        } ?: return null
+        return (argument as? FirConstExpression<*>)?.value
     }
 
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {

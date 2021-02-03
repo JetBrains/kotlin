@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -45,21 +46,24 @@ fun ConeKotlinType.isKMutableProperty(session: FirSession): Boolean {
 }
 
 private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
-    val classId = classId(session) ?: return null
-    return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString())
+    return classId(session)?.toFunctionClassKind()
+}
+
+private fun ClassId.toFunctionClassKind(): FunctionClassKind? {
+    return FunctionClassKind.byClassNamePrefix(packageFqName, relativeClassName.asString())
 }
 
 fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
-    val kind = functionClassKind(session) ?: return false
-    return kind == FunctionClassKind.Function ||
-            kind == FunctionClassKind.KFunction ||
-            kind == FunctionClassKind.SuspendFunction ||
-            kind == FunctionClassKind.KSuspendFunction
+    return functionClassKind(session) != null
 }
 
 fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
     val kind = functionClassKind(session) ?: return false
     return kind == FunctionClassKind.Function
+}
+
+fun ConeClassLikeLookupTag.isBuiltinFunctionalType(): Boolean {
+    return classId.toFunctionClassKind() != null
 }
 
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
