@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -862,6 +863,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     )
 
     private fun assertStability(
+        @Language("kotlin")
         classDefSrc: String,
         stability: String
     ) {
@@ -893,7 +895,9 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     }
 
     private fun assertStability(
+        @Language("kotlin")
         externalSrc: String,
+        @Language("kotlin")
         classDefSrc: String,
         stability: String,
         dumpClasses: Boolean = false
@@ -946,7 +950,9 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     }
 
     private fun buildModule(
+        @Language("kotlin")
         externalSrc: String,
+        @Language("kotlin")
         localSrc: String,
         dumpClasses: Boolean = false
     ): IrModuleFragment {
@@ -1004,6 +1010,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
     }
 
     private fun assertTransform(
+        @Language("kotlin")
         checked: String,
         expectedTransformed: String,
         unchecked: String = "",

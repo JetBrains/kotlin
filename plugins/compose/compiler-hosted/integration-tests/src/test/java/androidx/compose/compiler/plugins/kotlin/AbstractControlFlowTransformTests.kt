@@ -16,8 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.intellij.lang.annotations.Language
+
 abstract class AbstractControlFlowTransformTests : ComposeIrTransformTest() {
     protected fun controlFlow(
+        @Language("kotlin")
         source: String,
         expectedTransformed: String,
         dumpTree: Boolean = false

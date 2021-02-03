@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -595,7 +596,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
 
     // since the lowering will throw an exception if duplicate keys are found, all we have to do
     // is run the lowering
-    private fun assertNoDuplicateKeys(src: String) {
+    private fun assertNoDuplicateKeys(@Language("kotlin") src: String) {
         generateIrModuleWithJvmResolve(
             listOf(
                 sourceFile("Test.kt", src.replace('%', '$'))
