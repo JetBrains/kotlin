@@ -22,12 +22,6 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class JavaScopeProvider(
-    val declaredMemberScopeDecorator: (
-        klass: FirClass<*>,
-        declaredMemberScope: FirScope,
-        useSiteSession: FirSession,
-        scopeSession: ScopeSession
-    ) -> FirScope = { _, declaredMemberScope, _, _ -> declaredMemberScope },
     val symbolProvider: JavaSymbolProvider
 ) : FirScopeProvider() {
     override fun getUseSiteMemberScope(
@@ -83,7 +77,6 @@ class JavaScopeProvider(
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(regularClass)
-            val wrappedDeclaredScope = declaredMemberScopeDecorator(regularClass, declaredScope, useSiteSession, scopeSession)
             val superTypes =
                 if (regularClass.isThereLoopInSupertypes(useSiteSession))
                     listOf(StandardClassIds.Any.toConeKotlinType(emptyArray(), isNullable = false))
@@ -91,7 +84,7 @@ class JavaScopeProvider(
                     lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
 
             val superTypeScopes = superTypes.mapNotNull {
-                it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass, wrappedDeclaredScope, delegateFields = null)
+                it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass, declaredScope, delegateFields = null)
             }
 
             JavaClassUseSiteMemberScope(
@@ -105,7 +98,7 @@ class JavaScopeProvider(
                     ),
                     superTypeScopes,
                     regularClass.defaultType(),
-                ), wrappedDeclaredScope
+                ), declaredScope
             )
         }
     }
@@ -130,7 +123,6 @@ class JavaScopeProvider(
 
         return scopeSession.getOrBuild(klass.symbol, JAVA_ENHANCEMENT_FOR_STATIC) {
             val declaredScope = buildDeclaredMemberScope(klass)
-            val wrappedDeclaredScope = declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession)
 
             val superClassScope = klass.findJavaSuperClass()?.let {
                 (it.scopeProvider as? JavaScopeProvider)
@@ -147,7 +139,7 @@ class JavaScopeProvider(
                 klass.symbol,
                 JavaClassStaticUseSiteScope(
                     useSiteSession,
-                    declaredMemberScope = wrappedDeclaredScope,
+                    declaredMemberScope = declaredScope,
                     superClassScope, superTypesScopes,
                     klass.javaTypeParameterStack
                 )
