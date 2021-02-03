@@ -5,32 +5,38 @@
 
 package org.jetbrains.kotlin.test.uitls
 
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.nio.file.Files
 import java.nio.file.Path
 
 object IgnoreTests {
-    private const val INSERT_DIRECTIVE_AUTOMATICALLY = true // TODO use environment variable instead
+    private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
     private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
     fun runTestIfEnabledByFileDirective(
         testFile: Path,
         enableTestDirective: String,
         vararg additionalFilesExtensions: String,
+        directivePosition: DirectivePosition = DirectivePosition.FIRST_LINE_IN_FILE,
         test: () -> Unit,
     ) {
         runTestIfEnabledByDirective(
             testFile,
             EnableOrDisableTestDirective.Enable(enableTestDirective),
+            directivePosition,
             additionalFilesExtensions.toList(),
             test
         )
     }
 
-    fun runTestWithFixMeSupport(testFile: Path, test: () -> Unit) {
+    fun runTestWithFixMeSupport(
+        testFile: Path,
+        directivePosition: DirectivePosition = DirectivePosition.FIRST_LINE_IN_FILE,
+        test: () -> Unit
+    ) {
         runTestIfEnabledByDirective(
             testFile,
             EnableOrDisableTestDirective.Disable(DIRECTIVES.FIX_ME),
+            directivePosition,
             additionalFilesExtensions = emptyList(),
             test = test
         )
@@ -40,11 +46,13 @@ object IgnoreTests {
         testFile: Path,
         disableTestDirective: String,
         vararg additionalFilesExtensions: String,
+        directivePosition: DirectivePosition = DirectivePosition.FIRST_LINE_IN_FILE,
         test: () -> Unit
     ) {
         runTestIfEnabledByDirective(
             testFile,
             EnableOrDisableTestDirective.Disable(disableTestDirective),
+            directivePosition,
             additionalFilesExtensions.toList(),
             test
         )
@@ -53,6 +61,7 @@ object IgnoreTests {
     private fun runTestIfEnabledByDirective(
         testFile: Path,
         directive: EnableOrDisableTestDirective,
+        directivePosition: DirectivePosition,
         additionalFilesExtensions: List<String>,
         test: () -> Unit
     ) {
@@ -66,36 +75,57 @@ object IgnoreTests {
         try {
             test()
         } catch (e: Throwable) {
-            if (testIsEnabled) throw e
+            if (testIsEnabled) {
+                if (directive is EnableOrDisableTestDirective.Disable) {
+                    handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFilesExtensions)
+                }
+                throw e
+            }
             return
         }
 
         if (!testIsEnabled) {
-            handlePassingButNotEnabledTest(testFile, directive, additionalFilesExtensions)
+            handleTestWithWrongDirective(testFile, directive, directivePosition, additionalFilesExtensions)
         }
     }
 
-    private fun handlePassingButNotEnabledTest(
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun handleTestWithWrongDirective(
         testFile: Path,
         directive: EnableOrDisableTestDirective,
+        directivePosition: DirectivePosition,
         additionalFilesExtensions: List<String>,
     ) {
-        if (INSERT_DIRECTIVE_AUTOMATICALLY) {
-            testFile.insertDirectivesToFileAndAdditionalFile(directive, additionalFilesExtensions)
+        val verb = when (directive) {
+            is EnableOrDisableTestDirective.Disable -> "do not pass"
+            is EnableOrDisableTestDirective.Enable -> "passes"
         }
-
-        throw AssertionError(
-            "Looks like the test passes, please ${directive.fixDirectiveMessage} the beginning of the testdata file"
-        )
+        if (INSERT_DIRECTIVE_AUTOMATICALLY) {
+            testFile.insertDirectivesToFileAndAdditionalFile(directive, additionalFilesExtensions, directivePosition)
+            val filesWithDirectiveAdded = buildList {
+                add(testFile.fileName.toString())
+                additionalFilesExtensions.mapTo(this) { extension -> testFile.getSiblingFile(extension) }
+            }
+            throw AssertionError(
+                "Looks like the test $verb, ${directive.directiveText} was added to the ${filesWithDirectiveAdded.joinToString()}"
+            )
+        }
+        if (directive is EnableOrDisableTestDirective.Enable) {
+            throw AssertionError(
+                "Looks like the test $verb, please ${directive.fixDirectiveMessage} the ${testFile.fileName}"
+            )
+        }
     }
 
     private fun Path.insertDirectivesToFileAndAdditionalFile(
         directive: EnableOrDisableTestDirective,
         additionalFilesExtensions: List<String>,
+        directivePosition: DirectivePosition,
     ) {
-        insertDirective(directive)
+        insertDirective(directive, directivePosition)
         additionalFilesExtensions.forEach { extension ->
-            getSiblingFile(extension)?.insertDirective(directive)
+            getSiblingFile(extension)?.insertDirective(directive, directivePosition)
         }
     }
 
@@ -123,14 +153,18 @@ object IgnoreTests {
     }
 
     private fun EnableOrDisableTestDirective.isEnabledInFile(file: Path): Boolean {
-        val isDirectivePresent = InTextDirectivesUtils.isDirectiveDefined(file.toFile().readText(), directiveText)
+        val isDirectivePresent = file.toFile().readText().contains(directiveText)
         return isEnabledIfDirectivePresent(isDirectivePresent)
     }
 
-    private fun Path.insertDirective(directive: EnableOrDisableTestDirective) {
+    private fun Path.insertDirective(directive: EnableOrDisableTestDirective, directivePosition: DirectivePosition) {
         toFile().apply {
             val originalText = readText()
-            writeText("${directive.directiveText}\n$originalText")
+            val textWithDirective = when (directivePosition) {
+                DirectivePosition.FIRST_LINE_IN_FILE -> "${directive.directiveText}\n$originalText"
+                DirectivePosition.LAST_LINE_IN_FILE -> "$originalText\n${directive.directiveText}"
+            }
+            writeText(textWithDirective)
         }
     }
 
@@ -139,5 +173,9 @@ object IgnoreTests {
         const val FIR_COMPARISON_MUTLTILINE_COMMENT = "/* FIR_COMPARISON */"
         const val IGNORE_FIR = "// IGNORE_FIR"
         const val FIX_ME = "// FIX_ME: "
+    }
+
+    enum class DirectivePosition {
+        FIRST_LINE_IN_FILE, LAST_LINE_IN_FILE
     }
 }
