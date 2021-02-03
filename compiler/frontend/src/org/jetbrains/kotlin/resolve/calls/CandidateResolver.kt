@@ -606,7 +606,8 @@ class CandidateResolver(
         private val callElement: KtElement,
         typeAlias: TypeAliasDescriptor,
         ktTypeArguments: List<KtTypeProjection>,
-        private val trace: BindingTrace
+        private val trace: BindingTrace,
+        private val upperBoundChecker: UpperBoundChecker
     ) : TypeAliasExpansionReportStrategy {
         init {
             assert(!typeAlias.expandedType.isError) { "Incorrect type alias: $typeAlias" }
@@ -635,7 +636,7 @@ class CandidateResolver(
         }
 
         override fun boundsViolationInSubstitution(
-            bound: KotlinType,
+            substitutor: TypeSubstitutor,
             unsubstitutedArgument: KotlinType,
             argument: KotlinType,
             typeParameter: TypeParameterDescriptor
@@ -643,11 +644,8 @@ class CandidateResolver(
             val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor
             val argumentElement = argumentsMapping[descriptorForUnsubstitutedArgument]
             val argumentTypeReferenceElement = argumentElement?.typeReference
-            if (argumentTypeReferenceElement != null) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReferenceElement, bound, argument))
-            } else {
-                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(callElement, bound, argument, typeParameter))
-            }
+
+            upperBoundChecker.checkBounds(argumentTypeReferenceElement, argument, typeParameter, substitutor, trace, callElement)
         }
     }
 
@@ -665,7 +663,8 @@ class CandidateResolver(
         val unsubstitutedType = typeAliasDescriptor.expandedType
         if (unsubstitutedType.isError) return
 
-        val reportStrategy = TypeAliasSingleStepExpansionReportStrategy(call.callElement, typeAliasDescriptor, ktTypeArguments, trace)
+        val reportStrategy =
+            TypeAliasSingleStepExpansionReportStrategy(call.callElement, typeAliasDescriptor, ktTypeArguments, trace, upperBoundChecker)
 
         // TODO refactor TypeResolver
         //  - perform full type alias expansion
@@ -694,12 +693,12 @@ class CandidateResolver(
             val typeParameter = typeParameters[i]
             val substitutedTypeArgument = substitutedTypeProjection.type
             val unsubstitutedTypeArgument = unsubstitutedType.arguments[i].type
-            TypeAliasExpander.checkBoundsInTypeAlias(
-                reportStrategy,
+
+            reportStrategy.boundsViolationInSubstitution(
+                boundsSubstitutor,
                 unsubstitutedTypeArgument,
                 substitutedTypeArgument,
-                typeParameter,
-                boundsSubstitutor
+                typeParameter
             )
 
             checkTypeInTypeAliasSubstitutionRec(

@@ -215,9 +215,9 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
 
         if (!doesExpectedTypeContainsEnhancement && !doesExpressionTypeContainsEnhancement) return
 
-        val enhancedExpectedType = if (doesExpectedTypeContainsEnhancement) buildTypeWithEnhancement(expectedType) else expectedType
+        val enhancedExpectedType = if (doesExpectedTypeContainsEnhancement) expectedType.unwrapEnhancementDeeply() else expectedType
         val enhancedExpressionType = enhanceExpressionTypeByDataFlowNullability(
-            if (doesExpressionTypeContainsEnhancement) buildTypeWithEnhancement(expressionType) else expressionType,
+            if (doesExpressionTypeContainsEnhancement) expressionType.unwrapEnhancementDeeply() else expressionType,
             expressionTypeDataFlowValue,
             dataFlowInfo
         )
@@ -252,33 +252,6 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         body()
     } else {
         null
-    }
-
-    private fun enhanceTypeArguments(arguments: List<TypeProjection>) =
-        arguments.map { argument ->
-            // TODO: think about star projections with enhancement (e.g. came from Java: Foo<@NotNull ?>)
-            if (argument.isStarProjection) {
-                return@map argument
-            }
-            val argumentType = argument.type
-            val enhancedArgumentType = if (argumentType is TypeWithEnhancement) argumentType.enhancement else argumentType
-            val enhancedDeeplyArgumentType = buildTypeWithEnhancement(enhancedArgumentType)
-
-            argument.replaceType(enhancedDeeplyArgumentType)
-        }
-
-    fun buildTypeWithEnhancement(type: KotlinType): KotlinType {
-        val newArguments = enhanceTypeArguments(type.arguments)
-        val newArgumentsForUpperBound =
-            if (type is FlexibleType) {
-                enhanceTypeArguments(type.upperBound.arguments)
-            } else newArguments
-        val enhancedType = if (type is TypeWithEnhancement) type.enhancement else type
-
-        return enhancedType.replace(
-            newArguments = newArguments,
-            newArgumentsForUpperBound = newArgumentsForUpperBound
-        )
     }
 }
 

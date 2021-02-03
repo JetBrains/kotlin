@@ -202,7 +202,8 @@ class DeclarationsChecker(
     private class TypeAliasDeclarationCheckingReportStrategy(
         private val trace: BindingTrace,
         typeAliasDescriptor: TypeAliasDescriptor,
-        declaration: KtTypeAlias
+        declaration: KtTypeAlias,
+        val upperBoundChecker: UpperBoundChecker
     ) : TypeAliasExpansionReportStrategy {
         private val typeReference = declaration.getTypeReference()
                 ?: throw AssertionError("Incorrect type alias declaration for $typeAliasDescriptor")
@@ -224,15 +225,12 @@ class DeclarationsChecker(
         }
 
         override fun boundsViolationInSubstitution(
-            bound: KotlinType,
+            substitutor: TypeSubstitutor,
             unsubstitutedArgument: KotlinType,
             argument: KotlinType,
             typeParameter: TypeParameterDescriptor
         ) {
-            // TODO more precise diagnostics
-            if (!argument.containsTypeAliasParameters() && !bound.containsTypeAliasParameters()) {
-                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(typeReference, bound, argument, typeParameter))
-            }
+            upperBoundChecker.checkBounds(null, argument, typeParameter, substitutor, trace, typeReference)
         }
 
         override fun repeatedAnnotation(annotation: AnnotationDescriptor) {
@@ -243,7 +241,7 @@ class DeclarationsChecker(
 
     private fun checkTypeAliasExpansion(declaration: KtTypeAlias, typeAliasDescriptor: TypeAliasDescriptor) {
         val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
-        val reportStrategy = TypeAliasDeclarationCheckingReportStrategy(trace, typeAliasDescriptor, declaration)
+        val reportStrategy = TypeAliasDeclarationCheckingReportStrategy(trace, typeAliasDescriptor, declaration, upperBoundChecker)
         TypeAliasExpander(reportStrategy, true).expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
     }
 
