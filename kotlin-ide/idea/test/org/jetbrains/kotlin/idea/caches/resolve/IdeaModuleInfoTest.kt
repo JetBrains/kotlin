@@ -30,11 +30,13 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.platform
+import org.jetbrains.kotlin.idea.stubs.createMultiplatformFacetM3
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.addJdk
 import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils.allowProjectRootAccess
 import org.jetbrains.kotlin.test.KotlinTestUtils.disposeVfsRootAccess
 import org.jetbrains.kotlin.test.util.addDependency
@@ -324,6 +326,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         a.addDependency(stdlibJvm)
 
         val b = module("b")
+        b.setUpPlatform(JsPlatforms.defaultJsPlatform)
         b.addDependency(stdlibCommon)
         b.addDependency(stdlibJs)
 
@@ -496,6 +499,14 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     private fun projectLibraryWithFakeRoot(name: String): LibraryEx {
         return projectLibrary(name, sourcesRoot = createFileInProject(name))
+    }
+
+    private fun Module.setUpPlatform(targetPlatform: TargetPlatform) {
+        createMultiplatformFacetM3(
+            platformKind = targetPlatform,
+            dependsOnModuleNames = listOf(),
+            pureKotlinSourceFolders = listOf(),
+        )
     }
 
     override fun setUp() {
