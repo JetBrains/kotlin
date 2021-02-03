@@ -21,7 +21,20 @@ interface ResultsConsumer {
         class Commonized(override val libraryName: String, val metadata: SerializedMetadata) : ModuleResult()
     }
 
-    fun consumeResults(target: CommonizerTarget, moduleResults: Collection<ModuleResult>)
+    /**
+     * Consume a single [ModuleResult] for the specified [CommonizerTarget].
+     */
+    fun consume(target: CommonizerTarget, moduleResult: ModuleResult)
 
-    fun successfullyFinished(status: Status)
+    /**
+     * Mark the specified [CommonizerTarget] as fully consumed.
+     * It's forbidden to make subsequent [consume] calls for fully consumed targets.
+     */
+    fun targetConsumed(target: CommonizerTarget)
+
+    /**
+     * Notify that all results have been consumed.
+     * It's forbidden to make any subsequent [consume] and [targetConsumed] calls after this call.
+     */
+    fun allConsumed(status: Status)
 }

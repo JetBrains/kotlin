@@ -177,22 +177,39 @@ internal class MockModulesProvider private constructor(
     }
 }
 
+private typealias ModuleName = String
+private typealias ModuleResults = HashMap<ModuleName, ModuleResult>
+
 internal class MockResultsConsumer : ResultsConsumer {
-    private val _modulesByTargets = LinkedHashMap<CommonizerTarget, Collection<ModuleResult>>() // use linked hash map to preserve order
+    private val _modulesByTargets = LinkedHashMap<CommonizerTarget, ModuleResults>() // use linked hash map to preserve order
     val modulesByTargets: Map<CommonizerTarget, Collection<ModuleResult>>
-        get() = _modulesByTargets
+        get() = _modulesByTargets.mapValues { it.value.values }
 
     val sharedTarget: SharedTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedTarget>().single() }
     val leafTargets: Set<LeafTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafTarget>().toSet() }
 
+    private val finishedTargets = mutableSetOf<CommonizerTarget>()
+
     lateinit var status: ResultsConsumer.Status
 
-    override fun consumeResults(target: CommonizerTarget, moduleResults: Collection<ModuleResult>) {
-        val oldValue = _modulesByTargets.put(target, moduleResults)
-        check(oldValue == null)
+    override fun consume(target: CommonizerTarget, moduleResult: ModuleResult) {
+        check(!this::status.isInitialized)
+        check(target !in finishedTargets)
+        val moduleResults: ModuleResults = _modulesByTargets.getOrPut(target) { ModuleResults() }
+        val oldResult = moduleResults.put(moduleResult.libraryName, moduleResult)
+        check(oldResult == null) // to avoid accidental overwriting
     }
 
-    override fun successfullyFinished(status: ResultsConsumer.Status) {
+    override fun targetConsumed(target: CommonizerTarget) {
+        check(!this::status.isInitialized)
+        check(target in _modulesByTargets.keys)
+        check(target !in finishedTargets)
+        finishedTargets += target
+    }
+
+    override fun allConsumed(status: ResultsConsumer.Status) {
+        check(!this::status.isInitialized)
+        check(finishedTargets.containsAll(_modulesByTargets.keys))
         this.status = status
     }
 }
