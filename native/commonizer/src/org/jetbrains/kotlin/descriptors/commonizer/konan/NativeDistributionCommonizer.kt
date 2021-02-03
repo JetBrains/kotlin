@@ -82,7 +82,7 @@ class NativeDistributionCommonizer(
                 .orEmpty()
 
             if (platformLibs.isEmpty())
-                logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
+                logger.warning("No platform libraries found for target ${leafTarget.prettyName}. This target will be excluded from commonization.")
 
             leafTarget to NativeLibrariesToCommonize(platformLibs)
         }

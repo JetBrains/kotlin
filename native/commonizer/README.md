@@ -44,7 +44,7 @@ There are few limitations in the current version of KLIB Commonizer:
    ```
    Kotlin KLIB commonizer: Please wait while preparing libraries.
    [Step 1 of 1] Preparing commonized Kotlin/Native libraries for targets [macos_x64, linux_x64, mingw_x64] (137 items)
-     Warning: No platform libraries found for target mingw_x64. This target will be excluded from commonization.
+     Warning: No platform libraries found for target [mingw_x64]. This target will be excluded from commonization.
      ...
    ```
    In the degenerate case when all but one targets are not available at the host machine, the KLIB Commonizer is not launched.
