@@ -3521,6 +3521,66 @@ standaloneTest("testing_filters") {
     }
 }
 
+standaloneTest("testing_filtered_suites") {
+    source = "testing/filtered_suites.kt"
+    flags = ["-tr", "-ea"]
+
+    def filters = [
+            ["Filtered_suitesKt.*"],    // filter out a class.
+            ["A.*"],                    // filter out a top-level suite.
+            ["*.common"],               // run a test from all suites -> all hooks executed.
+            ["Ignored.*"],              // an ignored suite -> no hooks executed.
+            ["A.ignored"]               // a suite with only ignored tests.
+                                        //      TODO: Currently we execute hooks while other frameworks don't. Fix it.
+    ]
+    def expectedHooks = [
+            ["Filtered_suitesKt.before", "Filtered_suitesKt.after"],
+            ["A.before", "A.after"],
+            ["A.before", "A.after", "Filtered_suitesKt.before", "Filtered_suitesKt.after"],
+            [],
+            ["A.before", "A.after"],  // TODO: fix it.
+    ]
+
+    multiRuns = true
+    multiArguments = filters.collect {
+        def filter = it.collect { "kotlin.test.tests.$it" }.join(",")
+        ["--ktest_gradle_filter=$filter", "--ktest_logger=SIMPLE"]
+    }
+    outputChecker = { String output ->
+        // The first chunk is empty - drop it.
+        def outputs = output.split("Starting testing\n").drop(1)
+        if (outputs.size() != expectedHooks.size()) {
+            println("Incorrect number of test runs. Expected: ${expectedHooks.size()}, actual: ${outputs.size()}")
+            return false
+        }
+
+        // Check the correct set of hooks was executed on each run.
+        for (int i = 0; i < outputs.size(); i++) {
+            def actual = outputs[i].split('\n')
+                    .findAll { it.startsWith("Hook:") }
+                    .collect { it.replace("Hook: ", "") }
+            def expected = expectedHooks[i]
+
+            if (actual.size() != expected.size()) {
+                println("Incorrect number of executed hooks for run #$i. Expected: ${expected.size()}. Actual: ${actual.size()}")
+                println("Expected hooks: $expected")
+                println("Actual hooks: $actual")
+                return false
+            }
+
+            for (expectedHook in expected) {
+                if (!actual.contains(expectedHook)) {
+                    println("Expected hook wasn't executed for run #$i: $expectedHook")
+                    println("Expected hooks: $expected")
+                    println("Actual hooks: $actual")
+                    return false
+                }
+            }
+        }
+        return true
+    }
+}
+
 // Check that stacktraces and ignored suite are correctly reported in the TC logger.
 standaloneTest("testing_stacktrace") {
     source = "testing/stacktrace.kt"
