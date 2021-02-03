@@ -162,7 +162,6 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         import android.view.Gravity
         import android.widget.LinearLayout
         import androidx.compose.runtime.Composable
-        import androidx.compose.ui.viewinterop.emitView
     """.trimIndent()
 
     protected val COMPOSE_VIEW_STUBS = """
