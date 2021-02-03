@@ -444,7 +444,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 targetPlatform(jvm, js)
             }
             module("my-app") {
-                diagnostics(OrphanSourceSetsImportingDiagnostic::class.java to 1)
+                assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(1)
             }
         }
     }
@@ -536,7 +536,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
 
             module("my-app") {
-                diagnostics(OrphanSourceSetsImportingDiagnostic::class.java to 3)
+                assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(3)
             }
 
             // (jvm, js, native) is highly undesirable

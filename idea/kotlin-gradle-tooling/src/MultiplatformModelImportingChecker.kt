@@ -14,7 +14,8 @@ internal object OrphanSourceSetImportingChecker : MultiplatformModelImportingChe
         model: KotlinMPPGradleModel,
         reportTo: KotlinImportingDiagnosticsContainer,
         context: MultiplatformModelImportingContext
-    ) = model.sourceSets.values.filter { context.isOrphanSourceSet(it) }
-        .map { OrphanSourceSetsImportingDiagnostic(it) }
-        .forEach { reportTo += it }
+    ) {
+        model.sourceSets.values.filter { context.isOrphanSourceSet(it) }
+            .mapTo(reportTo) { OrphanSourceSetsImportingDiagnostic(it) }
+    }
 }

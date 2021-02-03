@@ -277,17 +277,14 @@ class ModuleInfo(
     }
 
     @Suppress("UnstableApiUsage")
-    fun diagnostics(vararg expectedByType: Pair<Class<out KotlinImportingDiagnostic>, Int>) {
+    internal inline fun <reified T : KotlinImportingDiagnostic> assertDiagnosticsCount(count: Int) {
         val moduleNode = GradleUtil.findGradleModuleData(module)
         val diagnostics = moduleNode!!.kotlinImportingDiagnosticsContainer!!
-        expectedByType.forEach { (expectedClazz, expectedCount) ->
-            val typedDiagnostics = diagnostics.filterIsInstance(expectedClazz)
-            if (typedDiagnostics.size != expectedCount) {
-                val actualCount = typedDiagnostics.size
-                projectInfo.messageCollector.report(
-                    "Expected number of ${expectedClazz.simpleName} diagnostics $expectedCount doesn't match the actual one: $actualCount"
-                )
-            }
+        val typedDiagnostics = diagnostics.filterIsInstance<T>()
+        if (typedDiagnostics.size != count) {
+            projectInfo.messageCollector.report(
+                "Expected number of ${T::class.java.simpleName} diagnostics $count doesn't match the actual one: ${typedDiagnostics.size}"
+            )
         }
     }
 
