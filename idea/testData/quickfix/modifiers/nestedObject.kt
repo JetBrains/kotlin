@@ -6,3 +6,4 @@ class A() {
         object <caret>C
     }
 }
+/* FIR_COMPARISON */

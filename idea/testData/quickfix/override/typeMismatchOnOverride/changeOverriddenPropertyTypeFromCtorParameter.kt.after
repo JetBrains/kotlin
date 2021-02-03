@@ -4,3 +4,4 @@ interface A {
 }
 
 class B(override val x: Any) : A
+/* FIR_COMPARISON */

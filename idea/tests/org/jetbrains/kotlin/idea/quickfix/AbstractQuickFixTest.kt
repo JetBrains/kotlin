@@ -51,7 +51,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
     }
 
     @Throws(Exception::class)
-    protected fun doTest(beforeFileName: String) {
+    protected open fun doTest(beforeFileName: String) {
         val beforeFileText = FileUtil.loadFile(File(beforeFileName))
         withCustomCompilerOptions(beforeFileText, project, module) {
             val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
