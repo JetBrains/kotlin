@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import android.os.Looper.getMainLooper
 import android.widget.Button
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -907,7 +908,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         """
     )
 
-    private fun skipping(text: String, dumpClasses: Boolean = false) =
+    private fun skipping(@Language("kotlin") text: String, dumpClasses: Boolean = false) =
         ensureSetup {
             compose(
                 """
