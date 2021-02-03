@@ -88,6 +88,40 @@ fun KotlinType.getEnhancement(): KotlinType? = when (this) {
     else -> null
 }
 
+private fun List<TypeProjection>.enhanceTypeArguments(depth: Int) =
+    map { argument ->
+        // TODO: think about star projections with enhancement (e.g. came from Java: Foo<@NotNull ?>)
+        if (argument.isStarProjection) {
+            return@map argument
+        }
+        val argumentType = argument.type
+        val enhancedArgumentType = if (argumentType is TypeWithEnhancement) argumentType.enhancement else argumentType
+        val enhancedDeeplyArgumentType = enhancedArgumentType.getEnhancementDeeply(depth + 1)
+
+        argument.replaceType(enhancedDeeplyArgumentType)
+    }
+
+private fun KotlinType.getEnhancementDeeply(depth: Int): KotlinType {
+    val newArguments = arguments.enhanceTypeArguments(depth)
+    val newArgumentsForUpperBound = if (this is FlexibleType) upperBound.arguments.enhanceTypeArguments(depth) else newArguments
+    val enhancedType = if (this is TypeWithEnhancement) enhancement else this
+
+    return enhancedType.replace(
+        newArguments = newArguments,
+        newArgumentsForUpperBound = newArgumentsForUpperBound
+    )
+}
+
+fun KotlinType.getEnhancementDeeply(): KotlinType? {
+    val enhancedTypeWithArguments = getEnhancementDeeply(depth = 0)
+
+    if (enhancedTypeWithArguments === this) return null
+
+    return enhancedTypeWithArguments
+}
+
+fun KotlinType.unwrapEnhancementDeeply() = getEnhancementDeeply() ?: this
+
 fun KotlinType.unwrapEnhancement(): KotlinType = getEnhancement() ?: this
 
 fun UnwrappedType.inheritEnhancement(origin: KotlinType): UnwrappedType = wrapEnhancement(origin.getEnhancement())

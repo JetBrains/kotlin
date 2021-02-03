@@ -597,7 +597,8 @@ class TypeResolver(
             c.trace,
             type, typeAliasQualifierPart.typeArguments ?: typeAliasQualifierPart.expression,
             descriptor, descriptor.declaredTypeParameters,
-            argumentElementsFromUserType // TODO arguments from inner scope
+            argumentElementsFromUserType, // TODO arguments from inner scope
+            upperBoundChecker
         )
 
         if (parameters.size != arguments.size) {
@@ -659,7 +660,8 @@ class TypeResolver(
         val typeArgumentsOrTypeName: KtElement?,
         val typeAliasDescriptor: TypeAliasDescriptor,
         typeParameters: List<TypeParameterDescriptor>,
-        typeArguments: List<KtTypeProjection>
+        typeArguments: List<KtTypeProjection>,
+        val upperBoundChecker: UpperBoundChecker
     ) : TypeAliasExpansionReportStrategy {
 
         private val mappedArguments = typeParameters.zip(typeArguments).toMap()
@@ -690,7 +692,7 @@ class TypeResolver(
         }
 
         override fun boundsViolationInSubstitution(
-            bound: KotlinType,
+            substitutor: TypeSubstitutor,
             unsubstitutedArgument: KotlinType,
             argument: KotlinType,
             typeParameter: TypeParameterDescriptor
@@ -698,11 +700,7 @@ class TypeResolver(
             val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor
             val argumentElement = mappedArguments[descriptorForUnsubstitutedArgument]
             val argumentTypeReferenceElement = argumentElement?.typeReference
-            if (argumentTypeReferenceElement != null) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReferenceElement, bound, argument))
-            } else if (type != null) {
-                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(type, bound, argument, typeParameter))
-            }
+            upperBoundChecker.checkBounds(argumentTypeReferenceElement, argument, typeParameter, substitutor, trace, type)
         }
 
         override fun repeatedAnnotation(annotation: AnnotationDescriptor) {

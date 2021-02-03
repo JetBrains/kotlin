@@ -7,17 +7,21 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.Errors.UPPER_BOUND_VIOLATED
+import org.jetbrains.kotlin.diagnostics.Errors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 
 @DefaultImplementation(impl = UpperBoundChecker::class)
-interface UpperBoundChecker {
-    val languageVersionSettings: LanguageVersionSettings
-
+open class UpperBoundChecker(val languageVersionSettings: LanguageVersionSettings) {
     fun checkBounds(typeReference: KtTypeReference, type: KotlinType, trace: BindingTrace) {
         if (type.isError) return
 
@@ -54,30 +58,59 @@ interface UpperBoundChecker {
         }
     }
 
-    fun checkBounds(
-        jetTypeArgument: KtTypeReference,
-        typeArgument: KotlinType,
+    open fun checkBounds(
+        argumentReference: KtTypeReference?,
+        argumentType: KotlinType,
         typeParameterDescriptor: TypeParameterDescriptor,
         substitutor: TypeSubstitutor,
-        trace: BindingTrace
+        trace: BindingTrace,
+        typeAliasUsageElement: KtElement? = null,
     ) {
+        if (typeParameterDescriptor.upperBounds.isEmpty()) return
+
+        val diagnosticsReporter = UpperBoundViolatedReporter(trace, argumentType, typeParameterDescriptor)
+
         for (bound in typeParameterDescriptor.upperBounds) {
-            checkBound(bound, substitutor, trace, jetTypeArgument, typeArgument)
+            checkBound(bound, argumentType, argumentReference, substitutor, typeAliasUsageElement, diagnosticsReporter)
         }
     }
 
-    fun checkBound(
+    protected fun checkBound(
         bound: KotlinType,
+        argumentType: KotlinType,
+        argumentReference: KtTypeReference?,
         substitutor: TypeSubstitutor,
-        trace: BindingTrace,
-        jetTypeArgument: KtTypeReference,
-        typeArgument: KotlinType
+        typeAliasUsageElement: KtElement? = null,
+        upperBoundViolatedReporter: UpperBoundViolatedReporter
     ): Boolean {
         val substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT)
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
-            trace.report(Errors.UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument))
+
+        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, substitutedBound)) {
+            if (argumentReference != null) {
+                upperBoundViolatedReporter.report(argumentReference, substitutedBound)
+            } else if (typeAliasUsageElement != null && !substitutedBound.containsTypeAliasParameters() && !argumentType.containsTypeAliasParameters()) {
+                upperBoundViolatedReporter.reportForTypeAliasExpansion(typeAliasUsageElement, substitutedBound)
+            }
             return false
         }
+
         return true
+    }
+}
+
+class UpperBoundViolatedReporter(
+    val trace: BindingTrace,
+    val argumentType: KotlinType,
+    val typeParameterDescriptor: TypeParameterDescriptor? = null,
+    val baseDiagnostic: DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> = UPPER_BOUND_VIOLATED,
+    val diagnosticForTypeAliases: DiagnosticFactory3<KtElement, KotlinType, KotlinType, ClassifierDescriptor> = UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
+) {
+    fun report(typeArgumentReference: KtTypeReference, substitutedBound: KotlinType) {
+        trace.report(baseDiagnostic.on(typeArgumentReference, substitutedBound, argumentType))
+    }
+
+    fun reportForTypeAliasExpansion(callElement: KtElement, substitutedBound: KotlinType) {
+        if (typeParameterDescriptor == null) return
+        trace.report(diagnosticForTypeAliases.on(callElement, substitutedBound, argumentType, typeParameterDescriptor))
     }
 }

@@ -7,40 +7,49 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.UpperBoundChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.UpperBoundViolatedReporter
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-class EnhancedUpperBoundChecker(override val languageVersionSettings: LanguageVersionSettings) : UpperBoundChecker {
-    override fun checkBound(
-        bound: KotlinType,
+// TODO: remove this checker after removing support LV < 1.6
+class EnhancedUpperBoundChecker(languageVersionSettings: LanguageVersionSettings) : UpperBoundChecker(languageVersionSettings) {
+    val isTypeEnhancementImprovementsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.ImprovementsAroundTypeEnhancement)
+
+    override fun checkBounds(
+        argumentReference: KtTypeReference?,
+        argumentType: KotlinType,
+        typeParameterDescriptor: TypeParameterDescriptor,
         substitutor: TypeSubstitutor,
         trace: BindingTrace,
-        jetTypeArgument: KtTypeReference,
-        typeArgument: KotlinType
-    ): Boolean {
-        val isCheckPassed = super.checkBound(bound, substitutor, trace, jetTypeArgument, typeArgument)
+        typeAliasUsageElement: KtElement?
+    ) {
+        if (typeParameterDescriptor.upperBounds.isEmpty()) return
 
-        // The error is already reported, it's unnecessary to do more checks
-        if (!isCheckPassed) return false
+        val diagnosticsReporter = UpperBoundViolatedReporter(trace, argumentType, typeParameterDescriptor)
+        val diagnosticsReporterForWarnings = UpperBoundViolatedReporter(
+            trace, argumentType, typeParameterDescriptor,
+            baseDiagnostic = UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS,
+            diagnosticForTypeAliases = UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
+        )
 
-        val enhancedBound = bound.getEnhancement() ?: return false
+        for (bound in typeParameterDescriptor.upperBounds) {
+            val isCheckPassed = checkBound(bound, argumentType, argumentReference, substitutor, typeAliasUsageElement, diagnosticsReporter)
 
-        val isTypeEnhancementImprovementsEnabled =
-            languageVersionSettings.supportsFeature(LanguageFeature.ImprovementsAroundTypeEnhancement)
-        val substitutedBound = substitutor.safeSubstitute(enhancedBound, Variance.INVARIANT)
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(typeArgument, substitutedBound)) {
-            if (isTypeEnhancementImprovementsEnabled) {
-                trace.report(Errors.UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument))
-            } else {
-                trace.report(ErrorsJvm.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS.on(jetTypeArgument, substitutedBound, typeArgument))
-            }
-            return false
+            // The error is already reported, it's unnecessary to do more checks
+            if (!isCheckPassed) continue
+
+            // If improvements are enabled, then type parameter's upper bounds will already enhanced, and the error will reported inside the first check
+            if (isTypeEnhancementImprovementsEnabled) continue
+
+            val enhancedBound = bound.getEnhancementDeeply() ?: continue
+
+            checkBound(enhancedBound, argumentType, argumentReference, substitutor, typeAliasUsageElement, diagnosticsReporterForWarnings)
         }
-        return true
     }
 }
