@@ -137,6 +137,8 @@ fun FirWhenExpression.copy(
     branches += this@copy.branches
     typeRef = resultType
     this.annotations += annotations
+    usedAsExpression = this@copy.usedAsExpression
+    isExhaustive = this@copy.isExhaustive
 }
 
 fun FirTryExpression.copy(

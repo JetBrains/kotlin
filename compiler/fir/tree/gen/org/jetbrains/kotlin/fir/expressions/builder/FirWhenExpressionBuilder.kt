@@ -37,6 +37,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
     var subjectVariable: FirVariable<*>? = null
     val branches: MutableList<FirWhenBranch> = mutableListOf()
     var isExhaustive: Boolean = false
+    var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirWhenExpression {
         return FirWhenExpressionImpl(
@@ -48,13 +49,14 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
             subjectVariable,
             branches,
             isExhaustive,
+            usedAsExpression,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildWhenExpression(init: FirWhenExpressionBuilder.() -> Unit = {}): FirWhenExpression {
+inline fun buildWhenExpression(init: FirWhenExpressionBuilder.() -> Unit): FirWhenExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

@@ -29,6 +29,7 @@ internal class FirWhenExpressionImpl(
     override var subjectVariable: FirVariable<*>?,
     override val branches: MutableList<FirWhenBranch>,
     override var isExhaustive: Boolean,
+    override val usedAsExpression: Boolean,
 ) : FirWhenExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

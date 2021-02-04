@@ -590,6 +590,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/whenInference.kt");
         }
 
+        @Test
+        @TestMetadata("whenWithWhenAsStatement.kt")
+        public void testWhenWithWhenAsStatement() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/whenWithWhenAsStatement.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arguments")
         @TestDataPath("$PROJECT_ROOT")

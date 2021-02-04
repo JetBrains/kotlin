@@ -499,6 +499,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/whenInference.kt");
     }
 
+    @TestMetadata("whenWithWhenAsStatement.kt")
+    public void testWhenWithWhenAsStatement() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/whenWithWhenAsStatement.kt");
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

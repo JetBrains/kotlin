@@ -25,6 +25,7 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
     abstract val subjectVariable: FirVariable<*>?
     abstract val branches: List<FirWhenBranch>
     abstract val isExhaustive: Boolean
+    abstract val usedAsExpression: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenExpression(this, data)
 
