@@ -2256,7 +2256,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 )
                 tmp0_return
               }, %composer, 0).apply {
-                value = value
+                %this%apply.value = value
               }
               %composer.endReplaceableGroup()
               return tmp0

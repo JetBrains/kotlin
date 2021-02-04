@@ -346,6 +346,8 @@ class ComposerLambdaMemoization(
             UNDEFINED_OFFSET,
             composerIrClass.defaultType.replaceArgumentsWithStarProjections(),
             currentComposerSymbol as IrSimpleFunctionSymbol,
+            currentComposerSymbol.owner.typeParameters.size,
+            currentComposerSymbol.owner.valueParameters.size,
             IrStatementOrigin.FOR_LOOP_ITERATOR,
         )
     }
@@ -446,6 +448,7 @@ class ComposerLambdaMemoization(
                             expression.type,
                             expression.symbol,
                             expression.typeArgumentsCount,
+                            expression.valueArgumentsCount,
                             expression.reflectionTarget
                         ).copyAttributes(expression).apply {
                             this.dispatchReceiver = tempDispatchReceiver?.let { irGet(it) }
