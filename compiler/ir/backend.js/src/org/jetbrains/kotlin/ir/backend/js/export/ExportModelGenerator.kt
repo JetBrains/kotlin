@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -406,7 +407,8 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
             .isNotEmpty()
 
         if (overriddenNonEmpty) {
-            return declaration.isOverriddenExported(context)
+            return declaration.isOverriddenExported(context) ||
+                    declaration.isMethodOfAny() // Handle names for special functions
         }
     }
 
