@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
@@ -33,6 +34,6 @@ internal interface KtFirAnalysisSessionComponent {
     fun createTypeCheckerContext() = ConeTypeCheckerContext(
         isErrorTypeEqualsToAnything = true,
         isStubTypeEqualsToAnything = true,
-        analysisSession.firResolveState.rootModuleSession //TODO use correct session here
+        analysisSession.firResolveState.rootModuleSession.typeContext //TODO use correct session here
     )
 }

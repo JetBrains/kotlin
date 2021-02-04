@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.*
 
-open class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext, AbstractTypeCheckerContext() {
+open class IrTypeCheckerContext(override val typeSystemContext: IrTypeSystemContext): AbstractTypeCheckerContext() {
+
+    val irBuiltIns: IrBuiltIns get() = typeSystemContext.irBuiltIns
 
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
         require(type is IrSimpleType)
@@ -30,32 +32,4 @@ open class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSys
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = false
-
-    override fun newBaseTypeCheckerContext(
-        errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
-    ): AbstractTypeCheckerContext = IrTypeCheckerContext(irBuiltIns)
-
-    override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
-    override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
-        if (this.isSimpleType()) {
-            return this.asSimpleType()!!.withNullability(nullable)
-        } else {
-            error("withNullability for non-simple types is not supported in IR")
-        }
-    }
-
-    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? =
-        error("Captured type is unsupported in IR")
-
-    override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
-        error("DefinitelyNotNull type is unsupported in IR")
-
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
-        error("makeDefinitelyNotNullOrNotNull is not supported in IR")
-    }
-
-    override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
-        error("makeSimpleTypeDefinitelyNotNullOrNotNull is not yet supported in IR")
-    }
 }

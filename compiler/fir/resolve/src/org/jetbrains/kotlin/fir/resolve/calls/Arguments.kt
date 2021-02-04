@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclarati
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.typeCheckerContext
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun Candidate.resolveArgumentExpression(
@@ -416,7 +416,10 @@ fun FirExpression.isFunctional(
             val returnTypeCompatible =
                 expectedReturnType is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
-                            session.inferenceComponents.ctx,
+                            session.inferenceComponents.ctx.newBaseTypeCheckerContext(
+                                errorTypesEqualToAnything = false,
+                                stubTypesEqualToAnything = true
+                            ),
                             invokeSymbol.fir.returnTypeRef.coneType,
                             expectedReturnType,
                             isFromNullabilityConstraint = false
@@ -433,7 +436,10 @@ fun FirExpression.isFunctional(
                 val expectedParameterType = expectedParameter!!.lowerBoundIfFlexible()
                 expectedParameterType is ConeTypeParameterType ||
                         AbstractTypeChecker.isSubtypeOf(
-                            session.inferenceComponents.ctx,
+                            session.inferenceComponents.ctx.newBaseTypeCheckerContext(
+                                errorTypesEqualToAnything = false,
+                                stubTypesEqualToAnything = true
+                            ),
                             invokeParameter.returnTypeRef.coneType,
                             expectedParameterType,
                             isFromNullabilityConstraint = false
@@ -488,7 +494,7 @@ internal fun captureFromTypeParameterUpperBoundIfNeeded(
     val simplifiedArgumentType = argumentType.lowerBoundIfFlexible() as? ConeTypeParameterType ?: return argumentType
     val typeParameter = simplifiedArgumentType.lookupTag.typeParameterSymbol.fir
 
-    val context = session.typeCheckerContext
+    val context = session.typeContext
 
     val chosenSupertype = typeParameter.bounds.map { it.coneType }
         .singleOrNull { it.hasSupertypeWithGivenClassId(expectedTypeClassId, context) } ?: return argumentType
@@ -501,7 +507,7 @@ internal fun captureFromTypeParameterUpperBoundIfNeeded(
     }
 }
 
-private fun ConeKotlinType.hasSupertypeWithGivenClassId(classId: ClassId, context: ConeTypeCheckerContext): Boolean {
+private fun ConeKotlinType.hasSupertypeWithGivenClassId(classId: ClassId, context: TypeSystemCommonSuperTypesContext): Boolean {
     return with(context) {
         anySuperTypeConstructor {
             it is ConeClassLikeLookupTag && it.classId == classId

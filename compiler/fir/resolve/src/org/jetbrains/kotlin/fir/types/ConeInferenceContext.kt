@@ -97,8 +97,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun newBaseTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
-    ): AbstractTypeCheckerContext =
-        ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
+    ): ConeTypeCheckerContext =
+        ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, this)
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {
         require(this is ConeKotlinType)
@@ -482,5 +482,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         else StandardNames.getKFunctionClassId(parametersNumber)
         return session.symbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
             ?: error("Can't find KFunction type")
+    }
+
+    override fun createTypeWithAlternativeForIntersectionResult(
+        firstCandidate: KotlinTypeMarker,
+        secondCandidate: KotlinTypeMarker
+    ): KotlinTypeMarker {
+        // TODO
+        return firstCandidate
     }
 }

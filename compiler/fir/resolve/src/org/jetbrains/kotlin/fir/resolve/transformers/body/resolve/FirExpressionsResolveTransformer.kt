@@ -496,7 +496,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (baseType !is ConeClassLikeType) return this
         val baseFirClass = baseType.lookupTag.toSymbol(session)?.fir ?: return this
 
-        val newArguments = if (AbstractTypeChecker.isSubtypeOfClass(session.typeCheckerContext, baseType.lookupTag, type.lookupTag)) {
+        val newArguments = if (AbstractTypeChecker.isSubtypeOfClass(
+                session.typeContext.newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true), baseType.lookupTag, type.lookupTag)) {
             // If actual type of declaration is more specific than bare type then we should just find
             // corresponding supertype with proper arguments
             with(session.typeContext) {

@@ -393,24 +393,28 @@ public class OverridingUtil {
                 "Should be the same number of type parameters: " + firstParameters + " vs " + secondParameters;
 
         NewKotlinTypeCheckerImpl typeChecker = new NewKotlinTypeCheckerImpl(kotlinTypeRefiner);
-        OverridingUtilTypeCheckerContext context = createTypeCheckerContext(firstParameters, secondParameters);
+        ClassicTypeCheckerContext context = createTypeCheckerContext(firstParameters, secondParameters);
 
         return new Pair<NewKotlinTypeCheckerImpl, ClassicTypeCheckerContext>(typeChecker, context);
     }
 
     @NotNull
-    private OverridingUtilTypeCheckerContext createTypeCheckerContext(
+    private ClassicTypeCheckerContext createTypeCheckerContext(
             @NotNull List<TypeParameterDescriptor> firstParameters,
             @NotNull List<TypeParameterDescriptor> secondParameters
     ) {
-        if (firstParameters.isEmpty()) return new OverridingUtilTypeCheckerContext(null);
+        if (firstParameters.isEmpty()) {
+            return (ClassicTypeCheckerContext) new OverridingUtilTypeSystemContext(null, equalityAxioms, kotlinTypeRefiner)
+                    .newBaseTypeCheckerContext(true, true);
+        }
 
         Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
         for (int i = 0; i < firstParameters.size(); i++) {
             matchingTypeConstructors.put(firstParameters.get(i).getTypeConstructor(), secondParameters.get(i).getTypeConstructor());
         }
 
-        return new OverridingUtilTypeCheckerContext(matchingTypeConstructors);
+        return (ClassicTypeCheckerContext) new OverridingUtilTypeSystemContext(matchingTypeConstructors, equalityAxioms, kotlinTypeRefiner)
+                .newBaseTypeCheckerContext(true, true);
     }
 
     @Nullable
@@ -975,34 +979,6 @@ public class OverridingUtil {
             }
         }
         return maxVisibility;
-    }
-
-    private class OverridingUtilTypeCheckerContext extends ClassicTypeCheckerContext {
-        private final @Nullable Map<TypeConstructor, TypeConstructor> matchingTypeConstructors;
-
-        public OverridingUtilTypeCheckerContext(@Nullable Map<TypeConstructor, TypeConstructor> matchingTypeConstructors) {
-            super(
-                    /* errorTypesEqualsToAnything = */ true,
-                    /* stubTypesEqualsToAnything = */ true,
-                    /* allowedTypeVariable = */ true,
-                    kotlinTypeRefiner
-            );
-            this.matchingTypeConstructors = matchingTypeConstructors;
-        }
-
-        @Override
-        public boolean areEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-            return super.areEqualTypeConstructors(a, b) || areEqualTypeConstructorsByAxioms(a, b);
-        }
-
-        private boolean areEqualTypeConstructorsByAxioms(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-            if (equalityAxioms.equals(a, b)) return true;
-            if (matchingTypeConstructors == null) return false;
-
-            TypeConstructor img1 = matchingTypeConstructors.get(a);
-            TypeConstructor img2 = matchingTypeConstructors.get(b);
-            return (img1 != null && img1.equals(b)) || (img2 != null && img2.equals(a));
-        }
     }
 
     public static class OverrideCompatibilityInfo {

@@ -229,7 +229,13 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun createTypeChecker(overrideFun: IrSimpleFunction, parentFun: IrSimpleFunction): AbstractTypeCheckerContext =
-        IrTypeCheckerContextWithAdditionalAxioms(context.irBuiltIns, overrideFun.typeParameters, parentFun.typeParameters)
+        IrTypeCheckerContext(
+            IrTypeSystemContextWithAdditionalAxioms(
+                context.irBuiltIns,
+                overrideFun.typeParameters,
+                parentFun.typeParameters
+            )
+        )
 
     private fun areTypeParametersEquivalent(
         overrideFun: IrSimpleFunction,

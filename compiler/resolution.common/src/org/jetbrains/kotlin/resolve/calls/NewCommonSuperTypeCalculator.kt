@@ -267,9 +267,7 @@ object NewCommonSuperTypeCalculator {
          * but it is too complicated and we will return not so accurate type: CS(List<Int>, List<Double>, List<String>)
          */
         val correspondingSuperTypes = types.flatMap {
-            with(AbstractTypeChecker) {
-                typeCheckerContext.findCorrespondingSupertypes(it, constructor)
-            }
+            AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, it, constructor)
         }
 
         val arguments = ArrayList<TypeArgumentMarker>(constructor.parametersCount())
