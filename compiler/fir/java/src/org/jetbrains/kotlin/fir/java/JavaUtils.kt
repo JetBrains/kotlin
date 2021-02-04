@@ -63,6 +63,14 @@ internal val JavaModifierListOwner.modality: Modality
         else -> Modality.OPEN
     }
 
+internal val JavaClass.modality: Modality
+    get() = when {
+        isSealed -> Modality.SEALED
+        isAbstract -> Modality.ABSTRACT
+        isFinal -> Modality.FINAL
+        else -> Modality.OPEN
+    }
+
 internal val JavaClass.classKind: ClassKind
     get() = when {
         isAnnotationType -> ClassKind.ANNOTATION_CLASS
