@@ -326,6 +326,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.PRIVATE_MODIFIER)
         val EXPECTED_PRIVATE_DECLARATION by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val VAL_WITH_SETTER by error<FirSourceElement, KtPropertyAccessor>()
+        val CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT by error<FirSourceElement, KtProperty>(PositioningStrategy.CONST_MODIFIER)
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

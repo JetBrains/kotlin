@@ -127,4 +127,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.IF_EXPRESSION,
         PositioningStrategies.IF_EXPRESSION
     )
+
+    val CONST_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONST_MODIFIER,
+        PositioningStrategies.CONST_MODIFIER
+    )
 }
