@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -34,7 +34,7 @@ open class FirImportResolveTransformer protected constructor(
 
     constructor(session: FirSession) : this(session, FirResolvePhase.IMPORTS)
 
-    private val symbolProvider: FirSymbolProvider = session.firSymbolProvider
+    private val symbolProvider: FirSymbolProvider = session.symbolProvider
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
@@ -108,7 +108,7 @@ fun FirBlock.writeResultType(session: FirSession) {
 
 fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
     fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
-        val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)
+        val symbol = session.symbolProvider.getClassLikeSymbolByFqName(classId)
             ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
         return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
     }

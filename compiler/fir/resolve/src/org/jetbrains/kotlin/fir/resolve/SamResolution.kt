@@ -241,7 +241,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
     val classes =
         lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session)
             .mapNotNullTo(mutableListOf(this)) {
-                (session.firSymbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirRegularClassSymbol)?.fir
+                (session.symbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirRegularClassSymbol)?.fir
             }
 
     val samCandidateNames = mutableSetOf<Name>()

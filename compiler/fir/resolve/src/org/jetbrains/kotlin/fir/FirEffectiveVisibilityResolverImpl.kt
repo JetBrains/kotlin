@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -103,8 +103,8 @@ open class FirEffectiveVisibilityResolverImpl(private val session: FirSession) :
         if (!succeededToGetSymbol) {
             if (parentClassId?.isLocal == false) {
                 // ?: is needed to get enum from enum entry
-                parentSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
-                    ?: parentClassId.outerClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
+                parentSymbol = session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)
+                    ?: parentClassId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByFqName(it) }
                 parentSymbol?.fir.safeAs<FirMemberDeclaration>()?.let {
                     parentEffectiveVisibility = resolveFor(it, null, scopeSession)
                 }

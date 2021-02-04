@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -435,7 +435,7 @@ class Fir2IrClassifierStorage(
         firClass as FirRegularClass
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
-        val parentClass = parentId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
+        val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByFqName(it) }
         val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol)!!
         val symbol = Fir2IrClassSymbol(signature)
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->

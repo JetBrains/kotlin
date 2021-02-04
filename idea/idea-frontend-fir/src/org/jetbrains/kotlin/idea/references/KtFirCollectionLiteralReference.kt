@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.references
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -36,7 +36,7 @@ class KtFirCollectionLiteralReference(
     }
 
     private fun KtFirAnalysisSession.arrayOfSymbol(identifier: Name): KtSymbol? {
-        val fir = firResolveState.rootModuleSession.firSymbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
+        val fir = firResolveState.rootModuleSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
              * public fun byteArrayOf(vararg elements: kotlin.Byte): kotlin.ByteArray
              */

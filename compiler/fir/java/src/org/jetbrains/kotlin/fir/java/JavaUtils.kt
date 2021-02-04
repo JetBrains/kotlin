@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolv
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
@@ -385,7 +385,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 )
             }
 
-            val classSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
+            val classSymbol = session.symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
 
             val mappedTypeArguments = if (isRaw) {
                 val defaultArgs = (1..classifier.typeParameters.size).map { ConeStarProjection }
@@ -436,7 +436,7 @@ private fun FirRegularClass.createRawArguments(
 private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?) =
     buildFunctionCall {
         val calleeReference = if (classId != null && entryName != null) {
-            session.firSymbolProvider.getClassDeclaredPropertySymbols(classId, entryName)
+            session.symbolProvider.getClassDeclaredPropertySymbols(classId, entryName)
                 .firstOrNull()?.let { propertySymbol ->
                     buildResolvedNamedReference {
                         name = entryName
@@ -503,7 +503,7 @@ private fun buildArgumentMapping(
     if (annotationArguments.none { it.name != null }) {
         return null
     }
-    val annotationClassSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(lookupTag.classId).also {
+    val annotationClassSymbol = session.symbolProvider.getClassLikeSymbolByFqName(lookupTag.classId).also {
         lookupTag.bindSymbolToLookupTag(session, it)
     } ?: return null
     val annotationConstructor =

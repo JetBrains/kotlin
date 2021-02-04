@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -138,7 +138,7 @@ internal class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(valu
             is Value.LocalClass -> return value.type
             is Value.NormalClass -> {
                 val (classId, arrayDimensions) = value.value
-                val klass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
+                val klass = session.symbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
                 var type: ConeKotlinType = klass.defaultType().replaceArgumentsWithStarProjections()
                 repeat(arrayDimensions) {
                     type = type.createArrayType()

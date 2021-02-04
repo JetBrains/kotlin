@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -77,7 +77,7 @@ class FirSealedClassInheritorsTransformer : FirTransformer<Nothing?>() {
                 data.computeIfAbsent(regularClass) { mutableListOf() }
             }
 
-            val symbolProvider = regularClass.session.firSymbolProvider
+            val symbolProvider = regularClass.session.symbolProvider
 
             for (typeRef in regularClass.superTypeRefs) {
                 val parent = extractClassFromTypeRef(symbolProvider, typeRef).takeIf { it?.modality == Modality.SEALED } ?: continue

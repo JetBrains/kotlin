@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedBodyResolveTransformerForIDE
@@ -49,7 +49,7 @@ internal class FirLazyDeclarationResolver(
                 else -> error("Invalid source of property accessor ${ktDeclaration::class}")
             }
             val containingProperty = ktContainingResolvableDeclaration
-                .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.session.firSymbolProvider, moduleFileCache)
+                .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.session.symbolProvider, moduleFileCache)
             return lazyResolveDeclaration(containingProperty, moduleFileCache, toPhase, towerDataContextCollector)
         }
 

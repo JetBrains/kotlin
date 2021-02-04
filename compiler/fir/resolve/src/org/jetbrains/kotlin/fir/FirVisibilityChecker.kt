@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -133,7 +133,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     private fun ClassId.ownerIfCompanion(session: FirSession): ClassId? {
         if (outerClassId == null || isLocal) return null
-        val ownerSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
+        val ownerSymbol = session.symbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
 
         return outerClassId.takeIf { ownerSymbol?.fir?.isCompanion == true }
     }
