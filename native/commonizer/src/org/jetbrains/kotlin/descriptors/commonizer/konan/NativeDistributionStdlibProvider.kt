@@ -24,7 +24,7 @@ internal class NativeDistributionStdlibProvider(
         cInteropAttributes = null
     )
 
-    override fun loadModuleInfos(): Map<String, ModuleInfo> = mapOf(KONAN_STDLIB_NAME to moduleInfo)
+    override fun loadModuleInfos() = listOf(moduleInfo)
 
     override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> {
         check(dependencies.isEmpty())

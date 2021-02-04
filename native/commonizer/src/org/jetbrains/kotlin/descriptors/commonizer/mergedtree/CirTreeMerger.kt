@@ -68,12 +68,14 @@ class CirTreeMerger(
         val rootNode: CirRootNode = buildRootNode(storageManager, size)
 
         // remember any exported forward declarations from common fragments of dependee modules
-        parameters.dependeeModulesProvider?.loadModuleInfos()?.values?.forEach(::processCInteropModuleAttributes)
+        parameters.dependeeModulesProvider?.loadModuleInfos()?.forEach(::processCInteropModuleAttributes)
 
         // load common dependencies
         val dependeeModules = parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
 
-        val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { it.modulesProvider.loadModuleInfos() }
+        val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { targetProvider ->
+            targetProvider.modulesProvider.loadModuleInfos().associateBy { it.name }
+        }
         val commonModuleNames = allModuleInfos.map { it.keys }.reduce { a, b -> a intersect b }
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->

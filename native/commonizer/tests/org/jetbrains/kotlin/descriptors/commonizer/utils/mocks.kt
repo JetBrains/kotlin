@@ -152,7 +152,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, ModuleDescriptor>,
 ) : ModulesProvider {
-    private val moduleInfos: Map<String, ModuleInfo> = modules.mapValues { (name, _) -> fakeModuleInfo(name) }
+    private val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
 
     override fun loadModuleInfos() = moduleInfos
     override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> = modules

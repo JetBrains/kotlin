@@ -26,6 +26,6 @@ interface ModulesProvider {
         val exportForwardDeclarations: Collection<String>
     )
 
-    fun loadModuleInfos(): Map<String, ModuleInfo>
+    fun loadModuleInfos(): Collection<ModuleInfo>
     fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor>
 }

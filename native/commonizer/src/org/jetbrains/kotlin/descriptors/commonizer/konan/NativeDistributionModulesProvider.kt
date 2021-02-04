@@ -23,8 +23,8 @@ internal class NativeDistributionModulesProvider(
     private val storageManager: StorageManager,
     private val librariesToCommonize: NativeLibrariesToCommonize
 ) : ModulesProvider {
-    private val moduleInfos: Map<String, ModuleInfo> by lazy {
-        librariesToCommonize.libraries.associate { library ->
+    private val moduleInfos by lazy {
+        librariesToCommonize.libraries.map { library ->
             val manifestData = library.manifestData
 
             val name = manifestData.uniqueName
@@ -38,11 +38,11 @@ internal class NativeDistributionModulesProvider(
                 CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
             } else null
 
-            name to ModuleInfo(name, location, cInteropAttributes)
+            ModuleInfo(name, location, cInteropAttributes)
         }
     }
 
-    override fun loadModuleInfos(): Map<String, ModuleInfo> = moduleInfos
+    override fun loadModuleInfos() = moduleInfos
 
     override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> {
         check(dependencies.isNotEmpty()) { "At least Kotlin/Native stdlib should be provided" }
