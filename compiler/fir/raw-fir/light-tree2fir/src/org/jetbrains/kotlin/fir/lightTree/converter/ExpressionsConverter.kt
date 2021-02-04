@@ -1084,6 +1084,7 @@ class ExpressionsConverter(
         }
 
         return buildWhenExpression {
+            source = ifExpression.toFirSourceElement()
             val trueBranch = convertLoopBody(thenBlock)
             branches += buildWhenBranch {
                 source = thenBlock?.toFirSourceElement()
