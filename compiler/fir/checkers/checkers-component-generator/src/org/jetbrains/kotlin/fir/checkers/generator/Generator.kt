@@ -24,7 +24,7 @@ class Generator(
 
     private fun generateAliases() {
         val filename = "${abstractCheckerName}Aliases.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printGeneratedMessage()
             configuration.aliases.keys
@@ -43,7 +43,7 @@ class Generator(
 
     private fun generateAbstractCheckersComponent() {
         val filename = "${checkersComponentName}.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()
@@ -86,7 +86,7 @@ class Generator(
     private fun generateComposedComponent() {
         val composedComponentName = "Composed$checkersComponentName"
         val filename = "${composedComponentName}.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()

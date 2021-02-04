@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import java.io.File
 import java.lang.Appendable
 
@@ -49,6 +50,7 @@ inline fun SmartPrinter.withIndent(block: () -> Unit) {
     popIndent()
 }
 
-inline fun File.useSmartPrinter(block: SmartPrinter.() -> Unit) {
-    writer().use { SmartPrinter(it).block() }
+inline fun File.writeToFileUsingSmartPrinterIfFileContentChanged(block: SmartPrinter.() -> Unit) {
+    val newText = buildString { SmartPrinter(this).block() }
+    GeneratorsFileUtil.writeFileIfContentChanged(this, newText)
 }

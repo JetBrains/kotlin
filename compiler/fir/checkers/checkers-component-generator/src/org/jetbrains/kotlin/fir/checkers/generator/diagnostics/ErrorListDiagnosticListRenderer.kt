@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
-import org.jetbrains.kotlin.fir.tree.generator.printer.useSmartPrinter
+import org.jetbrains.kotlin.fir.tree.generator.printer.writeToFileUsingSmartPrinterIfFileContentChanged
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -17,7 +17,7 @@ import kotlin.reflect.KTypeProjection
 
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
-        file.useSmartPrinter {
+        file.writeToFileUsingSmartPrinterIfFileContentChanged {
             render(diagnosticList, packageName)
         }
     }
