@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.jdk
 
-import org.jetbrains.kotlin.codegen.jdk.RunOnlyJdk6Test
-import org.jetbrains.kotlin.test.runners.codegen.BlackBoxCodegenTestGenerated
-import org.jetbrains.kotlin.test.runners.codegen.BlackBoxInlineCodegenTestGenerated
-import org.jetbrains.kotlin.test.runners.codegen.CompileKotlinAgainstInlineKotlinTestGenerated
+import org.jetbrains.kotlin.test.runners.codegen.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.platform.runner.JUnitPlatform
@@ -24,7 +21,11 @@ import org.junit.runner.RunWith
 @SelectClasses(
     BlackBoxCodegenTestGenerated::class,
     BlackBoxInlineCodegenTestGenerated::class,
-    CompileKotlinAgainstInlineKotlinTestGenerated::class
+    CompileKotlinAgainstInlineKotlinTestGenerated::class,
+
+    IrBlackBoxCodegenTestGenerated::class,
+    IrBlackBoxInlineCodegenTestGenerated::class,
+    IrCompileKotlinAgainstInlineKotlinTestGenerated::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
 @UseTechnicalNames
