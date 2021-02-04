@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
 
 abstract class KtSmartCastProvider : KtAnalysisSessionComponent() {
-    abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>
-    abstract fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
+    abstract fun getSmartCastedToType(expression: KtExpression): KtType?
+    abstract fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 }

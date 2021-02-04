@@ -61,10 +61,10 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
         symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
 
-    fun KtExpression.getSmartCasts(): Collection<KtType> = smartCastProvider.getSmartCastedToTypes(this)
+    fun KtExpression.getSmartCast(): KtType? = smartCastProvider.getSmartCastedToType(this)
 
-    fun KtExpression.getImplicitReceiverSmartCasts(): Collection<ImplicitReceiverSmartCast> =
-        smartCastProvider.getImplicitReceiverSmartCasts(this)
+    fun KtExpression.getImplicitReceiverSmartCast(): Collection<ImplicitReceiverSmartCast> =
+        smartCastProvider.getImplicitReceiverSmartCast(this)
 
     fun KtExpression.getKtType(): KtType = expressionTypeProvider.getKtExpressionType(this)
 
