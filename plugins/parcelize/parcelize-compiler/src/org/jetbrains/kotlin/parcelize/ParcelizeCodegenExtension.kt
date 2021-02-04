@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -220,7 +221,7 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
 
         createMethod(
             creatorClass, CREATE_FROM_PARCEL, Modality.FINAL,
-            parcelableClass.defaultType, "in" to parcelClassType
+            parcelableClass.defaultType.replaceArgumentsWithStarProjections(), "in" to parcelClassType
         ).write(codegen, overriddenFunction) {
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
@@ -368,7 +369,7 @@ open class ParcelizeCodegenExtension : ParcelizeExtensionBase, ExpressionCodegen
 
         createMethod(
             creatorClass, NEW_ARRAY, Modality.FINAL,
-            builtIns.getArrayType(Variance.INVARIANT, parcelableClass.defaultType),
+            builtIns.getArrayType(Variance.INVARIANT, parcelableClass.defaultType.replaceArgumentsWithStarProjections()),
             "size" to builtIns.intType
         ).write(codegen, overriddenFunction) {
             if (parcelerObject != null) {
