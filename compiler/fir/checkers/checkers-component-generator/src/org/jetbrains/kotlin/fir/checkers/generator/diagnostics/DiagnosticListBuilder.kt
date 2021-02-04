@@ -17,7 +17,7 @@ import kotlin.reflect.typeOf
 
 class DiagnosticListBuilder private constructor() {
     @PrivateForInline
-    val diagnostics = mutableListOf<Diagnostic>()
+    val diagnostics = mutableListOf<DiagnosticData>()
 
     @PrivateForInline
     var currentGroupName: String? = null
@@ -100,7 +100,7 @@ class DiagnosticBuilder(
     }
 
     @OptIn(PrivateForInline::class)
-    fun build() = Diagnostic(
+    fun build() = DiagnosticData(
         severity,
         name,
         sourceElementType,

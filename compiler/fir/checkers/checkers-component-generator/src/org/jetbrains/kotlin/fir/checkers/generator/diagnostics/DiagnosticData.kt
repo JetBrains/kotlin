@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.reflect.KType
 
-data class Diagnostic(
+data class DiagnosticData(
     val severity: Severity,
     val name: String,
     val sourceElementType: KType,
@@ -108,9 +108,9 @@ enum class PositioningStrategy(val expressionToCreate: String, val import: Strin
 private const val positioningStrategiesImport = "org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies"
 
 
-fun Diagnostic.hasDefaultPositioningStrategy(): Boolean =
+fun DiagnosticData.hasDefaultPositioningStrategy(): Boolean =
     positioningStrategy == PositioningStrategy.DEFAULT
 
 data class DiagnosticList(
-    val diagnostics: List<Diagnostic>,
+    val diagnostics: List<DiagnosticData>,
 )

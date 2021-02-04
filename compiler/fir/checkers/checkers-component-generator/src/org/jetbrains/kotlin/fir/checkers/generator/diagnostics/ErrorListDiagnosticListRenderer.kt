@@ -43,7 +43,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
     private fun SmartPrinter.printDiagnosticGroup(
         group: String?,
-        diagnostics: List<Diagnostic>
+        diagnostics: List<DiagnosticData>
     ) {
         println("// ${group ?: "NO GROUP"}")
         for (it in diagnostics) {
@@ -51,14 +51,14 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         }
     }
 
-    private fun SmartPrinter.printDiagnostic(diagnostic: Diagnostic) {
+    private fun SmartPrinter.printDiagnostic(diagnostic: DiagnosticData) {
         print("val ${diagnostic.name} by ${diagnostic.getFactoryFunction()}")
         printTypeArguments(diagnostic.getAllTypeArguments())
         printPositioningStrategy(diagnostic)
         println()
     }
 
-    private fun SmartPrinter.printPositioningStrategy(diagnostic: Diagnostic) {
+    private fun SmartPrinter.printPositioningStrategy(diagnostic: DiagnosticData) {
         print("(")
         if (!diagnostic.hasDefaultPositioningStrategy()) {
             print(diagnostic.positioningStrategy.expressionToCreate)
@@ -68,7 +68,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
 
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun Diagnostic.getAllTypeArguments(): List<KType> = buildList {
+    private fun DiagnosticData.getAllTypeArguments(): List<KType> = buildList {
         add(sourceElementType)
         add(psiType)
         parameters.mapTo(this) { it.type }
@@ -124,7 +124,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     private val KType.kClass: KClass<*>
         get() = classifier as KClass<*>
 
-    private fun Diagnostic.getFactoryFunction(): String =
+    private fun DiagnosticData.getFactoryFunction(): String =
         severity.name.toLowerCase() + parameters.size
 }
 
