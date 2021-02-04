@@ -11,7 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -46,7 +46,7 @@ internal class KtSymbolByFirBuilder private constructor(
 ) : ValidityTokenOwner {
     private val resolveState by weakRef(resolveState)
 
-    private val firProvider get() = resolveState.rootModuleSession.firSymbolProvider
+    private val firProvider get() = resolveState.rootModuleSession.symbolProvider
 
     constructor(
         resolveState: FirModuleResolveState,
