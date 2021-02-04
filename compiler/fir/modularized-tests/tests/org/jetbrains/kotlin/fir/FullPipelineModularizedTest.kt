@@ -30,11 +30,12 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
         val gcInfo: Map<String, GCInfo>,
         val analysis: Long,
         val translation: Long,
+        val lowering: Long,
         val generation: Long,
         val files: Int,
         val lines: Int
     ) {
-        constructor() : this(emptyMap(), 0, 0, 0, 0, 0)
+        constructor() : this(emptyMap(), 0, 0, 0, 0, 0, 0)
 
         operator fun plus(other: CumulativeTime): CumulativeTime {
             return CumulativeTime(
@@ -43,13 +44,14 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
                 },
                 analysis + other.analysis,
                 translation + other.translation,
+                lowering + other.lowering,
                 generation + other.generation,
                 files + other.files,
                 lines + other.lines
             )
         }
 
-        fun totalTime() = analysis + translation + generation
+        fun totalTime() = analysis + translation + lowering + generation
     }
 
     private lateinit var totalPassResult: CumulativeTime
@@ -126,6 +128,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
             }
             phase("Analysis", total.analysis, total.files, total.lines)
             phase("Translation", total.translation, total.files, total.lines)
+            phase("Lowering", total.lowering, total.files, total.lines)
             phase("Generation", total.generation, total.files, total.lines)
 
             separator()
@@ -264,6 +267,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
                 gcInfo,
                 analysisMeasurement?.milliseconds ?: 0,
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.TRANSLATION }?.milliseconds ?: 0,
+                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.LOWERING }?.milliseconds ?: 0,
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.GENERATION }?.milliseconds ?: 0,
                 files ?: 0,
                 lines ?: 0
