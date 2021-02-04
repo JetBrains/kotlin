@@ -16,7 +16,7 @@ annotation class AdapterForResolveProcessor
 sealed class FirResolveProcessor(val session: FirSession, val scopeSession: ScopeSession)
 
 abstract class FirGlobalResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirResolveProcessor(session, scopeSession) {
-    abstract fun process()
+    abstract fun process(files: Collection<FirFile>)
 }
 
 abstract class FirTransformerBasedResolveProcessor(

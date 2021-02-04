@@ -24,7 +24,7 @@ class FirGlobalExtensionStatusProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirGlobalResolveProcessor(session, scopeSession) {
-    override fun process() {
+    override fun process(files: Collection<FirFile>) {
         val extensions = session.extensionService.statusTransformerExtensions
         if (extensions.isEmpty()) return
         val provider = session.predicateBasedProvider

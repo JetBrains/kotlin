@@ -159,7 +159,7 @@ class FirResolveBench(val withProgress: Boolean) {
     private fun runStage(processor: FirResolveProcessor, firFileSequence: Sequence<FirFile>) {
         when (processor) {
             is FirTransformerBasedResolveProcessor -> runStage(processor, firFileSequence)
-            is FirGlobalResolveProcessor -> runStage(processor)
+            is FirGlobalResolveProcessor -> runStage(processor, firFileSequence.toList())
         }
     }
 
@@ -182,10 +182,10 @@ class FirResolveBench(val withProgress: Boolean) {
         }
     }
 
-    private fun runStage(processor: FirGlobalResolveProcessor) {
+    private fun runStage(processor: FirGlobalResolveProcessor, firFiles: List<FirFile>) {
         processWithTimeMeasure(
             processor::class,
-            { processor.process() }
+            { processor.process(firFiles) }
         ) { e ->
             val message = "Fail on stage ${processor::class}"
             println(message)
