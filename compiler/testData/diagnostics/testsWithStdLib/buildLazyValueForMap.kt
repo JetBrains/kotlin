@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 interface ClassId
 
 interface JavaAnnotation {

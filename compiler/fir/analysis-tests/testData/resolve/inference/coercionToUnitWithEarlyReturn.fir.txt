@@ -11,7 +11,7 @@ FILE: coercionToUnitWithEarlyReturn.kt
     public final fun foo(x: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun main(x: R|A?|): R|kotlin/Unit| {
-        lval lambda: R|() -> kotlin/Unit| = l@fun <anonymous>(): R|kotlin/Unit| {
+        lval lambda: R|() -> kotlin/Unit?| = l@fun <anonymous>(): R|kotlin/Unit?| {
             when () {
                 ==(R|<local>/x|?.{ $subj$.R|kotlin/Any.hashCode|() }, Int(0)) ->  {
                     ^@l Unit
@@ -21,5 +21,5 @@ FILE: coercionToUnitWithEarlyReturn.kt
             ^ R|<local>/x|?.{ $subj$.R|/A.unit|() }
         }
 
-        R|/foo|(R|<local>/lambda|)
+        <Inapplicable(INAPPLICABLE): /foo>#(R|<local>/lambda|)
     }

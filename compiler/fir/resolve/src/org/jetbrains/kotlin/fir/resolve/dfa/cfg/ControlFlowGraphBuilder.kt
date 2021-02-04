@@ -133,7 +133,6 @@ class ControlFlowGraphBuilder {
 
         fun CFGNode<*>.extractArgument(): FirElement? = when (this) {
             is FunctionEnterNode, is TryMainBlockEnterNode, is CatchClauseEnterNode -> null
-            is ExitSafeCallNode -> lastPreviousNode.extractArgument()
             is StubNode, is BlockExitNode -> firstPreviousNode.extractArgument()
             else -> fir.extractArgument()
         }
@@ -1090,8 +1089,9 @@ class ControlFlowGraphBuilder {
          *   lastNode -> exitNode
          * instead of
          *   lastNode -> enterNode -> exitNode
-         * because of we need to fork flow on `enterNode`, so `exitNode`
+         * because we need to fork flow before `enterNode`, so `exitNode`
          *   will have unchanged flow from `lastNode`
+         *   which corresponds to a path with nullable receiver.
          */
         val lastNode = lastNodes.pop()
         val enterNode = createEnterSafeCallNode(safeCall)
@@ -1104,6 +1104,12 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitSafeCall(): ExitSafeCallNode {
+        // There will be two paths towards this exit safe call node:
+        // one from the node prior to the enclosing safe call, and
+        // the other from the selector part in the enclosing safe call.
+        // Note that *neither* points to the safe call directly.
+        // So, when it comes to the real exit of the enclosing block/function,
+        // the safe call bound to this exit safe call node should be retrieved.
         return exitSafeCallNodes.pop().also {
             addNewSimpleNode(it)
             it.updateDeadStatus()
