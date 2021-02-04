@@ -67,8 +67,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -391,6 +393,33 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     }
                 }
 
+                private fun processThisCall(
+                    expression: KtSimpleNameExpression,
+                    context: BindingContext,
+                    extensionReceiver: ReceiverValue?,
+                    dispatchReceiver: ReceiverValue?
+                ) {
+                    val thisExpression = expression.parent as? KtThisExpression ?: return
+                    val thisCallExpression = thisExpression.parent as? KtCallExpression ?: return
+                    val usageInfo = when (callableDescriptor) {
+                        dispatchReceiver.getReceiverTargetDescriptor(context) -> {
+                            val extensionReceiverTargetDescriptor = extensionReceiver.getReceiverTargetDescriptor(context)
+                            if (extensionReceiverTargetDescriptor != null) {
+                                KotlinNonQualifiedOuterThisCallUsage(
+                                    thisCallExpression, originalReceiverInfo!!, functionUsageInfo, extensionReceiverTargetDescriptor
+                                )
+                            } else {
+                                KotlinParameterUsage(expression, originalReceiverInfo!!, functionUsageInfo)
+                            }
+                        }
+                        extensionReceiver.getReceiverTargetDescriptor(context) -> {
+                            KotlinParameterUsage(expression, originalReceiverInfo!!, functionUsageInfo)
+                        }
+                        else -> null
+                    }
+                    result.addIfNotNull(usageInfo)
+                }
+
                 override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, context: BindingContext): Void? {
                     val resolvedCall = expression.getResolvedCall(context) ?: return null
 
@@ -400,11 +429,16 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         return null
                     }
 
-                    val receiverValue = resolvedCall
+                    val (extensionReceiver, dispatchReceiver) = resolvedCall
                         .let { (it as? VariableAsFunctionResolvedCall)?.variableCall ?: it }
-                        .let { it.extensionReceiver ?: it.dispatchReceiver }
-                    if (receiverValue is ImplicitReceiver) {
-                        processImplicitThis(resolvedCall.call.callElement, receiverValue)
+                        .let { (it.extensionReceiver to it.dispatchReceiver) }
+                    if (extensionReceiver != null || dispatchReceiver != null) {
+                        val receiverValue = extensionReceiver ?: dispatchReceiver
+                        if (receiverValue is ImplicitReceiver) {
+                            processImplicitThis(resolvedCall.call.callElement, receiverValue)
+                            return null
+                        }
+                        processThisCall(expression, context, extensionReceiver, dispatchReceiver)
                     }
 
                     return null

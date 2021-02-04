@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 
 // Explicit reference to function parameter or outer this
@@ -63,4 +61,18 @@ class KotlinNonQualifiedOuterThisUsage(
     }
 
     override fun getReplacementText(changeInfo: KotlinChangeInfo): String = "this@${targetDescriptor.name.asString()}"
+}
+
+class KotlinNonQualifiedOuterThisCallUsage(
+    element: KtCallExpression,
+    val parameterInfo: KotlinParameterInfo,
+    val containingCallable: KotlinCallableDefinitionUsage<*>,
+    val targetDescriptor: DeclarationDescriptor
+) : KotlinExplicitReferenceUsage<KtCallExpression>(element) {
+    override fun getReplacementText(changeInfo: KotlinChangeInfo): String {
+        val inheritedName = parameterInfo.getInheritedName(containingCallable)
+        val receiver = targetDescriptor.explicateAsTextForReceiver()
+        element?.calleeExpression?.replace(KtPsiFactory(changeInfo.context).createExpression(receiver))
+        return "with($inheritedName) $inheritedName@{ ${element?.text} }"
+    }
 }

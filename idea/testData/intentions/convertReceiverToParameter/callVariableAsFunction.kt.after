@@ -9,6 +9,8 @@ class User(
     val callableLambda: () -> Unit = {}
 
     fun checkName() = Unit
+
+    operator fun invoke() = Unit
 }
 
 fun extFun(user: User) {
@@ -16,4 +18,5 @@ fun extFun(user: User) {
     user.checkName()
     user.callableLambda()
     user.callableObject()
+    user()
 }
