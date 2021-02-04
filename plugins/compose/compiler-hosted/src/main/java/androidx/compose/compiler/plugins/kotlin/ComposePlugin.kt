@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
@@ -129,7 +129,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             project: Project,
             configuration: CompilerConfiguration
         ) {
-            val KOTLIN_VERSION_EXPECTATION = "1.4.21-2"
+            val KOTLIN_VERSION_EXPECTATION = "1.4.30"
             KotlinCompilerVersion.getVersion()?.let { version ->
                 val suppressKotlinVersionCheck = configuration.get(
                     ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
@@ -186,7 +186,8 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                     intrinsicRememberEnabled = intrinsicRememberEnabled
                 )
             )
-            DescriptorSerializer.registerSerializerPlugin(
+            DescriptorSerializerPlugin.registerExtension(
+                project,
                 ClassStabilityFieldSerializationPlugin()
             )
         }
