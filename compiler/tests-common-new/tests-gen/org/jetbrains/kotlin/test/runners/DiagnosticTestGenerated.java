@@ -11842,6 +11842,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("errorsOnImplicitInvokeInSimpleCall.kt")
+            public void testErrorsOnImplicitInvokeInSimpleCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/errorsOnImplicitInvokeInSimpleCall.kt");
+            }
+
+            @Test
             @TestMetadata("expectedTypeAdditionalTest.kt")
             public void testExpectedTypeAdditionalTest() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/expectedTypeAdditionalTest.kt");
