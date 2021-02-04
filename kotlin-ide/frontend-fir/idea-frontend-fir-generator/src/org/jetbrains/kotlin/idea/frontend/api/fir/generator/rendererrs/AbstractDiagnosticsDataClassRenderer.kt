@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.printImports
 import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
-import org.jetbrains.kotlin.fir.tree.generator.printer.useSmartPrinter
+import org.jetbrains.kotlin.fir.tree.generator.printer.writeToFileUsingSmartPrinterIfFileContentChanged
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticConverter
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
@@ -21,7 +21,7 @@ import java.io.File
 abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
     override fun render(file: File, diagnosticList: DiagnosticList, packageName: String) {
         val hlDiagnosticsList = HLDiagnosticConverter.convert(diagnosticList)
-        file.useSmartPrinter { render(hlDiagnosticsList, packageName) }
+        file.writeToFileUsingSmartPrinterIfFileContentChanged { render(hlDiagnosticsList, packageName) }
     }
 
     private fun SmartPrinter.collectAndPrintImports(diagnosticList: HLDiagnosticList) {
