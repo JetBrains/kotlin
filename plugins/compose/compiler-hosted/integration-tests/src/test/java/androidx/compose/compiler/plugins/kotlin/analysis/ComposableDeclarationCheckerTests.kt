@@ -18,10 +18,6 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 
-/**
- * We're strongly considering supporting try-catch-finally blocks in the future.
- * If/when we do support them, these tests should be deleted.
- */
 class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testPropertyWithInitializer() {
         doTest(
@@ -217,6 +213,25 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
                 <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
             }
+        """
+        )
+    }
+
+    fun testInferenceOverComplexConstruct1() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            val composable: @Composable ()->Unit = if(true) { { } } else { { } }
+        """
+        )
+    }
+
+    fun testInferenceOverComplexConstruct2() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            @Composable fun foo() { }
+            val composable: @Composable ()->Unit = if(true) { { } } else { { foo() } }
         """
         )
     }

@@ -98,6 +98,7 @@ abstract class AbstractCompilerTest : TestCase() {
         val configuration = newConfiguration()
         configuration.addJvmClasspathRoots(classPath)
 
+        System.setProperty("idea.ignore.disabled.plugins", "true")
         return KotlinCoreEnvironment.createForTests(
             myTestRootDisposable,
             configuration,
