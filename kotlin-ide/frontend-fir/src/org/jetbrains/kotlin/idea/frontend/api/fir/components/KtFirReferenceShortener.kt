@@ -206,7 +206,9 @@ internal class KtFirReferenceShortener(
             val (mostTopLevelClassId, mostTopLevelTypeElement) = allClassIds.zip(allTypeElements).last()
             val availableClassifier = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
 
-            check(availableClassifier?.classId != mostTopLevelClassId) { "This should not be true" }
+            check(availableClassifier?.classId != mostTopLevelClassId) {
+                "If this condition were true, we would have exited from the loop on the last iteration. ClassId = $mostTopLevelClassId"
+            }
 
             if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
                 addTypeToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelTypeElement)
@@ -360,7 +362,9 @@ internal class KtFirReferenceShortener(
             val (mostTopLevelClassId, mostTopLevelQualifier) = allClassIds.zip(allQualifiers).last()
             val availableClassifier = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
 
-            check(availableClassifier?.classId != mostTopLevelClassId) { "This should not be true" }
+            check(availableClassifier?.classId != mostTopLevelClassId) {
+                "If this condition were true, we would have exited from the loop on the last iteration. ClassId = $mostTopLevelClassId"
+            }
 
             if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
                 addElementToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelQualifier)
