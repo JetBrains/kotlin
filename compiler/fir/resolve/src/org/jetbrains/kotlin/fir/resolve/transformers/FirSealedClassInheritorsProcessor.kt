@@ -95,7 +95,3 @@ class FirSealedClassInheritorsProcessor(
     }
 
 }
-
-object SealedClassInheritorsKey : FirDeclarationDataKey()
-
-var FirRegularClass.sealedInheritors: List<ClassId>? by FirDeclarationDataRegistry.data(SealedClassInheritorsKey)

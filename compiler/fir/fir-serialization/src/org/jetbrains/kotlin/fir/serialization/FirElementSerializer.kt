@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
