@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import android.os.Looper.getMainLooper
 import android.widget.Button
 import org.intellij.lang.annotations.Language
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -33,6 +34,7 @@ import org.robolectric.annotation.Config
 class LambdaMemoizationTests : AbstractLoweringTests() {
 
     @Test
+    @Ignore("b/179279455")
     fun nonCapturingEventLambda() = skipping(
         """
             fun eventFired() { }
@@ -54,6 +56,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun lambdaInClassInitializer() = skipping(
         """
             @Composable
@@ -79,6 +82,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun methodReferenceEvent() = skipping(
         """
             fun eventFired() { }
@@ -101,6 +105,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun methodReferenceOnValue() = skipping(
         """
         fun eventFired(value: String) { }
@@ -127,6 +132,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun extensionMethodReferenceOnValue() = skipping(
         """
         fun eventFired(value: String) { }
@@ -155,6 +161,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun doNotMemoizeCallsToInlines() = skipping(
         """
             fun eventFired(data: String) { }
@@ -185,6 +192,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun captureParameterDirectEventLambda() = skipping(
         """
             fun eventFired(data: String) { }
@@ -206,6 +214,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun shouldNotRememberDirectLambdaParameter() = skipping(
         """
         fun eventFired(data: String) {
@@ -232,6 +241,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun narrowCaptureValidation() = skipping(
         """
         fun eventFired(data: String) { }
@@ -260,6 +270,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun captureInANestedScope() = skipping(
         """
         fun eventFired(data: String) { }
@@ -301,6 +312,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun twoCaptures() = skipping(
         """
         fun eventFired(data: String) { }
@@ -336,6 +348,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun threeCaptures() = skipping(
         """
         fun eventFired(data: String) { }
@@ -372,6 +385,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun fiveCaptures() = skipping(
         """
         fun eventFired(data: String) { }
@@ -407,6 +421,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun doNotMemoizeNonStableCaptures() = skipping(
         """
         val unmodifiedUnstable = Any()
@@ -440,6 +455,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun doNotMemoizeVarCapures() = skipping(
         """
         fun eventFired(data: Int) { }
@@ -485,6 +501,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun considerNonComposableCaptures() = skipping(
         """
         fun eventFired(data: Int) {}
@@ -514,6 +531,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun wrapLambaExpressions() = skipping(
         """
             @Composable
@@ -535,6 +553,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun nonCapturingComposableLambda() = skipping(
         """
             @Composable
@@ -575,6 +594,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun wrappingOneParameter() = skipping(
         """
         @Composable
@@ -598,6 +618,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test // Selecting 23 as 22 is the maximum number handled by RestartingFunction
+    @Ignore("b/179279455")
     fun wrapping23Parameters() = skipping(
         """
         @Composable
@@ -676,6 +697,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun wrappingReceiverParameter() = skipping(
         """
         class Receiver() { }
@@ -700,6 +722,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun untrackedLambdasShouldNotForceEvaluation() = skipping(
         """
         @Composable
@@ -726,6 +749,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun lambdasWithReturnResultsShouldBeUntracked() = skipping(
         """
 
@@ -753,6 +777,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun method_lambdaCapturingThis_Unstable() = skipping(
         """
             fun log(data: String) { }
@@ -783,6 +808,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun method_lambdaCapturingThis_Stable() = skipping(
         """
             fun log(data: String) { }
@@ -830,6 +856,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun receiver_lambdaCapturingThis_Unstable() = skipping(
         """
             fun log(data: String) { }
@@ -862,6 +889,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun receiver_lambdaCapturingThis_Stable() = skipping(
         """
             fun log(data: String) { }

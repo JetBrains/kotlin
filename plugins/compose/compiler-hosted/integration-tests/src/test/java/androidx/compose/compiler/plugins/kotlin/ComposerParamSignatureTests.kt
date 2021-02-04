@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -386,6 +387,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    @Ignore("b/179279455")
     fun testCorrectComposerPassed1(): Unit = checkComposerParam(
         """
             var a: Composer? = null
@@ -399,6 +401,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun testCorrectComposerPassed2(): Unit = checkComposerParam(
         """
             var a: Composer? = null
@@ -415,6 +418,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun testCorrectComposerPassed3(): Unit = checkComposerParam(
         """
             var a: Composer? = null
@@ -438,6 +442,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun testCorrectComposerPassed4(): Unit = checkComposerParam(
         """
             var a: Composer? = null
@@ -464,6 +469,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     )
 
     @Test
+    @Ignore("b/179279455")
     fun testCorrectComposerPassed5(): Unit = checkComposerParam(
         """
             var a: Composer? = null
