@@ -180,7 +180,7 @@ class PowerAssertCallTransformer(
                   }
                   parent = scope.parent
                 }
-                val expression = IrFunctionExpressionImpl(-1, -1, parameters[1].type, lambda, IrStatementOrigin.LAMBDA)
+                val expression = IrFunctionExpressionImpl(original.startOffset, original.endOffset, parameters[1].type, lambda, IrStatementOrigin.LAMBDA)
                 irCall(overload, type = overload.owner.returnType).apply {
                   dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
                   extensionReceiver = original.extensionReceiver?.deepCopyWithSymbols(parent)
