@@ -3524,7 +3524,7 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
         @TestDataPath("$PROJECT_ROOT")
         @Execution(ExecutionMode.SAME_THREAD)
-        public class Suppress extends AbstractFirDiagnosticsWithLightTreeTest {
+        public class Suppress {
             @Test
             public void testAllFilesPresentInSuppress() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);

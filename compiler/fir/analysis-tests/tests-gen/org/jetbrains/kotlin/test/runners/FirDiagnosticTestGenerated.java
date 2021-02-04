@@ -3477,7 +3477,7 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
         @TestDataPath("$PROJECT_ROOT")
-        public class Suppress extends AbstractFirDiagnosticTest {
+        public class Suppress {
             @Test
             public void testAllFilesPresentInSuppress() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
