@@ -10,14 +10,14 @@ sealed class Base {
 
 // FILE: B.kt
 
-class B : <!HIDDEN!>Base<!>()
+class B : Base()
 
 // FILE: Container.kt
 
 class Containter {
-    class C : <!HIDDEN, SEALED_SUPERTYPE!>Base<!>()
+    class C : Base()
 
-    inner class D : <!HIDDEN, SEALED_SUPERTYPE!>Base<!>()
+    inner class D : Base()
 }
 
 // FILE: main.kt

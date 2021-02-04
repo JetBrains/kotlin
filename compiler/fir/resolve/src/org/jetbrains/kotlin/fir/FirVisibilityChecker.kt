@@ -65,17 +65,24 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
                 if (declaration.session == session) {
-                    if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
-                        val candidateFile = when (symbol) {
-                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                            else -> null
+                    when {
+                        ownerId == null -> {
+                            val candidateFile = when (symbol) {
+                                is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
+                                is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+                                else -> null
+                            }
+                            // Top-level: visible in file
+                            candidateFile == useSiteFile
                         }
-                        // Top-level: visible in file
-                        candidateFile == useSiteFile
-                    } else {
-                        // Member: visible inside parent class, including all its member classes
-                        canSeePrivateMemberOf(containingDeclarations, ownerId, session)
+                        declaration is FirConstructor && declaration.isFromSealedClass -> {
+                            // Sealed class constructor: visible in same package
+                            declaration.symbol.callableId.packageName == useSiteFile.packageFqName
+                        }
+                        else -> {
+                            // Member: visible inside parent class, including all its member classes
+                            canSeePrivateMemberOf(containingDeclarations, ownerId, session)
+                        }
                     }
                 } else {
                     declaration is FirSimpleFunction && declaration.isAllowedToBeAccessedFromOutside()

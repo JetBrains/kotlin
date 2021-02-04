@@ -1,7 +1,7 @@
 sealed class Base
 
 class Derived: Base() {
-    class Derived2: <!SEALED_SUPERTYPE!>Base<!>()
+    class Derived2: Base()
 }
 
 fun test() {

@@ -29,7 +29,7 @@ sealed class P {
 class K : P()
 
 <!REDECLARATION!>object B<!> {
-    class I : <!SEALED_SUPERTYPE!>P<!>()
+    class I : P()
 }
 
 fun test() {

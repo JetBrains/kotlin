@@ -13,21 +13,21 @@ sealed class Base {
 
 package foo
 
-class B : <!HIDDEN!>Base<!>()
+class B : Base()
 
 // FILE: c.kt
 
 package foo
 
 class Container {
-    class C : <!HIDDEN, SEALED_SUPERTYPE!>Base<!>()
+    class C : Base()
 
-    inner class D : <!HIDDEN, SEALED_SUPERTYPE!>Base<!>()
+    inner class D : Base()
 
-    val anon = object : <!HIDDEN, SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Base<!>() {} // Should be an error
+    val anon = object : <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Base<!>() {} // Should be an error
 
     fun someFun() {
-        class LocalClass : <!HIDDEN, SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Base<!>() {} // Should be an error
+        class LocalClass : <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Base<!>() {} // Should be an error
     }
 }
 
@@ -37,4 +37,4 @@ package bar
 
 import foo.Base
 
-class E : <!HIDDEN!>Base<!>()
+class E : <!HIDDEN, SEALED_SUPERTYPE!>Base<!>()

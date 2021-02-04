@@ -20,26 +20,18 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirClass<*>) {
             // only the file declaration is present
-            when {
-                context.containingDeclarations.size == 1 -> {
-                    checkTopLevelDeclaration(declaration, context, reporter)
-                }
-                declaration.classId.isLocal -> {
-                    checkLocalDeclaration(declaration, context, reporter)
-                }
-                else -> {
-                    checkInnerDeclaration(declaration, context, reporter)
-                }
+            if (declaration.classId.isLocal) {
+                checkLocalDeclaration(declaration, context, reporter)
+            } else {
+                checkGlobalDeclaration(declaration, context, reporter)
             }
         } else if (declaration is FirProperty) {
-            val initializer = declaration.initializer.safeAs<FirClass<*>>()
-                ?: return
-
+            val initializer = declaration.initializer.safeAs<FirClass<*>>() ?: return
             checkLocalDeclaration(initializer, context, reporter)
         }
     }
 
-    private fun checkTopLevelDeclaration(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkGlobalDeclaration(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in declaration.superTypeRefs) {
             val classId = it.coneType.classId ?: continue
 
@@ -51,9 +43,9 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
                 ?.fir.safeAs<FirRegularClass>()
                 ?: continue
 
-            if (fir.status.modality == Modality.SEALED && classId.outerClassId != null) {
+            if (fir.status.modality == Modality.SEALED && declaration.classId.packageFqName != fir.classId.packageFqName) {
                 reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE, context)
-                return
+                continue
             }
         }
     }
@@ -72,25 +64,6 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
 
             if (fir.status.modality == Modality.SEALED) {
                 reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS, context)
-                return
-            }
-        }
-    }
-
-    private fun checkInnerDeclaration(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (it in declaration.superTypeRefs) {
-            val classId = it.coneType.classId ?: continue
-
-            if (classId.isLocal) {
-                continue
-            }
-
-            val fir = context.session.symbolProvider.getClassLikeSymbolByFqName(classId)
-                ?.fir.safeAs<FirRegularClass>()
-                ?: continue
-
-            if (fir.status.modality == Modality.SEALED && !context.containingDeclarations.contains(fir)) {
-                reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE, context)
                 return
             }
         }
