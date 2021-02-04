@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverridesViaIncorrectHeuristic
+import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
@@ -86,7 +86,7 @@ class FunctionReferenceBuilder(
         irBlock(irFunctionExpression.startOffset, irFunctionExpression.endOffset) {
             val constructor = createConstructor()
             createInvokeMethod()
-            functionReferenceClass.addFakeOverridesViaIncorrectHeuristic()
+            functionReferenceClass.addFakeOverrides(irBuiltIns)
             +functionReferenceClass
             +irCall(constructor.symbol)
         }

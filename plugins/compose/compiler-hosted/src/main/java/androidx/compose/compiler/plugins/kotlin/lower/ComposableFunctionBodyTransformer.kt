@@ -1487,7 +1487,6 @@ class ComposableFunctionBodyTransformer(
                 // }
                 skipPreamble.statements.add(
                     irForLoop(
-                        scope.function.symbol.descriptor,
                         varargElementType,
                         irGet(param)
                     ) { loopVar ->
@@ -1948,7 +1947,9 @@ class ComposableFunctionBodyTransformer(
             startOffset,
             endOffset,
             returnType,
-            symbol as IrSimpleFunctionSymbol
+            symbol as IrSimpleFunctionSymbol,
+            symbol.owner.typeParameters.size,
+            symbol.owner.valueParameters.size
         ).apply {
             extensionReceiver = irCurrentComposer()
             putValueArgument(0, invalid)
@@ -2066,7 +2067,9 @@ class ComposableFunctionBodyTransformer(
             startOffset,
             endOffset,
             type,
-            symbol as IrSimpleFunctionSymbol
+            symbol as IrSimpleFunctionSymbol,
+            symbol.owner.typeParameters.size,
+            symbol.owner.valueParameters.size
         )
     }
 
@@ -2095,7 +2098,6 @@ class ComposableFunctionBodyTransformer(
         else
             scope.getNameForTemporary(nameHint)
         return irTemporary(
-            scope.function.symbol.descriptor,
             value,
             name,
             irType,

@@ -494,7 +494,9 @@ class ComposerParamTransformer(
                     index = param.index,
                     type = newType, varargElementType = param.varargElementType,
                     isCrossinline = param.isCrossinline,
-                    isNoinline = param.isNoinline
+                    isNoinline = param.isNoinline,
+                    isHidden = false,
+                    isAssignable = false
                 ).also {
                     it.defaultValue = param.defaultValue
                     it.parent = param.parent

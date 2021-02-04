@@ -76,7 +76,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -422,7 +422,9 @@ abstract class AbstractComposeLowering(
             type.toIrType(),
             (this as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             this.isCrossinline,
-            this.isNoinline
+            this.isNoinline,
+            false,
+            false
         ).also {
             it.parent = this@createParameterDeclarations
         }
@@ -503,7 +505,8 @@ abstract class AbstractComposeLowering(
                 symbol = symbol,
                 typeArgumentsCount = descriptor.typeParametersCount,
                 reflectionTarget = null,
-                origin = IrStatementOrigin.LAMBDA
+                origin = IrStatementOrigin.LAMBDA,
+                valueArgumentsCount = symbol.owner.valueParameters.size
             )
         }
     }
@@ -511,7 +514,7 @@ abstract class AbstractComposeLowering(
     @ObsoleteDescriptorBasedAPI
     protected fun IrBuilderWithScope.createFunctionDescriptor(
         type: IrType,
-        owner: DeclarationDescriptor = scope.scopeOwner
+        owner: DeclarationDescriptor = scope.scopeOwnerSymbol.descriptor
     ): FunctionDescriptor {
         return AnonymousFunctionDescriptor(
             owner,
@@ -613,6 +616,8 @@ abstract class AbstractComposeLowering(
             UNDEFINED_OFFSET,
             symbol.owner.returnType,
             symbol as IrSimpleFunctionSymbol,
+            symbol.owner.typeParameters.size,
+            symbol.owner.valueParameters.size,
             origin
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
@@ -625,11 +630,11 @@ abstract class AbstractComposeLowering(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.symbols.getBinaryOperator(name, this.toKotlinType(), paramType.toKotlinType())
+        context.symbols.getBinaryOperator(name, this, paramType)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun IrType.unaryOperator(name: Name): IrFunctionSymbol =
-        context.symbols.getUnaryOperator(name, this.toKotlinType())
+        context.symbols.getUnaryOperator(name, this)
 
     protected fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         return irCall(
@@ -819,7 +824,6 @@ abstract class AbstractComposeLowering(
 
     @ObsoleteDescriptorBasedAPI
     protected fun irForLoop(
-        scope: DeclarationDescriptor,
         elementType: IrType,
         subject: IrExpression,
         loopBody: (IrValueDeclaration) -> IrExpression
@@ -848,13 +852,14 @@ abstract class AbstractComposeLowering(
             UNDEFINED_OFFSET,
             iteratorType,
             getIteratorFunction.symbol,
+            getIteratorFunction.symbol.owner.typeParameters.size,
+            getIteratorFunction.symbol.owner.valueParameters.size,
             IrStatementOrigin.FOR_LOOP_ITERATOR
         ).also {
             it.dispatchReceiver = subject
         }
 
         val iteratorVar = irTemporary(
-            containingDeclaration = scope,
             value = call,
             isVar = false,
             name = "tmp0_iterator",
@@ -873,12 +878,13 @@ abstract class AbstractComposeLowering(
                     IrStatementOrigin.FOR_LOOP_INNER_WHILE
                 ).apply {
                     val loopVar = irTemporary(
-                        containingDeclaration = scope,
                         value = IrCallImpl(
                             symbol = nextSymbol.symbol,
                             origin = IrStatementOrigin.FOR_LOOP_NEXT,
                             startOffset = UNDEFINED_OFFSET,
                             endOffset = UNDEFINED_OFFSET,
+                            typeArgumentsCount = nextSymbol.symbol.owner.typeParameters.size,
+                            valueArgumentsCount = nextSymbol.symbol.owner.valueParameters.size,
                             type = elementType
                         ).also {
                             it.dispatchReceiver = irGet(iteratorVar)
@@ -908,29 +914,22 @@ abstract class AbstractComposeLowering(
 
     @ObsoleteDescriptorBasedAPI
     protected fun irTemporary(
-        containingDeclaration: DeclarationDescriptor,
         value: IrExpression,
         name: String,
         irType: IrType = value.type,
         isVar: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
     ): IrVariableImpl {
-        val tempVarDescriptor = IrTemporaryVariableDescriptorImpl(
-            containingDeclaration,
-            Name.identifier(name),
-            irType.toKotlinType(),
-            isVar
-        )
         return IrVariableImpl(
             value.startOffset,
             value.endOffset,
             origin,
-            IrVariableSymbolImpl(tempVarDescriptor),
-            tempVarDescriptor.name,
+            IrVariableSymbolImpl(WrappedVariableDescriptor()),
+            Name.identifier(name),
             irType,
             isVar,
-            tempVarDescriptor.isConst,
-            tempVarDescriptor.isLateInit
+            false,
+            false
         ).apply {
             initializer = value
         }
@@ -1035,6 +1034,7 @@ abstract class AbstractComposeLowering(
                     type,
                     function.symbol,
                     function.typeParameters.size,
+                    function.valueParameters.size,
                     null,
                     IrStatementOrigin.LAMBDA
                 )
