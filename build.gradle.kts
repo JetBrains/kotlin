@@ -565,10 +565,13 @@ allprojects {
     }
 }
 
-gradle.buildFinished {
-    val taskGraph = gradle?.taskGraph
-    if (taskGraph != null) {
-        taskGraph.allTasks
+if ((gradle.startParameter as? org.gradle.api.internal.StartParameterInternal)?.isConfigurationCache != true) {
+    // TODO: remove it once Gradle is bumped to 6.8:
+    // See https://docs.gradle.org/6.8/release-notes.html#more-cache-hits-when-empty-directories-are-present
+    gradle.buildFinished {
+        val taskGraph = gradle?.taskGraph
+        if (taskGraph != null) {
+            taskGraph.allTasks
                 .filterIsInstance<SourceTask>()
                 .filter { it.didWork }
                 .forEach {
@@ -578,6 +581,7 @@ gradle.buildFinished {
                         }
                     }
                 }
+        }
     }
 }
 
