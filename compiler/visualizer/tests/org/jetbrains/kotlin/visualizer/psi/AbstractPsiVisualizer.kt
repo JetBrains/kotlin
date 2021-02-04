@@ -5,24 +5,38 @@
 
 package org.jetbrains.kotlin.visualizer.psi
 
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.visualizer.PsiVisualizer
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicFrontendAnalysisHandler
+import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.visualizer.AbstractVisualizer
+import org.jetbrains.kotlin.visualizer.VisualizerDirectives
 import java.io.File
 
 abstract class AbstractPsiVisualizer : AbstractVisualizer() {
-    override fun doVisualizerTest(file: File, environment: KotlinCoreEnvironment) {
-        val ktFiles = environment.getSourceFiles()
-        val analysisResult = JvmResolveUtil.analyze(ktFiles, environment)
+    override val frontendKind: FrontendKind<*> = FrontendKinds.ClassicFrontend
+    override val frontendFacade: Constructor<FrontendFacade<*>> = { ClassicFrontendFacade(it) }
 
-        val renderer = PsiVisualizer(ktFiles.first(), analysisResult)
-        val psiRenderResult = renderer.render()
+    override val handler: Constructor<FrontendOutputHandler<*>> = {
+        object : ClassicFrontendAnalysisHandler(it) {
+            override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
+                val renderer = PsiVisualizer(info.ktFiles.values.first(), info.analysisResult)
+                val psiRenderResult = renderer.render()
 
-        val expectedPath = file.absolutePath.replace(replacement.first, replacement.second)
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult) {
-            return@assertEqualsToFile it.replace("// FIR_IGNORE\n", "")
+                val fileName = info.ktFiles.keys.first().name
+                val expectedPath = it.defaultDirectives.get(VisualizerDirectives.EXPECTED_FILE_PATH).first() + "/$fileName"
+                KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult) {
+                    return@assertEqualsToFile it.replace("// FIR_IGNORE\n", "")
+                }
+            }
+
+            override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+
+            }
         }
     }
 }

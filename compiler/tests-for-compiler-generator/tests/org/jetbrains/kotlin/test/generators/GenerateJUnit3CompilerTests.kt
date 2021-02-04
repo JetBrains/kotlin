@@ -516,25 +516,5 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("lightClasses")
             }
         }
-
-        testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
-                model("rawBuilder", testMethod = "doFirBuilderDataTest")
-            }
-
-            testClass<AbstractFirVisualizer>("FirVisualizerForRawFirDataGenerated") {
-                model("rawBuilder", testMethod = "doFirBuilderDataTest")
-            }
-        }
-
-        testGroup("compiler/visualizer/tests-gen", "compiler/visualizer/testData") {
-            testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
-            }
-
-            testClass<AbstractFirVisualizer>("FirVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
-            }
-        }
     }
 }

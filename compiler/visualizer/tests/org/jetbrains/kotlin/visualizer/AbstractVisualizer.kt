@@ -5,44 +5,64 @@
 
 package org.jetbrains.kotlin.visualizer
 
-import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.Directives
-import org.jetbrains.kotlin.test.KotlinBaseTest
-import java.io.File
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendFacade
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendOutputHandler
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.TestModule, KotlinBaseTest.TestFile>() {
-    lateinit var replacement: Pair<String, String>
+abstract class AbstractVisualizer : AbstractKotlinCompilerTest() {
+    abstract val handler: Constructor<FrontendOutputHandler<*>>
+    abstract val frontendKind: FrontendKind<*>
+    abstract val frontendFacade: Constructor<FrontendFacade<*>>
 
-    override fun createTestModule(
-        name: String,
-        dependencies: List<String>,
-        friends: List<String>
-    ): TestModule? = null
+    override fun TestConfigurationBuilder.configuration() {
+        globalDefaults {
+            frontend = frontendKind
+            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            dependencyKind = DependencyKind.Source
+        }
 
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator,
+        )
+        useFrontendFacades(frontendFacade)
+        useFrontendHandlers(handler)
 
-    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile =
-        TestFile(fileName, text, directives)
+        defaultDirectives {
+            +JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+        }
 
+        forTestsMatching("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/*") {
+            defaultDirectives {
+                VisualizerDirectives.EXPECTED_FILE_PATH with "compiler/visualizer/testData/rawBuilder/declarations"
+            }
+        }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        val environment = createEnvironment(wholeFile, files)
-        doVisualizerTest(wholeFile, environment)
+        forTestsMatching("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/*") {
+            defaultDirectives {
+                VisualizerDirectives.EXPECTED_FILE_PATH with "compiler/visualizer/testData/rawBuilder/expressions"
+            }
+        }
+
+        forTestsMatching("compiler/visualizer/testData/uncommonCases/*") {
+            defaultDirectives {
+                VisualizerDirectives.EXPECTED_FILE_PATH with "compiler/visualizer/testData/uncommonCases/resultFiles"
+            }
+        }
     }
+}
 
-    abstract fun doVisualizerTest(file: File, environment: KotlinCoreEnvironment)
-
-    override fun isKotlinSourceRootNeeded(): Boolean {
-        return true
-    }
-
-    fun doFirBuilderDataTest(filePath: String) {
-        replacement = "fir${File.separator}psi2fir" to "visualizer"
-        doTest(filePath)
-    }
-
-    fun doUncommonCasesTest(filePath: String) {
-        replacement = "testFiles" to "resultFiles"
-        doTest(filePath)
-    }
+internal object VisualizerDirectives : SimpleDirectivesContainer() {
+    val EXPECTED_FILE_PATH by stringDirective(
+        description = "Specify the path to expected result file"
+    )
 }
