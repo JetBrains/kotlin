@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-data class ImplicitReceiverSmartCast(val types: Collection<KtType>, val kind: ImplicitReceiverSmartcastKind)
+data class ImplicitReceiverSmartCast(val type: KtType, val kind: ImplicitReceiverSmartcastKind)
 
 enum class ImplicitReceiverSmartcastKind {
     DISPATCH, EXTENSION
