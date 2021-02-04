@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.UpperBoundChecker
-import org.jetbrains.kotlin.resolve.UpperBoundViolatedReporter
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.reportTrailingLambdaErrorOr
@@ -395,8 +393,8 @@ class DiagnosticReporterByTrackingStrategy(
                 }
 
                 (position as? ExplicitTypeParameterConstraintPositionImpl)?.let {
-                    UpperBoundViolatedReporter(trace, error.upperKotlinType)
-                        .report((it.typeArgument as SimpleTypeArgumentImpl).typeReference, error.lowerKotlinType)
+                    val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
+                    trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, error.upperKotlinType, error.lowerKotlinType))
                 }
 
                 (position as? FixVariableConstraintPositionImpl)?.let {
