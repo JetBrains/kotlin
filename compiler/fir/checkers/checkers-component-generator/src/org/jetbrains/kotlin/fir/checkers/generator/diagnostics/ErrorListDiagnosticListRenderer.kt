@@ -115,7 +115,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
                 typeArgument.collectClassNamesTo(this)
             }
             if (!diagnostic.hasDefaultPositioningStrategy()) {
-                add(diagnostic.positioningStrategy.import)
+                add(PositioningStrategy.importToAdd)
             }
         }
     }

@@ -23,89 +23,34 @@ data class DiagnosticParameter(
     val type: KType
 )
 
-enum class PositioningStrategy(val expressionToCreate: String, val import: String) {
-    DEFAULT(
-        "SourceElementPositioningStrategies.DEFAULT",
-        positioningStrategiesImport
-    ),
+enum class PositioningStrategy(private val strategy: String) {
+    DEFAULT("DEFAULT"),
+    VAL_OR_VAR_NODE("VAL_OR_VAR_NODE"),
+    SECONDARY_CONSTRUCTOR_DELEGATION_CALL("SECONDARY_CONSTRUCTOR_DELEGATION_CALL"),
+    DECLARATION_NAME("DECLARATION_NAME"),
+    DECLARATION_SIGNATURE("DECLARATION_SIGNATURE"),
+    DECLARATION_SIGNATURE_OR_DEFAULT("DECLARATION_SIGNATURE_OR_DEFAULT"),
+    VISIBILITY_MODIFIER("VISIBILITY_MODIFIER"),
+    MODALITY_MODIFIER("MODALITY_MODIFIER"),
+    OPERATOR("OPERATOR"),
+    PARAMETER_DEFAULT_VALUE("PARAMETER_DEFAULT_VALUE"),
+    PARAMETER_VARARG_MODIFIER("PARAMETER_VARARG_MODIFIER"),
+    DECLARATION_RETURN_TYPE("DECLARATION_RETURN_TYPE"),
+    OVERRIDE_MODIFIER("OVERRIDE_MODIFIER"),
+    DOT_BY_SELECTOR("DOT_BY_SELECTOR"),
+    OPEN_MODIFIER("OPEN_MODIFIER"),
+    WHEN_EXPRESSION("WHEN_EXPRESSION"),
+    IF_EXPRESSION("IF_EXPRESSION"),
+    VARIANCE_MODIFIER("VARIANCE_MODIFIER"),
 
-    VAL_OR_VAR_NODE(
-        "SourceElementPositioningStrategies.VAL_OR_VAR_NODE",
-        positioningStrategiesImport
-    ),
+    ;
 
-    SECONDARY_CONSTRUCTOR_DELEGATION_CALL(
-        "SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL",
-        positioningStrategiesImport
-    ),
+    val expressionToCreate get() = "SourceElementPositioningStrategies.$strategy"
 
-    DECLARATION_NAME(
-        "SourceElementPositioningStrategies.DECLARATION_NAME",
-        positioningStrategiesImport
-    ),
-
-    DECLARATION_SIGNATURE(
-        "SourceElementPositioningStrategies.DECLARATION_SIGNATURE",
-        positioningStrategiesImport
-    ),
-
-    DECLARATION_SIGNATURE_OR_DEFAULT(
-        "SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT",
-        positioningStrategiesImport
-    ),
-
-    VISIBILITY_MODIFIER(
-        "SourceElementPositioningStrategies.VISIBILITY_MODIFIER",
-        positioningStrategiesImport
-    ),
-
-    MODALITY_MODIFIER(
-        "SourceElementPositioningStrategies.MODALITY_MODIFIER",
-        positioningStrategiesImport
-    ),
-
-    OPERATOR(
-        "SourceElementPositioningStrategies.OPERATOR",
-        positioningStrategiesImport
-    ),
-
-    PARAMETER_DEFAULT_VALUE(
-        "SourceElementPositioningStrategies.PARAMETER_DEFAULT_VALUE",
-        positioningStrategiesImport
-    ),
-
-    PARAMETER_VARARG_MODIFIER(
-        "SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER",
-        positioningStrategiesImport
-    ),
-
-    DECLARATION_RETURN_TYPE(
-        "SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE",
-        positioningStrategiesImport
-    ),
-
-    OVERRIDE_MODIFIER(
-        "SourceElementPositioningStrategies.OVERRIDE_MODIFIER",
-        positioningStrategiesImport
-    ),
-
-    DOT_BY_SELECTOR(
-        "SourceElementPositioningStrategies.DOT_BY_SELECTOR",
-        positioningStrategiesImport
-    ),
-
-    OPEN_MODIFIER(
-        "SourceElementPositioningStrategies.OPEN_MODIFIER",
-        positioningStrategiesImport
-    ),
-
-    VARIANCE_MODIFIER(
-        "SourceElementPositioningStrategies.VARIANCE_MODIFIER",
-        positioningStrategiesImport
-    ),
+    companion object {
+        const val importToAdd = "org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies"
+    }
 }
-
-private const val positioningStrategiesImport = "org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStrategies"
 
 
 fun DiagnosticData.hasDefaultPositioningStrategy(): Boolean =
