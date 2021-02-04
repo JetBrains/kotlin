@@ -343,7 +343,7 @@ private fun CirTypeProjection.buildArgument(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun Variance.buildVariance() = when (this) {
+private inline fun Variance.buildVariance(): KmVariance = when (this) {
     Variance.INVARIANT -> KmVariance.INVARIANT
     Variance.IN_VARIANCE -> KmVariance.IN
     Variance.OUT_VARIANCE -> KmVariance.OUT
