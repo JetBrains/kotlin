@@ -28,18 +28,18 @@ interface TypeWithEnhancement {
 }
 
 class SimpleTypeWithEnhancement(
-        override val delegate: SimpleType,
-        override val enhancement: KotlinType
+    override val delegate: SimpleType,
+    override val enhancement: KotlinType
 ) : DelegatingSimpleType(),
     TypeWithEnhancement {
 
     override val origin: UnwrappedType get() = delegate
 
-    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
-            = origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement) as SimpleType
+    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType =
+        origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement) as SimpleType
 
-    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
-            = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability)) as SimpleType
+    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType = origin.makeNullableAsSpecified(newNullability)
+        .wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability)) as SimpleType
 
     @TypeRefinement
     override fun replaceDelegate(delegate: SimpleType) = SimpleTypeWithEnhancement(delegate, enhancement)
@@ -47,23 +47,23 @@ class SimpleTypeWithEnhancement(
     @TypeRefinement
     @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleTypeWithEnhancement =
-            SimpleTypeWithEnhancement(
-                kotlinTypeRefiner.refineType(delegate) as SimpleType,
-                kotlinTypeRefiner.refineType(enhancement)
-            )
+        SimpleTypeWithEnhancement(
+            kotlinTypeRefiner.refineType(delegate) as SimpleType,
+            kotlinTypeRefiner.refineType(enhancement)
+        )
 }
 
 class FlexibleTypeWithEnhancement(
-        override val origin: FlexibleType,
-        override val enhancement: KotlinType
+    override val origin: FlexibleType,
+    override val enhancement: KotlinType
 ) : FlexibleType(origin.lowerBound, origin.upperBound),
     TypeWithEnhancement {
 
-    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
-            = origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement)
+    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType =
+        origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement)
 
-    override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
-            = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability))
+    override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType =
+        origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         if (options.enhancedTypes) {
