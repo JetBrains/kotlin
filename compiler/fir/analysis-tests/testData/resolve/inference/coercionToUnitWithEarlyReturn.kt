@@ -15,5 +15,5 @@ fun main(x: A?) {
     }
 
     // lambda has a type (() -> Unit?)
-    foo(lambda)
+    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo<!>(lambda)<!>
 }
