@@ -46,6 +46,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     REFERENCE_BY_QUALIFIED,
     PRIVATE_MODIFIER,
     COMPANION_OBJECT,
+    CONST_MODIFIER,
 
     ;
 
