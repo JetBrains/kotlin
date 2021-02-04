@@ -3,7 +3,7 @@ open class A {
 }
 
 open class B : A {
-    override var test: Double = 20.0
+    override var test: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 20.0
 }
 
 class C() : A() {
@@ -15,7 +15,7 @@ open class D() : B() {
 }
 
 class E<T : Double>(val value: T) : B() {
-    override var test: T = value
+    override var test: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>T<!> = value
 }
 
 open class F<T : Number>(val value: T) {

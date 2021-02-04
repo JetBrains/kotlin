@@ -61,13 +61,13 @@ object FirOverrideChecker : FirRegularClassChecker() {
 
     private fun ConeKotlinType.substituteAllTypeParameters(
         overrideDeclaration: FirCallableMemberDeclaration<*>,
-        baseDeclarationSymbol: FirCallableSymbol<*>,
+        baseDeclaration: FirCallableDeclaration<*>,
     ): ConeKotlinType {
         if (overrideDeclaration.typeParameters.isEmpty()) {
             return this
         }
 
-        val parametersOwner = baseDeclarationSymbol.fir.safeAs<FirTypeParametersOwner>()
+        val parametersOwner = baseDeclaration.safeAs<FirTypeParametersOwner>()
             ?: return this
 
         val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
@@ -130,27 +130,35 @@ object FirOverrideChecker : FirRegularClassChecker() {
         }
     }
 
+    // See [OverrideResolver#isReturnTypeOkForOverride]
     private fun FirCallableMemberDeclaration<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
         context: CheckerContext,
     ): FirMemberDeclaration? {
-        val returnType = returnTypeRef.safeAs<FirResolvedTypeRef>()?.type
+        val overridingReturnType = returnTypeRef.safeAs<FirResolvedTypeRef>()?.type
             ?: return null
 
         // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
-        if (returnType is ConeKotlinErrorType) {
+        if (overridingReturnType is ConeKotlinErrorType) {
             return null
         }
 
         val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType.upperBoundIfFlexible() }
 
         for (it in bounds.indices) {
-            val restriction = bounds[it]
-                .substituteAllTypeParameters(this, overriddenSymbols[it])
+            val overriddenDeclaration = overriddenSymbols[it].fir
 
-            if (!AbstractTypeChecker.isSubtypeOf(typeCheckerContext, returnType, restriction)) {
-                return overriddenSymbols[it].fir.safeAs()
+            val overriddenReturnType = bounds[it].substituteAllTypeParameters(this, overriddenDeclaration)
+
+            val isReturnTypeOkForOverride =
+                if (overriddenDeclaration is FirProperty && overriddenDeclaration.isVar)
+                    AbstractTypeChecker.equalTypes(typeCheckerContext, overridingReturnType, overriddenReturnType)
+                else
+                    AbstractTypeChecker.isSubtypeOf(typeCheckerContext, overridingReturnType, overriddenReturnType)
+
+            if (!isReturnTypeOkForOverride) {
+                return overriddenDeclaration.safeAs()
             }
         }
 
