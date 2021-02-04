@@ -39,6 +39,11 @@ public final class NonExistentType {
     }
 
     @org.jetbrains.annotations.NotNull()
+    public final Foo getFoo() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
     public final ABCDEF a(@org.jetbrains.annotations.NotNull()
     ABCDEF a, @org.jetbrains.annotations.NotNull()
     java.lang.String s) {
