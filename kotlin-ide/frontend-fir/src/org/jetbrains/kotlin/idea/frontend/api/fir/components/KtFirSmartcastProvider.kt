@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
@@ -20,18 +22,16 @@ import org.jetbrains.kotlin.psi.KtExpression
 internal class KtFirSmartcastProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-    ) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
-    override fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType> = withValidityAssertion {
-        // TODO filter out not used smartcasts
+) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
+    override fun getSmartCastedToType(expression: KtExpression): KtType? = withValidityAssertion {
         expression.getOrBuildFirSafe<FirExpressionWithSmartcast>(analysisSession.firResolveState)
-            ?.typesFromSmartCast
-            ?.map { it.asKtType() }
-            ?: emptyList()
+            ?.typeRef
+            ?.coneTypeSafe<ConeKotlinType>()
+            ?.asKtType()
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun getImplicitReceiverSmartCasts(expression: KtExpression): Collection<ImplicitReceiverSmartCast> = withValidityAssertion {
-        // TODO filter out not used smartcasts
+    override fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<ImplicitReceiverSmartCast> = withValidityAssertion {
         val qualifiedExpression =
             expression.getOrBuildFirSafe<FirQualifiedAccessExpression>(analysisSession.firResolveState) ?: return emptyList()
         if (qualifiedExpression.dispatchReceiver !is FirExpressionWithSmartcast
@@ -40,13 +40,13 @@ internal class KtFirSmartcastProvider(
         buildList {
             (qualifiedExpression.dispatchReceiver as? FirExpressionWithSmartcast)?.let { smartCasted ->
                 ImplicitReceiverSmartCast(
-                    smartCasted.typesFromSmartCast.map { it.asKtType() },
+                    smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
                     ImplicitReceiverSmartcastKind.DISPATCH
                 )
             }?.let(::add)
             (qualifiedExpression.extensionReceiver as? FirExpressionWithSmartcast)?.let { smartCasted ->
                 ImplicitReceiverSmartCast(
-                    smartCasted.typesFromSmartCast.map { it.asKtType() },
+                    smartCasted.typeRef.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return@let null,
                     ImplicitReceiverSmartcastKind.EXTENSION
                 )
             }?.let(::add)
