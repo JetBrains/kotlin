@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.jar.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -144,11 +145,13 @@ public class CompileEnvironmentUtil {
                 JarEntry e = jis.getNextJarEntry();
                 if (e == null) break;
 
-                if ((!FileUtilRt.extensionEquals(e.getName(), "class") &&
-                     !FileUtilRt.extensionEquals(e.getName(), BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)) ||
-                    StringsKt.substringAfterLast(e.getName(), "/", e.getName()).equals("module-info.class")) {
+                String name = e.getName();
+                if (!FileUtilRt.extensionEquals(name, "class") &&
+                    !FileUtilRt.extensionEquals(name, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) &&
+                    !name.startsWith("META-INF/services/")) {
                     continue;
                 }
+                if (StringsKt.substringAfterLast(name, "/", name).equals("module-info.class")) continue;
                 if (resetJarTimestamps) {
                     e.setTime(DOS_EPOCH);
                 }
