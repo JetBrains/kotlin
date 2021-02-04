@@ -26,6 +26,7 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
@@ -571,7 +572,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
 
         project.whenEvaluated {
-            addCompilationSourcesToExternalCompileTask(kotlinCompilation, kaptTaskProvider)
+            addCompilationSourcesToExternalCompileTask(kotlinCompilation, kaptTaskProvider, project.kotlinExtension.sourceSets)
         }
 
         val subpluginOptions = buildOptions("stubs", project.provider { kaptExtension.getJavacOptions() })
