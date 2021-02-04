@@ -37,6 +37,9 @@ abstract class CustomJvmTargetOnJvmBaseTest
 class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(JUnitPlatform::class)
+class JvmTarget6OnJvm8 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm8 : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(JUnitPlatform::class)
