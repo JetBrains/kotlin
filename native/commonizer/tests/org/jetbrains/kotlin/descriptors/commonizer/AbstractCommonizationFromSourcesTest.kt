@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -239,7 +236,9 @@ private class AnalyzedModules(
 
             val commonizedModules: Map<CommonizerTarget, SerializedMetadata> =
                 createModules(sharedTarget, commonizedRoots, dependencies, parentDisposable)
-                    .mapValues { (_, moduleDescriptor) -> serializer.serializeModule(moduleDescriptor) }
+                    .mapValues { (_, moduleDescriptor) -> MockModulesProvider.SERIALIZER.serializeModule(moduleDescriptor) }
+
+
 
             return AnalyzedModules(originalModules, commonizedModules, dependeeModules)
         }
@@ -337,13 +336,6 @@ private class AnalyzedModules(
 
             return module
         }
-
-        private val serializer = KlibMetadataMonolithicSerializer(
-            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-            metadataVersion = KlibMetadataVersion.INSTANCE,
-            skipExpects = false,
-            project = null
-        )
     }
 }
 

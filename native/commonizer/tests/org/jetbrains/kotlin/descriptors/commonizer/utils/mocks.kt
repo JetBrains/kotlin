@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.*
@@ -14,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.storage.getValue
 internal fun mockEmptyModule(moduleName: String): ModuleDescriptor {
     val module = KotlinTestUtils.createEmptyModule(moduleName)
     module.initialize(PackageFragmentProvider.Empty)
+    module.setDependencies(module)
     return module
 }
 
@@ -155,7 +160,13 @@ internal class MockModulesProvider private constructor(
     private val moduleInfos = modules.keys.map { name -> fakeModuleInfo(name) }
 
     override fun loadModuleInfos() = moduleInfos
-    override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> = modules
+
+    override fun loadModuleMetadata(name: String): SerializedMetadata {
+        val module = modules[name] ?: error("No such module: $name")
+        return SERIALIZER.serializeModule(module)
+    }
+
+    override fun loadModules(dependencies: Collection<ModuleDescriptor>) = modules
 
     private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
 
@@ -173,6 +184,13 @@ internal class MockModulesProvider private constructor(
         @JvmName("createBySingleModule")
         fun create(module: ModuleDescriptor) = MockModulesProvider(
             mapOf(module.name.strip() to module)
+        )
+
+        val SERIALIZER = KlibMetadataMonolithicSerializer(
+            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+            metadataVersion = KlibMetadataVersion.INSTANCE,
+            skipExpects = false,
+            project = null
         )
     }
 }

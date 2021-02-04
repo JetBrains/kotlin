@@ -135,12 +135,12 @@ class NativeDistributionCommonizer(
                 copyEndorsedLibs = copyEndorsedLibs,
                 logProgress = ::logProgress
             )
-            dependeeModulesProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
+            dependeeModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
 
             allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
                 if (librariesToCommonize.libraries.isEmpty()) return@forEach
 
-                val modulesProvider = NativeDistributionModulesProvider(storageManager, librariesToCommonize)
+                val modulesProvider = NativeDistributionModulesProvider.platformLibraries(storageManager, librariesToCommonize)
 
                 addTarget(
                     TargetProvider(
