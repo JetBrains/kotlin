@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+## Version 0.7.0
+
+_2021-02-04_
+
+**New**
+* Support Kotlin 1.4.30.
+
+**Fixes**
+* Regex `matches` function formats poorly and exception (#31).
+
 ## Version 0.6.1
 
 _2020-11-29_
