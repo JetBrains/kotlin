@@ -27,6 +27,10 @@ class QuickFixes {
         factories.putAll(diagnosticFactory, factory.map { it.asKotlinIntentionActionsFactory() })
     }
 
+    fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: KotlinIntentionActionsFactory) {
+        factories.putAll(diagnosticFactory, factory.toList())
+    }
+
     fun register(diagnosticFactory: DiagnosticFactory<*>, vararg action: IntentionAction) {
         actions.putAll(diagnosticFactory, action.toList())
     }

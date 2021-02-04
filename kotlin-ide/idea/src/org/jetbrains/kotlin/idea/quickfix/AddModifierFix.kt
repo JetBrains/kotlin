@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
-open class AddModifierFix(
+    open class AddModifierFix(
     element: KtModifierListOwner,
     protected val modifier: KtModifierKeywordToken
 ) : KotlinCrossLanguageQuickFixAction<KtModifierListOwner>(element), KotlinUniversalQuickFix {
