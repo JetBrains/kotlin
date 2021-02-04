@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
@@ -65,6 +66,9 @@ class AnalyzerWithCompilerReport(
                 message.append("    class ").append(fqName)
                     .append(", unresolved supertypes: ").append(unresolved!!.joinToString())
                     .append("\n")
+            }
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.ExtendedCompilerChecks)) {
+                message.append("Adding -Xextended-compiler-checks argument might provide additional information.\n")
             }
             messageCollector.report(ERROR, message.toString())
         }
