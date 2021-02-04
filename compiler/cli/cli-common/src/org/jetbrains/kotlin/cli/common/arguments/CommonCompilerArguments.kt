@@ -357,6 +357,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var suppressVersionWarnings: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xextended-compiler-checks",
+        description = "Enable additional compiler checks that might provide verbose diagnostic information for certain errors.\n" +
+                "Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code."
+    )
+    var extendedCompilerChecks: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -422,6 +429,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (inferenceCompatibility) {
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
+            }
+
+            if (extendedCompilerChecks) {
+                put(LanguageFeature.ExtendedCompilerChecks, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {

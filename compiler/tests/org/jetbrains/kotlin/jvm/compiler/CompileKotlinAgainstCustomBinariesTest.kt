@@ -229,6 +229,14 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    fun testIncompleteHierarchyWithExtendedCompilerChecks() {
+        doTestBrokenLibrary(
+            "library",
+            "test/Super.class",
+            additionalOptions = listOf("-Xextended-compiler-checks"),
+        )
+    }
+
     fun testIncompleteHierarchyErrorPositions() {
         doTestBrokenLibrary("library", "test/Super.class")
     }

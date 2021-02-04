@@ -168,6 +168,8 @@ enum class LanguageFeature(
     // Looks like we can't enable it until KT-26245 is fixed because otherwise some use cases become broken because of overrides
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = null, kind = BUG_FIX),
 
+    ExtendedCompilerChecks(sinceVersion = null),
+
     // Experimental features
 
     Coroutines(
