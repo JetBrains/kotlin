@@ -84,3 +84,5 @@ val firImplementationDetailType = generatedType("FirImplementationDetail")
 val declarationOriginType = generatedType("declarations", "FirDeclarationOrigin")
 val declarationAttributesType = generatedType("declarations", "FirDeclarationAttributes")
 val annotationResolveStatusType = generatedType("expressions", "FirAnnotationResolveStatus")
+
+val exhaustivenessStatusType = generatedType("expressions", "ExhaustivenessStatus")

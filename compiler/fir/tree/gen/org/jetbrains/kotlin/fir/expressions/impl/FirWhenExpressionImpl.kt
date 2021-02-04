@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -28,7 +29,7 @@ internal class FirWhenExpressionImpl(
     override var subject: FirExpression?,
     override var subjectVariable: FirVariable<*>?,
     override val branches: MutableList<FirWhenBranch>,
-    override var isExhaustive: Boolean,
+    override var exhaustivenessStatus: ExhaustivenessStatus?,
     override val usedAsExpression: Boolean,
 ) : FirWhenExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -91,7 +92,7 @@ internal class FirWhenExpressionImpl(
         calleeReference = newCalleeReference
     }
 
-    override fun replaceIsExhaustive(newIsExhaustive: Boolean) {
-        isExhaustive = newIsExhaustive
+    override fun replaceExhaustivenessStatus(newExhaustivenessStatus: ExhaustivenessStatus?) {
+        exhaustivenessStatus = newExhaustivenessStatus
     }
 }

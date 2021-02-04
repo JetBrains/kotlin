@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -36,7 +37,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
     var subject: FirExpression? = null
     var subjectVariable: FirVariable<*>? = null
     val branches: MutableList<FirWhenBranch> = mutableListOf()
-    var isExhaustive: Boolean = false
+    var exhaustivenessStatus: ExhaustivenessStatus? = null
     var usedAsExpression: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirWhenExpression {
@@ -48,7 +49,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
             subject,
             subjectVariable,
             branches,
-            isExhaustive,
+            exhaustivenessStatus,
             usedAsExpression,
         )
     }

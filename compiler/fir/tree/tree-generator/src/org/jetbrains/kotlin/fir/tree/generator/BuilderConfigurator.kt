@@ -219,7 +219,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(whenExpression) {
-            defaultFalse("isExhaustive")
+            defaultNull("exhaustivenessStatus")
             default("calleeReference", "FirStubReference")
             useTypes(stubReferenceType)
         }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -29,23 +28,23 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     }
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): CompositeTransformResult<FirStatement> {
-        val resultExpression = processExhaustivenessCheck(whenExpression) ?: whenExpression
-        return resultExpression.compose()
+        processExhaustivenessCheck(whenExpression)
+        return whenExpression.compose()
     }
 
-    private fun processExhaustivenessCheck(whenExpression: FirWhenExpression): FirWhenExpression? {
+    private fun processExhaustivenessCheck(whenExpression: FirWhenExpression) {
         if (whenExpression.branches.any { it.condition is FirElseIfTrueCondition }) {
-            whenExpression.replaceIsExhaustive(true)
-            return whenExpression
+            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.Exhaustive)
+            return
         }
 
         val typeRef = whenExpression.subjectVariable?.returnTypeRef
             ?: whenExpression.subject?.typeRef
-            ?: return null
+            ?: return
 
         // TODO: add some report logic about flexible type (see WHEN_ENUM_CAN_BE_NULL_IN_JAVA diagnostic in old frontend)
         val type = typeRef.coneType.lowerBoundIfFlexible()
-        val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return null
+        val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return
         val nullable = type.nullability == ConeNullability.NULLABLE
         val isExhaustive = when {
             ((lookupTag as? ConeClassLikeLookupTag)?.classId == bodyResolveComponents.session.builtinTypes.booleanType.id) -> {
@@ -55,18 +54,18 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             whenExpression.branches.isEmpty() -> false
 
             else -> {
-                val klass = lookupTag.toSymbol(bodyResolveComponents.session)?.fir as? FirRegularClass ?: return null
+                val klass = lookupTag.toSymbol(bodyResolveComponents.session)?.fir as? FirRegularClass ?: return
                 when {
                     klass.classKind == ClassKind.ENUM_CLASS -> checkEnumExhaustiveness(whenExpression, klass, nullable)
                     klass.modality == Modality.SEALED -> checkSealedClassExhaustiveness(whenExpression, klass, nullable)
-                    else -> return null
+                    else -> return
                 }
             }
         }
-
-        return runIf(isExhaustive) {
-            whenExpression.replaceIsExhaustive(true)
-            whenExpression
+        if (isExhaustive) {
+            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.Exhaustive)
+        } else {
+            whenExpression.replaceExhaustivenessStatus(ExhaustivenessStatus.NotExhaustive(listOf()))
         }
     }
 

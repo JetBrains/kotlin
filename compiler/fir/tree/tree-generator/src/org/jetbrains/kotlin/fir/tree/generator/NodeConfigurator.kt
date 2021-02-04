@@ -587,7 +587,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("subject", expression, nullable = true).withTransform()
             +field("subjectVariable", variable.withArgs("F" to "*"), nullable = true)
             +fieldList("branches", whenBranch).withTransform()
-            +booleanField("isExhaustive", withReplace = true)
+            +field("exhaustivenessStatus", exhaustivenessStatusType, nullable = true, withReplace = true)
             +booleanField("usedAsExpression")
             needTransformOtherChildren()
         }
