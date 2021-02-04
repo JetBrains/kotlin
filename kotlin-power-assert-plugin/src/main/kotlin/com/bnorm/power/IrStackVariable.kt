@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -175,15 +177,23 @@ private fun findDisplayOffset(
 
   if (owner.isInfix || owner.isOperator || owner.origin == IrBuiltIns.BUILTIN_OPERATOR) {
     // Ignore single value operators
-    if (expression.dispatchReceiver != null && expression.valueArgumentsCount == 0) return 0
+    val singleReceiver = (expression.dispatchReceiver != null) xor (expression.extensionReceiver != null)
+    if (singleReceiver && expression.valueArgumentsCount == 0) return 0
 
     // Start after the dispatcher or first argument
-    val dispatcher = expression.dispatchReceiver ?: expression.getValueArgument(0) ?: return 0
-    var offset = dispatcher.endOffset - expression.startOffset
-    if (offset < 0) return 0 // infix function called using non-infix syntax
+    val receiver = expression.dispatchReceiver
+      ?: expression.extensionReceiver
+      ?: expression.getValueArgument(0).takeIf { owner.origin == IrBuiltIns.BUILTIN_OPERATOR }
+      ?: return 0
+    var offset = receiver.endOffset - expression.startOffset
+    if (receiver is IrConst<*> && receiver.kind == IrConstKind.String) offset++ // String constants don't include the quote
+    if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
 
     // Continue until there is a non-whitespace character
-    while (source[offset].isWhitespace()) offset++
+    while (source[offset].isWhitespace()) {
+      offset++
+      if (offset >= source.length) return 0
+    }
     return offset
   }
 
