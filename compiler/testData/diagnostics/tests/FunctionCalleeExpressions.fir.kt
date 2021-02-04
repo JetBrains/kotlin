@@ -72,7 +72,7 @@ fun main1() {
 
     1."sdf"
     1.{}
-    1.if (true) {}
+    1.<!INVALID_IF_AS_EXPRESSION!>if<!> (true) {}
 }
 
 fun test() {

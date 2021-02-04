@@ -70,7 +70,7 @@ fun blockReturnValueTypeMatch1() : Int {
     return if (1 > 2) 1.0 else 2.0
 }
 fun blockReturnValueTypeMatch2() : Int {
-    return if (1 > 2) 1
+    return <!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1
 }
 fun blockReturnValueTypeMatch3() : Int {
     return if (1 > 2) else 1
@@ -106,7 +106,7 @@ fun blockReturnValueTypeMatch9() : Int {
     1.0
     }
 fun blockReturnValueTypeMatch10() : Int {
-    return if (1 > 2)
+    return <!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2)
     1
 }
 fun blockReturnValueTypeMatch11() : Int {

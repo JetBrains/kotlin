@@ -1105,7 +1105,10 @@ class ExpressionsConverter(
 
     private val LighterASTNode.usedAsExpression: Boolean
         get() {
-            val parent = getParent() ?: return true
+            var parent = getParent() ?: return true
+            if (parent.elementType == ANNOTATED_EXPRESSION) {
+                parent = parent.getParent() ?: return true
+            }
             val parentTokenType = parent.tokenType
             if (parentTokenType == BLOCK) return false
             if (parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {

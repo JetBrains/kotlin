@@ -1,5 +1,5 @@
 fun test_1(b: Boolean) {
-    val x = when (b) {
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         true -> 1
     }
     val y = when (b) {
@@ -13,7 +13,7 @@ fun test_1(b: Boolean) {
 }
 
 fun test_2(b: Boolean?) {
-    val x = when (b) {
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         true -> 1
         false -> 2
     }

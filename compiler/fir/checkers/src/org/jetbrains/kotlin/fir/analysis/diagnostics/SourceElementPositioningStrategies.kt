@@ -102,4 +102,14 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.DOT_BY_SELECTOR,
         PositioningStrategies.DOT_BY_SELECTOR
     )
+
+    val WHEN_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHEN_EXPRESSION,
+        PositioningStrategies.WHEN_EXPRESSION
+    )
+
+    val IF_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.IF_EXPRESSION,
+        PositioningStrategies.IF_EXPRESSION
+    )
 }

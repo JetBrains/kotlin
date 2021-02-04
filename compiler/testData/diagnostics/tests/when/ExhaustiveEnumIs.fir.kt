@@ -12,7 +12,7 @@ enum class MyEnum {
 }
 
 fun foo(x: MyEnum): Int {
-    return when (x) {
+    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
         is <!UNRESOLVED_REFERENCE!>MyEnum.A<!> -> 1
         is <!UNRESOLVED_REFERENCE!>MyEnum.B<!> -> 2
         is <!UNRESOLVED_REFERENCE!>MyEnum.C<!> -> 3

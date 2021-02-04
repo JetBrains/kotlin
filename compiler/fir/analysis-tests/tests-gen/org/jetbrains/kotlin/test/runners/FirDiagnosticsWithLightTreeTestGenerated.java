@@ -162,54 +162,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         }
 
         @Test
-        @TestMetadata("exhaustiveWhenAndDNNType.kt")
-        public void testExhaustiveWhenAndDNNType() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveWhenAndDNNType.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
-        public void testExhaustiveWhenAndFlexibleType() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveWhenAndFlexibleType.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_boolean.kt")
-        public void testExhaustiveness_boolean() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_boolean.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_enum.kt")
-        public void testExhaustiveness_enum() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_enum.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_enumJava.kt")
-        public void testExhaustiveness_enumJava() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_enumJava.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_sealedClass.kt")
-        public void testExhaustiveness_sealedClass() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedClass.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_sealedObject.kt")
-        public void testExhaustiveness_sealedObject() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedObject.kt");
-        }
-
-        @Test
-        @TestMetadata("exhaustiveness_sealedSubClass.kt")
-        public void testExhaustiveness_sealedSubClass() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness_sealedSubClass.kt");
-        }
-
-        @Test
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/extension.kt");
@@ -1474,6 +1426,111 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 @TestMetadata("Parameters.kt")
                 public void testParameters() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression/Parameters.kt");
+                }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness")
+        @TestDataPath("$PROJECT_ROOT")
+        @Execution(ExecutionMode.SAME_THREAD)
+        public class Exhaustiveness {
+            @Test
+            public void testAllFilesPresentInExhaustiveness() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative")
+            @TestDataPath("$PROJECT_ROOT")
+            @Execution(ExecutionMode.SAME_THREAD)
+            public class Negative {
+                @Test
+                public void testAllFilesPresentInNegative() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("missingBooleanBranch.kt")
+                public void testMissingBooleanBranch() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingBooleanBranch.kt");
+                }
+
+                @Test
+                @TestMetadata("missingElse.kt")
+                public void testMissingElse() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingElse.kt");
+                }
+
+                @Test
+                @TestMetadata("missingEnumEntry.kt")
+                public void testMissingEnumEntry() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingEnumEntry.kt");
+                }
+
+                @Test
+                @TestMetadata("missingSealedInheritor.kt")
+                public void testMissingSealedInheritor() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingSealedInheritor.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive")
+            @TestDataPath("$PROJECT_ROOT")
+            @Execution(ExecutionMode.SAME_THREAD)
+            public class Positive {
+                @Test
+                public void testAllFilesPresentInPositive() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("exhaustiveWhenAndDNNType.kt")
+                public void testExhaustiveWhenAndDNNType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndDNNType.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
+                public void testExhaustiveWhenAndFlexibleType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveWhenAndFlexibleType.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveness_boolean.kt")
+                public void testExhaustiveness_boolean() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_boolean.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveness_enum.kt")
+                public void testExhaustiveness_enum() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_enum.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveness_enumJava.kt")
+                public void testExhaustiveness_enumJava() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_enumJava.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveness_sealedClass.kt")
+                public void testExhaustiveness_sealedClass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedClass.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveness_sealedObject.kt")
+                public void testExhaustiveness_sealedObject() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedObject.kt");
+                }
+
+                @Test
+                @TestMetadata("exhaustiveness_sealedSubClass.kt")
+                public void testExhaustiveness_sealedSubClass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedSubClass.kt");
                 }
             }
         }

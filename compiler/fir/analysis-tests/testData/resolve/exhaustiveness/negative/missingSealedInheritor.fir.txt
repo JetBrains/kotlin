@@ -1,0 +1,84 @@
+FILE: a.kt
+    public sealed class Base : R|kotlin/Any| {
+        private constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class A : R|Base| {
+        public constructor(): R|A| {
+            super<R|Base|>()
+        }
+
+    }
+FILE: b.kt
+    public final object B : R|Base| {
+        private constructor(): R|B| {
+            super<R|Base|>()
+        }
+
+    }
+FILE: c.kt
+    public final fun test_1(base: R|Base|): R|kotlin/Unit| {
+        lval x: R|kotlin/Unit| = when (R|<local>/base|) {
+            ($subj$ is R|A|) ->  {
+                Int(1)
+            }
+        }
+
+        lval y: R|kotlin/Unit| = when (R|<local>/base|) {
+            ==($subj$, Q|B|) ->  {
+                Int(1)
+            }
+        }
+
+        lval z: R|kotlin/Int| = when (R|<local>/base|) {
+            ($subj$ is R|A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|B|) ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun test_2(base: R|Base?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Unit| = when (R|<local>/base|) {
+            ($subj$ is R|A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|B|) ->  {
+                Int(2)
+            }
+        }
+
+        lval y: R|kotlin/Unit| = when (R|<local>/base|) {
+            ($subj$ is R|A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|B|) ->  {
+                Int(2)
+            }
+        }
+
+        lval z: R|kotlin/Int| = when (R|<local>/base|) {
+            ($subj$ is R|A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Null(null)) ->  {
+                Int(3)
+            }
+        }
+
+    }
+    public final fun test_3(base: R|Base|): R|kotlin/Unit| {
+        when (R|<local>/base|) {
+            ($subj$ is R|A|) ->  {
+                Int(1)
+            }
+        }
+
+    }

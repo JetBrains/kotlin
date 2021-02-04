@@ -1,6 +1,6 @@
 public fun foo(x: String?, y: String?): Int {
     while (true) {
-        x ?: if (y == null) break
+        x ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (y == null) break
         // y is nullable if x != null
         y<!UNSAFE_CALL!>.<!>length
     }

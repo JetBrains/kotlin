@@ -7,12 +7,12 @@ sealed class Base {
 class C : Base()
 
 fun test_1(e: Base) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is Base.A -> 1
         is Base.A.B -> 2
     }
 
-    val b = when (e) {
+    val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is Base.A -> 1
         is Base.A.B -> 2
         is String -> 3
@@ -31,7 +31,7 @@ fun test_1(e: Base) {
 }
 
 fun test_2(e: Base?) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is Base.A -> 1
         is Base.A.B -> 2
         is C -> 3

@@ -15,7 +15,7 @@ sealed class Base {
         // No else required
     }
 
-    fun bar() = when (this) {
+    fun bar() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
         is A -> 1
         is B.B1 -> 2
     }

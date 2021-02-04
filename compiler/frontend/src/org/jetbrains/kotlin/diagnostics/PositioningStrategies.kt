@@ -508,6 +508,13 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val IF_EXPRESSION: PositioningStrategy<KtIfExpression> = object : PositioningStrategy<KtIfExpression>() {
+        override fun mark(element: KtIfExpression): List<TextRange> {
+            return markElement(element.ifKeyword)
+        }
+    }
+
+    @JvmField
     val WHEN_CONDITION_IN_RANGE: PositioningStrategy<KtWhenConditionInRange> = object : PositioningStrategy<KtWhenConditionInRange>() {
         override fun mark(element: KtWhenConditionInRange): List<TextRange> {
             return markElement(element.operationReference)

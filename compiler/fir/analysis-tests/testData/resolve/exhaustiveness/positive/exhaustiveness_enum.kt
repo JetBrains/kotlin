@@ -3,12 +3,12 @@ enum class Enum {
 }
 
 fun test_1(e: Enum) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         Enum.A -> 1
         Enum.B -> 2
     }
 
-    val b = when (e) {
+    val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         Enum.A -> 1
         Enum.B -> 2
         is String -> 3
@@ -27,7 +27,7 @@ fun test_1(e: Enum) {
 }
 
 fun test_2(e: Enum?) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3

@@ -32,23 +32,23 @@ fun test_1(e: A) {
 }
 
 fun test_2(e: A) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is D -> 1
         is E -> 2
     }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
-    val b = when (e) {
+    val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is B -> 1
         is D -> 2
         is E -> 3
     }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
-    val c = when (e) {
+    val c = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is B -> 1
         is D -> 2
     }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
-    val d = when (e) {
+    val d = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is C -> 1
     }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 }

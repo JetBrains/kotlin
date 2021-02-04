@@ -7,12 +7,12 @@ public enum JavaEnum {
 
 // FILE: main.kt
 fun test_1(e: JavaEnum) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
     }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
-    val b = when (e) {
+    val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         is String -> 3
@@ -31,7 +31,7 @@ fun test_1(e: JavaEnum) {
 }
 
 fun test_2(e: JavaEnum?) {
-    val a = when (e) {
+    val a = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3

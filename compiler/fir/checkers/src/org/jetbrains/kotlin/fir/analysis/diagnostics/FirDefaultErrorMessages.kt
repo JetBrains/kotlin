@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_CLASS_ERROR
@@ -100,6 +101,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOTHING_TO_OVERRI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_LOOP_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ELSE_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_FOR_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER
@@ -500,6 +502,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             //    "Reference has a nullable type ''{0}'', use explicit \"?.invoke\" to make a function-like call instead.",
             //    RENDER_TYPE
             //)
+
+            // When expressions
+            map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive")
+            map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression")
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")

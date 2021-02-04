@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -23,6 +19,7 @@ fun main(args: Array<String>) {
         alias<FirFunctionCall>("FunctionCallChecker")
         alias<FirVariableAssignment>("VariableAssignmentChecker")
         alias<FirTryExpression>("TryExpressionChecker")
+        alias<FirWhenExpression>("WhenExpressionChecker")
     }
 
     val declarationPackage = "org.jetbrains.kotlin.fir.analysis.checkers.declaration"

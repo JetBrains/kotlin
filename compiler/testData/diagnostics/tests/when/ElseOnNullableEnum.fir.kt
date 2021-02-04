@@ -12,7 +12,7 @@
 
 enum class E { A, B }
 
-fun test(e: E?) = when (e) {
+fun test(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
     E.A -> 1
     E.B -> 2
 }

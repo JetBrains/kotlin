@@ -29,7 +29,7 @@ fun foo(d: Direction) = when(d) { //no 'else' should be requested
     Direction.EAST -> 4
 }
 
-fun foo1(d: Direction) = when(d) {
+fun foo1(d: Direction) = <!NO_ELSE_IN_WHEN!>when<!>(d) {
     Direction.NORTH -> 1
     Direction.SOUTH -> 2
     Direction.WEST -> 3
@@ -41,7 +41,7 @@ fun bar(c: Color) = when (c) {
     Color.BLUE -> 3
 }
 
-fun bar1(c: Color) = when (c) {
+fun bar1(c: Color) = <!NO_ELSE_IN_WHEN!>when<!> (c) {
     Color.RED -> 1
     Color.GREEN -> 2
 }

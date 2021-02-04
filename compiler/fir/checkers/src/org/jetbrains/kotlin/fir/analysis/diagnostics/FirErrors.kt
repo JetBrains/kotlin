@@ -230,6 +230,10 @@ object FirErrors {
     // TODO: val UNSAFE_OPERATOR_CALL by ...
     // TODO: val UNEXPECTED_SAFE_CALL by ...
 
+    // When expressions
+    val NO_ELSE_IN_WHEN by error0<FirSourceElement, KtWhenExpression>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
+    val INVALID_IF_AS_EXPRESSION by error0<FirSourceElement, KtIfExpression>(SourceElementPositioningStrategies.IF_EXPRESSION)
+
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val REDUNDANT_MODALITY_MODIFIER by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.MODALITY_MODIFIER)

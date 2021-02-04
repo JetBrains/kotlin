@@ -53,7 +53,7 @@ class ExpressionCheckersDiagnosticComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: CheckerContext) {
-        checkers.basicExpressionCheckers.check(whenExpression, data, reporter)
+        checkers.whenExpressionCheckers.check(whenExpression, data, reporter)
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: CheckerContext) {

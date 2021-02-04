@@ -99,10 +99,10 @@ fun testImplicitCoercion() {
         else -> z--
     }
 
-    var iff = if (true) {
+    var iff = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
         z = 34
     }
-    val g = if (true) 4
+    val g = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 4
     val h = if (false) 4 else {}
 
     <!INAPPLICABLE_CANDIDATE!>bar<!>(if (true) {

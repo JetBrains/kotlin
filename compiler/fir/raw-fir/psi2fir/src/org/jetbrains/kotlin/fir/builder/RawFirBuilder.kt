@@ -1625,6 +1625,10 @@ class RawFirBuilder(
 
         private val KtExpression.usedAsExpression: Boolean
             get() {
+                var parent = parent
+                if (parent.elementType == KtNodeTypes.ANNOTATED_EXPRESSION) {
+                    parent = parent.parent
+                }
                 if (parent is KtBlockExpression) return false
                 when (parent.elementType) {
                     KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
