@@ -232,5 +232,11 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                 }
             }
         }
+
+        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: BooleanExhaustivenessFlags) {
+            if (binaryLogicExpression.kind == LogicOperationKind.OR) {
+                binaryLogicExpression.acceptChildren(this, data)
+            }
+        }
     }
 }
