@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -30,7 +31,7 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
         NativeTopLevelSingletonChecker, NativeThreadLocalChecker
     )
 ) {
-    override fun configureModuleComponents(container: StorageComponentContainer) {
+    override fun configureModuleComponents(container: StorageComponentContainer, languageVersionSettings: LanguageVersionSettings) {
         container.useInstance(NativeInliningRule)
     }
 

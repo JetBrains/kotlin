@@ -29,6 +29,10 @@ inline fun <reified T : Any> StorageComponentContainer.useImpl() {
     registerSingleton(T::class.java)
 }
 
+inline fun <reified T : Any> StorageComponentContainer.useImplIf(cond: Boolean) {
+    if (cond) useImpl<T>()
+}
+
 inline fun <reified T : Any> ComponentProvider.get(): T {
     return getService(T::class.java)
 }

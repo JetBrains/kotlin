@@ -73,7 +73,7 @@ fun StorageComponentContainer.configureModule(
 
     useInstance(nonTrivialPlatformVersion ?: TargetPlatformVersion.NoVersion)
 
-    analyzerServices.platformConfigurator.configureModuleComponents(this)
+    analyzerServices.platformConfigurator.configureModuleComponents(this, languageVersionSettings)
     analyzerServices.platformConfigurator.configureModuleDependentCheckers(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
