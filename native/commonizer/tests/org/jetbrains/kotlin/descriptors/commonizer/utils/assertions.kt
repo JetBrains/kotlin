@@ -23,8 +23,8 @@ fun assertIsDirectory(file: File) {
 
 @ExperimentalContracts
 fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMetadata, target: CommonizerTarget) {
-    val referenceModule = with(reference) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
-    val generatedModule = with(generated) { KlibModuleMetadata.read(SerializedMetadataLibraryProvider(module, fragments, fragmentNames)) }
+    val referenceModule = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(reference))
+    val generatedModule = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(generated))
 
     when (val result = MetadataDeclarationsComparator.compare(referenceModule, generatedModule)) {
         is Result.Success -> Unit
