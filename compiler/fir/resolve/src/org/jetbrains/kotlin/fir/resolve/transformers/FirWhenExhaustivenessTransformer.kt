@@ -97,6 +97,10 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                         }
                     }
                     is FirQualifiedAccessExpression -> {
+                        if (argument.typeRef.isNullableNothing) {
+                            data.containsNull = true
+                            return
+                        }
                         val reference = argument.calleeReference as? FirResolvedNamedReference ?: return
                         val symbol = (reference.resolvedSymbol.fir as? FirEnumEntry)?.symbol ?: return
 
@@ -184,6 +188,12 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
                     is FirResolvedQualifier -> {
                         argument.typeRef.accept(this, data)
+                    }
+
+                    is FirQualifiedAccessExpression -> {
+                        if (argument.typeRef.isNullableNothing) {
+                            data.containsNull = true
+                        }
                     }
                 }
             }
