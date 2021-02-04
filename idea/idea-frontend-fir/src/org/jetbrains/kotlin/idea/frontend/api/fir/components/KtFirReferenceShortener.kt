@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -14,6 +13,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
@@ -39,7 +42,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
@@ -51,7 +53,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.resolve.ImportPath
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -134,28 +135,32 @@ internal class KtFirReferenceShortener(
 
         val result = buildList<FirScope> {
             addAll(towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope })
-            addIfNotNull(createFakeImportingScope(position.project, newImports))
+            addIfNotNull(createFakeImportingScope(newImports))
             addAll(towerDataContext.localScopes)
         }
 
         return result.asReversed()
     }
 
-    private fun createFakeImportingScope(
-        project: Project,
-        newImports: List<FqName>
-    ): FirScope? {
-        if (newImports.isEmpty()) return null
-
-        val psiFactory = KtPsiFactory(project)
-
-        val resolvedNewImports = newImports
-            .map { psiFactory.createImportDirective(ImportPath(it, isAllUnder = false)) }
-            .mapNotNull { it.getOrBuildFirSafe<FirResolvedImport>(firResolveState) }
-
+    private fun createFakeImportingScope(newImports: List<FqName>): FirScope? {
+        val resolvedNewImports = newImports.mapNotNull { createFakeResolvedImport(it) }
         if (resolvedNewImports.isEmpty()) return null
 
         return FirExplicitSimpleImportingScope(resolvedNewImports, firResolveState.rootModuleSession, ScopeSession())
+    }
+
+    private fun createFakeResolvedImport(fqNameToImport: FqName): FirResolvedImport? {
+        val packageOrClass = resolveToPackageOrClass(firResolveState.rootModuleSession.firSymbolProvider, fqNameToImport) ?: return null
+
+        val delegateImport = buildImport {
+            importedFqName = fqNameToImport
+            isAllUnder = false
+        }
+
+        return buildResolvedImport {
+            delegate = delegateImport
+            packageFqName = packageOrClass.packageFqName
+        }
     }
 
     private inner class TypesCollectingVisitor(
