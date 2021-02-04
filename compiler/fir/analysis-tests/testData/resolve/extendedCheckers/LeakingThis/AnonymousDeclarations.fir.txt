@@ -1,0 +1,29 @@
+FILE: AnonymousDeclarations.kt
+    public abstract class Abs : R|kotlin/Any| {
+        public constructor(): R|Abs| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval v: R|<anonymous>| = object : R|Abs| {
+            private constructor(): R|<anonymous>| {
+                super<R|Abs|>()
+            }
+
+            public final val a: R|kotlin/String|
+                public get(): R|kotlin/String|
+
+            public final fun foo(): R|kotlin/Unit| {
+                this@R|/<anonymous>|.R|/<anonymous>.a|.R|kotlin/String.length|
+            }
+
+            init {
+                this@R|/<anonymous>|.R|/<anonymous>.foo|()
+                this@R|/<anonymous>|.R|/<anonymous>.a| = String()
+            }
+
+        }
+
+        R|kotlin/io/print|(R|<local>/v|)
+    }

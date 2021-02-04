@@ -63,7 +63,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
-        checkers.basicDeclarationCheckers.check(anonymousObject, data, reporter)
+        checkers.classCheckers.check(anonymousObject, data, reporter)
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {

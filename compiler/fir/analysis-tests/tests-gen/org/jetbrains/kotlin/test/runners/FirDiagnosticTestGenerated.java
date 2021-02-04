@@ -2193,6 +2193,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("AnonymousDeclarations.kt")
+                public void testAnonymousDeclarations() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/AnonymousDeclarations.kt");
+                }
+
+                @Test
                 @TestMetadata("CallingFunctionsFromClassInit.kt")
                 public void testCallingFunctionsFromClassInit() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/LeakingThis/CallingFunctionsFromClassInit.kt");
