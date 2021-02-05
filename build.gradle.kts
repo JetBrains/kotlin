@@ -957,7 +957,6 @@ tasks {
             dependsOn(
                 ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
@@ -979,9 +978,7 @@ tasks {
                 ":kotlin-stdlib-jdk7:publish",
                 ":kotlin-stdlib-jdk8:publish",
                 ":kotlin-reflect:publish",
-                ":kotlin-main-kts:publish",
-                ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish"
+                ":kotlin-main-kts:publish"
             )
         }
     }
