@@ -74,7 +74,7 @@ class CirTreeMerger(
         val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { targetProvider ->
             targetProvider.modulesProvider.loadModuleInfos().associateBy { it.name }
         }
-        val commonModuleNames = allModuleInfos.map { it.keys }.reduce { a, b -> a intersect b }
+        val commonModuleNames = parameters.getCommonModuleNames()
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             val commonModuleInfos = allModuleInfos[targetIndex].filterKeys { it in commonModuleNames }
@@ -127,7 +127,7 @@ class CirTreeMerger(
         val moduleNode: CirModuleNode = rootNode.modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, size)
         }
-        moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleDescriptor)
+        moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleName)
 
         moduleDescriptor.collectNonEmptyPackageMemberScopes { packageFqName, packageMemberScope ->
             processPackage(moduleNode, targetIndex, packageFqName.intern(), packageMemberScope)
