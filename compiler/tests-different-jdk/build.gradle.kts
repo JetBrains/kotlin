@@ -82,6 +82,19 @@ codegenTest(target = 8, jvm = 11) {}
 
 codegenTest(target = 11, jvm = 11) {}
 
+//JDK 15
+codegenTest(target = 6, jvm = 15) {
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+}
+
+codegenTest(target = 8, jvm = 15) {
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+}
+
+codegenTest(target = 15, jvm = 15) {
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+}
+
 //..also add this two tasks to build after adding fresh jdks to build agents
 val mostRecentJdk = JdkMajorVersion.values().last().name
 

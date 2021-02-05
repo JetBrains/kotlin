@@ -130,6 +130,7 @@ extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPath("9")
 extra["JDK_10"] = jdkPath("10")
 extra["JDK_11"] = jdkPath("11")
+extra["JDK_15"] = jdkPath("15")
 
 // allow opening the project without setting up all env variables (see KT-26413)
 if (!kotlinBuildProperties.isInIdeaSync) {
