@@ -239,16 +239,16 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testScriptWithXArguments() {
-//        runProcess(
-//            "kotlin", "$testDataDirectory/funWithResultReturn.kts",
-//            expectedExitCode = 1,
-//            expectedStderr = """error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.kts:2:11)
-//compiler/testData/launcher/funWithResultReturn.kts:2:11: error: 'kotlin.Result' cannot be used as a return type
-//fun f() : Result<Int> = Result.success(42)
-//          ^
-//"""
-//        )
-//        runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
+        runProcess(
+            "kotlin", "$testDataDirectory/funWithResultReturn.kts",
+            expectedExitCode = 1,
+            expectedStderr = """error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.kts:2:11)
+compiler/testData/launcher/funWithResultReturn.kts:2:11: error: 'kotlin.Result' cannot be used as a return type
+fun f() : Result<Int> = Result.success(42)
+          ^
+"""
+        )
+        runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
     }
 
     fun testNoStdLib() {
