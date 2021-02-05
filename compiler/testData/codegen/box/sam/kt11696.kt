@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
+// SAM_CONVERSIONS: CLASS
+//   ^ test checks reflection for synthetic classes
 // MODULE: lib
 // FILE: Promise.java
 import org.jetbrains.annotations.NotNull;

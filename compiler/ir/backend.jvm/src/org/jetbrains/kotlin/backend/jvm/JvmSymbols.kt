@@ -545,18 +545,52 @@ class JvmSymbols(
             returnType = dst.defaultType
         }.symbol
 
-    val indySamConversionIntrinsic: IrSimpleFunctionSymbol =
+    val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
+
+    // Intrinsic to represent closure creation using INVOKEDYNAMIC with LambdaMetafactory.{metafactory, altMetafactory}
+    // as a bootstrap method.
+    //      fun <SAM_TYPE> `<jvm-indy-lambda-metafactory>`(
+    //          samMethodType,
+    //          implMethodReference,
+    //          instantiatedMethodType,
+    //          vararg extraOverriddenMethodTypes
+    //      ): SAM_TYPE
+    // where:
+    //      `SAM_TYPE` is a single abstract method interface, which is implemented by a resulting closure;
+    //      `samMethodType` is a method type (signature and return type) of a method to be implemented by a closure;
+    //      `implMethodReference` is an actual implementation method (e.g., method for a lambda function);
+    //      `instantiatedMethodType` is a specialized implementation method type;
+    //      `extraOverriddenMethodTypes` is a possibly empty vararg of additional methods to be implemented by a closure.
+    //
+    // At this stage, "method types" are represented as IrRawFunctionReference nodes for the functions with corresponding signature.
+    // `<jvm-indy-lambda-metafactory>` call rewriting selects a particular bootstrap method (`metafactory` or `altMetafactory`)
+    // and takes care about low-level detains of bootstrap method arguments representation.
+    // Note that `instantiatedMethodType` is a raw function reference to a "fake" specialized function (belonging to a "fake" specialized
+    // class) that doesn't exist in the bytecode and serves only the purpose of representing a corresponding method signature.
+    //
+    // Resulting closure produced by INVOKEDYNAMIC instruction has (approximately) the following shape:
+    //      object : ${SAM_TYPE} {
+    //          override fun ${samMethodName}(${instantiatedMethodType}) = ${implMethod}(...)
+    //          // bridge fun ${samMethodName}(${bridgeMethodType}) = ${instantiatedMethod}(...)
+    //          //      for each 'bridgeMethodType' in [ ${samMethodType}, *${extraOverriddenMethodTypes} ]
+    //      }
+    val indyLambdaMetafactoryIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {
-            name = Name.special("<jvm-indy-sam-conversion>")
+            name = Name.special("<jvm-indy-lambda-metafactory>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             parent = kotlinJvmInternalPackage
             val samType = addTypeParameter("SAM_TYPE", irBuiltIns.anyType)
-            addValueParameter("method", irBuiltIns.anyNType)
+            addValueParameter("samMethodType", irBuiltIns.anyNType)
+            addValueParameter("implMethodReference", irBuiltIns.anyNType)
+            addValueParameter("instantiatedMethodType", irBuiltIns.anyNType)
+            addValueParameter {
+                name = Name.identifier("extraOverriddenMethodTypes")
+                type = arrayOfAnyType
+                varargElementType = irBuiltIns.anyType
+            }
             returnType = samType.defaultType
         }.symbol
-
-    val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
 
     // Intrinsic to represent INVOKEDYNAMIC calls in IR.
     //  fun <T> `<jvm-indy>`(

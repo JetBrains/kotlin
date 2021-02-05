@@ -16,9 +16,9 @@ fun test() {
 }
 
 // @TestKt.class:
-// 1 NEW TestKt\$
+// 0 NEW TestKt\$
 // 1 NEW kotlin/jvm/internal/Ref\$IntRef
-// 2 NEW
+// 1 NEW
 // 0 IFNONNULL
 // 0 IFNULL
 // 1 ACONST_NULL

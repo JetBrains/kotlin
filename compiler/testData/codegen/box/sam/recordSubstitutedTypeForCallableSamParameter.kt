@@ -2,6 +2,8 @@
 // WITH_REFLECT
 // FULL_JDK
 // TARGET_BACKEND: JVM
+// SAM_CONVERSIONS: CLASS
+//  ^ SAM-convertion classes created with LambdaMetafactory have no generic signatures
 
 // FILE: Provider.java
 

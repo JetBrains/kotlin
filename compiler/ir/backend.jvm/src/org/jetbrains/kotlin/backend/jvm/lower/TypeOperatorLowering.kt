@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -37,6 +36,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.commons.Method
+import java.lang.invoke.LambdaMetafactory
 
 // After this pass runs there are only four kinds of IrTypeOperatorCalls left:
 //
@@ -101,7 +102,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             builder.irAs(argument, type)
     }
 
-    private val indySamConversionIntrinsic = context.ir.symbols.indySamConversionIntrinsic
+    private val jvmIndyLambdaMetafactoryIntrinsic = context.ir.symbols.indyLambdaMetafactoryIntrinsic
 
     private val indyIntrinsic = context.ir.symbols.jvmIndyIntrinsic
 
@@ -128,13 +129,17 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             putValueArgument(0, irRawFunctionReferefence(context.irBuiltIns.anyType, methodSymbol))
         }
 
+    @Suppress("unused")
     private fun IrBuilderWithScope.jvmSubstitutedMethodType(ownerType: IrType, methodSymbol: IrFunctionSymbol) =
         irCall(substitutedMethodTypeIntrinsic, context.irBuiltIns.anyType).apply {
             putTypeArgument(0, ownerType)
             putValueArgument(0, irRawFunctionReferefence(context.irBuiltIns.anyType, methodSymbol))
         }
 
-    private val lambdaMetafactoryHandle =
+    /**
+     * @see java.lang.invoke.LambdaMetafactory.metafactory
+     */
+    private val jdkMetafactoryHandle =
         Handle(
             Opcodes.H_INVOKESTATIC,
             "java/lang/invoke/LambdaMetafactory",
@@ -150,9 +155,26 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             false
         )
 
+    /**
+     * @see java.lang.invoke.LambdaMetafactory.altMetafactory
+     */
+    private val jdkAltMetafactoryHandle =
+        Handle(
+            Opcodes.H_INVOKESTATIC,
+            "java/lang/invoke/LambdaMetafactory",
+            "altMetafactory",
+            "(" +
+                    "Ljava/lang/invoke/MethodHandles\$Lookup;" +
+                    "Ljava/lang/String;" +
+                    "Ljava/lang/invoke/MethodType;" +
+                    "[Ljava/lang/Object;" +
+                    ")Ljava/lang/invoke/CallSite;",
+            false
+        )
+
     override fun visitCall(expression: IrCall): IrExpression {
         return when (expression.symbol) {
-            indySamConversionIntrinsic -> updateIndySamConversionIntrinsicCall(expression)
+            jvmIndyLambdaMetafactoryIntrinsic -> rewriteIndyLambdaMetafactoryCall(expression)
             else -> super.visitCall(expression)
         }
     }
@@ -160,46 +182,86 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     /**
      * @see FunctionReferenceLowering.wrapWithIndySamConversion
      */
-    private fun updateIndySamConversionIntrinsicCall(call: IrCall): IrCall {
+    private fun rewriteIndyLambdaMetafactoryCall(call: IrCall): IrCall {
         fun fail(message: String): Nothing =
             throw AssertionError("$message, call:\n${call.dump()}")
-
-        // We expect:
-        //  `<jvm-indy-sam-conversion>`<samType>(method)
-        // where
-        //  - 'samType' is a substituted SAM type;
-        //  - 'method' is an IrFunctionReference to an actual method that should be called,
-        //    with arguments captured by closure stored as function reference arguments.
-        // We replace it with JVM INVOKEDYNAMIC intrinsic.
 
         val startOffset = call.startOffset
         val endOffset = call.endOffset
 
         val samType = call.getTypeArgument(0) as? IrSimpleType
             ?: fail("'samType' is expected to be a simple type")
-        val samMethod = samType.getSingleAbstractMethod()
-            ?: fail("'${samType.render()}' is not a SAM-type")
 
-        val irFunRef = call.getValueArgument(0) as? IrFunctionReference
-            ?: fail("'method' is expected to be 'IrFunctionReference'")
-        val funSymbol = irFunRef.symbol
+        val samMethodRef = call.getValueArgument(0) as? IrRawFunctionReference
+            ?: fail("'samMethodType' should be 'IrRawFunctionReference'")
+        val implFunRef = call.getValueArgument(1) as? IrFunctionReference
+            ?: fail("'implMethodReference' is expected to be 'IrFunctionReference'")
+        val implFunSymbol = implFunRef.symbol
+        val instanceMethodRef = call.getValueArgument(2) as? IrRawFunctionReference
+            ?: fail("'instantiatedMethodType' is expected to be 'IrRawFunctionReference'")
 
-        val dynamicCall = wrapClosureInDynamicCall(samType, samMethod, irFunRef)
-
-        return context.createJvmIrBuilder(
-            funSymbol, // TODO actual symbol for outer scope
-            startOffset, endOffset
-        ).run {
-            val samMethodType = jvmOriginalMethodType(samMethod.symbol)
-            val irRawFunRef = irRawFunctionReferefence(irFunRef.type, funSymbol)
-            val instanceMethodType = jvmSubstitutedMethodType(samType, samMethod.symbol)
-
-            jvmInvokeDynamic(
-                dynamicCall,
-                lambdaMetafactoryHandle,
-                listOf(samMethodType, irRawFunRef, instanceMethodType)
-            )
+        val extraOverriddenMethods = run {
+            val extraOverriddenMethodVararg = call.getValueArgument(3) as? IrVararg
+                ?: fail("'extraOverriddenMethodTypes' is expected to be 'IrVararg'")
+            extraOverriddenMethodVararg.elements.map {
+                val ref = it as? IrRawFunctionReference
+                    ?: fail("'extraOverriddenMethodTypes' elements are expected to be 'IrRawFunctionReference'")
+                ref.symbol.owner as? IrSimpleFunction
+                    ?: fail("Extra overridden method is expected to be 'IrSimpleFunction': ${ref.symbol.owner.render()}")
+            }
         }
+
+        val samMethod = samMethodRef.symbol.owner as? IrSimpleFunction
+            ?: fail("SAM method is expected to be 'IrSimpleFunction': ${samMethodRef.symbol.owner.render()}")
+        val instanceMethod = instanceMethodRef.symbol.owner as? IrSimpleFunction
+            ?: fail("Instance method is expected to be 'IrSimpleFunction': ${instanceMethodRef.symbol.owner.render()}")
+
+        val dynamicCall = wrapClosureInDynamicCall(samType, samMethod, implFunRef)
+
+        val requiredBridges = getOverriddenMethodsRequiringBridges(instanceMethod, samMethod, extraOverriddenMethods)
+
+        return context.createJvmIrBuilder(implFunSymbol, startOffset, endOffset).run {
+            val samMethodType = jvmOriginalMethodType(samMethod.symbol)
+            val irRawFunRef = irRawFunctionReferefence(implFunRef.type, implFunSymbol)
+            val instanceMethodType = jvmOriginalMethodType(instanceMethodRef.symbol)
+
+            if (requiredBridges.isNotEmpty()) {
+                val bridgeMethodTypes = requiredBridges.map { jvmOriginalMethodType(it.symbol) }
+                jvmInvokeDynamic(
+                    dynamicCall,
+                    jdkAltMetafactoryHandle,
+                    listOf(
+                        samMethodType, irRawFunRef, instanceMethodType,
+                        irInt(LambdaMetafactory.FLAG_BRIDGES),
+                        irInt(requiredBridges.size)
+                    ) + bridgeMethodTypes
+                )
+            } else {
+                jvmInvokeDynamic(
+                    dynamicCall,
+                    jdkMetafactoryHandle,
+                    listOf(samMethodType, irRawFunRef, instanceMethodType)
+                )
+            }
+        }
+    }
+
+    private fun getOverriddenMethodsRequiringBridges(
+        instanceMethod: IrSimpleFunction,
+        samMethod: IrSimpleFunction,
+        extraOverriddenMethods: List<IrSimpleFunction>
+    ): Collection<IrSimpleFunction> {
+        val jvmInstanceMethod = context.methodSignatureMapper.mapAsmMethod(instanceMethod)
+        val jvmSamMethod = context.methodSignatureMapper.mapAsmMethod(samMethod)
+
+        val signatureToNonFakeOverride = LinkedHashMap<Method, IrSimpleFunction>()
+        for (overridden in extraOverriddenMethods) {
+            val jvmOverriddenMethod = context.methodSignatureMapper.mapAsmMethod(overridden)
+            if (jvmOverriddenMethod != jvmInstanceMethod && jvmOverriddenMethod != jvmSamMethod) {
+                signatureToNonFakeOverride[jvmOverriddenMethod] = overridden
+            }
+        }
+        return signatureToNonFakeOverride.values
     }
 
     private fun wrapClosureInDynamicCall(
