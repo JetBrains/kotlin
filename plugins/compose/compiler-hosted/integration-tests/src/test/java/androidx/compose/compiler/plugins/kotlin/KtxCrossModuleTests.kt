@@ -39,7 +39,6 @@ import java.net.URLClassLoader
 class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
-    @Ignore("b/165674304")
     fun testInlineFunctionDefaultArgument(): Unit = ensureSetup {
         compile(
             mapOf(
@@ -75,7 +74,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    @Ignore("b/165674304")
     fun testInlineFunctionDefaultArgument2(): Unit = ensureSetup {
         compile(
             mapOf(

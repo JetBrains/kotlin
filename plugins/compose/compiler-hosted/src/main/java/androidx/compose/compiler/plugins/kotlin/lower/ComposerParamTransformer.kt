@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -230,7 +232,15 @@ class ComposerParamTransformer(
 
     private fun defaultArgumentFor(param: IrValueParameter): IrExpression? {
         if (param.varargElementType != null) return null
-        return param.type.defaultValue()
+        return param.type.defaultValue().let {
+            IrCompositeImpl(
+                it.startOffset,
+                it.endOffset,
+                it.type,
+                IrStatementOrigin.DEFAULT_VALUE,
+                listOf(it)
+            )
+        }
     }
 
     // TODO(lmr): There is an equivalent function in IrUtils, but we can't use it because it
@@ -496,7 +506,7 @@ class ComposerParamTransformer(
                     isCrossinline = param.isCrossinline,
                     isNoinline = param.isNoinline,
                     isHidden = false,
-                    isAssignable = false
+                    isAssignable = param.defaultValue != null
                 ).also {
                     it.defaultValue = param.defaultValue
                     it.parent = param.parent
@@ -530,7 +540,8 @@ class ComposerParamTransformer(
                 for (i in 0 until defaultParamCount(realParams)) {
                     fn.addValueParameter(
                         if (i == 0) defaults else "$defaults$i",
-                        context.irBuiltIns.intType
+                        context.irBuiltIns.intType,
+                        IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION
                     )
                 }
             }
