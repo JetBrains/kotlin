@@ -15,6 +15,7 @@
  */
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
@@ -36,6 +37,7 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -178,6 +180,9 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                 runWrite {
                     Arrays.stream(ProjectJdkTable.getInstance().allJdks).forEach { jdk: Sdk ->
                         (ProjectJdkTable.getInstance() as ProjectJdkTableImpl).removeTestJdk(jdk)
+                        if (jdk is Disposable) {
+                            Disposer.dispose((jdk as Disposable))
+                        }
                     }
                     for (sdk in removedSdks) {
                         SdkConfigurationUtil.addSdk(sdk)
