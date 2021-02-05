@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -71,7 +70,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         }
     }
 
-    override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? = null
+    override fun SimpleTypeMarker.asCapturedType(): CapturedTypeMarker? = this as? IrCapturedType
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? = null
 
@@ -83,19 +82,24 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         else simpleType.run { IrSimpleTypeImpl(classifier, nullable, arguments, annotations) }
     }
 
-    override fun SimpleTypeMarker.typeConstructor() = (this as IrSimpleType).classifier
+    override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker = when (this) {
+        is IrCapturedType -> constructor
+        is IrSimpleType -> classifier
+        else -> error("Unknown type constructor")
+    }
 
     override fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker =
-        error("Captured types should be used for IrTypes")
+        (this as IrCapturedType).constructor
 
-    override fun CapturedTypeMarker.isProjectionNotNull(): Boolean =
-        error("Captured types should be used for IrTypes")
+    // Note: `isProjectionNotNull` is used inside inference along with intersection types.
+    // IrTypes are not used in type inference and do not have intersection type so implemenation is default (false)
+    override fun CapturedTypeMarker.isProjectionNotNull(): Boolean = false
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
-        error("Captured types should be used for IrTypes")
+        (this as IrCapturedType).captureStatus
 
     override fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker =
-        error("Captured types should be used for IrTypes")
+        (this as IrCapturedType.Constructor).argument
 
     override fun KotlinTypeMarker.argumentsCount(): Int =
         when (this) {
@@ -116,7 +120,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.asTypeArgument() = this as IrTypeArgument
 
-    override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? = error("Captured Type is not valid for IrTypes")
+    override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? = (this as IrCapturedType).lowerType
 
     override fun TypeArgumentMarker.isStarProjection() = this is IrStarProjection
 
@@ -139,6 +143,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
         return when (this) {
+            is IrCapturedType.Constructor -> superTypes
             is IrClassSymbol -> owner.superTypes
             is IrTypeParameterSymbol -> owner.superTypes
             else -> error("unsupported type constructor")
@@ -159,11 +164,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeParameterMarker.getTypeConstructor() = this as IrTypeParameterSymbol
 
-    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker) = FqNameEqualityChecker.areEqual(
-        c1 as IrClassifierSymbol, c2 as IrClassifierSymbol
-    )
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean =
+        if (c1 is IrClassifierSymbol && c2 is IrClassifierSymbol) {
+            FqNameEqualityChecker.areEqual(c1 , c2)
+        } else c1 === c2
 
-    override fun TypeConstructorMarker.isDenotable() = true
+    override fun TypeConstructorMarker.isDenotable() = this !is IrCapturedType.Constructor
 
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
         val classSymbol = this as? IrClassSymbol ?: return false
@@ -184,6 +190,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
         // TODO: is that correct?
         require(type is IrSimpleType)
+
+        if (type is IrCapturedType) return null
 
         val classifier = type.classifier as? IrClassSymbol ?: return null
         val typeArguments = type.arguments

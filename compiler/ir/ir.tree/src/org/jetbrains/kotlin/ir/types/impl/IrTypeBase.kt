@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
+import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class IrTypeBase(val kotlinType: KotlinType?) : IrType, IrTypeProjection {
@@ -69,3 +73,49 @@ object IrUninitializedType : IrType {
 class ReturnTypeIsNotInitializedException(function: IrFunction) : IllegalStateException(
     "Return type is not initialized for function '${function.name}'"
 )
+
+
+// Please note this type is not denotable which means it could only exist inside type system
+class IrCapturedType(
+    val captureStatus: CaptureStatus,
+    val lowerType: IrType?,
+    projection: IrTypeArgument,
+    typeParameter: IrTypeParameter
+) : IrSimpleType, CapturedTypeMarker {
+
+    class Constructor(val argument: IrTypeArgument, val typeParameter: IrTypeParameter) :
+        CapturedTypeConstructorMarker {
+
+        private var _superTypes: List<IrType> = emptyList()
+
+        val superTypes: List<IrType> get() = _superTypes
+
+        fun initSuperTypes(superTypes: List<IrType>) {
+            _superTypes = superTypes
+        }
+    }
+
+    val constructor: Constructor = Constructor(projection, typeParameter)
+
+    override val classifier: IrClassifierSymbol get() = error("Captured Type does not have a classifier")
+    override val arguments: List<IrTypeArgument> get() = emptyList()
+    override val abbreviation: IrTypeAbbreviation? get () = null
+    override val hasQuestionMark: Boolean get() = false
+    override val annotations: List<IrConstructorCall> get() = emptyList()
+
+    override fun equals(other: Any?): Boolean {
+        return other is IrCapturedType
+                && captureStatus == other.captureStatus
+                && lowerType == other.lowerType
+                && constructor.argument == other.constructor.argument
+                && constructor.typeParameter == other.constructor.typeParameter
+                && constructor.superTypes == other.constructor.superTypes
+    }
+
+    override fun hashCode(): Int {
+        return (((captureStatus.hashCode() * 31
+                + (lowerType?.hashCode() ?: 0)) * 31
+                + constructor.argument.hashCode()) * 31
+                + constructor.typeParameter.hashCode()) + constructor.superTypes.hashCode()
+    }
+}
