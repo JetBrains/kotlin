@@ -163,6 +163,7 @@ private class JsCodeOutlineTransformer(
             name = Name.identifier("outlinedJsCode$")
             visibility = DescriptorVisibilities.LOCAL
             returnType = backendContext.dynamicType
+            origin = OUTLINED_ORIGIN
         }
         // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
         outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
@@ -214,5 +215,9 @@ private class JsCodeOutlineTransformer(
                 +outlinedFunctionCall
             }
         }
+    }
+
+    companion object {
+        object OUTLINED_ORIGIN : IrDeclarationOriginImpl("OUTLINED_ORIGIN")
     }
 }

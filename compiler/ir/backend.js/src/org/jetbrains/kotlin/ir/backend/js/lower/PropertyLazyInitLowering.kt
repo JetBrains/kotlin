@@ -282,7 +282,7 @@ private fun IrDeclaration.isCompatibleDeclaration() =
     origin in compatibleOrigins
 
 private fun IrDeclaration.assertCompatibleDeclaration() {
-    assert((this as? PersistentIrElementBase<*>)?.createdOn?.let { it == 0 } != false)
+    assert(this !is PersistentIrElementBase<*> || createdOn == 0)
 }
 
 private val compatibleOrigins = listOf(

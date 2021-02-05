@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -63,6 +60,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 endOffset = reference.endOffset
                 returnType = reference.type
                 name = Name.identifier("${property.name.asString()}\$factory")
+                origin = PROPERTY_REFERENCE_FACTORY
             }
 
             val boundArguments = listOfNotNull(reference.dispatchReceiver, reference.extensionReceiver)
@@ -258,5 +256,9 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 IrFunctionExpressionImpl(startOffset, endOffset, context.irBuiltIns.anyType, function, IrStatementOrigin.LAMBDA)
             }
         }
+    }
+
+    companion object {
+        object PROPERTY_REFERENCE_FACTORY : IrDeclarationOriginImpl("PROPERTY_REFERNCE_FACTORY")
     }
 }
