@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -59,7 +60,7 @@ internal class KtFirReferenceShortener(
     override val token: ValidityToken,
     override val firResolveState: FirModuleResolveState,
 ) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
-    override fun collectShortenings(file: KtFile, from: Int, to: Int): ShortenCommand {
+    override fun collectShortenings(file: KtFile, selection: TextRange): ShortenCommand {
         resolveFileToBodyResolve(file)
         val firFile = file.getOrBuildFirOfType<FirFile>(firResolveState)
 
