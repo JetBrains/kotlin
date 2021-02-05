@@ -30,14 +30,14 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.ComposableContract
+            import androidx.compose.runtime.NonRestartableComposable
 
             $checked
         """.trimIndent(),
         expectedTransformed,
         """
             import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.ComposableContract
+            import androidx.compose.runtime.NonRestartableComposable
 
             $unchecked
         """.trimIndent(),
@@ -1218,10 +1218,10 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             open class Foo {
-                @ComposableContract(restartable = false) @Composable fun foo(x: Int = 0) {}
+                @NonRestartableComposable @Composable fun foo(x: Int = 0) {}
             }
             class Bar: Foo() {
-                @ComposableContract(restartable = false) @Composable fun Example() {
+                @NonRestartableComposable @Composable fun Example() {
                     foo()
                 }
             }
@@ -1229,7 +1229,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """
             @StabilityInferred(parameters = 0)
             open class Foo {
-              @ComposableContract(restartable = false)
+              @NonRestartableComposable
               @Composable
               fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
                 %composer.startReplaceableGroup(<>, "C(foo):Test.kt")
@@ -1242,7 +1242,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             }
             @StabilityInferred(parameters = 0)
             class Bar : Foo {
-              @ComposableContract(restartable = false)
+              @NonRestartableComposable
               @Composable
               fun Example(%composer: Composer?, %changed: Int) {
                 %composer.startReplaceableGroup(<>, "C(Example)<foo()>:Test.kt")
