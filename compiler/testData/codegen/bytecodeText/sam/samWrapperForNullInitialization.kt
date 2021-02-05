@@ -15,6 +15,16 @@ fun test() {
     JFoo.foo2({ i++ }, null)
 }
 
+// JVM_TEMPLATES:
+// @TestKt.class:
+// 1 NEW TestKt\$
+// 1 NEW kotlin/jvm/internal/Ref\$IntRef
+// 2 NEW
+// 0 IFNONNULL
+// 0 IFNULL
+// 1 ACONST_NULL
+
+// JVM_IR_TEMPLATES:
 // @TestKt.class:
 // 0 NEW TestKt\$
 // 1 NEW kotlin/jvm/internal/Ref\$IntRef

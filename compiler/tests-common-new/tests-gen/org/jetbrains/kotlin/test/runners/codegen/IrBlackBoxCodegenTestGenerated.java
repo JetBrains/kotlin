@@ -19922,6 +19922,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("covariantOverrideWithPrimitive.kt")
+            public void testCovariantOverrideWithPrimitive() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/covariantOverrideWithPrimitive.kt");
+            }
+
+            @Test
             @TestMetadata("genericFunInterface.kt")
             public void testGenericFunInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/genericFunInterface.kt");
