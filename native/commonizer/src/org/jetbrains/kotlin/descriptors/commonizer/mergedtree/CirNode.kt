@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirLiftedUpDeclaration

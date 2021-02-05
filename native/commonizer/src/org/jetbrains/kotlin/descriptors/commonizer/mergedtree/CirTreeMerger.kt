@@ -130,7 +130,7 @@ class CirTreeMerger(
         moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleDescriptor)
 
         moduleDescriptor.collectNonEmptyPackageMemberScopes { packageFqName, packageMemberScope ->
-            processPackage(moduleNode, targetIndex, packageFqName.intern(), packageMemberScope, moduleName)
+            processPackage(moduleNode, targetIndex, packageFqName.intern(), packageMemberScope)
         }
     }
 
@@ -138,11 +138,10 @@ class CirTreeMerger(
         moduleNode: CirModuleNode,
         targetIndex: Int,
         packageFqName: FqName,
-        packageMemberScope: MemberScope,
-        moduleName: Name
+        packageMemberScope: MemberScope
     ) {
         val packageNode: CirPackageNode = moduleNode.packages.getOrPut(packageFqName) {
-            buildPackageNode(storageManager, size, packageFqName, moduleName)
+            buildPackageNode(storageManager, size, packageFqName)
         }
         packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageFqName)
 

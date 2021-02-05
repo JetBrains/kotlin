@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.storage.NullableLazyValue
 class CirPackageNode(
     override val targetDeclarations: CommonizedGroup<CirPackage>,
     override val commonDeclaration: NullableLazyValue<CirPackage>,
-    override val fqName: FqName,
-    val moduleName: Name
+    override val fqName: FqName
 ) : CirNodeWithFqName<CirPackage, CirPackage>, CirNodeWithMembers<CirPackage, CirPackage> {
 
     override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
