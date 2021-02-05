@@ -193,15 +193,15 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val scriptsInstaller by extending {
-        htmlPreprocessors with ScriptsInstaller order { after(rootCreator) }
+        htmlPreprocessors providing ::ScriptsInstaller order { after(rootCreator) }
     }
 
     val stylesInstaller by extending {
-        htmlPreprocessors with StylesInstaller order { after(rootCreator) }
+        htmlPreprocessors providing ::StylesInstaller order { after(rootCreator) }
     }
 
     val assetsInstaller by extending {
-        htmlPreprocessors with AssetsInstaller order { after(rootCreator) }
+        htmlPreprocessors with AssetsInstaller order { after(rootCreator) } applyIf { !delayTemplateSubstitution }
     }
 
     val customResourceInstaller by extending {
@@ -209,7 +209,7 @@ class DokkaBase : DokkaPlugin() {
             after(stylesInstaller)
             after(scriptsInstaller)
             after(assetsInstaller)
-        }
+        } applyIf { !delayTemplateSubstitution }
     }
 
     val packageListCreator by extending {
@@ -219,7 +219,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val sourcesetDependencyAppender by extending {
-        htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) }
+        htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) } applyIf { !delayTemplateSubstitution }
     }
 
     val resolveLinkConsumer by extending {
