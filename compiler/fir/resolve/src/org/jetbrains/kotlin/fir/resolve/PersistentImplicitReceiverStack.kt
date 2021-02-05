@@ -37,7 +37,7 @@ class PersistentImplicitReceiverStack private constructor(
 
     fun add(name: Name?, value: ImplicitReceiverValue<*>): PersistentImplicitReceiverStack {
         val stack = stack.add(value)
-        val originalTypes = originalTypes.add(value.type)
+        val originalTypes = originalTypes.add(value.originalType)
         val index = stack.size - 1
         val indexesPerLabel = name?.let { indexesPerLabel.put(it, index) } ?: indexesPerLabel
         val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)

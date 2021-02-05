@@ -582,7 +582,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 syntheticElseNode.mergeIncomingFlow()
             }
         }
-        whenExitNode.mergeIncomingFlow(updateReceivers = true)
+        whenExitNode.mergeIncomingFlow()
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -675,7 +675,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     fun enterFinallyBlock() {
         // NB: fork to isolate effects inside the finally block
         // Otherwise, changes in the finally block could affect the previous nodes: try main block and catch clauses.
-        graphBuilder.enterFinallyBlock().mergeIncomingFlow(shouldForkFlow = true)
+        graphBuilder.enterFinallyBlock().mergeIncomingFlow(updateReceivers = true, shouldForkFlow = true)
     }
 
     fun exitFinallyBlock(tryExpression: FirTryExpression) {
@@ -1144,15 +1144,28 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private val CFGNode<*>.origin: CFGNode<*> get() = if (this is StubNode) firstPreviousNode else this
 
     private fun <T : CFGNode<*>> T.mergeIncomingFlow(
+        // This flag should be set true if we're changing flow branches from one to another (e.g. in when, try->catch)
         updateReceivers: Boolean = false,
         shouldForkFlow: Boolean = false
     ): T = this.also { node ->
-        val previousFlows = if (node.isDead)
-            node.previousNodes.mapNotNull { runIf(!node.incomingEdges.getValue(it).kind.isBack) { it.flow } }
-        else
-            node.previousNodes.mapNotNull { prev -> prev.takeIf { node.incomingEdges.getValue(it).kind.usedInDfa }?.flow }
+        val previousFlows = mutableListOf<FLOW>()
+        var deadForwardCount = 0
+        for (previousNode in previousNodes) {
+            val incomingEdgeKind = node.incomingEdges.getValue(previousNode).kind
+            if (node.isDead) {
+                if (!incomingEdgeKind.isBack) {
+                    previousFlows += previousNode.flow
+                }
+            } else if (incomingEdgeKind.usedInDfa) {
+                previousFlows += previousNode.flow
+            }
+            if (incomingEdgeKind == EdgeKind.DeadForward) {
+                deadForwardCount++
+            }
+        }
         var flow = logicSystem.joinFlow(previousFlows)
-        if (updateReceivers) {
+        // deadForwardCount should be added due to cases like merge after 'if (...) return else ...'
+        if (updateReceivers || previousFlows.size + deadForwardCount > 1) {
             logicSystem.updateAllReceivers(flow)
         }
         if (shouldForkFlow) {
