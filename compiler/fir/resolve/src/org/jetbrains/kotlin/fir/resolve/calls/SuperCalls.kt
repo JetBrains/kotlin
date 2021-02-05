@@ -36,12 +36,13 @@ fun BodyResolveComponents.findTypesForSuperCandidates(
     containingCall: FirQualifiedAccess,
 ): Collection<ConeKotlinType> {
     val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).type }
-    if (supertypes.size <= 1) return supertypes
+    val isMethodOfAny = containingCall is FirFunctionCall && isCallingMethodOfAny(containingCall)
+    if (supertypes.size <= 1 && !isMethodOfAny) return supertypes
 
     return when (containingCall) {
         is FirFunctionCall -> {
             val calleeName = containingCall.calleeReference.name
-            if (isCallingMethodOfAny(containingCall)) {
+            if (isMethodOfAny) {
                 resolveSupertypesForMethodOfAny(supertypes, calleeName)
             } else {
                 resolveSupertypesByCalleeName(supertypes, calleeName)
