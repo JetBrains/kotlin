@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -129,6 +130,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private val signatureParser = SignatureParser(treeMaker)
 
     private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
+
+    private val importsFromRoot = collectImportsFromRootPackage()
 
     private var done = false
 
@@ -249,7 +252,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
-        val imports = mutableListOf<JCTree.JCImport>()
+        val imports = mutableListOf<JCImport>()
         val importedShortNames = mutableSetOf<String>()
 
         // We prefer ordinary imports over aliased ones.
@@ -321,6 +324,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val isAnnotation = clazz.isAnnotation()
 
         val modifiers = convertModifiers(
+            clazz,
             flags,
             if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
             packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations, descriptor.annotations
@@ -375,7 +379,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 it.name == "<init>" && Type.getArgumentsAndReturnSizes(it.desc).shr(2) >= 2
             }?.desc ?: "()Z")
 
-            val args = mapJList(constructorArguments.drop(2)) { convertLiteralExpression(getDefaultValue(it)) }
+            val args = mapJList(constructorArguments.drop(2)) { convertLiteralExpression(clazz, getDefaultValue(it)) }
 
             val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName, false) }
 
@@ -624,6 +628,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             return false
         }
 
+        reportIfIllegalTypeUsage(containingClass, type)
+
         return true
     }
 
@@ -684,6 +690,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         } ?: Annotations.EMPTY
 
         val modifiers = convertModifiers(
+            containingClass,
             field.access, ElementKind.FIELD, packageFqName,
             field.visibleAnnotations, field.invisibleAnnotations, fieldAnnotations
         )
@@ -714,7 +721,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         lineMappings.registerField(containingClass, field)
 
-        val initializer = explicitInitializer ?: convertPropertyInitializer(field)
+        val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).also {
             if (keepKdocComments) {
                 it.keepKdocComments(field)
@@ -722,7 +729,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
     }
 
-    private fun convertPropertyInitializer(field: FieldNode): JCExpression? {
+    private fun convertPropertyInitializer(containingClass: ClassNode, field: FieldNode): JCExpression? {
         val value = field.value
 
         val origin = kaptContext.origins[field]
@@ -735,7 +742,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         if (value != null) {
             if (propertyInitializer != null) {
-                return convertConstantValueArguments(value, listOf(propertyInitializer))
+                return convertConstantValueArguments(containingClass, value, listOf(propertyInitializer))
             }
 
             return convertValueOfPrimitiveTypeOrString(value)
@@ -759,14 +766,14 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             if (constValue != null) {
                 val asmValue = mapConstantValueToAsmRepresentation(constValue)
                 if (asmValue !== UnknownConstantValue) {
-                    return convertConstantValueArguments(asmValue, listOf(propertyInitializer))
+                    return convertConstantValueArguments(containingClass, asmValue, listOf(propertyInitializer))
                 }
             }
         }
 
         if (isFinal(field.access)) {
             val type = Type.getType(field.desc)
-            return convertLiteralExpression(getDefaultValue(type))
+            return convertLiteralExpression(containingClass, getDefaultValue(type))
         }
 
         return null
@@ -879,6 +886,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         if (!isValidIdentifier(name, canBeConstructor = isConstructor)) return null
 
         val modifiers = convertModifiers(
+            containingClass,
             if (containingClass.isEnum() && isConstructor)
                 (method.access.toLong() and VISIBILITY_MODIFIERS.inv())
             else
@@ -908,6 +916,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
             val varargs = if (lastParameter && isArrayType && method.isVarargs()) Flags.VARARGS else 0L
             val modifiers = convertModifiers(
+                containingClass,
                 info.flags or varargs or Flags.PARAMETER,
                 ElementKind.PARAMETER,
                 packageFqName,
@@ -925,9 +934,9 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         val valueParametersFromDescriptor = descriptor.valueParameters
         val (genericSignature, returnType) =
-                extractMethodSignatureTypes(descriptor, exceptionTypes, jcReturnType, method, parameters, valueParametersFromDescriptor)
+            extractMethodSignatureTypes(descriptor, exceptionTypes, jcReturnType, method, parameters, valueParametersFromDescriptor)
 
-        val defaultValue = method.annotationDefault?.let { convertLiteralExpression(it) }
+        val defaultValue = method.annotationDefault?.let { convertLiteralExpression(containingClass, it) }
 
         val body = if (defaultValue != null) {
             null
@@ -943,7 +952,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
             val superClassConstructorCall = if (superClassConstructor != null) {
                 val args = mapJList(superClassConstructor.valueParameters) { param ->
-                    convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
+                    convertLiteralExpression(containingClass, getDefaultValue(typeMapper.mapType(param.type)))
                 }
                 val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args)
                 JavacList.of<JCStatement>(treeMaker.Exec(call))
@@ -955,7 +964,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         } else if (asmReturnType == Type.VOID_TYPE) {
             treeMaker.Block(0, JavacList.nil())
         } else {
-            val returnStatement = treeMaker.Return(convertLiteralExpression(getDefaultValue(asmReturnType)))
+            val returnStatement = treeMaker.Return(convertLiteralExpression(containingClass, getDefaultValue(asmReturnType)))
             treeMaker.Block(0, JavacList.of(returnStatement))
         }
 
@@ -1112,15 +1121,25 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun convertModifiers(
+        containingClass: ClassNode,
         access: Int,
         kind: ElementKind,
         packageFqName: String,
         visibleAnnotations: List<AnnotationNode>?,
         invisibleAnnotations: List<AnnotationNode>?,
         descriptorAnnotations: Annotations
-    ): JCModifiers = convertModifiers(access.toLong(), kind, packageFqName, visibleAnnotations, invisibleAnnotations, descriptorAnnotations)
+    ): JCModifiers = convertModifiers(
+        containingClass,
+        access.toLong(),
+        kind,
+        packageFqName,
+        visibleAnnotations,
+        invisibleAnnotations,
+        descriptorAnnotations
+    )
 
     private fun convertModifiers(
+        containingClass: ClassNode,
         access: Long,
         kind: ElementKind,
         packageFqName: String,
@@ -1135,7 +1154,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 seenOverride = true
             }
             val annotationDescriptor = descriptorAnnotations.singleOrNull { checkIfAnnotationValueMatches(annotation, AnnotationValue(it)) }
-            val annotationTree = convertAnnotation(annotation, packageFqName, annotationDescriptor) ?: return list
+            val annotationTree = convertAnnotation(containingClass, annotation, packageFqName, annotationDescriptor) ?: return list
             return list.prepend(annotationTree)
         }
 
@@ -1159,6 +1178,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     private fun convertAnnotation(
+        containingClass: ClassNode,
         annotation: AnnotationNode,
         packageFqName: String? = "",
         annotationDescriptor: AnnotationDescriptor? = null,
@@ -1190,25 +1210,30 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val values = if (argMapping.isNotEmpty()) {
             argMapping.mapNotNull { (parameterName, arg) ->
                 if (arg is DefaultValueArgument) return@mapNotNull null
-                convertAnnotationArgumentWithName(constantValues[parameterName], arg, parameterName)
+                convertAnnotationArgumentWithName(containingClass, constantValues[parameterName], arg, parameterName)
             }
         } else {
             constantValues.mapNotNull { (parameterName, arg) ->
-                convertAnnotationArgumentWithName(arg, null, parameterName)
+                convertAnnotationArgumentWithName(containingClass, arg, null, parameterName)
             }
         }
 
         return treeMaker.Annotation(annotationFqName, JavacList.from(values))
     }
 
-    private fun convertAnnotationArgumentWithName(constantValue: Any?, value: ResolvedValueArgument?, name: String): JCExpression? {
+    private fun convertAnnotationArgumentWithName(
+        containingClass: ClassNode,
+        constantValue: Any?,
+        value: ResolvedValueArgument?,
+        name: String
+    ): JCExpression? {
         if (!isValidIdentifier(name)) return null
         val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
-        val expr = convertConstantValueArguments(constantValue, args) ?: return null
+        val expr = convertConstantValueArguments(containingClass, constantValue, args) ?: return null
         return treeMaker.Assign(treeMaker.SimpleName(name), expr)
     }
 
-    private fun convertConstantValueArguments(constantValue: Any?, args: List<KtExpression>): JCExpression? {
+    private fun convertConstantValueArguments(containingClass: ClassNode, constantValue: Any?, args: List<KtExpression>): JCExpression? {
         val singleArg = args.singleOrNull()
 
         if (constantValue.isOfPrimitiveType()) {
@@ -1280,7 +1305,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             }
         }
 
-        return convertLiteralExpression(constantValue)
+        return convertLiteralExpression(containingClass, constantValue)
     }
 
     private fun tryParseReferenceToIntConstant(expression: KtExpression?): JCExpression? {
@@ -1369,20 +1394,22 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
     }
 
-    private fun convertLiteralExpression(value: Any?): JCExpression {
+    private fun convertLiteralExpression(containingClass: ClassNode, value: Any?): JCExpression {
+        fun convertDeeper(value: Any?) = convertLiteralExpression(containingClass, value)
+
         convertValueOfPrimitiveTypeOrString(value)?.let { return it }
 
         return when (value) {
             null -> treeMaker.Literal(TypeTag.BOT, null)
 
-            is ByteArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is BooleanArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is CharArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is ShortArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is IntArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is LongArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is FloatArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
-            is DoubleArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable()) { convertLiteralExpression(it) })
+            is ByteArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is BooleanArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is CharArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is ShortArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is IntArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is LongArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is FloatArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
+            is DoubleArray -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value.asIterable(), ::convertDeeper))
             is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
@@ -1393,10 +1420,13 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
             }
-            is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })
+            is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value, ::convertDeeper))
 
-            is Type -> treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
-            is AnnotationNode -> convertAnnotation(value, packageFqName = null, filtered = false)!!
+            is Type -> {
+                reportIfIllegalTypeUsage(containingClass, value)
+                treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
+            }
+            is AnnotationNode -> convertAnnotation(containingClass, value, packageFqName = null, filtered = false)!!
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value::class.java.canonicalName})")
         }
     }
@@ -1440,6 +1470,28 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT)
+
+    private fun getFileForClass(c: ClassNode): KtFile? = kaptContext.origins[c]?.element?.containingFile as? KtFile
+
+    private fun reportIfIllegalTypeUsage(containingClass: ClassNode, type: Type) {
+        val file = getFileForClass(containingClass)
+        importsFromRoot[file]?.let { importsFromRoot ->
+            val typeName = type.className
+            if (importsFromRoot.contains(typeName)) {
+                val msg = "${containingClass.className}: Can't reference type '${typeName}' from default package in Java stub."
+                if (strictMode) kaptContext.reportKaptError(msg)
+                else kaptContext.logger.warn(msg)
+            }
+        }
+    }
+
+    private fun collectImportsFromRootPackage(): Map<KtFile, Set<String>> =
+        kaptContext.compiledClasses.mapNotNull(::getFileForClass).distinct().map { file ->
+            val importsFromRoot =
+                file.importDirectives.mapNotNull { im -> im.importPath?.fqName?.takeIf { it.isOneSegmentFQN() } }
+            file to importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
+        }.toMap()
+
 
 }
 
