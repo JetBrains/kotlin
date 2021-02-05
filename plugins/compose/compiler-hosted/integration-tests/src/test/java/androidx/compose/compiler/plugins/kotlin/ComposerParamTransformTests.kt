@@ -44,7 +44,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             import androidx.compose.runtime.InternalComposeApi
             import androidx.compose.runtime.ComposeCompilerApi
             import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.ComposableContract
+            import androidx.compose.runtime.NonRestartableComposable
 
             $source
         """.trimIndent(),
@@ -59,7 +59,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """
             val bar: Int @Composable get() { return 123 }
 
-            @ComposableContract(restartable = false) @Composable fun Example() {
+            @NonRestartableComposable @Composable fun Example() {
                 bar
             }
         """,
@@ -71,7 +71,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 %composer.endReplaceableGroup()
                 return tmp0
               }
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<bar>:Test.kt#2487m")
@@ -85,13 +85,13 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     fun testAbstractComposable(): Unit = composerParam(
         """
             abstract class BaseFoo {
-                @ComposableContract(restartable = false)
+                @NonRestartableComposable
                 @Composable
                 abstract fun bar()
             }
 
             class FooImpl : BaseFoo() {
-                @ComposableContract(restartable = false)
+                @NonRestartableComposable
                 @Composable
                 override fun bar() {}
             }
@@ -99,14 +99,14 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """
             @StabilityInferred(parameters = 0)
             abstract class BaseFoo {
-              @ComposableContract(restartable = false)
+              @NonRestartableComposable
               @Composable
               abstract fun bar(%composer: Composer?, %changed: Int)
               static val %stable: Int = 0
             }
             @StabilityInferred(parameters = 0)
             class FooImpl : BaseFoo {
-              @ComposableContract(restartable = false)
+              @NonRestartableComposable
               @Composable
               override fun bar(%composer: Composer?, %changed: Int) {
                 %composer.startReplaceableGroup(<>, "C(bar):Test.kt#2487m")
@@ -120,18 +120,18 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     @Test
     fun testLocalClassAndObjectLiterals(): Unit = composerParam(
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Wat() {}
 
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Foo(x: Int) {
                 Wat()
-                @ComposableContract(restartable = false)
+                @NonRestartableComposable
                 @Composable fun goo() { Wat() }
                 class Bar {
-                    @ComposableContract(restartable = false)
+                    @NonRestartableComposable
                     @Composable fun baz() { Wat() }
                 }
                 goo()
@@ -139,18 +139,18 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Wat(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Wat):Test.kt#2487m")
               %composer.endReplaceableGroup()
             }
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Foo(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Foo)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
               Wat(%composer, 0)
-              @ComposableContract(restartable = false)
+              @NonRestartableComposable
               @Composable
               fun goo(%composer: Composer?, %changed: Int) {
                 %composer.startReplaceableGroup(<>, "C(goo)<Wat()>:Test.kt#2487m")
@@ -158,7 +158,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 %composer.endReplaceableGroup()
               }
               class Bar {
-                @ComposableContract(restartable = false)
+                @NonRestartableComposable
                 @Composable
                 fun baz(%composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>, "C(baz)<Wat()>:Test.kt#2487m")
@@ -235,13 +235,13 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     @Test
     fun testCircularCall(): Unit = composerParam(
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable fun Example() {
                 Example()
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<Exampl...>:Test.kt#2487m")
@@ -258,7 +258,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 content()
             }
 
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable fun Test() {
                 Example {}
             }
@@ -270,7 +270,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
               content(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Test)<Exampl...>:Test.kt#2487m")
