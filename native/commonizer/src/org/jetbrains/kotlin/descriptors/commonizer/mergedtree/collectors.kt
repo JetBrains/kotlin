@@ -57,7 +57,6 @@ internal inline fun FunctionCollector(
     if (candidate.kind.isReal
         && !candidate.isKniBridgeFunction()
         && !candidate.isDeprecatedTopLevelFunction()
-        && !candidate.isIgnoredDarwinFunction()
     ) {
         typedCollector(candidate)
     }

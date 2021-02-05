@@ -36,7 +36,6 @@ private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES = ForwardDeclarationsFqNames.synthe
     }
 
 private const val CINTEROP_PACKAGE = "kotlinx.cinterop"
-private const val DARWIN_PACKAGE = "platform.darwin"
 
 private val OBJC_INTEROP_CALLABLE_ANNOTATIONS = listOf(
     "ObjCMethod",
@@ -55,9 +54,6 @@ internal val FqName.isUnderStandardKotlinPackages: Boolean
 
 internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
     get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES)
-
-internal val FqName.isUnderDarwinPackage: Boolean
-    get() = asString().hasPrefix(DARWIN_PACKAGE)
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
