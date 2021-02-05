@@ -25,7 +25,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import plugins.KotlinBuildPublishingPlugin

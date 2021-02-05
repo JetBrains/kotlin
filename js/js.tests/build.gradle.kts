@@ -104,7 +104,7 @@ val currentOsType = run {
         else -> OsName.UNKNOWN
     }
 
-    val osArch = when (System.getProperty("sun.arch.data.model")) {
+    val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
         "32" -> OsArch.X86_32
         "64" -> OsArch.X86_64
         else -> OsArch.UNKNOWN
@@ -219,13 +219,15 @@ fun Test.setUpBoxTests() {
     workingDir = rootDir
     dependsOn(antLauncherJar)
     inputs.files(antLauncherJar)
+    val antLauncherJarPath = antLauncherJar.asPath
     doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
+        systemProperty("kotlin.ant.classpath", antLauncherJarPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
     systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
-    systemProperty("overwrite.output", findProperty("overwrite.output") ?: "false")
+    systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output")
+        .forUseAtConfigurationTime().orNull ?: "false")
 
     val prefixForPpropertiesToForward = "fd."
     for ((key, value) in properties) {

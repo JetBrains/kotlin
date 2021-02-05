@@ -20,8 +20,8 @@ dependencies {
 }
 
 val writeCopyright by task<tasks.WriteCopyrightToFile> {
-    outputFile = file("$buildDir/copyright/notice.txt")
-    commented = true
+    outputFile.set(file("$buildDir/copyright/notice.txt"))
+    commented.set(true)
 }
 
 application {

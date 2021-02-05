@@ -1,6 +1,3 @@
-
-import org.gradle.jvm.tasks.Jar
-
 description = "Compiler runner + daemon client"
 
 plugins {

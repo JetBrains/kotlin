@@ -62,9 +62,10 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
         it.options.forkOptions.javaHome = file(JDK_9)
         it.options.sourcepath = files(java9SourceSet.srcDirs)
         def compileClasspath = project.configurations.java9CompileClasspath
+        def objects = project.objects
 
         doFirst {
-            def moduleFiles = files(*moduleOutputs)
+            def moduleFiles = objects.fileCollection().from(*moduleOutputs)
             def modulePath = compileClasspath.filter { !(it in moduleFiles.files) }
 
             options.compilerArgs = [
@@ -73,7 +74,7 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
                     '-Xlint:-requires-transitive-automatic' // suppress automatic module transitive dependencies in kotlin.test
             ]
 
-            classpath = files()
+            classpath = objects.fileCollection().from()
         }
     }
 }
