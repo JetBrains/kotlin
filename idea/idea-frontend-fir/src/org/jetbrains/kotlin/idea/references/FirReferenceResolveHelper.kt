@@ -16,14 +16,17 @@ import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.idea.fir.*
+import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
+import org.jetbrains.kotlin.idea.fir.isImplicitFunctionCall
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -42,8 +45,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
-        val type = type as? ConeLookupTagBasedType ?: return null
-        val symbol = type.lookupTag.toSymbol(session) as? AbstractFirBasedSymbol<*>
+
+        val type = type as? ConeLookupTagBasedType
+        val resolvedSymbol = type?.lookupTag?.toSymbol(session) as? AbstractFirBasedSymbol<*>
+
+        val symbol = resolvedSymbol ?: run {
+            val diagnostic = (this as? FirErrorTypeRef)?.diagnostic
+            (diagnostic as? ConeWrongNumberOfTypeArgumentsError)?.type
+        }
+
         return symbol?.fir?.buildSymbol(symbolBuilder)
     }
 
