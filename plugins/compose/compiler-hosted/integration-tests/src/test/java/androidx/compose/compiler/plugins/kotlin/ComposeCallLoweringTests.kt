@@ -329,7 +329,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
                 @Composable
                 fun test() {
-                    Providers(x provides 456) {
+                    CompositionLocalProvider(x provides 456) {
 
                     }
                 }
@@ -1413,7 +1413,7 @@ fun <T> B(foo: T, bar: String) { }
             @Composable
             fun Main() {
                 var text = remember { mutableStateOf("$initialText") }
-                Providers(LocalText provides text.value) {
+                CompositionLocalProvider(LocalText provides text.value) {
                     LinearLayout {
                         ConsumesCompositionLocalFromDefaultParameter()
                         Button(
