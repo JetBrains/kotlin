@@ -1,6 +1,7 @@
 import java.lang.System;
 
 @kotlin.Metadata()
+@kotlin.jvm.JvmInline()
 public final class Cl {
 
     public Cl() {
