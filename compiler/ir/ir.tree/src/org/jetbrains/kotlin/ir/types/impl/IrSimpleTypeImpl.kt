@@ -95,6 +95,7 @@ class IrTypeProjectionImpl internal constructor(
 
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     when {
+        type is IrCapturedType -> IrTypeProjectionImpl(type, variance)
         type is IrTypeProjection && type.variance == variance -> type
         type is IrSimpleType -> type.toBuilder().apply { this.variance = variance }.buildTypeProjection()
         type is IrDynamicType -> IrDynamicTypeImpl(null, type.annotations, variance)
