@@ -320,8 +320,7 @@ fun Modality.toToken(): KtModifierKeywordToken = when (this) {
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
 
-internal val throwableClassLikeType =
-    StandardClassIds.byName("Throwable").constructClassLikeType(emptyArray(), false)
+internal fun throwableClassLikeType(session: FirSession) = session.builtinTypes.throwableType.type
 
-fun ConeKotlinType.isThrowable(session: FirSession) =
-    throwableClassLikeType.isSupertypeOf(session.typeCheckerContext, this.fullyExpandedType(session))
+fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession) =
+    throwableClassLikeType(session).isSupertypeOf(session.typeCheckerContext, this.fullyExpandedType(session))

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isThrowable
+import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -33,7 +33,7 @@ object FirThrowableSubclassChecker : FirClassChecker() {
     }
 
     private fun FirClass<*>.hasThrowableSupertype(context: CheckerContext) =
-        superConeTypes.any { it !is ConeClassErrorType && it.isThrowable(context.session) }
+        superConeTypes.any { it !is ConeClassErrorType && it.isSubtypeOfThrowable(context.session) }
 
     private fun FirClass<*>.hasGenericOuterDeclaration(context: CheckerContext) =
         classId.isLocal && context.containingDeclarations.anyIsGeneric()

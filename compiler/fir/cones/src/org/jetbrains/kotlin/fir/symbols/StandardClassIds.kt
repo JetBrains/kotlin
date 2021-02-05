@@ -41,6 +41,7 @@ object StandardClassIds {
     val ULong = Long.unsignedId()
 
     val String = "String".baseId()
+    val Throwable = "Throwable".baseId()
 
     val KProperty = "KProperty".reflectId()
     val KMutableProperty = "KMutableProperty".reflectId()
