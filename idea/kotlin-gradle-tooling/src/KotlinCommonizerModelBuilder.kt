@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Project
-import org.gradle.api.logging.Logging
 import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
@@ -17,6 +16,7 @@ interface EnableCommonizerTask
 class KotlinCommonizerModelBuilder : AbstractModelBuilderService() {
 
     companion object {
+        private const val INTEROP_BUNDLE_TASK_NAME = "buildInteropBundleKlib"
         private const val COMMONIZER_TASK_NAME = "runCommonizer"
         private const val COMMONIZER_SETUP_CLASS = "org.jetbrains.kotlin.gradle.targets.native.internal.KotlinNativePlatformDependenciesKt"
     }
@@ -46,6 +46,10 @@ class KotlinCommonizerModelBuilder : AbstractModelBuilderService() {
                 if (!tasks.contains(COMMONIZER_TASK_NAME)) {
                     tasks.add(COMMONIZER_TASK_NAME)
                     startParameter.setTaskNames(tasks)
+                }
+                if (project.tasks.findByName(INTEROP_BUNDLE_TASK_NAME) != null) {
+                    tasks.add(INTEROP_BUNDLE_TASK_NAME)
+                    startParameter.setTaskNames(startParameter.taskNames + INTEROP_BUNDLE_TASK_NAME)
                 }
             }
         } catch (e: Exception) {

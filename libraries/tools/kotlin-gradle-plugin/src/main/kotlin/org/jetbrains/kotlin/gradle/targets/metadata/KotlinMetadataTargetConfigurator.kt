@@ -460,11 +460,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
                 }
 
-                // TODO NOW: This is called during configuration time, which prevents initial artifact of being built!
                 val artifactView = fromFiles.incoming.artifactView { view ->
-                    view.attributes.attribute(
-                        COMMONIZER_TARGET_ATTRIBUTE, project.getCommonizerTarget(compilation)?.identityString ?: "**none**"
-                    )
                     view.componentFilter { id ->
                         allResolutionsByComponentId[id].let { resolutions ->
                             resolutions == null || resolutions.any { it !is MetadataDependencyResolution.ExcludeAsUnrequested }
@@ -472,8 +468,20 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     }
                 }
 
+                val keepOriginalDependenciesOnlyArtifactView = fromFiles.incoming.artifactView { view ->
+                    view.attributes.attribute(
+                        COMMONIZER_TARGET_ATTRIBUTE, project.getCommonizerTarget(compilation)?.identityString ?: "**none**"
+                    )
+                    view.componentFilter { id ->
+                        allResolutionsByComponentId[id].let { resolutions ->
+                            resolutions != null && resolutions.all { it is MetadataDependencyResolution.KeepOriginalDependency }
+                        }
+                    }
+                }
+
                 mutableSetOf<Any /* File | FileCollection */>().apply {
                     addAll(dependsOnCompilationOutputs)
+                    add(keepOriginalDependenciesOnlyArtifactView.files)
                     artifactView.artifacts.forEach { artifact ->
                         val resolutions = allResolutionsByComponentId[artifact.id.componentIdentifier]
                         if (resolutions == null) {
