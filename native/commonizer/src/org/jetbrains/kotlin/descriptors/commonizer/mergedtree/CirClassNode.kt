@@ -16,12 +16,12 @@ class CirClassNode(
     override val targetDeclarations: CommonizedGroup<CirClass>,
     override val commonDeclaration: NullableLazyValue<CirClass>,
     override val classId: ClassId
-) : CirNodeWithClassId<CirClass, CirClass> {
+) : CirNodeWithClassId<CirClass, CirClass>, CirNodeWithMembers<CirClass, CirClass> {
 
     val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = THashMap()
-    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
-    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
-    val classes: MutableMap<Name, CirClassNode> = THashMap()
+    override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
+    override val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
+    override val classes: MutableMap<Name, CirClassNode> = THashMap()
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitClassNode(this, data)

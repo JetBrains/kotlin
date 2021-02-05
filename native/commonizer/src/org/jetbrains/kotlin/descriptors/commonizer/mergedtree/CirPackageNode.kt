@@ -17,11 +17,11 @@ class CirPackageNode(
     override val commonDeclaration: NullableLazyValue<CirPackage>,
     override val fqName: FqName,
     val moduleName: Name
-) : CirNodeWithFqName<CirPackage, CirPackage> {
+) : CirNodeWithFqName<CirPackage, CirPackage>, CirNodeWithMembers<CirPackage, CirPackage> {
 
-    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
-    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
-    val classes: MutableMap<Name, CirClassNode> = THashMap()
+    override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
+    override val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
+    override val classes: MutableMap<Name, CirClassNode> = THashMap()
     val typeAliases: MutableMap<Name, CirTypeAliasNode> = THashMap()
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T) =

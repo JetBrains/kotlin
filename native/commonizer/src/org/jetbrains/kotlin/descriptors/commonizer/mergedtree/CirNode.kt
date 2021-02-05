@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import gnu.trove.THashMap
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirLiftedUpDeclaration
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 interface CirNode<T : CirDeclaration, R : CirDeclaration> {
@@ -37,3 +43,21 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     }
 }
 
+interface CirNodeWithClassId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
+    val classId: ClassId
+}
+
+interface CirNodeWithFqName<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+    val fqName: FqName
+}
+
+interface CirNodeWithLiftingUp<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+    val isLiftedUp: Boolean
+        get() = (commonDeclaration() as? CirLiftedUpDeclaration)?.isLiftedUp == true
+}
+
+interface CirNodeWithMembers<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode>
+    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode>
+    val classes: MutableMap<Name, CirClassNode>
+}
