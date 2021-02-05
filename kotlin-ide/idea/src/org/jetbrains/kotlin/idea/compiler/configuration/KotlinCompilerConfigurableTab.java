@@ -52,10 +52,7 @@ import java.util.*;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Disposable {
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
-    private static final Map<String, String> soruceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
-    private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
-            LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
-    );
+    private static final Map<String, String> sourceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
     private static final int MAX_WARNING_SIZE = 75;
 
     static {
@@ -64,9 +61,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, KotlinBundle.message("configuration.description.commonjs"));
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, KotlinBundle.message("configuration.description.umd.detect.amd.or.commonjs.if.available.fallback.to.plain"));
 
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, KotlinBundle.message("configuration.description.never"));
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, KotlinBundle.message("configuration.description.always"));
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING, KotlinBundle.message("configuration.description.when.inlining.a.function.from.other.module.with.embedded.sources"));
+        sourceMapSourceEmbeddingDescriptions
+                .put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, KotlinBundle.message("configuration.description.never"));
+        sourceMapSourceEmbeddingDescriptions
+                .put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, KotlinBundle.message("configuration.description.always"));
+        sourceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING, KotlinBundle.message("configuration.description.when.inlining.a.function.from.other.module.with.embedded.sources"));
     }
 
     @Nullable
@@ -93,8 +92,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
     private JComboBox moduleKindComboBox;
     private JTextField scriptTemplatesField;
     private JTextField scriptTemplatesClasspathField;
-    private JLabel scriptTemplatesLabel;
-    private JLabel scriptTemplatesClasspathLabel;
     private JPanel k2jvmPanel;
     private JPanel k2jsPanel;
     private JComboBox jvmVersionComboBox;
@@ -105,7 +102,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
     private JLabel labelForOutputPostfixFile;
     private JLabel warningLabel;
     private JTextField sourceMapPrefix;
-    private JLabel labelForSourceMapPrefix;
     private JComboBox sourceMapEmbedSources;
     private boolean isEnabled = true;
 
@@ -266,7 +262,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
     @NotNull
     private static String getSourceMapSourceEmbeddingDescription(@Nullable String sourceMapSourceEmbeddingId) {
         if (sourceMapSourceEmbeddingId == null) return "";
-        String result = soruceMapSourceEmbeddingDescriptions.get(sourceMapSourceEmbeddingId);
+        String result = sourceMapSourceEmbeddingDescriptions.get(sourceMapSourceEmbeddingId);
         assert result != null : "Source map source embedding mode " + sourceMapSourceEmbeddingId +
                                 " was not added to combobox, therefore it should not be here";
         return result;
@@ -399,7 +395,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Di
 
     @SuppressWarnings("unchecked")
     private void fillSourceMapSourceEmbeddingList() {
-        for (String moduleKind : soruceMapSourceEmbeddingDescriptions.keySet()) {
+        for (String moduleKind : sourceMapSourceEmbeddingDescriptions.keySet()) {
             sourceMapEmbedSources.addItem(moduleKind);
         }
         sourceMapEmbedSources.setRenderer(new ListCellRendererWrapper<String>() {
