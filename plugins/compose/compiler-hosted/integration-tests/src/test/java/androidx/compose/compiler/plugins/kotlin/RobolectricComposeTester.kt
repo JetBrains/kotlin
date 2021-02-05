@@ -24,7 +24,6 @@ import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.Recomposer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -103,9 +102,7 @@ class RobolectricComposeTester internal constructor(
 //            endProviders.invoke(composer)
 //        }
 
-        @Suppress("DEPRECATION")
-        @OptIn(ExperimentalComposeApi::class)
-//        val composition = Composition(root, UiApplier(root), recomposer)
+//        val composition = Composition(UiApplier(root), recomposer)
 //        fun setContent() {
 //            setContentMethod.invoke(composition, realComposable)
 //        }

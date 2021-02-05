@@ -120,6 +120,8 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                 import android.widget.LinearLayout
                 import android.content.Context
                 import androidx.compose.ui.node.UiApplier
+                import androidx.compose.runtime.tooling.CompositionData
+                import androidx.compose.runtime.tooling.CompositionGroup
                 import kotlin.coroutines.CoroutineContext
                 import kotlin.coroutines.EmptyCoroutineContext
 
