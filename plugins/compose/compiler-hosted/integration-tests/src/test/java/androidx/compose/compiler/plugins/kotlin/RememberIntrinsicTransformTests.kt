@@ -104,8 +104,12 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T?, %composer: Composer?, %changed: Int, %default: Int): Boolean {
               %composer.startReplaceableGroup(<>, "C(loadResourceInternal)P(1,2):Test.kt")
-              val pendingResource = if (%default and 0b0010 !== 0) null else pendingResource
-              val failedResource = if (%default and 0b0100 !== 0) null else failedResource
+              if (%default and 0b0010 !== 0) {
+                pendingResource = null
+              }
+              if (%default and 0b0100 !== 0) {
+                failedResource = null
+              }
               val deferred = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(key) || %changed and 0b0110 === 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(pendingResource) || %changed and 0b00110000 === 0b00100000 or %changed and 0b001110000000 xor 0b000110000000 > 256 && %composer.changed(failedResource) || %changed and 0b000110000000 === 0b000100000000) {
                 val tmp0_return = 123
                 tmp0_return
@@ -915,7 +919,6 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)<rememb...>:Test.kt")
               val %dirty = %changed
-              val a = a
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(a)) 0b0100 else 0b0010
               }

@@ -305,7 +305,6 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test)P(1)<Wrap(c...>:Test.kt")
               val %dirty = %changed
-              val content = content
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {

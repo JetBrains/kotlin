@@ -1289,92 +1289,50 @@ class ComposableFunctionBodyTransformer(
                 defaultExprIsStatic[index] = transformedDefault.isStatic()
                 defaultExpr[index] = transformedDefault
 
-                // create a new temporary variable with the same name as the parameter itself
-                // initialized to the parameter value.
-                val varSymbol = if (!canSkipExecution) {
-                    // If we can't skip execution, or if the expression is static, there's no need
-                    // to separate the assignment of the temporary and the declaration.
-                    irTemporary(
-                        irIfThenElse(
-                            param.type,
+                // Generate code to reassign parameter local for default arguments.
+                if (
+                    canSkipExecution &&
+                    !defaultExprIsStatic[index] &&
+                    dirty is IrChangedBitMaskVariable
+                ) {
+                    // If we are setting the parameter to the default expression and
+                    // running the default expression again, and the expression isn't
+                    // provably static, we can't be certain that the dirty value of
+                    // SAME is going to be valid. We must mark it as UNCERTAIN. In order
+                    // to avoid slot-table misalignment issues, we must mark it as
+                    // UNCERTAIN even when we skip the defaults, so that any child
+                    // function receives UNCERTAIN vs SAME/DIFFERENT deterministically.
+                    setDefaults.statements.add(
+                        irIf(
                             condition = irGetBit(defaultParam, index),
-                            // we need to ensure that this transform runs on the default expression. It
-                            // could contain conditional logic as well as composable calls
-                            thenPart = transformedDefault,
-                            elsePart = irGet(param)
-                        ),
-                        param.name.identifier,
-                        param.type,
-                        isVar = false,
-                        exactName = true
+                            body = irBlock(
+                                statements = listOf(
+                                    irSet(param, transformedDefault),
+                                    dirty.irSetSlotUncertain(index)
+                                )
+                            )
+                        )
+                    )
+                    skipDefaults.statements.add(
+                        irIf(
+                            condition = irGetBit(defaultParam, index),
+                            body = dirty.irSetSlotUncertain(index)
+                        )
                     )
                 } else {
-                    // If we can skip execution, we want to only execute the default expression
-                    // in certain cases. as a result, we first create the temp variable, and then
-                    // add the logic to set it in the "setDefaults" container.
-                    irTemporary(
-                        irGet(param),
-                        param.name.identifier,
-                        param.type,
-                        // NOTE(lmr): technically, we end up mutating this variable in the body of
-                        // the function. It turns out that the isVar doesn't validate this, but
-                        // it does cause the variable to be wrapped in a `Ref` object if it is
-                        // captured by a closure. We do NOT want that, and we know that the code
-                        // will be correct without it, so we set `isVar = false` here.
-                        isVar = false,
-                        exactName = true
-                    ).also {
-                        if (
-                            !defaultExprIsStatic[index] &&
-                            dirty is IrChangedBitMaskVariable
-                        ) {
-                            // if we are setting the parameter to the default expression and
-                            // running the default expression again, and the expression isn't
-                            // provably static, we can't be certain that the dirty value of
-                            // SAME is going to be valid. We must mark it as UNCERTAIN. In order
-                            // to avoid slot-table misalignment issues, we must mark it as
-                            // UNCERTAIN even when we skip the defaults, so that any child
-                            // function receives UNCERTAIN vs SAME/DIFFERENT deterministically.
-                            setDefaults.statements.add(
-                                irIf(
-                                    condition = irGetBit(defaultParam, index),
-                                    body = irBlock(
-                                        statements = listOf(
-                                            irSet(it, transformedDefault),
-                                            dirty.irSetSlotUncertain(index)
-                                        )
-                                    )
-                                )
-                            )
-                            skipDefaults.statements.add(
-                                irIf(
-                                    condition = irGetBit(defaultParam, index),
-                                    body = dirty.irSetSlotUncertain(index)
-                                )
-                            )
-                        } else {
-                            setDefaults.statements.add(
-                                irIf(
-                                    condition = irGetBit(defaultParam, index),
-                                    body = irSet(it, transformedDefault)
-                                )
-                            )
-                        }
-                    }
+                    setDefaults.statements.add(
+                        irIf(
+                            condition = irGetBit(defaultParam, index),
+                            body = irSet(param, transformedDefault)
+                        )
+                    )
                 }
-
-                // semantically, any reference to the parameter symbol now needs to be remapped
-                // to the temporary variable.
-                scope.remappedParams[param] = varSymbol
-
-                // in order to propagate the change detection we might perform on this parameter,
-                // we need to know which "slot" it is in
-                scope.paramsToSlots[varSymbol] = index
-                skipPreamble.statements.add(varSymbol)
-            } else {
-                scope.remappedParams[param] = param
-                scope.paramsToSlots[param] = index
             }
+
+            // In order to propagate the change detection we might perform on this parameter,
+            // we need to know which "slot" it is in
+            scope.remappedParams[param] = param
+            scope.paramsToSlots[param] = index
         }
         // we start the skipPreamble with all of the changed calls. These need to go at the top
         // of the function's group. Note that these end up getting called *before* default
