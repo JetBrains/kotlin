@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// SAM_CONVERSIONS: CLASS
+//   ^ test checks reflection for synthetic classes
 // MODULE: lib
 // FILE: JavaClass.java
 

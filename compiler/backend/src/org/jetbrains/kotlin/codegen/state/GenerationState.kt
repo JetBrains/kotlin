@@ -209,11 +209,12 @@ class GenerationState private constructor(
 
     val samConversionsScheme = run {
         val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
-            ?: JvmClosureGenerationScheme.DEFAULT
-        if (target >= fromConfig.minJvmTarget)
+        if (fromConfig != null && target >= fromConfig.minJvmTarget)
             fromConfig
+        else if (target < JvmTarget.JVM_1_8)
+            JvmClosureGenerationScheme.CLASS
         else
-            JvmClosureGenerationScheme.DEFAULT
+            JvmClosureGenerationScheme.INDY
     }
 
     val lambdasScheme = run {

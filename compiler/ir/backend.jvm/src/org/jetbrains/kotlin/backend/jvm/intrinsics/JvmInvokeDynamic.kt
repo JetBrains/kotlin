@@ -136,9 +136,9 @@ object JvmInvokeDynamic : IntrinsicMethod() {
             ?: fail("Argument in ${irCall.symbol.owner.name} call is expected to be a raw function reference")
         val irOriginalFun = irRawFunRef.symbol.owner as? IrSimpleFunction
             ?: fail("IrSimpleFunction expected: ${irRawFunRef.symbol.owner.render()}")
+
         val superType = irCall.getTypeArgument(0) as? IrSimpleType
             ?: fail("Type argument expected")
-
         val patchedSuperType = replaceTypeArgumentsWithNullable(superType)
 
         val fakeClass = codegen.context.irFactory.buildClass { name = Name.special("<fake>") }

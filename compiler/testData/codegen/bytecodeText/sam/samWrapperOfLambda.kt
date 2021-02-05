@@ -12,5 +12,5 @@ fun test() {
 }
 
 // Lambda inlined into run(), no wrapper class generated:
-// 1 NEW
+// 0 NEW
 // 0 INVOKEINTERFACE

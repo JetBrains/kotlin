@@ -8161,6 +8161,19 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class SpecializedGenerics extends AbstractIrCodegenBoxWasmTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInSpecializedGenerics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+            }
         }
     }
 

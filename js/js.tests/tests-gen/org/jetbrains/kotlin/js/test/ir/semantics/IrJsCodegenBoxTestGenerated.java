@@ -14015,6 +14015,19 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class SpecializedGenerics extends AbstractIrJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInSpecializedGenerics() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                }
+            }
         }
     }
 

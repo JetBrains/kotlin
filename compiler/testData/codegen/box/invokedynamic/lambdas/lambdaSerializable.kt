@@ -8,6 +8,6 @@ fun lambdaIsSerializable(fn: () -> Unit) = fn is java.io.Serializable
 
 fun box(): String {
     if (lambdaIsSerializable {})
-        return "Failed: indy lambdas are not serializable"
+        return "Failed: indy lambdas should not be serializable"
     return "OK"
 }

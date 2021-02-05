@@ -96,6 +96,7 @@ fun IrType.isArray(): Boolean = isNotNullClassType(IdSignatureValues.array)
 fun IrType.isNullableArray(): Boolean = isNullableClassType(IdSignatureValues.array)
 fun IrType.isCollection(): Boolean = isNotNullClassType(IdSignatureValues.collection)
 fun IrType.isNothing(): Boolean = isNotNullClassType(IdSignatureValues.nothing)
+fun IrType.isNullableNothing(): Boolean = isNullableClassType(IdSignatureValues.nothing)
 
 fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
     (this is IrSimpleType && hasQuestionMark == this.hasQuestionMark) &&

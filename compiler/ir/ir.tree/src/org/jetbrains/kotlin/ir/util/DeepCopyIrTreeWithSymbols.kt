@@ -600,6 +600,15 @@ open class DeepCopyIrTreeWithSymbols(
         }.copyAttributes(expression)
     }
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrRawFunctionReference {
+        val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
+        return IrRawFunctionReferenceImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            symbol
+        ).copyAttributes(expression)
+    }
+
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
         IrPropertyReferenceImpl(
             expression.startOffset, expression.endOffset,
