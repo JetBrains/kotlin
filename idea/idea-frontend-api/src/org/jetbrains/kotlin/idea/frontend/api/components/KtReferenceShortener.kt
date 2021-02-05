@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
-    abstract fun collectShortenings(file: KtFile, from: Int, to: Int): ShortenCommand
+    abstract fun collectShortenings(file: KtFile, selection: TextRange): ShortenCommand
 }
 
 interface ShortenCommand {

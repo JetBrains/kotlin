@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.shortenRefs
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.AbstractImportsTest
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -19,12 +20,12 @@ abstract class AbstractFirShortenRefsTest : AbstractImportsTest() {
         val selectionModel = myFixture.editor.selectionModel
         if (!selectionModel.hasSelection()) error("No selection in input file")
 
-        val (startOffset, endOffset) = runReadAction { selectionModel.selectionStart to selectionModel.selectionEnd }
+        val selection = runReadAction { TextRange(selectionModel.selectionStart, selectionModel.selectionEnd) }
 
         val shortenings = executeOnPooledThread {
             runReadAction {
                 analyze(file) {
-                    collectPossibleReferenceShortenings(file, startOffset, endOffset)
+                    collectPossibleReferenceShortenings(file, selection)
                 }
             }
         }
