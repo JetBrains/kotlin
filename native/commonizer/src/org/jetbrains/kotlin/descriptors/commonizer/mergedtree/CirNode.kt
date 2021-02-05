@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirLiftedUpDeclaration
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
@@ -28,8 +27,8 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
             get() = targetDeclarations.size + 1
 
         fun toString(node: CirNode<*, *>) = buildString {
-            if (node is CirNodeWithFqName) {
-                append("fqName=").append(node.fqName.asString()).append(", ")
+            if (node is CirPackageNode) {
+                append("packageFqName=").append(node.packageFqName.asString()).append(", ")
             }
             if (node is CirNodeWithClassId) {
                 append("classId=").append(node.classId.asString()).append(", ")
@@ -44,10 +43,6 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
 
 interface CirNodeWithClassId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
     val classId: ClassId
-}
-
-interface CirNodeWithFqName<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
-    val fqName: FqName
 }
 
 interface CirNodeWithLiftingUp<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {

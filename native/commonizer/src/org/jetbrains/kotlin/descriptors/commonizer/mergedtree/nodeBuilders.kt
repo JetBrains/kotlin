@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursi
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -37,15 +36,12 @@ internal fun buildModuleNode(
 
 internal fun buildPackageNode(
     storageManager: StorageManager,
-    size: Int,
-    fqName: FqName
+    size: Int
 ): CirPackageNode = buildNode(
     storageManager = storageManager,
     size = size,
     commonizerProducer = ::PackageCommonizer,
-    nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirPackageNode(targetDeclarations, commonDeclaration, fqName)
-    }
+    nodeProducer = ::CirPackageNode
 )
 
 internal fun buildPropertyNode(

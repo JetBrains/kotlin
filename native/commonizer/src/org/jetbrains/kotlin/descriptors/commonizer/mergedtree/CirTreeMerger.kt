@@ -141,7 +141,7 @@ class CirTreeMerger(
         packageMemberScope: MemberScope
     ) {
         val packageNode: CirPackageNode = moduleNode.packages.getOrPut(packageFqName) {
-            buildPackageNode(storageManager, size, packageFqName)
+            buildPackageNode(storageManager, size)
         }
         packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageFqName)
 
@@ -237,7 +237,7 @@ class CirTreeMerger(
         typeAliasDescriptor: TypeAliasDescriptor
     ) {
         val typeAliasName = typeAliasDescriptor.name.intern()
-        val typeAliasClassId = internedClassId(packageNode.fqName, typeAliasName)
+        val typeAliasClassId = internedClassId(packageNode.packageFqName, typeAliasName)
 
         val typeAliasNode: CirTypeAliasNode = packageNode.typeAliases.getOrPut(typeAliasName) {
             buildTypeAliasNode(storageManager, size, classifiers, typeAliasClassId)
