@@ -7,41 +7,29 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
-class IrTypeSubstitutor(
-    typeParameters: List<IrTypeParameterSymbol>,
-    typeArguments: List<IrTypeArgument>,
-    private val irBuiltIns: IrBuiltIns
-): TypeSubstitutorMarker {
-    init {
-        assert(typeParameters.size == typeArguments.size) {
-            "Unexpected number of type arguments: ${typeArguments.size}\n" +
-                    "Type parameters are:\n" +
-                    typeParameters.joinToString(separator = "\n") { it.owner.render() } +
-                    "Type arguments are:\n" +
-                    typeArguments.joinToString(separator = "\n") { it.render() }
-        }
-    }
+abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : TypeSubstitutorMarker {
 
-    private val substitution = typeParameters.zip(typeArguments).toMap()
 
     private fun IrType.typeParameterConstructor(): IrTypeParameterSymbol? {
         return if (this is IrSimpleType) classifier as? IrTypeParameterSymbol
         else null
     }
 
-    private fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
-        substitution[typeParameter]
-            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+    abstract fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument
+
+    abstract fun isEmptySubstitution(): Boolean
 
     fun substitute(type: IrType): IrType {
-        if (substitution.isEmpty()) return type
+        if (isEmptySubstitution()) return type
 
         return type.typeParameterConstructor()?.let {
             when (val typeArgument = getSubstitutionArgument(it)) {
@@ -83,4 +71,54 @@ class IrTypeSubstitutor(
         }
         return makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
     }
+}
+
+
+class IrTypeSubstitutor(
+    typeParameters: List<IrTypeParameterSymbol>,
+    typeArguments: List<IrTypeArgument>,
+    irBuiltIns: IrBuiltIns
+) : AbstractIrTypeSubstitutor(irBuiltIns) {
+
+    init {
+        assert(typeParameters.size == typeArguments.size) {
+            "Unexpected number of type arguments: ${typeArguments.size}\n" +
+                    "Type parameters are:\n" +
+                    typeParameters.joinToString(separator = "\n") { it.owner.render() } +
+                    "Type arguments are:\n" +
+                    typeArguments.joinToString(separator = "\n") { it.render() }
+        }
+    }
+
+    private val substitution = typeParameters.zip(typeArguments).toMap()
+
+    override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
+        substitution[typeParameter]
+            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+
+    override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
+}
+
+class IrCapturedTypeSubstitutor(
+    typeParameters: List<IrTypeParameterSymbol>,
+    typeArguments: List<IrTypeArgument>,
+    capturedTypes: List<IrCapturedType?>,
+    irBuiltIns: IrBuiltIns
+) : AbstractIrTypeSubstitutor(irBuiltIns) {
+
+    init {
+        assert(typeArguments.size == typeParameters.size)
+        assert(capturedTypes.size == typeParameters.size)
+    }
+
+    private val oldSubstitution = typeParameters.zip(typeArguments).toMap()
+    private val capturedSubstitution = typeParameters.zip(capturedTypes).toMap()
+
+    override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument {
+        return capturedSubstitution[typeParameter]?.let { makeTypeProjection(it, Variance.INVARIANT) }
+            ?: oldSubstitution[typeParameter]
+            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+    }
+
+    override fun isEmptySubstitution(): Boolean = oldSubstitution.isEmpty()
 }
