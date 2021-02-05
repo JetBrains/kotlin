@@ -426,6 +426,11 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         runTest("../idea/testData/resolve/references/WrongNumberOfTypeArguments2.kt");
     }
 
+    @TestMetadata("WrongNumberOfTypeArguments3.kt")
+    public void testWrongNumberOfTypeArguments3() throws Exception {
+        runTest("idea/testData/resolve/references/WrongNumberOfTypeArguments3.kt");
+    }
+
     @TestMetadata("WrongNumberOfTypeArgumentsInSupertype.kt")
     public void testWrongNumberOfTypeArgumentsInSupertype() throws Exception {
         runTest("../idea/testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
