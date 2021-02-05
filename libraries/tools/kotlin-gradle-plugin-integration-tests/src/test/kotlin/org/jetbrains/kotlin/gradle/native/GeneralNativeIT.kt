@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.chooseWrapperVersionOrFinishTest
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -678,14 +680,29 @@ class GeneralNativeIT : BaseGradleIT() {
                 }
             }
 
-            assertTestResults("testProject/native-tests/TEST-TestKt.xml", hostTestTask)
+            // Gradle 6.6+ slightly changed format of xml test results
+            // If, in the test project, preset name was updated,
+            // update accordingly test result output for Gradle6.6+
+            val testGradleVersion = project.chooseWrapperVersionOrFinishTest()
+            val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
+                listOf(
+                    "testProject/native-tests/TEST-TestKt_pre6.6.xml",
+                    "testProject/native-tests/TEST-TestKt-IOSsim_pre6.6.xml",
+                )
+            } else {
+                listOf(
+                    "testProject/native-tests/TEST-TestKt.xml",
+                    "testProject/native-tests/TEST-TestKt-IOSsim.xml",
+                )
+            }
+            assertTestResults(expectedTestResults.first(), hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
             // TODO: Uncomment when this is fixed.
             //assertStacktrace(hostTestTask)
             if (hostIsMac) {
                 assertTestResultsAnyOf(
-                    "testProject/native-tests/TEST-TestKt.xml",
-                    "testProject/native-tests/TEST-TestKt-IOSsim.xml",
+                    expectedTestResults[0],
+                    expectedTestResults[1],
                     "iosTest"
                 )
                 assertStacktrace("iosTest")

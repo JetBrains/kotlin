@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.native.configureMemoryInGradleProperties
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
@@ -672,8 +673,18 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
 
+            // Gradle 6.6+ slightly changed format of xml test results
+            // If, in the test project, preset name was updated,
+            // update accordingly test result output for Gradle 6.6+
+            val testGradleVersion = chooseWrapperVersionOrFinishTest()
+            val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
+                "testProject/new-mpp-lib-with-tests/TEST-all-pre6.6.xml"
+            } else {
+                "testProject/new-mpp-lib-with-tests/TEST-all.xml"
+            }
+
             assertTestResults(
-                "testProject/new-mpp-lib-with-tests/TEST-all.xml",
+                expectedTestResults,
                 "jsNodeTest",
                 "test", // jvmTest
                 "${nativeHostTargetName}Test"
