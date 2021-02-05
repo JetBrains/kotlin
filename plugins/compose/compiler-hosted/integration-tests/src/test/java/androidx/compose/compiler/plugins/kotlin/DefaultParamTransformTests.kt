@@ -96,7 +96,6 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             fun Example(foo: Foo, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Example)P(0:Foo):Test.kt")
               val %dirty = %changed
-              val foo = foo
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -174,7 +173,6 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             fun Test(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Test):Test.kt")
               val %dirty = %changed
-              val x = x
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(x)) 0b0100 else 0b0010
               }
@@ -218,8 +216,6 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             fun A(a: Int, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(A):Test.kt")
               val %dirty = %changed
-              val a = a
-              val b = b
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -307,37 +303,6 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val %dirty1 = %changed1
               val %dirty2 = %changed2
               val %dirty3 = %changed3
-              val a00 = a00
-              val a01 = a01
-              val a02 = a02
-              val a03 = a03
-              val a04 = a04
-              val a05 = a05
-              val a06 = a06
-              val a07 = a07
-              val a08 = a08
-              val a09 = a09
-              val a10 = a10
-              val a11 = a11
-              val a12 = a12
-              val a13 = a13
-              val a14 = a14
-              val a15 = a15
-              val a16 = a16
-              val a17 = a17
-              val a18 = a18
-              val a19 = a19
-              val a20 = a20
-              val a21 = a21
-              val a22 = a22
-              val a23 = a23
-              val a24 = a24
-              val a25 = a25
-              val a26 = a26
-              val a27 = a27
-              val a28 = a28
-              val a29 = a29
-              val a30 = a30
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -649,38 +614,6 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val %dirty1 = %changed1
               val %dirty2 = %changed2
               val %dirty3 = %changed3
-              val a00 = a00
-              val a01 = a01
-              val a02 = a02
-              val a03 = a03
-              val a04 = a04
-              val a05 = a05
-              val a06 = a06
-              val a07 = a07
-              val a08 = a08
-              val a09 = a09
-              val a10 = a10
-              val a11 = a11
-              val a12 = a12
-              val a13 = a13
-              val a14 = a14
-              val a15 = a15
-              val a16 = a16
-              val a17 = a17
-              val a18 = a18
-              val a19 = a19
-              val a20 = a20
-              val a21 = a21
-              val a22 = a22
-              val a23 = a23
-              val a24 = a24
-              val a25 = a25
-              val a26 = a26
-              val a27 = a27
-              val a28 = a28
-              val a29 = a29
-              val a30 = a30
-              val a31 = a31
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -1001,38 +934,6 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               val %dirty1 = %changed1
               val %dirty2 = %changed2
               val %dirty3 = %changed3
-              val a00 = a00
-              val a01 = a01
-              val a02 = a02
-              val a03 = a03
-              val a04 = a04
-              val a05 = a05
-              val a06 = a06
-              val a07 = a07
-              val a08 = a08
-              val a09 = a09
-              val a10 = a10
-              val a11 = a11
-              val a12 = a12
-              val a13 = a13
-              val a14 = a14
-              val a15 = a15
-              val a16 = a16
-              val a17 = a17
-              val a18 = a18
-              val a19 = a19
-              val a20 = a20
-              val a21 = a21
-              val a22 = a22
-              val a23 = a23
-              val a24 = a24
-              val a25 = a25
-              val a26 = a26
-              val a27 = a27
-              val a28 = a28
-              val a29 = a29
-              val a30 = a30
-              val a31 = a31
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -1332,7 +1233,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               @Composable
               fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
                 %composer.startReplaceableGroup(<>, "C(foo):Test.kt")
-                val x = if (%default and 0b0001 !== 0) 0 else x
+                if (%default and 0b0001 !== 0) {
+                  x = 0
+                }
                 %composer.endReplaceableGroup()
               }
               static val %stable: Int = 0

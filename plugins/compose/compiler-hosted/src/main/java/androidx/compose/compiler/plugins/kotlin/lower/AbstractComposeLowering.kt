@@ -592,7 +592,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    protected fun irSet(variable: IrVariable, value: IrExpression): IrExpression {
+    protected fun irSet(variable: IrValueDeclaration, value: IrExpression): IrExpression {
         return IrSetValueImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
