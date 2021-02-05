@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isThrowable
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 
@@ -19,16 +19,16 @@ object FirThrowableSubclassChecker : FirClassChecker() {
             return
 
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportGenericThrowableSubclass(declaration.typeParameters.firstOrNull()?.source)
+            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
 
             val source = when {
                 (declaration as? FirRegularClass)?.isInner == true -> declaration.source
                 declaration is FirAnonymousObject -> (declaration.declarations.firstOrNull())?.source
                 else -> null
             }
-            reporter.reportInnerClassOfGenericThrowableSubclass(source)
+            reporter.reportOn(source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
         } else if (declaration.hasGenericOuterDeclaration(context)) {
-            reporter.reportInnerClassOfGenericThrowableSubclass(declaration.source)
+            reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
         }
     }
 
@@ -40,12 +40,4 @@ object FirThrowableSubclassChecker : FirClassChecker() {
 
     private fun Collection<FirDeclaration>.anyIsGeneric() =
         any { it is FirTypeParameterRefsOwner && it.typeParameters.isNotEmpty() }
-
-    private fun DiagnosticReporter.reportGenericThrowableSubclass(source: FirSourceElement?) {
-        source?.let { report(FirErrors.GENERIC_THROWABLE_SUBCLASS.on(it)) }
-    }
-
-    private fun DiagnosticReporter.reportInnerClassOfGenericThrowableSubclass(source: FirSourceElement?) {
-        source?.let { report(FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS.on(it)) }
-    }
 }
