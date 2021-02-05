@@ -2,6 +2,7 @@ package a.b.c;
 
 import java.lang.System;
 
+@kotlin.jvm.JvmName(name = "FacadeName")
 @kotlin.Metadata()
 public final class FacadeName {
 

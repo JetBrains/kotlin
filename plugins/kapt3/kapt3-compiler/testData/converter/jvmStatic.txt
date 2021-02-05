@@ -6,6 +6,7 @@ public abstract interface FooComponent {
     public static final FooComponent.Companion Companion = null;
 
     @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmStatic()
     public static java.lang.String create(@org.jetbrains.annotations.NotNull()
     java.lang.String context) {
         return null;
@@ -19,6 +20,7 @@ public abstract interface FooComponent {
         }
 
         @org.jetbrains.annotations.NotNull()
+        @kotlin.jvm.JvmStatic()
         public final java.lang.String create(@org.jetbrains.annotations.NotNull()
         java.lang.String context) {
             return null;
@@ -60,6 +62,7 @@ public final class JvmStaticTest {
             return 0;
         }
 
+        @kotlin.jvm.JvmStatic()
         @java.lang.Deprecated()
         public static void getOne$annotations() {
         }

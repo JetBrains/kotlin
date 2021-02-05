@@ -96,8 +96,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         private val BLACKLISTED_ANNOTATIONS = listOf(
             "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
             "java.lang.Synthetic",
-            "synthetic.kotlin.jvm.GeneratedByJvmOverloads", // kapt3-related annotation for marking JvmOverloads-generated methods
-            "kotlin.jvm." // Kotlin annotations from runtime
+            "synthetic.kotlin.jvm.GeneratedByJvmOverloads" // kapt3-related annotation for marking JvmOverloads-generated methods
         )
 
         private val KOTLIN_METADATA_ANNOTATION = Metadata::class.java.name

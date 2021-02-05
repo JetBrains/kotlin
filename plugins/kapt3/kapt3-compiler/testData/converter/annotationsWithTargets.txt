@@ -40,6 +40,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Baz {
     @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     @FieldAnno()
     public final java.lang.String a = "";
 
