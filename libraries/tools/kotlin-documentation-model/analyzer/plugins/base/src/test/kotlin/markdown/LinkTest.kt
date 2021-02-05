@@ -6,6 +6,7 @@ import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.model.doc.DocumentationLink
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -75,6 +76,38 @@ class LinkTest : BaseAbstractTest() {
 
                 assertEquals(destinationDri, "/Outer///PointingToGenericParameters(0)/")
                 assertNotNull(foo.content.dfs { it is ContentDRILink && it.address.toString() == destinationDri } )
+            }
+        }
+    }
+
+    @Test
+    fun `link to parameter #238`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+                """
+            |/src/main/kotlin/Test.kt
+            |package example
+            |
+            |/** 
+            |* Link to [waitAMinute]
+            |*/
+            |fun stop(hammerTime: String, waitAMinute: String) {}
+            |
+        """.trimMargin(),
+                configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val parameter = module.dfs { it.name == "waitAMinute" }
+                val link = module.dfs { it.name == "stop" }!!.documentation.values.single().dfs { it is DocumentationLink } as DocumentationLink
+
+                assertEquals(parameter!!.dri, link.dri)
             }
         }
     }
