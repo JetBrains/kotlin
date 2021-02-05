@@ -23,13 +23,13 @@ fun SourceSetDependent<Set<ExtraModifiers>>.toAdditionalModifiers() = Additional
 
 data class Annotations(
     private val myContent: SourceSetDependent<List<Annotation>>
-) : ExtraProperty<Documentable> {
-    companion object : ExtraProperty.Key<Documentable, Annotations> {
-        override fun mergeStrategyFor(left: Annotations, right: Annotations): MergeStrategy<Documentable> =
+) : ExtraProperty<AnnotationTarget> {
+    companion object : ExtraProperty.Key<AnnotationTarget, Annotations> {
+        override fun mergeStrategyFor(left: Annotations, right: Annotations): MergeStrategy<AnnotationTarget> =
             MergeStrategy.Replace(Annotations(left.myContent + right.myContent))
     }
 
-    override val key: ExtraProperty.Key<Documentable, *> = Annotations
+    override val key: ExtraProperty.Key<AnnotationTarget, *> = Annotations
 
     data class Annotation(
         val dri: DRI,
