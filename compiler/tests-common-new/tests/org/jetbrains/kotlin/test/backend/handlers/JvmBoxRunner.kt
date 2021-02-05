@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
@@ -15,11 +14,14 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
+import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.lang.reflect.Method
@@ -40,7 +42,7 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
     }
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val ktFiles = info.classFileFactory.inputFiles
+        val ktFiles = info.classFileFactory.inputFiles.ifEmpty { return }
         val reportProblems = module.targetBackend !in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
         try {
@@ -162,21 +164,38 @@ class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testSe
         return classLoader
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun createClassLoader(module: TestModule, classFileFactory: ClassFileFactory): GeneratedClassLoader {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val urls = buildList {
-            addAll(configuration.jvmClasspathRoots)
-            testServices.compiledClassesManager.getCompiledJavaDirForModule(module)?.let {
-                add(it)
-            }
-        }.map { it.toURI().toURL() }
         val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
             ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
         } else {
             ForTestCompileRuntime.runtimeJarClassLoader()
         }
-        return GeneratedClassLoader(classFileFactory, parentClassLoader, *urls.toTypedArray())
+        val classpath = computeRuntimeClasspath(module)
+        return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
+    }
+
+    private fun computeRuntimeClasspath(rootModule: TestModule): List<File> {
+        val visited = mutableSetOf<TestModule>()
+        val result = mutableListOf<File>()
+
+        fun computeClasspath(module: TestModule, isRoot: Boolean) {
+            if (!visited.add(module)) return
+
+            if (!isRoot) {
+                result.add(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module))
+            }
+            result.addIfNotNull(testServices.compiledClassesManager.getCompiledJavaDirForModule(module))
+
+            for (dependency in module.dependencies + module.friends) {
+                if (dependency.kind == DependencyKind.Binary) {
+                    computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
+                }
+            }
+        }
+
+        computeClasspath(rootModule, true)
+        return result
     }
 
     private fun KtFile.getFacadeFqName(): String? {
