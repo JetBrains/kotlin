@@ -39,7 +39,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
             }
 
             val session = context.session
-            if (!coneType.isSubtypeOfThrowable(context.session)) {
+            if (!coneType.isSubtypeOfThrowable(session)) {
                 reporter.reportOn(catchParameter.source, FirErrors.TYPE_MISMATCH, throwableClassLikeType(session), coneType, context)
             }
         }
