@@ -6,25 +6,25 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
+import org.jetbrains.dokka.model.AnnotationTarget
 
 interface JvmSignatureUtils {
 
-    fun PageContentBuilder.DocumentableContentBuilder.annotationsBlock(d: Documentable)
+    fun PageContentBuilder.DocumentableContentBuilder.annotationsBlock(d: AnnotationTarget)
 
-    fun PageContentBuilder.DocumentableContentBuilder.annotationsInline(d: Documentable)
+    fun PageContentBuilder.DocumentableContentBuilder.annotationsInline(d: AnnotationTarget)
 
     fun <T : Documentable> WithExtraProperties<T>.modifiers(): SourceSetDependent<Set<ExtraModifiers>>
 
     fun Collection<ExtraModifiers>.toSignatureString(): String =
         joinToString("") { it.name.toLowerCase() + " " }
 
-    fun <T : Documentable> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
+    fun <T : AnnotationTarget> WithExtraProperties<T>.annotations(): SourceSetDependent<List<Annotations.Annotation>> =
         extra[Annotations]?.directAnnotations ?: emptyMap()
 
     private fun PageContentBuilder.DocumentableContentBuilder.annotations(
-        d: Documentable,
+        d: AnnotationTarget,
         ignored: Set<Annotations.Annotation>,
         styles: Set<Style>,
         operation: PageContentBuilder.DocumentableContentBuilder.(Annotations.Annotation) -> Unit
@@ -40,6 +40,10 @@ interface JvmSignatureUtils {
         is DEnumEntry -> d.annotations()
         is DTypeAlias -> d.annotations()
         is DParameter -> d.annotations()
+        is TypeParameter -> d.annotations()
+        is GenericTypeConstructor -> d.annotations()
+        is FunctionalTypeConstructor -> d.annotations()
+        is JavaObject -> d.annotations()
         else -> null
     }?.let {
         it.entries.forEach {
@@ -104,7 +108,7 @@ interface JvmSignatureUtils {
     }
 
     fun PageContentBuilder.DocumentableContentBuilder.annotationsBlockWithIgnored(
-        d: Documentable,
+        d: AnnotationTarget,
         ignored: Set<Annotations.Annotation>,
         renderAtStrategy: AtStrategy,
         listBrackets: Pair<Char, Char>,
@@ -118,7 +122,7 @@ interface JvmSignatureUtils {
     }
 
     fun PageContentBuilder.DocumentableContentBuilder.annotationsInlineWithIgnored(
-        d: Documentable,
+        d: AnnotationTarget,
         ignored: Set<Annotations.Annotation>,
         renderAtStrategy: AtStrategy,
         listBrackets: Pair<Char, Char>,

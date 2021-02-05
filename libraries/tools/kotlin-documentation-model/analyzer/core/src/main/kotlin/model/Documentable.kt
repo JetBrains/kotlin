@@ -6,8 +6,10 @@ import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
+interface AnnotationTarget
 
-abstract class Documentable : WithChildren<Documentable> {
+abstract class Documentable : WithChildren<Documentable>,
+    AnnotationTarget {
     abstract val name: String?
     abstract val dri: DRI
     abstract val documentation: SourceSetDependent<DocumentationNode>
@@ -346,7 +348,14 @@ data class DTypeParameter(
         bounds: List<Bound>,
         sourceSets: Set<DokkaSourceSet>,
         extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
-    ) : this(Invariance(TypeParameter(dri, name, presentableName)), documentation, expectPresentInSet, bounds, sourceSets, extra)
+    ) : this(
+        Invariance(TypeParameter(dri, name, presentableName)),
+        documentation,
+        expectPresentInSet,
+        bounds,
+        sourceSets,
+        extra
+    )
 
     override val dri: DRI by variantTypeParameter.inner::dri
     override val name: String by variantTypeParameter.inner::name
@@ -376,8 +385,17 @@ data class DTypeAlias(
 }
 
 sealed class Projection
-sealed class Bound : Projection()
-data class TypeParameter(val dri: DRI, val name: String, val presentableName: String? = null) : Bound()
+sealed class Bound : Projection(), AnnotationTarget
+data class TypeParameter(
+    val dri: DRI,
+    val name: String,
+    val presentableName: String? = null,
+    override val extra: PropertyContainer<TypeParameter> = PropertyContainer.empty()
+) : Bound(), WithExtraProperties<TypeParameter> {
+    override fun withNewExtras(newExtras: PropertyContainer<TypeParameter>): TypeParameter =
+        copy(extra = extra)
+}
+
 object Star : Projection()
 
 sealed class TypeConstructor : Bound() {
@@ -389,47 +407,61 @@ sealed class TypeConstructor : Bound() {
 data class GenericTypeConstructor(
     override val dri: DRI,
     override val projections: List<Projection>,
-    override val presentableName: String? = null
-) : TypeConstructor()
+    override val presentableName: String? = null,
+    override val extra: PropertyContainer<GenericTypeConstructor> = PropertyContainer.empty()
+) : TypeConstructor(), WithExtraProperties<GenericTypeConstructor> {
+    override fun withNewExtras(newExtras: PropertyContainer<GenericTypeConstructor>): GenericTypeConstructor =
+        copy(extra = newExtras)
+}
 
 data class FunctionalTypeConstructor(
     override val dri: DRI,
     override val projections: List<Projection>,
     val isExtensionFunction: Boolean = false,
     val isSuspendable: Boolean = false,
-    override val presentableName: String? = null
-) : TypeConstructor()
+    override val presentableName: String? = null,
+    override val extra: PropertyContainer<FunctionalTypeConstructor> = PropertyContainer.empty(),
+) : TypeConstructor(), WithExtraProperties<FunctionalTypeConstructor> {
+    override fun withNewExtras(newExtras: PropertyContainer<FunctionalTypeConstructor>): FunctionalTypeConstructor =
+        copy(extra = newExtras)
+}
 
 data class Nullable(val inner: Bound) : Bound()
 
 sealed class Variance<out T : Bound> : Projection() {
     abstract val inner: T
 }
+
 data class Covariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString() = "out"
 }
+
 data class Contravariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString() = "in"
 }
+
 data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
     override fun toString() = ""
 }
 
 data class TypeAliased(val typeAlias: Bound, val inner: Bound) : Bound()
 data class PrimitiveJavaType(val name: String) : Bound()
+
 object Void : Bound()
-object JavaObject : Bound()
+
+data class JavaObject(override val extra: PropertyContainer<JavaObject> = PropertyContainer.empty()) : Bound(),
+    WithExtraProperties<JavaObject> {
+    override fun withNewExtras(newExtras: PropertyContainer<JavaObject>): JavaObject =
+        copy(extra = newExtras)
+}
+
 object Dynamic : Bound()
 data class UnresolvedBound(val name: String) : Bound()
 
-fun Variance<TypeParameter>.withDri(dri: DRI) = when(this) {
+fun Variance<TypeParameter>.withDri(dri: DRI) = when (this) {
     is Contravariance -> Contravariance(TypeParameter(dri, inner.name, inner.presentableName))
     is Covariance -> Covariance(TypeParameter(dri, inner.name, inner.presentableName))
     is Invariance -> Invariance(TypeParameter(dri, inner.name, inner.presentableName))
-}
-
-private fun String.shorten(maxLength: Int) = lineSequence().first().let {
-    if (it.length != length || it.length > maxLength) it.take(maxLength - 3) + "..." else it
 }
 
 fun Documentable.dfs(predicate: (Documentable) -> Boolean): Documentable? =
