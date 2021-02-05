@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -18,8 +17,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -228,12 +229,10 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     ): CompositeTransformResult<FirStatement> {
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression.compose()
         elvisExpression.transformAnnotations(transformer, data)
-        val expectedArgumentType =
-            if (data is ResolutionMode.WithExpectedType && data.expectedType !is FirImplicitTypeRef) data
-            else ResolutionMode.ContextDependent
-        elvisExpression.transformLhs(transformer, expectedArgumentType)
+        val expectedType = data.expectedType.takeIf { it !is FirImplicitTypeRef }
+        elvisExpression.transformLhs(transformer, withExpectedType(expectedType?.withNullability(ConeNullability.NULLABLE)))
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
-        elvisExpression.transformRhs(transformer, expectedArgumentType)
+        elvisExpression.transformRhs(transformer, withExpectedType(expectedType))
 
         val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext)?.let {
             callCompleter.completeCall(it, data.expectedType).result

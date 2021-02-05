@@ -239,6 +239,9 @@ fun FirTypeRef.withReplacedConeType(
     }
 }
 
+fun FirTypeRef.withNullability(nullability: ConeNullability): FirTypeRef =
+    withReplacedConeType(coneTypeSafe<ConeKotlinType>()?.withNullability(nullability))
+
 fun FirTypeRef.approximated(
     typeApproximator: AbstractTypeApproximator,
     toSuper: Boolean,
