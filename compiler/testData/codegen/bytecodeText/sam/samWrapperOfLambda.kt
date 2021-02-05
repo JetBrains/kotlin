@@ -12,5 +12,10 @@ fun test() {
 }
 
 // Lambda inlined into run(), no wrapper class generated:
+// JVM_TEMPLATES:
+// 1 NEW
+// 0 INVOKEINTERFACE
+
+// JVM_IR_TEMPLATES:
 // 0 NEW
 // 0 INVOKEINTERFACE
