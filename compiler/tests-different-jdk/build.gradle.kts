@@ -93,6 +93,7 @@ codegenTest(target = 8, jvm = 15) {
 
 codegenTest(target = 15, jvm = 15) {
     jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+    systemProperty("kotlin.test.box.d8.disable", true)
 }
 
 //..also add this two tasks to build after adding fresh jdks to build agents
@@ -112,6 +113,9 @@ codegenTest(
     targetInTestClass = "Last",
     jvm = "Last",
     jdk = mostRecentJdk
-) {}
+) {
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+    systemProperty("kotlin.test.box.d8.disable", true)
+}
 
 testsJar()

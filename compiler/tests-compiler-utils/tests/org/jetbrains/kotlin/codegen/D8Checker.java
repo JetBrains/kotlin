@@ -20,12 +20,14 @@ import java.util.function.Consumer;
 
 public class D8Checker {
 
-    public static final boolean RUN_D8_CHECKER = true;
+    public static final boolean RUN_D8_CHECKER = !Boolean.valueOf(System.getProperty("kotlin.test.box.d8.disable"));
 
     private D8Checker() {
     }
 
     public static void check(ClassFileFactory outputFiles) {
+        if (!RUN_D8_CHECKER) return;
+
         runD8(builder -> {
             for (OutputFile file : ClassFileUtilsKt.getClassFiles(outputFiles)) {
                 byte[] bytes = file.asByteArray();
@@ -35,6 +37,7 @@ public class D8Checker {
     }
 
     public static void checkFilesWithD8(Collection<Pair<byte[], String>> classFiles) {
+        if (!RUN_D8_CHECKER) return;
         runD8(builder -> {
             classFiles.forEach(pair -> {
                 builder.addClassProgramData(pair.getFirst(), new PathOrigin(Paths.get(pair.getSecond())));
