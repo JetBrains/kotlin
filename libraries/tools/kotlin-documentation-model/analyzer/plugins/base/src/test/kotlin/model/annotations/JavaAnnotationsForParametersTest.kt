@@ -1,11 +1,10 @@
 package model.annotations
 
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.Annotations
-import org.jetbrains.dokka.model.DClass
-import org.jetbrains.dokka.model.DFunction
+import org.jetbrains.dokka.model.*
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
@@ -76,6 +75,36 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
             with((this / "java" / "Test").cast<DClass>()) {
                 with((this / "foo").cast<DFunction>()) {
                     val annotations = generics.first().extra[Annotations]?.directAnnotations?.flatMap { it.value }
+                    val driOfHello = DRI("java", "Hello")
+                    val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
+
+                    assertEquals(listOf(driOfHello), annotations?.map { it.dri })
+                    assertEquals(listOf("baz"), annotationsValues)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `function with generic parameter that has annotated bounds`() {
+        inlineModelTest(
+            """
+            |@Retention(RetentionPolicy.RUNTIME)
+            |@Target({ElementType.TYPE_USE})
+            |@interface Hello {
+            |    public String bar() default "";
+            |}
+            |class Test {
+            |   public <T extends @Hello(bar = "baz") String> List<T> foo() {
+            |        return null;
+            |    }
+            |}
+        """.trimIndent()
+        ) {
+            with((this / "java" / "Test").cast<DClass>()) {
+                with((this / "foo").cast<DFunction>()) {
+                    val annotations = ((generics.first().bounds.first() as Nullable).inner as GenericTypeConstructor)
+                        .extra[Annotations]?.directAnnotations?.flatMap { it.value }
                     val driOfHello = DRI("java", "Hello")
                     val annotationsValues = annotations?.flatMap { it.params.values }?.map { it.toString() }?.toList()
 
