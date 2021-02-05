@@ -184,7 +184,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
      *
      * In this case Captured Type of `y` would be `Array<CharSequence>`
      *
-     * See https://jetbrains.github.io/kotlin-spec/#type-capturing
+     * See https://kotlinlang.org/spec/type-system.html#type-capturing
      */
 
     override fun captureFromArguments(type: SimpleTypeMarker, status: CaptureStatus): SimpleTypeMarker? {
@@ -204,23 +204,49 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
         if (typeArguments.all { it is IrTypeProjection && it.variance == Variance.INVARIANT }) return type
 
-        val newArguments = mutableListOf<IrTypeArgument>()
+        val capturedTypes = ArrayList<IrCapturedType?>(typeArguments.size)
+
         for (index in typeArguments.indices) {
-            val argument = typeArguments[index]
             val parameter = typeParameters[index]
+            val argument = typeArguments[index]
 
             if (argument is IrTypeProjection && argument.variance == Variance.INVARIANT) {
-                newArguments += argument
-                continue
+                capturedTypes.add(null)
+            } else {
+                val lowerType = if (argument is IrTypeProjection && argument.variance == Variance.IN_VARIANCE) {
+                    argument.type
+                } else null
+
+                capturedTypes.add(IrCapturedType(status, lowerType, argument, parameter))
             }
+        }
 
-            val additionalBounds =
-                if (argument is IrTypeProjection && argument.variance == Variance.OUT_VARIANCE) listOf(argument.type) else emptyList()
+        val newArguments = ArrayList<IrTypeArgument>(typeArguments.size)
 
-            newArguments += makeTypeProjection(
-                makeTypeIntersection(parameter.superTypes + additionalBounds),
-                Variance.INVARIANT
-            )
+        val typeSubstitutor = IrCapturedTypeSubstitutor(typeParameters.map { it.symbol }, typeArguments, capturedTypes, irBuiltIns)
+
+        for (index in typeArguments.indices) {
+            val oldArgument = typeArguments[index]
+            val parameter = typeParameters[index]
+            val capturedType = capturedTypes[index]
+
+            if (capturedType == null) {
+                assert(oldArgument is IrTypeProjection && oldArgument.variance == Variance.INVARIANT)
+                newArguments.add(oldArgument)
+            } else {
+                val capturedSuperTypes = mutableListOf<IrType>()
+                parameter.superTypes.mapTo(capturedSuperTypes) {
+                    typeSubstitutor.substitute(it)
+                }
+
+                if (oldArgument is IrTypeProjection && oldArgument.variance == Variance.OUT_VARIANCE) {
+                    capturedSuperTypes += oldArgument.type
+                }
+
+                capturedType.constructor.initSuperTypes(capturedSuperTypes)
+
+                newArguments.add(makeTypeProjection(capturedType, Variance.INVARIANT))
+            }
         }
 
         return IrSimpleTypeImpl(type.classifier, type.hasQuestionMark, newArguments, type.annotations)
