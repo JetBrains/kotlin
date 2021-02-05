@@ -18,7 +18,7 @@ data class CirPropertyImpl(
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: DescriptorVisibility,
     override val modality: Modality,
-    override val containingClassDetails: CirContainingClassDetails?,
+    override val containingClass: CirContainingClass?,
     override val isExternal: Boolean,
     override val extensionReceiver: CirExtensionReceiver?,
     override val returnType: CirType,

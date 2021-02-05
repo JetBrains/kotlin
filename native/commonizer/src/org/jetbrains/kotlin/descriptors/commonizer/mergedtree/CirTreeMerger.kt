@@ -171,7 +171,10 @@ class CirTreeMerger(
         val propertyNode: CirPropertyNode = ownerNode.properties.getOrPut(PropertyApproximationKey(propertyDescriptor)) {
             buildPropertyNode(storageManager, size, classifiers, (ownerNode as? CirClassNode)?.commonDeclaration)
         }
-        propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(propertyDescriptor)
+        propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(
+            source = propertyDescriptor,
+            containingClass = (ownerNode as? CirClassNode)?.targetDeclarations?.get(targetIndex)
+        )
     }
 
     private fun processFunction(
@@ -182,7 +185,10 @@ class CirTreeMerger(
         val functionNode: CirFunctionNode = ownerNode.functions.getOrPut(FunctionApproximationKey(functionDescriptor)) {
             buildFunctionNode(storageManager, size, classifiers, (ownerNode as? CirClassNode)?.commonDeclaration)
         }
-        functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(functionDescriptor)
+        functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(
+            source = functionDescriptor,
+            containingClass = (ownerNode as? CirClassNode)?.targetDeclarations?.get(targetIndex)
+        )
     }
 
     private fun processClass(
@@ -228,7 +234,10 @@ class CirTreeMerger(
         val constructorNode: CirClassConstructorNode = classNode.constructors.getOrPut(ConstructorApproximationKey(constructorDescriptor)) {
             buildClassConstructorNode(storageManager, size, classifiers, classNode.commonDeclaration)
         }
-        constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(constructorDescriptor)
+        constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(
+            source = constructorDescriptor,
+            containingClass = classNode.targetDeclarations[targetIndex]!!
+        )
     }
 
     private fun processTypeAlias(

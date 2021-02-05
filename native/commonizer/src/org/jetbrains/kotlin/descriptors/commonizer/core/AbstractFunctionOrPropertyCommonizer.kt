@@ -30,7 +30,7 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
 
     override fun doCommonizeWith(next: T): Boolean =
         next.kind != DELEGATION // delegated members should not be commonized
-                && (next.kind != SYNTHESIZED || next.containingClassDetails?.isData != true) // synthesized members of data classes should not be commonized
+                && (next.kind != SYNTHESIZED || next.containingClass?.isData != true) // synthesized members of data classes should not be commonized
                 && kind == next.kind
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)

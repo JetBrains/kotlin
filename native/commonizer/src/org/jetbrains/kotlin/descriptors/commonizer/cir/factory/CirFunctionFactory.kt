@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
 object CirFunctionFactory {
-    fun create(source: SimpleFunctionDescriptor): CirFunction = create(
+    fun create(source: SimpleFunctionDescriptor, containingClass: CirContainingClass?): CirFunction = create(
         annotations = source.annotations.compactMap(CirAnnotationFactory::create),
         name = source.name.intern(),
         typeParameters = source.typeParameters.compactMap(CirTypeParameterFactory::create),
         visibility = source.visibility,
         modality = source.modality,
-        containingClassDetails = CirContainingClassDetailsFactory.create(source),
+        containingClass = containingClass,
         valueParameters = source.valueParameters.compactMap(CirValueParameterFactory::create),
         hasStableParameterNames = source.hasStableParameterNames(),
         extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
@@ -35,7 +35,7 @@ object CirFunctionFactory {
         typeParameters: List<CirTypeParameter>,
         visibility: DescriptorVisibility,
         modality: Modality,
-        containingClassDetails: CirContainingClassDetails?,
+        containingClass: CirContainingClass?,
         valueParameters: List<CirValueParameter>,
         hasStableParameterNames: Boolean,
         extensionReceiver: CirExtensionReceiver?,
@@ -49,7 +49,7 @@ object CirFunctionFactory {
             typeParameters = typeParameters,
             visibility = visibility,
             modality = modality,
-            containingClassDetails = containingClassDetails,
+            containingClass = containingClass,
             valueParameters = valueParameters,
             hasStableParameterNames = hasStableParameterNames,
             extensionReceiver = extensionReceiver,

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 object CirPropertyFactory {
-    fun create(source: PropertyDescriptor): CirProperty {
+    fun create(source: PropertyDescriptor, containingClass: CirContainingClass?): CirProperty {
         val compileTimeInitializer: ConstantValue<*>? = source.compileTimeInitializer
         if (compileTimeInitializer != null) {
             checkConstantSupportedInCommonization(
@@ -34,7 +34,7 @@ object CirPropertyFactory {
             typeParameters = source.typeParameters.compactMap(CirTypeParameterFactory::create),
             visibility = source.visibility,
             modality = source.modality,
-            containingClassDetails = CirContainingClassDetailsFactory.create(source),
+            containingClass = containingClass,
             isExternal = source.isExternal,
             extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
             returnType = CirTypeFactory.create(source.returnType!!),
@@ -58,7 +58,7 @@ object CirPropertyFactory {
         typeParameters: List<CirTypeParameter>,
         visibility: DescriptorVisibility,
         modality: Modality,
-        containingClassDetails: CirContainingClassDetails?,
+        containingClass: CirContainingClass?,
         isExternal: Boolean,
         extensionReceiver: CirExtensionReceiver?,
         returnType: CirType,
@@ -79,7 +79,7 @@ object CirPropertyFactory {
             typeParameters = typeParameters,
             visibility = visibility,
             modality = modality,
-            containingClassDetails = containingClassDetails,
+            containingClass = containingClass,
             isExternal = isExternal,
             extensionReceiver = extensionReceiver,
             returnType = returnType,

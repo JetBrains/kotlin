@@ -34,7 +34,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             typeParameters = typeParameters.result,
             visibility = visibility.result,
             modality = modality.result,
-            containingClassDetails = null,
+            containingClass = null, // does not matter
             isExternal = isExternal,
             extensionReceiver = extensionReceiver.result,
             returnType = returnType.result,

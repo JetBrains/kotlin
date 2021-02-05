@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.Name
 
-interface CirClass : CirClassifier, CirHasModality {
-    val kind: ClassKind
+interface CirClass : CirClassifier, CirContainingClass {
     var companion: Name? // null means no companion object
     val isCompanion: Boolean
-    val isData: Boolean
     val isInline: Boolean
     val isInner: Boolean
     val isExternal: Boolean

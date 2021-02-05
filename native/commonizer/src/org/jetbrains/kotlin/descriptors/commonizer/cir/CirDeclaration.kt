@@ -44,7 +44,15 @@ interface CirHasModality {
 }
 
 interface CirMaybeCallableMemberOfClass {
-    val containingClassDetails: CirContainingClassDetails? // null assumes no containing class
+    val containingClass: CirContainingClass? // null assumes no containing class
+}
+
+/**
+ * A subset of containing [CirClass] visible to such class members as [CirFunction], [CirProperty] and [CirClassConstructor].
+ */
+interface CirContainingClass : CirHasModality {
+    val kind: ClassKind
+    val isData: Boolean
 }
 
 interface CirHasTypeParameters {

@@ -17,7 +17,7 @@ data class CirFunctionImpl(
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: DescriptorVisibility,
     override val modality: Modality,
-    override val containingClassDetails: CirContainingClassDetails?,
+    override val containingClass: CirContainingClass?,
     override var valueParameters: List<CirValueParameter>,
     override var hasStableParameterNames: Boolean,
     override val extensionReceiver: CirExtensionReceiver?,
