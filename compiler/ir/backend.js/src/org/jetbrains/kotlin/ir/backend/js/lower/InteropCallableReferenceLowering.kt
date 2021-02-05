@@ -204,6 +204,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             visibility = lambdaClass.visibility
             returnType = expression.type
             name = factoryName
+            origin = FACTORY_ORIGIN
         }
 
         factoryDeclaration.parent = implicitDeclarationFile
@@ -231,5 +232,6 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
     companion object {
         object EXPLICIT_INVOKE : IrStatementOriginImpl("EXPLICIT_INVOKE")
+        object FACTORY_ORIGIN : IrDeclarationOriginImpl("FACTORY_ORIGIN")
     }
 }
