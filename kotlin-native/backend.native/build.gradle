@@ -33,11 +33,11 @@ sourceSets {
             srcDir 'compiler/ir/backend.native/src/'
             srcDir '../shared/src/main/kotlin'
             srcDir '../shared/src/library/kotlin'
-            use(VersionGeneratorKt) {
-                srcDir(project.konanVersionGeneratedSrc())
-            }
+            srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))
         }
         resources.srcDir 'compiler/ir/backend.native/resources/'
+        /* PATH to META-INF */
+        resources.srcDir VersionGeneratorKt.kotlinNativeVersionResourceFile(project).parentFile.parent
     }
     cli_bc {
         java.srcDir 'cli.bc/src'
