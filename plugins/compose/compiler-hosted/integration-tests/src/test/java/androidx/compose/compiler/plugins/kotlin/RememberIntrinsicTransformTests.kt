@@ -47,10 +47,10 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     fun testElidedRememberInsideIfDeoptsRememberAfterIf(): Unit = comparisonPropagation(
         "",
         """
-            import androidx.compose.runtime.ComposableContract
+            import androidx.compose.runtime.NonRestartableComposable
 
             @Composable
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             fun app(x: Boolean) {
                 val a = if (x) { remember { 1 } } else { 2 }
                 val b = remember { 2 }
@@ -58,7 +58,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             fun app(x: Boolean, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(app)<rememb...>:Test.kt")
               val a = if (x) {
@@ -203,27 +203,27 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             interface Uncertain
         """,
         """
-            import androidx.compose.runtime.ComposableContract
+            import androidx.compose.runtime.NonRestartableComposable
 
             @Composable
-            @ComposableContract(restartable=false)
+            @NonRestartableComposable
             fun test1(x: KnownStable) {
                 remember(x) { 1 }
             }
             @Composable
-            @ComposableContract(restartable=false)
+            @NonRestartableComposable
             fun test2(x: KnownUnstable) {
                 remember(x) { 1 }
             }
             @Composable
-            @ComposableContract(restartable=false)
+            @NonRestartableComposable
             fun test3(x: Uncertain) {
                 remember(x) { 1 }
             }
         """,
         """
             @Composable
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(test1):Test.kt")
               %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 === 0b0100) {
@@ -233,7 +233,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               %composer.endReplaceableGroup()
             }
             @Composable
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(test2):Test.kt")
               %composer.cache(%composer.changed(x)) {
@@ -243,7 +243,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               %composer.endReplaceableGroup()
             }
             @Composable
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(test3):Test.kt")
               %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 === 0b0100) {

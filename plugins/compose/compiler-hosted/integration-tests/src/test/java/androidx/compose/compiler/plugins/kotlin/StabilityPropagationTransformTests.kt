@@ -30,7 +30,6 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.ComposableContract
 
             $checked
         """.trimIndent(),
