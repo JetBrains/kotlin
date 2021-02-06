@@ -95,7 +95,7 @@ ext {
     kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
     kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
 
-    konanVersionFull = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
+    konanVersionFull = ext.kotlinNativeVersion
     gradlePluginVersion = konanVersionFull
 }
 
@@ -765,7 +765,7 @@ task clean(type: Delete) {
 
 task pusher(type: KotlinBuildPusher){
     kotlinVersion = project.kotlinVersion
-    konanVersion = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
+    konanVersion = project.ext.kotlinNativeVersion
     buildServer = "buildserver.labs.intellij.net"
     compilerConfigurationId = System.getenv("TEAMCITY_COMPILER_ID") ?: "Kotlin_KotlinDev_Compiler"
     overrideConfigurationId = System.getenv("TEAMCITY_OVERRIDE_NATIVE_ID") ?: "Kotlin_KotlinDev_DeployMavenArtifacts_OverrideNative"

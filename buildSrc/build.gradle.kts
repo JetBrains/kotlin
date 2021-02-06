@@ -96,7 +96,10 @@ repositories {
     }
 }
 
-val generateCompilerVersion by tasks.registering(VersionGenerator::class) {}
+val generateCompilerVersion by tasks.registering(VersionGenerator::class) {
+    kotlinNativeVersionInResources=true
+    defaultVersionFileLocation()
+}
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn(generateCompilerVersion)
 }
@@ -118,7 +121,7 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
     kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
     kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
     kotlin.srcDir("../compiler/util-klib/src")
-    kotlin.srcDir(project.konanVersionGeneratedSrc())
+    kotlin.srcDir(project.kotlinNativeVersionSrc())
 }
 
 tasks.validatePlugins.configure {

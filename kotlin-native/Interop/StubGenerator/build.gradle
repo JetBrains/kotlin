@@ -53,9 +53,7 @@ sourceSets{
         kotlin {
             srcDir("../../shared/src/library/kotlin")
             srcDir("../../shared/src/main/kotlin")
-            use(VersionGeneratorKt) {
-                srcDir(project.konanVersionGeneratedSrc())
-            }
+            srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))
         }
     }
 }
