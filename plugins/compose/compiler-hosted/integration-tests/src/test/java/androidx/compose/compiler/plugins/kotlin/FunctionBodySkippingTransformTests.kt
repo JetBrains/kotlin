@@ -30,7 +30,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.ComposableContract
+            import androidx.compose.runtime.NonRestartableComposable
+            import androidx.compose.runtime.ReadOnlyComposable
 
             $checked
         """.trimIndent(),
@@ -99,59 +100,6 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, 0b0110)
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(x, y, %composer, %changed or 0b0001, %default)
-              }
-            }
-        """
-    )
-
-    @Test
-    fun testUntrackedLambda(): Unit = comparisonPropagation(
-        """
-            @Composable fun A(x: Int = 0, y: Int = 0) {}
-            @Composable fun Wrap(content: @Composable () -> Unit) {
-                content()
-            }
-        """,
-        """
-            @Composable
-            fun Test(x: Int = 0, y: Int = 0) {
-                Wrap @ComposableContract(tracked = false) {
-                    A(x)
-                }
-            }
-        """,
-        """
-            @Composable
-            fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<>, "C(Test)<Wrap>:Test.kt")
-              val %dirty = %changed
-              if (%default and 0b0001 !== 0) {
-                %dirty = %dirty or 0b0110
-              } else if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
-              }
-              if (%default and 0b0010 !== 0) {
-                %dirty = %dirty or 0b00110000
-              } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(y)) 0b00100000 else 0b00010000
-              }
-              if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
-                if (%default and 0b0001 !== 0) {
-                  x = 0
-                }
-                if (%default and 0b0010 !== 0) {
-                  y = 0
-                }
-                Wrap(composableLambda(%composer, <>, false, "C:Test.kt") { %composer: Composer?, %changed: Int ->
-                  %composer.startReplaceableGroup(<>, "<A(x)>")
-                  A(x, 0, %composer, 0b1110 and %dirty, 0b0010)
-                  %composer.endReplaceableGroup()
                 }, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
@@ -557,7 +505,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            @ComposableContract(restartable=false)
+            @NonRestartableComposable
             fun Example() {
                 Call()
                 for (index in 0..1) {
@@ -570,7 +518,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<Call()>:Test.kt")
               Call(%composer, 0)
@@ -2471,16 +2419,15 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             import androidx.compose.runtime.ExperimentalComposeApi
 
             open class Foo {
-                @ComposableContract(readonly = true)
                 @Composable
-                inline val current: Int get() = currentComposer.hashCode()
+                inline val current: Int @ReadOnlyComposable get() = currentComposer.hashCode()
 
-                @ComposableContract(readonly = true)
+                @ReadOnlyComposable
                 @Composable
                 fun getHashCode(): Int = currentComposer.hashCode()
             }
 
-            @ComposableContract(readonly = true)
+            @ReadOnlyComposable
             @Composable
             fun getHashCode(): Int = currentComposer.hashCode()
         """,
@@ -2492,7 +2439,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                   val tmp0 = %composer.hashCode()
                   return tmp0
                 }
-              @ComposableContract(readonly = true)
+              @ReadOnlyComposable
               @Composable
               fun getHashCode(%composer: Composer?, %changed: Int): Int {
                 val tmp0 = %composer.hashCode()
@@ -2500,7 +2447,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               }
               static val %stable: Int = 0
             }
-            @ComposableContract(readonly = true)
+            @ReadOnlyComposable
             @Composable
             fun getHashCode(%composer: Composer?, %changed: Int): Int {
               val tmp0 = %composer.hashCode()

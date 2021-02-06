@@ -23,7 +23,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testIfNonComposable(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // No composable calls, so no group generated except for at function boundary
                 if (x > 0) {
@@ -32,7 +32,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -47,7 +47,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testIfWithCallsInBranch(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // Composable calls in the result blocks, so we can determine static number of
                 // groups executed. This means we put a group around the "then" and the implicit
@@ -58,7 +58,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -78,7 +78,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testIfElseWithCallsInBranch(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // Composable calls in the result blocks, so we can determine static number of
                 // groups executed. This means we put a group around the "then" and the
@@ -91,7 +91,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -112,7 +112,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testIfWithCallInCondition(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // Since the first condition of an if/else is unconditionally executed, it does not
                 // necessitate a group of any kind, so we just end up with the function boundary
@@ -125,7 +125,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<B()>:Test.kt")
@@ -142,7 +142,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testIfElseWithCallsInConditions(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // Since the condition in the else-if is conditionally executed, it means we have
                 // dynamic execution and we can't statically guarantee the number of groups. As a
@@ -159,7 +159,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -184,7 +184,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithSubjectAndNoCalls(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // nothing needed except for the function boundary group
                 when (x) {
@@ -195,7 +195,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -219,7 +219,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithSubjectAndCalls(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // calls only in the result block, which means we can statically guarantee the
                 // number of groups, so no group around the when is needed, just groups around the
@@ -232,7 +232,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -262,7 +262,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithSubjectAndCallsWithResult(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // no need for a group around the when expression overall, but since the result
                 // of the expression is now being used, we need to generate temporary variables to
@@ -275,7 +275,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -308,7 +308,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithCalls(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // result blocks have composable calls, so we generate groups round them. It's a
                 // statically guaranteed number of groups at execution, so no wrapping group is
@@ -321,7 +321,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -350,7 +350,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithCallsInSomeResults(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // result blocks have composable calls, so we generate groups round them. It's a
                 // statically guaranteed number of groups at execution, so no wrapping group is
@@ -363,7 +363,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -392,7 +392,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithCallsInConditions(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // composable calls are in the condition blocks of the when statement. Since these
                 // are conditionally executed, we can't statically know the number of groups during
@@ -406,7 +406,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -435,7 +435,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhenWithCallsInConditionsAndCallAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // composable calls are in the condition blocks of the when statement. Since these
                 // are conditionally executed, we can't statically know the number of groups during
@@ -449,7 +449,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -481,7 +481,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testSafeCall(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int?) {
                 // the composable call is made conditionally, which means it is like an if, but one
                 // with static groups, so no wrapping group needed.
@@ -489,7 +489,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int?, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -514,7 +514,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testElvis(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int?) {
                 // the composable call is made conditionally, which means it is like an if, but one
                 // with static groups, so no wrapping group needed.
@@ -522,7 +522,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int?, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -548,7 +548,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testForLoopWithCallsInBody(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: List<Int>) {
                 // The composable call is made a conditional number of times, so we need to wrap
                 // the loop with a dynamic wrapping group. Since there are no other calls, the
@@ -559,7 +559,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: List<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>:Test.kt")
@@ -576,7 +576,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testForLoopWithCallsInBodyAndCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: List<Int>) {
                 // The composable call is made a conditional number of times, so we need to wrap
                 // the loop with a dynamic wrapping group.
@@ -587,7 +587,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: List<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -607,7 +607,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testForLoopWithCallsInSubject(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example() {
                 // The for loop's subject expression is only executed once, so we don't need any
                 // additional groups
@@ -617,7 +617,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<L()>:Test.kt")
@@ -634,7 +634,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileLoopWithCallsInBody(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: MutableList<Int>) {
                 // since we have a composable call which is called a conditional number of times,
                 // we need to generate groups around the loop's block as well as a group around the
@@ -647,7 +647,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: MutableList<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<P(item...>:Test.kt")
@@ -663,7 +663,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileLoopWithCallsInBodyAndCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: MutableList<Int>) {
                 // since we have a composable call which is called a conditional number of times,
                 // we need to generate groups around the loop's block as well as a group around the
@@ -676,7 +676,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: MutableList<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -695,7 +695,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileLoopWithCallsInCondition(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example() {
                 // A while loop's condition block gets executed a conditional number of times, so
                 // so we must generate a group around the while expression overall. The function
@@ -706,7 +706,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<B()>:Test.kt")
@@ -721,7 +721,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileLoopWithCallsInConditionAndCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example() {
                 // A while loop's condition block gets executed a conditional number of times, so
                 // so we must generate a group around the while expression overall.
@@ -732,7 +732,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -750,7 +750,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileLoopWithCallsInConditionAndBody(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example() {
                 // Both the condition and the body of the loop get groups because they have
                 // composable calls in them. We must generate a group around the while statement
@@ -761,7 +761,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<B()>,<A()>:Test.kt")
@@ -776,7 +776,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileLoopWithCallsInConditionAndBodyAndCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example() {
                 // Both the condition and the body of the loop get groups because they have
                 // composable calls in them. We must generate a group around the while statement
@@ -788,7 +788,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A(b)>:Test.kt")
@@ -806,7 +806,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testEarlyReturnWithCallsBeforeButNotAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // in the early return path, we need only close out the opened groups
                 if (x > 0) {
@@ -817,7 +817,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -840,7 +840,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testEarlyReturnWithCallsAfterButNotBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 // we can just close out the open groups at the return.
                 if (x > 0) {
@@ -850,7 +850,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -867,7 +867,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testEarlyReturnValue(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int): Int {
                 if (x > 0) {
                     A()
@@ -877,7 +877,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -902,7 +902,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testEarlyReturnValueWithCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int): Int {
                 if (x > 0) {
                     return 1
@@ -912,7 +912,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -932,7 +932,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testReturnCallValue(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(): Int {
                 // since the return expression is a composable call, we need to generate a
                 // temporary variable and then return it after ending the open groups.
@@ -941,7 +941,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(%composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>,<R()>:Test.kt")
@@ -956,7 +956,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testEarlyReturnCallValue(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int): Int {
                 if (x > 0) {
                     return R()
@@ -965,7 +965,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Example)<R()>:Test.kt")
@@ -989,7 +989,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testReturnFromLoop(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
@@ -1008,7 +1008,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>,<P(l)>:Test.kt")
@@ -1092,7 +1092,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testBreakWithCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
@@ -1104,7 +1104,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>:Test.kt")
@@ -1123,7 +1123,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testBreakWithCallsBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
@@ -1135,7 +1135,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>:Test.kt")
@@ -1154,7 +1154,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testBreakWithCallsBeforeAndAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 // a group around while is needed here, but the function body group will suffice
                 while (items.hasNext()) {
@@ -1169,7 +1169,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<P(i)>,<P(j)>:Test.kt")
@@ -1190,7 +1190,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testBreakWithCallsBeforeAndAfterAndCallAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 // a group around while is needed here
                 while (items.hasNext()) {
@@ -1205,7 +1205,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -1228,7 +1228,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testContinueWithCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
@@ -1240,7 +1240,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1262,7 +1262,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testContinueWithCallsBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
@@ -1275,7 +1275,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1298,7 +1298,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testContinueWithCallsBeforeAndAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(items: Iterator<Int>) {
                 while (items.hasNext()) {
                     val i = items.next()
@@ -1311,7 +1311,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1334,7 +1334,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testLoopWithReturn(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>) {
                 while (a.hasNext()) {
                     val x = a.next()
@@ -1346,7 +1346,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<A()>:Test.kt")
@@ -1366,7 +1366,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testLoopWithBreak(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>) {
                 a@while (a.hasNext()) {
                     val x = a.next()
@@ -1382,7 +1382,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<A()>:Test.kt")
@@ -1408,7 +1408,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testNestedLoopsAndBreak(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>) {
                 a@while (a.hasNext()) {
                     val x = a.next()
@@ -1433,7 +1433,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<A()>:Test.kt")
@@ -1470,7 +1470,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testNestedLoops(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>) {
                 a@while (a.hasNext()) {
                     b@while (b.hasNext()) {
@@ -1482,7 +1482,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A()>:Test.kt")
@@ -1505,7 +1505,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileInsideIfAndCallAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 if (x > 0) {
                     while (x > 0) {
@@ -1516,7 +1516,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1541,7 +1541,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileInsideIfAndCallBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 if (x > 0) {
                     A()
@@ -1552,7 +1552,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1575,7 +1575,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileInsideIf(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 if (x > 0) {
                     while (x > 0) {
@@ -1585,7 +1585,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1607,7 +1607,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileWithKey(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 while (x > 0) {
                     key(x) {
@@ -1617,7 +1617,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1634,7 +1634,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileWithTwoKeys(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 while (x > 0) {
                     key(x) {
@@ -1647,7 +1647,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1667,7 +1667,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileWithKeyAndCallAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 while (x > 0) {
                     key(x) {
@@ -1678,7 +1678,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<A(b)>:Test.kt")
@@ -1696,7 +1696,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileWithKeyAndCallBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 while (x > 0) {
                     A(a)
@@ -1707,7 +1707,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<A(a)>:Test.kt")
@@ -1725,7 +1725,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testWhileWithKeyAndCallBeforeAndAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 while (x > 0) {
                     A(a)
@@ -1737,7 +1737,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<A(a)>,<A(c)>:Test.kt")
@@ -1756,7 +1756,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyAtRootLevel(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 key(x) {
                     A()
@@ -1764,7 +1764,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1779,7 +1779,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyAtRootLevelAndCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 key(x) {
                     A(a)
@@ -1788,7 +1788,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A(b)>:Test.kt")
@@ -1804,7 +1804,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyAtRootLevelAndCallsBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 A(a)
                 key(x) {
@@ -1813,7 +1813,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<A(a)>:Test.kt")
@@ -1829,7 +1829,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyInIf(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 if (x > 0) {
                     key(x) {
@@ -1839,7 +1839,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1861,7 +1861,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyInIfAndCallsAfter(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 if (x > 0) {
                     key(x) {
@@ -1872,7 +1872,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1895,7 +1895,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyInIfAndCallsBefore(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 if (x > 0) {
                     A(a)
@@ -1906,7 +1906,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1929,7 +1929,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyWithLotsOfValues(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(a: Int, b: Int, c: Int, d: Int) {
                 key(a, b, c, d) {
                     A()
@@ -1937,7 +1937,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(a: Int, b: Int, c: Int, d: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -1952,7 +1952,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyWithComposableValue(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 while(x > 0) {
                     key(R()) {
@@ -1962,7 +1962,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)*<R()>:Test.kt")
@@ -1979,14 +1979,14 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testKeyAsAValue(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int) {
                 val y = key(x) { R() }
                 P(y)
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<P(y)>:Test.kt")
@@ -2004,7 +2004,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testDynamicWrappingGroupWithReturnValue(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false) @Composable
+            @NonRestartableComposable @Composable
             fun Example(x: Int): Int {
                 return if (x > 0) {
                     if (B()) 1
@@ -2014,7 +2014,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
               %composer.startReplaceableGroup(<>, "C(Example):Test.kt")
@@ -2045,7 +2045,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testTheThing(): Unit = controlFlow(
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Simple() {
               // this has a composable call in it, and since we don't know the number of times the
@@ -2056,7 +2056,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               A()
             }
 
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun WithReturn() {
               // this has an early return in it, so it needs to end all of the groups present.
@@ -2067,7 +2067,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               A()
             }
 
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun NoCalls() {
               // this has no composable calls in it, so shouldn't cause any groups to get created
@@ -2077,7 +2077,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               A()
             }
 
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun NoCallsAfter() {
               // this has a composable call in the lambda, but not after it, which means the
@@ -2088,7 +2088,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         """
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun Simple(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Simple)<A()>:Test.kt")
@@ -2100,7 +2100,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               A(%composer, 0)
               %composer.endReplaceableGroup()
             }
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun WithReturn(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(WithReturn)<A()>:Test.kt")
@@ -2115,7 +2115,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               A(%composer, 0)
               %composer.endReplaceableGroup()
             }
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun NoCalls(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(NoCalls)<A()>:Test.kt")
@@ -2125,7 +2125,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               A(%composer, 0)
               %composer.endReplaceableGroup()
             }
-            @ComposableContract(restartable = false)
+            @NonRestartableComposable
             @Composable
             fun NoCallsAfter(%composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(NoCallsAfter)*<A()>:Test.kt")
