@@ -33,7 +33,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(Test)")
+              %composer = %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
                 A(a, %composer, 0)
                 A(b, %composer, 0)
@@ -59,7 +59,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             private fun Test(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>)
+              %composer = %composer.startRestartGroup(<>)
               if (%changed !== 0 || !%composer.skipping) {
                 A(a, %composer, 0)
                 A(b, %composer, 0)
@@ -86,7 +86,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(Test)")
+              %composer = %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
                 W(ComposableSingletons%TestKt.lambda-1, %composer, 0)
               } else {
@@ -121,7 +121,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """
             @Composable
             fun Test(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(Test)")
+              %composer = %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
                 IW({ %composer: Composer?, %changed: Int ->
                   if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
