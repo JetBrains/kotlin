@@ -68,8 +68,6 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal const val COMPOSABLE_PROPERTIES = true
-
 open class ComposableCallChecker :
     CallChecker,
     AdditionalTypeChecker,
@@ -91,7 +89,7 @@ open class ComposableCallChecker :
         if (resolvedCall !is VariableAsFunctionResolvedCall) return
         val descriptor = resolvedCall.variableCall.resultingDescriptor
         if (descriptor !is ValueParameterDescriptor) return
-        if (descriptor.type.composablePreventCaptureContract() == true) return
+        if (descriptor.type.hasDisallowComposableCallsAnnotation()) return
         val function = descriptor.containingDeclaration
         if (
             function is FunctionDescriptor &&
@@ -104,7 +102,7 @@ open class ComposableCallChecker :
                 when (node) {
                     is KtLambdaExpression -> {
                         val arg = getArgumentDescriptor(node.functionLiteral, bindingContext)
-                        if (arg?.type?.composablePreventCaptureContract() == true) {
+                        if (arg?.type?.hasDisallowComposableCallsAnnotation() == true) {
                             val parameterSrc = descriptor.findPsi()
                             if (parameterSrc != null) {
                                 missingDisallowedComposableCallPropagation(
@@ -154,7 +152,7 @@ open class ComposableCallChecker :
                     val composable = descriptor.isComposableCallable(bindingContext)
                     if (composable) return
                     val arg = getArgumentDescriptor(node.functionLiteral, bindingContext)
-                    if (arg?.type?.composablePreventCaptureContract() == true) {
+                    if (arg?.type?.hasDisallowComposableCallsAnnotation() == true) {
                         context.trace.record(
                             ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
                             descriptor,
@@ -239,9 +237,7 @@ open class ComposableCallChecker :
                     val property = node.property
                     val isComposable = node
                         .annotationEntries.hasComposableAnnotation(bindingContext)
-                    val propertyIsComposable = property
-                        .annotationEntries.hasComposableAnnotation(bindingContext)
-                    if (!(isComposable || COMPOSABLE_PROPERTIES && propertyIsComposable)) {
+                    if (!isComposable) {
                         illegalCall(context, reportOn, property.nameIdentifier ?: property)
                     }
                     return
@@ -403,28 +399,22 @@ fun ResolvedCall<*>.isComposableInvocation(): Boolean {
             val isGetter = valueArguments.isEmpty()
             val getter = candidateDescriptor.getter
             if (isGetter && getter != null) {
-                getter.hasComposableAnnotation() ||
-                    (COMPOSABLE_PROPERTIES && candidateDescriptor.hasComposableAnnotation())
+                getter.hasComposableAnnotation()
             } else {
                 false
             }
         }
-        is PropertyGetterDescriptor -> candidateDescriptor.hasComposableAnnotation() || (
-            COMPOSABLE_PROPERTIES && candidateDescriptor.correspondingProperty
-                .hasComposableAnnotation()
-            )
+        is PropertyGetterDescriptor -> candidateDescriptor.hasComposableAnnotation()
         else -> candidateDescriptor.hasComposableAnnotation()
     }
 }
 
 internal fun CallableDescriptor.isMarkedAsComposable(): Boolean {
     return when (this) {
-        is PropertyGetterDescriptor -> hasComposableAnnotation() || (
-            COMPOSABLE_PROPERTIES && correspondingProperty.hasComposableAnnotation()
-            )
+        is PropertyGetterDescriptor -> hasComposableAnnotation()
         is ValueParameterDescriptor -> type.hasComposableAnnotation()
         is LocalVariableDescriptor -> type.hasComposableAnnotation()
-        is PropertyDescriptor -> COMPOSABLE_PROPERTIES && hasComposableAnnotation()
+        is PropertyDescriptor -> false
         else -> hasComposableAnnotation()
     }
 }

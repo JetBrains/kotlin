@@ -157,7 +157,6 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         import androidx.compose.runtime.*
         @Composable fun C(): Int { return 123 }
         val ncProp: Int = <!COMPOSABLE_INVOCATION!>C<!>()
-        @Composable val <!COMPOSABLE_PROPERTY_BACKING_FIELD,DEPRECATED_COMPOSABLE_PROPERTY!>cProp<!>: Int = <!COMPOSABLE_INVOCATION!>C<!>()
     """
     )
 

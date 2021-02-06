@@ -2419,8 +2419,9 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             import androidx.compose.runtime.ExperimentalComposeApi
 
             open class Foo {
-                @Composable
-                inline val current: Int @ReadOnlyComposable get() = currentComposer.hashCode()
+                inline val current: Int
+                    @Composable
+                    @ReadOnlyComposable get() = currentComposer.hashCode()
 
                 @ReadOnlyComposable
                 @Composable
