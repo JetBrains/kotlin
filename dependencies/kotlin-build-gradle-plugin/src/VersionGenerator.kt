@@ -29,7 +29,10 @@ fun Project.kotlinNativeVersionSrc():File {
 }
 fun Project.konanRootDir() = rootProject.findProject(":kotlin-native")?.projectDir ?: file("../kotlin-native")
 fun Project.kotlinNativeProperties() = Properties().apply{
-    FileReader(File(this@kotlinNativeProperties.konanRootDir(), "gradle.properties")).use {
+    val kotlinNativeProperyFile = File(this@kotlinNativeProperties.konanRootDir(), "gradle.properties")
+    if (!kotlinNativeProperyFile.exists())
+        return@apply
+    FileReader(kotlinNativeProperyFile).use {
         load(it)
     }
 }
@@ -38,13 +41,12 @@ val Project.kotlinNativeVersionInResources:Boolean
     get() = kotlinNativeProperties()["kotlinNativeVersionInResources"]?.toString()?.toBoolean() ?: false
 
 fun Project.kotlinNativeVersionResourceFile() = File("${project.findProperty("kotlin_root")!!}/buildSrc/build/version-generated/META-INF/kotlin-native.compiler.version")
-fun Project.kotlinNativeVersionValue(): CompilerVersion {
+fun Project.kotlinNativeVersionValue(): CompilerVersion? {
     return if (this.kotlinNativeVersionInResources)
         kotlinNativeVersionResourceFile().let { file ->
             file.readLines().single().parseCompilerVersion()
         }
-    else
-        TODO("implement me")
+    else null
 }
 
 
