@@ -9,9 +9,9 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirAnnotationImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.checkConstantSupportedInCommonization
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compact
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
@@ -28,21 +28,18 @@ object CirAnnotationFactory {
         if (allValueArguments.isEmpty())
             return create(type = type, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
 
-        val constantValueArguments: MutableMap<Name, ConstantValue<*>> = THashMap(allValueArguments.size)
+        val constantValueArguments: MutableMap<Name, CirConstantValue<*>> = THashMap(allValueArguments.size)
         val annotationValueArguments: MutableMap<Name, CirAnnotation> = THashMap(allValueArguments.size)
 
         allValueArguments.forEach { (name, constantValue) ->
-            checkConstantSupportedInCommonization(
-                constantValue = constantValue,
-                constantName = name,
-                owner = source,
-                allowAnnotationValues = true
-            )
-
             if (constantValue is AnnotationValue)
                 annotationValueArguments[name.intern()] = create(source = constantValue.value)
             else
-                constantValueArguments[name.intern()] = constantValue
+                constantValueArguments[name.intern()] = CirConstantValueFactory.createSafely(
+                    constantValue = constantValue,
+                    constantName = name,
+                    owner = source,
+                )
         }
 
         return create(
@@ -54,7 +51,7 @@ object CirAnnotationFactory {
 
     fun create(
         type: CirClassType,
-        constantValueArguments: Map<Name, ConstantValue<*>>,
+        constantValueArguments: Map<Name, CirConstantValue<*>>,
         annotationValueArguments: Map<Name, CirAnnotation>
     ): CirAnnotation {
         return interner.intern(

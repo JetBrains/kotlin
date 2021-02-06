@@ -7,21 +7,15 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
-import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapOf
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import kotlin.DeprecationLevel.WARNING
 
 /**
@@ -62,7 +56,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             val level: DeprecationLevel = level ?: failInEmptyState()
             val messageValue: StringValue = message.toDeprecationMessageValue()
 
-            val constantValueArguments: Map<Name, ConstantValue<*>> = if (level == WARNING) {
+            val constantValueArguments: Map<Name, CirConstantValue<*>> = if (level == WARNING) {
                 // don't populate with the default level value
                 compactMapOf(PROPERTY_NAME_MESSAGE, messageValue)
             } else
@@ -194,17 +188,17 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         private fun String.toReplaceWithValue(imports: List<String>): CirAnnotation =
             createReplaceWithAnnotation(this, imports)
 
-        private inline fun Map<Name, ConstantValue<*>>.getString(name: Name): String? =
+        private inline fun Map<Name, CirConstantValue<*>>.getString(name: Name): String? =
             (this[name] as? StringValue)?.value
 
-        private inline fun Map<Name, ConstantValue<*>>.getEnumEntryName(name: Name): String? =
+        private inline fun Map<Name, CirConstantValue<*>>.getEnumEntryName(name: Name): String? =
             (this[name] as? EnumValue)?.enumEntryName?.asString()
 
         private inline fun Map<Name, CirAnnotation>.getAnnotation(name: Name): CirAnnotation? =
             this[name]
 
-        private inline fun Map<Name, ConstantValue<*>>.getStringArray(name: Name): List<String>? {
-            val elements: List<ConstantValue<*>> = (this[name] as? ArrayValue)?.value ?: return null
+        private inline fun Map<Name, CirConstantValue<*>>.getStringArray(name: Name): List<String>? {
+            val elements: List<CirConstantValue<*>> = (this[name] as? ArrayValue)?.value ?: return null
             if (elements.isEmpty()) return emptyList()
 
             val result = ArrayList<String>(elements.size)
@@ -223,10 +217,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
                 type = REPLACE_WITH_ANNOTATION_TYPE,
                 constantValueArguments = compactMapOf(
                     PROPERTY_NAME_EXPRESSION, StringValue(expression),
-                    PROPERTY_NAME_IMPORTS, ArrayValue(
-                        value = imports.compactMap { StringValue(it) },
-                        computeType = { it.builtIns.getArrayElementType(it.builtIns.stringType) }
-                    )
+                    PROPERTY_NAME_IMPORTS, ArrayValue(imports.compactMap(::StringValue))
                 ),
                 annotationValueArguments = emptyMap()
             )

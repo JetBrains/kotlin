@@ -7,16 +7,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.junit.Test
 import kotlin.DeprecationLevel.*
 
@@ -287,7 +285,7 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 
 private fun mockAnnotation(
     fqName: String,
-    constantValueArguments: Map<Name, ConstantValue<*>> = emptyMap(),
+    constantValueArguments: Map<Name, CirConstantValue<*>> = emptyMap(),
     annotationValueArguments: Map<Name, CirAnnotation> = emptyMap()
 ): CirAnnotation = CirAnnotationFactory.create(
     type = CirTypeFactory.create(mockClassType(fqName)) as CirClassType,
@@ -306,9 +304,7 @@ private fun mockDeprecated(
             fqName = "kotlin.ReplaceWith",
             constantValueArguments = mapOf(
                 Name.identifier("expression") to StringValue(replaceWithExpression),
-                Name.identifier("imports") to ArrayValue(replaceWithImports.map(::StringValue)) {
-                    it.builtIns.getArrayElementType(it.builtIns.stringType)
-                }
+                Name.identifier("imports") to ArrayValue(replaceWithImports.map(::StringValue))
             ),
             annotationValueArguments = emptyMap()
         )
@@ -316,7 +312,7 @@ private fun mockDeprecated(
 
     return mockAnnotation(
         fqName = "kotlin.Deprecated",
-        constantValueArguments = HashMap<Name, ConstantValue<*>>().apply {
+        constantValueArguments = HashMap<Name, CirConstantValue<*>>().apply {
             this[Name.identifier("message")] = StringValue(message)
 
             if (level != WARNING)

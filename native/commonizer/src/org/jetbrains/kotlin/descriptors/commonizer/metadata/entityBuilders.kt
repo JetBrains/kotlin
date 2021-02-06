@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.strip
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.Variance
 
 internal fun CirModule.buildModule(
@@ -156,7 +156,7 @@ internal fun CirProperty.buildProperty(
     annotations.mapTo(property.annotations) { it.buildAnnotation() }
     getter?.annotations?.mapTo(property.getterAnnotations) { it.buildAnnotation() }
     setter?.annotations?.mapTo(property.setterAnnotations) { it.buildAnnotation() }
-    property.compileTimeValue = compileTimeInitializer?.takeIf { it !is NullValue }?.buildAnnotationArgument()
+    property.compileTimeValue = compileTimeInitializer?.takeIf { it !is CirConstantValue.NullValue }?.buildAnnotationArgument()
     typeParameters.buildTypeParameters(context, output = property.typeParameters)
     extensionReceiver?.let { receiver ->
         // TODO nowhere to write receiver annotations, see KT-42490
@@ -195,8 +195,9 @@ internal fun CirFunction.buildFunction(
 private fun CirAnnotation.buildAnnotation(): KmAnnotation {
     val arguments = LinkedHashMap<String, KmAnnotationArgument<*>>(constantValueArguments.size + annotationValueArguments.size, 1F)
 
-    constantValueArguments.forEach { (name: Name, value: ConstantValue<*>) ->
+    constantValueArguments.forEach { (name: Name, value: CirConstantValue<*>) ->
         arguments[name.asString()] = value.buildAnnotationArgument()
+            ?: error("Unexpected <null> constant value inside of $this")
     }
 
     annotationValueArguments.forEach { (name: Name, nested: CirAnnotation) ->
@@ -209,28 +210,30 @@ private fun CirAnnotation.buildAnnotation(): KmAnnotation {
     )
 }
 
-private fun ConstantValue<*>.buildAnnotationArgument(): KmAnnotationArgument<*> = when (this) {
-    is StringValue -> KmAnnotationArgument.StringValue(value)
-    is CharValue -> KmAnnotationArgument.CharValue(value)
+private fun CirConstantValue<*>.buildAnnotationArgument(): KmAnnotationArgument<*>? = when (this) {
+    is CirConstantValue.StringValue -> KmAnnotationArgument.StringValue(value)
+    is CirConstantValue.CharValue -> KmAnnotationArgument.CharValue(value)
 
-    is ByteValue -> KmAnnotationArgument.ByteValue(value)
-    is ShortValue -> KmAnnotationArgument.ShortValue(value)
-    is IntValue -> KmAnnotationArgument.IntValue(value)
-    is LongValue -> KmAnnotationArgument.LongValue(value)
+    is CirConstantValue.ByteValue -> KmAnnotationArgument.ByteValue(value)
+    is CirConstantValue.ShortValue -> KmAnnotationArgument.ShortValue(value)
+    is CirConstantValue.IntValue -> KmAnnotationArgument.IntValue(value)
+    is CirConstantValue.LongValue -> KmAnnotationArgument.LongValue(value)
 
-    is UByteValue -> KmAnnotationArgument.UByteValue(value)
-    is UShortValue -> KmAnnotationArgument.UShortValue(value)
-    is UIntValue -> KmAnnotationArgument.UIntValue(value)
-    is ULongValue -> KmAnnotationArgument.ULongValue(value)
+    is CirConstantValue.UByteValue -> KmAnnotationArgument.UByteValue(value)
+    is CirConstantValue.UShortValue -> KmAnnotationArgument.UShortValue(value)
+    is CirConstantValue.UIntValue -> KmAnnotationArgument.UIntValue(value)
+    is CirConstantValue.ULongValue -> KmAnnotationArgument.ULongValue(value)
 
-    is FloatValue -> KmAnnotationArgument.FloatValue(value)
-    is DoubleValue -> KmAnnotationArgument.DoubleValue(value)
-    is BooleanValue -> KmAnnotationArgument.BooleanValue(value)
+    is CirConstantValue.FloatValue -> KmAnnotationArgument.FloatValue(value)
+    is CirConstantValue.DoubleValue -> KmAnnotationArgument.DoubleValue(value)
+    is CirConstantValue.BooleanValue -> KmAnnotationArgument.BooleanValue(value)
 
-    is EnumValue -> KmAnnotationArgument.EnumValue(enumClassId.asString(), enumEntryName.asString())
-    is ArrayValue -> KmAnnotationArgument.ArrayValue(value.map { it.buildAnnotationArgument() })
+    is CirConstantValue.EnumValue -> KmAnnotationArgument.EnumValue(enumClassId.asString(), enumEntryName.asString())
+    is CirConstantValue.NullValue -> null
 
-    else -> error("Unsupported annotation argument type: ${this::class.java}, $this")
+    is CirConstantValue.ArrayValue -> KmAnnotationArgument.ArrayValue(value.compactMap { element ->
+        element.buildAnnotationArgument() ?: error("Unexpected <null> constant value inside of $this")
+    })
 }
 
 private fun CirValueParameter.buildValueParameter(

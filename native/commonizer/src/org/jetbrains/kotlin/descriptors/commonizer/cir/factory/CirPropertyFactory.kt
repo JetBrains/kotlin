@@ -11,20 +11,16 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.checkConstantSupportedInCommonization
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 object CirPropertyFactory {
     fun create(source: PropertyDescriptor, containingClass: CirContainingClass?): CirProperty {
-        val compileTimeInitializer: ConstantValue<*>? = source.compileTimeInitializer
-        if (compileTimeInitializer != null) {
-            checkConstantSupportedInCommonization(
-                constantValue = compileTimeInitializer,
+        val compileTimeInitializer = source.compileTimeInitializer?.let { constantValue ->
+            CirConstantValueFactory.createSafely(
+                constantValue = constantValue,
                 owner = source,
-                allowAnnotationValues = false
             )
         }
 
@@ -47,7 +43,7 @@ object CirPropertyFactory {
             setter = source.setter?.let(CirPropertySetterFactory::create),
             backingFieldAnnotations = source.backingField?.annotations?.compactMap(CirAnnotationFactory::create),
             delegateFieldAnnotations = source.delegateField?.annotations?.compactMap(CirAnnotationFactory::create),
-            compileTimeInitializer = source.compileTimeInitializer
+            compileTimeInitializer = compileTimeInitializer
         )
     }
 
@@ -71,7 +67,7 @@ object CirPropertyFactory {
         setter: CirPropertySetter?,
         backingFieldAnnotations: List<CirAnnotation>?,
         delegateFieldAnnotations: List<CirAnnotation>?,
-        compileTimeInitializer: ConstantValue<*>?
+        compileTimeInitializer: CirConstantValue<*>?
     ): CirProperty {
         return CirPropertyImpl(
             annotations = annotations,

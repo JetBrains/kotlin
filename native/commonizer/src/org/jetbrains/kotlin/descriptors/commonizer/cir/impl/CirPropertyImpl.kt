@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 data class CirPropertyImpl(
     override val annotations: List<CirAnnotation>,
@@ -31,7 +30,7 @@ data class CirPropertyImpl(
     override val setter: CirPropertySetter?,
     override val backingFieldAnnotations: List<CirAnnotation>?,
     override val delegateFieldAnnotations: List<CirAnnotation>?,
-    override val compileTimeInitializer: ConstantValue<*>?
+    override val compileTimeInitializer: CirConstantValue<*>?
 ) : CirProperty {
     // const property in "common" fragment is already lifted up
     override val isLiftedUp get() = isConst

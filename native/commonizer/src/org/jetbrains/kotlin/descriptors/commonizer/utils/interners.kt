@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal fun FqName.intern(): FqName = fqNameInterner.intern(this)
 internal fun Name.intern(): Name = nameInterner.intern(this)
+internal fun ClassId.intern(): ClassId = classIdInterner.intern(this)
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun internedClassId(topLevelFqName: FqName): ClassId {
@@ -28,9 +29,6 @@ internal fun internedClassId(ownerClassId: ClassId, nestedClassName: Name): Clas
     val relativeClassName = ownerClassId.relativeClassName.child(nestedClassName).intern()
     return ClassId(ownerClassId.packageFqName, relativeClassName, ownerClassId.isLocal).intern()
 }
-
-@Suppress("NOTHING_TO_INLINE")
-private inline fun ClassId.intern(): ClassId = classIdInterner.intern(this)
 
 private val fqNameInterner = Interner<FqName>()
 private val nameInterner = Interner<Name>()
