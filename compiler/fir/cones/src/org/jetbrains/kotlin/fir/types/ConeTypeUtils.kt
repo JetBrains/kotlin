@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -54,4 +55,23 @@ fun ConeClassLikeType.replaceArgumentsWithStarProjections(): ConeClassLikeType {
     if (typeArguments.isEmpty()) return this
     val newArguments = Array(typeArguments.size) { ConeStarProjection }
     return withArguments(newArguments)
+}
+
+val ConeKotlinType.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
+val ConeKotlinType.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
+val ConeKotlinType.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
+val ConeKotlinType.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
+val ConeKotlinType.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
+val ConeKotlinType.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
+val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
+val ConeKotlinType.isArrayType: Boolean
+    get() {
+        return isBuiltinType(StandardClassIds.Array, false) ||
+                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+    }
+
+private fun ConeKotlinType.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
+
+    if (this !is ConeClassLikeType) return false
+    return lookupTag.classId == classId && type.isNullable == isNullable
 }

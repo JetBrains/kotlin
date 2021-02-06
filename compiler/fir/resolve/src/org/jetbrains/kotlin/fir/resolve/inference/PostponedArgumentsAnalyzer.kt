@@ -168,14 +168,14 @@ class PostponedArgumentsAnalyzer(
         val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
         var hasExpressionInReturnArguments = false
         // No constraint for return expressions of lambda if it has Unit return type.
-        val lambdaReturnType = lambda.returnType.let(substitute).takeUnless { it.isUnit }
+        val lambdaReturnType = lambda.returnType.let(substitute).takeUnless { it.isUnitOrFlexibleUnit }
         returnArguments.forEach {
             if (it !is FirExpression) return@forEach
             hasExpressionInReturnArguments = true
             // If it is the last expression, and the expected type is Unit, that expression will be coerced to Unit.
             // If the last expression is of Unit type, of course it's not coercion-to-Unit case.
             val lastExpressionCoercedToUnit =
-                it == lastExpression && expectedReturnType?.isUnit == true && !it.typeRef.coneType.isUnit
+                it == lastExpression && expectedReturnType?.isUnitOrFlexibleUnit == true && !it.typeRef.coneType.isUnitOrFlexibleUnit
             // No constraint for the last expression of lambda if it will be coerced to Unit.
             if (!lastExpressionCoercedToUnit) {
                 candidate.resolveArgumentExpression(

@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.fakeElement
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -182,6 +181,10 @@ fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
 fun ConeKotlinType.isUnsafeVarianceType(session: FirSession): Boolean {
     val type = this.lowerBoundIfFlexible().fullyExpandedType(session)
     return type.attributes.unsafeVarianceType != null
+}
+
+fun ConeKotlinType.toSymbol(session: FirSession): AbstractFirBasedSymbol<*>? {
+    return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
 }
 
 fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
