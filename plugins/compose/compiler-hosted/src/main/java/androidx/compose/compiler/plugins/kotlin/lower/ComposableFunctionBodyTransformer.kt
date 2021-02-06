@@ -21,9 +21,8 @@ import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
-import androidx.compose.compiler.plugins.kotlin.composableReadonlyContract
-import androidx.compose.compiler.plugins.kotlin.composableRestartableContract
-import androidx.compose.compiler.plugins.kotlin.composableTrackedContract
+import androidx.compose.compiler.plugins.kotlin.hasReadonlyComposableAnnotation
+import androidx.compose.compiler.plugins.kotlin.hasNonRestartableComposableAnnotation
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -62,7 +61,6 @@ import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -681,9 +679,7 @@ class ComposableFunctionBodyTransformer(
         val restartable = declaration.shouldBeRestartable()
         val isLambda = declaration.isLambda()
 
-        // we use != false because a null value is treated as "tracked"
-        val isTracked = declaration.descriptor.composableTrackedContract() != false &&
-            declaration.returnType.isUnit()
+        val isTracked = declaration.returnType.isUnit()
 
         if (declaration.body == null) return declaration
 
@@ -730,7 +726,7 @@ class ComposableFunctionBodyTransformer(
         if (descriptor.isInline)
             return false
 
-        if (descriptor.composableRestartableContract() == false)
+        if (descriptor.hasNonRestartableComposableAnnotation())
             return false
 
         // Do not insert an observe scope in an inline composable lambda
@@ -770,14 +766,7 @@ class ComposableFunctionBodyTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldElideGroups(): Boolean {
-        var readOnly = descriptor.composableReadonlyContract()
-        if (readOnly == null && this is IrSimpleFunction) {
-            readOnly = correspondingPropertySymbol
-                ?.owner
-                ?.descriptor
-                ?.composableReadonlyContract()
-        }
-        return readOnly == true
+        return descriptor.hasReadonlyComposableAnnotation()
     }
 
     // At a high level, a non-restartable composable function

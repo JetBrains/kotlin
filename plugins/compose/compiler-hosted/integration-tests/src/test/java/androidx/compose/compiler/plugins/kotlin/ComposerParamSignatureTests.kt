@@ -833,8 +833,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     fun testSealedClassEtc(): Unit = checkApi(
         """
             sealed class CompositionLocal2<T> {
-                @Composable
-                inline val current: T get() = error("")
+                inline val current: T
+                    @Composable
+                    get() = error("")
                 @Composable fun foo() {}
             }
 
@@ -846,7 +847,6 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             public abstract class CompositionLocal2 {
               private <init>()V
               public final getCurrent(Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
-              public static synthetic getCurrent%annotations()V
               public final foo(Landroidx/compose/runtime/Composer;I)V
               public synthetic <init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
               static <clinit>()V
