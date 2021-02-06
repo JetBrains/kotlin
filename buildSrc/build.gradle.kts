@@ -96,7 +96,10 @@ repositories {
     }
 }
 
-val generateCompilerVersion by tasks.registering(VersionGenerator::class) {}
+val generateCompilerVersion by tasks.registering(VersionGenerator::class) {
+    kotlinNativeVersionInResources=true
+    defaultVersionFileLocation()
+}
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     dependsOn(generateCompilerVersion)
 }

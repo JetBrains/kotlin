@@ -94,7 +94,7 @@ internal val Project.konanHome: String
 internal val Project.konanVersion: CompilerVersion
     get() = project.findProperty(KonanPlugin.ProjectProperty.KONAN_VERSION)
         ?.toString()?.let { CompilerVersion.fromString(it) }
-        ?: CompilerVersion.CURRENT
+        ?: project.findProperty("kotlinNativeVersion") as? CompilerVersion ?: CompilerVersion.CURRENT
 
 internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")
 internal val Project.konanBinBaseDir         get() = konanBuildRoot.resolve("bin")
