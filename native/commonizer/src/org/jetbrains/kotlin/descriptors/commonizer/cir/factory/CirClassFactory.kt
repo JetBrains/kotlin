@@ -11,22 +11,21 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.isInlineClass
 
 object CirClassFactory {
     fun create(source: ClassDescriptor): CirClass = create(
         annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-        name = source.name.intern(),
+        name = CirName.create(source.name),
         typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
         visibility = source.visibility,
         modality = source.modality,
         kind = source.kind,
-        companion = source.companionObjectDescriptor?.name?.intern(),
+        companion = source.companionObjectDescriptor?.name?.let(CirName::create),
         isCompanion = source.isCompanionObject,
         isData = source.isData,
         isInline = source.isInlineClass(),
@@ -39,12 +38,12 @@ object CirClassFactory {
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
         annotations: List<CirAnnotation>,
-        name: Name,
+        name: CirName,
         typeParameters: List<CirTypeParameter>,
         visibility: DescriptorVisibility,
         modality: Modality,
         kind: ClassKind,
-        companion: Name?,
+        companion: CirName?,
         isCompanion: Boolean,
         isData: Boolean,
         isInline: Boolean,

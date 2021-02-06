@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.Name
-
 interface CirAnnotation {
     val type: CirClassType
-    val constantValueArguments: Map<Name, CirConstantValue<*>>
-    val annotationValueArguments: Map<Name, CirAnnotation>
+    val constantValueArguments: Map<CirName, CirConstantValue<*>>
+    val annotationValueArguments: Map<CirName, CirAnnotation>
 }

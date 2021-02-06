@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.Name
 
 object CirPropertyFactory {
     fun create(source: PropertyDescriptor, containingClass: CirContainingClass?): CirProperty {
@@ -26,7 +24,7 @@ object CirPropertyFactory {
 
         return create(
             annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-            name = source.name.intern(),
+            name = CirName.create(source.name),
             typeParameters = source.typeParameters.compactMap(CirTypeParameterFactory::create),
             visibility = source.visibility,
             modality = source.modality,
@@ -50,7 +48,7 @@ object CirPropertyFactory {
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
         annotations: List<CirAnnotation>,
-        name: Name,
+        name: CirName,
         typeParameters: List<CirTypeParameter>,
         visibility: DescriptorVisibility,
         modality: Modality,

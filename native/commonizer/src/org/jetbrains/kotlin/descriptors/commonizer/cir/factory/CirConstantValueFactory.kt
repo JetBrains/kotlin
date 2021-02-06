@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 
 object CirConstantValueFactory {
     fun createSafely(
         constantValue: ConstantValue<*>,
-        constantName: Name? = null,
+        constantName: CirName? = null,
         owner: Any,
     ): CirConstantValue<*> = createSafely(
         constantValue = constantValue,
-        location = { "${owner::class.java}, $owner" + constantName?.asString()?.let { "[$it]" } }
+        location = { "${owner::class.java}, $owner" + constantName?.toString()?.let { "[$it]" } }
     )
 
     private fun createSafely(
@@ -42,7 +42,10 @@ object CirConstantValueFactory {
         is DoubleValue -> CirConstantValue.DoubleValue(constantValue.value)
         is BooleanValue -> CirConstantValue.BooleanValue(constantValue.value)
 
-        is EnumValue -> CirConstantValue.EnumValue(constantValue.enumClassId.intern(), constantValue.enumEntryName.intern())
+        is EnumValue -> CirConstantValue.EnumValue(
+            CirEntityId.create(constantValue.enumClassId),
+            CirName.create(constantValue.enumEntryName)
+        )
         is NullValue -> CirConstantValue.NullValue
 
         is ArrayValue -> CirConstantValue.ArrayValue(

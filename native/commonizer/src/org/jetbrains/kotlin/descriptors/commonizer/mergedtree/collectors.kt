@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
@@ -65,7 +66,7 @@ internal inline fun FunctionCollector(
 // collects member scopes for every non-empty package provided by this module
 internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(
     probeRootPackageForEmptiness: Boolean = false, // false is the default as probing might be expensive and is not always necessary
-    collector: (FqName, MemberScope) -> Unit
+    collector: (CirPackageName, MemberScope) -> Unit
 ) {
     // we don's need to process fragments from other modules which are the dependencies of this module, so
     // let's use the appropriate package fragment provider
@@ -88,7 +89,7 @@ internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(
                 "package member scope for $packageFqName in $name",
                 ownPackageMemberScopes
             )
-            collector(packageFqName, memberScope)
+            collector(CirPackageName.create(packageFqName), memberScope)
         }
 
         packageFragmentProvider.getSubPackagesOf(packageFqName, alwaysTrue()).toSet().map { recurse(it) }

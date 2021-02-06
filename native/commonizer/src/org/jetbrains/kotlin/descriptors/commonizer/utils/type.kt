@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -30,10 +32,13 @@ internal fun extractExpandedType(abbreviated: AbbreviatedType): SimpleType {
     return expanded
 }
 
-internal val ClassifierDescriptorWithTypeParameters.internedClassId: ClassId
+internal val ClassifierDescriptorWithTypeParameters.classifierId: CirEntityId
     get() = when (val owner = containingDeclaration) {
-        is PackageFragmentDescriptor -> internedClassId(owner.fqName.intern(), name.intern())
-        is ClassDescriptor -> internedClassId(owner.internedClassId, name.intern())
+        is PackageFragmentDescriptor -> CirEntityId.create(
+            packageName = CirPackageName.create(owner.fqName),
+            relativeName = CirName.create(name)
+        )
+        is ClassDescriptor -> owner.classifierId.createNestedEntityId(CirName.create(name))
         else -> error("Unexpected containing declaration type for $this: ${owner::class}, $owner")
     }
 

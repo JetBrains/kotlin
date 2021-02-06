@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -75,7 +75,7 @@ internal fun buildClassNode(
     size: Int,
     classifiers: CirKnownClassifiers,
     parentCommonDeclaration: NullableLazyValue<*>?,
-    classId: ClassId
+    classId: CirEntityId
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
@@ -106,7 +106,7 @@ internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
-    typeAliasId: ClassId
+    typeAliasId: CirEntityId
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,

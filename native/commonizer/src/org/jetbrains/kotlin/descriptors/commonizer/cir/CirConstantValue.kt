@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-
 sealed class CirConstantValue<out T> {
     abstract val value: T
 
@@ -28,8 +25,8 @@ sealed class CirConstantValue<out T> {
     data class DoubleValue(override val value: Double) : CirConstantValue<Double>()
     data class BooleanValue(override val value: Boolean) : CirConstantValue<Boolean>()
 
-    data class EnumValue(val enumClassId: ClassId, val enumEntryName: Name) : CirConstantValue<String>() {
-        override val value: String = "${enumClassId.asString()}.${enumEntryName.asString()}"
+    data class EnumValue(val enumClassId: CirEntityId, val enumEntryName: CirName) : CirConstantValue<String>() {
+        override val value: String = "${enumClassId}.${enumEntryName}"
     }
 
     data class ArrayValue(override val value: List<CirConstantValue<*>>) : CirConstantValue<List<CirConstantValue<*>>>()

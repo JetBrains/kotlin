@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -126,7 +126,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
             LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
                 CirClassFactory.create(
                     annotations = emptyList(),
-                    name = Name.identifier("kotlin.Any"),
+                    name = CirName.create("Any"),
                     typeParameters = emptyList(),
                     visibility = DescriptorVisibilities.PUBLIC,
                     modality = Modality.OPEN,
@@ -139,17 +139,17 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     isExternal = false
                 )
             },
-            ClassId.fromString("kotlin/Any")
+            CirEntityId.create("kotlin/Any")
         )
 
-        override fun classNode(classId: ClassId) = MOCK_CLASS_NODE
-        override fun typeAliasNode(typeAliasId: ClassId) = error("This method should not be called")
-        override fun addClassNode(classId: ClassId, node: CirClassNode) = error("This method should not be called")
-        override fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode) = error("This method should not be called")
+        override fun classNode(classId: CirEntityId) = MOCK_CLASS_NODE
+        override fun typeAliasNode(typeAliasId: CirEntityId) = error("This method should not be called")
+        override fun addClassNode(classId: CirEntityId, node: CirClassNode) = error("This method should not be called")
+        override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) = error("This method should not be called")
     },
     forwardDeclarations = object : CirForwardDeclarations {
-        override fun isExportedForwardDeclaration(classId: ClassId) = false
-        override fun addExportedForwardDeclaration(classId: ClassId) = error("This method should not be called")
+        override fun isExportedForwardDeclaration(classId: CirEntityId) = false
+        override fun addExportedForwardDeclaration(classId: CirEntityId) = error("This method should not be called")
     },
     dependeeLibraries = emptyMap()
 )

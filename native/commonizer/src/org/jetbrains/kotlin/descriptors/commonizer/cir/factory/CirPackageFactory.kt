@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackage
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPackageImpl
-import org.jetbrains.kotlin.name.FqName
 
 object CirPackageFactory {
-    fun create(fqName: FqName): CirPackage = CirPackageImpl(fqName)
+    fun create(packageName: CirPackageName): CirPackage = CirPackageImpl(packageName)
 }

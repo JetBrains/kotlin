@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isNull
-import org.jetbrains.kotlin.name.Name
 
 class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirValueParameter, CirValueParameter>() {
-    private lateinit var name: Name
+    private lateinit var name: CirName
     private val returnType = TypeCommonizer(classifiers)
     private var varargElementType: CirType? = null
     private var isCrossinline = true
@@ -49,7 +49,7 @@ class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStand
         return result
     }
 
-    fun overwriteName(name: Name) {
+    fun overwriteName(name: CirName) {
         this.name = name
     }
 }

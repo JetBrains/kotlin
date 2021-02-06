@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.*
 
 object CirTypeFactory {
@@ -42,7 +41,7 @@ object CirTypeFactory {
             when (val classifierDescriptor = abbreviation.declarationDescriptor) {
                 is TypeAliasDescriptor -> {
                     return createTypeAliasType(
-                        typeAliasId = classifierDescriptor.internedClassId,
+                        typeAliasId = classifierDescriptor.classifierId,
                         underlyingType = create(extractExpandedType(source), useAbbreviation = true) as CirClassOrTypeAliasType,
                         arguments = createArguments(abbreviation.arguments, useAbbreviation = true),
                         isMarkedNullable = abbreviation.isMarkedNullable
@@ -70,7 +69,7 @@ object CirTypeFactory {
                 val cirExpandedTypeWithProperNullability = if (source.isMarkedNullable) makeNullable(cirExpandedType) else cirExpandedType
 
                 createTypeAliasType(
-                    typeAliasId = classifierDescriptor.internedClassId,
+                    typeAliasId = classifierDescriptor.classifierId,
                     underlyingType = cirExpandedTypeWithProperNullability,
                     arguments = createArguments(source.arguments, useAbbreviation = true),
                     isMarkedNullable = source.isMarkedNullable
@@ -82,7 +81,7 @@ object CirTypeFactory {
     }
 
     fun createClassType(
-        classId: ClassId,
+        classId: CirEntityId,
         outerType: CirClassType?,
         visibility: DescriptorVisibility,
         arguments: List<CirTypeProjection>,
@@ -100,7 +99,7 @@ object CirTypeFactory {
     }
 
     fun createTypeAliasType(
-        typeAliasId: ClassId,
+        typeAliasId: CirEntityId,
         underlyingType: CirClassOrTypeAliasType,
         arguments: List<CirTypeProjection>,
         isMarkedNullable: Boolean
@@ -170,7 +169,7 @@ object CirTypeFactory {
         }
 
         return createClassType(
-            classId = classDescriptor.internedClassId,
+            classId = classDescriptor.classifierId,
             outerType = outerType,
             visibility = classDescriptor.visibility,
             arguments = remainingArguments,

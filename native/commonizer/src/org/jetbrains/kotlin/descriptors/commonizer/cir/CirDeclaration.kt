@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 /**
  * An intermediate representation of [DeclarationDescriptor]s for commonization purposes.
@@ -17,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
  * - [CirTypeAlias] - [TypeAliasDescriptor]
  * - [CirFunction] - [SimpleFunctionDescriptor]
  * - [CirProperty] - [PropertyDescriptor]
- * - [CirPackage] - union of multiple [PackageFragmentDescriptor]s with the same [FqName] contributed by commonized [ModuleDescriptor]s
+ * - [CirPackage] - union of multiple [PackageFragmentDescriptor]s with the same FQ name contributed by commonized [ModuleDescriptor]s
  * - [CirModule] - [ModuleDescriptor]
  * - [CirRoot] - the root of the whole Commonizer IR tree
  */
@@ -28,11 +26,7 @@ interface CirHasAnnotations {
 }
 
 interface CirHasName {
-    val name: Name
-}
-
-interface CirHasFqName {
-    val fqName: FqName
+    val name: CirName
 }
 
 interface CirHasVisibility {

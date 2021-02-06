@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.name.Name
 
 class ValueParameterListCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirValueParameter, CirValueParameter>(
     singleElementCommonizerFactory = { ValueParameterCommonizer(classifiers) }
 ) {
-    fun overwriteNames(names: List<Name>) {
+    fun overwriteNames(names: List<CirName>) {
         forEachSingleElementCommonizer { index, singleElementCommonizer ->
             (singleElementCommonizer as ValueParameterCommonizer).overwriteName(names[index])
         }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.Variance
 
@@ -58,13 +57,13 @@ data class CirTypeParameterType(
 }
 
 sealed class CirClassOrTypeAliasType : CirSimpleType() {
-    abstract val classifierId: ClassId
+    abstract val classifierId: CirEntityId
     abstract val arguments: List<CirTypeProjection>
 
     override fun appendDescriptionTo(builder: StringBuilder) = appendDescriptionTo(builder, shortNameOnly = false)
 
     protected open fun appendDescriptionTo(builder: StringBuilder, shortNameOnly: Boolean) {
-        builder.append(if (shortNameOnly) classifierId.relativeClassName.shortName().asString() else classifierId.asString())
+        builder.append(if (shortNameOnly) classifierId.relativeNameSegments.last() else classifierId)
         if (arguments.isNotEmpty()) arguments.joinTo(builder, prefix = "<", postfix = ">")
         super.appendDescriptionTo(builder)
     }

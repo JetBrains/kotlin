@@ -16,15 +16,12 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.strip
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 internal fun CirModule.buildModule(
     fragments: Collection<KmModuleFragment>
 ): KlibModuleMetadata = KlibModuleMetadata(
-    name = name.strip(),
+    name = name.toStrippedString(),
     fragments = fragments.toList(),
     annotations = emptyList()
 )
@@ -35,7 +32,7 @@ internal fun CirPackage.buildModuleFragment(
     topLevelFunctions: Collection<KmFunction>,
     topLevelProperties: Collection<KmProperty>
 ): KmModuleFragment = KmModuleFragment().also { fragment ->
-    fragment.fqName = fqName.asString()
+    fragment.fqName = packageName.toString()
     allClasses.forEach {
         fragment.classes += it
         fragment.className += it.name
@@ -43,7 +40,7 @@ internal fun CirPackage.buildModuleFragment(
 
     if (topLevelTypeAliases.isNotEmpty() || topLevelFunctions.isNotEmpty() || topLevelProperties.isNotEmpty()) {
         fragment.pkg = KmPackage().also { pkg ->
-            pkg.fqName = fqName.asString()
+            pkg.fqName = packageName.toString()
             pkg.typeAliases += topLevelTypeAliases
             pkg.functions += topLevelFunctions
             pkg.properties += topLevelProperties
@@ -101,15 +98,15 @@ internal fun CirClass.buildClass(
         }
     }
 
-    clazz.companionObject = companion?.asString()
+    clazz.companionObject = companion?.name
     supertypes.mapTo(clazz.supertypes) { it.buildType(context) }
 }
 
-internal fun linkSealedClassesWithSubclasses(packageFqName: FqName, classConsumer: ClassConsumer) {
+internal fun linkSealedClassesWithSubclasses(packageName: CirPackageName, classConsumer: ClassConsumer) {
     if (classConsumer.allClasses.isEmpty() || classConsumer.sealedClasses.isEmpty()) return
 
-    val packageName = packageFqName.asString().replace('.', '/')
-    fun ClassName.isInSamePackage(): Boolean = substringBeforeLast('/', "") == packageName
+    val metadataPackageName = packageName.toMetadataString()
+    fun ClassName.isInSamePackage(): Boolean = substringBeforeLast('/', "") == metadataPackageName
 
     val sealedClassesMap: Map<ClassName, KmClass> = classConsumer.sealedClasses.associateBy { it.name }
 
@@ -136,7 +133,7 @@ internal fun CirTypeAlias.buildTypeAlias(
     context: MetadataBuildingVisitorContext
 ): KmTypeAlias = KmTypeAlias(
     flags = typeAliasFlags(),
-    name = name.asString()
+    name = name.name
 ).also { typeAlias ->
     annotations.mapTo(typeAlias.annotations) { it.buildAnnotation() }
     typeParameters.buildTypeParameters(context, output = typeAlias.typeParameters)
@@ -148,7 +145,7 @@ internal fun CirProperty.buildProperty(
     context: MetadataBuildingVisitorContext,
 ): KmProperty = KmProperty(
     flags = propertyFlags(isExpect = context.isCommon && !isLiftedUp),
-    name = name.asString(),
+    name = name.name,
     getterFlags = getter?.propertyAccessorFlags(this, this) ?: NO_FLAGS,
     setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: NO_FLAGS
 ).also { property ->
@@ -180,7 +177,7 @@ internal fun CirFunction.buildFunction(
     context: MetadataBuildingVisitorContext,
 ): KmFunction = KmFunction(
     flags = functionFlags(isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED),
-    name = name.asString()
+    name = name.name
 ).also { function ->
     annotations.mapTo(function.annotations) { it.buildAnnotation() }
     typeParameters.buildTypeParameters(context, output = function.typeParameters)
@@ -195,17 +192,17 @@ internal fun CirFunction.buildFunction(
 private fun CirAnnotation.buildAnnotation(): KmAnnotation {
     val arguments = LinkedHashMap<String, KmAnnotationArgument<*>>(constantValueArguments.size + annotationValueArguments.size, 1F)
 
-    constantValueArguments.forEach { (name: Name, value: CirConstantValue<*>) ->
-        arguments[name.asString()] = value.buildAnnotationArgument()
+    constantValueArguments.forEach { (name: CirName, value: CirConstantValue<*>) ->
+        arguments[name.name] = value.buildAnnotationArgument()
             ?: error("Unexpected <null> constant value inside of $this")
     }
 
-    annotationValueArguments.forEach { (name: Name, nested: CirAnnotation) ->
-        arguments[name.asString()] = KmAnnotationArgument.AnnotationValue(nested.buildAnnotation())
+    annotationValueArguments.forEach { (name: CirName, nested: CirAnnotation) ->
+        arguments[name.name] = KmAnnotationArgument.AnnotationValue(nested.buildAnnotation())
     }
 
     return KmAnnotation(
-        className = type.classifierId.asString(),
+        className = type.classifierId.toString(),
         arguments = arguments
     )
 }
@@ -228,7 +225,7 @@ private fun CirConstantValue<*>.buildAnnotationArgument(): KmAnnotationArgument<
     is CirConstantValue.DoubleValue -> KmAnnotationArgument.DoubleValue(value)
     is CirConstantValue.BooleanValue -> KmAnnotationArgument.BooleanValue(value)
 
-    is CirConstantValue.EnumValue -> KmAnnotationArgument.EnumValue(enumClassId.asString(), enumEntryName.asString())
+    is CirConstantValue.EnumValue -> KmAnnotationArgument.EnumValue(enumClassId.toString(), enumEntryName.name)
     is CirConstantValue.NullValue -> null
 
     is CirConstantValue.ArrayValue -> KmAnnotationArgument.ArrayValue(value.compactMap { element ->
@@ -240,7 +237,7 @@ private fun CirValueParameter.buildValueParameter(
     context: MetadataBuildingVisitorContext
 ): KmValueParameter = KmValueParameter(
     flags = valueParameterFlags(),
-    name = name.asString()
+    name = name.name
 ).also { parameter ->
     annotations.mapTo(parameter.annotations) { it.buildAnnotation() }
     parameter.type = returnType.buildType(context)
@@ -256,7 +253,7 @@ private fun List<CirTypeParameter>.buildTypeParameters(
     mapIndexedTo(output) { index, cirTypeParameter ->
         KmTypeParameter(
             flags = cirTypeParameter.typeParameterFlags(),
-            name = cirTypeParameter.name.asString(),
+            name = cirTypeParameter.name.name,
             id = context.typeParameterIndexOffset + index,
             variance = cirTypeParameter.variance.buildVariance()
         ).also { parameter ->
@@ -292,7 +289,7 @@ private fun CirClassType.buildType(
     context: MetadataBuildingVisitorContext,
     expansion: TypeAliasExpansion
 ): KmType = KmType(typeFlags()).also { type ->
-    type.classifier = KmClassifier.Class(classifierId.asString())
+    type.classifier = KmClassifier.Class(classifierId.toString())
     arguments.mapTo(type.arguments) { it.buildArgument(context, expansion) }
     outerType?.let { type.outerType = it.buildType(context, expansion) }
 }
@@ -316,7 +313,7 @@ private fun CirTypeAliasType.buildAbbreviationType(
     expansion: TypeAliasExpansion
 ): KmType {
     val abbreviationType = KmType(typeFlags())
-    abbreviationType.classifier = KmClassifier.TypeAlias(classifierId.asString())
+    abbreviationType.classifier = KmClassifier.TypeAlias(classifierId.toString())
     arguments.mapTo(abbreviationType.arguments) { it.buildArgument(context, expansion) }
     return abbreviationType
 }

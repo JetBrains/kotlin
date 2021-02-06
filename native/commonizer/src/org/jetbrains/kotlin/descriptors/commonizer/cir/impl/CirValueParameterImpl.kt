@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
-import org.jetbrains.kotlin.name.Name
 
 data class CirValueParameterImpl(
     override val annotations: List<CirAnnotation>,
-    override val name: Name,
+    override val name: CirName,
     override val returnType: CirType,
     override val varargElementType: CirType?,
     override val declaresDefaultValue: Boolean,

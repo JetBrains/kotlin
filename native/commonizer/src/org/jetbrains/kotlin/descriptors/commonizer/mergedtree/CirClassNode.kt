@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirClassNode(
     override val targetDeclarations: CommonizedGroup<CirClass>,
     override val commonDeclaration: NullableLazyValue<CirClass>,
-    override val classId: ClassId
-) : CirNodeWithClassId<CirClass, CirClass>, CirNodeWithMembers<CirClass, CirClass> {
+    override val classifierId: CirEntityId
+) : CirNodeWithClassifierId<CirClass, CirClass>, CirNodeWithMembers<CirClass, CirClass> {
 
     val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = THashMap()
     override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
     override val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
-    override val classes: MutableMap<Name, CirClassNode> = THashMap()
+    override val classes: MutableMap<CirName, CirClassNode> = THashMap()
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitClassNode(this, data)

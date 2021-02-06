@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirLiftedUpDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 interface CirNode<T : CirDeclaration, R : CirDeclaration> {
@@ -28,10 +24,10 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
 
         fun toString(node: CirNode<*, *>) = buildString {
             if (node is CirPackageNode) {
-                append("packageFqName=").append(node.packageFqName.asString()).append(", ")
+                append("packageName=").append(node.packageName).append(", ")
             }
-            if (node is CirNodeWithClassId) {
-                append("classId=").append(node.classId.asString()).append(", ")
+            if (node is CirNodeWithClassifierId) {
+                append("classifierId=").append(node.classifierId).append(", ")
             }
             append("target=")
             node.targetDeclarations.joinTo(this)
@@ -41,8 +37,8 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     }
 }
 
-interface CirNodeWithClassId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
-    val classId: ClassId
+interface CirNodeWithClassifierId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
+    val classifierId: CirEntityId
 }
 
 interface CirNodeWithLiftingUp<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
@@ -53,5 +49,5 @@ interface CirNodeWithLiftingUp<T : CirDeclaration, R : CirDeclaration> : CirNode
 interface CirNodeWithMembers<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
     val properties: MutableMap<PropertyApproximationKey, CirPropertyNode>
     val functions: MutableMap<FunctionApproximationKey, CirFunctionNode>
-    val classes: MutableMap<Name, CirClassNode>
+    val classes: MutableMap<CirName, CirClassNode>
 }

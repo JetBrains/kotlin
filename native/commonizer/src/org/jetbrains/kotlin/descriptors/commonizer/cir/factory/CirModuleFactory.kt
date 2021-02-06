@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirModule
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirModuleImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.Name
 
 object CirModuleFactory {
-    fun create(source: ModuleDescriptor): CirModule = create(source.name.intern())
-
-    fun create(name: Name) = CirModuleImpl(name)
+    fun create(name: CirName) = CirModuleImpl(name)
 }

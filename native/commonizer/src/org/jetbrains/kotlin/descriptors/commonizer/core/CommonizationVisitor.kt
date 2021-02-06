@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
-import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
-import org.jetbrains.kotlin.name.ClassId
 
 internal class CommonizationVisitor(
     private val classifiers: CirKnownClassifiers,
@@ -88,7 +87,7 @@ internal class CommonizationVisitor(
             // companion object should have the same name for each target class, then it could be set to common class
             val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectName != null) {
-                val companionObjectClassId = internedClassId(node.classId, companionObjectName)
+                val companionObjectClassId = node.classifierId.createNestedEntityId(companionObjectName)
                 val companionObjectNode = classifiers.commonized.classNode(companionObjectClassId)
                     ?: error("Can't find companion object with class ID $companionObjectClassId")
 
@@ -99,7 +98,7 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            commonClass.commonizeSupertypes(node.classId, node.collectCommonSupertypes())
+            commonClass.commonizeSupertypes(node.classifierId, node.collectCommonSupertypes())
         }
     }
 
@@ -112,7 +111,7 @@ internal class CommonizationVisitor(
 
         if (commonClassifier is CirClass) {
             // find out common (and commonized) supertypes
-            commonClassifier.commonizeSupertypes(node.classId, node.collectCommonSupertypes())
+            commonClassifier.commonizeSupertypes(node.classifierId, node.collectCommonSupertypes())
         }
     }
 
@@ -135,7 +134,7 @@ internal class CommonizationVisitor(
 
             val expandedClassNode = classifiers.commonized.classNode(expandedClassId) ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
-                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classId")
+                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierId")
 
             for (supertype in expandedClass.supertypes) {
                 supertypesMap.getOrPut(supertype) { CommonizedGroup(targetDeclarations.size) }[index] = supertype
@@ -145,7 +144,7 @@ internal class CommonizationVisitor(
     }
 
     private fun CirClass.commonizeSupertypes(
-        classId: ClassId,
+        classId: CirEntityId,
         supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
     ) {
         val commonSupertypes = supertypesMap?.values?.compactMapNotNull { supertypesGroup ->

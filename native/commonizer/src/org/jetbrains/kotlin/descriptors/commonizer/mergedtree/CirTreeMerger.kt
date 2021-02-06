@@ -10,12 +10,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -123,27 +121,27 @@ class CirTreeMerger(
     ) {
         processCInteropModuleAttributes(moduleInfo)
 
-        val moduleName: Name = moduleDescriptor.name.intern()
+        val moduleName: CirName = CirName.create(moduleDescriptor.name)
         val moduleNode: CirModuleNode = rootNode.modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, size)
         }
         moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleName)
 
-        moduleDescriptor.collectNonEmptyPackageMemberScopes { packageFqName, packageMemberScope ->
-            processPackage(moduleNode, targetIndex, packageFqName.intern(), packageMemberScope)
+        moduleDescriptor.collectNonEmptyPackageMemberScopes { packageName, packageMemberScope ->
+            processPackage(moduleNode, targetIndex, packageName, packageMemberScope)
         }
     }
 
     private fun processPackage(
         moduleNode: CirModuleNode,
         targetIndex: Int,
-        packageFqName: FqName,
+        packageName: CirPackageName,
         packageMemberScope: MemberScope
     ) {
-        val packageNode: CirPackageNode = moduleNode.packages.getOrPut(packageFqName) {
+        val packageNode: CirPackageNode = moduleNode.packages.getOrPut(packageName) {
             buildPackageNode(storageManager, size)
         }
-        packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageFqName)
+        packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageName)
 
         packageMemberScope.collectMembers(
             PropertyCollector { propertyDescriptor ->
@@ -154,7 +152,7 @@ class CirTreeMerger(
             },
             ClassCollector { classDescriptor ->
                 processClass(packageNode, targetIndex, classDescriptor) { className ->
-                    internedClassId(packageFqName, className)
+                    CirEntityId.create(packageName, className)
                 }
             },
             TypeAliasCollector { typeAliasDescriptor ->
@@ -195,9 +193,9 @@ class CirTreeMerger(
         ownerNode: CirNodeWithMembers<*, *>,
         targetIndex: Int,
         classDescriptor: ClassDescriptor,
-        classIdFunction: (Name) -> ClassId
+        classIdFunction: (CirName) -> CirEntityId
     ) {
-        val className = classDescriptor.name.intern()
+        val className = CirName.create(classDescriptor.name)
         val classId = classIdFunction(className)
 
         val classNode: CirClassNode = ownerNode.classes.getOrPut(className) {
@@ -220,7 +218,7 @@ class CirTreeMerger(
             },
             ClassCollector { nestedClassDescriptor ->
                 processClass(classNode, targetIndex, nestedClassDescriptor) { nestedClassName ->
-                    internedClassId(classId, nestedClassName)
+                    classId.createNestedEntityId(nestedClassName)
                 }
             }
         )
@@ -245,8 +243,8 @@ class CirTreeMerger(
         targetIndex: Int,
         typeAliasDescriptor: TypeAliasDescriptor
     ) {
-        val typeAliasName = typeAliasDescriptor.name.intern()
-        val typeAliasClassId = internedClassId(packageNode.packageFqName, typeAliasName)
+        val typeAliasName = CirName.create(typeAliasDescriptor.name)
+        val typeAliasClassId = CirEntityId.create(packageNode.packageName, typeAliasName)
 
         val typeAliasNode: CirTypeAliasNode = packageNode.typeAliases.getOrPut(typeAliasName) {
             buildTypeAliasNode(storageManager, size, classifiers, typeAliasClassId)
@@ -257,12 +255,12 @@ class CirTreeMerger(
     private fun processCInteropModuleAttributes(moduleInfo: ModuleInfo) {
         val cInteropAttributes = moduleInfo.cInteropAttributes ?: return
         val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return
-        val mainPackageFqName = FqName(cInteropAttributes.mainPackageFqName).intern()
+        val mainPackageFqName = CirPackageName.create(cInteropAttributes.mainPackageFqName)
 
         exportForwardDeclarations.forEach { classFqName ->
             // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
-            val className = Name.identifier(classFqName.substringAfterLast('.')).intern()
-            classifiers.forwardDeclarations.addExportedForwardDeclaration(internedClassId(mainPackageFqName, className))
+            val className = CirName.create(classFqName.substringAfterLast('.'))
+            classifiers.forwardDeclarations.addExportedForwardDeclaration(CirEntityId.create(mainPackageFqName, className))
         }
     }
 }
