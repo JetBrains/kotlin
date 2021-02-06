@@ -11,19 +11,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        // TODO: add reporting of proper missing clauses, see class WhenMissingCase
         if (expression.usedAsExpression && !expression.isExhaustive) {
-            val factory = if (expression.source?.isIfExpression == true) {
-                FirErrors.INVALID_IF_AS_EXPRESSION
+            if (expression.source?.isIfExpression == true) {
+                reporter.reportOn(expression.source, FirErrors.INVALID_IF_AS_EXPRESSION, context)
             } else {
-                FirErrors.NO_ELSE_IN_WHEN
+                val missingCases = (expression.exhaustivenessStatus as ExhaustivenessStatus.NotExhaustive).reasons
+                reporter.reportOn(expression.source, FirErrors.NO_ELSE_IN_WHEN, missingCases, context)
             }
-            reporter.reportOn(expression.source, factory, context)
         }
     }
 

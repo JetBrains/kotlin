@@ -107,10 +107,10 @@ FILE: exhaustiveness_sealedSubClass.kt
             }
         }
         .<Unresolved name: plus>#(Int(0))
-        lval d: R|ERROR CLASS: Unresolved name: plus| = when (R|<local>/e|) {
+        lval d: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|C|) ->  {
                 Int(1)
             }
         }
-        .<Unresolved name: plus>#(Int(0))
+        .R|kotlin/Int.plus|(Int(0))
     }

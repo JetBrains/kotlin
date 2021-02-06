@@ -18,6 +18,6 @@ fun test2(x: Stmt): String =
         }
 
 fun test3(x: Expr): String =
-        <!NO_ELSE_IN_WHEN!>when<!> (x) {
+        when (x) {
             is Stmt -> "stmt"
         }

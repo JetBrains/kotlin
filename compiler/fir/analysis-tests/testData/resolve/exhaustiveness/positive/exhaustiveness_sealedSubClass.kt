@@ -48,7 +48,7 @@ fun test_2(e: A) {
         is D -> 2
     }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
 
-    val d = <!NO_ELSE_IN_WHEN!>when<!> (e) {
+    val d = when (e) {
         is C -> 1
-    }.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>plus<!>(0)<!>
+    }.plus(0)
 }
