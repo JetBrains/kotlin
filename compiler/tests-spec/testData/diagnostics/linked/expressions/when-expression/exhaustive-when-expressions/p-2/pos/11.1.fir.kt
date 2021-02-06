@@ -17,7 +17,7 @@ fun case_1(value_1: Boolean?): String = when (value_1) {
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: Boolean?): String = when (value_1) {
+fun case_2(value_1: Boolean?): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
     true && false && ((true || false)) || true && !!!false && !!!true -> ""
     true && false && ((true || false)) || true && !!!false -> ""
     null -> ""
