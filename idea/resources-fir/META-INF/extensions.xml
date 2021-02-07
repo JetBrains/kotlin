@@ -2,7 +2,7 @@
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.jetbrains.kotlin.ktQuickFixRegistrar"
-                    interface="org.jetbrains.kotlin.idea.quickfix.KtQuickFixRegistrar"
+                    interface="org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixRegistrar"
                     dynamic="true"/>
   </extensionPoints>
 

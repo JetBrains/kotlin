@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 
 internal interface KtFirAnalysisSessionComponent {
     val analysisSession: KtFirAnalysisSession
+
+    val rootModuleSession: FirSession get() = analysisSession.firResolveState.rootModuleSession
 
     val firSymbolBuilder get() = analysisSession.firSymbolBuilder
     val firResolveState get() = analysisSession.firResolveState

@@ -100,12 +100,10 @@ import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.idea.imports.AbstractJsOptimizeImportsTest
 import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
 import org.jetbrains.kotlin.idea.index.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
+import org.jetbrains.kotlin.idea.inspections.AbstractHLInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractMultiFileLocalInspectionTest
-import org.jetbrains.kotlin.idea.intentions.AbstractConcatenatedStringGeneratorTest
-import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
-import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest2
-import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
+import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
@@ -1107,6 +1105,16 @@ fun main(args: Array<String>) {
                 val pattern = "^([\\w\\-_]+)\\.kt$"
                 model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
                 model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
+            }
+
+            testClass<AbstractHLInspectionTest> {
+                val pattern = "^(inspections\\.test)$"
+                model("inspections/redundantUnitReturnType", pattern = pattern, singleClass = true)
+            }
+
+            testClass<AbstractHLIntentionTest> {
+                val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
+                model("intentions/specifyTypeExplicitly", pattern = pattern)
             }
         }
 
