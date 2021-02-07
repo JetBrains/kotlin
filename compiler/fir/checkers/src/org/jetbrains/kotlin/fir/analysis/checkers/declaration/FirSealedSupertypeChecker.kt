@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
@@ -41,10 +41,7 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
 
     private fun checkTopLevelDeclaration(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in declaration.superTypeRefs) {
-            val classId = it.safeAs<FirResolvedTypeRef>()
-                ?.type.safeAs<ConeClassLikeType>()
-                ?.lookupTag?.classId
-                ?: continue
+            val classId = it.coneType.classId ?: continue
 
             if (classId.isLocal) {
                 continue
@@ -63,10 +60,7 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
 
     private fun checkLocalDeclaration(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in declaration.superTypeRefs) {
-            val classId = it.safeAs<FirResolvedTypeRef>()
-                ?.type.safeAs<ConeClassLikeType>()
-                ?.lookupTag?.classId
-                ?: continue
+            val classId = it.coneType.classId ?: continue
 
             if (classId.isLocal) {
                 continue
@@ -85,10 +79,7 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
 
     private fun checkInnerDeclaration(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in declaration.superTypeRefs) {
-            val classId = it.safeAs<FirResolvedTypeRef>()
-                ?.type.safeAs<ConeClassLikeType>()
-                ?.lookupTag?.classId
-                ?: continue
+            val classId = it.coneType.classId ?: continue
 
             if (classId.isLocal) {
                 continue

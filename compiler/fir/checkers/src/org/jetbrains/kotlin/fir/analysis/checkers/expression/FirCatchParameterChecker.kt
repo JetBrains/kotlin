@@ -25,6 +25,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
             }
 
             val typeRef = catchParameter.returnTypeRef
+            // TODO: remaining implicit types should be resolved as an error type, along with proper error kind, most likely syntax error.
             if (typeRef !is FirResolvedTypeRef) return
 
             val coneType = typeRef.type

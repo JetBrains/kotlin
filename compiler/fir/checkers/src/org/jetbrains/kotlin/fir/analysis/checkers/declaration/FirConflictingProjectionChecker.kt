@@ -44,6 +44,8 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkTypeRef(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+        // TODO: remaining implicit types should be resolved as an error type, along with proper error kind,
+        //  e.g., type mismatch, can't infer parameter type, syntax error, etc.
         val declaration = typeRef.safeAs<FirResolvedTypeRef>()
             ?.coneTypeSafe<ConeClassLikeType>()
             ?.lookupTag

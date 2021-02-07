@@ -22,23 +22,19 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.typeCheckerContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -132,7 +128,7 @@ fun ConeKotlinType.toRegularClass(session: FirSession): FirRegularClass? {
  * or null of something goes wrong.
  */
 fun FirTypeRef.toRegularClass(session: FirSession): FirRegularClass? {
-    return safeAs<FirResolvedTypeRef>()?.type?.toRegularClass(session)
+    return coneType.toRegularClass(session)
 }
 
 /**
@@ -289,18 +285,15 @@ private fun FirDeclaration.hasBody(): Boolean = when (this) {
  * or null if couldn't find any.
  */
 fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
-    for (it in superTypeRefs) {
-        val lookupTag = it.safeAs<FirResolvedTypeRef>()
-            ?.type.safeAs<ConeClassLikeType>()
-            ?.lookupTag
-            ?: continue
+    for (superTypeRef in superTypeRefs) {
+        val lookupTag = superTypeRef.coneType.safeAs<ConeClassLikeType>()?.lookupTag ?: continue
 
         val fir = lookupTag.toSymbol(context.session)
             ?.fir.safeAs<FirClass<*>>()
             ?: continue
 
         if (fir.classKind != ClassKind.INTERFACE) {
-            return it
+            return superTypeRef
         }
     }
 

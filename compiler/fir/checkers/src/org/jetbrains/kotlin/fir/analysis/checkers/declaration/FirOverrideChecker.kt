@@ -136,8 +136,7 @@ object FirOverrideChecker : FirRegularClassChecker() {
         typeCheckerContext: AbstractTypeCheckerContext,
         context: CheckerContext,
     ): FirMemberDeclaration? {
-        val overridingReturnType = returnTypeRef.safeAs<FirResolvedTypeRef>()?.type
-            ?: return null
+        val overridingReturnType = returnTypeRef.coneType
 
         // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
         if (overridingReturnType is ConeKotlinErrorType) {
