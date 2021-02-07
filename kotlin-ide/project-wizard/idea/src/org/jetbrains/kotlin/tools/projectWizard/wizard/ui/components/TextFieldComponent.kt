@@ -32,7 +32,7 @@ class TextFieldComponent(
     fun disable(@Nls message: String) {
         cachedValueWhenDisabled = getUiValue()
         uiComponent.isEditable = false
-        uiComponent.foreground = UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER)
+        uiComponent.foreground = UIUtil.getLabelDisabledForeground()
         isDisabled = true
         updateUiValue(message)
     }

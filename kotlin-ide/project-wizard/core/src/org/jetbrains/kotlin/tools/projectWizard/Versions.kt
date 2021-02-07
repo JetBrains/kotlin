@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 object Versions {
     val KOTLIN = version("1.3.70")
+    val GRADLE = version("6.3")
 
     object GradlePlugins {
         val ANDROID = version("3.5.2")

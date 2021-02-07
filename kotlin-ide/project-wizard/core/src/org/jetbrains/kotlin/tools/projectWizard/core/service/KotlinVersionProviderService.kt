@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.service
 
 import org.jetbrains.kotlin.tools.projectWizard.Versions
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -27,9 +28,12 @@ val Version.kotlinVersionKind
         else -> KotlinVersionKind.STABLE
     }
 
-enum class KotlinVersionKind(val repository: Repository?) {
-    STABLE(repository = null),
+enum class KotlinVersionKind(val repository: Repository) {
+    STABLE(repository = DefaultRepository.MAVEN_CENTRAL),
     EAP(repository = Repositories.KOTLIN_EAP_BINTRAY),
     DEV(repository = Repositories.KOTLIN_DEV_BINTRAY),
     M(repository = Repositories.KOTLIN_EAP_BINTRAY)
 }
+
+val KotlinVersionKind.isStable
+    get() = this == KotlinVersionKind.STABLE

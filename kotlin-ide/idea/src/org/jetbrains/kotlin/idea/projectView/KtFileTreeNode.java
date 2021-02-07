@@ -39,11 +39,11 @@ public class KtFileTreeNode extends PsiFileNode {
     }
 
     @Override
-    public Collection<AbstractTreeNode> getChildrenImpl() {
+    public Collection<AbstractTreeNode<?>> getChildrenImpl() {
         KtFile file = (KtFile) getValue();
 
         if (file == null) return Collections.emptyList();
-        ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+        ArrayList<AbstractTreeNode<?>> result = new ArrayList<>();
 
         if (getSettings().isShowMembers()) {
             @SuppressWarnings("ConstantConditions") List<KtDeclaration> declarations = (file.isScript() ? file.getScript() : file).getDeclarations();

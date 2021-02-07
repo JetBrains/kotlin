@@ -1,9 +1,9 @@
 package p
 
-/*<selection>*
+<selection>/**
  * Doc comment <caret>here
- </selection>*/
-fun foo() {
+ */
+</selection>fun foo() {
 }
 
 fun bar(){}

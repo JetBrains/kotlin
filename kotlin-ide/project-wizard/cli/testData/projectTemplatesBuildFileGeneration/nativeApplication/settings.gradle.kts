@@ -1,1 +1,1 @@
-rootProject.name = "NativeConsoleApplication"
+rootProject.name = "NativeApplication"

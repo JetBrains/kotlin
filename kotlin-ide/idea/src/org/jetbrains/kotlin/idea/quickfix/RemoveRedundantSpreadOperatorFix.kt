@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RemoveRedundantSpreadOperatorFix(argument: KtExpression) : KotlinQuickFixAction<KtExpression>(argument) {
-    override fun getText(): String = "Remove redundant *"
+    override fun getText(): String = KotlinBundle.message("fix.remove.redundant.star.text")
 
     override fun getFamilyName(): String = text
 

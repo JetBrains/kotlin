@@ -7,13 +7,10 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
 import java.awt.BorderLayout
-import java.awt.Dimension
-import javax.swing.Box
-import javax.swing.BoxLayout
-import javax.swing.JPanel
 
 class SecondStepWizardComponent(
     wizard: IdeWizard,
@@ -23,10 +20,11 @@ class SecondStepWizardComponent(
         ProjectStructureEditorComponent(wizard.context, uiEditorUsagesStats, ::onNodeSelected).asSubComponent()
     private val moduleSettingsComponent = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
-    override val component = borderPanel {
-        addToLeft(moduleEditorComponent.component)
-        addToCenter(moduleSettingsComponent.component)
-    }
+    override val component = SmartTwoComponentPanel(
+        moduleSettingsComponent.component,
+        moduleEditorComponent.component,
+        sideIsOnTheRight = false
+    )
 
     override fun navigateTo(error: ValidationResult.ValidationError) {
         moduleEditorComponent.navigateTo(error)
@@ -64,10 +62,14 @@ class ModuleSettingsSubStep(
 ) : SubStep(wizard.context) {
     private val moduleSettingsComponent =
         ModuleSettingsComponent(wizard.context, uiEditorUsagesStats).asSubComponent()
-    private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
+    private val nothingSelected = PanelWithStatusText(
+        BorderLayout(),
+        KotlinNewProjectWizardUIBundle.message("error.nothing.selected"),
+        isStatusTextVisible = true
+    )
 
     private val panel = customPanel {
-        add(nothingSelectedComponent.component, BorderLayout.CENTER)
+        add(nothingSelected, BorderLayout.CENTER)
     }
 
     var selectedNode: DisplayableSettingItem? = null
@@ -80,10 +82,10 @@ class ModuleSettingsSubStep(
     private fun changeComponent() {
         panel.removeAll()
         val component = when (selectedNode) {
-            is Module -> moduleSettingsComponent
-            else -> nothingSelectedComponent
+            is Module -> moduleSettingsComponent.component
+            else -> nothingSelected
         }
-        panel.add(component.component, BorderLayout.CENTER)
+        panel.add(component, BorderLayout.CENTER)
         panel.updateUI()
     }
 

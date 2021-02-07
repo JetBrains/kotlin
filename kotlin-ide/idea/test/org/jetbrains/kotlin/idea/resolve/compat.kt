@@ -8,18 +8,12 @@ package org.jetbrains.kotlin.idea.resolve
 import com.intellij.mock.MockProject
 import com.intellij.pom.PomModel
 import com.intellij.pom.tree.TreeAspect
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 
 internal fun createAndRegisterKotlinCodeBlockModificationListener(project: MockProject, pomModel: PomModel, treeAspect: TreeAspect) {
     project.registerService(PomModel::class.java, pomModel)
-    project.picoContainer.registerComponentInstance(
-        KotlinCodeBlockModificationListener(
-            PsiModificationTracker.SERVICE.getInstance(project),
-            project,
-            treeAspect
-        )
-    )
+    project.registerService(TreeAspect::class.java, treeAspect)
+    project.registerService(KotlinCodeBlockModificationListener::class.java, KotlinCodeBlockModificationListener(project))
 }
 
 internal fun unregisterKotlinCodeBlockModificationListener(project: MockProject) {

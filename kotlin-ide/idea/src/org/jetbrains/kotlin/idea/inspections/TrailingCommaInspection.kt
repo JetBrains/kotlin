@@ -68,9 +68,10 @@ class TrailingCommaInspection(
 
         private fun checkCommaPosition(commaOwner: KtElement) {
             for (invalidComma in TrailingCommaHelper.findInvalidCommas(commaOwner)) {
-                reportProblem(invalidComma,
-                              KotlinBundle.message("inspection.trailing.comma.comma.loses.the.advantages.in.this.position"),
-                              KotlinBundle.message("inspection.trailing.comma.fix.comma.position")
+                reportProblem(
+                    invalidComma,
+                    KotlinBundle.message("inspection.trailing.comma.comma.loses.the.advantages.in.this.position"),
+                    KotlinBundle.message("inspection.trailing.comma.fix.comma.position")
                 )
             }
         }
@@ -90,9 +91,10 @@ class TrailingCommaInspection(
                 )
             } else if (action == TrailingCommaAction.REMOVE) {
                 if (!trailingCommaOrLastElement.isComma) return
-                reportProblem(trailingCommaOrLastElement,
-                              KotlinBundle.message("inspection.trailing.comma.useless.trailing.comma"),
-                              KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma")
+                reportProblem(
+                    trailingCommaOrLastElement,
+                    KotlinBundle.message("inspection.trailing.comma.useless.trailing.comma"),
+                    KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma")
                 )
             }
         }

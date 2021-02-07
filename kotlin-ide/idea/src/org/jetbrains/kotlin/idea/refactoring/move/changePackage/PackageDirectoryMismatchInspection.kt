@@ -40,12 +40,16 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
 
         val fixes = mutableListOf<LocalQuickFix>()
         val qualifiedName = directive.qualifiedName
-        val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
+        val dirName = if (qualifiedName.isEmpty())
+            KotlinBundle.message("fix.move.file.to.package.dir.name.text")
+        else
+            "'${qualifiedName.replace('.', '/')}'"
+
         fixes += MoveFileToPackageFix(dirName)
         val fqNameByDirectory = file.getFqNameByDirectory()
         when {
             fqNameByDirectory.isRoot ->
-                fixes += ChangePackageFix("source root", fqNameByDirectory)
+                fixes += ChangePackageFix(KotlinBundle.message("fix.move.file.to.package.dir.name.text"), fqNameByDirectory)
             fqNameByDirectory.hasIdentifiersOnly() ->
                 fixes += ChangePackageFix("'${fqNameByDirectory.asString()}'", fqNameByDirectory)
         }

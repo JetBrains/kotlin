@@ -150,6 +150,9 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
 
     @Test
     fun testNonTrivialIdentifiers() = doTest("NonTrivialIdentifiers")
+
+    @Test
+    fun testTypeAliasExpansionWithOtherAliasInArgument() = doTest("TypeAliasExpansionWithOtherAliasInArgument")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {

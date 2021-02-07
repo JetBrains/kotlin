@@ -64,7 +64,7 @@ class Module(
     override val text: String get() = name
     override val greyText: String?
         get() = when {
-            kind == ModuleKind.target -> configurator.text + KotlinNewProjectWizardBundle.message("module.kind.target")
+            kind == ModuleKind.target -> configurator.text + " " + KotlinNewProjectWizardBundle.message("module.kind.target")
             configurator == MppModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.mpp.module")
             configurator == AndroidSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
             configurator == IOSSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.ios.module")

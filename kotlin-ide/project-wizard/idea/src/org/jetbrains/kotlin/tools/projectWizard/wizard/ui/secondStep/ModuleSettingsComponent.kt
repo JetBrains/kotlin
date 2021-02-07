@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
@@ -131,9 +132,9 @@ private class ModuleTemplateComponent(
     }.asSubComponent()
 
     override val forceLabelCenteringOffset: Int? = 4
-    private val templateDescriptionLabel = label("") {
-        fontColor = UIUtil.FontColor.BRIGHTER
-        addBorder(JBUI.Borders.empty(4, 4))
+    private val templateDescriptionLabel = JBLabel().apply {
+        foreground = UIUtil.getContextHelpForeground()
+        addBorder(JBUI.Borders.empty(2, 4))
     }
 
     override fun onInit() {
@@ -143,6 +144,7 @@ private class ModuleTemplateComponent(
 
     private fun changeTemplateDescription(template: Template?) {
         templateDescriptionLabel.text = template?.description
+        templateDescriptionLabel.isVisible = template?.description != null
     }
 
     override val component = borderPanel {

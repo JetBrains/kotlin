@@ -19,8 +19,8 @@ class KotlinNavBarModelExtension : AbstractNavBarModelExtension() {
         }
     }
 
-    override fun adjustElement(psiElement: PsiElement?): PsiElement? {
-        val containingFile = psiElement?.containingFile as? KtFile ?: return psiElement
+    override fun adjustElement(psiElement: PsiElement): PsiElement? {
+        val containingFile = psiElement.containingFile as? KtFile ?: return psiElement
         if (containingFile.isScript()) return psiElement
         return KotlinIconProvider.getSingleClass(containingFile) ?: psiElement
     }

@@ -52,14 +52,14 @@ fun notifyOutdatedBundledCompilerIfNecessary(project: Project) {
             NotificationType.WARNING,
             NotificationListener { notification, event ->
                 if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-                    when {
-                        "update" == event.description -> {
+                    when (event.description) {
+                        "update" -> {
                             val action = ActionManager.getInstance().getAction(ConfigurePluginUpdatesAction.ACTION_ID)
                             val dataContext = DataManager.getInstance().dataContextFromFocus.result
                             val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
                             action.actionPerformed(actionEvent)
                         }
-                        "ignore" == event.description -> {
+                        "ignore" -> {
                             if (!project.isDisposed) {
                                 PropertiesComponent.getInstance(project).setValue(SUPPRESSED_OUTDATED_COMPILER_PROPERTY_NAME, pluginVersion)
                             }

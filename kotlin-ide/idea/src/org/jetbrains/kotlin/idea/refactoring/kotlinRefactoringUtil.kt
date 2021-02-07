@@ -375,10 +375,10 @@ fun <T> chooseContainerElement(
             private fun PsiElement.renderDeclaration(): String? {
                 if (this is KtFunctionLiteral || isFunctionalExpression()) return renderText()
 
-                val descriptor = when {
-                    this is KtFile -> name
-                    this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
-                    this is PsiMember -> getJavaMemberDescriptor()
+                val descriptor = when (this) {
+                    is KtFile -> name
+                    is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                    is PsiMember -> getJavaMemberDescriptor()
                     else -> null
                 } ?: return null
                 val name = renderName()
@@ -391,7 +391,7 @@ fun <T> chooseContainerElement(
             }
 
             private fun PsiElement.renderText(): String = when (this) {
-                is SeparateFileWrapper -> "Extract to separate file"
+                is SeparateFileWrapper -> KotlinBundle.message("refactoring.extract.to.separate.file.text")
                 is PsiPackageBase -> qualifiedName
                 else -> {
                     val text = text ?: "<invalid text>"

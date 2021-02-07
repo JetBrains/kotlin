@@ -9,15 +9,24 @@ import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.jarRepository.JarRepositoryManager
+import com.intellij.jarRepository.RemoteRepositoryDescription
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.libraries.ui.OrderRoot
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.idea.maven.utils.library.RepositoryLibraryProperties
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle.Companion.INSTANCE
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -30,6 +39,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetTy
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.withSettingsOf
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import java.nio.file.Path
 import java.util.*
 import com.intellij.openapi.module.Module as IdeaModule
@@ -44,19 +57,29 @@ class IdeaJpsWizardService(
         buildSystemType == BuildSystemType.Jps
 
     override fun importProject(
+        reader: Reader,
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
     ): TaskResult<Unit> = runWriteAction {
         ideWizard.jpsData.jdk?.let { jdk -> NewProjectUtil.applyJdkToProject(project, jdk) }
         KotlinSdkType.setUpIfNeeded()
-        modulesBuilder.addModuleConfigurationUpdater(JpsModuleConfigurationUpdater(ideWizard.jpsData))
+        val projectImporter = ProjectImporter(project, modulesModel, path, modulesIrs)
+        modulesBuilder.addModuleConfigurationUpdater(
+            JpsModuleConfigurationUpdater(ideWizard.jpsData, projectImporter, project, reader)
+        )
 
-        ProjectImporter(project, modulesModel, path, modulesIrs).import()
+        projectImporter.import()
     }
 }
 
-private class JpsModuleConfigurationUpdater(private val jpsData: IdeWizard.JpsData) : ModuleBuilder.ModuleConfigurationUpdater() {
+private class JpsModuleConfigurationUpdater(
+    private val jpsData: IdeWizard.JpsData,
+    private val projectImporter: ProjectImporter,
+    private val project: Project,
+    private val reader: Reader
+) : ModuleBuilder.ModuleConfigurationUpdater() {
+
     override fun update(module: IdeaModule, rootModel: ModifiableRootModel) = with(jpsData) {
         libraryOptionsPanel.apply()?.addLibraries(
             rootModel,
@@ -64,15 +87,47 @@ private class JpsModuleConfigurationUpdater(private val jpsData: IdeWizard.JpsDa
             librariesContainer
         )
         libraryDescription.finishLibConfiguration(module, rootModel, true)
+        setUpJvmTargetVersionForModules(module, rootModel)
         ProjectCodeStyleImporter.apply(module.project, INSTANCE)
     }
+
+    private fun setUpJvmTargetVersionForModules(module: IdeaModule, rootModel: ModifiableRootModel) {
+        val modules = projectImporter.modulesIrs
+        if (modules.all { it.jvmTarget() == modules.first().jvmTarget() }) {
+            Kotlin2JvmCompilerArgumentsHolder.getInstance(project).update {
+                jvmTarget = modules.first().jvmTarget().value
+            }
+        } else {
+            val jvmTarget = modules.first { it.name == module.name }.jvmTarget()
+            val modelsProvider = IdeModifiableModelsProviderImpl(project)
+            try {
+                val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = true, commitModel = true)
+                val platform = JvmTarget.fromString(jvmTarget.value)
+                    ?.let(JvmPlatforms::jvmPlatformByTargetVersion)
+                    ?: JvmPlatforms.defaultJvmPlatform
+                facet.configuration.settings.apply {
+                    initializeIfNeeded(module, rootModel, platform)
+                    targetPlatform = platform
+                }
+            } finally {
+                modelsProvider.dispose()
+            }
+        }
+    }
+
+    private fun ModuleIR.jvmTarget() = reader {
+        withSettingsOf(originalModule) {
+            JvmModuleConfigurator.targetJvmVersion.reference.settingValue
+        }
+    }
+
 }
 
 private class ProjectImporter(
     private val project: Project,
     private val modulesModel: ModifiableModuleModel,
     private val path: Path,
-    private val modulesIrs: List<ModuleIR>
+    val modulesIrs: List<ModuleIR>
 ) {
     private val librariesPath: Path
         get() = path / "libs"
@@ -147,18 +202,13 @@ private class ProjectImporter(
         module: IdeaModule
     ) {
         val artifact = libraryDependency.artifact as? MavenArtifact ?: return
-        val libraryProperties = RepositoryLibraryProperties(
-            artifact.groupId,
-            artifact.artifactId,
-            libraryDependency.version.toString()
-        )
-        val classesRoots = downloadLibraryAndGetItsClasses(libraryProperties)
+        val (classesRoots, sourcesRoots) = downloadLibraryAndGetItsClasses(libraryDependency, artifact)
 
         ModuleRootModificationUtil.addModuleLibrary(
             module,
-            if (classesRoots.size > 1) libraryProperties.artifactId else null,
-            OrderEntryFix.refreshAndConvertToUrls(classesRoots),
-            emptyList(),
+            if (classesRoots.size > 1) artifact.artifactId else null,
+            classesRoots,
+            sourcesRoots,
             when (libraryDependency.dependencyType) {
                 DependencyType.MAIN -> DependencyScope.COMPILE
                 DependencyType.TEST -> DependencyScope.TEST
@@ -166,18 +216,50 @@ private class ProjectImporter(
         )
     }
 
-    private fun downloadLibraryAndGetItsClasses(libraryProperties: RepositoryLibraryProperties) =
-        JarRepositoryManager.loadDependenciesModal(
+    private fun downloadLibraryAndGetItsClasses(
+        libraryDependency: LibraryDependencyIR,
+        artifact: MavenArtifact
+    ): LibraryClassesAndSources {
+        val libraryProperties = RepositoryLibraryProperties(
+            artifact.groupId,
+            artifact.artifactId,
+            libraryDependency.version.toString()
+        )
+        val orderRoots = JarRepositoryManager.loadDependenciesModal(
             project,
             libraryProperties,
-            false,
-            false,
+            true,
+            true,
             librariesPath.toString(),
-            null
-        ).asSequence()
-            .filter { it.type == OrderRootType.CLASSES }
-            .map { PathUtil.getLocalPath(it.file) }
-            .toList()
+            listOf(artifact.repository.asJPSRepository())
+        )
+
+        return LibraryClassesAndSources.fromOrderRoots(orderRoots)
+    }
+
+    private fun Repository.asJPSRepository() = RemoteRepositoryDescription(
+        idForMaven,
+        idForMaven,
+        url
+    )
+
+    private data class LibraryClassesAndSources(
+        val classes: List<String>,
+        val sources: List<String>
+    ) {
+        companion object {
+            fun fromOrderRoots(orderRoots: Collection<OrderRoot>) = LibraryClassesAndSources(
+                orderRoots.filterRootTypes(OrderRootType.CLASSES),
+                orderRoots.filterRootTypes(OrderRootType.SOURCES)
+            )
+
+            private fun Collection<OrderRoot>.filterRootTypes(rootType: OrderRootType) =
+                filter { it.type == rootType }
+                    .mapNotNull { PathUtil.getLocalPath(it.file) }
+                    .let(OrderEntryFix::refreshAndConvertToUrls)
+
+        }
+    }
 }
 
 private val Path.url

@@ -12,5 +12,5 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 // BUNCH: 193
 fun invokeIntentionCompat(action: IntentionAction, file: PsiFile, editor: Editor) {
-    CodeInsightTestFixtureImpl.invokeIntention(action, file, editor, action.text)
+    CodeInsightTestFixtureImpl.invokeIntention(action, file, editor)
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInliner
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiTreeChangeAdapter
 import com.intellij.psi.PsiTreeChangeEvent
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canDropBraces
 import org.jetbrains.kotlin.idea.core.dropBraces
@@ -51,6 +52,10 @@ internal class AnnotationEntryReplacementPerformer(
         assert(codeToInline.mainExpression != null)
         assert(codeToInline.statementsBefore.isEmpty())
 
+        val useSiteTarget = elementToBeReplaced.useSiteTarget?.getAnnotationUseSiteTarget()
+        val useSiteTargetText = useSiteTarget?.renderName?.let { "$it:" } ?: ""
+        val isFileUseSiteTarget = useSiteTarget == AnnotationUseSiteTarget.FILE
+
         val dummyAnnotationEntry = createByPattern("@Dummy($0)", codeToInline.mainExpression!!) { psiFactory.createAnnotationEntry(it) }
         val replaced = elementToBeReplaced.replace(dummyAnnotationEntry)
 
@@ -63,7 +68,11 @@ internal class AnnotationEntryReplacementPerformer(
         assert(range.first is KtAnnotationEntry)
         val annotationEntry = range.first as KtAnnotationEntry
         val text = annotationEntry.valueArguments.single().getArgumentExpression()!!.text
-        return annotationEntry.replaced(psiFactory.createAnnotationEntry("@$text"))
+        val newAnnotationEntry = if (isFileUseSiteTarget)
+            psiFactory.createFileAnnotation(text)
+        else
+            psiFactory.createAnnotationEntry("@$useSiteTargetText$text")
+        return annotationEntry.replaced(newAnnotationEntry)
     }
 }
 

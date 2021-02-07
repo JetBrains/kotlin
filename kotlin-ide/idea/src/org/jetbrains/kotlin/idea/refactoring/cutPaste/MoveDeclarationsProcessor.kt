@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.core.util.range
@@ -87,7 +88,7 @@ class MoveDeclarationsProcessor(
     fun performRefactoring() {
         psiDocumentManager.commitAllDocuments()
 
-        val commandName = "Usage update"
+        val commandName = KotlinBundle.message("action.usage.update.text")
         val commandGroupId = Any() // we need to group both commands for undo
 
         // temporary revert imports to the state before they have been changed

@@ -6,9 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.fold
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
+import org.jetbrains.kotlin.tools.projectWizard.core.service.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
@@ -94,7 +92,10 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     val createPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runBefore(BuildSystemPlugin::createModules)
         withAction {
-            val pluginRepository = KotlinPlugin::version.propertyValue.kotlinVersionKind.repository ?: return@withAction UNIT_SUCCESS
+            val pluginRepository = KotlinPlugin::version.propertyValue.kotlinVersionKind
+                .takeUnless(KotlinVersionKind::isStable)
+                ?.repository
+                ?: return@withAction UNIT_SUCCESS
             BuildSystemPlugin::pluginRepositoreis.addValues(pluginRepository) andThen
                     updateBuildFiles { buildFile ->
                         buildFile.withIrs(RepositoryIR(pluginRepository)).asSuccess()

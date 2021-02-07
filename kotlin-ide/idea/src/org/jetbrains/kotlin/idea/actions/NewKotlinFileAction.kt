@@ -116,9 +116,8 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
         builder.setValidator(NameValidator)
     }
 
-    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String {
-        return KotlinBundle.message("action.new.file.text")
-    }
+    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String =
+        KotlinBundle.message("action.new.file.text")
 
     override fun isAvailable(dataContext: DataContext): Boolean {
         if (super.isAvailable(dataContext)) {
@@ -127,16 +126,13 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
             val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
             return ideView.directories.any { projectFileIndex.isInSourceContent(it.virtualFile) }
         }
+
         return false
     }
 
-    override fun hashCode(): Int {
-        return 0
-    }
+    override fun hashCode(): Int = 0
 
-    override fun equals(other: Any?): Boolean {
-        return other is NewKotlinFileAction
-    }
+    override fun equals(other: Any?): Boolean = other is NewKotlinFileAction
 
     override fun startInWriteAction() = false
 
@@ -158,13 +154,9 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
                 return null
             }
 
-            override fun checkInput(inputString: String): Boolean {
-                return true
-            }
+            override fun checkInput(inputString: String): Boolean = true
 
-            override fun canClose(inputString: String): Boolean {
-                return getErrorText(inputString) == null
-            }
+            override fun canClose(inputString: String): Boolean = getErrorText(inputString) == null
         }
 
         @get:TestOnly

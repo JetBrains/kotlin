@@ -1,1 +1,1 @@
-rootProject.name = "EmptyMultiplatform"
+rootProject.name = "MultiplatformApplication"

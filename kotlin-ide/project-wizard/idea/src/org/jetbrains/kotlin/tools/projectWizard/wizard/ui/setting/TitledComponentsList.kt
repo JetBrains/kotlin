@@ -99,7 +99,7 @@ open class TitledComponentsList(
         }
 
         if (stretchY) {
-            constraints()[SpringLayout.SOUTH] = lastComponent!![SpringLayout.SOUTH] + yGap
+            constraints()[SpringLayout.SOUTH] = lastComponent!![SpringLayout.SOUTH]
         }
     }
 
@@ -119,16 +119,4 @@ open class TitledComponentsList(
         val maximumWidth: Int?
     )
 }
-
-private operator fun Spring.plus(other: Spring) = Spring.sum(this, other)
-private operator fun Spring.plus(gap: Int) = Spring.sum(this, Spring.constant(gap))
-private operator fun Spring.minus(other: Spring) = this + Spring.minus(other)
-private operator fun Spring.unaryMinus() = Spring.minus(this)
-private operator fun Spring.times(by: Float) = Spring.scale(this, by)
-private fun Int.asSpring() = Spring.constant(this)
-private operator fun SpringLayout.Constraints.get(edgeName: String) = getConstraint(edgeName)
-private operator fun SpringLayout.Constraints.set(edgeName: String, spring: Spring) {
-    setConstraint(edgeName, spring)
-}
-
 

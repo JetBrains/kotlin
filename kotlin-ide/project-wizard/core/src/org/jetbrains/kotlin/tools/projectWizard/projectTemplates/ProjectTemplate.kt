@@ -65,15 +65,15 @@ sealed class ProjectTemplate : DisplayableSettingItem {
 
     companion object {
         val ALL = listOf(
-            EmptySingleplatformProjectTemplate,
-            JvmConsoleApplication,
-            MPPMobileApplication,
-            MultiplatformMobileLibrary,
-            EmptyMultiplatformProjectTemplate,
-            MultiplatformLibrary,
-            NativeConsoleApplication,
-            JsBrowserApplication,
-            JvmServerJsClient
+            BackendApplicationProjectTemplate,
+            ConsoleApplicationProjectTemplate,
+            MultiplatformMobileApplicationProjectTemplate,
+            MultiplatformMobileLibraryProjectTemplate,
+            MultiplatformApplicationProjectTemplate,
+            MultiplatformLibraryProjectTemplate,
+            NativeApplicationProjectTemplate,
+            FrontendApplicationProjectTemplate,
+            FullStackWebApplicationProjectTemplate
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -134,7 +134,7 @@ private fun ModuleType.createDefaultTarget(
     name: String = this.name
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
-object EmptySingleplatformProjectTemplate : ProjectTemplate() {
+object BackendApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.description")
 
@@ -150,7 +150,7 @@ object EmptySingleplatformProjectTemplate : ProjectTemplate() {
         )
 }
 
-object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
+object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.description")
 
@@ -166,7 +166,7 @@ object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
         )
 }
 
-object JvmConsoleApplication : ProjectTemplate() {
+object ConsoleApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.description")
 
@@ -187,7 +187,7 @@ object JvmConsoleApplication : ProjectTemplate() {
         )
 }
 
-object MultiplatformLibrary : ProjectTemplate() {
+object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.description")
 
@@ -211,7 +211,7 @@ object MultiplatformLibrary : ProjectTemplate() {
         )
 }
 
-object JvmServerJsClient : ProjectTemplate() {
+object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
     override val title: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.title")
     override val description: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.description")
 
@@ -237,7 +237,7 @@ object JvmServerJsClient : ProjectTemplate() {
     )
 }
 
-object NativeConsoleApplication : ProjectTemplate() {
+object NativeApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.native.console.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.native.console.description")
 
@@ -263,7 +263,7 @@ object NativeConsoleApplication : ProjectTemplate() {
         )
 }
 
-object JsBrowserApplication : ProjectTemplate() {
+object FrontendApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
 
@@ -287,7 +287,7 @@ object JsBrowserApplication : ProjectTemplate() {
         )
 }
 
-object MPPMobileApplication : ProjectTemplate() {
+object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
 
@@ -338,7 +338,7 @@ object MPPMobileApplication : ProjectTemplate() {
     }
 }
 
-object MultiplatformMobileLibrary : ProjectTemplate() {
+object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
     override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
     override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.description")
 

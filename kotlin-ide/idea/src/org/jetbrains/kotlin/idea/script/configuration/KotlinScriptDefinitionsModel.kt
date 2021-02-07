@@ -9,6 +9,7 @@ import com.intellij.ui.BooleanTableCellEditor
 import com.intellij.ui.BooleanTableCellRenderer
 import com.intellij.util.ui.ColumnInfo
 import com.intellij.util.ui.ListTableModel
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -32,11 +33,15 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
         items = definitions.mapTo(arrayListOf()) { KotlinScriptDefinitionsModelDescriptor(it, settings.isScriptDefinitionEnabled(it)) }
     }
 
-    private class ScriptDefinitionName : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, String>("Name") {
+    private class ScriptDefinitionName : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, String>(
+        KotlinBundle.message("kotlin.script.definitions.model.name.name")
+    ) {
         override fun valueOf(item: KotlinScriptDefinitionsModelDescriptor) = item.definition.name
     }
 
-    private class ScriptDefinitionPattern : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, String>("Pattern/Extension") {
+    private class ScriptDefinitionPattern : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, String>(
+        KotlinBundle.message("kotlin.script.definitions.model.name.pattern.extension")
+    ) {
         override fun valueOf(item: KotlinScriptDefinitionsModelDescriptor): String {
             val definition = item.definition
             return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern
@@ -45,7 +50,9 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
         }
     }
 
-    private class ScriptDefinitionIsEnabled : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, Boolean>("Is Enabled") {
+    private class ScriptDefinitionIsEnabled : ColumnInfo<KotlinScriptDefinitionsModelDescriptor, Boolean>(
+        KotlinBundle.message("kotlin.script.definitions.model.name.is.enabled")
+    ) {
         override fun valueOf(item: KotlinScriptDefinitionsModelDescriptor): Boolean = item.isEnabled
         override fun setValue(item: KotlinScriptDefinitionsModelDescriptor, value: Boolean) {
             item.isEnabled = value
@@ -58,13 +65,12 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
     }
 
     companion object {
-        fun createModel(definitions: List<ScriptDefinition>, settings: KotlinScriptingSettings): KotlinScriptDefinitionsModel {
-            return KotlinScriptDefinitionsModel(definitions.mapTo(arrayListOf()) {
+        fun createModel(definitions: List<ScriptDefinition>, settings: KotlinScriptingSettings): KotlinScriptDefinitionsModel =
+            KotlinScriptDefinitionsModel(definitions.mapTo(arrayListOf()) {
                 KotlinScriptDefinitionsModelDescriptor(
                     it,
                     settings.isScriptDefinitionEnabled(it)
                 )
             })
-        }
     }
 }
