@@ -1,0 +1,3 @@
+package test
+
+public fun number(): java.lang.Number

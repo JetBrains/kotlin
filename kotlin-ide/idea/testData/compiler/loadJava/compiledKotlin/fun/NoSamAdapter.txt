@@ -1,0 +1,7 @@
+package test
+
+public fun foo(/*0*/ r: java.lang.Runnable): kotlin.Unit
+
+public interface TaskObject {
+    public abstract fun foo(/*0*/ r: java.lang.Runnable): kotlin.Unit
+}

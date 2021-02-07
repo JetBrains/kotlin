@@ -1,0 +1,11 @@
+package test
+
+public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+        public final fun <get-value>(): kotlin.String
+}
+
+public final class Constructor {
+    /*primary*/ @test.Anno(value = "string") public constructor Constructor()
+}

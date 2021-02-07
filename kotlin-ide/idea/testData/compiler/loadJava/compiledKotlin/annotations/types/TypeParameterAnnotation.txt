@@ -1,0 +1,10 @@
+package test
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A()
+}
+
+public final class SimpleTypeParameterAnnotation {
+    /*primary*/ public constructor SimpleTypeParameterAnnotation()
+    public final fun </*0*/ @test.A T> foo(/*0*/ x: T): kotlin.Unit
+}

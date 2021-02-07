@@ -1,0 +1,3 @@
+// SingleFileKt
+
+public fun foo() {}

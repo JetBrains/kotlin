@@ -1,0 +1,8 @@
+package test
+
+public open class FieldOfArrayType {
+    /*primary*/ public constructor FieldOfArrayType()
+    public final var files: kotlin.Array<java.io.File>?
+        public final fun <get-files>(): kotlin.Array<java.io.File>?
+        public final fun <set-files>(/*0*/ <set-?>: kotlin.Array<java.io.File>?): kotlin.Unit
+}

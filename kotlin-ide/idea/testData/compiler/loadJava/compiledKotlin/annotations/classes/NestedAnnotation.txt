@@ -1,0 +1,14 @@
+package test
+
+public final class A {
+    /*primary*/ public constructor A()
+
+    public final annotation class Anno : kotlin.Annotation {
+        /*primary*/ public constructor Anno()
+    }
+}
+
+@test.A.Anno public final class B {
+    /*primary*/ public constructor B()
+    @test.A.Anno public final fun f(): kotlin.Unit
+}

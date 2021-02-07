@@ -1,0 +1,6 @@
+package test
+
+public open class VarargString {
+    /*primary*/ public constructor VarargString()
+    public open fun vararg(/*0*/ vararg p0: kotlin.String? /*kotlin.Array<out kotlin.String?>*/): kotlin.Unit
+}

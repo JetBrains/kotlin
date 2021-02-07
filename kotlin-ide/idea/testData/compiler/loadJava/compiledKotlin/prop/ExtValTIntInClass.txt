@@ -1,0 +1,7 @@
+package test
+
+public final class ExtValPIntInClass</*0*/ P> {
+    /*primary*/ public constructor ExtValPIntInClass</*0*/ P>()
+    public final val P.asas: kotlin.Int
+        public final fun P.<get-asas>(): kotlin.Int
+}

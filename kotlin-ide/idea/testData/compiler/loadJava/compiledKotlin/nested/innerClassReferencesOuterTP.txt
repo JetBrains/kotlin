@@ -1,0 +1,9 @@
+package test
+
+public final class InnerClassReferencesOuterTP</*0*/ P> {
+    /*primary*/ public constructor InnerClassReferencesOuterTP</*0*/ P>()
+
+    public final inner class Inner</*0*/ Q : P> /*captured type parameters: /*1*/ P*/ {
+        /*primary*/ public constructor Inner</*0*/ Q : P>()
+    }
+}

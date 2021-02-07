@@ -1,0 +1,16 @@
+package test
+
+public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno()
+}
+
+public final class Class {
+    /*primary*/ public constructor Class()
+    @delegate:test.Anno public final val property: kotlin.String
+        public final fun <get-property>(): kotlin.String
+}
+
+public final class CustomDelegate {
+    /*primary*/ public constructor CustomDelegate()
+    public final operator fun getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.String
+}

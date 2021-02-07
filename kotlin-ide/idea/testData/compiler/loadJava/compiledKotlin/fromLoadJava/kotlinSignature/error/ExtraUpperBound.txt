@@ -1,0 +1,6 @@
+package test
+
+public open class ExtraUpperBound {
+    /*primary*/ public constructor ExtraUpperBound()
+    public open fun </*0*/ A : java.lang.Runnable?> foo(): kotlin.String?
+}

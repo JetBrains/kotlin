@@ -1,0 +1,6 @@
+package test
+
+public open class ArrayType {
+    /*primary*/ public constructor ArrayType()
+    public open fun foo(): kotlin.Array<kotlin.String>
+}

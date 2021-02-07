@@ -1,0 +1,5 @@
+package test
+
+internal final class InternalClass {
+    /*primary*/ public constructor InternalClass()
+}

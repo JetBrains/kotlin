@@ -1,0 +1,9 @@
+package test
+
+public final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A()
+}
+
+public interface Foo</*0*/ T : @test.A kotlin.Number> : @test.A java.io.Serializable {
+    public abstract fun </*0*/ E, /*1*/ F : @test.A E> bar(): kotlin.Unit
+}

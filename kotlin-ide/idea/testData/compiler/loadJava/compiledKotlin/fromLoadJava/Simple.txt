@@ -1,0 +1,5 @@
+package test
+
+public final class Simple {
+    /*primary*/ public constructor Simple()
+}

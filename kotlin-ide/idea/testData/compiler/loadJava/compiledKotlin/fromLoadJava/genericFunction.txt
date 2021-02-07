@@ -1,0 +1,3 @@
+package test
+
+public fun </*0*/ T> foo(/*0*/ t: T): T

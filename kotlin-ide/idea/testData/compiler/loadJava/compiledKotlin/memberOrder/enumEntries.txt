@@ -1,0 +1,33 @@
+package test
+
+public final enum class E : kotlin.Enum<test.E> {
+    enum entry ONE
+
+    enum entry TWO
+
+    enum entry THREE
+
+    enum entry FOUR
+
+    enum entry FIVE
+
+    enum entry SIX
+
+    enum entry SEVEN
+
+    enum entry EIGHT
+
+    /*primary*/ private constructor E()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.E!>!
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
+    public final /*synthesized*/ fun values(): kotlin.Array<test.E>
+}

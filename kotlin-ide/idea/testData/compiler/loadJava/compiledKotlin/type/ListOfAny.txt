@@ -1,0 +1,3 @@
+package test
+
+public fun listOfAny(): kotlin.collections.List<kotlin.Any>

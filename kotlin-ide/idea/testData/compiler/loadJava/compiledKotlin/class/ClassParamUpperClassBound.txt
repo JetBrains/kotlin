@@ -1,0 +1,5 @@
+package test
+
+public final class Clock</*0*/ A : java.lang.Number> {
+    /*primary*/ public constructor Clock</*0*/ A : java.lang.Number>()
+}

@@ -1,0 +1,19 @@
+package test
+
+public final class A</*0*/ TA> {
+    /*primary*/ public constructor A</*0*/ TA>()
+
+    public final inner class B</*0*/ TB> /*captured type parameters: /*1*/ TA*/ {
+        /*primary*/ public constructor B</*0*/ TB>()
+
+        public final inner class C</*0*/ TC> /*captured type parameters: /*1*/ TB, /*2*/ TA*/ {
+            /*primary*/ public constructor C</*0*/ TC>()
+
+            public final inner class D</*0*/ TD> /*captured type parameters: /*1*/ TC, /*2*/ TB, /*3*/ TA*/ {
+                /*primary*/ public constructor D</*0*/ TD>()
+                public final fun bar(/*0*/ ta: TA, /*1*/ tb: TB, /*2*/ tc: TC, /*3*/ td: TD): test.A<TA>.B<TB>.C<TC>.D<TD>
+                public final fun </*0*/ P1, /*1*/ P2, /*2*/ P3, /*3*/ P4> foo(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): kotlin.Nothing
+            }
+        }
+    }
+}

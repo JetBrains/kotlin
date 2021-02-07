@@ -1,0 +1,15 @@
+package test
+
+public final class MembersReferenceOuterTP</*0*/ P> {
+    /*primary*/ public constructor MembersReferenceOuterTP</*0*/ P>()
+
+    public final inner class Inner /*captured type parameters: /*0*/ P*/ {
+        /*primary*/ public constructor Inner()
+        public final val v: P
+            public final fun <get-v>(): P
+        public final val </*0*/ Q : P> Q.w: Q
+            public final fun Q.<get-w>(): Q
+        public final fun </*0*/ Q : P> f(): kotlin.Unit
+        public final fun g(/*0*/ p: P): P
+    }
+}
