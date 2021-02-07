@@ -43,7 +43,7 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
 
 In order to build Kotlin distribution you need to have:
 
-- JDK 1.6, 1.7, 1.8 and 9
+- JDK 1.6, 1.7, 1.8, 9 and 15
 - Setup environment variables as following:
 
         JAVA_HOME="path to JDK 1.8"
@@ -51,6 +51,7 @@ In order to build Kotlin distribution you need to have:
         JDK_17="path to JDK 1.7"
         JDK_18="path to JDK 1.8"
         JDK_9="path to JDK 9"
+        JDK_15="path to JDK 15"
 
 For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 1.8 and JDK 9 installed, and to point `JDK_16` and `JDK_17` environment variables to your JDK 1.8 installation.
 
@@ -59,7 +60,7 @@ You also can use [Gradle properties](https://docs.gradle.org/current/userguide/b
 Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
 
 ```bash
-$ brew tap caskroom/versions
+$ brew tap homebrew/cask-versions
 $ brew cask install java6
 ```
 
