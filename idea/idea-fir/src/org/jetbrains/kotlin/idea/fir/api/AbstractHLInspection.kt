@@ -84,6 +84,7 @@ abstract class AbstractHLInspection<PSI : KtElement, INPUT : HLApplicatorInput>(
         }
     }
 
+
     abstract val presentation: HLPresentation<PSI>
     abstract val applicabilityRange: HLApplicabilityRange<PSI>
     abstract val inputProvider: HLApplicatorInputProvider<PSI, INPUT>
@@ -96,7 +97,6 @@ private fun <PSI : PsiElement, INPUT : HLApplicatorInput> HLApplicator<PSI, INPU
 ): LocalQuickFix = object : LocalQuickFix {
     override fun startInWriteAction() = false
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         @Suppress("UNCHECKED_CAST")
         val element = descriptor.psiElement as PSI
