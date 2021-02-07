@@ -66,11 +66,11 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(Example):Test.kt")
+              %composer = %composer.startRestartGroup(<>, "C(Example):Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 @Composable
                 fun A(%composer: Composer?, %changed: Int) {
-                  %composer.startRestartGroup(<>, "C(A):Test.kt")
+                  %composer = %composer.startRestartGroup(<>, "C(A):Test.kt")
                   if (%changed !== 0 || !%composer.skipping) {
                   } else {
                     %composer.skipToGroupEnd()
@@ -81,7 +81,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 }
                 @Composable
                 fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-                  %composer.startRestartGroup(<>, "C(B):Test.kt")
+                  %composer = %composer.startRestartGroup(<>, "C(B):Test.kt")
                   val %dirty = %changed
                   if (%changed and 0b1110 === 0) {
                     %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
@@ -96,7 +96,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
                 }
                 @Composable
                 fun C(%composer: Composer?, %changed: Int) {
-                  %composer.startRestartGroup(<>, "C(C)<B>:Test.kt")
+                  %composer = %composer.startRestartGroup(<>, "C(C)<B>:Test.kt")
                   if (%changed !== 0 || !%composer.skipping) {
                     B(composableLambda(%composer, <>, false, "C<A()>:Test.kt") { %composer: Composer?, %changed: Int ->
                       if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
@@ -141,7 +141,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(A)<B>:Test.kt")
+              %composer = %composer.startRestartGroup(<>, "C(A)<B>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 <<LOCALDELPROP>>
                 B(composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer?, %changed: Int ->
@@ -213,7 +213,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(A)<B(foo)>,<B(bar)>:Test.kt")
+              %composer = %composer.startRestartGroup(<>, "C(A)<B(foo)>,<B(bar)>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 val foo = ComposableSingletons%TestKt.lambda-1
                 val bar = ComposableSingletons%TestKt.lambda-2
@@ -261,7 +261,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun A(%composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(A)<B>:Test.kt")
+              %composer = %composer.startRestartGroup(<>, "C(A)<B>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 B(ComposableSingletons%TestKt.lambda-1, %composer, 0)
               } else {
@@ -303,7 +303,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<>, "C(Test)P(1)<Wrap(c...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>, "C(Test)P(1)<Wrap(c...>:Test.kt")
               val %dirty = %changed
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
@@ -358,7 +358,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(enabled: Boolean, %composer: Composer?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(Test)<Wrap(c...>:Test.kt")
+              %composer = %composer.startRestartGroup(<>, "C(Test)<Wrap(c...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(enabled)) 0b0100 else 0b0010
@@ -409,7 +409,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
         @Composable
         fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
-          %composer.startRestartGroup(<>, "C(TestLambda):Test.kt")
+          %composer = %composer.startRestartGroup(<>, "C(TestLambda):Test.kt")
           val %dirty = %changed
           if (%changed and 0b1110 === 0) {
             %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
@@ -425,7 +425,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         }
         @Composable
         fun Test(%composer: Composer?, %changed: Int) {
-          %composer.startRestartGroup(<>, "C(Test)<TestLa...>:Test.kt")
+          %composer = %composer.startRestartGroup(<>, "C(Test)<TestLa...>:Test.kt")
           if (%changed !== 0 || !%composer.skipping) {
             TestLambda({
               println("Doesn't capture")
@@ -461,7 +461,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """
         @Composable
         fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
-          %composer.startRestartGroup(<>, "C(TestLambda):Test.kt")
+          %composer = %composer.startRestartGroup(<>, "C(TestLambda):Test.kt")
           val %dirty = %changed
           if (%changed and 0b1110 === 0) {
             %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
@@ -477,7 +477,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         }
         @Composable
         fun Test(a: String, %composer: Composer?, %changed: Int) {
-          %composer.startRestartGroup(<>, "C(Test)<{>,<TestLa...>:Test.kt")
+          %composer = %composer.startRestartGroup(<>, "C(Test)<{>,<TestLa...>:Test.kt")
           val %dirty = %changed
           if (%changed and 0b1110 === 0) {
             %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010

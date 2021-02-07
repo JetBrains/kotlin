@@ -520,10 +520,12 @@ class ComposerParamTransformer(
             val realParams = fn.valueParameters.size
 
             // $composer
-            val composerParam = fn.addValueParameter(
-                KtxNameConventions.COMPOSER_PARAMETER.identifier,
-                composerType.makeNullable()
-            )
+            val composerParam = fn.addValueParameter {
+                name = KtxNameConventions.COMPOSER_PARAMETER
+                type = composerType.makeNullable()
+                origin = IrDeclarationOrigin.DEFINED
+                isAssignable = true
+            }
 
             // $changed[n]
             val changed = KtxNameConventions.CHANGED_PARAMETER.identifier
