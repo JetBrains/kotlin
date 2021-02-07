@@ -9,7 +9,11 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.ForbidKtResolve
 
-abstract class HLPresentation<PSI : PsiElement> internal constructor() {
+/**
+ * Provides a presentation to display an message in the editor which may be latter fixed by [HLApplicator]
+ * Used by [org.jetbrains.kotlin.idea.fir.api.AbstractHLInspection] to provide higlighting message and type
+ */
+sealed class HLPresentation<PSI : PsiElement> {
     fun getHighlightType(element: PSI): ProblemHighlightType = ForbidKtResolve.forbidResolveIn("HLPresentation.getHighlightType") {
         getHighlightTypeImpl(element)
     }
@@ -54,9 +58,13 @@ class HLInspectionPresentationProviderBuilder<PSI : PsiElement> internal constru
         getMessage = { text }
     }
 
-
-    internal fun build(): HLPresentation<PSI> =
-        HLPresentationImpl(getHighlightType!!, getMessage!!)
+    internal fun build(): HLPresentation<PSI> {
+        val getHighlightType = getHighlightType
+            ?: error("Please, provide highlightType")
+        val getMessage = getMessage
+            ?: error("Please, provide getMessage")
+        return HLPresentationImpl(getHighlightType, getMessage)
+    }
 }
 
 fun <PSI : PsiElement> presentation(

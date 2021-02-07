@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 
 object CallableReturnTypeUpdaterApplicator {
     val applicator = applicator<KtCallableDeclaration, Type> {
-        familyName(KotlinBundle.message("fix.change.return.type.family"))
+        familyAndActionName(KotlinBundle.lazyMessage("fix.change.return.type.family"))
 
         applyTo { declaration, type, project ->
             val newTypeRef = if (!declaration.isProcedure(type)) {
-                // TODO use longTypeRepresentation and the shorten
+                // TODO use longTypeRepresentation and then shorten
                 KtPsiFactory(project ?: declaration.project).createType(type.shortTypeRepresentation)
             } else null
             runWriteAction {
