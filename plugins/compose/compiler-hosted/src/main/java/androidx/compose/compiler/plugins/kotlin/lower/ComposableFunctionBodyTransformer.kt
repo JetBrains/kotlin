@@ -1875,17 +1875,20 @@ class ComposableFunctionBodyTransformer(
     ): IrExpression {
         val startDescriptor = if (scope.hasSourceInformation)
             startRestartGroupSourceFunction else startRestartGroupFunction
-        return irMethodCall(
-            irCurrentComposer(),
-            startDescriptor,
-            element.startOffset,
-            element.endOffset
-        ).also {
-            it.putValueArgument(0, key)
-            if (scope.hasSourceInformation) {
-                recordSourceParameter(it, 1, scope)
+        return irSet(
+            nearestComposer(),
+            irMethodCall(
+                irCurrentComposer(),
+                startDescriptor,
+                element.startOffset,
+                element.endOffset
+            ).also {
+                it.putValueArgument(0, key)
+                if (scope.hasSourceInformation) {
+                    recordSourceParameter(it, 1, scope)
+                }
             }
-        }
+        )
     }
 
     private fun irEndRestartGroup(): IrExpression {
