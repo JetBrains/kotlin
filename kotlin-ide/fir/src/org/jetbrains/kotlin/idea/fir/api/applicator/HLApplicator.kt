@@ -9,16 +9,31 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
+import org.jetbrains.kotlin.idea.frontend.api.ForbidKtResolve
 import kotlin.experimental.ExperimentalTypeInference
 import kotlin.reflect.KClass
 
 sealed class HLApplicator<in PSI : PsiElement, in INPUT : HLApplicatorInput> {
-    abstract fun applyTo(psi: PSI, input: INPUT, project: Project?, editor: Editor?)
+    fun applyTo(psi: PSI, input: INPUT, project: Project?, editor: Editor?) = ForbidKtResolve.forbidResolveIn("HLApplicator.applyTo") {
+        applyToImpl(psi, input, project, editor)
+    }
 
-    abstract fun isApplicableByPsi(psi: PSI): Boolean
+    fun isApplicableByPsi(psi: PSI): Boolean = ForbidKtResolve.forbidResolveIn("HLApplicator.isApplicableByPsi") {
+        isApplicableByPsiImpl(psi)
+    }
 
-    abstract fun getActionName(psi: PSI, input: INPUT): String
-    abstract fun getFamilyName(): String
+    fun getActionName(psi: PSI, input: INPUT): String = ForbidKtResolve.forbidResolveIn("HLApplicator.getActionName") {
+        getActionNameImpl(psi, input)
+    }
+
+    fun getFamilyName(): String = ForbidKtResolve.forbidResolveIn("HLApplicator.getFamilyName") {
+        getFamilyNameImpl()
+    }
+
+    protected abstract fun applyToImpl(psi: PSI, input: INPUT, project: Project?, editor: Editor?)
+    protected abstract fun isApplicableByPsiImpl(psi: PSI): Boolean
+    protected abstract fun getActionNameImpl(psi: PSI, input: INPUT): String
+    protected abstract fun getFamilyNameImpl(): String
 }
 
 fun <PSI : PsiElement, NEW_PSI : PSI, INPUT : HLApplicatorInput> HLApplicator<PSI, INPUT>.with(
@@ -51,17 +66,17 @@ internal class HLApplicatorImpl<PSI : PsiElement, INPUT : HLApplicatorInput>(
     val getActionName: (PSI, INPUT) -> String,
     val getFamilyName: () -> String,
 ) : HLApplicator<PSI, INPUT>() {
-    override fun applyTo(psi: PSI, input: INPUT, project: Project?, editor: Editor?) {
+    override fun applyToImpl(psi: PSI, input: INPUT, project: Project?, editor: Editor?) {
         applyTo.invoke(psi, input, project, editor)
     }
 
-    override fun isApplicableByPsi(psi: PSI): Boolean =
+    override fun isApplicableByPsiImpl(psi: PSI): Boolean =
         isApplicableByPsi.invoke(psi)
 
-    override fun getActionName(psi: PSI, input: INPUT): String =
+    override fun getActionNameImpl(psi: PSI, input: INPUT): String =
         getActionName.invoke(psi, input)
 
-    override fun getFamilyName(): String =
+    override fun getFamilyNameImpl(): String =
         getFamilyName.invoke()
 }
 
