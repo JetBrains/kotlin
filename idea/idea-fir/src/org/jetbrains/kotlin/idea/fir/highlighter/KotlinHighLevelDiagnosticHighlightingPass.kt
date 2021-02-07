@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.getDefaultMessageWithFactoryName
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
-import org.jetbrains.kotlin.idea.quickfix.KtQuickFixService
+import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixService
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinHighLevelDiagnosticHighlightingPass(
