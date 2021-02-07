@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
     private val containingDeclaration: FirRefWithValidityCheck<T>,
     typeResolvePhase: FirResolvePhase,
-    private val builder: KtSymbolByFirBuilder,
+    _builder: KtSymbolByFirBuilder,
     private val typeRef: (T) -> FirTypeRef,
 ) : KtTypeAndAnnotations() {
+    private val builder by weakRef(_builder)
 
     override val token: ValidityToken get() = containingDeclaration.token
 

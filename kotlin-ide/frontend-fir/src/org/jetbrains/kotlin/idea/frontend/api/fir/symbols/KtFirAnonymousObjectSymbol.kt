@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotat
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtAnonymousObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
@@ -29,9 +30,9 @@ internal class KtFirAnonymousObjectSymbol(
     fir: FirAnonymousObject,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder
+    _builder: KtSymbolByFirBuilder
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObject> {
-
+    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val symbolKind: KtSymbolKind = KtSymbolKind.LOCAL
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
