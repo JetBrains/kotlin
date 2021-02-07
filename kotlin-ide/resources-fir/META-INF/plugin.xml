@@ -267,7 +267,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.FirPluginOracleService"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.FirPluginOracleServiceFirImpl"/>
 
-    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.quickfix.KtQuickFixService"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixService"/>
 
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 
@@ -287,10 +287,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
               fieldName="INSTANCE"
               extensions="kotlin_module"/>
 
-   <!-- <intentionAction>
-      <className>org.jetbrains.kotlin.idea.fir.inspections.AddFunctionReturnTypeIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>-->
+
 
   </extensions>
 </idea-plugin>

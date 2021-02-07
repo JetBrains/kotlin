@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixRegistrar
+import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesList
+import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesListBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.quickfix.fixes.ChangeTypeQuickFix
-import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
-    private val modifiers = KtQuickFixesListBuilder.register {
-        register<PsiElement, KtFirDiagnostic.RedundantModifier>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
-        register<PsiElement, KtFirDiagnostic.IncompatibleModifiers>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
-        register<PsiElement, KtFirDiagnostic.RepeatedModifier>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
-        register<PsiElement, KtFirDiagnostic.DeprecatedModifierPair>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
-        register<PsiElement, KtFirDiagnostic.TypeParametersInEnum>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
-        register<KtModifierListOwner, KtFirDiagnostic.RedundantOpenInInterface>(
+    private val modifiers = KtQuickFixesListBuilder.registerPsiQuickFix {
+        registerPsiQuickFix<PsiElement, KtFirDiagnostic.RedundantModifier>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
+        registerPsiQuickFix<PsiElement, KtFirDiagnostic.IncompatibleModifiers>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
+        registerPsiQuickFix<PsiElement, KtFirDiagnostic.RepeatedModifier>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
+        registerPsiQuickFix<PsiElement, KtFirDiagnostic.DeprecatedModifierPair>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
+        registerPsiQuickFix<PsiElement, KtFirDiagnostic.TypeParametersInEnum>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
+        registerPsiQuickFix<KtModifierListOwner, KtFirDiagnostic.RedundantOpenInInterface>(
             RemoveModifierFix.createRemoveModifierFromListOwnerFactoryByModifierListOwner(
                 modifier = KtTokens.OPEN_KEYWORD,
                 isRedundant = true
@@ -29,11 +29,10 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         )
     }
 
-    private val overrides = KtQuickFixesListBuilder.register {
-        register(ChangeTypeQuickFix.changeFunctionReturnTypeOnOverride)
-        register(ChangeTypeQuickFix.changePropertyReturnTypeOnOverride)
-        register(ChangeTypeQuickFix.changeVariableReturnTypeOnOverride)
-
+    private val overrides = KtQuickFixesListBuilder.registerPsiQuickFix {
+        registerApplicator(ChangeTypeQuickFix.changeFunctionReturnTypeOnOverride)
+        registerApplicator(ChangeTypeQuickFix.changePropertyReturnTypeOnOverride)
+        registerApplicator(ChangeTypeQuickFix.changeVariableReturnTypeOnOverride)
     }
 
     override val list: KtQuickFixesList = KtQuickFixesList.createCombined(
