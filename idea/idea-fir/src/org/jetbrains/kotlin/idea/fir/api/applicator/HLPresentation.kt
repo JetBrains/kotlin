@@ -7,25 +7,34 @@ package org.jetbrains.kotlin.idea.fir.api.applicator
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.ForbidKtResolve
 
-abstract class HLPresentation<PSI: PsiElement> internal constructor() {
-    abstract fun getHighlightType(element: PSI): ProblemHighlightType
-    abstract fun getMessage(element: PSI): String
+abstract class HLPresentation<PSI : PsiElement> internal constructor() {
+    fun getHighlightType(element: PSI): ProblemHighlightType = ForbidKtResolve.forbidResolveIn("HLPresentation.getHighlightType") {
+        getHighlightTypeImpl(element)
+    }
+
+    fun getMessage(element: PSI): String = ForbidKtResolve.forbidResolveIn("HLPresentation.getMessage") {
+        getMessageImpl(element)
+    }
+
+    abstract fun getMessageImpl(element: PSI): String
+    abstract fun getHighlightTypeImpl(element: PSI): ProblemHighlightType
 }
 
-private class HLPresentationImpl<PSI: PsiElement>(
+private class HLPresentationImpl<PSI : PsiElement>(
     private val getHighlightType: (element: PSI) -> ProblemHighlightType,
     private val getMessage: (element: PSI) -> String,
 ) : HLPresentation<PSI>() {
-    override fun getHighlightType(element: PSI): ProblemHighlightType =
+    override fun getHighlightTypeImpl(element: PSI): ProblemHighlightType =
         getHighlightType.invoke(element)
 
-    override fun getMessage(element: PSI): String =
+    override fun getMessageImpl(element: PSI): String =
         getMessage.invoke(element)
 }
 
 
-class HLInspectionPresentationProviderBuilder<PSI: PsiElement> internal constructor() {
+class HLInspectionPresentationProviderBuilder<PSI : PsiElement> internal constructor() {
     private var getHighlightType: ((element: PSI) -> ProblemHighlightType)? = null
     private var getMessage: ((element: PSI) -> String)? = null
 
@@ -50,7 +59,7 @@ class HLInspectionPresentationProviderBuilder<PSI: PsiElement> internal construc
         HLPresentationImpl(getHighlightType!!, getMessage!!)
 }
 
-fun <PSI: PsiElement> presentation(
+fun <PSI : PsiElement> presentation(
     init: HLInspectionPresentationProviderBuilder<PSI>.() -> Unit
 ): HLPresentation<PSI> =
     HLInspectionPresentationProviderBuilder<PSI>().apply(init).build()

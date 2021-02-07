@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.api.applicator
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.ForbidKtResolve
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -28,13 +29,17 @@ sealed class HLApplicabilityRange<in ELEMENT : PsiElement> {
      * The ranges are relative to [element]
      *  i.e. if range covers the whole element when it should return `[0, element.length)`
      */
-    abstract fun getApplicabilityRanges(element: ELEMENT): List<TextRange>
+    fun getApplicabilityRanges(element: ELEMENT): List<TextRange> = ForbidKtResolve.forbidResolveIn("getApplicabilityRanges") {
+        getApplicabilityRangesImpl(element)
+    }
+
+    protected abstract fun getApplicabilityRangesImpl(element: ELEMENT): List<TextRange>
 }
 
 private class HLApplicabilityRangeImpl<ELEMENT : PsiElement>(
     private val getApplicabilityRanges: (ELEMENT) -> List<TextRange>,
 ) : HLApplicabilityRange<ELEMENT>() {
-    override fun getApplicabilityRanges(element: ELEMENT): List<TextRange> =
+    override fun getApplicabilityRangesImpl(element: ELEMENT): List<TextRange> =
         getApplicabilityRanges.invoke(element)
 }
 
