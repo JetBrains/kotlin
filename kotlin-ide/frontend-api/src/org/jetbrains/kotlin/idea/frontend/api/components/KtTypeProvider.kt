@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     abstract val builtinTypes: KtBuiltinTypes
 
+    abstract fun approximateToPublicDenotable(type: KtType): KtType?
+
     abstract fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType
 }
 
