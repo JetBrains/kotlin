@@ -55,8 +55,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         context: DeclarationCheckerContext
     ) {
         when {
-            COMPOSABLE_PROPERTIES &&
-                declaration is KtProperty &&
+            declaration is KtProperty &&
                 descriptor is PropertyDescriptor -> checkProperty(declaration, descriptor, context)
             declaration is KtPropertyAccessor &&
                 descriptor is PropertyAccessorDescriptor -> checkPropertyAccessor(
@@ -120,15 +119,14 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         descriptor: PropertyDescriptor,
         context: DeclarationCheckerContext
     ) {
-        val hasComposableAnnotation = descriptor.hasComposableAnnotation()
-        val thisIsComposable = hasComposableAnnotation || descriptor
+        val hasComposableAnnotation = descriptor
             .getter
             ?.hasComposableAnnotation() == true
         if (descriptor.overriddenDescriptors.isNotEmpty()) {
             val override = descriptor.overriddenDescriptors.first()
             val overrideIsComposable = override.hasComposableAnnotation() ||
                 override.getter?.hasComposableAnnotation() == true
-            if (overrideIsComposable != thisIsComposable) {
+            if (overrideIsComposable != hasComposableAnnotation) {
                 context.trace.report(
                     ComposeErrors.CONFLICTING_OVERLOADS.on(
                         declaration,
@@ -136,13 +134,6 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                     )
                 )
             }
-        }
-        if (hasComposableAnnotation) {
-            context.trace.report(
-                ComposeErrors.DEPRECATED_COMPOSABLE_PROPERTY.on(
-                    declaration.nameIdentifier ?: declaration
-                )
-            )
         }
         if (!hasComposableAnnotation) return
         val initializer = declaration.initializer
@@ -165,14 +156,10 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         val name = propertyPsi.nameIdentifier
         val initializer = propertyPsi.initializer
         val hasComposableAnnotation = descriptor.hasComposableAnnotation()
-        val propertyHasComposableAnnotation = COMPOSABLE_PROPERTIES && propertyDescriptor
-            .hasComposableAnnotation()
-        val thisComposable = hasComposableAnnotation || propertyHasComposableAnnotation
         if (descriptor.overriddenDescriptors.isNotEmpty()) {
             val override = descriptor.overriddenDescriptors.first()
-            val overrideComposable = override.hasComposableAnnotation() || override
-                .correspondingProperty.hasComposableAnnotation()
-            if (overrideComposable != thisComposable) {
+            val overrideComposable = override.hasComposableAnnotation()
+            if (overrideComposable != hasComposableAnnotation) {
                 context.trace.report(
                     ComposeErrors.CONFLICTING_OVERLOADS.on(
                         declaration,
