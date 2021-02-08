@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -63,6 +64,7 @@ abstract class KotlinIrLinker(
 
     private val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
 
+    // TODO: replace with Map<Name, IrModuleDeserializer>
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
@@ -633,6 +635,23 @@ abstract class KotlinIrLinker(
 
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
+    }
+
+    private fun topLevelKindToSymbolKind(kind: IrDeserializer.TopLevelSymbolKind): BinarySymbolData.SymbolKind {
+        return when (kind) {
+            IrDeserializer.TopLevelSymbolKind.CLASS_SYMBOL -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
+            IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+            IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
+            IrDeserializer.TopLevelSymbolKind.TYPEALIAS_SYMBOL -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
+        }
+    }
+
+    override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
+        val moduleDeserializer =
+            deserializersForModules.entries.find { it.key.name == moduleName }?.value ?: error("No module for name '$moduleName' found")
+        assert(signature == signature.topLevelSignature()) { "Signature '$signature' has to be top level" }
+        if (signature !in moduleDeserializer) error("No signature $signature in module $moduleName")
+        return moduleDeserializer.deserializeIrSymbol(signature, topLevelKindToSymbolKind(kind))
     }
 
     // The issue here is that an expect can not trigger its actual deserialization by reachability
