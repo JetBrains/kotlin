@@ -14134,6 +14134,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt");
         }
 
+        @TestMetadata("constructorCallableReference.kt")
+        public void testConstructorCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt");
+        }
+
         @TestMetadata("constructorImplVisibility.kt")
         public void testConstructorImplVisibility() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibility.kt");

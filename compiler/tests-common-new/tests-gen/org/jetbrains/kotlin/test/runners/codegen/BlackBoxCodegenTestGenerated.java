@@ -16961,6 +16961,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("constructorCallableReference.kt")
+        public void testConstructorCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt");
+        }
+
+        @Test
         @TestMetadata("constructorImplVisibility.kt")
         public void testConstructorImplVisibility() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibility.kt");
