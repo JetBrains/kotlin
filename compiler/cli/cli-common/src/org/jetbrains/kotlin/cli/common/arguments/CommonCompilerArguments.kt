@@ -382,6 +382,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
+            put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
         }
     }
 
@@ -429,10 +430,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (inferenceCompatibility) {
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
-            }
-
-            if (extendedCompilerChecks) {
-                put(LanguageFeature.ExtendedCompilerChecks, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {
