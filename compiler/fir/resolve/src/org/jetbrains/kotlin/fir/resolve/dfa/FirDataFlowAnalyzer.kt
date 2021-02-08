@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
@@ -1123,8 +1126,23 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitElvis() {
-        graphBuilder.exitElvis().mergeIncomingFlow()
+    fun exitElvis(elvisExpression: FirElvisExpression) {
+        val node = graphBuilder.exitElvis().mergeIncomingFlow()
+        if (!components.session.languageVersionSettings.supportsFeature(LanguageFeature.BooleanElvisBoundSmartCasts)) return
+        val lhs = elvisExpression.lhs
+        val rhs = elvisExpression.rhs
+        if (rhs is FirConstExpression<*> && rhs.kind == ConstantValueKind.Boolean) {
+            if (lhs.typeRef.coneType.classId != StandardClassIds.Boolean) return
+
+            val flow = node.flow
+            // a ?: false == true -> a != null
+            // a ?: true == false -> a != null
+            val elvisVariable = variableStorage.getOrCreateVariable(flow, elvisExpression)
+            val lhsVariable = variableStorage.getOrCreateVariable(flow, lhs)
+
+            val value = rhs.value as Boolean
+            flow.addImplication(elvisVariable.eq(!value) implies (lhsVariable.notEq(null)))
+        }
     }
 
     // Callable reference

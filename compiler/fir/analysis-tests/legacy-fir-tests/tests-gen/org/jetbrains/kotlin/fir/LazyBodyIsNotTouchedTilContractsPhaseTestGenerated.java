@@ -2818,6 +2818,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("booleanElvisBoundSmartcast.kt")
+            public void testBooleanElvisBoundSmartcast() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/booleanElvisBoundSmartcast.kt");
+            }
+
             @TestMetadata("booleanOperators.kt")
             public void testBooleanOperators() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/booleanOperators.kt");

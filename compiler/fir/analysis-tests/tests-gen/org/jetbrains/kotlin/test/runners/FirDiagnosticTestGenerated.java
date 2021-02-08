@@ -3195,6 +3195,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("booleanElvisBoundSmartcast.kt")
+                public void testBooleanElvisBoundSmartcast() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/booleanElvisBoundSmartcast.kt");
+                }
+
+                @Test
                 @TestMetadata("booleanOperators.kt")
                 public void testBooleanOperators() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans/booleanOperators.kt");
