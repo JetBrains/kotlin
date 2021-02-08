@@ -266,6 +266,8 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
             override fun getDeclarationDescriptor() = this@IrBasedTypeParameterDescriptor
 
             override fun getBuiltIns() = module.builtIns
+
+            override fun isSameClassifier(classifier: ClassifierDescriptor): Boolean = declarationDescriptor === classifier
         }
     }
 
