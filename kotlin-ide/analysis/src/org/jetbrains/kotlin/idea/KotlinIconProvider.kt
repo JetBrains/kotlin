@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.idea
 
 import org.jetbrains.kotlin.idea.util.hasMatchingExpected
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 
 class KotlinIconProvider : KotlinIconProviderBase() {
-    override fun KtDeclaration.isMatchingExpected() = hasMatchingExpected()
+    override fun KtDeclaration.isMatchingExpected() = hasActualModifier() && hasMatchingExpected()
 }
