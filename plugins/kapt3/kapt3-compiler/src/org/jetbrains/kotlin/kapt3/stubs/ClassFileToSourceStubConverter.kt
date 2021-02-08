@@ -131,7 +131,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
 
-    private val importsFromRoot = collectImportsFromRootPackage()
+    private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
     private var done = false
 
@@ -1423,7 +1423,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value, ::convertDeeper))
 
             is Type -> {
-                reportIfIllegalTypeUsage(containingClass, value)
+                checkIfValidTypeName(containingClass, value)
                 treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
             }
             is AnnotationNode -> convertAnnotation(containingClass, value, packageFqName = null, filtered = false)!!
