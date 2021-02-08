@@ -43,26 +43,32 @@ abstract class AbstractVisualizer : AbstractKotlinCompilerTest() {
 
         forTestsMatching("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/*") {
             defaultDirectives {
-                VisualizerDirectives.EXPECTED_FILE_PATH with "compiler/visualizer/testData/rawBuilder/declarations"
+                VisualizerDirectives.TEST_FILE_PATH with "fir/raw-fir/psi2fir"
+                VisualizerDirectives.EXPECTED_FILE_PATH with "visualizer"
             }
         }
 
         forTestsMatching("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/*") {
             defaultDirectives {
-                VisualizerDirectives.EXPECTED_FILE_PATH with "compiler/visualizer/testData/rawBuilder/expressions"
+                VisualizerDirectives.TEST_FILE_PATH with "fir/raw-fir/psi2fir"
+                VisualizerDirectives.EXPECTED_FILE_PATH with "visualizer"
             }
         }
 
         forTestsMatching("compiler/visualizer/testData/uncommonCases/*") {
             defaultDirectives {
-                VisualizerDirectives.EXPECTED_FILE_PATH with "compiler/visualizer/testData/uncommonCases/resultFiles"
+                VisualizerDirectives.TEST_FILE_PATH with "uncommonCases/testFiles"
+                VisualizerDirectives.EXPECTED_FILE_PATH with "uncommonCases/resultFiles"
             }
         }
     }
 }
 
 internal object VisualizerDirectives : SimpleDirectivesContainer() {
+    val TEST_FILE_PATH by stringDirective(
+        description = "Specify that part of test file path must be replaced with EXPECTED_FILE_PATH"
+    )
     val EXPECTED_FILE_PATH by stringDirective(
-        description = "Specify the path to expected result file"
+        description = "Specify the path to expected result file that will be inserted instead of TEST_FILE_PATH"
     )
 }

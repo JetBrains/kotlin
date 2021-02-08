@@ -21,3 +21,11 @@ fun foo(some: Some) {
 //  │
     z = ""
 }
+
+fun bar(some: Some) {
+//       Int
+//       │  Double
+//       │  │  String bar.some: Some
+//       │  │  │      │
+    val (a, _, `_`) = some
+}

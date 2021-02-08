@@ -12,6 +12,31 @@ fun foo() {
     }
 }
 
+fun fooLabeled() {
+//  fun io/println(Any?): Unit
+//  │
+    println("!!!")
+//                   Int
+//                   │fun (Int).rangeTo(Int): ranges/IntRange
+//              Int  ││ Int
+//              │    ││ │
+    label@ for (i in 1..10) {
+//      Unit
+//      │   val fooLabeled.i: Int
+//      │   │ fun (Any).equals(Any?): Boolean
+//      │   │ │  Int
+//      │   │ │  │
+        if (i == 5) continue@label
+//      fun io/println(Int): Unit
+//      │       val fooLabeled.i: Int
+//      │       │
+        println(i)
+    }
+//  fun io/println(Any?): Unit
+//  │
+    println("!!!")
+}
+
 //            collections/List<String>
 //            │
 fun bar(list: List<String>) {
@@ -48,5 +73,18 @@ fun baz(set: Set<Some>) {
 //      │             │      val baz.y: Int
 //      │             │      │
         println("x = $x y = $y")
+    }
+}
+
+//                      collections/List<Some>
+//                      │
+fun withParameter(list: List<Some>) {
+//       Some       withParameter.list: collections/List<Some>
+//       │          │
+    for (s: Some in list) {
+//      fun io/println(Any?): Unit
+//      │       val withParameter.s: Some
+//      │       │
+        println(s)
     }
 }

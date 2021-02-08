@@ -61,3 +61,22 @@ enum class Planet(val m: Double, internal val r: Double) {
         const val G = 6.67e-11
     }
 }
+
+enum class PseudoInsn(val signature: String = "()V") {
+    FIX_STACK_BEFORE_JUMP,
+//                       constructor PseudoInsn(String = ...)
+//                       │
+    FAKE_ALWAYS_TRUE_IFEQ("()I"),
+//                        constructor PseudoInsn(String = ...)
+//                        │
+    FAKE_ALWAYS_FALSE_IFEQ("()I"),
+    SAVE_STACK_BEFORE_TRY,
+    RESTORE_STACK_IN_TRY_CATCH,
+    STORE_NOT_NULL,
+//             constructor PseudoInsn(String = ...)
+//             │
+    AS_NOT_NULL("(Ljava/lang/Object;)Ljava/lang/Object;")
+    ;
+
+    fun emit() {}
+}

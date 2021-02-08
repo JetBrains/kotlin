@@ -28,9 +28,10 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
                 val renderer = FirVisualizer(info.firFiles.values.first())
                 val firRenderResult = renderer.render()
 
-                val fileName = info.firFiles.keys.first().name
-                val expectedPath = it.defaultDirectives.get(VisualizerDirectives.EXPECTED_FILE_PATH).first() + "/$fileName"
-                val expectedText = File(expectedPath).readLines()
+                val replaceFrom = it.defaultDirectives[VisualizerDirectives.TEST_FILE_PATH].first()
+                val replaceTo = it.defaultDirectives[VisualizerDirectives.EXPECTED_FILE_PATH].first()
+                val path = info.firFiles.keys.first().originalFile.absolutePath.replace(replaceFrom, replaceTo)
+                val expectedText = File(path).readLines()
                 if (expectedText[0].startsWith("// FIR_IGNORE")) {
                     Assert.assertFalse(
                         "Files are identical, please delete ignore directive",
@@ -38,7 +39,7 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
                     )
                     return
                 }
-                KotlinTestUtils.assertEqualsToFile(File(expectedPath), firRenderResult) {
+                KotlinTestUtils.assertEqualsToFile(File(path), firRenderResult) {
                     return@assertEqualsToFile it.replace("// FIR_IGNORE\n", "")
                 }
             }

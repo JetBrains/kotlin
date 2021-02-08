@@ -27,9 +27,10 @@ abstract class AbstractPsiVisualizer : AbstractVisualizer() {
                 val renderer = PsiVisualizer(info.ktFiles.values.first(), info.analysisResult)
                 val psiRenderResult = renderer.render()
 
-                val fileName = info.ktFiles.keys.first().name
-                val expectedPath = it.defaultDirectives.get(VisualizerDirectives.EXPECTED_FILE_PATH).first() + "/$fileName"
-                KotlinTestUtils.assertEqualsToFile(File(expectedPath), psiRenderResult) {
+                val replaceFrom = it.defaultDirectives[VisualizerDirectives.TEST_FILE_PATH].first()
+                val replaceTo = it.defaultDirectives[VisualizerDirectives.EXPECTED_FILE_PATH].first()
+                val path = info.ktFiles.keys.first().originalFile.absolutePath.replace(replaceFrom, replaceTo)
+                KotlinTestUtils.assertEqualsToFile(File(path), psiRenderResult) {
                     return@assertEqualsToFile it.replace("// FIR_IGNORE\n", "")
                 }
             }
