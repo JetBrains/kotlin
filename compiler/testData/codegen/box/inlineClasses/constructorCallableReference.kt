@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // KJS_FULL_RUNTIME
+// IGNORE_BACKEND: WASM
 
 interface I {
     companion object {
