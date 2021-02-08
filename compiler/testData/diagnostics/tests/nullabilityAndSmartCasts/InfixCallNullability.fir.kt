@@ -18,15 +18,15 @@ fun test(x : Int?, a : A?) {
 
     a<!UNSAFE_CALL!>.<!>plus(1)
     a?.plus(1)
-    a <!UNSAFE_CALL!>plus<!> 1
-    a <!UNSAFE_CALL!>+<!> 1
+    a <!UNSAFE_INFIX_CALL!>plus<!> 1
+    a <!UNSAFE_OPERATOR_CALL!>+<!> 1
     <!UNSAFE_CALL!>-<!>a
     a<!UNSAFE_CALL!>.<!>unaryMinus()
     a?.unaryMinus()
 
     a<!UNSAFE_CALL!>.<!>div(1)
-    a <!UNSAFE_CALL!>/<!> 1
-    a <!UNSAFE_CALL!>div<!> 1
+    a <!UNSAFE_OPERATOR_CALL!>/<!> 1
+    a <!UNSAFE_INFIX_CALL!>div<!> 1
     a?.div(1)
 
     a.times(1)
@@ -34,8 +34,8 @@ fun test(x : Int?, a : A?) {
     a times 1
     a?.times(1)
 
-    1 <!UNSAFE_CALL!>in<!> a
-    a <!UNSAFE_CALL!>contains<!> 1
+    1 <!UNSAFE_OPERATOR_CALL!>in<!> a
+    a <!UNSAFE_INFIX_CALL!>contains<!> 1
     a<!UNSAFE_CALL!>.<!>contains(1)
     a?.contains(1)
 }

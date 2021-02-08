@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -63,7 +64,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val SUPER_IS_NOT_AN_EXPRESSION by error<FirSourceElement, PsiElement>()
         val SUPER_NOT_AVAILABLE by error<FirSourceElement, PsiElement>()
         val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>()
-        val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<FirSourceElement, PsiElement>() {
+        val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<FirSourceElement, PsiElement> {
             parameter<String>("target")
         }
     }
@@ -74,7 +75,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val RECURSION_IN_SUPERTYPES by error<FirSourceElement, PsiElement>()
         val NOT_A_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error<FirSourceElement, PsiElement>()
-        val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error<FirSourceElement, PsiElement>() {
+        val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error<FirSourceElement, PsiElement> {
             parameter<FirClass<*>>("otherSuperType")
         }
         val SUPERTYPE_INITIALIZED_IN_INTERFACE by error<FirSourceElement, PsiElement>()
@@ -156,7 +157,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val INAPPLICABLE_CANDIDATE by error<FirSourceElement, PsiElement> {
             parameter<AbstractFirBasedSymbol<*>>("candidate")
         }
-        val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, PsiElement>() {
+        val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, PsiElement> {
             parameter<String>("reason")
         }
     }
@@ -328,7 +329,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
 
-        val COMPONENT_FUNCTION_ON_NULLABLE by error<FirSourceElement, KtExpression>() {
+        val COMPONENT_FUNCTION_ON_NULLABLE by error<FirSourceElement, KtExpression> {
             parameter<Name>("componentFunctionName")
         }
 
@@ -354,11 +355,19 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_SELECTOR) {
             parameter<ConeKotlinType>("receiverType")
         }
-        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement>() {
+        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement> {
             parameter<ConeKotlinType>("receiverType")
         }
-        // TODO: val UNSAFE_INFIX_CALL by ...
-        // TODO: val UNSAFE_OPERATOR_CALL by ...
+        val UNSAFE_INFIX_CALL by error<FirSourceElement, KtExpression> {
+            parameter<FirExpression>("lhs")
+            parameter<String>("operator")
+            parameter<FirExpression>("rhs")
+        }
+        val UNSAFE_OPERATOR_CALL by error<FirSourceElement, KtExpression> {
+            parameter<FirExpression>("lhs")
+            parameter<String>("operator")
+            parameter<FirExpression>("rhs")
+        }
         // TODO: val UNEXPECTED_SAFE_CALL by ...
     }
 

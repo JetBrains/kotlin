@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isInfix
+import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -58,7 +64,6 @@ private fun mapInapplicableCandidateError(
     source: FirSourceElement,
 ): FirDiagnostic<*> {
     // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
-    // TODO: handle other UNSAFE_* variants: infix, operator
     val rootCause = diagnostic.candidate.diagnostics.find { it.applicability == diagnostic.applicability }
     if (rootCause != null &&
         rootCause is InapplicableWrongReceiver &&
@@ -68,6 +73,24 @@ private fun mapInapplicableCandidateError(
         if (diagnostic.candidate.callInfo.isImplicitInvoke) {
             return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType!!)
         }
+
+        val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
+        val candidateFunctionName = candidateFunction?.name
+        val left = diagnostic.candidate.callInfo.explicitReceiver
+        val right = diagnostic.candidate.callInfo.argumentList.arguments.singleOrNull()
+        if (left != null && right != null &&
+            source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
+            (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
+        ) {
+            val operationToken = source.getChild(KtTokens.IDENTIFIER)
+            if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
+                return FirErrors.UNSAFE_INFIX_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+            }
+            if (candidateFunction.isOperator && operationToken == null) {
+                return FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+            }
+        }
+
         return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
     }
     return FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)

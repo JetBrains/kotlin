@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStr
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -228,6 +229,8 @@ object FirErrors {
     // Nullability
     val UNSAFE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>(SourceElementPositioningStrategies.DOT_BY_SELECTOR)
     val UNSAFE_IMPLICIT_INVOKE_CALL by error1<FirSourceElement, PsiElement, ConeKotlinType>()
+    val UNSAFE_INFIX_CALL by error3<FirSourceElement, KtExpression, FirExpression, String, FirExpression>()
+    val UNSAFE_OPERATOR_CALL by error3<FirSourceElement, KtExpression, FirExpression, String, FirExpression>()
 
     // When expressions
     val NO_ELSE_IN_WHEN by error1<FirSourceElement, KtWhenExpression, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
