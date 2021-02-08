@@ -59,7 +59,8 @@ class MemoizedInlineClassReplacements(
                 it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticInlineClassReplacement ||
-                        it.origin.isSynthetic ->
+                        it.origin.isSynthetic ||
+                        it.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE ->
                     null
 
                 it.isInlineClassFieldGetter ->
