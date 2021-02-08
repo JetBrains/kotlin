@@ -1,5 +1,5 @@
 @kotlin.Metadata
-public final class<null>  test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnable$0 {
+public synthetic final class<null>  test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnable$0 {
     // source: 'samAdapterAndInlinedOne.kt'
     public <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method run(): void
@@ -9,7 +9,7 @@ public final class<null>  test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnabl
 }
 
 @kotlin.Metadata
-final class<null>  test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0 {
+synthetic final class<null>  test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0 {
     // source: 'samAdapterAndInlinedOne.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method run(): void

@@ -81,7 +81,7 @@ class ClassCodegen private constructor(
         defineClass(
             irClass.psiElement,
             state.classFileVersion,
-            irClass.flags,
+            irClass.getFlags(context.state.languageVersionSettings),
             signature.name,
             signature.javaGenericSignature,
             signature.superclassName,
@@ -473,10 +473,11 @@ class ClassCodegen private constructor(
         }
 }
 
-private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or
+private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
+    origin.flags or
+            getVisibilityAccessFlagForClass() or
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
-            (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNTHETIC else 0) or
+            getSynthAccessFlag(languageVersionSettings) or
             when {
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
@@ -484,6 +485,16 @@ private val IrClass.flags: Int
                 hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
+
+private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
+    if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
+        return Opcodes.ACC_SYNTHETIC
+    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
+        languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
+    )
+        return Opcodes.ACC_SYNTHETIC
+    return 0
+}
 
 private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or

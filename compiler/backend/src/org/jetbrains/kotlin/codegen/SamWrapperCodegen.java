@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -79,7 +80,8 @@ public class SamWrapperCodegen {
         this.samType = samType;
         this.parentCodegen = parentCodegen;
         visibility = isInsideInline ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
-        classFlags = visibility | ACC_FINAL | ACC_SUPER;
+        int synth = state.getLanguageVersionSettings().supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic) ? ACC_SYNTHETIC : 0;
+        classFlags = visibility | ACC_FINAL | ACC_SUPER | synth;
     }
 
     @NotNull
