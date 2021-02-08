@@ -15,4 +15,4 @@ versions.jar.serviceMessages=2019.1.4
 versions.jar.lz4-java=1.7.1
 ignore.jar.snappy-in-java=true
 versions.gradle-api=4.5.1
-versions.shadow=5.2.0
+versions.shadow=6.1.0
