@@ -1,3 +1,4 @@
+// FIR_IGNORE
 // new contracts syntax for simple functions
 //           [ERROR : MyClass]?                          [ERROR: unknown type]          [ERROR: unknown type]
 //           │                                           │                              │

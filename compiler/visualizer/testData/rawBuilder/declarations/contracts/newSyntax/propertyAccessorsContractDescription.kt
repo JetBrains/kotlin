@@ -1,3 +1,4 @@
+// FIR_IGNORE
 // new contracts syntax for property accessors
 class MyClass {
 //      Int          Int

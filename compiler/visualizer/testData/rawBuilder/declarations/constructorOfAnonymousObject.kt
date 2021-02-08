@@ -1,3 +1,4 @@
+// FIR_IGNORE
 private fun resolveAccessorCall(
 //                             [ERROR : PropertyDescriptor]
 //                             │

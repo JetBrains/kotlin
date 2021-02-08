@@ -1,3 +1,4 @@
+// FIR_IGNORE
 fun test1(s: String?) contract [returnsNotNull()] {
 //  [ERROR: not resolved]
 //  │

@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //     package kotlin
 //     │
 import kotlin.properties.ReadWriteProperty

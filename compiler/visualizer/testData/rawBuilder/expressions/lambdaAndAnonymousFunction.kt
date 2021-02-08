@@ -1,3 +1,4 @@
+// FIR_IGNORE
 //                             T fun (() -> T).invoke(): T
 //                             │ │
 fun <T> run(block: () -> T): T = block()

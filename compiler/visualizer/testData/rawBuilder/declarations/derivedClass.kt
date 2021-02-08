@@ -1,3 +1,4 @@
+// FIR_IGNORE
 open class Base<T>(val x: T)
 
 //                             constructor Base<T>(T)

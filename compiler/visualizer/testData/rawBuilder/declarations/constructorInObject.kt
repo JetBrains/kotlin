@@ -1,3 +1,4 @@
+// FIR_IGNORE
 object A {
     constructor()
     init {}

@@ -1,3 +1,4 @@
+// FIR_IGNORE
 // Should have raw description
 fun test_1() {
 //  [ERROR: not resolved]
