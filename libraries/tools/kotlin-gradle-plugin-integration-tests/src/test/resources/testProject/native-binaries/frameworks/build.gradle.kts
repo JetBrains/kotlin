@@ -7,6 +7,9 @@ repositories {
     jcenter()
 }
 
+val disambiguation1Attribute = Attribute.of("myDisambiguation1Attribute", String::class.java)
+val disambiguation2Attribute = Attribute.of("myDisambiguation2Attribute", String::class.java)
+
 kotlin {
     sourceSets["commonMain"].apply {
         dependencies {
@@ -16,6 +19,7 @@ kotlin {
     }
 
     iosArm64("ios") {
+        attributes.attribute(disambiguation1Attribute, "someValue")
         binaries {
             framework("main") {
                 export(project(":exported"))
@@ -25,6 +29,7 @@ kotlin {
                 linkerOpts = mutableListOf("-L.")
                 freeCompilerArgs = mutableListOf("-Xtime")
                 isStatic = true
+                attributes.attribute(disambiguation2Attribute, "someValue2")
             }
         }
     }
