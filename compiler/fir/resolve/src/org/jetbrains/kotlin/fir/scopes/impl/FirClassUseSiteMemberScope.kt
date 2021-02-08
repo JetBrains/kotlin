@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -23,6 +24,10 @@ class FirClassUseSiteMemberScope(
         val seen = mutableSetOf<FirVariableSymbol<*>>()
         declaredMemberScope.processPropertiesByName(name) l@{
             if (it.isStatic) return@l
+            if (it is FirPropertySymbol) {
+                val directOverridden = computeDirectOverridden(it.fir)
+                this@FirClassUseSiteMemberScope.directOverriddenProperties[it] = directOverridden
+            }
             seen += it
             processor(it)
         }
@@ -31,9 +36,18 @@ class FirClassUseSiteMemberScope(
             val overriddenBy = it.getOverridden(seen)
             if (overriddenBy == null) {
                 processor(it)
-            } else if (overriddenBy is FirPropertySymbol && it is FirPropertySymbol) {
-                directOverriddenProperties.getOrPut(overriddenBy) { mutableListOf() }.add(it)
             }
         }
+    }
+
+    private fun computeDirectOverridden(property: FirProperty): MutableList<FirPropertySymbol> {
+        val result = mutableListOf<FirPropertySymbol>()
+        superTypesScope.processPropertiesByName(property.name) l@{ superSymbol ->
+            if (superSymbol !is FirPropertySymbol) return@l
+            if (overrideChecker.isOverriddenProperty(property, superSymbol.fir)) {
+                result.add(superSymbol)
+            }
+        }
+        return result
     }
 }
