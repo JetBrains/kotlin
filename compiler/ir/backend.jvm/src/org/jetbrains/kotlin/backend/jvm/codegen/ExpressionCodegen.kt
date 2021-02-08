@@ -288,6 +288,7 @@ class ExpressionCodegen(
             irFunction.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
             irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
             irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ||
+            irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER ||
             irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
             irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
             irFunction.isMultifileBridge()
