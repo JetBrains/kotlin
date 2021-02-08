@@ -25,15 +25,14 @@ the following platforms:
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
    (`-target linux_x64`, default on Linux hosts, hosted on Linux, Windows and macOS).
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw_x64`,
-   default on Windows hosts). Experimental support is available on Linux and macOS hosts (requires Wine).
+   default on Windows hosts).
  * Microsoft Windows x86-32 cross-compiled target (`-target mingw_x86`), hosted on Windows.
-   Experimental support is available on Linux and macOS hosts (requires Wine).
  * Apple iOS (armv7 and arm64 devices, x86 simulator), cross-compiled target
    (`-target ios_arm32|ios_arm64|ios_x64`), hosted on macOS.
  * Apple tvOS (arm64 devices, x86 simulator), cross-compiled target
     (`-target tvos_arm64|tvos_x64`), hosted on macOS.
  * Apple watchOS (arm32/arm64 devices, x86 simulator), cross-compiled target
-     (`-target watchos_arm32|watchos_arm64|watchos_x86`), hosted on macOS.
+     (`-target watchos_arm32|watchos_arm64|watchos_x86|watchos_x64`), hosted on macOS.
  * Linux arm32 hardfp, Raspberry Pi, cross-compiled target (`-target raspberrypi`), hosted on Linux, Windows and macOS
  * Linux MIPS big endian, cross-compiled target (`-target mips`), hosted on Linux.
  * Linux MIPS little endian, cross-compiled target (`-target mipsel`), hosted on Linux.
@@ -42,11 +41,8 @@ the following platforms:
  * WebAssembly (`-target wasm32`) target, hosted on Linux, Windows or macOS. Webassembly support is experimental
    and could be discontinued in further releases.
  * Experimental support for Zephyr RTOS (`-target zephyr_stm32f4_disco`) is available on macOS, Linux
-   and Windows hosts.
-
- To enable experimental targets Kotlin/Native must be recompiled with `org.jetbrains.kotlin.native.experimentalTargets` Gradle property set.
-
- Adding support for other target platforms shouldn't be too hard, if LLVM support is available.
+   and Windows hosts. "Experimental" here also means that support for this target might be broken at the moment,
+   and UX might be disappointing.
 
  ## Compatibility and features ##
 
@@ -55,28 +51,37 @@ Produced programs are fully self-sufficient and do not need JVM or other runtime
 
 On macOS it also requires Xcode 11.0 or newer to be installed.
 
-The language and library version supported by this release match Kotlin 1.4.
+The language and library version supported by this release match Kotlin 1.5.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
 collection algorithm. Multiple threads could be used, but objects must be explicitly transferred
-between threads, and same object couldn't be accessed by two threads concurrently.
+between threads, and same object couldn't be accessed by two threads concurrently unless it is frozen.
+See the relevant [documentation](https://kotlinlang.org/docs/reference/native/concurrency.html).
+We are going to lift these multithreading restrictions, which involves implementing a new memory manager.
+More details are available in
+["Kotlin/Native Memory Management Roadmap"](https://blog.jetbrains.com/kotlin/2020/07/kotlin-native-memory-management-roadmap/).
 
-_Kotlin/Native_ provides efficient interoperability with libraries written in C or Objective-C, and supports
-automatic generation of Kotlin bindings from a C/Objective-C header file.
-See the samples coming with the distribution.
+_Kotlin/Native_ provides efficient bidirectional interoperability with C and Objective-C.
+See the [samples](https://github.com/JetBrains/kotlin-native/tree/master/samples)
+and the [tutorials](https://kotlinlang.org/docs/tutorials/).
 
   ## Getting Started ##
+  
+The most complete experience with Kotlin/Native can be achieved by using
+[Gradle](https://kotlinlang.org/docs/tutorials/native/using-gradle.html),
+[IntelliJ IDEA](https://kotlinlang.org/docs/tutorials/native/using-intellij-idea.html) or
+[Android Studio with KMM plugin](https://kotlinlang.org/docs/mobile/create-first-app.html) if you target iOS.
 
- Download _Kotlin/Native_ distribution and unpack it. You can run command line compiler with
+If you are interested in using Kotlin/Native for iOS, then
+[Kotlin Multiplatform Mobile portal](https://kotlinlang.org/lp/mobile/) might also be useful for you.
+ 
+Command line compiler is also
+[available](https://kotlinlang.org/docs/tutorials/native/using-command-line-compiler.html).
 
-    bin/kotlinc <some_file>.kt <dir_with_kt_files> -o <program_name>
-
-  During the first run it will download all the external dependencies, such as LLVM.
-
-To see the list of available flags, run `kotlinc -h`.
-
-For documentation on C interoperability stubs see [INTEROP.md](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md).
+More information can be found in the overviews of
+[Kotlin/Native](https://kotlinlang.org/docs/reference/native-overview.html)
+and [Kotlin Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html).
 
  ## <a name="limitations"></a>Known limitations ##
 
