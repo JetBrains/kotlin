@@ -41,7 +41,7 @@ public @interface ClassRefAnnotation {
 
 package test;
 
-import java.lang.System;
+import java.lang.Number;
 
 @kotlin.Metadata()
 public abstract interface PackedClass {
@@ -60,7 +60,7 @@ public abstract interface PackedClass {
 
 package test;
 
-import java.lang.System;
+import java.lang.Number;
 
 @kotlin.Metadata()
 @ClassRefAnnotation(value = {RootClass.class})

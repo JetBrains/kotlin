@@ -105,6 +105,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultPackage.kt");
     }
 
+    @TestMetadata("defaultPackageCorrectErrorTypes.kt")
+    public void testDefaultPackageCorrectErrorTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultPackageCorrectErrorTypes.kt");
+    }
+
     @TestMetadata("defaultParameterValueOff.kt")
     public void testDefaultParameterValueOff() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultParameterValueOff.kt");
