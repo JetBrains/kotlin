@@ -12,17 +12,25 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "GC.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 
 using namespace kotlin;
 
+using testing::_;
+
+namespace {
+
+using SimpleAllocator = mm::internal::SimpleAllocator;
+
 template <size_t DataAlignment>
-using ObjectFactoryStorage = mm::internal::ObjectFactoryStorage<DataAlignment>;
+using ObjectFactoryStorage = mm::internal::ObjectFactoryStorage<DataAlignment, SimpleAllocator>;
 
 using ObjectFactoryStorageRegular = ObjectFactoryStorage<alignof(void*)>;
 
-namespace {
+template <typename Storage>
+using Producer = typename Storage::Producer;
 
 template <size_t DataAlignment>
 KStdVector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
@@ -76,7 +84,7 @@ TEST(ObjectFactoryStorageTest, Empty) {
 
 TEST(ObjectFactoryStorageTest, DoNotPublish) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
     producer.Insert<int>(2);
@@ -88,8 +96,8 @@ TEST(ObjectFactoryStorageTest, DoNotPublish) {
 
 TEST(ObjectFactoryStorageTest, Publish) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer1(storage);
-    ObjectFactoryStorageRegular::Producer producer2(storage);
+    Producer<ObjectFactoryStorageRegular> producer1(storage, SimpleAllocator());
+    Producer<ObjectFactoryStorageRegular> producer2(storage, SimpleAllocator());
 
     producer1.Insert<int>(1);
     producer1.Insert<int>(2);
@@ -106,7 +114,7 @@ TEST(ObjectFactoryStorageTest, Publish) {
 
 TEST(ObjectFactoryStorageTest, PublishDifferentTypes) {
     ObjectFactoryStorage<alignof(MaxAlignedData)> storage;
-    ObjectFactoryStorage<alignof(MaxAlignedData)>::Producer producer(storage);
+    Producer<ObjectFactoryStorage<alignof(MaxAlignedData)>> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
     producer.Insert<size_t>(2);
@@ -139,7 +147,7 @@ TEST(ObjectFactoryStorageTest, PublishDifferentTypes) {
 
 TEST(ObjectFactoryStorageTest, PublishSeveralTimes) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     // Add 2 elements and publish.
     producer.Insert<int>(1);
@@ -167,7 +175,7 @@ TEST(ObjectFactoryStorageTest, PublishInDestructor) {
     ObjectFactoryStorageRegular storage;
 
     {
-        ObjectFactoryStorageRegular::Producer producer(storage);
+        Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
         producer.Insert<int>(1);
         producer.Insert<int>(2);
     }
@@ -177,9 +185,22 @@ TEST(ObjectFactoryStorageTest, PublishInDestructor) {
     EXPECT_THAT(actual, testing::ElementsAre(1, 2));
 }
 
+TEST(ObjectFactoryStorageTest, FindNode) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+
+    auto& node1 = producer.Insert<int>(1);
+    auto& node2 = producer.Insert<int>(2);
+
+    producer.Publish();
+
+    EXPECT_THAT(&ObjectFactoryStorageRegular::Node::FromData(node1.Data()), &node1);
+    EXPECT_THAT(&ObjectFactoryStorageRegular::Node::FromData(node2.Data()), &node2);
+}
+
 TEST(ObjectFactoryStorageTest, EraseFirst) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
     producer.Insert<int>(2);
@@ -205,7 +226,7 @@ TEST(ObjectFactoryStorageTest, EraseFirst) {
 
 TEST(ObjectFactoryStorageTest, EraseMiddle) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
     producer.Insert<int>(2);
@@ -231,7 +252,7 @@ TEST(ObjectFactoryStorageTest, EraseMiddle) {
 
 TEST(ObjectFactoryStorageTest, EraseLast) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
     producer.Insert<int>(2);
@@ -257,7 +278,7 @@ TEST(ObjectFactoryStorageTest, EraseLast) {
 
 TEST(ObjectFactoryStorageTest, EraseAll) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
     producer.Insert<int>(2);
@@ -279,7 +300,7 @@ TEST(ObjectFactoryStorageTest, EraseAll) {
 
 TEST(ObjectFactoryStorageTest, EraseTheOnlyElement) {
     ObjectFactoryStorageRegular storage;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
 
     producer.Insert<int>(1);
 
@@ -307,7 +328,7 @@ TEST(ObjectFactoryStorageTest, ConcurrentPublish) {
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
         threads.emplace_back([i, &storage, &canStart, &readyCount]() {
-            ObjectFactoryStorageRegular::Producer producer(storage);
+            Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
             producer.Insert<int>(i);
             ++readyCount;
             while (!canStart) {
@@ -335,7 +356,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
 
     KStdVector<int> expectedBefore;
     KStdVector<int> expectedAfter;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_back(i);
         expectedAfter.push_back(i);
@@ -351,7 +372,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
         threads.emplace_back([j, &storage, &canStart, &startedCount, &readyCount]() {
-            ObjectFactoryStorageRegular::Producer producer(storage);
+            Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
             producer.Insert<int>(j);
             ++readyCount;
             while (!canStart) {
@@ -393,7 +414,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
 
     KStdVector<int> expectedAfter;
-    ObjectFactoryStorageRegular::Producer producer(storage);
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
     for (int i = 0; i < kStartCount; ++i) {
         if (i % 2 == 0) {
             expectedAfter.push_back(i);
@@ -410,7 +431,7 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
         threads.emplace_back([j, &storage, &canStart, &startedCount, &readyCount]() {
-            ObjectFactoryStorageRegular::Producer producer(storage);
+            Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
             producer.Insert<int>(j);
             ++readyCount;
             while (!canStart) {
@@ -446,9 +467,102 @@ TEST(ObjectFactoryStorageTest, EraseWhileConcurrentPublish) {
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expectedAfter));
 }
 
-using mm::ObjectFactory;
+using mm::internal::AllocatorWithGC;
 
 namespace {
+
+class MockAllocator {
+public:
+    MOCK_METHOD(void*, Alloc, (size_t, size_t));
+};
+
+class MockAllocatorWrapper {
+public:
+    MockAllocator& operator*() { return *mock_; }
+
+    void* Alloc(size_t size, size_t alignment) { return mock_->Alloc(size, alignment); }
+
+private:
+    KStdUniquePtr<testing::StrictMock<MockAllocator>> mock_ = make_unique<testing::StrictMock<MockAllocator>>();
+};
+
+class MockGC {
+public:
+    MOCK_METHOD(void, SafePointAllocation, (size_t));
+    MOCK_METHOD(void, OnOOM, (size_t));
+};
+
+} // namespace
+
+TEST(AllocatorWithGCTest, AllocateWithoutOOM) {
+    constexpr size_t size = 256;
+    constexpr size_t alignment = 8;
+    void* nonNull = reinterpret_cast<void*>(1);
+    MockAllocatorWrapper baseAllocator;
+    testing::StrictMock<MockGC> gc;
+    {
+        testing::InSequence seq;
+        EXPECT_CALL(gc, SafePointAllocation(size));
+        EXPECT_CALL(*baseAllocator, Alloc(size, alignment)).WillOnce(testing::Return(nonNull));
+        EXPECT_CALL(gc, OnOOM(_)).Times(0);
+    }
+    AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
+    void* ptr = allocator.Alloc(size, alignment);
+    EXPECT_THAT(ptr, nonNull);
+}
+
+TEST(AllocatorWithGCTest, AllocateWithFixableOOM) {
+    constexpr size_t size = 256;
+    constexpr size_t alignment = 8;
+    void* nonNull = reinterpret_cast<void*>(1);
+    MockAllocatorWrapper baseAllocator;
+    testing::StrictMock<MockGC> gc;
+    {
+        testing::InSequence seq;
+        EXPECT_CALL(gc, SafePointAllocation(size));
+        EXPECT_CALL(*baseAllocator, Alloc(size, alignment)).WillOnce(testing::Return(nullptr));
+        EXPECT_CALL(gc, OnOOM(size));
+        EXPECT_CALL(*baseAllocator, Alloc(size, alignment)).WillOnce(testing::Return(nonNull));
+    }
+    AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
+    void* ptr = allocator.Alloc(size, alignment);
+    EXPECT_THAT(ptr, nonNull);
+}
+
+TEST(AllocatorWithGCTest, AllocateWithUnfixableOOM) {
+    constexpr size_t size = 256;
+    constexpr size_t alignment = 8;
+    MockAllocatorWrapper baseAllocator;
+    testing::StrictMock<MockGC> gc;
+    {
+        testing::InSequence seq;
+        EXPECT_CALL(gc, SafePointAllocation(size));
+        EXPECT_CALL(*baseAllocator, Alloc(size, alignment)).WillOnce(testing::Return(nullptr));
+        EXPECT_CALL(gc, OnOOM(size));
+        EXPECT_CALL(*baseAllocator, Alloc(size, alignment)).WillOnce(testing::Return(nullptr));
+    }
+    AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
+    void* ptr = allocator.Alloc(size, alignment);
+    EXPECT_THAT(ptr, nullptr);
+}
+
+namespace {
+
+class GC {
+public:
+    struct ObjectData {
+        uint32_t flags = 42;
+    };
+
+    class ThreadData {
+    public:
+        void SafePointAllocation(size_t size) noexcept {}
+
+        void OnOOM(size_t size) noexcept {}
+    };
+};
+
+using ObjectFactory = mm::ObjectFactory<GC>;
 
 KStdUniquePtr<TypeInfo> MakeObjectTypeInfo(int32_t size) {
     auto typeInfo = make_unique<TypeInfo>();
@@ -468,32 +582,42 @@ KStdUniquePtr<TypeInfo> MakeArrayTypeInfo(int32_t elementSize) {
 
 TEST(ObjectFactoryTest, CreateObject) {
     auto typeInfo = MakeObjectTypeInfo(24);
+    GC::ThreadData gc;
     ObjectFactory objectFactory;
-    ObjectFactory::ThreadQueue threadQueue(objectFactory);
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
 
     auto* object = threadQueue.CreateObject(typeInfo.get());
     threadQueue.Publish();
 
+    auto node = ObjectFactory::NodeRef::From(object);
+    EXPECT_FALSE(node.IsArray());
+    EXPECT_THAT(node.GetObjHeader(), object);
+    EXPECT_THAT(node.GCObjectData().flags, 42);
+
     auto iter = objectFactory.Iter();
     auto it = iter.begin();
-    EXPECT_FALSE(it.IsArray());
-    EXPECT_THAT(it.GetObjHeader(), object);
+    EXPECT_THAT(*it, node);
     ++it;
     EXPECT_THAT(it, iter.end());
 }
 
 TEST(ObjectFactoryTest, CreateArray) {
     auto typeInfo = MakeArrayTypeInfo(24);
+    GC::ThreadData gc;
     ObjectFactory objectFactory;
-    ObjectFactory::ThreadQueue threadQueue(objectFactory);
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
 
     auto* array = threadQueue.CreateArray(typeInfo.get(), 3);
     threadQueue.Publish();
 
+    auto node = ObjectFactory::NodeRef::From(array);
+    EXPECT_TRUE(node.IsArray());
+    EXPECT_THAT(node.GetArrayHeader(), array);
+    EXPECT_THAT(node.GCObjectData().flags, 42);
+
     auto iter = objectFactory.Iter();
     auto it = iter.begin();
-    EXPECT_TRUE(it.IsArray());
-    EXPECT_THAT(it.GetArrayHeader(), array);
+    EXPECT_THAT(*it, node);
     ++it;
     EXPECT_THAT(it, iter.end());
 }
@@ -501,8 +625,9 @@ TEST(ObjectFactoryTest, CreateArray) {
 TEST(ObjectFactoryTest, Erase) {
     auto objectTypeInfo = MakeObjectTypeInfo(24);
     auto arrayTypeInfo = MakeArrayTypeInfo(24);
+    GC::ThreadData gc;
     ObjectFactory objectFactory;
-    ObjectFactory::ThreadQueue threadQueue(objectFactory);
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
 
     for (int i = 0; i < 10; ++i) {
         threadQueue.CreateObject(objectTypeInfo.get());
@@ -514,7 +639,7 @@ TEST(ObjectFactoryTest, Erase) {
     {
         auto iter = objectFactory.Iter();
         for (auto it = iter.begin(); it != iter.end();) {
-            if (it.IsArray()) {
+            if (it->IsArray()) {
                 iter.EraseAndAdvance(it);
             } else {
                 ++it;
@@ -526,7 +651,7 @@ TEST(ObjectFactoryTest, Erase) {
         auto iter = objectFactory.Iter();
         int count = 0;
         for (auto it = iter.begin(); it != iter.end(); ++it, ++count) {
-            EXPECT_FALSE(it.IsArray());
+            EXPECT_FALSE(it->IsArray());
         }
         EXPECT_THAT(count, 10);
     }
@@ -544,7 +669,8 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
 
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&typeInfo, &objectFactory, &canStart, &readyCount, &expected, &expectedMutex]() {
-            ObjectFactory::ThreadQueue threadQueue(objectFactory);
+            GC::ThreadData gc;
+            ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
             auto* object = threadQueue.CreateObject(typeInfo.get());
             {
                 std::lock_guard<std::mutex> guard(expectedMutex);
@@ -567,7 +693,7 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     auto iter = objectFactory.Iter();
     KStdVector<ObjHeader*> actual;
     for (auto it = iter.begin(); it != iter.end(); ++it) {
-        actual.push_back(it.GetObjHeader());
+        actual.push_back(it->GetObjHeader());
     }
 
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));

@@ -8,6 +8,7 @@
 
 #include "ObjectFactory.hpp"
 #include "GlobalsRegistry.hpp"
+#include "GC.hpp"
 #include "StableRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
@@ -23,7 +24,8 @@ public:
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     StableRefRegistry& stableRefRegistry() noexcept { return stableRefRegistry_; }
-    ObjectFactory& objectFactory() noexcept { return objectFactory_; }
+    ObjectFactory<GC>& objectFactory() noexcept { return objectFactory_; }
+    GC& gc() noexcept { return gc_; }
 
 private:
     GlobalData();
@@ -34,7 +36,8 @@ private:
     ThreadRegistry threadRegistry_;
     GlobalsRegistry globalsRegistry_;
     StableRefRegistry stableRefRegistry_;
-    ObjectFactory objectFactory_;
+    ObjectFactory<GC> objectFactory_;
+    GC gc_;
 };
 
 } // namespace mm

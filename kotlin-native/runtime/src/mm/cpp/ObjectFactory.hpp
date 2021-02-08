@@ -25,11 +25,23 @@ namespace internal {
 
 // A queue that is constructed by collecting subqueues from several `Producer`s.
 // This is essentially a heterogeneous `MultiSourceQueue` on top of a singly linked list that
-// uses `konanAllocMemory` and `konanFreeMemory`
+// uses `Allocator` to allocate and free memory.
 // TODO: Consider merging with `MultiSourceQueue` somehow.
-template <size_t DataAlignment>
+template <size_t DataAlignment, typename Allocator>
 class ObjectFactoryStorage : private Pinned {
     static_assert(IsValidAlignment(DataAlignment), "DataAlignment is not a valid alignment");
+
+    template <typename T>
+    class Deleter {
+    public:
+        void operator()(T* instance) noexcept {
+            instance->~T();
+            Allocator::Free(instance);
+        }
+    };
+
+    template <typename T>
+    using unique_ptr = std::unique_ptr<T, Deleter<T>>;
 
 public:
     // This class does not know its size at compile-time. Does not inherit from `KonanAllocatorAware` because
@@ -39,6 +51,13 @@ public:
 
     public:
         ~Node() = default;
+
+        static Node& FromData(void* data) noexcept {
+            constexpr size_t kDataOffset = DataOffset();
+            Node* node = reinterpret_cast<Node*>(reinterpret_cast<uintptr_t>(data) - kDataOffset);
+            RuntimeAssert(node->Data() == data, "Node layout has broken");
+            return *node;
+        }
 
         // Note: This can only be trivially destructible data, as nobody can invoke its destructor.
         void* Data() noexcept {
@@ -59,37 +78,36 @@ public:
 
         Node() noexcept = default;
 
-        static KStdUniquePtr<Node> Create(size_t dataSize) noexcept {
+        static unique_ptr<Node> Create(Allocator& allocator, size_t dataSize) noexcept {
             size_t dataSizeAligned = AlignUp(dataSize, DataAlignment);
             size_t totalAlignment = std::max(alignof(Node), DataAlignment);
             size_t totalSize = AlignUp(sizeof(Node) + dataSizeAligned, totalAlignment);
             RuntimeAssert(
                     DataOffset() + dataSize <= totalSize, "totalSize %zu is not enough to fit data %zu at offset %zu", totalSize, dataSize,
                     DataOffset());
-            void* ptr = konanAllocAlignedMemory(totalSize, totalAlignment);
+            void* ptr = allocator.Alloc(totalSize, totalAlignment);
             if (!ptr) {
-                // TODO: Try doing GC first.
-                konan::consoleErrorf("Out of memory trying to allocate %zu. Aborting.\n", totalSize);
+                konan::consoleErrorf("Out of memory trying to allocate %zu bytes. Aborting.\n", totalSize);
                 konan::abort();
             }
             RuntimeAssert(IsAligned(ptr, totalAlignment), "Allocator returned unaligned to %zu pointer %p", totalAlignment, ptr);
-            return KStdUniquePtr<Node>(new (ptr) Node());
+            return unique_ptr<Node>(new (ptr) Node());
         }
 
-        KStdUniquePtr<Node> next_;
+        unique_ptr<Node> next_;
         // There's some more data of an unknown (at compile-time) size here, but it cannot be represented
         // with C++ members.
     };
 
     class Producer : private MoveOnly {
     public:
-        explicit Producer(ObjectFactoryStorage& owner) noexcept : owner_(owner) {}
+        Producer(ObjectFactoryStorage& owner, Allocator allocator) noexcept : owner_(owner), allocator_(std::move(allocator)) {}
 
         ~Producer() { Publish(); }
 
         Node& Insert(size_t dataSize) noexcept {
             AssertCorrect();
-            auto node = Node::Create(dataSize);
+            auto node = Node::Create(allocator_, dataSize);
             auto* nodePtr = node.get();
             if (!root_) {
                 root_ = std::move(node);
@@ -159,7 +177,8 @@ public:
         }
 
         ObjectFactoryStorage& owner_; // weak
-        KStdUniquePtr<Node> root_;
+        Allocator allocator_;
+        unique_ptr<Node> root_;
         Node* last_ = nullptr;
     };
 
@@ -245,35 +264,160 @@ private:
         }
     }
 
-    KStdUniquePtr<Node> root_;
+    unique_ptr<Node> root_;
     Node* last_ = nullptr;
     SpinLock mutex_;
 };
 
+class SimpleAllocator {
+public:
+    void* Alloc(size_t size, size_t alignment) noexcept { return konanAllocAlignedMemory(size, alignment); }
+
+    static void Free(void* instance) noexcept { konanFreeMemory(instance); }
+};
+
+template <typename BaseAllocator, typename GC>
+class AllocatorWithGC {
+public:
+    AllocatorWithGC(BaseAllocator base, GC& gc) noexcept : base_(std::move(base)), gc_(gc) {}
+
+    void* Alloc(size_t size, size_t alignment) noexcept {
+        gc_.SafePointAllocation(size);
+        if (void* ptr = base_.Alloc(size, alignment)) {
+            return ptr;
+        }
+        // Tell GC that we failed to allocate, and try one more time.
+        gc_.OnOOM(size);
+        return base_.Alloc(size, alignment);
+    }
+
+    static void Free(void* instance) noexcept { BaseAllocator::Free(instance); }
+
+private:
+    BaseAllocator base_;
+    GC& gc_;
+};
+
 } // namespace internal
 
+template <typename GC>
 class ObjectFactory : private Pinned {
+    using GCObjectData = typename GC::ObjectData;
+    using GCThreadData = typename GC::ThreadData;
+
+    using Allocator = internal::AllocatorWithGC<internal::SimpleAllocator, GCThreadData>;
+
+    struct HeapObjHeader {
+        GCObjectData gcData;
+        alignas(kObjectAlignment) ObjHeader object;
+    };
+
+    // Needs to be kept compatible with `HeapObjHeader` just like `ArrayHeader` is compatible
+    // with `ObjHeader`: the former can always be casted to the other.
+    struct HeapArrayHeader {
+        GCObjectData gcData;
+        alignas(kObjectAlignment) ArrayHeader array;
+    };
+
 public:
-    using Storage = internal::ObjectFactoryStorage<kObjectAlignment>;
+    using Storage = internal::ObjectFactoryStorage<kObjectAlignment, Allocator>;
+
+    class NodeRef {
+    public:
+        explicit NodeRef(typename Storage::Node& node) noexcept : node_(node) {}
+
+        static NodeRef From(ObjHeader* object) noexcept {
+            RuntimeAssert(object->heap(), "Must be a heap object");
+            auto* heapObject = reinterpret_cast<HeapObjHeader*>(reinterpret_cast<uintptr_t>(object) - offsetof(HeapObjHeader, object));
+            RuntimeAssert(&heapObject->object == object, "HeapObjHeader layout has broken");
+            return NodeRef(Storage::Node::FromData(heapObject));
+        }
+
+        static NodeRef From(ArrayHeader* array) noexcept {
+            // `ArrayHeader` and `ObjHeader` are kept compatible, so the former can
+            // be always casted to the other.
+            RuntimeAssert(reinterpret_cast<ObjHeader*>(array)->heap(), "Must be a heap object");
+            auto* heapArray = reinterpret_cast<HeapArrayHeader*>(reinterpret_cast<uintptr_t>(array) - offsetof(HeapArrayHeader, array));
+            RuntimeAssert(&heapArray->array == array, "HeapArrayHeader layout has broken");
+            return NodeRef(Storage::Node::FromData(heapArray));
+        }
+
+        NodeRef* operator->() noexcept { return this; }
+
+        GCObjectData& GCObjectData() noexcept {
+            // `HeapArrayHeader` and `HeapObjHeader` are kept compatible, so the former can
+            // be always casted to the other.
+            return static_cast<HeapObjHeader*>(node_.Data())->gcData;
+        }
+
+        bool IsArray() const noexcept {
+            // `HeapArrayHeader` and `HeapObjHeader` are kept compatible, so the former can
+            // be always casted to the other.
+            auto* object = &static_cast<HeapObjHeader*>(node_.Data())->object;
+            return object->type_info()->IsArray();
+        }
+
+        ObjHeader* GetObjHeader() noexcept {
+            auto* object = &static_cast<HeapObjHeader*>(node_.Data())->object;
+            RuntimeAssert(!object->type_info()->IsArray(), "Must not be an array");
+            return object;
+        }
+
+        ArrayHeader* GetArrayHeader() noexcept {
+            auto* array = &static_cast<HeapArrayHeader*>(node_.Data())->array;
+            RuntimeAssert(array->type_info()->IsArray(), "Must be an array");
+            return array;
+        }
+
+        bool operator==(const NodeRef& rhs) const noexcept { return &node_ == &rhs.node_; }
+
+        bool operator!=(const NodeRef& rhs) const noexcept { return !(*this == rhs); }
+
+    private:
+        typename Storage::Node& node_;
+    };
 
     class ThreadQueue : private MoveOnly {
     public:
-        explicit ThreadQueue(ObjectFactory& owner) noexcept : producer_(owner.storage_) {}
+        ThreadQueue(ObjectFactory& owner, GCThreadData& gc) noexcept :
+            producer_(owner.storage_, internal::AllocatorWithGC(internal::SimpleAllocator(), gc)) {}
 
-        ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept;
+        ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept {
+            RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
+            size_t membersSize = typeInfo->instanceSize_ - sizeof(ObjHeader);
+            size_t allocSize = AlignUp(sizeof(HeapObjHeader) + membersSize, kObjectAlignment);
+            auto& node = producer_.Insert(allocSize);
+            auto* heapObject = new (node.Data()) HeapObjHeader();
+            auto* object = &heapObject->object;
+            object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+            return object;
+        }
+
+        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
+            RuntimeAssert(typeInfo->IsArray(), "Must be an array");
+            uint32_t membersSize = static_cast<uint32_t>(-typeInfo->instanceSize_) * count;
+            // Note: array body is aligned, but for size computation it is enough to align the sum.
+            size_t allocSize = AlignUp(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
+            auto& node = producer_.Insert(allocSize);
+            auto* heapArray = new (node.Data()) HeapArrayHeader();
+            auto* array = &heapArray->array;
+            array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+            array->count_ = count;
+            return array;
+        }
 
         void Publish() noexcept { producer_.Publish(); }
 
         void ClearForTests() noexcept { producer_.ClearForTests(); }
 
     private:
-        Storage::Producer producer_;
+        typename Storage::Producer producer_;
     };
 
     class Iterator {
     public:
-        Storage::Node& operator*() noexcept { return *iterator_; }
+        NodeRef operator*() noexcept { return NodeRef(*iterator_); }
+        NodeRef operator->() noexcept { return NodeRef(*iterator_); }
 
         Iterator& operator++() noexcept {
             ++iterator_;
@@ -284,17 +428,12 @@ public:
 
         bool operator!=(const Iterator& rhs) const noexcept { return iterator_ != rhs.iterator_; }
 
-        bool IsArray() noexcept;
-
-        ObjHeader* GetObjHeader() noexcept;
-        ArrayHeader* GetArrayHeader() noexcept;
-
     private:
         friend class ObjectFactory;
 
-        explicit Iterator(Storage::Iterator iterator) noexcept : iterator_(std::move(iterator)) {}
+        explicit Iterator(typename Storage::Iterator iterator) noexcept : iterator_(std::move(iterator)) {}
 
-        Storage::Iterator iterator_;
+        typename Storage::Iterator iterator_;
     };
 
     class Iterable {
@@ -307,13 +446,11 @@ public:
         void EraseAndAdvance(Iterator& iterator) noexcept { iter_.EraseAndAdvance(iterator.iterator_); }
 
     private:
-        Storage::Iterable iter_;
+        typename Storage::Iterable iter_;
     };
 
-    ObjectFactory() noexcept;
-    ~ObjectFactory();
-
-    static ObjectFactory& Instance() noexcept;
+    ObjectFactory() noexcept = default;
+    ~ObjectFactory() = default;
 
     Iterable Iter() noexcept { return Iterable(*this); }
 

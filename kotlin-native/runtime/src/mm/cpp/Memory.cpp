@@ -253,6 +253,11 @@ extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
     // Nothing to do
 }
 
+extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().PerformFullGC();
+}
+
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
     ThrowIllegalArgumentException();
@@ -287,6 +292,10 @@ extern "C" bool Kotlin_Any_isShareable(ObjHeader* thiz) {
 extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
     // TODO: Remove when legacy MM is gone.
     // Nothing to do
+}
+
+extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
+    GetThreadData(memory)->gc().PerformFullGC();
 }
 
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
@@ -366,7 +375,22 @@ extern "C" void AdoptReferenceFromSharedVariable(ObjHeader* object) {
     // Nothing to do.
 }
 
-void CheckGlobalsAccessible() {
+extern "C" void CheckGlobalsAccessible() {
     // TODO: Remove when legacy MM is gone.
     // Always accessible
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionEpilogue() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().SafePointFunctionEpilogue();
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().SafePointLoopBody();
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_safePointExceptionUnwind() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().SafePointExceptionUnwind();
 }

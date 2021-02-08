@@ -9,7 +9,9 @@
 #include <atomic>
 #include <pthread.h>
 
+#include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
+#include "GC.hpp"
 #include "ObjectFactory.hpp"
 #include "ShadowStack.hpp"
 #include "StableRefRegistry.hpp"
@@ -32,7 +34,8 @@ public:
         globalsThreadQueue_(GlobalsRegistry::Instance()),
         stableRefThreadQueue_(StableRefRegistry::Instance()),
         state_(ThreadState::kRunnable),
-        objectFactoryThreadQueue_(ObjectFactory::Instance()) {}
+        gc_(GlobalData::Instance().gc()),
+        objectFactoryThreadQueue_(GlobalData::Instance().objectFactory(), gc_) {}
 
     ~ThreadData() = default;
 
@@ -48,11 +51,13 @@ public:
 
     ThreadState setState(ThreadState state) noexcept { return state_.exchange(state); }
 
-    ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
+    ObjectFactory<GC>::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
     KStdVector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+
+    GC::ThreadData& gc() noexcept { return gc_; }
 
 private:
     const pthread_t threadId_;
@@ -60,8 +65,9 @@ private:
     ThreadLocalStorage tls_;
     StableRefRegistry::ThreadQueue stableRefThreadQueue_;
     std::atomic<ThreadState> state_;
-    ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
     ShadowStack shadowStack_;
+    GC::ThreadData gc_;
+    ObjectFactory<GC>::ThreadQueue objectFactoryThreadQueue_;
     KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
 };
 
