@@ -59,6 +59,13 @@ public:
 
     GC::ThreadData& gc() noexcept { return gc_; }
 
+    void Publish() noexcept {
+        // TODO: These use separate locks, which is inefficient.
+        globalsThreadQueue_.Publish();
+        stableRefThreadQueue_.Publish();
+        objectFactoryThreadQueue_.Publish();
+    }
+
 private:
     const pthread_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;

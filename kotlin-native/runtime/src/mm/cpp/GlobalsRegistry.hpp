@@ -26,6 +26,9 @@ public:
 
     using Iterator = MultiSourceQueue<ObjHeader**>::Iterator;
 
+    GlobalsRegistry();
+    ~GlobalsRegistry();
+
     static GlobalsRegistry& Instance() noexcept;
 
     void RegisterStorageForGlobal(mm::ThreadData* threadData, ObjHeader** location) noexcept;
@@ -41,11 +44,6 @@ public:
     Iterable Iter() noexcept { return globals_.Iter(); }
 
 private:
-    friend class GlobalData;
-
-    GlobalsRegistry();
-    ~GlobalsRegistry();
-
     // TODO: Add-only MultiSourceQueue can be made more efficient. Measure, if it's a problem.
     MultiSourceQueue<ObjHeader**> globals_;
 };
