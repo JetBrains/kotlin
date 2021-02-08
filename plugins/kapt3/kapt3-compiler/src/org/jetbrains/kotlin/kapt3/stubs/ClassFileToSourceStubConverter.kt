@@ -1023,10 +1023,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val returnType = getNonErrorType(
             descriptor.returnType, RETURN_TYPE,
             ktTypeProvider = {
-                val element = kaptContext.origins[method]?.element
-                when (element) {
+                when (val element = kaptContext.origins[method]?.element) {
                     is KtFunction -> element.typeReference
                     is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    is KtPropertyAccessor -> if (descriptor is PropertyGetterDescriptor) element.property.typeReference else null
                     is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
                     else -> null
                 }
