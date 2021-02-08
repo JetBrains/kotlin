@@ -16,18 +16,14 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -47,10 +43,18 @@ class ComposableFunInterfaceLowering(private val context: IrPluginContext) :
             argument is IrFunctionExpression &&
             argument.origin.isLambda &&
             functionClass != null &&
-            functionClass.owner.isFun &&
-            functionClass.functions.single {
-                it.owner.modality == Modality.ABSTRACT
-            }.owner.annotations.hasAnnotation(ComposeFqNames.Composable)
+            functionClass.owner.isFun
+        // IMPORTANT(b/178663739):
+        // We are transforming not just SAM conversions for composable fun interfaces, but ALL
+        // fun interfaces temporarily until KT-44622 gets fixed in the version of kotlin we
+        // are using, which should be in 1.4.30.
+        // Once it does, we should either add the below additional condition to this predicate,
+        // or, if possible, remove this lowering all together if kotlin's lowering works for
+        // composable fun interfaces as well.
+        //
+        // functionClass.functions.single {
+        //    it.owner.modality == Modality.ABSTRACT
+        // }.owner.annotations.hasAnnotation(ComposeFqNames.Composable)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
