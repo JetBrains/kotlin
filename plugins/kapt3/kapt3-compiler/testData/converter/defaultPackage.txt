@@ -1,6 +1,19 @@
 import java.lang.System;
 
 @kotlin.Metadata()
+public final class AnotherRootClass {
+
+    public AnotherRootClass() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
 public final class RootClass {
 
     public RootClass() {
@@ -38,6 +51,9 @@ public abstract interface PackedClass {
 
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.Number otherMethod();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract AnotherRootClass oneMoreMethod();
 }
 
 ////////////////////
