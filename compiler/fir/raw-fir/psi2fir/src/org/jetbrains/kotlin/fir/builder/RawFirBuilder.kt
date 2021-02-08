@@ -862,9 +862,7 @@ class RawFirBuilder(
                         }
 
                         if (classOrObject.hasModifier(DATA_KEYWORD) && firPrimaryConstructor != null) {
-                            val zippedParameters = classOrObject.primaryConstructorParameters.zip(
-                                declarations.filterIsInstance<FirProperty>(),
-                            )
+                            val zippedParameters = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
                             DataClassMembersGenerator(
                                 baseSession,
                                 classOrObject,
@@ -877,7 +875,7 @@ class RawFirBuilder(
                                     // just making a shallow copy isn't enough type ref may be a function type ref
                                     // and contain value parameters inside
                                     withDefaultSourceElementKind(newKind) {
-                                        (property.returnTypeRef.psi as KtTypeReference).toFirOrImplicitType()
+                                        (property.returnTypeRef.psi as KtTypeReference?).toFirOrImplicitType()
                                     }
                                 },
                             ).generate()

@@ -244,6 +244,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeInFakeOverride.kt");
     }
 
+    @TestMetadata("incorrectDataClass.kt")
+    public void testIncorrectDataClass() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/incorrectDataClass.kt");
+    }
+
     @TestMetadata("incorrectSuperCall.kt")
     public void testIncorrectSuperCall() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/incorrectSuperCall.kt");

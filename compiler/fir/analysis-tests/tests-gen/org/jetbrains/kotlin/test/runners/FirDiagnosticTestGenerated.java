@@ -285,6 +285,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("incorrectDataClass.kt")
+        public void testIncorrectDataClass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/incorrectDataClass.kt");
+        }
+
+        @Test
         @TestMetadata("incorrectSuperCall.kt")
         public void testIncorrectSuperCall() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/incorrectSuperCall.kt");
