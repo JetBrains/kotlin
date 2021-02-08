@@ -79,7 +79,6 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         val loader = classLoader(
             """
            @file:OptIn(
-             ExperimentalComposeApi::class,
              InternalComposeApi::class,
              ComposeCompilerApi::class
            )

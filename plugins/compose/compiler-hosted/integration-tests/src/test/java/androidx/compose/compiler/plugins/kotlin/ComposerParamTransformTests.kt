@@ -34,13 +34,11 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     ) = verifyComposeIrTransform(
         """
             @file:OptIn(
-              ExperimentalComposeApi::class,
               InternalComposeApi::class,
               ComposeCompilerApi::class
             )
             package test
 
-            import androidx.compose.runtime.ExperimentalComposeApi
             import androidx.compose.runtime.InternalComposeApi
             import androidx.compose.runtime.ComposeCompilerApi
             import androidx.compose.runtime.Composable

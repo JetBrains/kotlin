@@ -2416,7 +2416,6 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             import androidx.compose.runtime.currentComposer
-            import androidx.compose.runtime.ExperimentalComposeApi
 
             open class Foo {
                 inline val current: Int
