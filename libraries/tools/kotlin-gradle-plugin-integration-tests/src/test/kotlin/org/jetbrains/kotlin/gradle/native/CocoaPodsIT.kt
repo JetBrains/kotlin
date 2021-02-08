@@ -309,6 +309,22 @@ class CocoaPodsIT : BaseGradleIT() {
         project.test(":kotlin-library:podDownload")
     }
 
+    @Test
+    fun errorIfVersionIsNotSpecified() {
+        with(project.gradleBuildScript()) {
+            useLines { lines ->
+                lines.filter { line -> "version = \"1.0\"" !in line }.joinToString(separator = "\n")
+            }.also { writeText(it) }
+        }
+        hooks.addHook {
+            assertContains("Cocoapods Integration requires version of this project to be specified.")
+        }
+
+        project.build(POD_IMPORT_TASK_NAME, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+            assertFailed()
+            hooks.trigger(this)
+        }
+    }
 
     // up-to-date tests
 
