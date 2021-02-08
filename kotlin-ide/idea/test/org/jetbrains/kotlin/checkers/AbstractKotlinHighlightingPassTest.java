@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 
@@ -89,10 +88,4 @@ public abstract class AbstractKotlinHighlightingPassTest extends KotlinLightCode
             }
         });
     }
-
-    @Override
-    protected String getTestDataPath() {
-        return KtTestUtil.getTestsRoot(this.getClass());
-    }
-
 }
