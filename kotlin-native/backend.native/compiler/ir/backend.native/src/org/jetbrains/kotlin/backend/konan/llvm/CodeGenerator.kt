@@ -140,7 +140,12 @@ internal inline fun generateFunction(
         name: String,
         block: FunctionGenerationContext.(FunctionGenerationContext) -> Unit
 ): LLVMValueRef {
-    val function = LLVMAddFunction(codegen.context.llvmModule, name, functionType)!!
+    val function = addLlvmFunctionWithDefaultAttributes(
+            codegen.context,
+            codegen.context.llvmModule!!,
+            name,
+            functionType
+    )
     generateFunction(codegen, function, startLocation = null, endLocation = null, code = block)
     return function
 }
@@ -1041,9 +1046,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 ObjectStorageKind.THREAD_LOCAL -> {
                     val valueGetterName = irClass.threadLocalObjectStorageGetterSymbolName
                     val valueGetterFunction = LLVMGetNamedFunction(context.llvmModule, valueGetterName)
-                            ?: LLVMAddFunction(context.llvmModule, valueGetterName,
-                                    functionType(kObjHeaderPtrPtr, false))
-                    call(valueGetterFunction!!,
+                            ?: addLlvmFunctionWithDefaultAttributes(
+                                    context,
+                                    context.llvmModule!!,
+                                    valueGetterName,
+                                    functionType(kObjHeaderPtrPtr, false)
+                            )
+                    call(valueGetterFunction,
                             listOf(),
                             resultLifetime = Lifetime.GLOBAL,
                             exceptionHandler = exceptionHandler)

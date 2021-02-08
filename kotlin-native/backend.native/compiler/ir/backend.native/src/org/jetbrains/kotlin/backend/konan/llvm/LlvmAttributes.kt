@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import llvm.LLVMAddTargetDependentFunctionAttr
-import llvm.LLVMValueRef
+import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -14,14 +13,29 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.konan.target.Family
 
-internal fun addLlvmAttributes(context: Context, irFunction: IrFunction, llvmFunction: LLVMValueRef) {
-    if (irFunction.returnType.isNothing()) {
-        setFunctionNoReturn(llvmFunction)
-    }
+internal fun addLlvmFunctionWithDefaultAttributes(
+        context: Context,
+        module: LLVMModuleRef,
+        name: String,
+        type: LLVMTypeRef
+): LLVMValueRef = LLVMAddFunction(module, name, type)!!.also {
+    addDefaultLlvmFunctionAttributes(context, it)
+}
 
+/**
+ * Mimics parts of clang's `CodeGenModule::getDefaultFunctionAttributes`
+ * that are required for Kotlin/Native compiler.
+ */
+private fun addDefaultLlvmFunctionAttributes(context: Context, llvmFunction: LLVMValueRef) {
     if (shouldEnforceFramePointer(context)) {
         // Note: this is default for clang on at least on iOS and macOS.
         enforceFramePointer(llvmFunction)
+    }
+}
+
+internal fun addLlvmAttributesForKotlinFunction(context: Context, irFunction: IrFunction, llvmFunction: LLVMValueRef) {
+    if (irFunction.returnType.isNothing()) {
+        setFunctionNoReturn(llvmFunction)
     }
 
     if (mustNotInline(context, irFunction)) {

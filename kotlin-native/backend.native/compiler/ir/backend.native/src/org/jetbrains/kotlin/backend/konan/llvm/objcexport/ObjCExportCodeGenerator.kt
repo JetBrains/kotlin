@@ -742,7 +742,12 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         debugInfo: Boolean = false,
         genBody: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
-    val result = LLVMAddFunction(context.llvmModule, "objc2kotlin", objCFunctionType(context, methodBridge))!!
+    val result = addLlvmFunctionWithDefaultAttributes(
+            context,
+            context.llvmModule!!,
+            "objc2kotlin",
+            objCFunctionType(context, methodBridge)
+    )
 
     val location = if (debugInfo) {
         setupBridgeDebugInfo(context, result)

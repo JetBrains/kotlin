@@ -233,7 +233,12 @@ private class ExportedElement(val kind: ElementKind,
                 val irClass = irSymbol.owner as IrClass
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 // Produce type getter.
-                val getTypeFunction = LLVMAddFunction(context.llvmModule, "${cname}_type", owner.kGetTypeFuncType)!!
+                val getTypeFunction = addLlvmFunctionWithDefaultAttributes(
+                        context,
+                        context.llvmModule!!,
+                        "${cname}_type",
+                        owner.kGetTypeFuncType
+                )
                 val builder = LLVMCreateBuilderInContext(llvmContext)!!
                 val bb = LLVMAppendBasicBlockInContext(llvmContext, getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)

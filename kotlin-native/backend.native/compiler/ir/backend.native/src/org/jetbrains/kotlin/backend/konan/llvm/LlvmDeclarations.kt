@@ -366,11 +366,15 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             } else {
                 "kfun:" + qualifyInternalName(declaration)
             }
-            val function = LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
 
-            addLlvmAttributes(context, declaration, function)
-
-            function
+            addLlvmFunctionWithDefaultAttributes(
+                    context,
+                    context.llvmModule!!,
+                    symbolName,
+                    llvmFunctionType
+            ).also {
+                addLlvmAttributesForKotlinFunction(context, declaration, it)
+            }
         }
 
         declaration.metadata = CodegenFunctionMetadata(
