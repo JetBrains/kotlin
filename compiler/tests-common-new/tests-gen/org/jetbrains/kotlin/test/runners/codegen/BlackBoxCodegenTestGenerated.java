@@ -35388,6 +35388,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("equalsForClassAndTypeParameterWithSameFqName.kt")
+            public void testEqualsForClassAndTypeParameterWithSameFqName() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/types/equalsForClassAndTypeParameterWithSameFqName.kt");
+            }
+
+            @Test
             @TestMetadata("innerGenericArguments.kt")
             public void testInnerGenericArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/types/innerGenericArguments.kt");

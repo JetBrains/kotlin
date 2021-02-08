@@ -28135,6 +28135,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/types/classifiersOfBuiltInTypes.kt");
             }
 
+            @TestMetadata("equalsForClassAndTypeParameterWithSameFqName.kt")
+            public void testEqualsForClassAndTypeParameterWithSameFqName() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/types/equalsForClassAndTypeParameterWithSameFqName.kt");
+            }
+
             @TestMetadata("innerGenericArguments.kt")
             public void testInnerGenericArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/types/innerGenericArguments.kt");
