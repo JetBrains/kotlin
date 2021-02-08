@@ -390,7 +390,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 .filterIsInstance(KonanProgram::class.java)
                 .forEach { program ->
                     program.tasks().forEach { compile ->
-                        compile.configure { runTask?.let { runTask.dependsOn(it) } }
+                        compile.configure { this@configure.runTask?.let { runTask.dependsOn(it) } }
                     }
                 }
         }
