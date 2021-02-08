@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.test.es6.semantics.AbstractIrJsTypeScriptExportES
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
+import org.jetbrains.kotlin.js.test.withIrPlugins.AbstractJsWithReplaceOriginalCallsIrPluginBoxTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
@@ -132,6 +133,12 @@ fun main(args: Array<String>) {
         testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsKlibBinaryCompatibilityTest> {
                 model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
+            testClass<AbstractJsWithReplaceOriginalCallsIrPluginBoxTest> {
+                model("ir/withPlugin/replaceOriginalCalls", targetBackend = TargetBackend.JS_IR)
             }
         }
     }
