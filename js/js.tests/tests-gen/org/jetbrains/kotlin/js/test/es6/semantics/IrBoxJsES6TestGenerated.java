@@ -1632,6 +1632,11 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
         }
 
+        @TestMetadata("overriddenChainNonExportIntermediate.kt")
+        public void testOverriddenChainNonExportIntermediate() throws Exception {
+            runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediate.kt");
+        }
+
         @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
         public void testOverriddenExternalMethodWithSameNameMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameNameMethod.kt");
