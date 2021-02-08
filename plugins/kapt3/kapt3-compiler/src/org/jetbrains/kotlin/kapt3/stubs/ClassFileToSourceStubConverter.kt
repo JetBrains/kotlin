@@ -1488,7 +1488,9 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private fun collectImportsFromRootPackage(): Map<KtFile, Set<String>> =
         kaptContext.compiledClasses.mapNotNull(::getFileForClass).distinct().map { file ->
             val importsFromRoot =
-                file.importDirectives.mapNotNull { im -> im.importPath?.fqName?.takeIf { it.isOneSegmentFQN() } }
+                file.importDirectives
+                    .filter { !it.isAllUnder }
+                    .mapNotNull { im -> im.importPath?.fqName?.takeIf { it.isOneSegmentFQN() } }
             file to importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
         }.toMap()
 
