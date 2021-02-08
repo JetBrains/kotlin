@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
-import androidx.compose.compiler.plugins.kotlin.composableTrackedContract
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -474,9 +473,7 @@ class ComposerLambdaMemoization(
             // Only memoize non-composable lambdas in a context we can use remember
             !functionContext.canRemember ||
             // Don't memoize inlined lambdas
-            expression.isInlineArgument() ||
-            // Don't memoize untracked function
-            !expression.isTracked()
+            expression.isInlineArgument()
         ) {
             return super.visitFunctionExpression(expression)
         }
@@ -659,7 +656,7 @@ class ComposerLambdaMemoization(
             // tracked parameter
             // If the lambda has no captures, then kotlin will turn it into a singleton instance,
             // which means that it will never change, thus does not need to be tracked.
-            val shouldBeTracked = expression.isTracked() && collector.captures.isNotEmpty()
+            val shouldBeTracked = collector.captures.isNotEmpty()
             putValueArgument(index++, irBuilder.irBoolean(shouldBeTracked))
 
             // sourceInformation parameter
@@ -825,10 +822,6 @@ class ComposerLambdaMemoization(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrExpression?.isNullOrStable() = this == null || stabilityOf(this).knownStable()
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrFunctionExpression.isTracked() =
-        function.descriptor.composableTrackedContract() != false
 }
 
 // This must match the highest value of FunctionXX which is current Function22
