@@ -45,7 +45,7 @@ fun createInteropLibrary(
             irVersion = KlibIrVersion.INSTANCE.toString()
     )
     val libFile = File(outputPath)
-    val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
+    val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")
     val layout = KonanLibraryLayoutForWriter(libFile, unzippedDir, target)
     KonanLibraryWriterImpl(
             moduleName,

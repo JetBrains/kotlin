@@ -58,7 +58,7 @@ fun buildLibrary(
 ): KonanLibraryLayout {
 
     val libFile = File(output)
-    val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
+    val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")
     val layout = KonanLibraryLayoutForWriter(libFile, unzippedDir, target)
     val library = KonanLibraryWriterImpl(
             moduleName,
