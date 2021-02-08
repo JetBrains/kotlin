@@ -153,6 +153,8 @@ tasks.withType(RunExternalTestGroup.class).configureEach {
     enableTwoStageCompilation = twoStageEnabled
 }
 
+ext.isExperimentalMM = project.globalTestArgs.contains("-memory-model") && project.globalTestArgs.contains("experimental")
+
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
     // backend.native/tests
@@ -812,7 +814,8 @@ task runtime_basic_simd(type: KonanLocalTest) {
 }
 
 task runtime_worker_random(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Uses workers.
+    enabled = (project.testTarget != 'wasm32') && // Uses workers.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/worker_random.kt"
 }
 
@@ -926,146 +929,170 @@ task empty_substring(type: KonanLocalTest) {
 }
 
 standaloneTest("cleaner_basic") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_basic.kt"
     flags = ['-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("cleaner_workers") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_workers.kt"
     flags = ['-tr', '-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("cleaner_in_main_with_checker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_in_main_with_checker.kt"
     goldValue = "42\n"
 }
 
 standaloneTest("cleaner_in_main_without_checker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_in_main_without_checker.kt"
     goldValue = ""
 }
 
 standaloneTest("cleaner_leak_without_checker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_leak_without_checker.kt"
     goldValue = ""
 }
 
 standaloneTest("cleaner_leak_with_checker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_leak_with_checker.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
 }
 
 standaloneTest("cleaner_in_tls_main_without_checker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_in_tls_main_without_checker.kt"
 }
 
 standaloneTest("cleaner_in_tls_main_with_checker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_in_tls_main_with_checker.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> (s =~ /Cleaner (0x)?[0-9a-fA-F]+ was disposed during program exit/).find() }
 }
 
 standaloneTest("cleaner_in_tls_worker") {
-    enabled = (project.testTarget != 'wasm32') // Cleaners need workers
+    enabled = (project.testTarget != 'wasm32') && // Cleaners need workers
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/cleaner_in_tls_worker.kt"
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("worker_bound_reference0") {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/concurrent/worker_bound_reference0.kt"
     flags = ['-tr']
 }
 
 task worker0(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "Got Input processed\nOK\n"
     source = "runtime/workers/worker0.kt"
 }
 
 task worker1(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "OK\n"
     source = "runtime/workers/worker1.kt"
 }
 
 task worker2(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "OK\n"
     source = "runtime/workers/worker2.kt"
 }
 
 task worker3(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "OK\n"
     source = "runtime/workers/worker3.kt"
 }
 
 task worker4(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "Got 42\nOK\n"
     source = "runtime/workers/worker4.kt"
 }
 
 // This tests changes main thread worker queue state, so better be executed alone.
 standaloneTest("worker5") {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "Got 3\nOK\n"
     source = "runtime/workers/worker5.kt"
 }
 
 task worker6(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "Got 42\nOK\n"
     source = "runtime/workers/worker6.kt"
 }
 
 task worker7(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "Input\nGot kotlin.Unit\nOK\n"
     source = "runtime/workers/worker7.kt"
 }
 
 task worker8(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))\nGot kotlin.Unit\nOK\n"
     source = "runtime/workers/worker8.kt"
 }
 
 task worker9(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "zzz\n42\nOK\nfirst 2\nsecond 3\nfrozen OK\n"
     source = "runtime/workers/worker9.kt"
 }
 
 task worker10(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "OK\ntrue\ntrue\n"
     source = "runtime/workers/worker10.kt"
 }
 
 task worker11(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "OK\n"
     source = "runtime/workers/worker11.kt"
 }
 
 standaloneTest("worker_threadlocal_no_leak") {
-    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
+    disabled = (project.testTarget == 'wasm32') || // Needs pthreads.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
 }
 
 task freeze0(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No workers on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No workers on WASM.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "frozen bit is true\n" +
             "Worker: SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))\n" +
             "Main: SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))\n" +
@@ -1074,19 +1101,22 @@ task freeze0(type: KonanLocalTest) {
 }
 
 task freeze1(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK, cannot mutate frozen\n"
     source = "runtime/workers/freeze1.kt"
 }
 
 task freeze_stress(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\n"
     source = "runtime/workers/freeze_stress.kt"
 }
 
 task freeze2(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue =
             "Worker 1: Hello world\n" + "Worker2: 42\n" +
             "Worker3: 239.0\n" + "Worker4: a\n" + "OK\n"
@@ -1094,30 +1124,35 @@ task freeze2(type: KonanLocalTest) {
 }
 
 task freeze3(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\n"
     source = "runtime/workers/freeze3.kt"
 }
 
 task freeze4(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\n"
     source = "runtime/workers/freeze4.kt"
 }
 
 task freeze5(type: KonanLocalTest) {
+    enabled = !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\n"
     source = "runtime/workers/freeze5.kt"
 }
 
 task freeze6(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\nOK\n"
     source = "runtime/workers/freeze6.kt"
 }
 
 task atomic0(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "35\n" + "20\n" + "OK\n"
     source = "runtime/workers/atomic0.kt"
 }
@@ -1129,46 +1164,54 @@ standaloneTest("atomic1") {
 }
 
 task lazy0(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "OK\n"
     source = "runtime/workers/lazy0.kt"
 }
 
 task lazy1(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Need exceptions.
+    enabled = (project.testTarget != 'wasm32') && // Need exceptions.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\n"
     source = "runtime/workers/lazy1.kt"
 }
 
 standaloneTest("lazy2") {
+    enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
     goldValue = "123\nOK\n"
     source = "runtime/workers/lazy2.kt"
 }
 
 standaloneTest("lazy3") {
+    enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
     source = "runtime/workers/lazy3.kt"
 }
 
 task mutableData1(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads. Need exceptions
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads. Need exceptions
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/workers/mutableData1.kt"
 }
 
 task enumIdentity(type: KonanLocalTest) {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+        !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     goldValue = "true\n"
     source = "runtime/workers/enum_identity.kt"
 }
 
 standaloneTest("leakWorker") {
-    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
+    disabled = (project.testTarget == 'wasm32') || // Needs pthreads.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/workers/leak_worker.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Unfinished workers detected, 1 workers leaked!") }
 }
 
 standaloneTest("leakMemoryWithWorkerTermination") {
-    disabled = (project.testTarget == 'wasm32') // Needs pthreads.
+    disabled = (project.testTarget == 'wasm32') || // Needs pthreads.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/workers/leak_memory_with_worker_termination.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
@@ -1251,6 +1294,7 @@ task enum_nested(type: KonanLocalTest) {
 }
 
 task enum_isFrozen(type: KonanLocalTest) {
+    enabled = !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "true\n"
     source = "codegen/enum/isFrozen.kt"
 }
@@ -2001,7 +2045,8 @@ task typed_array0(type: KonanLocalTest) {
 }
 
 task typed_array1(type: KonanLocalTest) {
-    enabled  = (project.testTarget != 'wasm32')  // No exceptions on WASM.
+    enabled  = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "OK\n"
     source = "runtime/collections/typed_array1.kt"
 }
@@ -2647,21 +2692,24 @@ standaloneTest("args0") {
 }
 
 standaloneTest("devirtualization_lateinitInterface") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        isExperimentalMM // Experimental MM does not support -opt yet.
     goldValue = "42\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
 }
 
 standaloneTest("devirtualization_getter_looking_as_box_function") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        isExperimentalMM // Experimental MM does not support -opt yet.
     goldValue = "box\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("devirtualization_anonymousObject") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        isExperimentalMM // Experimental MM does not support -opt yet.
     goldValue = "zzz\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/anonymousObject.kt"
@@ -2857,7 +2905,8 @@ task initializers5(type: KonanLocalTest) {
 }
 
 task initializers6(type: KonanLocalTest) {
-    disabled = project.testTarget == 'wasm32' // Needs workers.
+    disabled = (project.testTarget == 'wasm32') || // Needs workers.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/basic/initializers6.kt"
 }
 
@@ -2915,11 +2964,13 @@ task memory_escape1(type: KonanLocalTest) {
 }
 
 task memory_cycles0(type: KonanLocalTest) {
+    enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
     goldValue = "42\n"
     source = "runtime/memory/cycles0.kt"
 }
 
 task memory_cycles1(type: KonanLocalTest) {
+    enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
     source = "runtime/memory/cycles1.kt"
 }
 
@@ -2933,6 +2984,7 @@ task memory_escape2(type: KonanLocalTest) {
 }
 
 task memory_weak0(type: KonanLocalTest) {
+    enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
     goldValue = "Data(s=Hello)\nnull\nOK\n"
     source = "runtime/memory/weak0.kt"
 }
@@ -2943,17 +2995,20 @@ task memory_weak1(type: KonanLocalTest) {
 }
 
 standaloneTest("memory_only_gc") {
+    enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
     source = "runtime/memory/only_gc.kt"
 }
 
 task memory_stable_ref_cross_thread_check(type: KonanLocalTest) {
-    disabled = project.testTarget == 'wasm32' // Needs workers.
+    disabled = (project.testTarget == 'wasm32') || // Needs workers.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "runtime/memory/stable_ref_cross_thread_check.kt"
 }
 
 standaloneTest("cycle_detector") {
     disabled = project.globalTestArgs.contains('-opt') || // Needs debug build.
-               (project.testTarget == 'wasm32') // CycleDetector is disabled on WASM.
+               (project.testTarget == 'wasm32') || // CycleDetector is disabled on WASM.
+               isExperimentalMM  // Experimental MM will not support CycleDetector.
     flags = ['-tr', '-g']
     source = "runtime/memory/cycle_detector.kt"
 }
@@ -2970,15 +3025,19 @@ standaloneTest("cycle_collector_deadlock1") {
 
 standaloneTest("leakMemory") {
     source = "runtime/memory/leak_memory.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+    if (!isExperimentalMM) { // Experimental MM will not report memory leaks.
+        expectedExitStatusChecker = { it != 0 }
+        outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+    }
 }
 
 standaloneTest("leakMemoryWithTestRunner") {
     source = "runtime/memory/leak_memory_test_runner.kt"
     flags = ['-tr']
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+    if (!isExperimentalMM) { // Experimental MM will not report memory leaks.
+        expectedExitStatusChecker = { it != 0 }
+        outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+    }
 }
 
 standaloneTest("mpp1") {
@@ -3614,7 +3673,8 @@ tasks.register("driver0", KonanDriverTest) {
 }
 
 tasks.register("driver_opt", KonanDriverTest) {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        isExperimentalMM // Experimental MM does not support -opt yet.
     goldValue = "Hello, world!\n"
     source = "runtime/basic/driver0.kt"
     flags = ["-opt"]
@@ -4170,13 +4230,15 @@ dynamicTest("interop_kt43502") {
 }
 
 interopTest("interop_leakMemoryWithRunningThreadUnchecked") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     interop = 'leakMemoryWithRunningThread'
     source = "interop/leakMemoryWithRunningThread/unchecked.kt"
 }
 
 interopTest("interop_leakMemoryWithRunningThreadChecked") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     interop = 'leakMemoryWithRunningThread'
     source = "interop/leakMemoryWithRunningThread/checked.kt"
     expectedExitStatusChecker = { it != 0 }
@@ -4219,6 +4281,7 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
+        enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
         goldValue = "84\nFoo\nDeallocated\n" +
                 "Hello, World!\nKotlin says: Hello, everybody!\nHello from Kotlin\n2, 1\n" +
                 "true\ntrue\n" +
@@ -4253,6 +4316,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
+        enabled = !isExperimentalMM  // Experimental MM does not have a GC yet.
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -4370,6 +4434,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_illegal_sharing_with_weak") {
+        enabled = !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
         source = "interop/objc/illegal_sharing_with_weak/main.kt"
         interop = 'objc_illegal_sharing_with_weak'
 
@@ -4382,6 +4447,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_kt42172") {
+        enabled = !isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
         source = "interop/objc/kt42172/main.kt"
         interop = "objc_kt42172"
         flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
@@ -4432,7 +4498,8 @@ standaloneTest("interop_zlib") {
 
 standaloneTest("interop_objc_illegal_sharing") {
     dependsOnPlatformLibs(it)
-    disabled = !isAppleTarget(project)
+    disabled = !isAppleTarget(project) ||
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/objc/illegal_sharing.kt"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = {
@@ -4498,7 +4565,8 @@ dynamicTest("interop_kt42397") {
 }
 
 dynamicTest("interop_cleaners_main_thread") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.target.name != project.hostName) ||
+        isExperimentalMM  // Experimental MM does not have a GC yet.
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/main_thread.cpp"
     clangTool = "clang++"
@@ -4507,7 +4575,8 @@ dynamicTest("interop_cleaners_main_thread") {
 }
 
 dynamicTest("interop_cleaners_second_thread") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.target.name != project.hostName) ||
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/second_thread.cpp"
     clangTool = "clang++"
@@ -4525,7 +4594,8 @@ dynamicTest("interop_cleaners_leak") {
 }
 
 dynamicTest("interop_migrating_main_thread_legacy") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.target.name != project.hostName) ||
+        isExperimentalMM  // Experimental MM will not support legacy destroy runtime mode.
     source = "interop/migrating_main_thread/lib.kt"
     flags = ['-Xdestroy-runtime-mode=legacy']
     clangFlags = ['-DIS_LEGACY']
@@ -4534,7 +4604,8 @@ dynamicTest("interop_migrating_main_thread_legacy") {
 }
 
 dynamicTest("interop_migrating_main_thread") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.target.name != project.hostName) ||
+        isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/migrating_main_thread/lib.kt"
     flags = ['-Xdestroy-runtime-mode=on-shutdown']
     cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
@@ -4542,7 +4613,8 @@ dynamicTest("interop_migrating_main_thread") {
 }
 
 dynamicTest("interop_memory_leaks") {
-    disabled = (project.target.name != project.hostName)
+    disabled = (project.target.name != project.hostName) ||
+        isExperimentalMM  // Experimental MM will not support legacy destroy runtime mode.
     source = "interop/memory_leaks/lib.kt"
     cSource = "$projectDir/interop/memory_leaks/main.cpp"
     clangTool = "clang++"
@@ -4682,6 +4754,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 
 if (isAppleTarget(project)) {
     frameworkTest('testObjCExport') {
+        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
         final String frameworkName = 'Kt'
         final String dir = "$testOutputFramework/testObjCExport"
         final File lazyHeader = file("$dir/$target-lazy.h")
@@ -4731,6 +4804,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest('testObjCExportStatic') {
+        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
         final String frameworkName = 'KtStatic'
         final String frameworkArtifactName = 'Kt'
         final String libraryName = frameworkName + "Library"
@@ -4768,6 +4842,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testStdlibFramework") {
+        enabled = !isExperimentalMM // Experimental MM does not have GC yet.
         framework('Stdlib') {
             sources = ['framework/stdlib']
             bitcode = true
@@ -4988,7 +5063,8 @@ tasks.register("metadata_compare_unable_to_import", MetadataComparisonTest) {
 }
 
 standaloneTest("local_ea_arraysfieldwrite") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+        isExperimentalMM // Experimental MM does not support -opt yet.
     goldValue = "Array (constructor init):\nSize: 2\nContents: [1, 2]\n" +
             "Array (constructor init):\nSize: 2\nContents: [3, 4]\n" +
             "Array (default value init):\nSize: 2\nContents: [1, 2]\n" +
@@ -5061,7 +5137,8 @@ private void configureStdlibTest(KonanGTest task, boolean inWorker) {
     task.useFilter = false
     task.testLogger = KonanTest.Logger.GTEST
     task.finalizedBy("resultsTask")
-    task.enabled = (project.testTarget != 'wasm32')  // Uses exceptions
+    task.enabled = (project.testTarget != 'wasm32') && // Uses exceptions
+        (!inWorker || !ext.isExperimentalMM)  // Experimental MM doesn't support multiple mutators yet.
 }
 
 /**
