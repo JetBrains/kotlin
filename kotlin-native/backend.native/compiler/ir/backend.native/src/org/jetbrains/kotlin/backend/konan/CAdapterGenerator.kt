@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 private enum class ScopeKind {
     TOP,
@@ -466,12 +465,7 @@ private class ExportedElement(val kind: ElementKind,
 
     private fun addUsedType(type: KotlinType, set: MutableSet<ClassDescriptor>) {
         if (type.constructor.declarationDescriptor is TypeParameterDescriptor) return
-        val clazz = TypeUtils.getClassDescriptor(type)
-        if (clazz == null) {
-            context.reportCompilationWarning("cannot get class for $type")
-        } else {
-            set += clazz
-        }
+        set.addIfNotNull(TypeUtils.getClassDescriptor(type))
     }
 
     fun addUsedTypes(set: MutableSet<ClassDescriptor>) {
@@ -602,10 +596,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         return true
     }
 
-    override fun visitScriptDescriptor(descriptor: ScriptDescriptor, ignored: Void?): Boolean {
-        context.reportCompilationWarning("visitScriptDescriptor() is ignored")
-        return true
-    }
+    override fun visitScriptDescriptor(descriptor: ScriptDescriptor, ignored: Void?) = true
 
     override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, ignored: Void?): Boolean {
         if (descriptor.module !in moduleDescriptors) return true
@@ -623,15 +614,9 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         TODO("visitReceiverParameterDescriptor() shall not be seen")
     }
 
-    override fun visitVariableDescriptor(descriptor: VariableDescriptor, ignored: Void?): Boolean {
-        context.reportCompilationWarning("visitVariableDescriptor() is ignored for now")
-        return true
-    }
+    override fun visitVariableDescriptor(descriptor: VariableDescriptor, ignored: Void?) = true
 
-    override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, ignored: Void?): Boolean {
-        context.reportCompilationWarning("visitTypeParameterDescriptor() is ignored for now")
-        return true
-    }
+    override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, ignored: Void?) = true
 
     private val seenPackageFragments = mutableSetOf<PackageFragmentDescriptor>()
     private var currentPackageFragments: List<PackageFragmentDescriptor> = emptyList()
@@ -641,10 +626,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         TODO("Shall not be called directly")
     }
 
-    override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, ignored: Void?): Boolean {
-        context.reportCompilationWarning("visitTypeAliasDescriptor() is ignored for now")
-        return true
-    }
+    override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, ignored: Void?) = true
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
         val fqName = descriptor.fqName
