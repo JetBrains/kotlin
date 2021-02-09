@@ -8,7 +8,7 @@ plugins {
 
 repositories {
     jcenter()
-    maven("https://dl.bintray.com/kotlin/ktor")
+    mavenCentral()
 }
 
 val hostOs = System.getProperty("os.name")
