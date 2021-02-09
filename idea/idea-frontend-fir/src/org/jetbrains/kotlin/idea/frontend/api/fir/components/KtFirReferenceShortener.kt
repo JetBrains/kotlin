@@ -216,24 +216,23 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
 
         if (wholeTypeElement.qualifier == null) return
 
-        collectTypeIfNeedsToBeShortened(wholeClassifierId, wholeTypeElement)
+        findTypeToShorten(wholeClassifierId, wholeTypeElement)?.let(::addElementToShorten)
     }
 
-    private fun collectTypeIfNeedsToBeShortened(wholeClassifierId: ClassId, wholeTypeElement: KtUserType) {
+    private fun findTypeToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): ShortenType? {
         val allClassIds = wholeClassifierId.outerClassesWithSelf
         val allTypeElements = wholeTypeElement.qualifiersWithSelf
 
-        val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport) ?: return
+        val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport) ?: return null
 
         for ((classId, typeElement) in allClassIds.zip(allTypeElements)) {
             // if qualifier is null, then this type have no package and thus cannot be shortened
-            if (typeElement.qualifier == null) return
+            if (typeElement.qualifier == null) return null
 
             val firstFoundClass = shorteningContext.findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
 
             if (firstFoundClass == classId) {
-                addElementToShorten(ShortenType(typeElement))
-                return
+                return ShortenType(typeElement)
             }
         }
 
@@ -245,20 +244,18 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             "If this condition were true, we would have exited from the loop on the last iteration. ClassId = $mostTopLevelClassId"
         }
 
-        if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-            addElementToShorten(ShortenType(mostTopLevelTypeElement, mostTopLevelClassId.asSingleFqName()))
+        return if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
+            ShortenType(mostTopLevelTypeElement, mostTopLevelClassId.asSingleFqName())
         } else {
-            addFakePackagePrefixToShortenIfPresent(mostTopLevelTypeElement)
+            findFakePackageToShorten(mostTopLevelTypeElement)
         }
     }
 
-    private fun addFakePackagePrefixToShortenIfPresent(typeElement: KtUserType) {
+    private fun findFakePackageToShorten(typeElement: KtUserType): ShortenType? {
         val deepestTypeWithQualifier = typeElement.qualifiersWithSelf.last().parent as? KtUserType
             ?: error("Type element should have at least one qualifier, instead it was ${typeElement.text}")
 
-        if (deepestTypeWithQualifier.hasFakeRootPrefix()) {
-            addElementToShorten(ShortenType(deepestTypeWithQualifier))
-        }
+        return if (deepestTypeWithQualifier.hasFakeRootPrefix()) ShortenType(deepestTypeWithQualifier) else null
     }
 
     private fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -269,11 +266,14 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             else -> return
         }
 
-        collectQualifierIfNeedsToBeShortened(wholeClassQualifier, wholeQualifierElement)
+        findTypeQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
     }
 
-    private fun collectQualifierIfNeedsToBeShortened(wholeClassQualifier: ClassId, wholeQualifierElement: KtDotQualifiedExpression) {
-        val positionScopes = shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport) ?: return
+    private fun findTypeQualifierToShorten(
+        wholeClassQualifier: ClassId,
+        wholeQualifierElement: KtDotQualifiedExpression
+    ): ShortenQualifier? {
+        val positionScopes = shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport) ?: return null
 
         val allClassIds = wholeClassQualifier.outerClassesWithSelf
         val allQualifiers = wholeQualifierElement.qualifiersWithSelf
@@ -282,8 +282,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             val firstFoundClass = shorteningContext.findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
 
             if (firstFoundClass == classId) {
-                addElementToShorten(ShortenQualifier(qualifier))
-                return
+                return ShortenQualifier(qualifier)
             }
         }
 
@@ -294,10 +293,10 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             "If this condition were true, we would have exited from the loop on the last iteration. ClassId = $mostTopLevelClassId"
         }
 
-        if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-            addElementToShorten(ShortenQualifier(mostTopLevelQualifier, mostTopLevelClassId.asSingleFqName()))
+        return if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
+            ShortenQualifier(mostTopLevelQualifier, mostTopLevelClassId.asSingleFqName())
         } else {
-            addFakePackagePrefixToShortenIfPresent(mostTopLevelQualifier)
+            findFakePackageToShorten(mostTopLevelQualifier)
         }
     }
 
@@ -327,18 +326,16 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         val scopes = shorteningContext.findScopesAtPosition(callExpression, namesToImport) ?: return
         val availableCallables = shorteningContext.findFunctionsInScopes(scopes, callableId.callableName)
 
-        when {
+        val callToShorten = when {
             availableCallables.isEmpty() -> {
-                val additionalImport = callableId.asImportableFqName() ?: return
-                addElementToShorten(ShortenQualifier(qualifiedCallExpression, additionalImport))
+                val additionalImport = callableId.asImportableFqName()
+                additionalImport?.let { ShortenQualifier(qualifiedCallExpression, it) }
             }
-            availableCallables.all { it.callableId == callableId } -> {
-                addElementToShorten(ShortenQualifier(qualifiedCallExpression))
-            }
-            else -> {
-                addFakePackagePrefixToShortenIfPresent(qualifiedCallExpression)
-            }
+            availableCallables.all { it.callableId == callableId } -> ShortenQualifier(qualifiedCallExpression)
+            else -> findFakePackageToShorten(qualifiedCallExpression)
         }
+
+        callToShorten?.let(::addElementToShorten)
     }
 
     private fun canBePossibleToDropReceiver(functionCall: FirFunctionCall): Boolean {
@@ -384,11 +381,9 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             ?: error("Expected all candidates to have same callableId, but got: ${distinctCandidates.map { it.callableId }}")
     }
 
-    private fun addFakePackagePrefixToShortenIfPresent(wholeQualifiedExpression: KtDotQualifiedExpression) {
+    private fun findFakePackageToShorten(wholeQualifiedExpression: KtDotQualifiedExpression): ShortenQualifier? {
         val deepestQualifier = wholeQualifiedExpression.qualifiersWithSelf.last()
-        if (deepestQualifier.hasFakeRootPrefix()) {
-            addElementToShorten(ShortenQualifier(deepestQualifier))
-        }
+        return if (deepestQualifier.hasFakeRootPrefix()) ShortenQualifier(deepestQualifier) else null
     }
 
     private fun addElementToShorten(element: ElementToShorten) {
