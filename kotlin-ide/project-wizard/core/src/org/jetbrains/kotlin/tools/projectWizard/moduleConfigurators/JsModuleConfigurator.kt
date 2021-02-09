@@ -108,16 +108,14 @@ interface JsBrowserBasedConfigurator {
             settingsValue(module, cssSupport)
 
         fun GradleIRListBuilder.browserSubTarget(module: Module, reader: Reader) {
+            if (reader.isApplication(module)) {
+                applicationSupport()
+            }
             "browser" {
                 if (reader.isApplication(module)) {
-                    applicationSupport()
                     if (reader.hasCssSupport(module)) {
                         applicationCssSupport()
                     }
-                }
-                if (reader.settingValue(module, ModuleConfiguratorWithTests.testFramework) != KotlinTestFramework.NONE
-                ) {
-                    testTask(cssSupport = reader.hasCssSupport(module))
                 }
             }
         }
@@ -127,10 +125,10 @@ interface JsBrowserBasedConfigurator {
 interface JsNodeBasedConfigurator {
     companion object : ModuleConfiguratorSettings() {
         fun GradleIRListBuilder.nodejsSubTarget(module: Module, reader: Reader) {
+            if (reader.isApplication(module)) {
+                applicationSupport()
+            }
             "nodejs" {
-                if (reader.isApplication(module)) {
-                    applicationSupport()
-                }
             }
         }
     }
@@ -215,21 +213,7 @@ fun GradleIRListBuilder.applicationSupport() {
 }
 
 fun GradleIRListBuilder.applicationCssSupport() {
-    "webpackTask" {
+    "commonWebpackConfig" {
         +"cssSupport.enabled = true"
-    }
-    "runTask" {
-        +"cssSupport.enabled = true"
-    }
-}
-
-fun GradleIRListBuilder.testTask(cssSupport: Boolean) {
-    "testTask" {
-        "useKarma" {
-            +"useChromeHeadless()"
-            if (cssSupport) {
-                +"webpackConfig.cssSupport.enabled = true"
-            }
-        }
     }
 }
