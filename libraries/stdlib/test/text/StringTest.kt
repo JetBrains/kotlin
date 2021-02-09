@@ -1703,4 +1703,42 @@ ${"    "}
             assertEquals(hashSetOf('1', '2', '3', '4', '5'), it.toHashSet())
         }
     }
+
+    @Test
+    fun lowercase() {
+        assertEquals("", "".lowercase())
+
+        // ASCII
+        for (index in 0..25) {
+            val lower = ('a' + index).toString()
+            val upper = ('A' + index).toString()
+            assertEquals(lower, lower.lowercase())
+            assertEquals(lower, upper.lowercase())
+        }
+
+        // Incorrect surrogate chars
+        assertEquals("\uDE5F\uD801\uDC4F\uDCB0\uD806\uD81B", "\uDE5F\uD801\uDC27\uDCB0\uD806\uD81B".lowercase())
+    }
+
+    @Test
+    fun uppercase() {
+        assertEquals("", "".uppercase())
+
+        // ASCII
+        for (index in 0..25) {
+            val lower = ('a' + index).toString()
+            val upper = ('A' + index).toString()
+            assertEquals(upper, lower.uppercase())
+            assertEquals(upper, upper.uppercase())
+        }
+
+        // Surrogate pairs
+        assertEquals("\uD802\uDEBC\uD801\uDC00", "\uD802\uDEBC\uD801\uDC28".uppercase())
+
+        // Incorrect surrogate chars
+        assertEquals("\uDEBC\uD801\uDC00\uD802", "\uDEBC\uD801\uDC28\uD802".uppercase())
+
+        // Special Casing
+        assertEquals("\u0399\u0308\u0301\u0053\u0053", "\u0390\u00DF".uppercase())
+    }
 }
