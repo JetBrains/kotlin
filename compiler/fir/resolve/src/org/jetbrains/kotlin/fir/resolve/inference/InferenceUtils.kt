@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -248,7 +247,15 @@ fun extractLambdaInfoFromFunctionalType(
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
     val receiverType = argument.receiverType ?: expectedType.receiverType(session)
-    val returnType = argument.returnType ?: expectedType.returnType(session) ?: return null
+    val lastStatement = argument.body?.statements?.singleOrNull()
+    val returnType =
+        // Simply { }, i.e., function literals without body. Raw FIR added an implicit return with an implicit unit type ref.
+        if (lastStatement?.source?.kind is FirFakeSourceElementKind.ImplicitReturn &&
+            (lastStatement as? FirReturnExpression)?.result?.source?.kind is FirFakeSourceElementKind.ImplicitUnit
+        ) {
+            session.builtinTypes.unitType.type
+        } else
+            argument.returnType ?: expectedType.returnType(session) ?: return null
     val parameters = extractLambdaParameters(expectedType, argument, expectedType.isExtensionFunctionType(session), session)
 
     return ResolvedLambdaAtom(

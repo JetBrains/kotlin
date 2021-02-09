@@ -14,6 +14,6 @@ fun <T : ILength> bar(a: (Int) -> T) {
 }
 
 fun test() {
-    foo<String> { }
-    bar<Impl> { }
+    <!INAPPLICABLE_CANDIDATE!>foo<!><String> { }
+    <!INAPPLICABLE_CANDIDATE!>bar<!><Impl> { }
 }
