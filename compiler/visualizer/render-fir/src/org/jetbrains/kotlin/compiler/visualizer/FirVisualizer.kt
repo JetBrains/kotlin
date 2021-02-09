@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
@@ -171,7 +172,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             renderVariableType(multiDeclarationEntry)
 
         override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
-            annotationEntry.firstOfTypeWithRender<FirAnnotationCall>()
+            annotationEntry.firstOfTypeWithRender<FirAnnotationCall>(annotationEntry.children.first())
             super.visitAnnotationEntry(annotationEntry)
         }
 
@@ -288,11 +289,13 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun removeCurrentFilePackage(fqName: String): String {
-            return if (fqName.startsWith(filePackage) && !fqName.substring(filePackage.length + 1).contains("/")) {
-                fqName.replaceFirst("$filePackage/", "")
-            } else {
-                fqName
+            val withoutPackage = when {
+                fqName.startsWith(filePackage) && !fqName.substring(filePackage.length + 1).contains("/") ->
+                    fqName.replaceFirst("$filePackage/", "")
+                else -> fqName
             }
+
+            return withoutPackage.let { if (it.startsWith("/")) it.substring(1) else it }
         }
 
         private fun ClassId.getWithoutCurrentPackage() = removeCurrentFilePackage(this.asString())
@@ -310,8 +313,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             arguments.joinTo(data, ", ", "(", ")") {
                 if (it is FirResolvedQualifier) {
                     val lookupTag = (it.typeRef as FirResolvedTypeRef).coneTypeSafe<ConeClassLikeType>()?.lookupTag
-                    val type = lookupTag?.let {
-                        (symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
+                    val type = lookupTag?.let { tag ->
+                        (symbolProvider.getSymbolByLookupTag(tag)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
                     }
                     if (type != null) return@joinTo type
                 }
@@ -323,9 +326,21 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             element.acceptChildren(this, data)
         }
 
+        private fun visitConstructor(calleeReference: FirReference, data: StringBuilder) {
+            if (calleeReference !is FirResolvedNamedReference) {
+                data.append("[ERROR: Unresolved]")
+            } else {
+                visitConstructor(calleeReference.resolvedSymbol.fir as FirConstructor, data)
+            }
+        }
+
         override fun visitConstructor(constructor: FirConstructor, data: StringBuilder) {
             data.append(renderSymbol(constructor.symbol))
             visitValueParameters(constructor.valueParameters, data)
+        }
+
+        override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: StringBuilder) {
+            visitTypeParameter(typeParameterRef.symbol.fir, data)
         }
 
         override fun visitTypeParameter(typeParameter: FirTypeParameter, data: StringBuilder) {
@@ -356,9 +371,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitValueParameter(valueParameter: FirValueParameter, data: StringBuilder) {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
+                valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.let { data.append(it.render()) }
+            } else {
+                valueParameter.returnTypeRef.accept(this, data)
             }
-            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.let { data.append(it.render()) }
-                ?: valueParameter.returnTypeRef.accept(this, data)
             valueParameter.defaultValue?.let { data.append(" = ...") }
         }
 
@@ -380,21 +396,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: StringBuilder) {
-            data.append(annotationCall.annotationTypeRef.render())
+            val reference = annotationCall.calleeReference
+            visitConstructor(reference, data)
         }
 
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: StringBuilder) {
             val coneClassType = delegatedConstructorCall.constructedTypeRef.coneTypeSafe<ConeClassLikeType>()
             if (coneClassType != null) {
-                data.append("constructor").append(" ")
-
-                data.append(coneClassType.lookupTag.classId.getWithoutCurrentPackage())
-
-                val typeParameters =
-                    (symbolProvider.getSymbolByLookupTag(coneClassType.lookupTag)?.fir as? FirRegularClass)
-                        ?.typeParameters ?: emptyList()
-                renderListInTriangles(typeParameters, data)
-                visitArguments(delegatedConstructorCall.arguments, data)
+                val reference = delegatedConstructorCall.calleeReference
+                visitConstructor(reference, data)
             } else {
                 data.append("[ERROR : ${delegatedConstructorCall.constructedTypeRef.render()}]")
             }
@@ -458,8 +468,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
-            resolvedQualifier.symbol?.let {
-                val fir = it.fir
+            resolvedQualifier.symbol?.fir?.let { fir ->
                 if (fir is FirClass) {
                     data.append(fir.classKind.name.toLowerCaseAsciiOnly()).append(" ")
                     data.append((fir as? FirRegularClass)?.name ?: Name.special("<anonymous>"))
@@ -506,18 +515,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun renderSymbol(symbol: AbstractFirBasedSymbol<*>?): String {
             val data = StringBuilder()
-            var id = when (symbol) {
+            val id = when (symbol) {
                 is FirCallableSymbol<*> -> {
                     val callableId = symbol.callableId
-                    val idWithPackage = callableId.toString().replace("." + callableId.callableName.asString(), "")
+                    val idWithPackage = callableId.toString().replaceFirst(".${callableId.callableName}", "")
                     removeCurrentFilePackage(idWithPackage)
                 }
                 is FirClassLikeSymbol<*> -> symbol.classId.getWithoutCurrentPackage()
                 else -> ""
-            }
-
-            if (id.startsWith("/")) {
-                id = id.substring(1)
             }
 
             fun renderVariable(variable: FirVariable<*>) {
@@ -564,8 +569,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 }
                 is FirConstructorSymbol -> {
                     data.append("constructor ")
-                    val packageName = symbol.callableId.className
-                    data.append(packageName)
+                    data.append(id)
                     renderListInTriangles(symbol.fir.typeParameters, data)
                 }
             }
