@@ -6,7 +6,7 @@ import kotlin.contracts.*
 
 fun Any?.foo(): Boolean {
     contract {
-        returns(true) implies (this != null)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this != null)<!>
     }
     return this != null
 }

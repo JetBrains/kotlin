@@ -381,6 +381,12 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val INVALID_IF_AS_EXPRESSION by error<FirSourceElement, KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
     }
 
+    group("Function contracts") {
+        val ERROR_IN_CONTRACT_DESCRIPTION by error<FirSourceElement, KtElement> {
+            parameter<String>("reason")
+        }
+    }
+
     group("Extended checkers") {
         val REDUNDANT_VISIBILITY_MODIFIER by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val REDUNDANT_MODALITY_MODIFIER by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER)
