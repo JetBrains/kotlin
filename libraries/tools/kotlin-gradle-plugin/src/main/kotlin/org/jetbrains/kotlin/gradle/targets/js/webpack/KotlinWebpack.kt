@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
-import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -42,11 +41,6 @@ constructor(
 ) : DefaultTask(), RequiresNpmDependencies {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
-
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-//        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
-    }
 
     private val npmProject = compilation.npmProject
 
