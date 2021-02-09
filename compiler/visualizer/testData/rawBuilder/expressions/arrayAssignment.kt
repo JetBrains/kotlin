@@ -7,8 +7,10 @@ fun test() {
 //      │   │          │  │  │
     val x = intArrayOf(1, 2, 3)
 //  val test.x: IntArray
-//  │ Int  Int
-//  │ │    │
+//  │ Int
+//  │ │  fun (IntArray).set(Int, Int): Unit
+//  │ │  │ Int
+//  │ │  │ │
     x[1] = 0
 }
 
@@ -23,7 +25,8 @@ fun test2() {
 //  │          │  Int
 //  │          │  │  Int
 //  │          │  │  │  fun foo(): Int
-//  │          │  │  │  │        Int
-//  │          │  │  │  │        │
+//  │          │  │  │  │      fun (IntArray).set(Int, Int): Unit
+//  │          │  │  │  │      │ Int
+//  │          │  │  │  │      │ │
     intArrayOf(1, 2, 3)[foo()] = 1
 }

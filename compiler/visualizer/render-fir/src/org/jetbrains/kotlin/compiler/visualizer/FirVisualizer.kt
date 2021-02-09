@@ -151,7 +151,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitNamedFunction(function: KtNamedFunction) {
             stack.push((function.name ?: "<no name provided>"))
             if (function.equalsToken != null) {
-                function.bodyExpression!!.firstOfTypeWithRender<FirExpression>(function.equalsToken) { this.typeRef }
+                function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
                     ?: function.firstOfTypeWithRender<FirTypedDeclaration>(function.equalsToken) { this.returnTypeRef }
             }
             super.visitNamedFunction(function)
@@ -279,6 +279,13 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private val session = firFile.session
         private val filePackage = firFile.packageFqName.toString().replace(".", "/")
         private val symbolProvider = firFile.session.symbolProvider
+
+        private fun FirTypeRef.renderWithNativeRenderer(): String {
+            return buildString {
+                val nativeRenderer = org.jetbrains.kotlin.fir.FirRenderer(this)
+                this@renderWithNativeRenderer.accept(nativeRenderer)
+            }.replace("R|", "").replace("|", "")
+        }
 
         private fun removeCurrentFilePackage(fqName: String): String {
             return if (fqName.startsWith(filePackage) && !fqName.substring(filePackage.length + 1).contains("/")) {
@@ -479,8 +486,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
+            data.append(resolvedTypeRef.renderWithNativeRenderer())
             val coneType = resolvedTypeRef.type
-            data.append(removeCurrentFilePackage(coneType.render()))
             if (coneType is ConeClassLikeType) {
                 val original = coneType.directExpansionType(session)
                 original?.let { data.append(" /* = ${it.render()} */") }
@@ -528,11 +535,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     val callableName = symbol.callableId.callableName
                     val receiverType = symbol.fir.receiverTypeRef
                     if (receiverType == null) {
-                        if (symbol.callableId.className == null) {
-                            data.append(id)
-                        } else {
-                            data.append("($id).$callableName")
-                        }
+                        symbol.callableId.className?.let { data.append("($id).$callableName") } ?: data.append(id)
                     } else {
                         data.append("${receiverType.render()}.$callableName")
                     }
@@ -557,7 +560,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
                 }
                 is FirVariableSymbol<*> -> {
-                    renderVariable(symbol.fir)                }
+                    renderVariable(symbol.fir)
+                }
                 is FirConstructorSymbol -> {
                     data.append("constructor ")
                     val packageName = symbol.callableId.className
