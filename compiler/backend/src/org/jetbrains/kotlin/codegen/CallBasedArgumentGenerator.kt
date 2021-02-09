@@ -72,12 +72,6 @@ class CallBasedArgumentGenerator(
         callGenerator.putValueIfNeeded(getJvmKotlinType(i), lazyVararg, ValueKind.GENERAL_VARARG, i)
     }
 
-    override fun generateDefaultJava(i: Int, argument: DefaultValueArgument) {
-        val argumentValue = valueParameters[i].findJavaDefaultArgumentValue(valueParameterTypes[i], codegen.typeMapper)
-
-        callGenerator.putValueIfNeeded(getJvmKotlinType(i), argumentValue)
-    }
-
     override fun reorderArgumentsIfNeeded(args: List<ArgumentAndDeclIndex>) {
         callGenerator.reorderArgumentsIfNeeded(args, valueParameterTypes)
     }
