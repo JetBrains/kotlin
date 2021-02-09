@@ -80,7 +80,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-annotation-processing",
     ":kotlin-annotation-processing-cli",
     ":kotlin-annotation-processing-runtime",
-    ":kotlin-annotations-android",
     ":kotlin-annotations-jvm",
     ":kotlin-ant",
     ":kotlin-daemon",

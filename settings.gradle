@@ -264,7 +264,6 @@ include ":benchmarks",
         ":examples:kotlin-jsr223-local-example",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":kotlin-annotations-jvm",
-        ":kotlin-annotations-android",
         ":kotlin-scripting-common",
         ':kotlin-scripting-js',
         ':kotlin-scripting-js-test',
@@ -531,7 +530,6 @@ project(':plugins:kapt3-idea').projectDir = "$rootDir/plugins/kapt3/kapt3-idea" 
 project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
-project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/kotlin-annotations-android" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-js').projectDir = "$rootDir/libraries/scripting/js" as File
 project(':kotlin-scripting-js-test').projectDir = "$rootDir/libraries/scripting/js-test" as File
