@@ -21,12 +21,12 @@ fun case1() {
         override var a: Any
             get() = TODO()
             set(value) {}
-        override val b: Any
+        override <!VAR_OVERRIDDEN_BY_VAL!>val<!> b: Any
             get() = TODO()
         override var c: Any
             get() = TODO()
             set(value) {}
-        override val d: Any
+        override <!VAR_OVERRIDDEN_BY_VAL!>val<!> d: Any
             get() = TODO()
 
         override fun foo() {}

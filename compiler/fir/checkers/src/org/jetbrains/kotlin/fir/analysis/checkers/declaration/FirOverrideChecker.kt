@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.utils.addToStdlib.min
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirOverrideChecker : FirRegularClassChecker() {
-    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOverrideChecker : FirClassChecker() {
+    override fun check(declaration: FirClass<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         val typeCheckerContext = context.session.typeContext.newBaseTypeCheckerContext(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
