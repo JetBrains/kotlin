@@ -105,7 +105,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
             val substitutedInnerType = substitute(innerType, keepAnnotation, runCapturedChecks = false)
 
             if (substitutedInnerType != null) {
-                if (innerType is StubType || substitutedInnerType is StubType) {
+                if (innerType is StubType || substitutedInnerType is StubType || innerType.constructor is IntersectionTypeConstructor) {
                     return NewCapturedType(
                         capturedType.captureStatus,
                         NewCapturedTypeConstructor(
