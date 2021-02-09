@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 
 object FirCatchParameterChecker : FirTryExpressionChecker() {
     override fun check(expression: FirTryExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -24,11 +24,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
                 reporter.reportOn(catchParameter.source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE, context)
             }
 
-            val typeRef = catchParameter.returnTypeRef
-            // TODO: remaining implicit types should be resolved as an error type, along with proper error kind, most likely syntax error.
-            if (typeRef !is FirResolvedTypeRef) return
-
-            val coneType = typeRef.type
+            val coneType = catchParameter.returnTypeRef.coneType
             if (coneType is ConeTypeParameterType) {
                 val isReified = coneType.lookupTag.typeParameterSymbol.fir.isReified
 
