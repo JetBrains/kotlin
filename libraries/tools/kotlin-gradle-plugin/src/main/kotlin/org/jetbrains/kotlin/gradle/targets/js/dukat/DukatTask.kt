@@ -26,11 +26,6 @@ abstract class DukatTask(
         compilation.disambiguatedName
     }
 
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-//        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
-    }
-
     @get:Internal
     override val nodeModulesRequired: Boolean
         get() = true

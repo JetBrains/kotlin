@@ -13,8 +13,6 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
-import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -37,11 +35,6 @@ constructor(
                 logger
             )[projectPath][compilationName]
 
-
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-//        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
-    }
 
     // TODO: is map contains only serializable values?
     @get:Input

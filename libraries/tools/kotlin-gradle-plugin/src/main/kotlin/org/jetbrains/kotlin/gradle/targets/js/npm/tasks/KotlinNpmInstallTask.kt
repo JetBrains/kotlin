@@ -27,11 +27,6 @@ open class KotlinNpmInstallTask : DefaultTask() {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val resolutionManager get() = nodeJs.npmResolutionManager
 
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-//        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
-    }
-
     @Input
     val args: MutableList<String> = mutableListOf()
 
