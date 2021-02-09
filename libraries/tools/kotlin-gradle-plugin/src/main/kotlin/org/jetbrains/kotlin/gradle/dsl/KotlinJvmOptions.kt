@@ -8,6 +8,7 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Include Kotlin runtime into the resulting JAR
      * Default value: false
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var includeRuntime: kotlin.Boolean
 
     /**
@@ -45,12 +46,14 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Don't automatically include Kotlin reflection into the classpath
      * Default value: true
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noReflect: kotlin.Boolean
 
     /**
      * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
      * Default value: true
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noStdlib: kotlin.Boolean
 
     /**
