@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_DECLARATION_WITH_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
@@ -534,6 +535,9 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             // When expressions
             map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", WHEN_MISSING_CASES)
             map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression")
+
+            // Function contracts
+            map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description", TO_STRING)
 
             // Extended checkers group
             map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")
