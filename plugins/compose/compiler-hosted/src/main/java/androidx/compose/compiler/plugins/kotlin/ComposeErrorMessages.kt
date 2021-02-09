@@ -62,6 +62,12 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
+            ComposeErrors.NONREADONLY_CALL_IN_READONLY_COMPOSABLE,
+            "Composables marked with @ReadOnlyComposable can only call other @ReadOnlyComposable " +
+                "composables"
+        )
+
+        MAP.put(
             ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD,
             "Composable properties are not able to have backing fields"
         )
