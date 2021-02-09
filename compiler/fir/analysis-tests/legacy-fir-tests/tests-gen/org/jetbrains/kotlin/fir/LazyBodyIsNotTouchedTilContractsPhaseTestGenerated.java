@@ -1274,6 +1274,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             public void testMissingSealedInheritor() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingSealedInheritor.kt");
             }
+
+            @TestMetadata("nonExhaustiveWhenWithoutCoercionToUnit.kt")
+            public void testNonExhaustiveWhenWithoutCoercionToUnit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/nonExhaustiveWhenWithoutCoercionToUnit.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive")
@@ -1326,6 +1331,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             @TestMetadata("exhaustiveness_sealedSubClass.kt")
             public void testExhaustiveness_sealedSubClass() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedSubClass.kt");
+            }
+
+            @TestMetadata("nonExhaustiveWhenWithCoercionToUnit.kt")
+            public void testNonExhaustiveWhenWithCoercionToUnit() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nonExhaustiveWhenWithCoercionToUnit.kt");
             }
         }
     }

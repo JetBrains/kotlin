@@ -1473,6 +1473,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 public void testMissingSealedInheritor() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingSealedInheritor.kt");
                 }
+
+                @Test
+                @TestMetadata("nonExhaustiveWhenWithoutCoercionToUnit.kt")
+                public void testNonExhaustiveWhenWithoutCoercionToUnit() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/nonExhaustiveWhenWithoutCoercionToUnit.kt");
+                }
             }
 
             @Nested
@@ -1531,6 +1537,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 @TestMetadata("exhaustiveness_sealedSubClass.kt")
                 public void testExhaustiveness_sealedSubClass() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedSubClass.kt");
+                }
+
+                @Test
+                @TestMetadata("nonExhaustiveWhenWithCoercionToUnit.kt")
+                public void testNonExhaustiveWhenWithCoercionToUnit() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nonExhaustiveWhenWithCoercionToUnit.kt");
                 }
             }
         }
