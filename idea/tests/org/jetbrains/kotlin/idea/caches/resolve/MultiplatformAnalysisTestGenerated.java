@@ -263,4 +263,9 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     public void testWeaklyIncompatibleActualInIntermediateModule() throws Exception {
         runTest("idea/testData/multiplatform/weaklyIncompatibleActualInIntermediateModule/");
     }
+
+    @TestMetadata("whenExhaustivenessForSealed")
+    public void testWhenExhaustivenessForSealed() throws Exception {
+        runTest("idea/testData/multiplatform/whenExhaustivenessForSealed/");
+    }
 }

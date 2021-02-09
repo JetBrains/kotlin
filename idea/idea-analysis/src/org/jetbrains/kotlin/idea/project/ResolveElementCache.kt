@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerCompat
 import org.jetbrains.kotlin.idea.caches.trackers.inBlockModificationCount
-import org.jetbrains.kotlin.idea.compiler.IdeMainFunctionDetectorFactory
+import org.jetbrains.kotlin.idea.compiler.IdeSealedClassInheritorsProvider
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -785,7 +785,8 @@ class ResolveElementCache(
             statementFilter,
             targetPlatform.findAnalyzerServices(file.project),
             file.languageVersionSettings,
-            IdeaModuleStructureOracle()
+            IdeaModuleStructureOracle(),
+            IdeSealedClassInheritorsProvider
         ).get()
     }
 
