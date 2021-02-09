@@ -313,7 +313,10 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             .flatMap { createStubFuns(irClass, it) }
             .mapTo(HashSet()) { it.toJvmSignature() }
 
-        return classStubFuns.filter { it.toJvmSignature() !in superClassStubSignatures }
+        return classStubFuns
+            .filter { it.toJvmSignature() !in superClassStubSignatures }
+            .associateBy { it.toJvmSignature() }
+            .values.toList()
     }
 
     private fun createStubFuns(irClass: IrClass, stubs: StubsForCollectionClass): List<IrSimpleFunction> {
