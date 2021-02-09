@@ -24,9 +24,10 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
@@ -57,16 +58,14 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(CONSTRUCTOR_CALL_NORMALIZATION_MODE, JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE)
         register(SAM_CONVERSIONS, JVMConfigurationKeys.SAM_CONVERSIONS)
         register(USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+        register(ENABLE_JVM_PREVIEW, JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
         val registeredDirectives = module.directives
-        val targets = registeredDirectives[JvmEnvironmentConfigurationDirectives.JVM_TARGET]
-        when (targets.size) {
-            0 -> {}
-            1 -> configuration.put(JVMConfigurationKeys.JVM_TARGET, targets.single())
-            else -> error("Too many jvm targets passed: ${targets.joinToArrayString()}")
+        registeredDirectives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JVM_TARGET)?.let {
+            configuration.put(JVMConfigurationKeys.JVM_TARGET, it)
         }
         configureDefaultJvmTarget(configuration)
 
@@ -123,10 +122,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
         if (JvmEnvironmentConfigurationDirectives.ANDROID_ANNOTATIONS in module.directives) {
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.androidAnnotationsForTests())
-        }
-
-        if (LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in module.directives) {
-            configuration.put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, true)
         }
 
         val isIr = module.targetBackend?.isIR == true
