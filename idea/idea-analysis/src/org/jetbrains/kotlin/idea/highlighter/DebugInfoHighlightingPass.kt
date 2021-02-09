@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.checkers.utils.DebugInfoUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.isApplicationInternalMode
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -75,7 +76,9 @@ class DebugInfoHighlightingPass(file: KtFile, document: Document) : AbstractBind
     class Factory : TextEditorHighlightingPassFactory {
         override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
             return if (file is KtFile &&
-                (isApplicationInternalMode() && (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isDevVersion())) &&
+                (isUnitTestMode() ||
+                        isApplicationInternalMode() &&
+                        (KotlinPluginUtil.isSnapshotVersion() || KotlinPluginUtil.isDevVersion())) &&
                 ProjectRootsUtil.isInProjectOrLibSource(file)
             ) {
                 DebugInfoHighlightingPass(file, editor.document)
