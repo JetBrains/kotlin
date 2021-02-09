@@ -191,6 +191,7 @@ internal class MockModulesProvider private constructor(
         val SERIALIZER = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             metadataVersion = KlibMetadataVersion.INSTANCE,
+            exportKDoc = false,
             skipExpects = false,
             project = null,
             includeOnlyModuleContent = true,
