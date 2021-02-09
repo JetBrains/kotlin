@@ -64,19 +64,14 @@ internal class KtFirReferenceShortener(
         resolveFileToBodyResolve(file)
         val firFile = file.getOrBuildFirOfType<FirFile>(firResolveState)
 
-        val namesToImport = mutableListOf<FqName>()
-
-        val typesToShorten = mutableListOf<KtUserType>()
-        val callsToShorten = mutableListOf<KtDotQualifiedExpression>()
-
-        firFile.acceptChildren(TypesCollectingVisitor(namesToImport, typesToShorten))
-        firFile.acceptChildren(CallsCollectingVisitor(namesToImport, callsToShorten))
+        val collector = ElementsToShortenCollector()
+        firFile.acceptChildren(collector)
 
         return ShortenCommandImpl(
             file,
-            namesToImport.distinct(),
-            typesToShorten.distinct().map { it.createSmartPointer() },
-            callsToShorten.distinct().map { it.createSmartPointer() }
+            collector.namesToImport.distinct(),
+            collector.typesToShorten.distinct().map { it.createSmartPointer() },
+            collector.qualifiersToShorten.distinct().map { it.createSmartPointer() }
         )
     }
 
@@ -164,10 +159,11 @@ internal class KtFirReferenceShortener(
         }
     }
 
-    private inner class TypesCollectingVisitor(
-        private val namesToImport: MutableList<FqName>,
-        private val typesToShorten: MutableList<KtUserType>,
-    ) : FirVisitorVoid() {
+    private inner class ElementsToShortenCollector : FirVisitorVoid() {
+        val namesToImport: MutableList<FqName> = mutableListOf()
+        val typesToShorten: MutableList<KtUserType> = mutableListOf()
+        val qualifiersToShorten: MutableList<KtDotQualifiedExpression> = mutableListOf()
+
         override fun visitElement(element: FirElement) {
             element.acceptChildren(this)
         }
@@ -240,14 +236,47 @@ internal class KtFirReferenceShortener(
             namesToImport.add(classFqName)
             typesToShorten.add(mostTopLevelTypeElement)
         }
-    }
 
-    private inner class CallsCollectingVisitor(
-        private val namesToImport: MutableList<FqName>,
-        private val callsToShorten: MutableList<KtDotQualifiedExpression>
-    ) : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
-            element.acceptChildren(this)
+        override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
+            super.visitResolvedQualifier(resolvedQualifier)
+
+            val wholeClassQualifier = resolvedQualifier.classId ?: return
+            val wholeQualifierElement = when (val qualifierPsi = resolvedQualifier.psi) {
+                is KtDotQualifiedExpression -> qualifierPsi
+                is KtNameReferenceExpression -> qualifierPsi.getDotQualifiedExpressionForSelector() ?: return
+                else -> return
+            }
+
+            collectQualifierIfNeedsToBeShortened(wholeClassQualifier, wholeQualifierElement)
+        }
+
+        private fun collectQualifierIfNeedsToBeShortened(wholeClassQualifier: ClassId, wholeQualifierElement: KtDotQualifiedExpression) {
+            val positionScopes = findScopesAtPosition(wholeQualifierElement, namesToImport) ?: return
+
+            val allClassIds = wholeClassQualifier.outerClassesWithSelf
+            val allQualifiers = wholeQualifierElement.qualifiersWithSelf
+
+            for ((classId, qualifier) in allClassIds.zip(allQualifiers)) {
+                val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
+
+                if (firstFoundClass == classId) {
+                    addElementToShorten(qualifier)
+                    return
+                }
+            }
+
+            val (mostTopLevelClassId, mostTopLevelQualifier) = allClassIds.zip(allQualifiers).last()
+            val availableClassifier = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
+
+            check(availableClassifier?.classId != mostTopLevelClassId) {
+                "If this condition were true, we would have exited from the loop on the last iteration. ClassId = $mostTopLevelClassId"
+            }
+
+            if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
+                addElementToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelQualifier)
+            } else {
+                addFakePackagePrefixToShortenIfPresent(mostTopLevelQualifier)
+            }
         }
 
         override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
@@ -337,48 +366,6 @@ internal class KtFirReferenceShortener(
                 ?: error("Expected all candidates to have same callableId, but got: ${distinctCandidates.map { it.callableId }}")
         }
 
-        override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-            super.visitResolvedQualifier(resolvedQualifier)
-
-            val wholeClassQualifier = resolvedQualifier.classId ?: return
-            val wholeQualifierElement = when (val qualifierPsi = resolvedQualifier.psi) {
-                is KtDotQualifiedExpression -> qualifierPsi
-                is KtNameReferenceExpression -> qualifierPsi.getDotQualifiedExpressionForSelector() ?: return
-                else -> return
-            }
-
-            collectQualifierIfNeedsToBeShortened(wholeClassQualifier, wholeQualifierElement)
-        }
-
-        private fun collectQualifierIfNeedsToBeShortened(wholeClassQualifier: ClassId, wholeQualifierElement: KtDotQualifiedExpression) {
-            val positionScopes = findScopesAtPosition(wholeQualifierElement, namesToImport) ?: return
-
-            val allClassIds = wholeClassQualifier.outerClassesWithSelf
-            val allQualifiers = wholeQualifierElement.qualifiersWithSelf
-
-            for ((classId, qualifier) in allClassIds.zip(allQualifiers)) {
-                val firstFoundClass = findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
-
-                if (firstFoundClass == classId) {
-                    addElementToShorten(qualifier)
-                    return
-                }
-            }
-
-            val (mostTopLevelClassId, mostTopLevelQualifier) = allClassIds.zip(allQualifiers).last()
-            val availableClassifier = findFirstClassifierInScopesByName(positionScopes, mostTopLevelClassId.shortClassName)
-
-            check(availableClassifier?.classId != mostTopLevelClassId) {
-                "If this condition were true, we would have exited from the loop on the last iteration. ClassId = $mostTopLevelClassId"
-            }
-
-            if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-                addElementToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelQualifier)
-            } else {
-                addFakePackagePrefixToShortenIfPresent(mostTopLevelQualifier)
-            }
-        }
-
         private fun addFakePackagePrefixToShortenIfPresent(wholeQualifiedExpression: KtDotQualifiedExpression) {
             val deepestQualifier = wholeQualifiedExpression.qualifiersWithSelf.last()
             if (deepestQualifier.hasFakeRootPrefix()) {
@@ -387,12 +374,12 @@ internal class KtFirReferenceShortener(
         }
 
         private fun addElementToShorten(element: KtDotQualifiedExpression) {
-            callsToShorten.add(element)
+            qualifiersToShorten.add(element)
         }
 
         private fun addElementToImportAndShorten(nameToImport: FqName, element: KtDotQualifiedExpression) {
             namesToImport.add(nameToImport)
-            callsToShorten.add(element)
+            qualifiersToShorten.add(element)
         }
     }
 
@@ -410,7 +397,7 @@ private class ShortenCommandImpl(
     val targetFile: KtFile,
     val importsToAdd: List<FqName>,
     val typesToShorten: List<SmartPsiElementPointer<KtUserType>>,
-    val callsToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
+    val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
 ) : ShortenCommand {
 
     override fun invokeShortening() {
@@ -425,7 +412,7 @@ private class ShortenCommandImpl(
             type.deleteQualifier()
         }
 
-        for (callPointer in callsToShorten) {
+        for (callPointer in qualifiersToShorten) {
             val call = callPointer.element ?: continue
             call.deleteQualifier()
         }
