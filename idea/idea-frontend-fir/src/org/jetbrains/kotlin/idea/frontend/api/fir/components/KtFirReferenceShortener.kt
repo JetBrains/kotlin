@@ -170,6 +170,10 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     }
 }
 
+private sealed class ElementToShorten
+private class ShortenType(val element: KtUserType, val nameToImport: FqName? = null) : ElementToShorten()
+private class ShortenQualifier(val element: KtDotQualifiedExpression, val nameToImport: FqName? = null) : ElementToShorten()
+
 private class ElementsToShortenCollector(private val shorteningContext: FirShorteningContext) : FirVisitorVoid() {
     val namesToImport: MutableList<FqName> = mutableListOf()
     val typesToShorten: MutableList<KtUserType> = mutableListOf()
@@ -228,7 +232,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             val firstFoundClass = shorteningContext.findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
 
             if (firstFoundClass == classId) {
-                addTypeToShorten(typeElement)
+                addElementToShorten(ShortenType(typeElement))
                 return
             }
         }
@@ -242,7 +246,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         }
 
         if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-            addTypeToShorten(mostTopLevelTypeElement, mostTopLevelClassId.asSingleFqName())
+            addElementToShorten(ShortenType(mostTopLevelTypeElement, mostTopLevelClassId.asSingleFqName()))
         } else {
             addFakePackagePrefixToShortenIfPresent(mostTopLevelTypeElement)
         }
@@ -253,13 +257,8 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             ?: error("Type element should have at least one qualifier, instead it was ${typeElement.text}")
 
         if (deepestTypeWithQualifier.hasFakeRootPrefix()) {
-            addTypeToShorten(deepestTypeWithQualifier)
+            addElementToShorten(ShortenType(deepestTypeWithQualifier))
         }
-    }
-
-    private fun addTypeToShorten(mostTopLevelTypeElement: KtUserType, classFqName: FqName? = null) {
-        namesToImport.addIfNotNull(classFqName)
-        typesToShorten.add(mostTopLevelTypeElement)
     }
 
     private fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
@@ -283,7 +282,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
             val firstFoundClass = shorteningContext.findFirstClassifierInScopesByName(positionScopes, classId.shortClassName)?.classId
 
             if (firstFoundClass == classId) {
-                addElementToShorten(qualifier)
+                addElementToShorten(ShortenQualifier(qualifier))
                 return
             }
         }
@@ -296,7 +295,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         }
 
         if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-            addElementToShorten(mostTopLevelQualifier, mostTopLevelClassId.asSingleFqName())
+            addElementToShorten(ShortenQualifier(mostTopLevelQualifier, mostTopLevelClassId.asSingleFqName()))
         } else {
             addFakePackagePrefixToShortenIfPresent(mostTopLevelQualifier)
         }
@@ -312,7 +311,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         val singleAvailableProperty = shorteningContext.findSinglePropertyInScopesByName(scopes, propertyId.callableName)
 
         if (singleAvailableProperty?.callableId == propertyId) {
-            addElementToShorten(qualifiedProperty)
+            addElementToShorten(ShortenQualifier(qualifiedProperty))
         }
     }
 
@@ -331,10 +330,10 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         when {
             availableCallables.isEmpty() -> {
                 val additionalImport = callableId.asImportableFqName() ?: return
-                addElementToShorten(qualifiedCallExpression, additionalImport)
+                addElementToShorten(ShortenQualifier(qualifiedCallExpression, additionalImport))
             }
             availableCallables.all { it.callableId == callableId } -> {
-                addElementToShorten(qualifiedCallExpression)
+                addElementToShorten(ShortenQualifier(qualifiedCallExpression))
             }
             else -> {
                 addFakePackagePrefixToShortenIfPresent(qualifiedCallExpression)
@@ -388,13 +387,21 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
     private fun addFakePackagePrefixToShortenIfPresent(wholeQualifiedExpression: KtDotQualifiedExpression) {
         val deepestQualifier = wholeQualifiedExpression.qualifiersWithSelf.last()
         if (deepestQualifier.hasFakeRootPrefix()) {
-            addElementToShorten(deepestQualifier)
+            addElementToShorten(ShortenQualifier(deepestQualifier))
         }
     }
 
-    private fun addElementToShorten(element: KtDotQualifiedExpression, nameToImport: FqName? = null) {
-        namesToImport.addIfNotNull(nameToImport)
-        qualifiersToShorten.add(element)
+    private fun addElementToShorten(element: ElementToShorten) {
+        when (element) {
+            is ShortenType -> {
+                namesToImport.addIfNotNull(element.nameToImport)
+                typesToShorten.add(element.element)
+            }
+            is ShortenQualifier -> {
+                namesToImport.addIfNotNull(element.nameToImport)
+                qualifiersToShorten.add(element.element)
+            }
+        }
     }
 
     private val ClassId.outerClassesWithSelf: Sequence<ClassId>
