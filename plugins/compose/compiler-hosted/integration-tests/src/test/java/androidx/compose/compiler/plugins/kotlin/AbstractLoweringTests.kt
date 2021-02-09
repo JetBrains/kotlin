@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.runtime.Composer
-import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.snapshots.Snapshot
 import org.intellij.lang.annotations.Language
 import org.robolectric.RuntimeEnvironment
@@ -42,7 +41,6 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
         )
     }
 
-    @OptIn(ExperimentalComposeApi::class)
     protected fun execute(block: () -> Unit) {
         val scheduler = RuntimeEnvironment.getMasterScheduler()
         scheduler.pause()
