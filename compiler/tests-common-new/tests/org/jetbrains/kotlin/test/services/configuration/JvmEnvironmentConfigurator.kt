@@ -163,7 +163,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
     }
 
-    private fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
+    fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
         val fullJdkEnabled = JvmEnvironmentConfigurationDirectives.FULL_JDK in registeredDirectives
         val jdkKinds = registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND]
 
@@ -181,7 +181,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         }
     }
 
-    private fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
+    fun extractConfigurationKind(registeredDirectives: RegisteredDirectives): ConfigurationKind {
         val withRuntime = JvmEnvironmentConfigurationDirectives.WITH_RUNTIME in registeredDirectives ||
                 JvmEnvironmentConfigurationDirectives.WITH_STDLIB in registeredDirectives
         val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in registeredDirectives
