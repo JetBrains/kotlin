@@ -91,7 +91,7 @@ abstract class JsClientTemplate : Template() {
                         id = "root"
                      }
                     """.trimIndent()
-                    +"""script(src = "/static/$JS_OUTPUT_FILE_NAME") {}"""
+                    +"""script(src = "/static/${module.name}.js") {}"""
                 }
             }
 
@@ -159,7 +159,7 @@ abstract class JsClientTemplate : Template() {
                 taskAccessIR,
                 irs = listOf(
                     GradleAssignmentIR(
-                        "outputFileName", GradleStringConstIR(JS_OUTPUT_FILE_NAME)
+                        "outputFileName", GradleStringConstIR("${module.name}.js")
                     )
                 )
             )
@@ -173,9 +173,6 @@ abstract class JsClientTemplate : Template() {
             .any { it.template is KtorServerTemplate }
 
     companion object {
-        @NonNls
-        private const val JS_OUTPUT_FILE_NAME = "output.js"
-
         @NonNls
         private const val WEBPACK_TASK_CLASS = "KotlinWebpack"
 
