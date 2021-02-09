@@ -134,9 +134,10 @@ fun createContainerForBodyResolve(
     statementFilter: StatementFilter,
     analyzerServices: PlatformDependentAnalyzerServices,
     languageVersionSettings: LanguageVersionSettings,
-    moduleStructureOracle: ModuleStructureOracle
+    moduleStructureOracle: ModuleStructureOracle,
+    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
 ): StorageComponentContainer = createContainer("BodyResolve", analyzerServices) {
-    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
+    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
 
     useInstance(statementFilter)
 
@@ -156,10 +157,10 @@ fun createContainerForLazyBodyResolve(
     analyzerServices: PlatformDependentAnalyzerServices,
     languageVersionSettings: LanguageVersionSettings,
     moduleStructureOracle: ModuleStructureOracle,
-    mainFunctionDetectorFactory: MainFunctionDetector.Factory
+    mainFunctionDetectorFactory: MainFunctionDetector.Factory,
+    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
 ): StorageComponentContainer = createContainer("LazyBodyResolve", analyzerServices) {
-    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
-
+    configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
     useInstance(mainFunctionDetectorFactory)
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)
