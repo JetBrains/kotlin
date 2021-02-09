@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
@@ -112,7 +113,7 @@ private class FirApplySupertypesTransformer(
         return super.transformAnonymousObject(anonymousObject, data)
     }
 
-    private fun getResolvedSupertypeRefs(classLikeDeclaration: FirClassLikeDeclaration<*>): List<FirTypeRef> {
+    private fun getResolvedSupertypeRefs(classLikeDeclaration: FirClassLikeDeclaration<*>): List<FirResolvedTypeRef> {
         val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)
         require(status is SupertypeComputationStatus.Computed) {
             "Unexpected status at FirApplySupertypesTransformer: $status for ${classLikeDeclaration.symbol.classId}"
@@ -248,7 +249,7 @@ private class FirSupertypeResolverVisitor(
 
     private fun resolveSpecificClassLikeSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration<*>,
-        resolveSuperTypeRefs: (FirTransformer<FirScope>, FirScope) -> List<FirTypeRef>
+        resolveSuperTypeRefs: (FirTransformer<FirScope>, FirScope) -> List<FirResolvedTypeRef>
     ): List<FirTypeRef> {
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
@@ -282,23 +283,26 @@ private class FirSupertypeResolverVisitor(
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
-            ArrayList(supertypeRefs).mapTo(mutableListOf()) {
+            supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = transformer.transformTypeRef(it, scope).single
-
-                if (superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null)
-                    createErrorTypeRef(
-                        superTypeRef,
-                        "Type parameter cannot be a super-type: ${superTypeRef.coneTypeUnsafe<ConeTypeParameterType>().render()}"
-                    )
-                else
-                    superTypeRef
+                when {
+                    superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null ->
+                        createErrorTypeRef(
+                            superTypeRef,
+                            "Type parameter cannot be a super-type: ${superTypeRef.coneTypeUnsafe<ConeTypeParameterType>().render()}"
+                        )
+                    superTypeRef !is FirResolvedTypeRef ->
+                        createErrorTypeRef(superTypeRef, "Unresolved super-type: ${superTypeRef.render()}")
+                    else ->
+                        superTypeRef
+                }
             }.also {
                 addSupertypesFromExtensions(classLikeDeclaration, it)
             }
         }
     }
 
-    private fun addSupertypesFromExtensions(klass: FirClassLikeDeclaration<*>, supertypeRefs: MutableList<FirTypeRef>) {
+    private fun addSupertypesFromExtensions(klass: FirClassLikeDeclaration<*>, supertypeRefs: MutableList<FirResolvedTypeRef>) {
         if (supertypeGenerationExtensions.isEmpty()) return
         val provider = session.predicateBasedProvider
         for (extension in supertypeGenerationExtensions) {
@@ -384,7 +388,7 @@ private class SupertypeComputationSession {
         supertypeStatusMap[classLikeDeclaration] = SupertypeComputationStatus.Computing
     }
 
-    fun storeSupertypes(classLikeDeclaration: FirClassLikeDeclaration<*>, resolvedTypesRefs: List<FirTypeRef>) {
+    fun storeSupertypes(classLikeDeclaration: FirClassLikeDeclaration<*>, resolvedTypesRefs: List<FirResolvedTypeRef>) {
         require(supertypeStatusMap[classLikeDeclaration] is SupertypeComputationStatus.Computing) {
             "Unexpected in storeSupertypes supertype status for $classLikeDeclaration: ${supertypeStatusMap[classLikeDeclaration]}"
         }
@@ -411,7 +415,7 @@ private class SupertypeComputationSession {
             }
 
             val typeRefs = supertypeComputationStatus.supertypeRefs
-            val resultingTypeRefs = mutableListOf<FirTypeRef>()
+            val resultingTypeRefs = mutableListOf<FirResolvedTypeRef>()
             var wereChanges = false
 
             for (typeRef in typeRefs) {
@@ -453,7 +457,7 @@ sealed class SupertypeComputationStatus {
     object NotComputed : SupertypeComputationStatus()
     object Computing : SupertypeComputationStatus()
 
-    class Computed(val supertypeRefs: List<FirTypeRef>) : SupertypeComputationStatus()
+    class Computed(val supertypeRefs: List<FirResolvedTypeRef>) : SupertypeComputationStatus()
 }
 
 private typealias ScopePersistentList = PersistentList<FirScope>
