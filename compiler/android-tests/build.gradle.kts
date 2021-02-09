@@ -19,6 +19,10 @@ dependencies {
     testCompile(project(":kotlin-reflect"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
 
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
@@ -37,6 +41,8 @@ dependencies {
     testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
     testCompile(jpsStandalone()) { includeJars("jps-model") }
     testCompile(jpsBuildTest())
+
+    testCompile("org.junit.platform:junit-platform-launcher:${commonVer("org.junit.platform", "")}")
 }
 
 sourceSets {
