@@ -4222,7 +4222,7 @@ interopTest("interop_kt43265") {
 }
 
 dynamicTest("interop_kt43502") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.target.name != project.hostName)
     interop = "kt43502"
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"
