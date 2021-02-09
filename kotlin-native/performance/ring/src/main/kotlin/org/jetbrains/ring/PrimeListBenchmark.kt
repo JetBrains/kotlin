@@ -19,8 +19,6 @@ package org.jetbrains.ring
 /**
  * This class tests linked list performance
  * using prime number calculation algorithms
- *
- * @author Mikhail Glukhikh
  */
 open class PrimeListBenchmark {
     private var primes: MutableList<Int> = mutableListOf()
