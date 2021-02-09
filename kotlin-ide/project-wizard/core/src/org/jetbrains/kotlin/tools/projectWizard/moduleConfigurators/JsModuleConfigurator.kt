@@ -112,10 +112,11 @@ interface JsBrowserBasedConfigurator {
                 applicationSupport()
             }
             "browser" {
-                if (reader.isApplication(module)) {
-                    if (reader.hasCssSupport(module)) {
-                        applicationCssSupport()
-                    }
+                if (
+                    reader.isApplication(module) && reader.hasCssSupport(module) ||
+                    reader.settingValue(module, ModuleConfiguratorWithTests.testFramework) != KotlinTestFramework.NONE
+                ) {
+                    commonCssSupport()
                 }
             }
         }
@@ -212,7 +213,7 @@ fun GradleIRListBuilder.applicationSupport() {
     +"binaries.executable()"
 }
 
-fun GradleIRListBuilder.applicationCssSupport() {
+fun GradleIRListBuilder.commonCssSupport() {
     "commonWebpackConfig" {
         +"cssSupport.enabled = true"
     }
