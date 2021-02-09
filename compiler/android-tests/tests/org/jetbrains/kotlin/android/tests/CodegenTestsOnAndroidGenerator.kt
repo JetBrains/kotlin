@@ -16,12 +16,25 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.impl.BackendKindExtractorImpl
+import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
@@ -237,6 +250,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
+    @OptIn(TestInfrastructureInternals::class)
     @Throws(IOException::class)
     private fun processFiles(
         files: Array<File>,
@@ -290,27 +304,90 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (fullFileText.contains("// SKIP_JDK6")) continue
 
                 if (hasBoxMethod(fullFileText)) {
-                    val testFiles = createTestFiles(file, fullFileText)
-                    val kind = KotlinBaseTest.extractConfigurationKind(testFiles)
-                    val jdkKind = KotlinBaseTest.getTestJdkKind(testFiles)
+                    val testConfiguration = createTestConfiguration(file)
+                    val services = testConfiguration.testServices
+
+                    val moduleStructure = try {
+                        testConfiguration.moduleStructureExtractor.splitTestDataByModules(
+                            file.path,
+                            testConfiguration.directives,
+                        ).also {
+                            services.register(TestModuleStructure::class, it)
+                        }
+                    } catch (e: ExceptionFromModuleStructureTransformer) {
+                        continue
+                    }
+                    val module = moduleStructure.modules.singleOrNull() ?: continue
+                    if (module.files.any { it.isJavaFile || it.isKtsFile }) continue
+                    if (module.files.isEmpty()) continue
+                    services.registerDependencyProvider(DependencyProviderImpl(services, moduleStructure.modules))
+
                     val keyConfiguration = CompilerConfiguration()
-                    KotlinBaseTest.updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
+                    module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JVM_TARGET)?.let {
+                        keyConfiguration.put(JVMConfigurationKeys.JVM_TARGET, it)
+                    }
+
+                    val configuratorForFlags = JvmEnvironmentConfigurator(services)
+                    with(configuratorForFlags) {
+                        val extractor = DirectiveToConfigurationKeyExtractor()
+                        extractor.provideConfigurationKeys()
+                        extractor.configure(keyConfiguration, module.directives)
+                    }
+                    val kind = configuratorForFlags.extractConfigurationKind(module.directives)
+                    val jdkKind = configuratorForFlags.extractJdkKind(module.directives)
+
+                    keyConfiguration.languageVersionSettings = module.languageVersionSettings
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val compiler = if (kind.withReflection) REFLECT else COMMON
+                    val compilerConfigurationProvider = services.compilerConfigurationProvider as CompilerConfigurationProviderImpl
                     val filesHolder = holders.getOrPut(key) {
-                        FilesWriter(compiler, KotlinTestUtils.newConfiguration(kind, jdkKind,
-                                                                               KtTestUtil.getAnnotationsJar()
-                        ).apply {
+                        FilesWriter(compiler, compilerConfigurationProvider.createCompilerConfiguration(module)).also {
                             println("Creating new configuration by $key")
-                            KotlinBaseTest.updateConfigurationByDirectivesInTestFiles(testFiles, this)
-                        })
+                        }
                     }
 
-                    patchFilesAndAddTest(file, testFiles, filesHolder)
+                    patchFilesAndAddTest(file, module, services, filesHolder)
                 }
             }
         }
+    }
+
+    private fun createTestConfiguration(testDataFile: File): TestConfiguration {
+        return TestConfigurationBuilder().apply {
+            testConfiguration()
+            testInfo = KotlinTestInfo(
+                "org.jetbrains.kotlin.android.tests.AndroidRunner",
+                "test${testDataFile.nameWithoutExtension.capitalize()}",
+                emptySet()
+            )
+        }.build(testDataFile.path)
+    }
+
+    private val testConfiguration: TestConfigurationBuilder.() -> Unit = {
+        globalDefaults {
+            frontend = FrontendKinds.ClassicFrontend
+            targetBackend = TargetBackend.ANDROID
+            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            dependencyKind = DependencyKind.Binary
+        }
+
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator
+        )
+
+        useAdditionalSourceProviders(
+            ::AdditionalDiagnosticsSourceFilesProvider,
+            ::CoroutineHelpersSourceFilesProvider,
+            ::CodegenHelpersSourceFilesProvider,
+        )
+
+        assertions = JUnit5Assertions
+        useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+        useAdditionalService<BackendKindExtractor>(::BackendKindExtractorImpl)
+        useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())
+        useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
     }
 
     private fun createTestFiles(file: File, expectedText: String): List<KotlinBaseTest.TestFile> =
