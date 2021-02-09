@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.test.backend.classic
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.compileJavaFilesExternally
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -26,16 +24,11 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class JavaCompilerFacade(private val testServices: TestServices) {
-    @OptIn(ExperimentalStdlibApi::class)
     fun compileJavaFiles(module: TestModule, configuration: CompilerConfiguration, classFileFactory: ClassFileFactory) {
         if (module.javaFiles.isEmpty()) return
-        val javaClasspath = buildList {
-            add(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module, classFileFactory).path)
-            addAll(configuration.jvmClasspathRoots.map { it.absolutePath })
-            if (JvmEnvironmentConfigurationDirectives.ANDROID_ANNOTATIONS in module.directives) {
-                add(ForTestCompileRuntime.androidAnnotationsForTests().path)
-            }
-        }
+        val javaClasspath =
+            listOf(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module, classFileFactory).path) +
+                    configuration.jvmClasspathRoots.map { it.absolutePath }
 
         val javaClassesOutputDirectory = testServices.compiledClassesManager.getOrCreateCompiledJavaDirForModule(module)
 

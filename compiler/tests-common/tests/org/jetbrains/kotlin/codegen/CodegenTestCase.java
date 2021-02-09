@@ -414,20 +414,10 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         File javaSourceDir = writeJavaFiles(files);
 
         configurationKind = extractConfigurationKind(files);
-        boolean loadAndroidAnnotations = files.stream().anyMatch(
-                it -> InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
-        );
-
-        List<File> classpath = new ArrayList<>();
-        classpath.add(getAnnotationsJar());
-
-        if (loadAndroidAnnotations) {
-            classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
-        }
 
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind, getTestJdkKind(files), getBackend(),
-                classpath,
+                Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
         );
@@ -454,9 +444,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             List<String> javaClasspath = new ArrayList<>();
             javaClasspath.add(kotlinOut.getPath());
 
-            if (loadAndroidAnnotations) {
-                javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
-            }
             updateJavaClasspath(javaClasspath);
 
             javaClassesOutputDirectory = getJavaClassesOutputDirectory();

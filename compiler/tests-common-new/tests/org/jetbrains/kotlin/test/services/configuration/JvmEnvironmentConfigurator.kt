@@ -132,10 +132,6 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
         }
 
-        if (JvmEnvironmentConfigurationDirectives.ANDROID_ANNOTATIONS in module.directives) {
-            configuration.addJvmClasspathRoot(ForTestCompileRuntime.androidAnnotationsForTests())
-        }
-
         val isIr = module.targetBackend?.isIR == true
         configuration.put(JVMConfigurationKeys.IR, isIr)
 
