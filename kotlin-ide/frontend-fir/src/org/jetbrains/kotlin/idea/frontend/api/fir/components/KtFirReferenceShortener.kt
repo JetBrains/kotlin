@@ -175,6 +175,24 @@ internal class KtFirReferenceShortener(
             resolvedTypeRef.delegatedTypeRef?.accept(this)
         }
 
+        override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
+            super.visitResolvedQualifier(resolvedQualifier)
+
+            processTypeQualifier(resolvedQualifier)
+        }
+
+        override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
+            super.visitResolvedNamedReference(resolvedNamedReference)
+
+            processPropertyReference(resolvedNamedReference)
+        }
+
+        override fun visitFunctionCall(functionCall: FirFunctionCall) {
+            super.visitFunctionCall(functionCall)
+
+            processFunctionCall(functionCall)
+        }
+
         private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
             val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
 
@@ -237,9 +255,7 @@ internal class KtFirReferenceShortener(
             typesToShorten.add(mostTopLevelTypeElement)
         }
 
-        override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-            super.visitResolvedQualifier(resolvedQualifier)
-
+        private fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
             val wholeClassQualifier = resolvedQualifier.classId ?: return
             val wholeQualifierElement = when (val qualifierPsi = resolvedQualifier.psi) {
                 is KtDotQualifiedExpression -> qualifierPsi
@@ -279,9 +295,7 @@ internal class KtFirReferenceShortener(
             }
         }
 
-        override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
-            super.visitResolvedNamedReference(resolvedNamedReference)
-
+        private fun processPropertyReference(resolvedNamedReference: FirResolvedNamedReference) {
             val referenceExpression = resolvedNamedReference.psi as? KtNameReferenceExpression
             val qualifiedProperty = referenceExpression?.getDotQualifiedExpressionForSelector() ?: return
 
@@ -295,9 +309,7 @@ internal class KtFirReferenceShortener(
             }
         }
 
-        override fun visitFunctionCall(functionCall: FirFunctionCall) {
-            super.visitFunctionCall(functionCall)
-
+        private fun processFunctionCall(functionCall: FirFunctionCall) {
             if (!canBePossibleToDropReceiver(functionCall)) return
 
             val callExpression = functionCall.psi as? KtCallExpression ?: return
@@ -381,16 +393,16 @@ internal class KtFirReferenceShortener(
             namesToImport.add(nameToImport)
             qualifiersToShorten.add(element)
         }
+
+        private val ClassId.outerClassesWithSelf: Sequence<ClassId>
+            get() = generateSequence(this) { it.outerClassId }
+
+        private val KtUserType.qualifiersWithSelf: Sequence<KtUserType>
+            get() = generateSequence(this) { it.qualifier }
+
+        private val KtDotQualifiedExpression.qualifiersWithSelf: Sequence<KtDotQualifiedExpression>
+            get() = generateSequence(this) { it.receiverExpression as? KtDotQualifiedExpression }
     }
-
-    private val ClassId.outerClassesWithSelf: Sequence<ClassId>
-        get() = generateSequence(this) { it.outerClassId }
-
-    private val KtUserType.qualifiersWithSelf: Sequence<KtUserType>
-        get() = generateSequence(this) { it.qualifier }
-
-    private val KtDotQualifiedExpression.qualifiersWithSelf: Sequence<KtDotQualifiedExpression>
-        get() = generateSequence(this) { it.receiverExpression as? KtDotQualifiedExpression }
 }
 
 private class ShortenCommandImpl(
