@@ -29,9 +29,9 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
-    @TestMetadata("argfile")
+    @TestMetadata("defaultPackage")
     public void testArgfile() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/argfile/");
+        runTest("plugins/kapt3/kapt3-cli/testData/integration/defaultPackage/");
     }
 
     @TestMetadata("correctErrorTypesOff")
