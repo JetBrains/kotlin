@@ -28,13 +28,5 @@ class ErrorInDeclarations {
 annotation class Anno(val a: KClass<Any>)
 
 // EXPECTED_ERROR(kotlin:11:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:12:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:16:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:17:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:20:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:22:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:25:5) cannot find symbol
 // EXPECTED_ERROR(kotlin:6:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:9:34) cannot find symbol
-// EXPECTED_ERROR(kotlin:9:50) cannot find symbol
-// EXPECTED_ERROR(kotlin:9:62) cannot find symbol
+// EXPECTED_ERROR(kotlin:12:1) cannot find symbol
