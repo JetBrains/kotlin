@@ -242,7 +242,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         }
 
         if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-            addTypeToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelTypeElement)
+            addTypeToShorten(mostTopLevelTypeElement, mostTopLevelClassId.asSingleFqName())
         } else {
             addFakePackagePrefixToShortenIfPresent(mostTopLevelTypeElement)
         }
@@ -257,12 +257,8 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         }
     }
 
-    private fun addTypeToShorten(typeElement: KtUserType) {
-        typesToShorten.add(typeElement)
-    }
-
-    private fun addTypeToImportAndShorten(classFqName: FqName, mostTopLevelTypeElement: KtUserType) {
-        namesToImport.add(classFqName)
+    private fun addTypeToShorten(mostTopLevelTypeElement: KtUserType, classFqName: FqName? = null) {
+        namesToImport.addIfNotNull(classFqName)
         typesToShorten.add(mostTopLevelTypeElement)
     }
 
@@ -300,7 +296,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         }
 
         if (availableClassifier == null || availableClassifier.isFromStarOrPackageImport) {
-            addElementToImportAndShorten(mostTopLevelClassId.asSingleFqName(), mostTopLevelQualifier)
+            addElementToShorten(mostTopLevelQualifier, mostTopLevelClassId.asSingleFqName())
         } else {
             addFakePackagePrefixToShortenIfPresent(mostTopLevelQualifier)
         }
@@ -335,7 +331,7 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         when {
             availableCallables.isEmpty() -> {
                 val additionalImport = callableId.asImportableFqName() ?: return
-                addElementToImportAndShorten(additionalImport, qualifiedCallExpression)
+                addElementToShorten(qualifiedCallExpression, additionalImport)
             }
             availableCallables.all { it.callableId == callableId } -> {
                 addElementToShorten(qualifiedCallExpression)
@@ -396,12 +392,8 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         }
     }
 
-    private fun addElementToShorten(element: KtDotQualifiedExpression) {
-        qualifiersToShorten.add(element)
-    }
-
-    private fun addElementToImportAndShorten(nameToImport: FqName, element: KtDotQualifiedExpression) {
-        namesToImport.add(nameToImport)
+    private fun addElementToShorten(element: KtDotQualifiedExpression, nameToImport: FqName? = null) {
+        namesToImport.addIfNotNull(nameToImport)
         qualifiersToShorten.add(element)
     }
 
