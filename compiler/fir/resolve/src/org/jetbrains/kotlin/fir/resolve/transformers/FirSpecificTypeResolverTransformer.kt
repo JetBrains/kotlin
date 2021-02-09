@@ -38,12 +38,15 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): CompositeTransformResult<FirResolvedTypeRef> {
         typeRef.transformChildren(this, data)
         return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed))
     }
 
-    override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
+    override fun transformFunctionTypeRef(
+        functionTypeRef: FirFunctionTypeRef,
+        data: FirScope
+    ): CompositeTransformResult<FirResolvedTypeRef> {
         functionTypeRef.transformChildren(this, data)
         val resolvedType = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed).takeIfAcceptable()
         return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
@@ -62,11 +65,11 @@ class FirSpecificTypeResolverTransformer(
         }.compose()
     }
 
-    private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
+    private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirResolvedTypeRef> {
         return if (resolvedType !is ConeClassErrorType) {
             buildResolvedTypeRef {
                 source = typeRef.source
-                type = resolvedType.takeIfAcceptable() ?: return typeRef.compose()
+                type = resolvedType
                 annotations += typeRef.annotations
                 delegatedTypeRef = typeRef
             }
