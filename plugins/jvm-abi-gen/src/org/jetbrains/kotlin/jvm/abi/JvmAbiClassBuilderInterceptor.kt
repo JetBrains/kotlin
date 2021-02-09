@@ -79,6 +79,11 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
         override fun getDelegate(): ClassBuilder = delegate
 
         override fun defineClass(origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>) {
+            // Always keep annotation classes
+            if (access and Opcodes.ACC_ANNOTATION != 0) {
+                publicAbi = true
+            }
+
             internalName = name
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
@@ -89,6 +94,10 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
         }
 
         override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+            if (publicAbi) {
+                return super.newMethod(origin, access, name, desc, signature, exceptions)
+            }
+
             // inline suspend functions are a special case: Unless they use reified type parameters,
             // we will transform the original method and generate a $$forInline method for the inliner.
             // Only the latter needs to be kept, the former can be stripped. Unfortunately, there is no
@@ -121,7 +130,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
         // Parse the public ABI flag from the Kotlin metadata annotation
         override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
             val delegate = super.newAnnotation(desc, visible)
-            if (desc != JvmAnnotationNames.METADATA_DESC)
+            if (publicAbi || desc != JvmAnnotationNames.METADATA_DESC)
                 return delegate
 
             return object : AnnotationVisitor(Opcodes.API_VERSION, delegate) {

@@ -1,0 +1,56 @@
+@kotlin.annotation.Retention(value=SOURCE)
+@java.lang.annotation.Retention(value=SOURCE)
+@kotlin.Metadata
+annotation class test/A1 {
+    // source: 'annotations.kt'
+    public abstract method x(): int
+}
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@kotlin.Metadata
+annotation class test/A2 {
+    // source: 'annotations.kt'
+    public abstract method x(): int
+}
+@kotlin.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+annotation class test/A3 {
+    // source: 'annotations.kt'
+    public abstract method x(): int
+}
+@kotlin.annotation.Retention(value=SOURCE)
+@java.lang.annotation.Retention(value=SOURCE)
+@kotlin.Metadata
+public annotation class test/B1 {
+    // source: 'annotations.kt'
+    public abstract method x(): int
+}
+@kotlin.annotation.Retention(value=BINARY)
+@java.lang.annotation.Retention(value=CLASS)
+@kotlin.Metadata
+public annotation class test/B2 {
+    // source: 'annotations.kt'
+    public abstract method x(): int
+}
+@kotlin.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class test/B3 {
+    // source: 'annotations.kt'
+    public abstract method x(): int
+}
+@test.A3(x=2)
+@kotlin.Metadata
+@test.A2(x=1)
+public final class test/T1 {
+    // source: 'annotations.kt'
+    public method <init>(): void
+}
+@test.B3(x=2)
+@kotlin.Metadata
+@test.B2(x=1)
+public final class test/T2 {
+    // source: 'annotations.kt'
+    public method <init>(): void
+}

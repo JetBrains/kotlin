@@ -30,6 +30,11 @@ public class IrJvmAbiContentTestGenerated extends AbstractIrJvmAbiContentTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
     }
 
+    @TestMetadata("annotation")
+    public void testAnnotation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/annotation/");
+    }
+
     @TestMetadata("class")
     public void testClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/class/");

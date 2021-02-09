@@ -30,6 +30,11 @@ public class LegacyJvmAbiContentTestGenerated extends AbstractLegacyJvmAbiConten
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
     }
 
+    @TestMetadata("annotation")
+    public void testAnnotation() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/annotation/");
+    }
+
     @TestMetadata("class")
     public void testClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/class/");
