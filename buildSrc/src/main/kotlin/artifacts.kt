@@ -254,14 +254,14 @@ fun Project.idePluginDependency(block: () -> Unit) {
     }
 }
 
-fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List<String> = emptyList(), configuration: String? = null) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
 
     dependencies {
         for (projectName in projects) {
-            fatJarContents(project(projectName)) { isTransitive = false }
+            fatJarContents(project(projectName, configuration)) { isTransitive = false }
         }
 
         for (libraryDependency in libraryDependencies) {

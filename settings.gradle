@@ -347,7 +347,8 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
-        ":prepare:ide-plugin-dependencies:compiler-components-for-jps"
+        ":prepare:ide-plugin-dependencies:compiler-components-for-jps",
+        ":prepare:ide-plugin-dependencies:kotlin-stdlib-for-ide"
 
 if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR modules in settings.gradle")
