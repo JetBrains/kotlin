@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -91,9 +90,6 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         }
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
-        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ANDROID_ANNOTATIONS")) {
-            result.add(ForTestCompileRuntime.androidAnnotationsForTests())
-        }
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
             result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
         }
