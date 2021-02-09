@@ -17,55 +17,60 @@ import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
+import org.jetbrains.kotlin.js.naming.isValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
+import kotlin.collections.set
+import kotlin.math.abs
 
 // TODO remove direct usages of [mapToKey] from [NameTable] & co and move it to scripting & REPL infrastructure. Review usages.
 private fun <T> mapToKey(declaration: T): String {
     return with(JsManglerIr) {
         if (declaration is IrDeclaration) {
             declaration.hashedMangle.toString()
-        } else if (declaration is Signature) {
-            declaration.toString().hashMangle.toString()
+        } else if (declaration is String) {
+            declaration.hashMangle.toString()
         } else {
             error("Key is not generated for " + declaration?.let { it::class.simpleName })
         }
     }
 }
 
+abstract class NameScope {
+    abstract fun isReserved(name: String): Boolean
+
+    object EmptyScope : NameScope() {
+        override fun isReserved(name: String): Boolean = false
+    }
+}
+
 class NameTable<T>(
-    val parent: NameTable<*>? = null,
+    val parent: NameScope = EmptyScope,
     val reserved: MutableSet<String> = mutableSetOf(),
-    val sanitizer: (String) -> String = ::sanitizeName,
     val mappedNames: MutableMap<String, String>? = null
-) {
-    var finished = false
+) : NameScope() {
     val names = mutableMapOf<T, String>()
 
-    private fun isReserved(name: String): Boolean {
-        if (parent != null && parent.isReserved(name))
-            return true
-        return name in reserved
+    private val suggestedNameLastIdx = mutableMapOf<String, Int>()
+
+    override fun isReserved(name: String): Boolean {
+        return parent.isReserved(name) || name in reserved
     }
 
     fun declareStableName(declaration: T, name: String) {
-        if (parent != null) assert(parent.finished)
-        assert(!finished)
         names[declaration] = name
         reserved.add(name)
         mappedNames?.set(mapToKey(declaration), name)
     }
 
     fun declareFreshName(declaration: T, suggestedName: String): String {
-        val freshName = findFreshName(sanitizer(suggestedName))
+        val freshName = findFreshName(sanitizeName(suggestedName))
         declareStableName(declaration, freshName)
         return freshName
     }
@@ -74,7 +79,7 @@ class NameTable<T>(
         if (!isReserved(suggestedName))
             return suggestedName
 
-        var i = 0
+        var i = suggestedNameLastIdx[suggestedName] ?: 0
 
         fun freshName() =
             suggestedName + "_" + i
@@ -82,6 +87,9 @@ class NameTable<T>(
         while (isReserved(freshName())) {
             i++
         }
+
+        suggestedNameLastIdx[suggestedName] = i
+
         return freshName()
     }
 }
@@ -93,32 +101,24 @@ fun NameTable<IrDeclaration>.dump(): String =
         "---  $declRef => $name"
     }
 
-sealed class Signature
-data class StableNameSignature(val name: String) : Signature()
-data class BackingFieldSignature(val field: IrField) : Signature()
-data class ParameterTypeBasedSignature(val mangledName: String, val suggestedName: String) : Signature()
 
-fun fieldSignature(field: IrField): Signature {
-    if (field.isEffectivelyExternal()) {
-        return StableNameSignature(field.name.identifier)
-    }
+private const val RESERVED_MEMBER_NAME_SUFFIX = "_k$"
 
-    return BackingFieldSignature(field)
-}
-
-fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext?): Signature {
+fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext?): String {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
     val declarationName = declaration.getJsNameOrKotlinName().asString()
 
     if (declaration.hasStableJsName(context)) {
-        return StableNameSignature(declarationName)
+        // TODO: Handle reserved suffix in FE
+        require(!declarationName.endsWith(RESERVED_MEMBER_NAME_SUFFIX)) {
+            "Function ${declaration.fqNameWhenAvailable} uses reserved name suffix \"$RESERVED_MEMBER_NAME_SUFFIX\""
+        }
+        return declarationName
     }
 
     val nameBuilder = StringBuilder()
-
-    nameBuilder.append(declarationName)
 
     // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
     declaration.typeParameters.ifNotEmpty {
@@ -141,20 +141,19 @@ fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext?): 
 
     val signature = nameBuilder.toString()
 
-    // TODO: Check reserved names
-    return ParameterTypeBasedSignature(signature, declarationName)
+    // TODO: Use better hashCode
+    return sanitizeName(declarationName) + "_" + abs(signature.hashCode()).toString(Character.MAX_RADIX) + RESERVED_MEMBER_NAME_SUFFIX
 }
 
 class NameTables(
-    packages: List<IrPackageFragment>,
+    packages: Iterable<IrPackageFragment>,
     reservedForGlobal: MutableSet<String> = mutableSetOf(),
     reservedForMember: MutableSet<String> = mutableSetOf(),
     val mappedNames: MutableMap<String, String>? = null,
     private val context: JsIrBackendContext? = null
 ) {
     val globalNames: NameTable<IrDeclaration>
-    private val memberNames: NameTable<Signature>
-    private val localNames = mutableMapOf<IrDeclaration, NameTable<IrDeclaration>>()
+    private val memberNames: NameTable<IrField>
     private val loopNames = mutableMapOf<IrLoop, String>()
 
     init {
@@ -171,74 +170,48 @@ class NameTables(
             mappedNames = mappedNames
         )
 
-        val classDeclaration = mutableListOf<IrClass>()
         for (p in packages) {
             for (declaration in p.declarations) {
-                generateNamesForTopLevelDecl(declaration)
+                processTopLevelLocalDecl(declaration)
+                processNonTopLevelLocalDecl(declaration)
+                declaration.acceptChildrenVoid(object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitDeclaration(declaration: IrDeclarationBase) {
+                        processNonTopLevelLocalDecl(declaration)
+                        super.visitDeclaration(declaration)
+                    }
+                })
                 if (declaration is IrScript) {
                     for (memberDecl in declaration.statements) {
                         if (memberDecl is IrDeclaration) {
-                            generateNamesForTopLevelDecl(memberDecl)
+                            processTopLevelLocalDecl(memberDecl)
                             if (memberDecl is IrClass) {
-                                classDeclaration += memberDecl
+                                processNonTopLevelLocalDecl(memberDecl)
                             }
                         }
                     }
                 }
             }
         }
+    }
 
-        globalNames.finished = true
-
-        for (declaration in classDeclaration) {
-            acceptDeclaration(declaration)
-        }
-
-        for (p in packages) {
-            for (declaration in p.declarations) {
-                acceptDeclaration(declaration)
+    private fun acceptNonExternalClass(declaration: IrClass) {
+        for (memberDecl in declaration.declarations) {
+            when (memberDecl) {
+                is IrField ->
+                    generateNameForMemberField(memberDecl)
             }
         }
     }
 
-    private fun acceptDeclaration(declaration: IrDeclaration) {
-        val localNameGenerator = LocalNameGenerator(declaration)
-
+    private fun processNonTopLevelLocalDecl(declaration: IrDeclaration) {
         if (declaration is IrClass) {
-            if (declaration.isEffectivelyExternal()) {
-                declaration.acceptChildrenVoid(object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
-                    }
-
-                    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                        val parent = declaration.parent
-                        if (parent is IrClass && !parent.isEnumClass) {
-                            generateNameForMemberFunction(declaration)
-                        }
-                    }
-
-                    override fun visitField(declaration: IrField) {
-                        val parent = declaration.parent
-                        if (parent is IrClass && !parent.isEnumClass) {
-                            generateNameForMemberField(declaration)
-                        }
-                    }
-                })
-            } else {
-                declaration.thisReceiver!!.acceptVoid(localNameGenerator)
-                for (memberDecl in declaration.declarations) {
-                    memberDecl.acceptChildrenVoid(LocalNameGenerator(memberDecl))
-                    when (memberDecl) {
-                        is IrSimpleFunction ->
-                            generateNameForMemberFunction(memberDecl)
-                        is IrField ->
-                            generateNameForMemberField(memberDecl)
-                    }
-                }
+            if (!declaration.isEffectivelyExternal()) {
+                acceptNonExternalClass(declaration)
             }
-        } else {
-            declaration.acceptChildrenVoid(localNameGenerator)
         }
     }
 
@@ -262,7 +235,6 @@ class NameTables(
 
         globalNames.names.addAllIfAbsent(table.globalNames.names)
         memberNames.names.addAllIfAbsent(table.memberNames.names)
-        localNames.addAllIfAbsent(table.localNames)
         loopNames.addAllIfAbsent(table.loopNames)
 
         globalNames.reserved.addAll(table.globalNames.reserved)
@@ -272,48 +244,22 @@ class NameTables(
     private fun generateNameForMemberField(field: IrField) {
         require(!field.isTopLevel)
         require(!field.isStatic)
-        val signature = fieldSignature(field)
 
         if (field.isEffectivelyExternal()) {
-            memberNames.declareStableName(signature, field.name.identifier)
+            memberNames.declareStableName(field, field.name.identifier)
         } else {
-            memberNames.declareFreshName(signature, "_" + sanitizeName(field.name.asString()))
-        }
-    }
-
-    private fun generateNameForMemberFunction(declaration: IrSimpleFunction) {
-        when (val signature = jsFunctionSignature(declaration, context)) {
-            is StableNameSignature -> memberNames.declareStableName(signature, signature.name)
-            is ParameterTypeBasedSignature -> memberNames.declareFreshName(signature, signature.suggestedName)
+            memberNames.declareFreshName(field, "_" + sanitizeName(field.name.asString()))
         }
     }
 
     @Suppress("unused")
     fun dump(): String {
-        val local = localNames.toList().joinToString("\n") { (decl, table) ->
-            val declRef = (decl as? IrDeclarationWithName)?.fqNameWhenAvailable ?: decl
-            "\nLocal names for $declRef:\n${table.dump()}\n"
-        }
-        return "Global names:\n${globalNames.dump()}" +
-                //   "\nMember names:\n${memberNames.dump()}" +
-                "\nLocal names:\n$local\n"
+        return "Global names:\n${globalNames.dump()}"
     }
 
     fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): String {
         val global: String? = globalNames.names[declaration]
         if (global != null) return global
-
-        var parent: IrDeclarationParent = declaration.parent
-        while (parent is IrDeclaration) {
-            val parentLocalNames = localNames[parent]
-            if (parentLocalNames != null) {
-                val localName = parentLocalNames.names[declaration]
-                if (localName != null)
-                    return localName
-            }
-            parent = parent.parent
-        }
-
 
         mappedNames?.get(mapToKey(declaration))?.let {
             return it
@@ -323,8 +269,7 @@ class NameTables(
     }
 
     fun getNameForMemberField(field: IrField): String {
-        val signature = fieldSignature(field)
-        val name = memberNames.names[signature] ?: mappedNames?.get(mapToKey(signature))
+        val name = memberNames.names[field] ?: mappedNames?.get(mapToKey(field))
 
         // TODO investigate
         if (name == null) {
@@ -334,24 +279,12 @@ class NameTables(
         return name
     }
 
-    fun getNameForMemberFunction(function: IrSimpleFunction): String {
-        val signature = jsFunctionSignature(function, context)
-        val name = memberNames.names[signature] ?: mappedNames?.get(mapToKey(signature))
-
-        // TODO Add a compiler flag, which enables this behaviour
-        // TODO remove in DCE
-        if (name == null) {
-            return sanitizeName(function.name.asString()) + "__error" // TODO one case is a virtual method of an abstract class with no implementation
-        }
-
-        return name
-    }
-
-    private fun generateNamesForTopLevelDecl(declaration: IrDeclaration) {
+    private fun processTopLevelLocalDecl(declaration: IrDeclaration) {
         when {
             declaration !is IrDeclarationWithName ->
                 return
 
+            // TODO: Handle JsQualifier
             declaration.isEffectivelyExternal() && (declaration.getJsModule() == null || declaration.isJsNonModule()) ->
                 globalNames.declareStableName(declaration, declaration.getJsNameOrKotlinName().identifier)
 
@@ -360,74 +293,77 @@ class NameTables(
         }
     }
 
-    inner class LocalNameGenerator(parentDeclaration: IrDeclaration) : IrElementVisitorVoid {
-        val table = NameTable<IrDeclaration>(globalNames)
+}
 
-        private val breakableDeque: Deque<IrExpression> = LinkedList()
+class LocalNameGenerator(parentScope: NameScope) : IrElementVisitorVoid {
+    val variableNames = NameTable<IrDeclarationWithName>(parentScope)
+    val localLoopNames = NameTable<IrLoop>()
 
-        init {
-            localNames[parentDeclaration] = table
-        }
+    private val breakableDeque: Deque<IrExpression> = LinkedList()
 
-        private val localLoopNames = NameTable<IrLoop>()
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
 
-        override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrDeclarationWithName) {
-                table.declareFreshName(declaration, declaration.name.asString())
-            }
-            super.visitDeclaration(declaration)
-        }
-
-        override fun visitBreak(jump: IrBreak) {
-            val loop = jump.loop
-            if (loop.label == null && loop != breakableDeque.firstOrNull()) {
-                persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
-            }
-
-            super.visitBreak(jump)
-        }
-
-        override fun visitWhen(expression: IrWhen) {
-            breakableDeque.push(expression)
-
-            super.visitWhen(expression)
-
-            breakableDeque.pop()
-        }
-
-        override fun visitLoop(loop: IrLoop) {
-            breakableDeque.push(loop)
-
-            super.visitLoop(loop)
-
-            breakableDeque.pop()
-
-            val label = loop.label
-
-            if (label != null) {
-                persistLoopName(label, loop)
-            }
-        }
-
-        private fun persistLoopName(label: String, loop: IrLoop) {
-            localLoopNames.declareFreshName(loop, label)
-            loopNames[loop] = localLoopNames.names[loop]!!
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+        super.visitDeclaration(declaration)
+        if (declaration is IrDeclarationWithName) {
+            variableNames.declareFreshName(declaration, declaration.name.asString())
         }
     }
 
-    fun getNameForLoop(loop: IrLoop): String? =
-        loopNames[loop]
+    override fun visitBreak(jump: IrBreak) {
+        val loop = jump.loop
+        if (loop.label == null && loop != breakableDeque.firstOrNull()) {
+            persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
+        }
+
+        super.visitBreak(jump)
+    }
+
+    override fun visitWhen(expression: IrWhen) {
+        breakableDeque.push(expression)
+
+        super.visitWhen(expression)
+
+        breakableDeque.pop()
+    }
+
+    override fun visitLoop(loop: IrLoop) {
+        breakableDeque.push(loop)
+
+        super.visitLoop(loop)
+
+        breakableDeque.pop()
+
+        val label = loop.label
+
+        if (label != null) {
+            persistLoopName(label, loop)
+        }
+    }
+
+    private fun persistLoopName(label: String, loop: IrLoop) {
+        localLoopNames.declareFreshName(loop, label)
+    }
 }
 
 
 fun sanitizeName(name: String): String {
+    if (name.isValidES5Identifier()) return name
     if (name.isEmpty()) return "_"
 
+    val builder = StringBuilder()
+
     val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
-    return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
+    builder.append(first)
+
+    for (idx in 1..name.lastIndex) {
+        val c = name[idx]
+        builder.append(if (c.isES5IdentifierPart()) c else '_')
+    }
+
+    return builder.toString()
 }
 
 private const val SYNTHETIC_LOOP_LABEL = "\$l\$break"

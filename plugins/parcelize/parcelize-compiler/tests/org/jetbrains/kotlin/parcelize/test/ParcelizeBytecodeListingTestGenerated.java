@@ -70,6 +70,11 @@ public class ParcelizeBytecodeListingTestGenerated extends AbstractParcelizeByte
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/efficientParcelable.kt");
     }
 
+    @TestMetadata("generics.kt")
+    public void testGenerics() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/codegen/generics.kt");
+    }
+
     @TestMetadata("IBinderIInterface.kt")
     public void testIBinderIInterface() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/IBinderIInterface.kt");

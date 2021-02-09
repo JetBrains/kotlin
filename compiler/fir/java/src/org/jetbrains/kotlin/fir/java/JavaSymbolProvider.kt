@@ -309,7 +309,12 @@ class JavaSymbolProvider(
         }
         if (classIsAnnotation) {
             declarations +=
-                buildConstructorForAnnotationClass(constructorId, this, valueParametersForAnnotationConstructor)
+                buildConstructorForAnnotationClass(
+                    classSource = (javaClass as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor) as? FirFakeSourceElement,
+                    constructorId = constructorId,
+                    ownerClassBuilder = this,
+                    valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor
+                )
         }
     }
 
@@ -438,6 +443,7 @@ class JavaSymbolProvider(
         }
         if (classIsAnnotation) {
             val parameterForAnnotationConstructor = buildJavaValueParameter {
+                source = (javaMethod as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitJavaAnnotationConstructor)
                 session = this@JavaSymbolProvider.session
                 returnTypeRef = firJavaMethod.returnTypeRef
                 name = methodName
@@ -505,11 +511,13 @@ class JavaSymbolProvider(
     }
 
     private fun buildConstructorForAnnotationClass(
+        classSource: FirFakeSourceElement<*>?,
         constructorId: CallableId,
         ownerClassBuilder: FirJavaClassBuilder,
         valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor
     ): FirJavaConstructor {
         return buildJavaConstructor {
+            source = classSource
             session = this@JavaSymbolProvider.session
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)

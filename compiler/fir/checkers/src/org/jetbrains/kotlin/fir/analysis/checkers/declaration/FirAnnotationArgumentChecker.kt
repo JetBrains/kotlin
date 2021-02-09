@@ -5,21 +5,24 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -36,8 +39,8 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             for ((arg, _) in declarationOfAnnotation.argumentMapping ?: continue) {
                 val expression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
 
-                checkAnnotationArgumentWithSubElements(expression, context.session, reporter)
-                    ?.let { reporter.report(expression.source, it) }
+                checkAnnotationArgumentWithSubElements(expression, context.session, reporter, context)
+                    ?.let { reporter.reportOn(expression.source, it, context) }
             }
         }
     }
@@ -45,7 +48,8 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
     private fun checkAnnotationArgumentWithSubElements(
         expression: FirExpression,
         session: FirSession,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        context: CheckerContext
     ): FirDiagnosticFactory0<FirSourceElement, KtExpression>? {
         when (expression) {
             is FirArrayOfCall -> {
@@ -54,13 +58,13 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
                 for (arg in expression.argumentList.arguments) {
                     val sourceForReport = arg.source
 
-                    when (val err = checkAnnotationArgumentWithSubElements(arg, session, reporter)) {
+                    when (val err = checkAnnotationArgumentWithSubElements(arg, session, reporter, context)) {
                         null -> {
                             //DO NOTHING
                         }
                         else -> {
                             if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
-                            reporter.report(sourceForReport, err)
+                            reporter.reportOn(sourceForReport, err, context)
                         }
                     }
                 }
@@ -69,8 +73,8 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             }
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments)
-                    checkAnnotationArgumentWithSubElements(arg, session, reporter)
-                        ?.let { reporter.report(arg.source, it) }
+                    checkAnnotationArgumentWithSubElements(arg, session, reporter, context)
+                        ?.let { reporter.reportOn(arg.source, it, context) }
             }
             else ->
                 return checkAnnotationArgument(expression, session)
@@ -223,13 +227,6 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             ?.lookupTag
             ?.toSymbol(session)
             ?.fir
-
-    private inline fun <reified T : FirSourceElement, P : PsiElement> DiagnosticReporter.report(
-        source: T?,
-        factory: FirDiagnosticFactory0<T, P>
-    ) {
-        source?.let { report(factory.on(it)) }
-    }
 
     private val CONVERSION_NAMES = listOf(
         "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"

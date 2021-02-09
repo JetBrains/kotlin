@@ -8,9 +8,10 @@
 
 #if defined(__x86_64__) or defined(__i386__)
 
-#include <immintrin.h>
+#define __SSE41__ __attribute__((target("sse4.1")))
+#define __AVX2__ __attribute__((target("avx2")))
 
-#pragma clang attribute push (__attribute__((target("avx2"))), apply_to=function)
+#include <immintrin.h>
 
 namespace {
 
@@ -26,24 +27,24 @@ struct SSETraits {
     using Vec128Type = __m128i;
     using U16VecType = __m128i;
 
-    ALWAYS_INLINE static VecType initVec() { return _mm_setzero_si128(); }
-    ALWAYS_INLINE static Vec128Type initVec128() { return _mm_setzero_si128(); }
-    ALWAYS_INLINE static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
-    ALWAYS_INLINE static VecType u16Load(U16VecType x) { return _mm_cvtepu16_epi32(x); }
-    ALWAYS_INLINE static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
-    ALWAYS_INLINE static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
-    ALWAYS_INLINE static VecType vecMul(VecType x, VecType y) { return _mm_mullo_epi32(x, y); }
-    ALWAYS_INLINE static VecType vecAdd(VecType x, VecType y) { return _mm_add_epi32(x, y); }
-    ALWAYS_INLINE static Vec128Type squash2(VecType x, VecType y) {
+    __SSE41__ static VecType initVec() { return _mm_setzero_si128(); }
+    __SSE41__ static Vec128Type initVec128() { return _mm_setzero_si128(); }
+    __SSE41__ static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
+    __SSE41__ static VecType u16Load(U16VecType x) { return _mm_cvtepu16_epi32(x); }
+    __SSE41__ static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
+    __SSE41__ static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
+    __SSE41__ static VecType vecMul(VecType x, VecType y) { return _mm_mullo_epi32(x, y); }
+    __SSE41__ static VecType vecAdd(VecType x, VecType y) { return _mm_add_epi32(x, y); }
+    __SSE41__ static Vec128Type squash2(VecType x, VecType y) {
         return squash1(_mm_hadd_epi32(x, y)); // [x0 + x1, x2 + x3, y0 + y1, y2 + y3]
     }
 
-    ALWAYS_INLINE static Vec128Type squash1(VecType z) {
+    __SSE41__ static Vec128Type squash1(VecType z) {
         VecType sum = _mm_hadd_epi32(z, z); // [z0 + z1, z2 + z3, z0 + z1, z2 + z3]
         return _mm_hadd_epi32(sum, sum);    // [z0..3, same, same, same]
     }
 
-    static int polyHashUnalignedUnrollUpTo8(int n, uint16_t const* str) {
+    __SSE41__ static int polyHashUnalignedUnrollUpTo8(int n, uint16_t const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll2<SSETraits>(n, str, res, &b8[0], &p64[56]);
@@ -52,7 +53,7 @@ struct SSETraits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
+    __SSE41__ static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll4<SSETraits>(n, str, res, &b16[0], &p64[48]);
@@ -68,19 +69,19 @@ struct AVX2Traits {
     using Vec128Type = __m128i;
     using U16VecType = __m128i;
 
-    ALWAYS_INLINE static VecType initVec() { return _mm256_setzero_si256(); }
-    ALWAYS_INLINE static Vec128Type initVec128() { return _mm_setzero_si128(); }
-    ALWAYS_INLINE static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
-    ALWAYS_INLINE static VecType u16Load(U16VecType x) { return _mm256_cvtepu16_epi32(x); }
-    ALWAYS_INLINE static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
-    ALWAYS_INLINE static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
-    ALWAYS_INLINE static VecType vecMul(VecType x, VecType y) { return _mm256_mullo_epi32(x, y); }
-    ALWAYS_INLINE static VecType vecAdd(VecType x, VecType y) { return _mm256_add_epi32(x, y); }
-    ALWAYS_INLINE static Vec128Type squash2(VecType x, VecType y) {
+    __AVX2__ static VecType initVec() { return _mm256_setzero_si256(); }
+    __AVX2__ static Vec128Type initVec128() { return _mm_setzero_si128(); }
+    __AVX2__ static int vec128toInt(Vec128Type x) { return _mm_cvtsi128_si32(x); }
+    __AVX2__ static VecType u16Load(U16VecType x) { return _mm256_cvtepu16_epi32(x); }
+    __AVX2__ static Vec128Type vec128Mul(Vec128Type x, Vec128Type y) { return _mm_mullo_epi32(x, y); }
+    __AVX2__ static Vec128Type vec128Add(Vec128Type x, Vec128Type y) { return _mm_add_epi32(x, y); }
+    __AVX2__ static VecType vecMul(VecType x, VecType y) { return _mm256_mullo_epi32(x, y); }
+    __AVX2__ static VecType vecAdd(VecType x, VecType y) { return _mm256_add_epi32(x, y); }
+    __AVX2__ static Vec128Type squash2(VecType x, VecType y) {
         return squash1(_mm256_hadd_epi32(x, y)); // [x0 + x1, x2 + x3, y0 + y1, y2 + y3, x4 + x5, x6 + x7, y4 + y5, y6 + y7]
     }
 
-    ALWAYS_INLINE static Vec128Type squash1(VecType z) {
+    __AVX2__ static Vec128Type squash1(VecType z) {
         VecType sum = _mm256_hadd_epi32(z, z);            // [z0 + z1, z2 + z3, z0 + z1, z2 + z3, z4 + z5, z6 + z7, z4 + z5, z6 + z7]
         sum = _mm256_hadd_epi32(sum, sum);                // [z0..3, z0..3, z0..3, z0..3, z4..7, z4..7, z4..7, z4..7]
         Vec128Type lo = _mm256_extracti128_si256(sum, 0); // [z0..3, same, same, same]
@@ -88,7 +89,7 @@ struct AVX2Traits {
         return _mm_add_epi32(lo, hi);                     // [z0..7, same, same, same]
     }
 
-    static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
+    __AVX2__ static int polyHashUnalignedUnrollUpTo16(int n, uint16_t const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll2<AVX2Traits>(n, str, res, &b16[0], &p64[48]);
@@ -98,7 +99,7 @@ struct AVX2Traits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo32(int n, uint16_t const* str) {
+    __AVX2__ static int polyHashUnalignedUnrollUpTo32(int n, uint16_t const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll4<AVX2Traits>(n, str, res, &b32[0], &p64[32]);
@@ -109,7 +110,7 @@ struct AVX2Traits {
         return vec128toInt(res);
     }
 
-    static int polyHashUnalignedUnrollUpTo64(int n, uint16_t const* str) {
+    __AVX2__ static int polyHashUnalignedUnrollUpTo64(int n, uint16_t const* str) {
         Vec128Type res = initVec128();
 
         polyHashUnroll8<AVX2Traits>(n, str, res, &b64[0], &p64[0]);
@@ -128,8 +129,8 @@ struct AVX2Traits {
     const bool x64 = false;
 #endif
     bool initialized = false;
-    bool sseSupported;
-    bool avx2Supported;
+    bool sseSupported = false;
+    bool avx2Supported = false;
 
 }
 
@@ -160,7 +161,5 @@ int polyHash_x86(int length, uint16_t const* str) {
         res = res * 31 + str[i];
     return res;
 }
-
-#pragma clang attribute pop
 
 #endif

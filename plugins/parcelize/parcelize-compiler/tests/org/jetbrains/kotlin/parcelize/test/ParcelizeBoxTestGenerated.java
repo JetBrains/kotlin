@@ -120,6 +120,11 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/functions.kt");
     }
 
+    @TestMetadata("generics.kt")
+    public void testGenerics() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/generics.kt");
+    }
+
     @TestMetadata("intArray.kt")
     public void testIntArray() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/intArray.kt");

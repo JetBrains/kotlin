@@ -5,7 +5,7 @@ class Foo {
 
 class Bar : Foo() {
     override fun openFoo() {}
-    override fun finalFoo() {}
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun finalFoo() {}
 }
 
 

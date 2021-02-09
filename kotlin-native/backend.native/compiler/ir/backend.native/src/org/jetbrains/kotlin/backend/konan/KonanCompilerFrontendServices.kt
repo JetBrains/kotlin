@@ -8,18 +8,23 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpObjCHeader
 import org.jetbrains.kotlin.container.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
-    this.useImpl<FrontendServices>()
+    useImpl<FrontendServices>()
 
     if (config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE) != null) {
-        this.useImpl<ObjCExportLazyImpl>()
-        this.useInstance(ObjCExportWarningCollector.SILENT)
+        useImpl<ObjCExportLazyImpl>()
+        useInstance(object : ObjCExportProblemCollector {
+            override fun reportWarning(text: String) {}
+            override fun reportWarning(method: FunctionDescriptor, text: String) {}
+            override fun reportException(throwable: Throwable) = throw throwable
+        })
 
         useInstance(object : ObjCExportLazy.Configuration {
             override val frameworkName: String

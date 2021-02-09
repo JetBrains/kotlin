@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockResultsConsumer
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockModulesProvider
-import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExperimentalContracts
 class CommonizerFacadeTest {
@@ -44,7 +46,7 @@ class CommonizerFacadeTest {
     )
 
     @Test
-    fun commonizedWithDifferentModules() = doTestSuccessfulCommonization(
+    fun commonizedWithDifferentModules() = doTestNothingToCommonize(
         mapOf(
             "target1" to listOf("foo"),
             "target2" to listOf("bar")
@@ -60,28 +62,32 @@ class CommonizerFacadeTest {
     )
 
     companion object {
-        private fun Map<String, List<String>>.toCommonizationParameters() = CommonizerParameters().also {
-            forEach { (targetName, moduleNames) ->
-                it.addTarget(
-                    TargetProvider(
-                        target = LeafTarget(targetName),
-                        builtInsClass = DefaultBuiltIns::class.java,
-                        builtInsProvider = BuiltInsProvider.defaultBuiltInsProvider,
-                        modulesProvider = MockModulesProvider.create(moduleNames),
-                        dependeeModulesProvider = null
+        private fun Map<String, List<String>>.toCommonizerParameters(resultsConsumer: ResultsConsumer) =
+            CommonizerParameters().also { parameters ->
+                parameters.resultsConsumer = resultsConsumer
+
+                forEach { (targetName, moduleNames) ->
+                    parameters.addTarget(
+                        TargetProvider(
+                            target = LeafTarget(targetName),
+                            modulesProvider = MockModulesProvider.create(moduleNames),
+                            dependeeModulesProvider = null
+                        )
                     )
-                )
+                }
             }
-        }
 
         private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
-            val result = runCommonization(originalModules.toCommonizationParameters())
-            assertEquals(CommonizerResult.NothingToDo, result)
+            val results = MockResultsConsumer()
+            runCommonization(originalModules.toCommonizerParameters(results))
+            assertEquals(results.status, Status.NOTHING_TO_DO)
+            assertTrue(results.modulesByTargets.isEmpty())
         }
 
         private fun doTestSuccessfulCommonization(originalModules: Map<String, List<String>>) {
-            val result = runCommonization(originalModules.toCommonizationParameters())
-            assertCommonizationPerformed(result)
+            val results = MockResultsConsumer()
+            runCommonization(originalModules.toCommonizerParameters(results))
+            assertEquals(results.status, Status.DONE)
 
             val expectedCommonModuleNames = mutableSetOf<String>()
             originalModules.values.forEachIndexed { index, moduleNames ->
@@ -93,17 +99,17 @@ class CommonizerFacadeTest {
             assertModulesMatch(
                 expectedCommonizedModuleNames = expectedCommonModuleNames,
                 expectedMissingModuleNames = emptySet(),
-                actualModuleResults = result.modulesByTargets.getValue(result.sharedTarget)
+                actualModuleResults = results.modulesByTargets.getValue(results.sharedTarget)
             )
 
-            result.leafTargets.forEach { target ->
+            results.leafTargets.forEach { target ->
                 val allModuleNames = originalModules.getValue(target.name).toSet()
                 val expectedMissingModuleNames = allModuleNames - expectedCommonModuleNames
 
                 assertModulesMatch(
                     expectedCommonizedModuleNames = expectedCommonModuleNames,
                     expectedMissingModuleNames = expectedMissingModuleNames,
-                    actualModuleResults = result.modulesByTargets.getValue(target)
+                    actualModuleResults = results.modulesByTargets.getValue(target)
                 )
             }
         }
@@ -120,12 +126,8 @@ class CommonizerFacadeTest {
 
             actualModuleResults.forEach { moduleResult ->
                 when (moduleResult) {
-                    is ModuleResult.Commonized -> {
-                        actualCommonizedModuleNames += moduleResult.module.name.asString().removeSurrounding("<", ">")
-                    }
-                    is ModuleResult.Missing -> {
-                        actualMissingModuleNames += moduleResult.originalLocation.name
-                    }
+                    is ModuleResult.Commonized -> actualCommonizedModuleNames += moduleResult.libraryName
+                    is ModuleResult.Missing -> actualMissingModuleNames += moduleResult.libraryName
                 }
             }
 

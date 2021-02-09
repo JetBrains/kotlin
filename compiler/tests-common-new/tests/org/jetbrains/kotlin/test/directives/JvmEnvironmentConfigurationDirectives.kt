@@ -54,8 +54,17 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         additionalParser = JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
     )
 
-    val SAM_CONVERSIONS by enumDirective<JvmSamConversions>(
+    val SAM_CONVERSIONS by enumDirective(
         description = "SAM conversion code generation scheme",
-        additionalParser = JvmSamConversions.Companion::fromString
+        additionalParser = JvmClosureGenerationScheme.Companion::fromString
+    )
+
+    val LAMBDAS by enumDirective(
+        description = "Lambdas code generation scheme",
+        additionalParser = JvmClosureGenerationScheme.Companion::fromString
+    )
+
+    val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME by directive(
+        description = "Enable old mangling scheme for inline classes"
     )
 }

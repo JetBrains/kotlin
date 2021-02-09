@@ -14,10 +14,12 @@ import com.intellij.psi.PsiNameValuePair
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSimpleAnnotation
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import java.util.*
 
 private const val JAVA_LANG_ANNOTATION_DOCUMENTED = "java.lang.annotation.Documented"
 
@@ -49,18 +51,27 @@ private fun PsiAnnotation.extractArrayAnnotationFqNames(attributeName: String): 
                 .map { "${it.first.asSingleFqName().asString()}.${it.second.identifier}" }
         }
 
-private val javaAnnotationElementTypeId = ClassId.fromString("java.lang.annotation.ElementType")
-private val targetMapping = hashMapOf(
-    "kotlin.annotation.AnnotationTarget.CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE")),
-    "kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("ANNOTATION_TYPE")),
-    "kotlin.annotation.AnnotationTarget.FIELD" to EnumValue(javaAnnotationElementTypeId, Name.identifier("FIELD")),
-    "kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE" to EnumValue(javaAnnotationElementTypeId, Name.identifier("LOCAL_VARIABLE")),
-    "kotlin.annotation.AnnotationTarget.VALUE_PARAMETER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("PARAMETER")),
-    "kotlin.annotation.AnnotationTarget.CONSTRUCTOR" to EnumValue(javaAnnotationElementTypeId, Name.identifier("CONSTRUCTOR")),
-    "kotlin.annotation.AnnotationTarget.FUNCTION" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-    "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-    "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD"))
-)
+private val targetMappings = EnumMap<JvmTarget, Map<String, EnumValue>>(JvmTarget::class.java).also { result ->
+    val javaAnnotationElementTypeId = ClassId.fromString("java.lang.annotation.ElementType")
+    val jdk6 = hashMapOf(
+        "kotlin.annotation.AnnotationTarget.CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE")),
+        "kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("ANNOTATION_TYPE")),
+        "kotlin.annotation.AnnotationTarget.FIELD" to EnumValue(javaAnnotationElementTypeId, Name.identifier("FIELD")),
+        "kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE" to EnumValue(javaAnnotationElementTypeId, Name.identifier("LOCAL_VARIABLE")),
+        "kotlin.annotation.AnnotationTarget.VALUE_PARAMETER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("PARAMETER")),
+        "kotlin.annotation.AnnotationTarget.CONSTRUCTOR" to EnumValue(javaAnnotationElementTypeId, Name.identifier("CONSTRUCTOR")),
+        "kotlin.annotation.AnnotationTarget.FUNCTION" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
+        "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
+        "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD"))
+    )
+    val jdk8AndLater = HashMap(jdk6).apply {
+        put("kotlin.annotation.AnnotationTarget.TYPE_PARAMETER", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_PARAMETER")))
+        put("kotlin.annotation.AnnotationTarget.TYPE", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_USE")))
+    }
+    for (target in JvmTarget.values()) {
+        result[target] = if (target >= JvmTarget.JVM_1_8) jdk8AndLater else jdk6
+    }
+}
 
 internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
 
@@ -71,6 +82,7 @@ internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtL
 
     attributeValues ?: return null
 
+    val targetMapping = targetMappings.getValue(support.typeMapper.jvmTarget)
     val convertedValues = attributeValues.mapNotNull { targetMapping[it] }.distinct()
 
     val targetAttributes = "value" to ArrayValue(convertedValues) { module -> module.builtIns.array.defaultType }

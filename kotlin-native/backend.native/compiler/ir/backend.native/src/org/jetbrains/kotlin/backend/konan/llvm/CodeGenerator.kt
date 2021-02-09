@@ -341,6 +341,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      */
     var forwardingForeignExceptionsTerminatedWith: LLVMValueRef? = null
 
+    // Whether the generating function needs to initialize Kotlin runtime before execution. Useful for interop bridges,
+    // for example.
+    var needsRuntimeInit = false
+
     init {
         irFunction?.let {
             if (!irFunction.isExported()) {
@@ -1207,6 +1211,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     internal fun epilogue() {
         appendingTo(prologueBb) {
+            if (needsRuntimeInit) {
+                call(context.llvm.initRuntimeIfNeeded, emptyList())
+            }
             val slots = if (needSlotsPhi)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else

@@ -8,28 +8,21 @@
 #include "KAssert.h"
 
 ALWAYS_INLINE bool isFrozen(const ObjHeader* obj) {
-    TODO();
-}
-
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
-    TODO();
+    // TODO: Unimplemented
+    return false;
 }
 
 extern "C" {
 
 void MutationCheck(ObjHeader* obj) {
-    TODO();
+    // TODO: Unimplemented
 }
 
 void FreezeSubgraph(ObjHeader* obj) {
-    TODO();
+    // TODO: Unimplemented
 }
 
 void EnsureNeverFrozen(ObjHeader* obj) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_collect(ObjHeader*) {
     TODO();
 }
 
@@ -81,10 +74,6 @@ bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*) {
     TODO();
 }
 
-RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    TODO();
-}
-
 bool TryAddHeapRef(const ObjHeader* object) {
     TODO();
 }
@@ -99,18 +88,6 @@ RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
     TODO();
-}
-
-RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionEpilogue() {
-    // TODO: Unimplemented
-}
-
-RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
-    // TODO: Unimplemented
-}
-
-RUNTIME_NOTHROW void Kotlin_mm_safePointExceptionUnwind() {
-    // TODO: Unimplemented
 }
 
 } // extern "C"

@@ -71,6 +71,7 @@ where advanced options include:
   -Xreport-perf              Report detailed performance statistics
   -Xskip-metadata-version-check Allow to load classes with bad metadata version and pre-release classes
   -Xskip-prerelease-check    Allow to load pre-release classes
+  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent or experimental language or API versions
   -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xuse-fir                  Compile using Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready

@@ -1,4 +1,3 @@
-
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 package test
@@ -32,48 +31,3 @@ fun box(): String {
 
     return result
 }
-
-
-// FILE: 1.smap
-
-// FILE: 2.smap
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt
-+ 2 1.kt
-test/_1Kt
-*L
-1#1,20:1
-7#2,4:21
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt
-*L
-8#1:21,4
-*E
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt$box$1$1
-+ 2 1.kt
-test/_1Kt
-*L
-1#1,20:1
-13#2,3:21
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt$box$1$1
-*L
-10#1:21,3
-*E

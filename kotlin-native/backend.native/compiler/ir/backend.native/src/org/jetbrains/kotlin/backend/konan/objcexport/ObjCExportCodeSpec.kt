@@ -17,7 +17,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): ObjCExportCodeSpec {
 
     fun createObjCMethods(methods: List<FunctionDescriptor>) = methods.map {
-        ObjCMethodForKotlinMethod(symbolTable.referenceSimpleFunction(it))
+        ObjCMethodForKotlinMethod(
+                createObjCMethodSpecBaseMethod(
+                        mapper,
+                        namer,
+                        symbolTable.referenceSimpleFunction(it),
+                        it
+                )
+        )
     }
 
     fun List<CallableMemberDescriptor>.toObjCMethods() = createObjCMethods(this.flatMap {
@@ -55,17 +62,22 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         } else {
             descriptor.constructors.filter { mapper.shouldBeExposed(it) }.mapTo(methods) {
                 val irConstructorSymbol = symbolTable.referenceConstructor(it)
+                val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, irConstructorSymbol, it)
 
                 if (descriptor.isArray) {
-                    ObjCFactoryMethodForKotlinArrayConstructor(irConstructorSymbol)
+                    ObjCFactoryMethodForKotlinArrayConstructor(baseMethod)
                 } else {
-                    ObjCInitMethodForKotlinConstructor(irConstructorSymbol)
+                    ObjCInitMethodForKotlinConstructor(baseMethod)
                 }
+            }
+
+            if (descriptor.kind == ClassKind.OBJECT) {
+                methods += ObjCGetterForObjectInstance(namer.getObjectInstanceSelector(descriptor))
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
                 descriptor.enumEntries.mapTo(methods) {
-                    ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it))
+                    ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
                 }
 
                 descriptor.getEnumValuesFunctionDescriptor()?.let {
@@ -90,27 +102,52 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
     return ObjCExportCodeSpec(files, types)
 }
 
+internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
+        mapper: ObjCExportMapper,
+        namer: ObjCExportNamer,
+        symbol: S,
+        descriptor: FunctionDescriptor
+): ObjCMethodSpec.BaseMethod<S> {
+    require(mapper.isBaseMethod(descriptor))
+
+    val selector = namer.getSelector(descriptor)
+    val bridge = mapper.bridgeMethod(descriptor)
+
+    return ObjCMethodSpec.BaseMethod(symbol, bridge, selector)
+}
+
 internal class ObjCExportCodeSpec(
         val files: List<ObjCClassForKotlinFile>,
         val types: List<ObjCTypeForKotlinType>
 )
 
-internal sealed class ObjCMethodSpec
+internal sealed class ObjCMethodSpec {
+    /**
+     * Aggregates base method (as defined by [ObjCExportMapper.isBaseMethod])
+     * and details required to generate code for bridges between Kotlin and Obj-C methods.
+     */
+    data class BaseMethod<out S : IrFunctionSymbol>(val symbol: S, val bridge: MethodBridge, val selector: String)
+}
 
-internal class ObjCMethodForKotlinMethod(val baseMethod: IrSimpleFunctionSymbol) : ObjCMethodSpec()
+internal class ObjCMethodForKotlinMethod(val baseMethod: BaseMethod<IrSimpleFunctionSymbol>) : ObjCMethodSpec()
 
-internal class ObjCInitMethodForKotlinConstructor(val irConstructorSymbol: IrConstructorSymbol) : ObjCMethodSpec()
+internal class ObjCInitMethodForKotlinConstructor(val baseMethod: BaseMethod<IrConstructorSymbol>) : ObjCMethodSpec()
 
 internal class ObjCFactoryMethodForKotlinArrayConstructor(
-        val irConstructorSymbol: IrConstructorSymbol
+        val baseMethod: BaseMethod<IrConstructorSymbol>
 ) : ObjCMethodSpec()
 
-internal class ObjCGetterForKotlinEnumEntry(val irEnumEntrySymbol: IrEnumEntrySymbol) : ObjCMethodSpec()
+internal class ObjCGetterForKotlinEnumEntry(
+        val irEnumEntrySymbol: IrEnumEntrySymbol,
+        val selector: String
+) : ObjCMethodSpec()
 
 internal class ObjCClassMethodForKotlinEnumValues(
         val valuesFunctionSymbol: IrFunctionSymbol,
         val selector: String
 ) : ObjCMethodSpec()
+
+internal class ObjCGetterForObjectInstance(val selector: String) : ObjCMethodSpec()
 
 internal sealed class ObjCTypeSpec(val binaryName: String)
 

@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAM
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -94,8 +96,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         private val BLACKLISTED_ANNOTATIONS = listOf(
             "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
             "java.lang.Synthetic",
-            "synthetic.kotlin.jvm.GeneratedByJvmOverloads", // kapt3-related annotation for marking JvmOverloads-generated methods
-            "kotlin.jvm." // Kotlin annotations from runtime
+            "synthetic.kotlin.jvm.GeneratedByJvmOverloads" // kapt3-related annotation for marking JvmOverloads-generated methods
         )
 
         private val KOTLIN_METADATA_ANNOTATION = Metadata::class.java.name
@@ -690,7 +691,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val name = field.name
         if (!isValidIdentifier(name)) return null
 
-        val type = Type.getType(field.desc)
+        val type = getFieldType(field, origin)
+
         if (!checkIfValidTypeName(containingClass, type)) {
             return null
         }
@@ -1420,6 +1422,25 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         lineMappings.registerSignature(this, node)
         return this
     }
+
+    private fun getFieldType(field: FieldNode, origin: JvmDeclarationOrigin?): Type {
+        val fieldType = Type.getType(field.desc)
+        return when (val declaration = origin?.element) {
+            is KtProperty -> {
+                //replace anonymous type in delegate (if any)
+                val delegateType = kaptContext.bindingContext[BindingContext.EXPRESSION_TYPE_INFO, declaration.delegateExpression]?.type
+                delegateType?.let {
+                    val replaced = replaceAnonymousTypeWithSuperType(it)
+                    //not changed => not anonymous type => use type from field
+                    if (replaced != it) replaced else null
+                }?.let(::convertKotlinType) ?: fieldType
+            }
+            else -> fieldType
+        }
+    }
+
+    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT)
+
 }
 
 private fun Any?.isOfPrimitiveType(): Boolean = when (this) {

@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -560,7 +558,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         target, IrDeclarationOrigin.BRIDGE,
         type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),
         // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
-        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters)
+        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters),
+        startOffset = target.startOffset,
+        endOffset = target.endOffset,
     )
 
     private fun IrBuilderWithScope.delegatingCall(
@@ -593,17 +593,23 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         fun computeJvmMethod(function: IrFunction): Method =
             signatureCache.getOrPut(function.symbol) { context.methodSignatureMapper.mapAsmMethod(function) }
 
+        private fun canHaveSpecialBridge(function: IrSimpleFunction): Boolean {
+            if (function.name in specialBridgeMethods.specialMethodNames)
+                return true
+            // Function name could be mangled by inline class rules
+            val functionName = function.name.asString()
+            if (specialBridgeMethods.specialMethodNames.any { functionName.startsWith(it.asString() + "-") })
+                return true
+            return false
+        }
+
         fun computeSpecialBridge(function: IrSimpleFunction): SpecialBridge? {
             // Optimization: do not try to compute special bridge for irrelevant methods.
             val correspondingProperty = function.correspondingPropertySymbol
             if (correspondingProperty != null) {
                 if (correspondingProperty.owner.name !in specialBridgeMethods.specialPropertyNames) return null
             } else {
-                // 'remove' and 'removeAt' functions can be mangled by inline class rules
-                if (function.name !in specialBridgeMethods.specialMethodNames &&
-                    !function.name.asString().startsWith("removeAt-") &&
-                    !function.name.asString().startsWith("remove-")
-                ) {
+                if (!canHaveSpecialBridge(function)) {
                     return null
                 }
             }

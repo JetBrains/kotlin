@@ -33,10 +33,9 @@ data class VMCounters(val userTime: Long, val cpuTime: Long, val gcInfo: Map<Str
 }
 
 
-private fun <K, V> merge(first: Map<K, V>, second: Map<K, V>, valueOp: (V, V) -> V): Map<K, V> {
+private fun <K, V : Any> merge(first: Map<K, V>, second: Map<K, V>, valueOp: (V, V) -> V): Map<K, V> {
     val result = first.toMutableMap()
     for ((k, v) in second) {
-        @Suppress("NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER") // KT-43225
         result.merge(k, v, valueOp)
     }
     return result

@@ -17,7 +17,9 @@ class C {
 }
 
 fun <T : Any> df(t: T, r: suspend (T) -> Unit) {
-    r.startCoroutine(t, Continuation(EmptyCoroutineContext) {})
+    r.startCoroutine(t, Continuation(EmptyCoroutineContext) {
+        it.getOrThrow()
+    })
 }
 
 fun foo(s: String, c: C?) {

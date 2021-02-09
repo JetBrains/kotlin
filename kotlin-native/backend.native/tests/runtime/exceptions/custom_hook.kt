@@ -6,17 +6,31 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-fun main(args : Array<String>) {
+fun setHookLegacyMM(hook: ReportUnhandledExceptionHook) : ReportUnhandledExceptionHook? {
     assertFailsWith<InvalidMutabilityException> {
         setUnhandledExceptionHook { _ -> println("wrong") }
     }
 
+    return setUnhandledExceptionHook(hook.freeze())
+}
+
+fun setHookNewMM(hook: ReportUnhandledExceptionHook) : ReportUnhandledExceptionHook? {
+    return setUnhandledExceptionHook(hook)
+}
+
+fun setHook(hook: ReportUnhandledExceptionHook) : ReportUnhandledExceptionHook? {
+    return when (kotlin.native.Platform.memoryModel) {
+        kotlin.native.MemoryModel.EXPERIMENTAL -> setHookNewMM(hook)
+        else -> setHookLegacyMM(hook)
+    }
+}
+
+fun main() {
     val x = 42
-    val old = setUnhandledExceptionHook({
+    val old = setHook {
         throwable: Throwable -> println("value $x: ${throwable::class.simpleName}")
-    }.freeze())
+    }
 
     assertNull(old)
-
     throw Error("an error")
 }

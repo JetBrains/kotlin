@@ -4,8 +4,8 @@ enum class E {
     override val name: String = "lol"
     override val ordinal: Int = 0
 
-    override fun compareTo(other: E) = -1
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun compareTo(other: E) = -1
 
-    override fun equals(other: Any?) = true
-    override fun hashCode() = -1
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun equals(other: Any?) = true
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun hashCode() = -1
 }

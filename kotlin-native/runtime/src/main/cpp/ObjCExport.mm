@@ -902,6 +902,8 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     }
   };
 
+  // Compiler relies on using reverse adapters here from all supertypes
+  // in [ObjCExportCodeGenerator.createReverseAdapters].
   for (const TypeInfo* t : supers) {
     const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
     if (typeAdapter == nullptr) continue;
@@ -921,6 +923,8 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     }
   }
 
+  // Compiler relies on using reverse adapters here from all supertypes
+  // in [ObjCExportCodeGenerator.createReverseAdapters].
   for (const TypeInfo* typeInfo : addedInterfaces) {
     const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
 

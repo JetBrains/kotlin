@@ -47,45 +47,63 @@ fun testNoCoversion() {
 }
 
 fun testSuspendPlain() {
-  useSuspend(fn = local suspend fun foo1() {
-    foo1()
-  }
-)
+  useSuspend(fn = { // BLOCK
+    local suspend fun foo1() {
+      foo1()
+    }
+
+    ::foo1
+  })
 }
 
 fun testSuspendWithArgs() {
-  useSuspendInt(fn = local suspend fun fooInt(p0: Int) {
-    fooInt(x = p0)
-  }
-)
+  useSuspendInt(fn = { // BLOCK
+    local suspend fun fooInt(p0: Int) {
+      fooInt(x = p0)
+    }
+
+    ::fooInt
+  })
 }
 
 fun testWithVararg() {
-  useSuspend(fn = local suspend fun foo2() {
-    foo2()
-  }
-)
+  useSuspend(fn = { // BLOCK
+    local suspend fun foo2() {
+      foo2()
+    }
+
+    ::foo2
+  })
 }
 
 fun testWithVarargMapped() {
-  useSuspendInt(fn = local suspend fun foo2(p0: Int) {
-    foo2(xs = [p0])
-  }
-)
+  useSuspendInt(fn = { // BLOCK
+    local suspend fun foo2(p0: Int) {
+      foo2(xs = [p0])
+    }
+
+    ::foo2
+  })
 }
 
 fun testWithCoercionToUnit() {
-  useSuspend(fn = local suspend fun foo3() {
-    foo3() /*~> Unit */
-  }
-)
+  useSuspend(fn = { // BLOCK
+    local suspend fun foo3() {
+      foo3() /*~> Unit */
+    }
+
+    ::foo3
+  })
 }
 
 fun testWithDefaults() {
-  useSuspend(fn = local suspend fun foo4() {
-    foo4()
-  }
-)
+  useSuspend(fn = { // BLOCK
+    local suspend fun foo4() {
+      foo4()
+    }
+
+    ::foo4
+  })
 }
 
 fun testWithBoundReceiver() {

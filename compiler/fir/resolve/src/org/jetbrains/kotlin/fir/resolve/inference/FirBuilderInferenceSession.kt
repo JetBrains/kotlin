@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -13,13 +15,18 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class FirBuilderInferenceSession(
@@ -33,14 +40,35 @@ class FirBuilderInferenceSession(
         val system = candidate.system
 
         if (system.hasContradiction) return true
+        if (!candidate.isSuitableForBuilderInference()) return true
+
 
         val storage = system.getBuilder().currentStorage()
 
-        return !storage.notFixedTypeVariables.keys.any {
+        if (call.hasPostponed()) return true
+
+        return storage.notFixedTypeVariables.keys.all {
             val variable = storage.allTypeVariables[it]
             val isPostponed = variable != null && variable in storage.postponedTypeVariables
-            !isPostponed && !components.callCompleter.completer.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
-        } || call.hasPostponed()
+            isPostponed || components.callCompleter.completer.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
+        }
+    }
+
+    private fun Candidate.isSuitableForBuilderInference(): Boolean {
+        val extensionReceiver = extensionReceiverValue
+        val dispatchReceiver = dispatchReceiverValue
+        return when {
+            extensionReceiver == null && dispatchReceiver == null -> false
+            dispatchReceiver?.type?.containsStubType() == true -> true
+            extensionReceiver?.type?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation()
+            else -> false
+        }
+    }
+
+    private fun ConeKotlinType.containsStubType(): Boolean {
+        return this.contains {
+            it is ConeStubType
+        }
     }
 
     private fun FirStatement.hasPostponed(): Boolean {
@@ -241,3 +269,8 @@ class FirStubTypeTransformer(
     override fun transformArgumentList(argumentList: FirArgumentList, data: Nothing?): CompositeTransformResult<FirArgumentList> =
         argumentList.transformArguments(this, data).compose()
 }
+
+private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
+
+fun FirElement.hasBuilderInferenceAnnotation(): Boolean =
+    (this as? FirAnnotatedDeclaration)?.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID) == true

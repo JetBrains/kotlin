@@ -32,7 +32,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
     private val jarToModule = mutableMapOf<File, IncrementalModuleEntry>()
 
     protected val incrementalModuleInfo: IncrementalModuleInfo by lazy {
-        IncrementalModuleInfo(workingDir, dirToModule, nameToModules, jarToClassListFile, jarToModule)
+        IncrementalModuleInfo(workingDir, workingDir, dirToModule, nameToModules, jarToClassListFile, jarToModule)
     }
 
     protected abstract val modulesApiHistory: ApiHistory

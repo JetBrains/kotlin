@@ -70,15 +70,15 @@ fun main(args: Array<String>) {
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsCodegenBoxTest> {
-                model("codegen/box", targetBackend = TargetBackend.JS)
+                model("codegen/box", targetBackend = TargetBackend.JS, excludeDirs = listOf("compileKotlinAgainstKotlin"))
             }
 
             testClass<AbstractIrJsCodegenBoxTest> {
-                model("codegen/box", targetBackend = TargetBackend.JS_IR)
+                model("codegen/box", targetBackend = TargetBackend.JS_IR, excludeDirs = listOf("compileKotlinAgainstKotlin"))
             }
 
             testClass<AbstractIrJsCodegenBoxErrorTest> {
-                model("codegen/boxError", targetBackend = TargetBackend.JS_IR)
+                model("codegen/boxError", targetBackend = TargetBackend.JS_IR, excludeDirs = listOf("compileKotlinAgainstKotlin"))
             }
 
             testClass<AbstractIrCodegenBoxWasmTest> {
@@ -103,7 +103,9 @@ fun main(args: Array<String>) {
                         // TODO: Support delegated properties
                         "delegatedProperty",
 
-                        "oldLanguageVersions"
+                        "oldLanguageVersions",
+
+                        "compileKotlinAgainstKotlin"
                     )
                 )
             }

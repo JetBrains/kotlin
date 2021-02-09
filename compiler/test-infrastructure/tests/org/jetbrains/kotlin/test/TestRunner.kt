@@ -35,11 +35,17 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             configurator.transformTestDataPath(fileName)
         }
 
-        val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
-            testDataFileName,
-            testConfiguration.directives,
-        ).also {
-            services.register(TestModuleStructure::class, it)
+        val moduleStructure = try {
+            testConfiguration.moduleStructureExtractor.splitTestDataByModules(
+                testDataFileName,
+                testConfiguration.directives,
+            ).also {
+                services.register(TestModuleStructure::class, it)
+            }
+        } catch (e: ExceptionFromModuleStructureTransformer) {
+            services.register(TestModuleStructure::class, e.alreadyParsedModuleStructure)
+            val exception = filterFailedExceptions(listOf(e.cause)).singleOrNull() ?: return
+            throw exception
         }
 
         testConfiguration.metaTestConfigurators.forEach {
@@ -55,7 +61,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         var failedException: Throwable? = null
         try {
             for (module in modules) {
-                processModule(services, module, dependencyProvider, moduleStructure)
+                val shouldProcessNextModules = processModule(services, module, dependencyProvider, moduleStructure)
+                if (!shouldProcessNextModules) break
             }
         } catch (e: Throwable) {
             failedException = e
@@ -84,50 +91,58 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         }
 
-        val filteredFailedAssertions = testConfiguration.afterAnalysisCheckers
-            .fold<AfterAnalysisChecker, List<Throwable>>(failedAssertions) { assertions, checker ->
-                checker.suppressIfNeeded(assertions)
-            }
-            .map { if (it is ExceptionFromTestError) it.cause else it }
+        val filteredFailedAssertions = filterFailedExceptions(failedAssertions)
 
         services.assertions.assertAll(filteredFailedAssertions)
     }
 
+    private fun filterFailedExceptions(failedExceptions: List<Throwable>): List<Throwable> = testConfiguration.afterAnalysisCheckers
+        .fold(failedExceptions) { assertions, checker ->
+            checker.suppressIfNeeded(assertions)
+        }
+        .map { if (it is ExceptionFromTestError) it.cause else it }
+
+    /*
+     * If there was failure from handler with `failureDisablesNextSteps=true` then `processModule`
+     *   returns false which indicates that other modules should not be processed
+     */
     private fun processModule(
         services: TestServices,
         module: TestModule,
         dependencyProvider: DependencyProviderImpl,
         moduleStructure: TestModuleStructure
-    ) {
+    ): Boolean {
         val sourcesArtifact = ResultingArtifact.Source()
 
         val frontendKind = module.frontendKind
-        if (!frontendKind.shouldRunAnalysis) return
+        if (!frontendKind.shouldRunAnalysis) return true
 
         val frontendArtifacts: ResultingArtifact.FrontendOutput<*> = testConfiguration.getFacade(SourcesKind, frontendKind)
-            .transform(module, sourcesArtifact)?.also { dependencyProvider.registerArtifact(module, it) } ?: return
+            .transform(module, sourcesArtifact)?.also { dependencyProvider.registerArtifact(module, it) } ?: return true
         val frontendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(frontendKind)
         for (frontendHandler in frontendHandlers) {
-            withAssertionCatching {
+            val thereWasAnException = withAssertionCatching {
                 if (frontendHandler.shouldRun(failedAssertions.isNotEmpty())) {
                     frontendHandler.hackyProcess(module, frontendArtifacts)
                 }
             }
+            if (thereWasAnException && frontendHandler.failureDisablesNextSteps) return false
         }
 
         val backendKind = services.backendKindExtractor.backendKind(module.targetBackend)
-        if (!backendKind.shouldRunAnalysis) return
+        if (!backendKind.shouldRunAnalysis) return true
 
         val backendInputInfo = testConfiguration.getFacade(frontendKind, backendKind)
-            .hackyTransform(module, frontendArtifacts)?.also { dependencyProvider.registerArtifact(module, it) } ?: return
+            .hackyTransform(module, frontendArtifacts)?.also { dependencyProvider.registerArtifact(module, it) } ?: return true
 
         val backendHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(backendKind)
         for (backendHandler in backendHandlers) {
-            withAssertionCatching {
+            val thereWasAnException = withAssertionCatching {
                 if (backendHandler.shouldRun(failedAssertions.isNotEmpty())) {
                     backendHandler.hackyProcess(module, backendInputInfo)
                 }
             }
+            if (thereWasAnException && backendHandler.failureDisablesNextSteps) return false
         }
 
         for (artifactKind in moduleStructure.getTargetArtifactKinds(module)) {
@@ -135,28 +150,36 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             val binaryArtifact = testConfiguration.getFacade(backendKind, artifactKind)
                 .hackyTransform(module, backendInputInfo)?.also {
                     dependencyProvider.registerArtifact(module, it)
-                } ?: return
+                } ?: return true
 
             val binaryHandlers: List<AnalysisHandler<*>> = testConfiguration.getHandlers(artifactKind)
             for (binaryHandler in binaryHandlers) {
-                withAssertionCatching {
+                val thereWasAnException = withAssertionCatching {
                     if (binaryHandler.shouldRun(failedAssertions.isNotEmpty())) {
                         binaryHandler.hackyProcess(module, binaryArtifact)
                     }
                 }
+                if (thereWasAnException && binaryHandler.failureDisablesNextSteps) return false
             }
         }
+
+        return true
     }
 
-    private inline fun withAssertionCatching(insertExceptionInStart: Boolean = false, block: () -> Unit) {
-        try {
+    /*
+     * Returns true if there was an exception in block
+     */
+    private inline fun withAssertionCatching(insertExceptionInStart: Boolean = false, block: () -> Unit): Boolean {
+        return try {
             block()
+            false
         } catch (e: Throwable) {
             if (insertExceptionInStart) {
                 failedAssertions.add(0, e)
             } else {
                 failedAssertions += e
             }
+            true
         }
     }
 

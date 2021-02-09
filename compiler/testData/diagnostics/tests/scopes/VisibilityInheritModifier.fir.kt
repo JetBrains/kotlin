@@ -65,7 +65,7 @@ open class L : T {
 }
 
 class M : L() {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 //---------------
 interface R {
@@ -81,5 +81,5 @@ interface Q : R {
 }
 
 class S : P, Q {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }

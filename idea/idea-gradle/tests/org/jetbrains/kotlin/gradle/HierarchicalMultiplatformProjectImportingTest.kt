@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -440,6 +443,9 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             module("my-app.orphan") {
                 targetPlatform(jvm, js)
             }
+            module("my-app") {
+                assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(1)
+            }
         }
     }
 
@@ -528,6 +534,10 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         val native = NativePlatforms.unspecifiedNativePlatform
 
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false) {
+
+            module("my-app") {
+                assertDiagnosticsCount<OrphanSourceSetsImportingDiagnostic>(3)
+            }
 
             // (jvm, js, native) is highly undesirable
             module("my-app.danglingOnJvm") {

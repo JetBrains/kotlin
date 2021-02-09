@@ -313,8 +313,6 @@ private val jvmFilePhases = listOf(
     collectionStubMethodLowering,
     jvmInlineClassPhase,
 
-    sharedVariablesPhase,
-
     makePatchParentsPhase(1),
 
     enumWhenPhase,
@@ -323,6 +321,7 @@ private val jvmFilePhases = listOf(
     singleAbstractMethodPhase,
     assertionPhase,
     returnableBlocksPhase,
+    sharedVariablesPhase,
     localDeclarationsPhase,
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
@@ -395,7 +394,7 @@ val jvmPhases = NamedCompilerPhase(
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then
             // should be last transformation
-            removeDeclarationsThatWouldBeInlined then
+            prepareForBytecodeInlining then
             validateIrAfterLowering
 )
 

@@ -9,7 +9,6 @@ package kotlin
 
 import kotlin.experimental.*
 
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public inline class ULong @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {

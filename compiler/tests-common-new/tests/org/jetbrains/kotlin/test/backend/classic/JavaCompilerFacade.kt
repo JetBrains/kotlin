@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.compileJavaFilesExternally
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -51,7 +52,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
 
         val javaFiles = module.javaFiles.map { testServices.sourceFileProvider.getRealFileForSourceFile(it) }
         val ignoreErrors = CodegenTestDirectives.IGNORE_JAVA_ERRORS in module.directives
-        compileJavaFiles(configuration[JVMConfigurationKeys.JVM_TARGET] ?: JvmTarget.DEFAULT, javaFiles, finalJavacOptions, ignoreErrors)
+        compileJavaFiles(module, configuration[JVMConfigurationKeys.JVM_TARGET] ?: JvmTarget.DEFAULT, javaFiles, finalJavacOptions, ignoreErrors)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -73,9 +74,9 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         }
     }
 
-    private fun compileJavaFiles(jvmTarget: JvmTarget, files: List<File>, javacOptions: List<String>, ignoreErrors: Boolean) {
+    private fun compileJavaFiles(module: TestModule, jvmTarget: JvmTarget, files: List<File>, javacOptions: List<String>, ignoreErrors: Boolean) {
         val targetIsJava8OrLower = System.getProperty("java.version").startsWith("1.")
-        if (targetIsJava8OrLower) {
+        if (USE_JAVAC_BASED_ON_JVM_TARGET !in module.directives || targetIsJava8OrLower) {
             org.jetbrains.kotlin.test.compileJavaFiles(
                 files,
                 javacOptions,
@@ -85,6 +86,8 @@ class JavaCompilerFacade(private val testServices: TestServices) {
             return
         }
         val jdkHome = when (jvmTarget) {
+            JvmTarget.JVM_1_6 -> KtTestUtil.getJdk6Home()
+            JvmTarget.JVM_1_8 -> KtTestUtil.getJdk8Home()
             JvmTarget.JVM_9 -> KtTestUtil.getJdk9Home()
             JvmTarget.JVM_11 -> KtTestUtil.getJdk11Home()
             JvmTarget.JVM_15 -> KtTestUtil.getJdk15Home()

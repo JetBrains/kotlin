@@ -14,6 +14,13 @@ configurations {
 }
 
 dependencies {
+    embedded(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    embedded(project(":kotlinx-metadata")) { isTransitive = false }
+
+    // N.B. The order of "kotlinx-metadata*" dependencies makes sense for runtime classpath
+    // of the "runCommonizer" task. Please, don't mix them up.
+    compileOnly(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    compileOnly(project(":kotlinx-metadata")) { isTransitive = false }
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":compiler:frontend"))
@@ -29,6 +36,8 @@ dependencies {
 
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    testImplementation(project(":kotlinx-metadata")) { isTransitive = false }
 }
 
 val runCommonizer by tasks.registering(JavaExec::class) {

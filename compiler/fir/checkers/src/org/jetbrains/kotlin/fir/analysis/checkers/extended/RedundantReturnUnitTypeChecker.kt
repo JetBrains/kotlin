@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -25,7 +26,7 @@ object RedundantReturnUnitType : FirBasicDeclarationChecker() {
         if (returnType.annotations.isNotEmpty()) return
 
         if (returnType.isUnit) {
-            reporter.report(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE)
+            reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE, context)
         }
     }
 

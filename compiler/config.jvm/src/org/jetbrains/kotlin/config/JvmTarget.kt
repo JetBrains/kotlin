@@ -36,7 +36,7 @@ enum class JvmTarget(
 
     companion object {
         @JvmField
-        val DEFAULT = JVM_1_6
+        val DEFAULT = JVM_1_8
 
         @JvmStatic
         fun fromString(string: String) = values().find { it.description == string }

@@ -16,7 +16,19 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <idea-version since-build="202.1" until-build="202.*"/>
 
   <change-notes><![CDATA[
+    <h3>1.4.30</h3>
+    <ul>
+      <li>Preview of new language features: JVM records support, sealed interfaces, and stable inline classes.</li>
+      <li>Kotlin/JVM: IR backend is now in Beta.</li>
+      <li>Kotlin/Native: performance improvements, new `watchosX64` simulator target, support for Xcode 12.2 libraries.</li>
+      <li>Kotlin/JS: prototype lazy initialization of top-level properties.</li>
+      <li>Support for Gradle configuration cache.</li>
+      <li>Standard library API improvements: locale-agnostic API for upper/lowercasing text and clear Char-to-code and Char-to-digit conversions.</li>
+    </ul>
+    For more details, see <a href="https://kotlinlang.org/docs/reference/whatsnew1430.html?utm_source=product&utm_medium=link">What’s New in Kotlin 1.4.30</a> and <a href="http://blog.jetbrains.com/kotlin/2021/01/1-4-30-is-released-with-a-new-jvm-backend-and-language-and-multiplatform-features/?utm_source=product&utm_medium=link">this blog post</a>.
+    <br><br>
     <h3>1.4.20</h3>
+    Released: <b>November 23, 2020</b>
     <ul>
       <li>Kotlin/JS: New project templates, improved Gradle plugin, experimental <b>compilation with errors mode</b> in the IR compiler.</li>
       <li>Kotlin/Native: New escape analysis mechanism, wrapping of Objective-C exceptions, various functional and performance improvements.</li>
@@ -123,6 +135,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
 
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.DebugInfoHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureHighlightPass$Registrar"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
 

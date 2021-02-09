@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
@@ -35,11 +36,13 @@ import java.io.File
  * - All directives between `MODULE` and `FILE` directives belongs to module
  * - All directives before first `MODULE` are global and belongs to each declared module
  */
+@OptIn(TestInfrastructureInternals::class)
 class ModuleStructureExtractorImpl(
     testServices: TestServices,
     additionalSourceProviders: List<AdditionalSourceProvider>,
+    moduleStructureTransformers: List<ModuleStructureTransformer>,
     private val environmentConfigurators: List<EnvironmentConfigurator>
-) : ModuleStructureExtractor(testServices, additionalSourceProviders) {
+) : ModuleStructureExtractor(testServices, additionalSourceProviders, moduleStructureTransformers) {
     companion object {
         private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java")
 
@@ -57,7 +60,15 @@ class ModuleStructureExtractorImpl(
     ): TestModuleStructure {
         val testDataFile = File(testDataFileName)
         val extractor = ModuleStructureExtractorWorker(listOf(testDataFile), directivesContainer)
-        return extractor.splitTestDataByModules()
+        var result = extractor.splitTestDataByModules()
+        for (transformer in moduleStructureTransformers) {
+            result = try {
+                transformer.transformModuleStructure(result)
+            } catch (e: Throwable) {
+                throw ExceptionFromModuleStructureTransformer(e, result)
+            }
+        }
+        return result
     }
 
     private inner class ModuleStructureExtractorWorker constructor(
@@ -90,7 +101,7 @@ class ModuleStructureExtractorImpl(
         private var currentFileName: String? = null
         private var firstFileInModule: Boolean = true
         private var linesOfCurrentFile = mutableListOf<String>()
-        private var startLineNumberOfCurrentFile = 0
+        private var endLineNumberOfLastFile = -1
 
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
         private var moduleDirectivesBuilder: RegisteredDirectivesParser = directivesBuilder
@@ -116,7 +127,7 @@ class ModuleStructureExtractorImpl(
                     linesOfCurrentFile.add(line)
                 }
             }
-            finishModule()
+            finishModule(lineNumber = -1)
             val sortedModules = sortModules(modules)
             checkCycles(modules)
             return TestModuleStructureImpl(sortedModules, testDataFiles)
@@ -163,7 +174,7 @@ class ModuleStructureExtractorImpl(
                      * There was previous module, so we should save it
                      */
                     if (currentModuleName != null) {
-                        finishModule()
+                        finishModule(lineNumber)
                     } else {
                         finishGlobalDirectives()
                     }
@@ -206,12 +217,11 @@ class ModuleStructureExtractorImpl(
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
-                        finishFile()
+                        finishFile(lineNumber)
                     } else {
                         resetFileCaches()
                     }
                     currentFileName = (values.first() as String).also(::validateFileName)
-                    startLineNumberOfCurrentFile = lineNumber
                 }
                 else -> return false
             }
@@ -219,7 +229,7 @@ class ModuleStructureExtractorImpl(
             return true
         }
 
-        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependeciens {
+        private fun splitRawModuleStringToNameAndDependencies(moduleDirectiveString: String): ModuleNameAndDependencies {
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
             val (name, _, dependencies, _, friends) = matchResult.destructured
@@ -234,7 +244,7 @@ class ModuleStructureExtractorImpl(
                     dependenciesNames = dependenciesNames.filter { it != "support" }
                 }
             }
-            return ModuleNameAndDependeciens(
+            return ModuleNameAndDependencies(
                 name,
                 dependenciesNames,
                 friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList(),
@@ -268,8 +278,8 @@ class ModuleStructureExtractorImpl(
             error("Directive $this has $applicability applicability but it declared in $context")
         }
 
-        private fun finishModule() {
-            finishFile()
+        private fun finishModule(lineNumber: Int) {
+            finishFile(lineNumber)
             val isImplicitModule = currentModuleName == null
             val moduleDirectives = moduleDirectivesBuilder.build() + testServices.defaultDirectives + globalDirectives
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
@@ -316,7 +326,8 @@ class ModuleStructureExtractorImpl(
             }
         }
 
-        private fun finishFile() {
+        @OptIn(ExperimentalStdlibApi::class)
+        private fun finishFile(lineNumber: Int) {
             val actualDefaultFileName = if (currentModuleName == null) {
                 defaultFileName
             } else {
@@ -329,17 +340,24 @@ class ModuleStructureExtractorImpl(
             val directives = fileDirectivesBuilder?.build()?.also { directives ->
                 directives.forEach { it.checkDirectiveApplicability(contextIsFile = true) }
             }
+            val fileContent = buildString {
+                for (i in 0 until endLineNumberOfLastFile) {
+                    appendLine()
+                }
+                appendLine(linesOfCurrentFile.joinToString("\n"))
+            }
             filesOfCurrentModule.add(
                 TestFile(
                     relativePath = filename,
-                    originalContent = linesOfCurrentFile.joinToString(separator = "\n", postfix = "\n"),
+                    originalContent = fileContent,
                     originalFile = currentTestDataFile,
-                    startLineNumberInOriginalFile = startLineNumberOfCurrentFile,
+                    startLineNumberInOriginalFile = endLineNumberOfLastFile,
                     isAdditional = false,
                     directives = directives ?: RegisteredDirectives.Empty
                 )
             )
             firstFileInModule = false
+            endLineNumberOfLastFile = lineNumber - 1
             resetFileCaches()
         }
 
@@ -369,7 +387,6 @@ class ModuleStructureExtractorImpl(
                 moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
-            startLineNumberOfCurrentFile = 0
             resetDirectivesBuilder()
             fileDirectivesBuilder = directivesBuilder
         }
@@ -393,7 +410,7 @@ class ModuleStructureExtractorImpl(
         }
     }
 
-    private data class ModuleNameAndDependeciens(
+    private data class ModuleNameAndDependencies(
         val name: String,
         val dependencies: List<String>,
         val friends: List<String>

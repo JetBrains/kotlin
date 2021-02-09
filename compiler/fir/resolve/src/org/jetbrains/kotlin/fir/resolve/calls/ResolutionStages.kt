@@ -239,14 +239,13 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
 }
 
 internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
-    private val BUILDER_INFERENCE_CLASS_ID: ClassId = ClassId.fromString("kotlin/BuilderInference")
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val argumentMapping = candidate.argumentMapping ?: return
         // TODO: convert type argument mapping to map [FirTypeParameterSymbol, FirTypedProjection?]
         if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
         for (parameter in argumentMapping.values) {
-            if (!parameter.hasBuilderInferenceMarker()) continue
+            if (!parameter.hasBuilderInferenceAnnotation()) continue
             val type = parameter.returnTypeRef.coneType
             val receiverType = type.receiverType(callInfo.session) ?: continue
 
@@ -262,9 +261,5 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
                 }
             }
         }
-    }
-
-    private fun FirValueParameter.hasBuilderInferenceMarker(): Boolean {
-        return this.hasAnnotation(BUILDER_INFERENCE_CLASS_ID)
     }
 }

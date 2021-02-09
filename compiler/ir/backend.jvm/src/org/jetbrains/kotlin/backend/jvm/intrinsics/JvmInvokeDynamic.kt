@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.inline.v
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -101,7 +102,8 @@ object JvmInvokeDynamic : IntrinsicMethod() {
 
     private fun generateMethodHandle(irRawFunctionReference: IrRawFunctionReference, codegen: ExpressionCodegen): Handle {
         val irFun = irRawFunctionReference.symbol.owner
-        val irParentClass = irFun.parentAsClass
+        val irParentClass = irFun.parent as? IrClass
+            ?: throw AssertionError("Unexpected parent: ${irFun.parent.render()}")
         val owner = codegen.typeMapper.mapOwner(irParentClass)
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(irFun)
         val handleTag = when {

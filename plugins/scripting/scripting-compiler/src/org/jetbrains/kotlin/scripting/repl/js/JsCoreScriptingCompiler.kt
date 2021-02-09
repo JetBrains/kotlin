@@ -84,8 +84,7 @@ class JsCoreScriptingCompiler(
                 irModuleFragment.descriptor,
                 psi2irContext.irBuiltIns,
                 psi2irContext.symbolTable
-            ),
-            environment.configuration.languageVersionSettings
+            )
         ).generateUnboundSymbolsAsDependencies()
 
         environment.configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)

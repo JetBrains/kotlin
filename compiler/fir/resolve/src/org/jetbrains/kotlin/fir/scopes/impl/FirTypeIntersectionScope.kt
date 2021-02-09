@@ -89,7 +89,7 @@ class FirTypeIntersectionScope private constructor(
             return false
         }
 
-        val allMembersWithScope = membersByScope.flatMapTo(mutableListOf()) { (scope, members) ->
+        val allMembersWithScope = membersByScope.flatMapTo(linkedSetOf()) { (scope, members) ->
             members.map { MemberWithBaseScope(it, scope) }
         }
 
@@ -508,6 +508,14 @@ class FirTypeIntersectionScope private constructor(
 private class MemberWithBaseScope<D : FirCallableSymbol<*>>(val member: D, val baseScope: FirTypeScope) {
     operator fun component1() = member
     operator fun component2() = baseScope
+
+    override fun equals(other: Any?): Boolean {
+        return other is MemberWithBaseScope<*> && member == other.member
+    }
+
+    override fun hashCode(): Int {
+        return member.hashCode()
+    }
 }
 
 private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = MemberWithBaseScope(this, baseScope)

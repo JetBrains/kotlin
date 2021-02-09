@@ -24,10 +24,7 @@ dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:frontend"))
 
-    testApi(platform("org.junit:junit-bom:5.7.0"))
-    testApi("org.junit.jupiter:junit-jupiter")
-    testApi("org.junit.platform:junit-platform-commons:1.7.0")
-    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
+    testApiJUnit5()
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
@@ -35,14 +32,6 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
-    testImplementation(intellijDep()) {
-        // This dependency is needed only for FileComparisonFailure
-        includeJars("idea_rt", rootProject = rootProject)
-        isTransitive = false
-    }
-
-    // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
-    testRuntimeOnly(commonDep("junit:junit"))
     testRuntimeOnly(intellijDep()) {
         includeJars(
             "jps-model",

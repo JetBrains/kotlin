@@ -1,0 +1,41 @@
+FILE: catchParameter.kt
+    public final typealias StringType = R|kotlin/String|
+    public final fun <T : R|kotlin/Throwable|> test(): R|kotlin/Unit| {
+        try {
+        }
+        catch (e: R|kotlin/NullPointerException| = R|java/lang/NullPointerException.NullPointerException|()) {
+        }
+
+        try {
+        }
+        catch (e: R|T|) {
+        }
+
+        try {
+        }
+        catch (e: R|() -> kotlin/Int|) {
+        }
+
+        try {
+        }
+        catch (e: R|StringType|) {
+        }
+
+        try {
+        }
+        catch (e: R|kotlin/Int| = Int(5)) {
+        }
+
+        try {
+        }
+        catch (e: R|kotlin/Throwable|) {
+        }
+
+    }
+    public final inline fun <reified T> anotherTest(): R|kotlin/Unit| {
+        try {
+        }
+        catch (e: R|T|) {
+        }
+
+    }

@@ -5,105 +5,65 @@
 
 package org.jetbrains.kotlin.codegen.jdk
 
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.CodegenTestCase.BOX_IN_SEPARATE_PROCESS_PORT
-import org.jetbrains.kotlin.test.RunOnlyJdk6Test
-import org.jetbrains.kotlin.test.SuiteRunnerForCustomJdk
-import org.junit.AfterClass
-import org.junit.BeforeClass
+import org.jetbrains.kotlin.test.runners.codegen.*
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
+import org.junit.platform.runner.JUnitPlatform
+import org.junit.platform.suite.api.IncludeClassNamePatterns
+import org.junit.platform.suite.api.SelectClasses
+import org.junit.platform.suite.api.UseTechnicalNames
 import org.junit.runner.RunWith
-import org.junit.runners.Suite
-import java.io.File
-import kotlin.test.assertTrue
 
 /*
  * NB: ALL NECESSARY FLAGS ARE PASSED THROUGH Gradle
  */
 
-@Suite.SuiteClasses(
+@SelectClasses(
+    BlackBoxCodegenTestGenerated::class,
     BlackBoxInlineCodegenTestGenerated::class,
     CompileKotlinAgainstInlineKotlinTestGenerated::class,
-    CompileKotlinAgainstKotlinTestGenerated::class,
-    BlackBoxAgainstJavaCodegenTestGenerated::class
+
+    IrBlackBoxCodegenTestGenerated::class,
+    IrBlackBoxInlineCodegenTestGenerated::class,
+    IrCompileKotlinAgainstInlineKotlinTestGenerated::class
 )
+@IncludeClassNamePatterns(".*Test.*Generated")
+@UseTechnicalNames
 abstract class CustomJvmTargetOnJvmBaseTest
 
 @RunOnlyJdk6Test
-@RunWith(SuiteRunnerForCustomJdk::class)
-class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest() {
+@Execution(ExecutionMode.SAME_THREAD)
+@RunWith(JUnitPlatformRunnerForJdk6::class)
+class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest()
 
-    companion object {
-
-        private lateinit var jdkProcess: Process
-
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            println("Configuring JDK6 Test server...")
-            val jdkPath = System.getenv("JDK_16") ?: error("JDK_16 is not optional to run this test")
-
-            val executable = File(jdkPath, "bin/java").canonicalPath
-            val main = "org.jetbrains.kotlin.test.clientserver.TestProcessServer"
-            val classpath =
-                System.getProperty("kotlin.test.box.in.separate.process.server.classpath") ?: System.getProperty("java.class.path")
-
-            println("Server classpath: $classpath")
-            val port = BOX_IN_SEPARATE_PROCESS_PORT ?: error("kotlin.test.box.in.separate.process.port is not specified")
-            val builder = ProcessBuilder(executable, "-cp", classpath, main, port)
-
-            builder.inheritIO()
-
-            println("Starting JDK 6 server $executable...")
-            jdkProcess = builder.start()
-            Thread.sleep(2000)
-            assertTrue(jdkProcess.isAlive, "Test server process hasn't started")
-            println("Test server started!")
-            Runtime.getRuntime().addShutdownHook(object : Thread() {
-                override fun run() {
-                    tearDown()
-                }
-            })
-        }
-
-        @JvmStatic
-        @AfterClass
-        fun tearDown() {
-            println("Stopping JDK 6 server...")
-            if (::jdkProcess.isInitialized) {
-                jdkProcess.destroy()
-            }
-        }
-    }
-}
-
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm8 : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget6OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget11OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget6OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTargetLastOnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
 //TODO: delete old tasks
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget6OnJvm9 : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm9 : CustomJvmTargetOnJvmBaseTest()
 
-@RunWith(SuiteRunnerForCustomJdk::class)
+@RunWith(JUnitPlatform::class)
 class JvmTarget9OnJvm9 : CustomJvmTargetOnJvmBaseTest()
 

@@ -231,10 +231,9 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             }
 
             val targetExtensionReceiverParameter = targetFun.extensionReceiverParameter
-            if (targetExtensionReceiverParameter != null) {
+            if (targetExtensionReceiverParameter != null && irFunRef.extensionReceiver != null) {
                 addValueParameter("p${syntheticParameterIndex++}", targetExtensionReceiverParameter.type)
-                val extensionReceiver = irFunRef.extensionReceiver
-                    ?: fail("Captured extension receiver is not provided")
+                val extensionReceiver = irFunRef.extensionReceiver!!
                 dynamicCallArguments.add(extensionReceiver)
             }
 

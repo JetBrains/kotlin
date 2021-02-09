@@ -35,24 +35,33 @@ object Host {
 }
 
 fun testDefault(): String {
-  return use(fn = local fun fnWithDefault(p0: Int): String {
-    return fnWithDefault(a = p0)
-  }
-)
+  return use(fn = { // BLOCK
+    local fun fnWithDefault(p0: Int): String {
+      return fnWithDefault(a = p0)
+    }
+
+    ::fnWithDefault
+  })
 }
 
 fun testVararg(): String {
-  return use(fn = local fun fnWithVarargs(p0: Int): String {
-    return fnWithVarargs(xs = [p0])
-  }
-)
+  return use(fn = { // BLOCK
+    local fun fnWithVarargs(p0: Int): String {
+      return fnWithVarargs(xs = [p0])
+    }
+
+    ::fnWithVarargs
+  })
 }
 
 fun testCoercionToUnit() {
-  return coerceToUnit(fn = local fun fnWithDefault(p0: Int) {
-    fnWithDefault(a = p0) /*~> Unit */
-  }
-)
+  return coerceToUnit(fn = { // BLOCK
+    local fun fnWithDefault(p0: Int) {
+      fnWithDefault(a = p0) /*~> Unit */
+    }
+
+    ::fnWithDefault
+  })
 }
 
 fun testImportedObjectMember(): String {
@@ -66,16 +75,22 @@ fun testImportedObjectMember(): String {
 }
 
 fun testDefault0(): String {
-  return use0(fn = local fun fnWithDefaults(): String {
-    return fnWithDefaults()
-  }
-)
+  return use0(fn = { // BLOCK
+    local fun fnWithDefaults(): String {
+      return fnWithDefaults()
+    }
+
+    ::fnWithDefaults
+  })
 }
 
 fun testVararg0(): String {
-  return use0(fn = local fun fnWithVarargs(): String {
-    return fnWithVarargs()
-  }
-)
+  return use0(fn = { // BLOCK
+    local fun fnWithVarargs(): String {
+      return fnWithVarargs()
+    }
+
+    ::fnWithVarargs
+  })
 }
 

@@ -35,27 +35,3 @@ class SomeIterator {
         return "OK"
     }
 }
-
-
-// FILE: 1.smap
-
-// FILE: 2.smap
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt
-+ 2 2.kt
-SomeIterator
-*L
-1#1,31:1
-21#2,6:32
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt
-*L
-5#1:32,6
-*E

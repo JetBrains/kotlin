@@ -9,10 +9,15 @@ val testJvm6ServerRuntime by configurations.creating
 
 dependencies {
     testCompile(projectTests(":compiler"))
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testCompile(projectTests(":compiler:tests-common-new"))
+
+    testApiJUnit5(vintageEngine = true, runner = true, suiteApi = true)
+
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(intellijDep())
     testRuntime(intellijDep())
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
 }
@@ -34,11 +39,12 @@ fun Project.codegenTest(
     target: Int, jvm: String, jdk: String,
     targetInTestClass: String = "$target",
     body: Test.() -> Unit
-): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
+): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test", jUnit5Enabled = true) {
     dependsOn(":dist")
     workingDir = rootDir
 
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.JvmTarget${targetInTestClass}OnJvm${jvm}")
+    val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
     systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
     body()

@@ -5,46 +5,35 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1
-import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor2
-import org.jetbrains.kotlin.descriptors.commonizer.builder.createGlobalBuilderComponents
+import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger.CirTreeMergeResult
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.MetadataBuilder
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
-fun runCommonization(parameters: CommonizerParameters): CommonizerResult {
-    if (!parameters.hasAnythingToCommonize())
-        return CommonizerResult.NothingToDo
+fun runCommonization(parameters: CommonizerParameters) {
+    if (!parameters.hasAnythingToCommonize()) {
+        parameters.resultsConsumer.allConsumed(Status.NOTHING_TO_DO)
+        return
+    }
 
-    val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
+    val storageManager = LockBasedStorageManager("Declarations commonization")
 
     val mergeResult = mergeAndCommonize(storageManager, parameters)
     val mergedTree = mergeResult.root
 
-    // build resulting descriptors:
-    val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters)
-    mergedTree.accept(DeclarationsBuilderVisitor1(components), emptyList())
-    mergedTree.accept(DeclarationsBuilderVisitor2(components), emptyList())
-
-    val modulesByTargets = LinkedHashMap<CommonizerTarget, Collection<ModuleResult>>() // use linked hash map to preserve order
-    components.targetComponents.forEach { component ->
-        val target = component.target
-        check(target !in modulesByTargets)
-
-        val commonizedModules: List<ModuleResult.Commonized> = components.cache.getAllModules(component.index).map(ModuleResult::Commonized)
-
-        val missingModules: List<ModuleResult.Missing> = if (target is LeafTarget)
-            mergeResult.missingModuleInfos.getValue(target).map { ModuleResult.Missing(it.originalLocation) }
-        else emptyList()
-
-        modulesByTargets[target] = commonizedModules + missingModules
+    // build resulting declarations:
+    for (targetIndex in 0 until mergedTree.dimension) {
+        serializeTarget(mergeResult, targetIndex, parameters)
     }
 
-    parameters.progressLogger?.invoke("Prepared new descriptors")
-
-    return CommonizerResult.Done(modulesByTargets)
+    parameters.resultsConsumer.allConsumed(Status.DONE)
 }
 
 private fun mergeAndCommonize(storageManager: StorageManager, parameters: CommonizerParameters): CirTreeMergeResult {
@@ -68,3 +57,27 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
 
     return mergeResult
 }
+
+private fun serializeTarget(mergeResult: CirTreeMergeResult, targetIndex: Int, parameters: CommonizerParameters) {
+    val mergedTree = mergeResult.root
+    val target = mergedTree.getTarget(targetIndex)
+
+    MetadataBuilder.build(mergedTree, targetIndex, parameters.statsCollector) { metadataModule ->
+        val libraryName = metadataModule.name
+        val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
+            SerializedMetadata(header, fragments, fragmentNames)
+        }
+
+        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata))
+    }
+
+    if (target is LeafTarget) {
+        mergeResult.missingModuleInfos.getValue(target).forEach {
+            parameters.resultsConsumer.consume(target, ModuleResult.Missing(it.originalLocation))
+        }
+    }
+
+    parameters.resultsConsumer.targetConsumed(target)
+}
+
+private val KLIB_FRAGMENT_WRITE_STRATEGY = ChunkedKlibModuleFragmentWriteStrategy()

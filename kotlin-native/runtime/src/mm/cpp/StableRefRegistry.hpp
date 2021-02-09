@@ -26,6 +26,9 @@ public:
     using Iterator = MultiSourceQueue<ObjHeader*>::Iterator;
     using Node = MultiSourceQueue<ObjHeader*>::Node;
 
+    StableRefRegistry();
+    ~StableRefRegistry();
+
     static StableRefRegistry& Instance() noexcept;
 
     Node* RegisterStableRef(mm::ThreadData* threadData, ObjHeader* object) noexcept;
@@ -46,11 +49,6 @@ public:
     Iterable Iter() noexcept { return stableRefs_.Iter(); }
 
 private:
-    friend class GlobalData;
-
-    StableRefRegistry();
-    ~StableRefRegistry();
-
     // Current approach optimizes for creating and disposing of stable refs:
     // * creation just enqueues ref, disposing either queues or deletes the ref immediately (if it still resides in the current queue).
     // * when thread is stopped, it'll scan through the local queue (to mark that refs no longer reside in it) and push creation and

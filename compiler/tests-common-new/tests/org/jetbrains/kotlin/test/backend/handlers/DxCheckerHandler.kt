@@ -20,7 +20,22 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (RUN_DEX_CHECKER !in module.directives || IGNORE_DEXING in module.directives) return
-        D8Checker.check(info.classFileFactory)
+        val reportProblems = module.targetBackend !in module.directives[CodegenTestDirectives.IGNORE_BACKEND]
+        try {
+            D8Checker.check(info.classFileFactory)
+        } catch (e: Throwable) {
+            if (reportProblems) {
+                try {
+                    println(info.classFileFactory.createText())
+                } catch (_: Throwable) {
+                    // In FIR we have factory which can't print bytecode
+                    //   and it throws exception otherwise. So we need
+                    //   ignore that exception to report original one
+                    // TODO: fix original problem
+                }
+            }
+            throw e
+        }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

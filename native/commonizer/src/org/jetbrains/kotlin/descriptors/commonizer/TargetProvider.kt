@@ -5,31 +5,18 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 
 class TargetProvider(
     val target: LeafTarget,
-    val builtInsClass: Class<out KotlinBuiltIns>,
-    val builtInsProvider: BuiltInsProvider,
     val modulesProvider: ModulesProvider,
     val dependeeModulesProvider: ModulesProvider?
 )
 
-interface BuiltInsProvider {
-    fun loadBuiltIns(): KotlinBuiltIns
-
-    companion object {
-        val defaultBuiltInsProvider = object : BuiltInsProvider {
-            override fun loadBuiltIns() = DefaultBuiltIns.Instance
-        }
-    }
-}
-
 interface ModulesProvider {
-    class ModuleInfo(
+    open class ModuleInfo(
         val name: String,
         val originalLocation: File,
         val cInteropAttributes: CInteropModuleAttributes?
@@ -40,6 +27,17 @@ interface ModulesProvider {
         val exportForwardDeclarations: Collection<String>
     )
 
-    fun loadModuleInfos(): Map<String, ModuleInfo>
+    /**
+     * Returns information about all modules that can be loaded by this [ModulesProvider] in the form of [ModuleInfo]s.
+     * This function is relatively light-weight and does not have significant impact on performance.
+     */
+    fun loadModuleInfos(): Collection<ModuleInfo>
+
+    /**
+     * Loads metadata for the specified module.
+     */
+    fun loadModuleMetadata(name: String): SerializedMetadata
+
+    @Deprecated("To be replaced by loadModuleMetadata()")
     fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor>
 }

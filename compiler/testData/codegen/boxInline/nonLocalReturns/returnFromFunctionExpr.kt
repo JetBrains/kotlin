@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: 1.kt
 
@@ -7,7 +8,6 @@ inline fun foo(f: () -> Unit) {
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 fun test(): String = fun (): String {
     foo { return "OK" }
     return "fail"

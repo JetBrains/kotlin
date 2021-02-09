@@ -5,31 +5,17 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
-import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
-import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
-import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector
+import org.jetbrains.kotlin.descriptors.commonizer.stats.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
-import org.jetbrains.kotlin.descriptors.konan.NATIVE_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.impl.BaseWriterImpl
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
-import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 import java.io.File
@@ -44,9 +30,7 @@ class NativeDistributionCommonizer(
     private val statsType: StatsType,
     private val logger: Logger
 ) {
-    enum class StatsType {
-        RAW, AGGREGATED, NONE
-    }
+    enum class StatsType { RAW, AGGREGATED, NONE }
 
     private val clockMark = ResettableClockMark()
 
@@ -57,11 +41,8 @@ class NativeDistributionCommonizer(
         // 1. load libraries
         val allLibraries = loadLibraries()
 
-        // 2. run commonization
-        val result = commonize(allLibraries)
-
-        // 3. write new libraries
-        saveModules(allLibraries, result)
+        // 2. run commonization & write new libraries
+        commonizeAndSaveResults(allLibraries)
 
         logTotal()
     }
@@ -101,7 +82,7 @@ class NativeDistributionCommonizer(
                 .orEmpty()
 
             if (platformLibs.isEmpty())
-                logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
+                logger.warning("No platform libraries found for target ${leafTarget.prettyName}. This target will be excluded from commonization.")
 
             leafTarget to NativeLibrariesToCommonize(platformLibs)
         }
@@ -136,203 +117,48 @@ class NativeDistributionCommonizer(
         return library
     }
 
-    private fun commonize(allLibraries: AllNativeLibraries): CommonizerResult {
+    private fun commonizeAndSaveResults(allLibraries: AllNativeLibraries) {
         val statsCollector = when (statsType) {
-            RAW -> RawStatsCollector(targets, FileStatsOutput(destination, "raw"))
-            AGGREGATED -> AggregatedStatsCollector(targets, FileStatsOutput(destination, "aggregated"))
+            RAW -> RawStatsCollector(targets)
+            AGGREGATED -> AggregatedStatsCollector(targets)
             NONE -> null
         }
-        statsCollector.use {
-            val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
-                val storageManager = LockBasedStorageManager("Commonized modules")
 
-                val stdlibProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
-                dependeeModulesProvider = stdlibProvider
+        val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
+            val storageManager = LockBasedStorageManager("Commonized modules")
 
-                allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
-                    if (librariesToCommonize.libraries.isEmpty()) return@forEach
+            resultsConsumer = NativeDistributionResultsConsumer(
+                repository = repository,
+                originalLibraries = allLibraries,
+                destination = destination,
+                copyStdlib = copyStdlib,
+                copyEndorsedLibs = copyEndorsedLibs,
+                logProgress = ::logProgress
+            )
+            dependeeModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
 
-                    val modulesProvider = NativeDistributionModulesProvider(storageManager, librariesToCommonize)
+            allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
+                if (librariesToCommonize.libraries.isEmpty()) return@forEach
 
-                    addTarget(
-                        TargetProvider(
-                            target = target,
-                            builtInsClass = KonanBuiltIns::class.java,
-                            builtInsProvider = stdlibProvider,
-                            modulesProvider = modulesProvider,
-                            dependeeModulesProvider = null // stdlib is already set as common dependency
-                        )
+                val modulesProvider = NativeDistributionModulesProvider.platformLibraries(storageManager, librariesToCommonize)
+
+                addTarget(
+                    TargetProvider(
+                        target = target,
+                        modulesProvider = modulesProvider,
+                        dependeeModulesProvider = null // stdlib is already set as common dependency
                     )
-                }
-            }
-
-            return runCommonization(parameters)
-        }
-    }
-
-    private fun saveModules(originalLibraries: AllNativeLibraries, result: CommonizerResult) {
-        // optimization: stdlib and endorsed libraries effectively remain the same across all Kotlin/Native targets,
-        // so they can be just copied to the new destination without running serializer
-        copyCommonStandardLibraries()
-
-        when (result) {
-            is CommonizerResult.NothingToDo -> {
-                // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
-                // In such case commonizer will do nothing and return a special result value 'NothingToCommonize'.
-                // So, let's just copy platform libraries from the target where they are to the new destination.
-                originalLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
-                    copyTargetAsIs(target, librariesToCommonize.libraries.size)
-                }
-            }
-
-            is CommonizerResult.Done -> {
-                val serializer = KlibMetadataMonolithicSerializer(
-                    languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-                    metadataVersion = KlibMetadataVersion.INSTANCE,
-                    skipExpects = false,
-                    project = null
                 )
-
-                // 'targetsToCopy' are some targets with empty set of platform libraries
-                val targetsToCopy = originalLibraries.librariesByTargets.keys - result.leafTargets
-                if (targetsToCopy.isNotEmpty()) {
-                    targetsToCopy.forEach { target ->
-                        val librariesToCommonize = originalLibraries.librariesByTargets.getValue(target)
-                        copyTargetAsIs(target, librariesToCommonize.libraries.size)
-                    }
-                }
-
-                val leafTargetNames = result.leafTargets.map { it.name }
-                val targetsToSerialize = result.leafTargets + result.sharedTarget
-                targetsToSerialize.forEach { target ->
-                    val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
-                    val newModules: Collection<ModuleDescriptor> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.module }
-                    val missingModuleLocations: List<File> =
-                        moduleResults.mapNotNull { (it as? ModuleResult.Missing)?.originalLocation }
-
-                    val manifestProvider: NativeManifestDataProvider
-                    val starredTarget: String?
-                    when (target) {
-                        is LeafTarget -> {
-                            manifestProvider = originalLibraries.librariesByTargets.getValue(target)
-                            starredTarget = target.name
-                        }
-                        is SharedTarget -> {
-                            manifestProvider = CommonNativeManifestDataProvider(originalLibraries.librariesByTargets.values)
-                            starredTarget = null
-                        }
-                    }
-
-                    val targetName = leafTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
-                    serializeTarget(target, targetName, newModules, missingModuleLocations, manifestProvider, serializer)
-                }
             }
         }
-    }
 
-    private fun copyCommonStandardLibraries() {
-        if (copyStdlib || copyEndorsedLibs) {
-            repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-                .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-                .listFiles()
-                ?.filter { it.isDirectory }
-                ?.let {
-                    if (copyStdlib) {
-                        if (copyEndorsedLibs) it else it.filter { dir -> dir.endsWith(KONAN_STDLIB_NAME) }
-                    } else
-                        it.filter { dir -> !dir.endsWith(KONAN_STDLIB_NAME) }
-                }?.forEach { libraryOrigin ->
-                    val libraryDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR).resolve(libraryOrigin.name)
-                    libraryOrigin.copyRecursively(libraryDestination)
-                }
+        runCommonization(parameters)
 
-            val what = listOfNotNull(
-                "standard library".takeIf { copyStdlib },
-                "endorsed libraries".takeIf { copyEndorsedLibs }
-            ).joinToString(separator = " and ")
-
-            logProgress("Copied $what")
-        }
-    }
-
-    private fun copyTargetAsIs(leafTarget: LeafTarget, librariesCount: Int) {
-        val librariesDestination = leafTarget.librariesDestination
-        librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
-
-        val librariesSource = leafTarget.platformLibrariesSource
-        if (librariesSource.isDirectory) librariesSource.copyRecursively(librariesDestination)
-
-        logProgress("Copied $librariesCount libraries for [${leafTarget.name}]")
-    }
-
-    private fun serializeTarget(
-        target: CommonizerTarget,
-        targetName: String,
-        newModules: Collection<ModuleDescriptor>,
-        missingModuleLocations: List<File>,
-        manifestProvider: NativeManifestDataProvider,
-        serializer: KlibMetadataMonolithicSerializer
-    ) {
-        val librariesDestination = target.librariesDestination
-        librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
-
-        for (newModule in newModules) {
-            val libraryName = newModule.name
-
-            if (!shouldBeSerialized(libraryName))
-                continue
-
-            val metadata = serializer.serializeModule(newModule)
-            val plainName = libraryName.asString().removePrefix("<").removeSuffix(">")
-
-            val manifestData = manifestProvider.getManifest(plainName)
-            val libraryDestination = librariesDestination.resolve(plainName)
-
-            writeLibrary(metadata, manifestData, libraryDestination)
-        }
-
-        for (missingModuleLocation in missingModuleLocations) {
-            val libraryName = missingModuleLocation.name
-            missingModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
-        }
-
-        logProgress("Written libraries for [$targetName]")
-    }
-
-    private fun writeLibrary(
-        metadata: SerializedMetadata,
-        manifestData: NativeSensitiveManifestData,
-        destination: File
-    ) {
-        val kDestination = KFile(destination.path)
-        val layout = KotlinLibraryLayoutForWriter(kDestination, kDestination)
-        val library = KotlinLibraryWriterImpl(
-            moduleName = manifestData.uniqueName,
-            versions = manifestData.versions,
-            builtInsPlatform = BuiltInsPlatform.NATIVE,
-            nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
-            nopack = true,
-            shortName = manifestData.shortName,
-            layout = layout
-        )
-        library.addMetadata(metadata)
-        manifestData.applyTo(library.base as BaseWriterImpl)
-        library.commit()
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
     }
 
     private val LeafTarget.platformLibrariesSource: File
         get() = repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
             .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
             .resolve(name)
-
-    private val CommonizerTarget.librariesDestination: File
-        get() = when (this) {
-            is LeafTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
-            is SharedTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-        }
-
-    private companion object {
-        fun shouldBeSerialized(libraryName: Name) =
-            libraryName != NATIVE_STDLIB_MODULE_NAME && libraryName != KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME
-    }
 }

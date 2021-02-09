@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 
@@ -15,7 +15,11 @@ import org.jetbrains.kotlin.js.backend.ast.JsFunction
 class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext> {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsFunction {
         val funcName = if (declaration.dispatchReceiverParameter == null) {
-            context.getNameForStaticFunction(declaration)
+            if (declaration.parent is IrFunction) {
+                context.getNameForValueDeclaration(declaration)
+            } else {
+                context.getNameForStaticFunction(declaration)
+            }
         } else {
             context.getNameForMemberFunction(declaration)
         }

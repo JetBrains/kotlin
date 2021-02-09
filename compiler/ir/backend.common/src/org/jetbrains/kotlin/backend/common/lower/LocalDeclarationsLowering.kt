@@ -404,7 +404,7 @@ class LocalDeclarationsLowering(
 
                 val oldCallee = expression.symbol.owner
                 val newCallee = oldCallee.transformed ?: return expression
-                val newReflectionTarget = expression.reflectionTarget?.run { owner.transformed }
+                val newReflectionTarget = expression.reflectionTarget?.run { owner.transformed ?: owner }
 
                 val typeParameters = if (newCallee is IrConstructor)
                     newCallee.parentAsClass.typeParameters

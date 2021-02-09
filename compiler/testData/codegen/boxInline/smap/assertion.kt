@@ -35,29 +35,3 @@ fun box(): String {
 
     return "OK"
 }
-
-// FILE: 1.smap
-
-// FILE: 2.smap
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt
-+ 2 1.kt
-test/_1Kt
-*L
-1#1,14:1
-18#2,7:15
-9#2,7:22
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt
-*L
-6#1:15,7
-7#1:22,7
-*E

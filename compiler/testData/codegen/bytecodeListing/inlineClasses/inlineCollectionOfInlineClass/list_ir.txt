@@ -28,7 +28,7 @@ public final class InlineList {
     public synthetic final static method box-impl(p0: java.util.List): InlineList
     public method clear(): void
     public static method constructor-impl(p0: java.util.List): java.util.List
-    public synthetic bridge method contains(p0: java.lang.Object): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
     public method contains-jHY5zpA(p0: int): boolean
     public static method contains-jHY5zpA(p0: java.util.List, p1: int): boolean
     public method containsAll(p0: java.util.Collection): boolean
@@ -43,14 +43,14 @@ public final class InlineList {
     public static method getSize-impl(p0: java.util.List): int
     public method hashCode(): int
     public static method hashCode-impl(p0: java.util.List): int
-    public synthetic bridge method indexOf(p0: java.lang.Object): int
+    public bridge final method indexOf(p0: java.lang.Object): int
     public method indexOf-jHY5zpA(p0: int): int
     public static method indexOf-jHY5zpA(p0: java.util.List, p1: int): int
     public method isEmpty(): boolean
     public static method isEmpty-impl(p0: java.util.List): boolean
     public method iterator(): java.util.Iterator
     public static method iterator-impl(p0: java.util.List): java.util.Iterator
-    public synthetic bridge method lastIndexOf(p0: java.lang.Object): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
     public method lastIndexOf-jHY5zpA(p0: int): int
     public static method lastIndexOf-jHY5zpA(p0: java.util.List, p1: int): int
     public method listIterator(): java.util.ListIterator

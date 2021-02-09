@@ -52,12 +52,18 @@ internal class BitcodeCompiler(val context: Context) {
 
         val profilingFlags = llvmProfilingFlags().map { listOf("-mllvm", it) }.flatten()
 
-        // LLVM we use does not have support for arm64_32.
         // TODO: fix with LLVM update.
         val targetTriple = when (context.config.target) {
+            // LLVM we use does not have support for arm64_32.
             KonanTarget.WATCHOS_ARM64 -> {
                 require(configurables is AppleConfigurables)
                 "arm64_32-apple-watchos${configurables.osVersionMin}"
+            }
+            // Runtime generates bitcode for mythical macos 10.16 because of old Clang.
+            // Let's fix it.
+            KonanTarget.MACOS_ARM64 -> {
+                require(configurables is AppleConfigurables)
+                "arm64-apple-macos${configurables.osVersionMin}"
             }
             else -> context.llvm.targetTriple
         }

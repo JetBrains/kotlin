@@ -54,6 +54,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         runTest("compiler/fir/analysis-tests/testData/resolve/cast.kt");
     }
 
+    @TestMetadata("catchParameter.kt")
+    public void testCatchParameter() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/catchParameter.kt");
+    }
+
     @TestMetadata("companion.kt")
     public void testCompanion() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");
@@ -412,6 +417,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");
+    }
+
+    @TestMetadata("throwableSubclass.kt")
+    public void testThrowableSubclass() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/throwableSubclass.kt");
     }
 
     @TestMetadata("treeSet.kt")
@@ -3095,6 +3105,39 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             public void testFlexibleWildcard() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k/flexibleWildcard.kt");
             }
+        }
+    }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Suppress extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuppress() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/suppress"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("allWarnings.kt")
+        public void testAllWarnings() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/allWarnings.kt");
+        }
+
+        @TestMetadata("multipleWarnings.kt")
+        public void testMultipleWarnings() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/multipleWarnings.kt");
+        }
+
+        @TestMetadata("singleError.kt")
+        public void testSingleError() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleError.kt");
+        }
+
+        @TestMetadata("singleWarning.kt")
+        public void testSingleWarning() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/suppress/singleWarning.kt");
         }
     }
 

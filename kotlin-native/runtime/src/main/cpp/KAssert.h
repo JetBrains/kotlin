@@ -80,4 +80,11 @@ extern "C" const int KonanNeedDebugInfo;
         ::internal::TODOImpl(CURRENT_SOURCE_LOCATION, ##__VA_ARGS__); \
     } while (false)
 
+// Use RuntimeFail() to unconditionally fail, signifying compiler/runtime bug.
+// TODO: Consider using `CURRENT_SOURCE_LOCATION` when `KonanNeedDebugInfo` is `true`.
+#define RuntimeFail(format, ...) \
+    do { \
+        RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
+    } while (false)
+
 #endif // RUNTIME_ASSERT_H

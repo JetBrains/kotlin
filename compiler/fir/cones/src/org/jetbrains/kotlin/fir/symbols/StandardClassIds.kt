@@ -41,6 +41,7 @@ object StandardClassIds {
     val ULong = Long.unsignedId()
 
     val String = "String".baseId()
+    val Throwable = "Throwable".baseId()
 
     val KProperty = "KProperty".reflectId()
     val KMutableProperty = "KMutableProperty".reflectId()
@@ -83,6 +84,8 @@ object StandardClassIds {
     fun FunctionN(n: Int): ClassId {
         return "Function$n".baseId()
     }
+
+    val Suppress = "Suppress".baseId()
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }

@@ -8,15 +8,89 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.*
 import java.lang.reflect.Field
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 private val BOOLEAN_FLAG_PATTERN = Pattern.compile("([+-])(([a-zA-Z_0-9]*)\\.)?([a-zA-Z_0-9]*)")
-private val CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN = Pattern.compile(
-    "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_\\-0-9]*)"
-)
-private val ASSERTIONS_MODE_FLAG_PATTERN = Pattern.compile("ASSERTIONS_MODE=([a-zA-Z_0-9-]*)")
-private val STRING_CONCAT = Pattern.compile("STRING_CONCAT=([a-zA-Z_0-9-]*)")
 
+@OptIn(ExperimentalStdlibApi::class)
+private val patterns = buildList {
+    createPattern(
+        "ASSERTIONS_MODE",
+        JVMConfigurationKeys.ASSERTIONS_MODE,
+        JVMAssertionsMode.Companion::fromString
+    )
+    createPattern(
+        "STRING_CONCAT",
+        JVMConfigurationKeys.STRING_CONCAT,
+        JvmStringConcat.Companion::fromString
+    )
+    createPattern(
+        "CONSTRUCTOR_CALL_NORMALIZATION_MODE",
+        JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+        JVMConstructorCallNormalizationMode.Companion::fromStringOrNull
+    )
+    createPattern(
+        "SAM_CONVERSIONS",
+        JVMConfigurationKeys.SAM_CONVERSIONS,
+        JvmClosureGenerationScheme.Companion::fromString
+    )
+    createPattern(
+        "LAMBDAS",
+        JVMConfigurationKeys.LAMBDAS,
+        JvmClosureGenerationScheme.Companion::fromString
+    )
+    createPattern(
+        "USE_OLD_INLINE_CLASSES_MANGLING_SCHEME",
+        JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME,
+    )
+}
+
+private sealed class PatternWithExtractor<E : Any> {
+    abstract val configurationKey: CompilerConfigurationKey<E>
+    abstract val pattern: Pattern
+
+    abstract fun extract(matcher: Matcher): E
+}
+
+private class ValuePatternWithExtractor<E : Any>(
+    val directive: String,
+    override val configurationKey: CompilerConfigurationKey<E>,
+    val extractor: (String) -> E?
+) : PatternWithExtractor<E>() {
+    override val pattern: Pattern = Pattern.compile("$directive=([a-zA-Z_0-9-]*)")
+
+    override fun extract(matcher: Matcher): E {
+        val stringValue = matcher.group(1)
+        return extractor(stringValue) ?: error("Wrong $directive value: $stringValue")
+    }
+}
+
+private class BooleanPatternWithExtractor(
+    val directive: String,
+    override val configurationKey: CompilerConfigurationKey<Boolean>
+) : PatternWithExtractor<Boolean>() {
+    override val pattern: Pattern = Pattern.compile(directive)
+
+    override fun extract(matcher: Matcher): Boolean {
+        return true
+    }
+}
+
+private fun <E : Any> MutableList<PatternWithExtractor<*>>.createPattern(
+    directive: String,
+    configurationKey: CompilerConfigurationKey<E>,
+    extractor: (String) -> E?,
+): PatternWithExtractor<E> {
+    return ValuePatternWithExtractor(directive, configurationKey, extractor).also { this += it }
+}
+
+private fun MutableList<PatternWithExtractor<*>>.createPattern(
+    directive: String,
+    configurationKey: CompilerConfigurationKey<Boolean>
+): PatternWithExtractor<Boolean> {
+    return BooleanPatternWithExtractor(directive, configurationKey).also { this += it }
+}
 
 private val FLAG_CLASSES: List<Class<*>> = listOf(
     CLIConfigurationKeys::class.java,
@@ -31,6 +105,7 @@ private val FLAG_NAMESPACE_TO_CLASS: Map<String, Class<*>> = mapOf(
 fun parseAnalysisFlags(rawFlags: List<String>): Map<CompilerConfigurationKey<*>, Any> {
     val result = mutableMapOf<CompilerConfigurationKey<*>, Any>()
 
+    @Suppress("unused")
     for (flag in rawFlags) {
         var m = BOOLEAN_FLAG_PATTERN.matcher(flag)
         if (m.matches()) {
@@ -40,27 +115,12 @@ fun parseAnalysisFlags(rawFlags: List<String>): Map<CompilerConfigurationKey<*>,
             tryApplyBooleanFlag(result, flag, flagEnabled, flagNamespace, flagName)
             continue
         }
-        m = CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN.matcher(flag)
-        if (m.matches()) {
-            val flagValueString = m.group(1)
-            val mode = JVMConstructorCallNormalizationMode.fromStringOrNull(flagValueString)
-                ?: error("Wrong CONSTRUCTOR_CALL_NORMALIZATION_MODE value: $flagValueString")
-            result[JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE] = mode
-        }
-        m = ASSERTIONS_MODE_FLAG_PATTERN.matcher(flag)
-        if (m.matches()) {
-            val flagValueString = m.group(1)
-            val mode = JVMAssertionsMode.fromStringOrNull(flagValueString)
-                ?: error("Wrong ASSERTIONS_MODE value: $flagValueString")
-            result[JVMConfigurationKeys.ASSERTIONS_MODE] = mode
-        }
-
-        m = STRING_CONCAT.matcher(flag)
-        if (m.matches()) {
-            val flagValueString = m.group(1)
-            val mode = JvmStringConcat.fromString(flagValueString)
-                ?: error("Wrong STRING_CONCAT value: $flagValueString")
-            result[JVMConfigurationKeys.STRING_CONCAT] = mode
+        for (pattern in patterns) {
+            m = pattern.pattern.matcher(flag)
+            if (m.matches()) {
+                result[pattern.configurationKey] = pattern.extract(m)
+                continue
+            }
         }
     }
 
@@ -97,7 +157,7 @@ private fun tryApplyBooleanFlag(
     try {
         @Suppress("UNCHECKED_CAST")
         val configurationKey = configurationKeyField!![null] as CompilerConfigurationKey<Boolean>
-        destination.put(configurationKey, flagEnabled)
+        destination[configurationKey] = flagEnabled
     } catch (e: java.lang.Exception) {
         assert(false) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
     }

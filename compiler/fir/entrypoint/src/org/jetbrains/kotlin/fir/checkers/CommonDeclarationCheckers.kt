@@ -35,6 +35,10 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirDestructuringDeclarationChecker,
     )
 
+    override val classCheckers: Set<FirClassChecker> = setOf(
+        FirThrowableSubclassChecker,
+    )
+
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
         FirAnnotationClassDeclarationChecker,
         FirCommonConstructorDelegationIssuesChecker,
@@ -46,11 +50,11 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirLocalEntityNotAllowedChecker,
         FirManyCompanionObjectsChecker,
         FirMethodOfAnyImplementedInInterfaceChecker,
+        FirOverrideChecker,
         FirPrimaryConstructorRequiredForDataClassChecker,
         FirSupertypeInitializedInInterfaceChecker,
         FirSupertypeInitializedWithoutPrimaryConstructor,
         FirTypeParametersInObjectChecker,
-        FirTypeMismatchOnOverrideChecker,
         FirMemberFunctionChecker,
         FirMemberPropertyChecker,
     )

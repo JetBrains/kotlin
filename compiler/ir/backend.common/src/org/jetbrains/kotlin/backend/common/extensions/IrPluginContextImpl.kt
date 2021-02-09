@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
@@ -33,6 +34,7 @@ open class IrPluginContextImpl constructor(
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
+    private val diagnosticReporter: IrMessageLogger,
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, irBuiltIns.builtIns, st)
 ) : IrPluginContext {
 
@@ -66,6 +68,18 @@ open class IrPluginContextImpl constructor(
         linker.postProcess()
 
         return symbol
+    }
+
+    override fun createDiagnosticReporter(pluginId: String): IrMessageLogger {
+        return object : IrMessageLogger {
+            override fun report(
+                severity: IrMessageLogger.Severity,
+                message: String,
+                location: IrMessageLogger.Location?
+            ) {
+                diagnosticReporter.report(severity, "[Plugin $pluginId] $message", location)
+            }
+        }
     }
 
     private fun <S : IrSymbol> resolveSymbolCollection(fqName: FqName, referencer: (MemberScope) -> Collection<S>): Collection<S> {

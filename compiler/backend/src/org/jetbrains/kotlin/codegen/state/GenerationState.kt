@@ -208,11 +208,21 @@ class GenerationState private constructor(
         else JvmStringConcat.INLINE
 
     val samConversionsScheme = run {
-        val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS) ?: JvmSamConversions.DEFAULT
+        val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
+            ?: JvmClosureGenerationScheme.DEFAULT
         if (target >= fromConfig.minJvmTarget)
             fromConfig
         else
-            JvmSamConversions.DEFAULT
+            JvmClosureGenerationScheme.DEFAULT
+    }
+
+    val lambdasScheme = run {
+        val fromConfig = configuration.get(JVMConfigurationKeys.LAMBDAS)
+            ?: JvmClosureGenerationScheme.DEFAULT
+        if (target >= fromConfig.minJvmTarget)
+            fromConfig
+        else
+            JvmClosureGenerationScheme.DEFAULT
     }
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)

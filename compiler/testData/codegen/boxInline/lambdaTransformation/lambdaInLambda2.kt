@@ -1,6 +1,7 @@
+// WITH_RUNTIME
+// NO_CHECK_LAMBDA_INLINING
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// WITH_RUNTIME
 package test
 
 inline fun <R> mfun(f: () -> R) {
@@ -13,7 +14,6 @@ fun noInline(suffix: String, l: (s: String) -> Unit)  {
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 import java.util.*
 

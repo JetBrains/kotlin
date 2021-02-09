@@ -4,13 +4,21 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class A$B {
+    @kotlin.jvm.JvmField()
     public test.A$B.C c;
+    @kotlin.jvm.JvmField()
     public test.A$B.D$E de;
+    @kotlin.jvm.JvmField()
     public test.J$B.C jc;
+    @kotlin.jvm.JvmField()
     public test.J$B.D$E jde;
+    @kotlin.jvm.JvmField()
     public test.A$B.D$$E dee;
+    @kotlin.jvm.JvmField()
     public test.A$B.D$$$E deee;
+    @kotlin.jvm.JvmField()
     public test.J$B.D$$E jdee;
+    @kotlin.jvm.JvmField()
     public test.J$B.D$$$E jdeee;
 
     public A$B() {
@@ -27,9 +35,13 @@ public final class A$B {
 
     @kotlin.Metadata()
     public static final class D$E {
+        @kotlin.jvm.JvmField()
         public test.A$B.D$E.F f;
+        @kotlin.jvm.JvmField()
         public test.A$B.D$E.F$G fg;
+        @kotlin.jvm.JvmField()
         public test.J$B.D$E.F jf;
+        @kotlin.jvm.JvmField()
         public test.J$B.D$E.F$G jfg;
 
         public D$E() {

@@ -53,7 +53,7 @@ interface ObjCExportLazy {
 @JvmOverloads
 fun createObjCExportLazy(
         configuration: ObjCExportLazy.Configuration,
-        warningCollector: ObjCExportWarningCollector,
+        problemCollector: ObjCExportProblemCollector,
         codeAnalyzer: KotlinCodeAnalyzer,
         typeResolver: TypeResolver,
         descriptorResolver: DescriptorResolver,
@@ -62,7 +62,7 @@ fun createObjCExportLazy(
         deprecationResolver: DeprecationResolver? = null
 ): ObjCExportLazy = ObjCExportLazyImpl(
         configuration,
-        warningCollector,
+        problemCollector,
         codeAnalyzer,
         typeResolver,
         descriptorResolver,
@@ -73,7 +73,7 @@ fun createObjCExportLazy(
 
 internal class ObjCExportLazyImpl(
         private val configuration: ObjCExportLazy.Configuration,
-        warningCollector: ObjCExportWarningCollector,
+        problemCollector: ObjCExportProblemCollector,
         private val codeAnalyzer: KotlinCodeAnalyzer,
         private val typeResolver: TypeResolver,
         private val descriptorResolver: DescriptorResolver,
@@ -94,8 +94,8 @@ internal class ObjCExportLazyImpl(
             null,
             mapper,
             namer,
-            warningCollector,
-            objcGenerics = configuration.objcGenerics
+            problemCollector,
+            configuration.objcGenerics
     )
 
     private val isValid: Boolean

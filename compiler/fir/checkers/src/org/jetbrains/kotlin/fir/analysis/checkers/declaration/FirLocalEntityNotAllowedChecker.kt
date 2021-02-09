@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isCompanion
 import org.jetbrains.kotlin.fir.declarations.visibility
-import org.jetbrains.kotlin.name.Name
 
 object FirLocalEntityNotAllowedChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -24,19 +23,11 @@ object FirLocalEntityNotAllowedChecker : FirRegularClassChecker() {
 
         when {
             declaration.classKind == ClassKind.OBJECT && !declaration.isCompanion ->
-                reporter.reportLocalObjectNotAllowed(declaration.source, declaration.name)
+                reporter.reportOn(declaration.source, FirErrors.LOCAL_OBJECT_NOT_ALLOWED, declaration.name, context)
             declaration.classKind == ClassKind.INTERFACE ->
-                reporter.reportLocalInterfaceNotAllowed(declaration.source, declaration.name)
+                reporter.reportOn(declaration.source, FirErrors.LOCAL_INTERFACE_NOT_ALLOWED, declaration.name, context)
             else -> {
             }
         }
-    }
-
-    private fun DiagnosticReporter.reportLocalObjectNotAllowed(source: FirSourceElement?, name: Name) {
-        source?.let { report(FirErrors.LOCAL_OBJECT_NOT_ALLOWED.on(it, name)) }
-    }
-
-    private fun DiagnosticReporter.reportLocalInterfaceNotAllowed(source: FirSourceElement?, name: Name) {
-        source?.let { report(FirErrors.LOCAL_INTERFACE_NOT_ALLOWED.on(it, name)) }
     }
 }

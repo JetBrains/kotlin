@@ -84,9 +84,11 @@ private fun createSpecialEnumMethodBody(
             Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
             Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, JAVA_STRING_TYPE), false
         )
+        node.visitTypeInsn(Opcodes.CHECKCAST, ENUM_TYPE.internalName)
     } else {
         node.visitInsn(Opcodes.ICONST_0)
         node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
+        node.visitTypeInsn(Opcodes.CHECKCAST, AsmUtil.getArrayType(ENUM_TYPE).internalName)
     }
     node.visitInsn(Opcodes.ARETURN)
     node.visitMaxs(if (isValueOf) 3 else 2, if (isValueOf) 1 else 0)

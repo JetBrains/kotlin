@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
-import org.jetbrains.kotlin.config.JvmSamConversions
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
+import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -74,6 +75,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         irFile.transformChildrenVoid(this)
     }
 
+    private val shouldGenerateIndySamConversions =
+        context.state.samConversionsScheme == JvmClosureGenerationScheme.INDY
+
+    private val shouldGenerateIndyLambdas =
+        context.state.lambdasScheme == JvmClosureGenerationScheme.INDY
+
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (!expression.origin.isLambda)
             return super.visitBlock(expression)
@@ -84,7 +91,22 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         expression.statements.dropLast(1).forEach { it.transform(this, null) }
         reference.transformChildrenVoid(this)
+
+        if (shouldGenerateIndyLambdas && canUseIndySamConversion(reference, reference.type, true)) {
+            return wrapLambdaReferenceWithIndySamConversion(expression, reference)
+        }
+
         return FunctionReferenceBuilder(reference).build()
+    }
+
+    private fun wrapLambdaReferenceWithIndySamConversion(expression: IrBlock, reference: IrFunctionReference): IrBlock {
+        expression.statements[expression.statements.size - 1] = wrapWithIndySamConversion(reference.type, reference)
+        val irLambda = reference.symbol.owner
+        // JDK LambdaMetafactory can't adapt '(...)V' to '(...)Lkotlin/Unit;'.
+        if (irLambda.returnType.isUnit()) {
+            irLambda.returnType = irLambda.returnType.makeNullable()
+        }
+        return expression
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
@@ -94,9 +116,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         else
             FunctionReferenceBuilder(expression).build()
     }
-
-    private val shouldUseIndySamConversions =
-        context.state.samConversionsScheme == JvmSamConversions.INDY
 
     // Handle SAM conversions which wrap a function reference:
     //     class sam$n(private val receiver: R) : Interface { override fun method(...) = receiver.target(...) }
@@ -121,15 +140,15 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         reference.transformChildrenVoid()
 
         val samSuperType = expression.typeOperand
-        return if (shouldUseIndySamConversions && canUseIndySamConversion(reference, samSuperType)) {
+        return if (shouldGenerateIndySamConversions && canUseIndySamConversion(reference, samSuperType, false)) {
             wrapSamConversionArgumentWithIndySamConversion(expression)
         } else {
             FunctionReferenceBuilder(reference, samSuperType).build()
         }
     }
 
-    private fun canUseIndySamConversion(reference: IrFunctionReference, samSuperType: IrType): Boolean {
-        // Can't use indy for regular function references by default (because of 'equals').
+    private fun canUseIndySamConversion(reference: IrFunctionReference, samSuperType: IrType, plainLambda: Boolean): Boolean {
+        // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
         if (reference.origin != IrStatementOrigin.LAMBDA)
             return false
@@ -149,6 +168,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             target.returnType.isProhibitedTypeForIndySamConversion()
         )
             return false
+
+        if (plainLambda) {
+            var parametersCount = target.valueParameters.size
+            if (target.extensionReceiverParameter != null) ++parametersCount
+            if (parametersCount >= BuiltInFunctionArity.BIG_ARITY)
+                return false
+        }
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
         if (target.parents.any { it.isInlineFunction() || it.isCrossinlineLambda() })

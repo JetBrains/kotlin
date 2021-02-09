@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.hasPrimaryConstructor
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInterface
 
@@ -20,11 +20,7 @@ object FirConstructorInInterfaceChecker : FirRegularClassChecker() {
         }
 
         if (declaration.source?.hasPrimaryConstructor() == true) {
-            reporter.report(declaration.source)
+            reporter.reportOn(declaration.source, FirErrors.CONSTRUCTOR_IN_INTERFACE, context)
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.CONSTRUCTOR_IN_INTERFACE.on(it)) }
     }
 }

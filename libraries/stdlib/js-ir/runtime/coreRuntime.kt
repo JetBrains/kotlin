@@ -49,7 +49,7 @@ internal fun hashCode(obj: dynamic): Int {
         "function" -> getObjectHashCode(obj)
         "number" -> getNumberHashCode(obj)
         "boolean" -> if(obj.unsafeCast<Boolean>()) 1 else 0
-        else -> getStringHashCode(js("String(obj)"))
+        else -> getStringHashCode(js("String")(obj))
     }
 }
 

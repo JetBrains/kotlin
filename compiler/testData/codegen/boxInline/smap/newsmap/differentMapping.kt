@@ -1,4 +1,3 @@
-
 // FILE: 1.kt
 
 package test
@@ -26,29 +25,3 @@ fun box(): String {
 
     return result
 }
-
-// FILE: 1.smap
-
-// FILE: 2.smap
-
-SMAP
-2.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 2.kt
-_2Kt
-+ 2 1.kt
-test/_1Kt
-*L
-1#1,18:1
-7#2,4:19
-7#2,4:23
-*S KotlinDebug
-*F
-+ 1 2.kt
-_2Kt
-*L
-7#1:19,4
-11#1:23,4
-*E

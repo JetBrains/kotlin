@@ -23,6 +23,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL
     )
 
+    val DECLARATION_RETURN_TYPE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DECLARATION_RETURN_TYPE,
+        PositioningStrategies.DECLARATION_RETURN_TYPE
+    )
+
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
         PositioningStrategies.DECLARATION_NAME
@@ -46,6 +51,36 @@ object SourceElementPositioningStrategies {
     val MODALITY_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.MODALITY_MODIFIER,
         PositioningStrategies.MODALITY_MODIFIER
+    )
+
+    val ABSTRACT_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ABSTRACT_MODIFIER,
+        PositioningStrategies.ABSTRACT_MODIFIER
+    )
+
+    val OPEN_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OPEN_MODIFIER,
+        PositioningStrategies.OPEN_MODIFIER
+    )
+
+    val OVERRIDE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OVERRIDE_MODIFIER,
+        PositioningStrategies.OVERRIDE_MODIFIER
+    )
+
+    val PRIVATE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PRIVATE_MODIFIER,
+        PositioningStrategies.PRIVATE_MODIFIER
+    )
+
+    val LATEINIT_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.LATEINIT_MODIFIER,
+        PositioningStrategies.LATEINIT_MODIFIER
+    )
+
+    val VARIANCE_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VARIANCE_MODIFIER,
+        PositioningStrategies.VARIANCE_MODIFIER
     )
 
     val OPERATOR = SourceElementPositioningStrategy(

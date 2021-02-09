@@ -20,16 +20,22 @@ fun use(fn: Function0<Any>): Any {
 }
 
 fun testFn(): Any {
-  return use(fn = local fun foo(): String {
-    return foo()
-  }
-)
+  return use(fn = { // BLOCK
+    local fun foo(): String {
+      return foo()
+    }
+
+    ::foo
+  })
 }
 
 fun testCtor(): Any {
-  return use(fn = local fun <init>(): C {
-    return C()
-  }
-)
+  return use(fn = { // BLOCK
+    local fun <init>(): C {
+      return C()
+    }
+
+    ::<init>
+  })
 }
 

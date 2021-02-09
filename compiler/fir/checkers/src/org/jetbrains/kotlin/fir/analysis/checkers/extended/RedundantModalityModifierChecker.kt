@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.modalityModifier
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.modality
@@ -33,6 +34,6 @@ object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
         val implicitModality = declaration.implicitModality(context)
         if (modality != implicitModality) return
 
-        reporter.report(source, REDUNDANT_MODALITY_MODIFIER)
+        reporter.reportOn(source, REDUNDANT_MODALITY_MODIFIER, context)
     }
 }

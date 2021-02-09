@@ -95,6 +95,10 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     mm::ExtraObjectData::Uninstall(object);
 }
 
+ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
+    return obj->permanent() || isFrozen(obj);
+}
+
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
     // TODO: Remove when legacy MM is gone.
     return true;
@@ -140,7 +144,10 @@ extern "C" ALWAYS_INLINE OBJ_GETTER(InitSingleton, ObjHeader** location, const T
 extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
-    mm::SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+    // Null `initialValue` means that the appropriate value was already set by static initialization.
+    if (initialValue != nullptr) {
+        mm::SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+    }
 }
 
 extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
@@ -246,6 +253,11 @@ extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
     // Nothing to do
 }
 
+extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().PerformFullGC();
+}
+
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
     ThrowIllegalArgumentException();
@@ -282,29 +294,45 @@ extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
     // Nothing to do
 }
 
+extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
+    GetThreadData(memory)->gc().PerformFullGC();
+}
+
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
     // TODO: Remove when legacy MM is gone.
     return true;
 }
 
 extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
+    if (!object)
+        return nullptr;
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     return mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
 }
 
 extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
+    if (!pointer)
+        return;
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
+    if (!pointer)
+        RETURN_OBJ(nullptr);
+
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     ObjHeader* object = **node;
     RETURN_OBJ(object);
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
+    if (!pointer)
+        RETURN_OBJ(nullptr);
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
     ObjHeader* object = **node;
@@ -347,7 +375,22 @@ extern "C" void AdoptReferenceFromSharedVariable(ObjHeader* object) {
     // Nothing to do.
 }
 
-void CheckGlobalsAccessible() {
+extern "C" void CheckGlobalsAccessible() {
     // TODO: Remove when legacy MM is gone.
     // Always accessible
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_safePointFunctionEpilogue() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().SafePointFunctionEpilogue();
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_safePointWhileLoopBody() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().SafePointLoopBody();
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_mm_safePointExceptionUnwind() {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().SafePointExceptionUnwind();
 }

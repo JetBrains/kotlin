@@ -12,10 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
@@ -81,6 +78,8 @@ class CliKotlinAsJavaSupport(
         }.orEmpty()
     }
 
+    override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
+        KtDescriptorBasedFakeLightClass(classOrObject)
 
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName, searchScope: GlobalSearchScope

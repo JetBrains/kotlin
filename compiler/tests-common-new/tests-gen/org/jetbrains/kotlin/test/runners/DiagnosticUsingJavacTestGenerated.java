@@ -33,7 +33,7 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/javac/fieldsResolution")
     @TestDataPath("$PROJECT_ROOT")
-    public class FieldsResolution extends AbstractDiagnosticUsingJavacTest {
+    public class FieldsResolution {
         @Test
         public void testAllFilesPresentInFieldsResolution() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/fieldsResolution"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -115,7 +115,7 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/javac/imports")
     @TestDataPath("$PROJECT_ROOT")
-    public class Imports extends AbstractDiagnosticUsingJavacTest {
+    public class Imports {
         @Test
         public void testAllFilesPresentInImports() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/imports"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -227,7 +227,7 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/javac/inheritance")
     @TestDataPath("$PROJECT_ROOT")
-    public class Inheritance extends AbstractDiagnosticUsingJavacTest {
+    public class Inheritance {
         @Test
         public void testAllFilesPresentInInheritance() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inheritance"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -339,7 +339,7 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/javac/inners")
     @TestDataPath("$PROJECT_ROOT")
-    public class Inners extends AbstractDiagnosticUsingJavacTest {
+    public class Inners {
         @Test
         public void testAllFilesPresentInInners() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/inners"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -391,7 +391,7 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/javac/qualifiedExpression")
     @TestDataPath("$PROJECT_ROOT")
-    public class QualifiedExpression extends AbstractDiagnosticUsingJavacTest {
+    public class QualifiedExpression {
         @Test
         public void testAllFilesPresentInQualifiedExpression() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/qualifiedExpression"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
@@ -431,7 +431,7 @@ public class DiagnosticUsingJavacTestGenerated extends AbstractDiagnosticUsingJa
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/javac/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
-    public class TypeParameters extends AbstractDiagnosticUsingJavacTest {
+    public class TypeParameters {
         @Test
         public void testAllFilesPresentInTypeParameters() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/javac/typeParameters"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);

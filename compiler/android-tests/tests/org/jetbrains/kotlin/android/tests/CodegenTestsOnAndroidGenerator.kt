@@ -44,10 +44,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val COMMON = FlavorConfig("common", 3);
-    private val REFLECT = FlavorConfig("reflect", 1);
-    private val JVM8 = FlavorConfig("jvm8", 1);
-    private val JVM8REFLECT = FlavorConfig("reflectjvm8", 1);
+    private val COMMON = FlavorConfig("common", 3)
+    private val REFLECT = FlavorConfig("reflect", 1)
 
     class FlavorConfig(private val prefix: String, val limit: Int) {
 
@@ -100,7 +98,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 it.setExecutable(true)
             }
         }
-        File("./gradlew.bat").copyTo(File(projectRoot, "gradlew.bat"));
+        File("./gradlew.bat").copyTo(File(projectRoot, "gradlew.bat"))
         val file = File(target, "gradle-wrapper.properties")
         file.readLines().map {
             when {
@@ -156,8 +154,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         COMMON.printStatistics()
         REFLECT.printStatistics()
-        JVM8.printStatistics()
-        JVM8REFLECT.printStatistics()
     }
 
     internal inner class FilesWriter(
@@ -279,14 +275,16 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
                 // TODO: Support jvm assertions
-                if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
+                if (fullFileText.contains("// ASSERTIONS_MODE: jvm")) continue
+                if (fullFileText.contains("// MODULE: ")) continue
                 val targets = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fullFileText, "// JVM_TARGET:")
-                    .also { it.remove(JvmTarget.JVM_1_6.description) }
 
-                val isJvm8Target =
-                    if (targets.isEmpty()) false
-                    else if (targets.contains(JvmTarget.JVM_1_8.description) && targets.size == 1) true
-                    else continue //TODO: support other targets on Android
+                val isAtLeastJvm8Target = !targets.contains(JvmTarget.JVM_1_6.description)
+
+                if (isAtLeastJvm8Target && fullFileText.contains("@Target(AnnotationTarget.TYPE)")) {
+                    //TODO: type annotations supported on sdk 26 emulator
+                    continue
+                }
 
                 // TODO: support SKIP_JDK6 on new platforms
                 if (fullFileText.contains("// SKIP_JDK6")) continue
@@ -299,9 +297,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     KotlinBaseTest.updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
-                    val compiler = if (isJvm8Target) {
-                        if (kind.withReflection) JVM8REFLECT else JVM8
-                    } else if (kind.withReflection) REFLECT else COMMON
+                    val compiler = if (kind.withReflection) REFLECT else COMMON
                     val filesHolder = holders.getOrPut(key) {
                         FilesWriter(compiler, KotlinTestUtils.newConfiguration(kind, jdkKind,
                                                                                KtTestUtil.getAnnotationsJar()

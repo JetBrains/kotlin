@@ -89,6 +89,61 @@ public class MultiModuleMoveTestGenerated extends AbstractMultiModuleMoveTest {
         runTest("idea/testData/refactoring/moveMultiModule/moveRefToLibTypeAliasImplementingLibExpectClass/moveRefToLibTypeAliasImplementingLibExpectClass.test");
     }
 
+    @TestMetadata("moveSealedCheckEntireHierarchy/moveSealedCheckEntireHierarchy.test")
+    public void testMoveSealedCheckEntireHierarchy_MoveSealedCheckEntireHierarchy() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckEntireHierarchy/moveSealedCheckEntireHierarchy.test");
+    }
+
+    @TestMetadata("moveSealedCheckNotMember/moveSealedCheckNotMember.test")
+    public void testMoveSealedCheckNotMember_MoveSealedCheckNotMember() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckNotMember/moveSealedCheckNotMember.test");
+    }
+
+    @TestMetadata("moveSealedCheckOriginalPackageHasMember/moveSealedCheckOriginalPackageHasMember.test")
+    public void testMoveSealedCheckOriginalPackageHasMember_MoveSealedCheckOriginalPackageHasMember() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckOriginalPackageHasMember/moveSealedCheckOriginalPackageHasMember.test");
+    }
+
+    @TestMetadata("moveSealedCheckOriginalPackageHasMemberCrossModule/moveSealedCheckOriginalPackageHasMemberCrossModule.test")
+    public void testMoveSealedCheckOriginalPackageHasMemberCrossModule_MoveSealedCheckOriginalPackageHasMemberCrossModule() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckOriginalPackageHasMemberCrossModule/moveSealedCheckOriginalPackageHasMemberCrossModule.test");
+    }
+
+    @TestMetadata("moveSealedCheckSingleSealed/moveSealedCheckSingleSealed.test")
+    public void testMoveSealedCheckSingleSealed_MoveSealedCheckSingleSealed() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckSingleSealed/moveSealedCheckSingleSealed.test");
+    }
+
+    @TestMetadata("moveSealedCheckTargetPackageHasMember/moveSealedCheckTargetPackageHasMember.test")
+    public void testMoveSealedCheckTargetPackageHasMember_MoveSealedCheckTargetPackageHasMember() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckTargetPackageHasMember/moveSealedCheckTargetPackageHasMember.test");
+    }
+
+    @TestMetadata("moveSealedCheckTargetPackageHasMemberCrossModule/moveSealedCheckTargetPackageHasMemberCrossModule.test")
+    public void testMoveSealedCheckTargetPackageHasMemberCrossModule_MoveSealedCheckTargetPackageHasMemberCrossModule() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckTargetPackageHasMemberCrossModule/moveSealedCheckTargetPackageHasMemberCrossModule.test");
+    }
+
+    @TestMetadata("moveSealedCheckTargetPackageHasNoMembers/moveSealedCheckTargetPackageHasNoMembers.test")
+    public void testMoveSealedCheckTargetPackageHasNoMembers_MoveSealedCheckTargetPackageHasNoMembers() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckTargetPackageHasNoMembers/moveSealedCheckTargetPackageHasNoMembers.test");
+    }
+
+    @TestMetadata("moveSealedCheckTargetPackageHasNoMembersCrossModule/moveSealedCheckTargetPackageHasNoMembersCrossModule.test")
+    public void testMoveSealedCheckTargetPackageHasNoMembersCrossModule_MoveSealedCheckTargetPackageHasNoMembersCrossModule() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckTargetPackageHasNoMembersCrossModule/moveSealedCheckTargetPackageHasNoMembersCrossModule.test");
+    }
+
+    @TestMetadata("moveSealedCheckTargetPackageHasNoMembersCrossModuleBig/moveSealedCheckTargetPackageHasNoMembersCrossModuleBig.test")
+    public void testMoveSealedCheckTargetPackageHasNoMembersCrossModuleBig_MoveSealedCheckTargetPackageHasNoMembersCrossModuleBig() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckTargetPackageHasNoMembersCrossModuleBig/moveSealedCheckTargetPackageHasNoMembersCrossModuleBig.test");
+    }
+
+    @TestMetadata("moveSealedCheckWithinPackage/moveSealedCheckWithinPackage.test")
+    public void testMoveSealedCheckWithinPackage_MoveSealedCheckWithinPackage() throws Exception {
+        runTest("idea/testData/refactoring/moveMultiModule/moveSealedCheckWithinPackage/moveSealedCheckWithinPackage.test");
+    }
+
     @TestMetadata("moveToModuleWithoutLibConflict/moveToModuleWithoutLibConflict.test")
     public void testMoveToModuleWithoutLibConflict_MoveToModuleWithoutLibConflict() throws Exception {
         runTest("idea/testData/refactoring/moveMultiModule/moveToModuleWithoutLibConflict/moveToModuleWithoutLibConflict.test");

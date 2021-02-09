@@ -38,8 +38,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     }
 
     override fun TypeVariableMarker.isReified(): Boolean {
-        // TODO
-        return false
+        return this is TypeParameterBasedTypeVariable && typeParameterSymbol.fir.isReified
     }
 
     override fun KotlinTypeMarker.refineType(): KotlinTypeMarker {

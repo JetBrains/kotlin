@@ -186,14 +186,14 @@ internal object FirReferenceResolveHelper {
         val ktValueArgumentName = expression.parent as? KtValueArgumentName ?: return emptyList()
         val ktValueArgument = ktValueArgumentName.parent as? KtValueArgument ?: return emptyList()
         val ktValueArgumentList = ktValueArgument.parent as? KtValueArgumentList ?: return emptyList()
-        val ktCallExpression = ktValueArgumentList.parent as? KtCallExpression ?: return emptyList()
+        val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return emptyList()
 
-        val firCall = ktCallExpression.getOrBuildFirSafe<FirFunctionCall>(analysisSession.firResolveState) ?: return emptyList()
+        val firCall = ktCallExpression.getOrBuildFirSafe<FirCall>(analysisSession.firResolveState) ?: return emptyList()
         val parameter = firCall.findCorrespondingParameter(ktValueArgument) ?: return emptyList()
         return listOfNotNull(parameter.buildSymbol(symbolBuilder))
     }
 
-    private fun FirFunctionCall.findCorrespondingParameter(ktValueArgument: KtValueArgument): FirValueParameter? =
+    private fun FirCall.findCorrespondingParameter(ktValueArgument: KtValueArgument): FirValueParameter? =
         argumentMapping?.entries?.firstNotNullResult { (firArgument, firParameter) ->
             if (firArgument.psi == ktValueArgument) firParameter
             else null

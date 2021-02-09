@@ -199,6 +199,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/overrideExpectWithCompositeType/");
     }
 
+    @TestMetadata("platformDependencyInCommon")
+    public void testPlatformDependencyInCommon() throws Exception {
+        runTest("idea/testData/multiplatform/platformDependencyInCommon/");
+    }
+
     @TestMetadata("platformSpecificChecksInCommon")
     public void testPlatformSpecificChecksInCommon() throws Exception {
         runTest("idea/testData/multiplatform/platformSpecificChecksInCommon/");

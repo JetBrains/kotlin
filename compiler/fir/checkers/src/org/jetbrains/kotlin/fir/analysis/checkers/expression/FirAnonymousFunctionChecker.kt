@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.report
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
@@ -20,10 +20,10 @@ object FirAnonymousFunctionChecker : FirExpressionChecker<FirStatement>() {
         for (valueParameter in expression.valueParameters) {
             val source = valueParameter.source ?: continue
             if (valueParameter.defaultValue != null) {
-                reporter.report(source, FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE)
+                reporter.reportOn(source, FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE, context)
             }
             if (valueParameter.isVararg) {
-                reporter.report(source, FirErrors.USELESS_VARARG_ON_PARAMETER)
+                reporter.reportOn(source, FirErrors.USELESS_VARARG_ON_PARAMETER, context)
             }
         }
     }

@@ -73,7 +73,7 @@ class ExpressionCheckersDiagnosticComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: CheckerContext) {
-        checkers.basicExpressionCheckers.check(tryExpression, data, reporter)
+        checkers.tryExpressionCheckers.check(tryExpression, data, reporter)
     }
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: CheckerContext) {

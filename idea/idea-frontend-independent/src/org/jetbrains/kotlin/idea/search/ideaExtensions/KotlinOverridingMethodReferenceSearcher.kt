@@ -14,7 +14,7 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.idea.asJava.LightClassProvider.Companion.providedToLightMethods
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -106,7 +106,7 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                 }
 
                 fun countNonFinalLightMethods() = refElement
-                    .providedToLightMethods()
+                    .toLightMethods()
                     .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
 
                 val lightMethods = when (refElement) {

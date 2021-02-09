@@ -71,7 +71,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12, 13, 14 or 15), default is 1.6"
+        description = "Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14 or 15), default is 1.8"
     )
     var jvmTarget: String? by NullableStringFreezableVar(JvmTarget.DEFAULT.description)
 
@@ -355,10 +355,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xstring-concat",
         valueDescription = "{indy-with-constants|indy|inline}",
-        description = """Switch a way in which string concatenation is performed.
--Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
--Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
--Xstring-concat=inline              Performs string concatenation via `StringBuilder`"""
+        description = """Select code generation scheme for string concatenation.
+-Xstring-concat=indy-with-constants   Concatenate strings using `invokedynamic` `makeConcatWithConstants`. Requires `-jvm-target 9` or greater.
+-Xstring-concat=indy                Concatenate strings using `invokedynamic` `makeConcat`. Requires `-jvm-target 9` or greater.
+-Xstring-concat=inline              Concatenate strings using `StringBuilder`"""
     )
     var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
 
@@ -366,10 +366,20 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-Xsam-conversions",
         valueDescription = "{class|indy}",
         description = """Select code generation scheme for SAM conversions.
--Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 8` or greater.
+-Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
 -Xsam-conversions=class             Generate SAM conversions as explicit classes"""
     )
-    var samConversions: String? by NullableStringFreezableVar(JvmSamConversions.CLASS.description)
+    var samConversions: String? by NullableStringFreezableVar(null)
+
+    @Argument(
+        value = "-Xlambdas",
+        valueDescription = "{class|indy}",
+        description = """Select code generation scheme for lambdas.
+-Xlambdas=indy                      Generate lambdas using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
+                                    Lambda objects created using `LambdaMetafactory.metafactory` will have different `toString()`.
+-Xlambdas=class                     Generate lambdas as explicit classes"""
+    )
+    var lambdas: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xklib",
@@ -437,6 +447,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment"
     )
     var enableJvmPreview: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xsuppress-deprecated-jvm-target-warning",
+        description = "Suppress deprecation warning about deprecated JVM target versions"
+    )
+    var suppressDeprecatedJvmTargetWarning: Boolean by FreezableVar(false)
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)

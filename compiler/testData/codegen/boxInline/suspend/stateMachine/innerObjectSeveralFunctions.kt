@@ -1,8 +1,8 @@
-// FILE: inlined.kt
-// WITH_RUNTIME
+// CHECK_STATE_MACHINE
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
-// CHECK_STATE_MACHINE
+// WITH_RUNTIME
+// FILE: inlined.kt
 
 interface SuspendRunnable {
     suspend fun run1()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,23 +10,10 @@ package org.w3c.workers
 
 import kotlin.js.*
 import org.khronos.webgl.*
-import org.w3c.css.masking.*
 import org.w3c.dom.*
-import org.w3c.dom.clipboard.*
-import org.w3c.dom.css.*
-import org.w3c.dom.encryptedmedia.*
 import org.w3c.dom.events.*
-import org.w3c.dom.mediacapture.*
-import org.w3c.dom.mediasource.*
-import org.w3c.dom.parsing.*
-import org.w3c.dom.pointerevents.*
-import org.w3c.dom.svg.*
-import org.w3c.dom.url.*
 import org.w3c.fetch.*
-import org.w3c.files.*
 import org.w3c.notifications.*
-import org.w3c.performance.*
-import org.w3c.xhr.*
 
 /**
  * Exposes the JavaScript [ServiceWorker](https://developer.mozilla.org/en/docs/Web/API/ServiceWorker) to Kotlin
@@ -78,6 +65,7 @@ public external interface RegistrationOptions {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun RegistrationOptions(scope: String? = undefined, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
     val o = js("({})")
@@ -122,6 +110,7 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ServiceWorkerMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
@@ -192,6 +181,7 @@ public external interface ClientQueryOptions {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions {
     val o = js("({})")
@@ -216,6 +206,7 @@ public external open class ExtendableEvent(type: String, eventInitDict: Extendab
 
 public external interface ExtendableEventInit : EventInit
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableEventInit {
     val o = js("({})")
@@ -241,13 +232,10 @@ public external open class InstallEvent(type: String, eventInitDict: ExtendableE
 
 public external interface ForeignFetchOptions {
     var scopes: Array<String>?
-        get() = definedExternally
-        set(value) = definedExternally
     var origins: Array<String>?
-        get() = definedExternally
-        set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<String>?): ForeignFetchOptions {
     val o = js("({})")
@@ -275,8 +263,6 @@ public external open class FetchEvent(type: String, eventInitDict: FetchEventIni
 
 public external interface FetchEventInit : ExtendableEventInit {
     var request: Request?
-        get() = definedExternally
-        set(value) = definedExternally
     var clientId: String? /* = null */
         get() = definedExternally
         set(value) = definedExternally
@@ -285,6 +271,7 @@ public external interface FetchEventInit : ExtendableEventInit {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun FetchEventInit(request: Request?, clientId: String? = null, isReload: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FetchEventInit {
     val o = js("({})")
@@ -312,13 +299,12 @@ public external open class ForeignFetchEvent(type: String, eventInitDict: Foreig
 
 public external interface ForeignFetchEventInit : ExtendableEventInit {
     var request: Request?
-        get() = definedExternally
-        set(value) = definedExternally
     var origin: String? /* = "null" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "null", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ForeignFetchEventInit {
     val o = js("({})")
@@ -332,8 +318,6 @@ public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "nu
 
 public external interface ForeignFetchResponse {
     var response: Response?
-        get() = definedExternally
-        set(value) = definedExternally
     var origin: String?
         get() = definedExternally
         set(value) = definedExternally
@@ -342,6 +326,7 @@ public external interface ForeignFetchResponse {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ForeignFetchResponse(response: Response?, origin: String? = undefined, headers: Array<String>? = undefined): ForeignFetchResponse {
     val o = js("({})")
@@ -387,6 +372,7 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ExtendableMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionClientOrMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
     val o = js("({})")
@@ -429,6 +415,7 @@ public external interface CacheQueryOptions {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = undefined): CacheQueryOptions {
     val o = js("({})")
@@ -454,6 +441,7 @@ public external interface CacheBatchOperation {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun CacheBatchOperation(type: String? = undefined, request: Request? = undefined, response: Response? = undefined, options: CacheQueryOptions? = undefined): CacheBatchOperation {
     val o = js("({})")
@@ -489,6 +477,7 @@ public external interface UnionMessagePortOrServiceWorker
 public external interface UnionClientOrMessagePortOrServiceWorker
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface ServiceWorkerState {
     companion object
@@ -505,6 +494,7 @@ public inline val ServiceWorkerState.Companion.ACTIVATED: ServiceWorkerState get
 public inline val ServiceWorkerState.Companion.REDUNDANT: ServiceWorkerState get() = "redundant".asDynamic().unsafeCast<ServiceWorkerState>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface FrameType {
     companion object
@@ -519,6 +509,7 @@ public inline val FrameType.Companion.NESTED: FrameType get() = "nested".asDynam
 public inline val FrameType.Companion.NONE: FrameType get() = "none".asDynamic().unsafeCast<FrameType>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface ClientType {
     companion object

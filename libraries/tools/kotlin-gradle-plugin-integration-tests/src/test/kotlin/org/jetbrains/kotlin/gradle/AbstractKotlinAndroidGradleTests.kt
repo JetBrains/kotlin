@@ -867,21 +867,7 @@ fun getSomething() = 10
     fun testDetectAndroidJava8() = with(Project("AndroidProject")) {
         setupWorkingDir()
 
-        val kotlinJvmTarget18Regex = Regex("Kotlin compiler args: .* -jvm-target 1.8")
-
-        gradleBuildScript("Lib").appendText(
-            "\n" + """
-            android.compileOptions {
-                sourceCompatibility JavaVersion.VERSION_1_6
-                targetCompatibility JavaVersion.VERSION_1_6
-            }
-            """.trimIndent()
-        )
-
-        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
-            assertSuccessful()
-            assertNotContains(kotlinJvmTarget18Regex)
-        }
+        val kotlinJvmTarget16Regex = Regex("Kotlin compiler args: .* -jvm-target 1.6")
 
         gradleBuildScript("Lib").appendText(
             "\n" + """
@@ -892,14 +878,28 @@ fun getSomething() = 10
             """.trimIndent()
         )
 
+        build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
+            assertSuccessful()
+            assertNotContains(kotlinJvmTarget16Regex)
+        }
+
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
+            android.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_6
+                targetCompatibility JavaVersion.VERSION_1_6
+            }
+            """.trimIndent()
+        )
+
         build("clean", ":Lib:assembleDebug") {
             assertSuccessful()
-            assertNotContains(kotlinJvmTarget18Regex)
+            assertNotContains(kotlinJvmTarget16Regex)
         }
 
         build(":Lib:assembleDebug", "-Pkotlin.setJvmTargetFromAndroidCompileOptions=true") {
             assertSuccessful()
-            assertContainsRegex(kotlinJvmTarget18Regex)
+            assertContainsRegex(kotlinJvmTarget16Regex)
         }
     }
 }

@@ -58,12 +58,15 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
             }
             append("]")
         }
+
+        if (type.isMarkedNullable)
+            append("?")
     } else {
         // N.B. this is classifier type
         val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
         append(abbreviation.declarationDescriptor.classId!!.asString())
 
-        val arguments = type.arguments
+        val arguments = abbreviation.arguments
         if (arguments.isNotEmpty()) {
             append("<")
             arguments.forEachIndexed { index, argument ->
@@ -81,10 +84,10 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
             }
             append(">")
         }
-    }
 
-    if (type.isMarkedNullable)
-        append("?")
+        if (abbreviation.isMarkedNullable)
+            append("?")
+    }
 }
 
 // dedicated to hold unique entries of "signature"

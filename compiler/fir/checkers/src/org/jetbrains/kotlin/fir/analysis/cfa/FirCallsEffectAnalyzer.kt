@@ -43,7 +43,7 @@ import kotlin.contracts.contract
 
 object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
+    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         val function = (graph.declaration as? FirFunction<*>) ?: return
         if (function !is FirContractDescriptionOwner) return
         if (function.contractDescription.coneEffects?.any { it is ConeCallsEffectDeclaration } != true) return
@@ -73,10 +73,10 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         for ((symbol, leakedPlaces) in leakedSymbols) {
             function.contractDescription.source?.let {
-                reporter.report(FirErrors.LEAKED_IN_PLACE_LAMBDA.on(it, symbol))
+                reporter.report(FirErrors.LEAKED_IN_PLACE_LAMBDA.on(it, symbol), context)
             }
             leakedPlaces.forEach {
-                reporter.report(FirErrors.LEAKED_IN_PLACE_LAMBDA.on(it, symbol))
+                reporter.report(FirErrors.LEAKED_IN_PLACE_LAMBDA.on(it, symbol), context)
             }
         }
 
@@ -91,7 +91,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
                 val requiredRange = effectDeclaration.kind
                 val pathAwareInfo = invocationData.getValue(node)
                 for (info in pathAwareInfo.values) {
-                    if (investigate(info, symbol, requiredRange, function, reporter)) {
+                    if (investigate(info, symbol, requiredRange, function, reporter, context)) {
                         // To avoid duplicate reports, stop investigating remaining paths once reported.
                         break
                     }
@@ -105,12 +105,13 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         symbol: AbstractFirBasedSymbol<*>,
         requiredRange: EventOccurrencesRange,
         function: FirContractDescriptionOwner,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        context: CheckerContext
     ): Boolean {
         val foundRange = info[symbol] ?: EventOccurrencesRange.ZERO
         if (foundRange !in requiredRange) {
             function.contractDescription.source?.let {
-                reporter.report(FirErrors.WRONG_INVOCATION_KIND.on(it, symbol, requiredRange, foundRange))
+                reporter.report(FirErrors.WRONG_INVOCATION_KIND.on(it, symbol, requiredRange, foundRange), context)
                 return true
             }
         }

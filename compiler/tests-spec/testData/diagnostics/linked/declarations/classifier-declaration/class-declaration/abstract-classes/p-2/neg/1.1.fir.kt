@@ -22,9 +22,9 @@ fun case1() {
 
 class BaseImplCase2(
     override var a: Any, override
-    val  b: Any, override var c: Any, override
+    <!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any, override var c: Any, override
 
- val  d: Any = "5") : Base()
+ <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any = "5") : Base()
 {
     override fun foo() {}
     override internal fun boo() {}
@@ -42,14 +42,14 @@ class ImplBaseCase2() : Base() {
         set(value) {}
     override
 
-     val  b: Any
+     <!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any
         get() = TODO()
     override var c: Any
         get() = TODO()
         set(value) {}
     override
 
-     val  d: Any
+     <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any
         get() = TODO()
 
     override fun foo() {}

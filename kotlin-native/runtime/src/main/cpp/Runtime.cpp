@@ -120,6 +120,9 @@ RuntimeState* initRuntime() {
               RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
           }
           firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
+          if (CurrentMemoryModel == MemoryModel::kExperimental) {
+              RuntimeCheck(firstRuntime, "Experimental MM does not support multiple mutator threads yet");
+          }
           result->memoryState = InitMemory(firstRuntime);
           result->worker = WorkerInit(true);
   }
@@ -186,7 +189,7 @@ void AppendToInitializersTail(InitNode *next) {
   initTailNode = next;
 }
 
-void Kotlin_initRuntimeIfNeeded() {
+RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
   if (!isValidRuntime()) {
     initRuntime();
     // Register runtime deinit function at thread cleanup.

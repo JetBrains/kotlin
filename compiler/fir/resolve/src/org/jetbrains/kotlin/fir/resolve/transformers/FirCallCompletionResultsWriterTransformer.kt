@@ -108,7 +108,9 @@ class FirCallCompletionResultsWriterTransformer(
             .transformDispatchReceiver(StoreReceiver, subCandidate.dispatchReceiverExpression())
             .transformExtensionReceiver(StoreReceiver, subCandidate.extensionReceiverExpression()) as T
         result.replaceTypeRef(typeRef)
-        result.replaceTypeArguments(typeArguments)
+        if (declaration !is FirErrorFunction) {
+            result.replaceTypeArguments(typeArguments)
+        }
         return result
     }
 

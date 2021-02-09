@@ -10,28 +10,27 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
-import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassesLazyCreator
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.idea.caches.lightClasses.decompiledDeclarations.KtLightEnumEntryForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.lightClasses.decompiledDeclarations.KtLightFieldForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.lightClasses.decompiledDeclarations.KtLightMethodForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.idea.caches.lightClasses.decompiledDeclarations.*
 
 open class KtLightClassForDecompiledDeclaration(
     override val clsDelegate: PsiClass,
     private val clsParent: PsiElement,
     private val file: KtClsFile,
-    final override val kotlinOrigin: KtClassOrObject?
-) : KtLightElementBase(clsParent), PsiClass, KtLightClass, PsiExtensibleClass {
+    kotlinOrigin: KtClassOrObject?
+) : KtLightClassForDecompiledDeclarationBase(clsDelegate, clsParent, kotlinOrigin) {
 
     private val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this,

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -35,7 +35,7 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
             is FirTypeAlias -> {
                 for (it in declaration.typeParameters) {
                     if (it.variance != Variance.INVARIANT) {
-                        reporter.reportVarianceNotAllowed(it.source)
+                        reporter.reportOn(it.source, FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, context)
                     }
                 }
                 checkTypeRef(declaration.expandedTypeRef, context, reporter)
@@ -70,17 +70,9 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
                 actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
                 actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE
             ) {
-                reporter.reportConflictingProjections(typeRef.source, typeRef.coneType.toString())
+                reporter.reportOn(typeRef.source, FirErrors.CONFLICTING_PROJECTION, typeRef.coneType.toString(), context)
                 return
             }
         }
-    }
-
-    private fun DiagnosticReporter.reportConflictingProjections(source: FirSourceElement?, desiredProjection: String) {
-        source?.let { report(FirErrors.CONFLICTING_PROJECTION.on(it, desiredProjection)) }
-    }
-
-    private fun DiagnosticReporter.reportVarianceNotAllowed(source: FirSourceElement?) {
-        source?.let { report(FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED.on(it)) }
     }
 }

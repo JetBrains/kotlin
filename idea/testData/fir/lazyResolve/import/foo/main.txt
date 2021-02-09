@@ -1,4 +1,4 @@
 FILE: main.kt
-    public? final? [RAW_FIR] fun foofoo(): Int {
+    public? final? [TYPES] fun foofoo(): R|kotlin/Int| {
         ^foofoo barbar#()
     }

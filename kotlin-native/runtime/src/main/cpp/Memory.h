@@ -85,6 +85,8 @@ struct ObjHeader {
     return hasPointerBits(typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
   }
 
+  inline bool heap() const { return getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK) == 0; }
+
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);
 };

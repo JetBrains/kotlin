@@ -80,14 +80,6 @@ android {
         reflect0 {
             dimension "box"
         }
-
-        jvm80 {
-            dimension "box"
-        }
-
-        reflectjvm80 {
-            dimension "box"
-        }
     }
 
 }

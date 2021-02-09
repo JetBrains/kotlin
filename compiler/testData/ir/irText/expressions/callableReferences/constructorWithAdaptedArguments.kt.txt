@@ -30,10 +30,13 @@ class Outer {
 }
 
 fun testConstructor(): Any {
-  return use(fn = local fun <init>(p0: Int): C {
-    return C(xs = [p0])
-  }
-)
+  return use(fn = { // BLOCK
+    local fun <init>(p0: Int): C {
+      return C(xs = [p0])
+    }
+
+    ::<init>
+  })
 }
 
 fun testInnerClassConstructor(outer: Outer): Any {

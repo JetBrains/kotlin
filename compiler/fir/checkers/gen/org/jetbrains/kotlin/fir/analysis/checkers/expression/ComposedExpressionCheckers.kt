@@ -21,11 +21,14 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _functionCallCheckers
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
         get() = _variableAssignmentCheckers
+    override val tryExpressionCheckers: Set<FirTryExpressionChecker>
+        get() = _tryExpressionCheckers
 
     private val _basicExpressionCheckers: MutableSet<FirBasicExpressionChecker> = mutableSetOf()
     private val _qualifiedAccessCheckers: MutableSet<FirQualifiedAccessChecker> = mutableSetOf()
     private val _functionCallCheckers: MutableSet<FirFunctionCallChecker> = mutableSetOf()
     private val _variableAssignmentCheckers: MutableSet<FirVariableAssignmentChecker> = mutableSetOf()
+    private val _tryExpressionCheckers: MutableSet<FirTryExpressionChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     internal fun register(checkers: ExpressionCheckers) {
@@ -33,5 +36,6 @@ internal class ComposedExpressionCheckers : ExpressionCheckers() {
         _qualifiedAccessCheckers += checkers.allQualifiedAccessCheckers
         _functionCallCheckers += checkers.allFunctionCallCheckers
         _variableAssignmentCheckers += checkers.allVariableAssignmentCheckers
+        _tryExpressionCheckers += checkers.allTryExpressionCheckers
     }
 }

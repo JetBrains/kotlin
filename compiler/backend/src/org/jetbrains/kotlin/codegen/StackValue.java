@@ -629,7 +629,11 @@ public abstract class StackValue {
     }
 
     public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v) {
-        if (toType.equals(fromType)) return;
+        coerce(fromType, toType, v, false);
+    }
+
+    public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v, boolean forceSelfCast) {
+        if (toType.equals(fromType) && !forceSelfCast) return;
 
         if (toType.getSort() == Type.VOID) {
             pop(v, fromType);

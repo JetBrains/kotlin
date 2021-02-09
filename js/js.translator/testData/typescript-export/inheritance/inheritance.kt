@@ -45,5 +45,6 @@ final class FC : OC(true, "FC")
 object O1 : OC(true, "O1")
 
 object O2 : OC(true, "O2") {
+    @JsName("foo")  // TODO: Should work without JsName
     fun foo(): Int = 10
 }

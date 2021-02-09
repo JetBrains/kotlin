@@ -436,6 +436,9 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @Input
     var clangFlags: List<String> = listOf()
 
+    @Input @Optional
+    var interop: String? = null
+
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
     private fun processCSource(): String {
         val sourceFile = File(cSource)

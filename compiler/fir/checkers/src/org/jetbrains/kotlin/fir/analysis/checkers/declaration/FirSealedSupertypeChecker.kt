@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -55,7 +55,7 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
                 ?: continue
 
             if (fir.status.modality == Modality.SEALED && classId.outerClassId != null) {
-                reporter.report(it.source)
+                reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE, context)
                 return
             }
         }
@@ -77,7 +77,7 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
                 ?: continue
 
             if (fir.status.modality == Modality.SEALED) {
-                reporter.reportInLocal(it.source)
+                reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS, context)
                 return
             }
         }
@@ -99,17 +99,9 @@ object FirSealedSupertypeChecker : FirMemberDeclarationChecker() {
                 ?: continue
 
             if (fir.status.modality == Modality.SEALED && !context.containingDeclarations.contains(fir)) {
-                reporter.report(it.source)
+                reporter.reportOn(it.source, FirErrors.SEALED_SUPERTYPE, context)
                 return
             }
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.SEALED_SUPERTYPE.on(it)) }
-    }
-
-    private fun DiagnosticReporter.reportInLocal(source: FirSourceElement?) {
-        source?.let { report(FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(it)) }
     }
 }

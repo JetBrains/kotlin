@@ -345,6 +345,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib-js",
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
+    ":kotlin-test",
     ":kotlin-test:kotlin-test-annotations-common",
     ":kotlin-test:kotlin-test-common",
     ":kotlin-test:kotlin-test-jvm",
@@ -471,7 +472,7 @@ allprojects {
         }
     }
 
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && !kotlinBuildProperties.useFir) {
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync && !kotlinBuildProperties.useFir && !kotlinBuildProperties.disableWerror) {
         // For compiler and stdlib, allWarningsAsErrors is configured in the corresponding "root" projects
         // (compiler/build.gradle.kts and libraries/commonConfiguration.gradle).
         val projectsWithWarningsAsErrors = listOf("core", "plugins").map { File(it).absoluteFile }
@@ -637,7 +638,10 @@ tasks {
 
     listOf("clean", "assemble", "install").forEach { taskName ->
         register("coreLibs${taskName.capitalize()}") {
-            coreLibProjects.forEach { projectName -> dependsOn("$projectName:$taskName") }
+            for (projectName in coreLibProjects) {
+                if (projectName.startsWith(":kotlin-test:") && taskName == "install") continue
+                dependsOn("$projectName:$taskName")
+            }
         }
     }
 
@@ -953,7 +957,6 @@ tasks {
             dependsOn(
                 ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
@@ -975,9 +978,7 @@ tasks {
                 ":kotlin-stdlib-jdk7:publish",
                 ":kotlin-stdlib-jdk8:publish",
                 ":kotlin-reflect:publish",
-                ":kotlin-main-kts:publish",
-                ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish"
+                ":kotlin-main-kts:publish"
             )
         }
     }

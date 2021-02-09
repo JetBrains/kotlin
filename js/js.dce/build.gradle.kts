@@ -9,6 +9,7 @@ dependencies {
     compile(project(":js:js.ast"))
     compile(project(":js:js.translator"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("guava", rootProject = rootProject) }
 }
 
 sourceSets {

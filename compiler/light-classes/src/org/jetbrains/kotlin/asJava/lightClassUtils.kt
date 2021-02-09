@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.classes.runReadAction
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -53,6 +50,8 @@ fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
     val searchScope = useScope as? GlobalSearchScope ?: return null
     return JavaPsiFacade.getInstance(project).findClass(javaClassFqName.asString(), searchScope)
 }
+
+fun KtClassOrObject.toFakeLightClass(): KtFakeLightClass = KotlinAsJavaSupport.getInstance(project).getFakeLightClass(this)
 
 fun KtFile.findFacadeClass(): KtLightClass? {
     return KotlinAsJavaSupport.getInstance(project)

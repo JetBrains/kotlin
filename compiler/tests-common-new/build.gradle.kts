@@ -17,22 +17,12 @@ dependencies {
 
     testImplementation(projectTests(":generators:test-generator"))
 
-    testApi(platform("org.junit:junit-bom:5.7.0"))
-    testApi("org.junit.jupiter:junit-jupiter")
-    testApi("org.junit.platform:junit-platform-commons:1.7.0")
-    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
+    testApiJUnit5()
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-jvm6"))
 
-    testImplementation(intellijDep()) {
-        // This dependency is needed only for FileComparisonFailure
-        includeJars("idea_rt", rootProject = rootProject)
-        isTransitive = false
-    }
-
-    // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
-    testRuntimeOnly(commonDep("junit:junit"))
     testRuntimeOnly(intellijDep()) {
         includeJars(
             "jps-model",

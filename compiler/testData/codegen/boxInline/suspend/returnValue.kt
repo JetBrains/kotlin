@@ -1,7 +1,7 @@
-// FILE: inlined.kt
-// WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// WITH_RUNTIME
+// FILE: inlined.kt
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import helpers.*

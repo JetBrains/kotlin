@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
@@ -74,7 +75,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             }
 
             if (!satisfiesBounds(proto, actual.type, substitutor, typeCheckerContext)) {
-                reporter.report(actual.source, proto, actual.type)
+                reporter.reportOn(actual.source, proto, actual.type, context)
                 return
             }
 
@@ -98,7 +99,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // typealias A<G> = B<List<G>>
         // val a = A<Int>()
         when (calleeFir) {
-            is FirConstructor -> analyzeConstructorCall(expression, substitutor, typeCheckerContext, reporter)
+            is FirConstructor -> analyzeConstructorCall(expression, substitutor, typeCheckerContext, reporter, context)
         }
     }
 
@@ -106,7 +107,8 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         functionCall: FirQualifiedAccessExpression,
         callSiteSubstitutor: ConeSubstitutor,
         typeCheckerContext: AbstractTypeCheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        context: CheckerContext
     ) {
         // holds Collection<Number> bound.
         // note that if B used another type parameter here,
@@ -168,7 +170,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             val satisfiesBounds = AbstractTypeChecker.isSubtypeOf(typeCheckerContext, target, intersection)
 
             if (!satisfiesBounds) {
-                reporter.report(functionCall.source, proto, actual)
+                reporter.reportOn(functionCall.source, proto, actual, context)
                 return
             }
         }
@@ -218,7 +220,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         parameterPairs.forEach { (proto, actual) ->
             if (!satisfiesBounds(proto, actual.type, substitutor, typeCheckerContext)) {
                 // should report on the parameter instead!
-                reporter.report(reportTarget, proto, actual)
+                reporter.reportOn(reportTarget, proto, actual, context)
                 return true
             }
 
@@ -250,9 +252,12 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         return AbstractTypeChecker.isSubtypeOf(typeCheckerContext, target, intersection)
     }
 
-    private fun DiagnosticReporter.report(source: FirSourceElement?, proto: FirTypeParameterSymbol, actual: ConeKotlinType) {
-        source?.let {
-            report(FirErrors.UPPER_BOUND_VIOLATED.on(it, proto, actual))
-        }
+    private fun DiagnosticReporter.reportOn(
+        source: FirSourceElement?,
+        proto: FirTypeParameterSymbol,
+        actual: ConeKotlinType,
+        context: CheckerContext
+    ) {
+        reportOn(source, FirErrors.UPPER_BOUND_VIOLATED, proto, actual, context)
     }
 }

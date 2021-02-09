@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findNonInterfaceSupertype
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInterface
 
@@ -20,11 +20,7 @@ object FirInterfaceWithSuperclassChecker : FirRegularClassChecker() {
         }
 
         declaration.findNonInterfaceSupertype(context)?.let {
-            reporter.report(it.source)
+            reporter.reportOn(it.source, FirErrors.INTERFACE_WITH_SUPERCLASS, context)
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.INTERFACE_WITH_SUPERCLASS.on(it)) }
     }
 }

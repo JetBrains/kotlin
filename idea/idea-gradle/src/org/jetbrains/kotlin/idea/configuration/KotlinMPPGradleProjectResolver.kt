@@ -61,7 +61,6 @@ import java.io.File
 import java.lang.reflect.Proxy
 import java.util.*
 import java.util.stream.Collectors
-import kotlin.collections.HashMap
 
 @Order(ExternalSystemConstants.UNORDERED + 1)
 open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionCompat() {
@@ -458,9 +457,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
             }
 
-            mainModuleNode.kotlinNativeHome = mppModel.kotlinNativeHome
-            mainModuleNode.coroutines = mppModel.extraFeatures.coroutinesState
-            mainModuleNode.isHmpp = mppModel.extraFeatures.isHMPPEnabled
+            with(mainModuleNode) {
+                kotlinNativeHome = mppModel.kotlinNativeHome
+                coroutines = mppModel.extraFeatures.coroutinesState
+                isHmpp = mppModel.extraFeatures.isHMPPEnabled
+                kotlinImportingDiagnosticsContainer = mppModel.kotlinImportingDiagnostics
+            }
             //TODO improve passing version of used multiplatform
         }
 
@@ -782,7 +784,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             if (fromModule.data == toModule.data) return
             val fromData = fromModule.data as? ModuleData ?: return
             val toData = toModule.data as? ModuleData ?: return
-            val existing = fromModule.children.mapNotNull { it.data as? ModuleDependencyData }.filter { it.target.id == (toModule.data as? ModuleData)?.id }
+            val existing = fromModule.children.mapNotNull { it.data as? ModuleDependencyData }
+                .filter { it.target.id == (toModule.data as? ModuleData)?.id }
             val nodeToModify =
                 existing.singleOrNull() ?: existing.firstOrNull { it.scope == DependencyScope.COMPILE } ?: existing.firstOrNull()
             if (nodeToModify != null) {

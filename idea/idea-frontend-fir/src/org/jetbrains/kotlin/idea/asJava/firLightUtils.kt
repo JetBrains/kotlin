@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
@@ -65,14 +64,14 @@ internal fun KtTypeAndAnnotations.asPsiType(
 
 internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
     require(this is KtFirClassOrObjectSymbol)
-    val (session, type) = firRef.withFir(FirResolvePhase.TYPES) { firClass ->
-        firClass.session to ConeClassLikeTypeImpl(
-            firClass.symbol.toLookupTag(),
-            firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }.toTypedArray(),
-            isNullable = false
-        )
+
+    val types = analyzeWithSymbolAsContext(this) {
+        this@typeForClassSymbol.buildSelfClassType()
     }
-    return type.asPsiType(session, this.firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
+    require(types is KtFirType)
+
+    val session = firRef.withFir { it.session }
+    return types.coneType.asPsiType(session, firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
 }
 
 private class AnonymousTypesSubstitutor(private val session: FirSession, private val state: FirModuleResolveState) :

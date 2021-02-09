@@ -1,6 +1,6 @@
+// WITH_RUNTIME
 // IGNORE_BACKEND: JS
 // FILE: 1.kt
-// WITH_RUNTIME
 package test
 
 class A

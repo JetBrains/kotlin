@@ -3,7 +3,6 @@ description = 'Kotlin Test JUnit'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
-configurePublishing(project)
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
@@ -31,12 +30,18 @@ configureSourcesJar()
 configureJavadocJar()
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+        "-Xsuppress-deprecated-jvm-target-warning",
+    ]
     kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+        "-Xsuppress-deprecated-jvm-target-warning",
+    ]
 }
 
 configureJvmIrBackend(project)

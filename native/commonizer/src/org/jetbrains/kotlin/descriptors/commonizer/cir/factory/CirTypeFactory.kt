@@ -11,13 +11,20 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.extractExpandedType
-import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.*
 
 object CirTypeFactory {
+    object StandardTypes {
+        val ANY: CirClassType = createClassType(
+            classId = ANY_CLASS_ID,
+            outerType = null,
+            visibility = DescriptorVisibilities.PUBLIC,
+            arguments = emptyList(),
+            isMarkedNullable = false
+        )
+    }
+
     private val classTypeInterner = Interner<CirClassType>()
     private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
     private val typeParameterTypeInterner = Interner<CirTypeParameterType>()
@@ -57,9 +64,14 @@ object CirTypeFactory {
                     Annotations.EMPTY
                 ) as AbbreviatedType
 
+                val expandedType = extractExpandedType(abbreviatedType)
+
+                val cirExpandedType = create(expandedType, useAbbreviation = true) as CirClassOrTypeAliasType
+                val cirExpandedTypeWithProperNullability = if (source.isMarkedNullable) makeNullable(cirExpandedType) else cirExpandedType
+
                 createTypeAliasType(
                     typeAliasId = classifierDescriptor.internedClassId,
-                    underlyingType = create(extractExpandedType(abbreviatedType), useAbbreviation = true) as CirClassOrTypeAliasType,
+                    underlyingType = cirExpandedTypeWithProperNullability,
                     arguments = createArguments(source.arguments, useAbbreviation = true),
                     isMarkedNullable = source.isMarkedNullable
                 )
@@ -103,6 +115,7 @@ object CirTypeFactory {
         )
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
     fun createTypeParameterType(
         index: Int,
         isMarkedNullable: Boolean
@@ -182,7 +195,12 @@ object CirTypeFactory {
             var index = index
             var parent = containingDeclaration
 
-            while ((parent as? ClassifierDescriptorWithTypeParameters)?.isInner != false) {
+            if (parent is CallableMemberDescriptor) {
+                parent = parent.containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: return index
+                index += parent.declaredTypeParameters.size
+            }
+
+            while (parent is ClassifierDescriptorWithTypeParameters) {
                 parent = parent.containingDeclaration as? ClassifierDescriptorWithTypeParameters ?: break
                 index += parent.declaredTypeParameters.size
             }

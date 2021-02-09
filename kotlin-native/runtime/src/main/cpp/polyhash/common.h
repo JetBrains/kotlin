@@ -39,10 +39,6 @@ constexpr std::array<uint32_t, Count> RepeatingPowers(uint32_t base, uint8_t exp
     return result;
 }
 
-#if defined(__x86_64__) or defined(__i386__)
-#pragma clang attribute push (__attribute__((target("avx2"))), apply_to=function)
-#endif
-
 template<typename Traits>
 ALWAYS_INLINE void polyHashTail(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
@@ -193,9 +189,5 @@ ALWAYS_INLINE void polyHashUnroll8(int& n, uint16_t const*& str, typename Traits
     Vec128Type sum2 = Traits::vec128Add(Traits::squash2(res4, res5), Traits::squash2(res6, res7));
     res = Traits::vec128Add(res, Traits::vec128Add(sum1, sum2));
 }
-
-#if defined(__x86_64__) or defined(__i386__)
-#pragma clang attribute pop
-#endif
 
 #endif  // RUNTIME_POLYHASH_COMMON_H

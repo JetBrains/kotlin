@@ -127,7 +127,8 @@ private object CfgRenderMode : FirRenderer.RenderMode(
     renderLambdaBodies = false,
     renderCallArguments = false,
     renderCallableFqNames = false,
-    renderDeclarationResolvePhase = false
+    renderDeclarationResolvePhase = false,
+    renderAnnotation = false,
 )
 
 private fun FirFunction<*>.name(): String = when (this) {

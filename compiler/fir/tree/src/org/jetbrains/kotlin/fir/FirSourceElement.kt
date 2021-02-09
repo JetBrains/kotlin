@@ -161,6 +161,14 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // { it + 1} --> { it -> it + 1 }
     // where `it` parameter declaration has fake source
     object ItLambdaParameter : FirFakeSourceElementKind()
+
+    // for java annotations implicit constructor is generated
+    // with a fake source which refers to containing class
+    object ImplicitJavaAnnotationConstructor : FirFakeSourceElementKind()
+
+    // for java annotations constructor implicit parameters are generated
+    // with a fake source which refers to declared annotation methods
+    object ImplicitAnnotationAnnotationConstructorParameter : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

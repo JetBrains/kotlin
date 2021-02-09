@@ -146,6 +146,7 @@ public abstract external class MediaDeviceInfo {
     public final fun toJSON(): dynamic
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface MediaDeviceKind {
     public companion object of MediaDeviceKind {
     }
@@ -252,9 +253,10 @@ public open external class MediaStreamTrackEvent : org.w3c.dom.events.Event {
 }
 
 public external interface MediaStreamTrackEventInit : org.w3c.dom.EventInit {
-    public open var track: org.w3c.dom.mediacapture.MediaStreamTrack? { get; set; }
+    public abstract var track: org.w3c.dom.mediacapture.MediaStreamTrack? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface MediaStreamTrackState {
     public companion object of MediaStreamTrackState {
     }
@@ -429,11 +431,13 @@ public external interface ULongRange {
     public open var min: kotlin.Int? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface VideoFacingModeEnum {
     public companion object of VideoFacingModeEnum {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface VideoResizeModeEnum {
     public companion object of VideoResizeModeEnum {
     }

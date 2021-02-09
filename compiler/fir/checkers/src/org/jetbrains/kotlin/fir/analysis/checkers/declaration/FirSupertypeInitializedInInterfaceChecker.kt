@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInterface
 
@@ -22,12 +22,8 @@ object FirSupertypeInitializedInInterfaceChecker : FirRegularClassChecker() {
         for (superTypeRef in declaration.superTypeRefs) {
             val source = superTypeRef.source ?: continue
             if (source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE) {
-                reporter.report(source)
+                reporter.reportOn(source, FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE, context)
             }
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE.on(it)) }
     }
 }

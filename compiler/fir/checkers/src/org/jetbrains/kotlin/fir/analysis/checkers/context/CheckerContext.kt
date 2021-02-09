@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableArgumentDiagnostic
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.name.Name
 
@@ -21,6 +24,10 @@ abstract class CheckerContext {
     abstract val containingDeclarations: List<FirDeclaration>
     abstract val sessionHolder: SessionHolder
     abstract val returnTypeCalculator: ReturnTypeCalculator
+    abstract val suppressedDiagnostics: Set<String>
+    abstract val allInfosSuppressed: Boolean
+    abstract val allWarningsSuppressed: Boolean
+    abstract val allErrorsSuppressed: Boolean
 
     val session: FirSession
         get() = sessionHolder.session
@@ -38,17 +45,25 @@ abstract class CheckerContext {
     }
 }
 
-class PersistentCheckerContext(
-    override val implicitReceiverStack: PersistentImplicitReceiverStack = PersistentImplicitReceiverStack(),
-    override val containingDeclarations: PersistentList<FirDeclaration> = persistentListOf(),
+class PersistentCheckerContext private constructor(
+    override val implicitReceiverStack: PersistentImplicitReceiverStack,
+    override val containingDeclarations: PersistentList<FirDeclaration>,
     override val sessionHolder: SessionHolder,
     override val returnTypeCalculator: ReturnTypeCalculator,
+    override val suppressedDiagnostics: PersistentSet<String>,
+    override val allInfosSuppressed: Boolean,
+    override val allWarningsSuppressed: Boolean,
+    override val allErrorsSuppressed: Boolean
 ) : CheckerContext() {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
         persistentListOf(),
         sessionHolder,
-        returnTypeCalculator
+        returnTypeCalculator,
+        persistentSetOf(),
+        allInfosSuppressed = false,
+        allWarningsSuppressed = false,
+        allErrorsSuppressed = false
     )
 
     fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): PersistentCheckerContext {
@@ -56,7 +71,11 @@ class PersistentCheckerContext(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
             sessionHolder,
-            returnTypeCalculator
+            returnTypeCalculator,
+            suppressedDiagnostics,
+            allInfosSuppressed,
+            allWarningsSuppressed,
+            allErrorsSuppressed
         )
     }
 
@@ -65,7 +84,30 @@ class PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations.add(declaration),
             sessionHolder,
-            returnTypeCalculator
+            returnTypeCalculator,
+            suppressedDiagnostics,
+            allInfosSuppressed,
+            allWarningsSuppressed,
+            allErrorsSuppressed
+        )
+    }
+
+    fun addSuppressedDiagnostics(
+        diagnosticNames: Collection<String>,
+        allInfosSuppressed: Boolean,
+        allWarningsSuppressed: Boolean,
+        allErrorsSuppressed: Boolean
+    ): PersistentCheckerContext {
+        if (diagnosticNames.isEmpty()) return this
+        return PersistentCheckerContext(
+            implicitReceiverStack,
+            containingDeclarations,
+            sessionHolder,
+            returnTypeCalculator,
+            suppressedDiagnostics.addAll(diagnosticNames),
+            this.allInfosSuppressed || allInfosSuppressed,
+            this.allWarningsSuppressed || allWarningsSuppressed,
+            this.allErrorsSuppressed || allErrorsSuppressed
         )
     }
 }
