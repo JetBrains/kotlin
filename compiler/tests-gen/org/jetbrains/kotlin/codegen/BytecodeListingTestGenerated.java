@@ -440,6 +440,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/kt44233.kt");
         }
 
+        @TestMetadata("ListAndSet.kt")
+        public void testListAndSet() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/ListAndSet.kt");
+        }
+
         @TestMetadata("mapOfPrimitivesFullJdk.kt")
         public void testMapOfPrimitivesFullJdk() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/mapOfPrimitivesFullJdk.kt");
