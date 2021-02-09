@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
@@ -63,28 +64,34 @@ class CompilerConfigurationProviderImpl(
 
     override fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         return cache.getOrPut(module) {
-            val platform = module.targetPlatform
-            val configFiles = when {
-                platform.isJvm() -> EnvironmentConfigFiles.JVM_CONFIG_FILES
-                platform.isJs() -> EnvironmentConfigFiles.JS_CONFIG_FILES
-                platform.isNative() -> EnvironmentConfigFiles.NATIVE_CONFIG_FILES
-                // TODO: is it correct?
-                platform.isCommon() -> EnvironmentConfigFiles.METADATA_CONFIG_FILES
-                else -> error("Unknown platform: $platform")
-            }
-            val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
-                ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
-                CompilerConfiguration()
-            )
-            val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment)
-            KotlinCoreEnvironment.createForTests(
-                projectEnv,
-                createCompilerConfiguration(module, projectEnv.project),
-                configFiles
-            )
+            createKotlinCoreEnvironment(module)
         }
     }
 
+    @OptIn(TestInfrastructureInternals::class)
+    protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
+        val platform = module.targetPlatform
+        val configFiles = when {
+            platform.isJvm() -> EnvironmentConfigFiles.JVM_CONFIG_FILES
+            platform.isJs() -> EnvironmentConfigFiles.JS_CONFIG_FILES
+            platform.isNative() -> EnvironmentConfigFiles.NATIVE_CONFIG_FILES
+            // TODO: is it correct?
+            platform.isCommon() -> EnvironmentConfigFiles.METADATA_CONFIG_FILES
+            else -> error("Unknown platform: $platform")
+        }
+        val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
+            ApplicationEnvironmentDisposer.ROOT_DISPOSABLE,
+            CompilerConfiguration()
+        )
+        val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment)
+        return KotlinCoreEnvironment.createForTests(
+            projectEnv,
+            createCompilerConfiguration(module),
+            configFiles
+        )
+    }
+
+    @TestInfrastructureInternals
     fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
         val configuration = CompilerConfiguration()
         configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
