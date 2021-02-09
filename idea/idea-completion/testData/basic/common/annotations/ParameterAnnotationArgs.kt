@@ -12,3 +12,4 @@ fun foo(@inlineOptions(<caret>) { }
 // EXIST: InlineOption
 // EXIST: String
 // EXIST: v
+// FIR_COMPARISON

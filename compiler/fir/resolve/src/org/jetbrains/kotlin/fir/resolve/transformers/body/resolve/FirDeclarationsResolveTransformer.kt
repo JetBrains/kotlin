@@ -704,6 +704,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         context.storeVariable(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
             transformer.replaceDeclarationResolvePhaseIfNeeded(valueParameter, transformerPhase)
+            valueParameter.replaceReturnTypeRef(
+                valueParameter.returnTypeRef.errorTypeFromPrototype(ConeSimpleDiagnostic("Unresolved value parameter type"))
+            )
             return valueParameter.compose()
         }
 

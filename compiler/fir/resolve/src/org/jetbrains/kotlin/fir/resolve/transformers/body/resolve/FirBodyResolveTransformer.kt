@@ -74,7 +74,7 @@ open class FirBodyResolveTransformer(
         return (element.transformChildren(this, data) as E).compose()
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): CompositeTransformResult<FirResolvedTypeRef> {
         if (typeRef is FirResolvedTypeRef) {
             return typeRef.compose()
         }
