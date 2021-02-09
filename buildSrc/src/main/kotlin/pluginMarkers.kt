@@ -64,6 +64,9 @@ private fun createMavenMarkerPublication(
 ): MavenPublication {
     return publications.create<MavenPublication>(declaration.name.toString() + "PluginMarkerMaven") {
         val pluginId: String = declaration.id
+        val cGroupId = coordinates.groupId
+        val cArtifactId = coordinates.artifactId
+        val cVersion = coordinates.version
         artifactId = pluginId + PLUGIN_MARKER_SUFFIX
         groupId = pluginId
         pom.withXml {
@@ -72,11 +75,11 @@ private fun createMavenMarkerPublication(
             val dependencies = root.appendChild(document.createElement("dependencies"))
             val dependency = dependencies.appendChild(document.createElement("dependency"))
             val groupId = dependency.appendChild(document.createElement("groupId"))
-            groupId.textContent = coordinates.groupId
+            groupId.textContent = cGroupId
             val artifactId = dependency.appendChild(document.createElement("artifactId"))
-            artifactId.textContent = coordinates.artifactId
+            artifactId.textContent = cArtifactId
             val version = dependency.appendChild(document.createElement("version"))
-            version.textContent = coordinates.version
+            version.textContent = cVersion
         }
 
         pom.name.set(declaration.displayName)
