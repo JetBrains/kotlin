@@ -52,5 +52,5 @@ inline fun SmartPrinter.withIndent(block: () -> Unit) {
 
 inline fun File.writeToFileUsingSmartPrinterIfFileContentChanged(block: SmartPrinter.() -> Unit) {
     val newText = buildString { SmartPrinter(this).block() }
-    GeneratorsFileUtil.writeFileIfContentChanged(this, newText)
+    GeneratorsFileUtil.writeFileIfContentChanged(this, newText, logNotChanged = false)
 }
