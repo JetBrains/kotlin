@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -19,7 +18,7 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(ConfigurationDirectives)
 
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val rawFlags = module.directives[ConfigurationDirectives.KOTLIN_CONFIGURATION_FLAGS]
         parseAnalysisFlags(rawFlags).forEach { (key, value) ->
             @Suppress("UNCHECKED_CAST")
