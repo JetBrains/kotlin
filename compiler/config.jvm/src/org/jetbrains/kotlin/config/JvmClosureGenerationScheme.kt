@@ -17,7 +17,9 @@ enum class JvmClosureGenerationScheme(
         val DEFAULT = CLASS
 
         @JvmStatic
-        fun fromString(string: String?) =
-            values().find { it.description == string }
+        fun fromString(string: String?): JvmClosureGenerationScheme? {
+            val lowerStr = string?.toLowerCase() ?: return null
+            return values().find { it.description == lowerStr }
+        }
     }
 }
