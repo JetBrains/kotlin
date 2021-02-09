@@ -84,15 +84,15 @@ codegenTest(target = 11, jvm = 11) {}
 
 //JDK 15
 codegenTest(target = 6, jvm = 15) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+    jvmArgs( "-XX:-FailOverToOldVerifier")
 }
 
 codegenTest(target = 8, jvm = 15) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+    jvmArgs( "-XX:-FailOverToOldVerifier")
 }
 
 codegenTest(target = 15, jvm = 15) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+    jvmArgs( "-XX:-FailOverToOldVerifier")
     systemProperty("kotlin.test.box.d8.disable", true)
 }
 
@@ -100,13 +100,9 @@ codegenTest(target = 15, jvm = 15) {
 val mostRecentJdk = JdkMajorVersion.values().last().name
 
 //LAST JDK from JdkMajorVersion available on machine
-codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
-}
+codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {}
 
-codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
-}
+codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {}
 
 codegenTest(
     mostRecentJdk.substringAfter('_').toInt(),
@@ -114,7 +110,6 @@ codegenTest(
     jvm = "Last",
     jdk = mostRecentJdk
 ) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
     systemProperty("kotlin.test.box.d8.disable", true)
 }
 
