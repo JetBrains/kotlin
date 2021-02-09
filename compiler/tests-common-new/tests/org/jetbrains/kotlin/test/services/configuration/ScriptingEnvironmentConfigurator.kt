@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.model.TestModule
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtsFile
 
 class ScriptingEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (module.files.any { it.isKtsFile }) {
             loadScriptingPlugin(configuration)
         }

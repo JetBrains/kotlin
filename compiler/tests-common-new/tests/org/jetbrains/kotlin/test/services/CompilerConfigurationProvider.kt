@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -86,7 +85,7 @@ class CompilerConfigurationProviderImpl(
         }
     }
 
-    private fun createCompilerConfiguration(module: TestModule, project: MockProject): CompilerConfiguration {
+    fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
         val configuration = CompilerConfiguration()
         configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
 
@@ -104,7 +103,7 @@ class CompilerConfigurationProviderImpl(
         }
         configuration.languageVersionSettings = module.languageVersionSettings
 
-        configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module, project) }
+        configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module) }
 
         return configuration
     }

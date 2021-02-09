@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
@@ -60,7 +59,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
         register(USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
     }
 
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (module.targetPlatform !in JvmPlatforms.allJvmPlatforms) return
         val registeredDirectives = module.directives
         val targets = registeredDirectives[JvmEnvironmentConfigurationDirectives.JVM_TARGET]
