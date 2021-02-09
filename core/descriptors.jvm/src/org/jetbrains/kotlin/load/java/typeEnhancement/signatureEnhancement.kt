@@ -195,14 +195,8 @@ class SignatureEnhancement(
         }
 
         val valueParameterEnhancements = annotationOwnerForMember.valueParameters.map { p ->
-            val enhancementResult = partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
+            partsForValueParameter(p, memberContext) { it.valueParameters[p.index].type }
                 .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
-
-            val actualType = if (enhancementResult.wereChanges) enhancementResult.type else p.type
-            val hasDefaultValue = p.hasDefaultValueInAnnotation(actualType)
-            val wereChanges = enhancementResult.wereChanges || (hasDefaultValue != p.declaresDefaultValue())
-
-            ValueParameterEnhancementResult(enhancementResult.type, hasDefaultValue, wereChanges, enhancementResult.containsFunctionN)
         }
 
         val returnTypeEnhancement =
@@ -231,7 +225,7 @@ class SignatureEnhancement(
             @Suppress("UNCHECKED_CAST")
             return this.enhance(
                 receiverTypeEnhancement?.type,
-                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
+                valueParameterEnhancements.map { ValueParameterData(it.type, false) },
                 returnTypeEnhancement.type,
                 additionalUserData
             ) as D
@@ -262,13 +256,6 @@ class SignatureEnhancement(
      */
     fun enhanceSuperType(type: KotlinType, context: LazyJavaResolverContext) =
         SignatureParts(null, type, emptyList(), false, context, AnnotationQualifierApplicabilityType.TYPE_USE).enhance().type
-
-    private fun ValueParameterDescriptor.hasDefaultValueInAnnotation(type: KotlinType) =
-        when (val defaultValue = getDefaultValueFromAnnotation()) {
-            is StringDefaultValue -> type.lexicalCastFrom(defaultValue.value) != null
-            NullDefaultValue -> TypeUtils.acceptsNullable(type)
-            null -> declaresDefaultValue()
-        } && overriddenDescriptors.isEmpty()
 
     private inner class SignatureParts(
         private val typeContainer: Annotated?,
@@ -591,13 +578,6 @@ class SignatureEnhancement(
         val wereChanges: Boolean,
         val containsFunctionN: Boolean
     )
-
-    private class ValueParameterEnhancementResult(
-        type: KotlinType,
-        val hasDefaultValue: Boolean,
-        wereChanges: Boolean,
-        containsFunctionN: Boolean
-    ) : PartEnhancementResult(type, wereChanges, containsFunctionN)
 
     private fun CallableMemberDescriptor.partsForValueParameter(
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)
