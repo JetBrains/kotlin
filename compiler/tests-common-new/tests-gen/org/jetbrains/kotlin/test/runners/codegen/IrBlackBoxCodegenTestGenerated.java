@@ -16595,6 +16595,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("substituteIntersectionTypeInsideCapType.kt")
+        public void testSubstituteIntersectionTypeInsideCapType() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/substituteIntersectionTypeInsideCapType.kt");
+        }
+
+        @Test
         @TestMetadata("subtypingOfIntersectionIltInsideFlexible.kt")
         public void testSubtypingOfIntersectionIltInsideFlexible() throws Exception {
             runTest("compiler/testData/codegen/box/inference/subtypingOfIntersectionIltInsideFlexible.kt");

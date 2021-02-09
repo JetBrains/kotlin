@@ -13795,6 +13795,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
         }
 
+        @TestMetadata("substituteIntersectionTypeInsideCapType.kt")
+        public void testSubstituteIntersectionTypeInsideCapType() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/substituteIntersectionTypeInsideCapType.kt");
+        }
+
         @TestMetadata("subtypingOfIntersectionIltInsideFlexible.kt")
         public void testSubtypingOfIntersectionIltInsideFlexible() throws Exception {
             runTest("compiler/testData/codegen/box/inference/subtypingOfIntersectionIltInsideFlexible.kt");
