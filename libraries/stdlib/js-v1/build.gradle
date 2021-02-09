@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.node-gradle.node" version "2.2.0"
+    id "com.github.node-gradle.node" version "3.0.1"
 }
 
 description = 'Kotlin Standard Library for JS'
@@ -325,7 +325,7 @@ artifacts {
 node {
     download = true
     version = '12.18.0'
-    nodeModulesDir = buildDir
+    nodeProjectDir = buildDir
 }
 
 // Otherwise Node ignores nodeModulesDir
@@ -352,8 +352,8 @@ task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-te
         args = ['--reporter', 'min']
     }
 
-    args += ['--timeout', '10s']
-    args += [jsTestOutputFile, kotlinTestJsTestOutputFile]
+    args = args.get() + ['--timeout', '10s']
+    args = args.get() + [jsTestOutputFile, kotlinTestJsTestOutputFile]
 
     execOverrides {
         it.ignoreExitValue = rootProject.ignoreTestFailures

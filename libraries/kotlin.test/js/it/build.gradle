@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 
 plugins {
+    // TODO: update gradle-node-plugin to support configuration cache
     id "com.github.node-gradle.node" version "2.2.0"
 }
 
@@ -26,13 +27,16 @@ dependencies {
 // package.json contains direct links to the builddir
 buildDir = "$projectDir/build"
 
-[compileKotlin2Js, compileTestKotlin2Js]*.configure {
-    kotlinOptions.moduleKind = "commonjs"
+["compileKotlin2Js", "compileTestKotlin2Js"].forEach {
+    tasks.named(it).configure {
+        kotlinOptions.moduleKind = "commonjs"
+    }
 }
 
-task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
-    from compileKotlin2Js.destinationDir
+tasks.register("populateNodeModules", Copy) {
+    dependsOn(compileKotlin2Js)
     dependsOn(configurations.nodeModules)
+    from compileKotlin2Js.destinationDir
 
     from {
         configurations.nodeModules.collect {
@@ -53,7 +57,7 @@ node {
 }
 
 def createFrameworkTest(def name) {
-    return tasks.create("test$name", NpmTask) {
+    return tasks.register("test$name", NpmTask) {
         dependsOn(compileTestKotlin2Js, populateNodeModules, npmInstall)
         def lowerName = name.toLowerCase()
         def tcOutput = "$buildDir/tc-${lowerName}.log"
@@ -80,6 +84,8 @@ def createFrameworkTest(def name) {
     }
 }
 
-['Jest', 'Jasmine', 'Mocha', 'Qunit', 'Tape'].each {
-    check.dependsOn createFrameworkTest(it)
+tasks.check {
+    ['Jest', 'Jasmine', 'Mocha', 'Qunit', 'Tape'].each {
+        dependsOn createFrameworkTest(it)
+    }
 }
