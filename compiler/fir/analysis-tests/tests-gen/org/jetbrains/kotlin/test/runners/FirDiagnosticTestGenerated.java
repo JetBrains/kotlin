@@ -1525,6 +1525,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("nestedIfInLambda.kt")
+                public void testNestedIfInLambda() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nestedIfInLambda.kt");
+                }
+
+                @Test
                 @TestMetadata("nonExhaustiveWhenWithCoercionToUnit.kt")
                 public void testNonExhaustiveWhenWithCoercionToUnit() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nonExhaustiveWhenWithCoercionToUnit.kt");

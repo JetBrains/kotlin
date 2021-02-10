@@ -1111,7 +1111,7 @@ class ExpressionsConverter(
             }
             val parentTokenType = parent.tokenType
             if (parentTokenType == BLOCK) return false
-            if (parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {
+            if (parentTokenType == THEN || parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {
                 return parent.getParent()?.usedAsExpression ?: true
             }
             if (parentTokenType != BODY) return true

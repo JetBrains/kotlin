@@ -1333,6 +1333,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedSubClass.kt");
             }
 
+            @TestMetadata("nestedIfInLambda.kt")
+            public void testNestedIfInLambda() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nestedIfInLambda.kt");
+            }
+
             @TestMetadata("nonExhaustiveWhenWithCoercionToUnit.kt")
             public void testNonExhaustiveWhenWithCoercionToUnit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/nonExhaustiveWhenWithCoercionToUnit.kt");

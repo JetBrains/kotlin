@@ -1631,7 +1631,7 @@ class RawFirBuilder(
                 }
                 if (parent is KtBlockExpression) return false
                 when (parent.elementType) {
-                    KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
+                    KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
                         return (parent.parent as? KtExpression)?.usedAsExpression ?: true
                     }
                 }
