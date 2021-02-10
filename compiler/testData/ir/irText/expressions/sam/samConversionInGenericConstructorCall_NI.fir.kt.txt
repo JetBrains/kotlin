@@ -1,5 +1,5 @@
 fun test3(f1: Function1<String, String>, f2: Function1<Int, String>): D<Int?, String?> {
-  return C<String?>(jxx = f1 /*-> J<X?, X?>? */).D<Int?>(jxy = f2 /*-> J<String?, Y?>? */)
+  return C<String?>(jxx = f1 /*-> J<String?, String?>? */).D<Int?>(jxy = f2 /*-> J<String?, Int?>? */)
 }
 
 class Outer<T1 : Any?> {
@@ -29,14 +29,14 @@ class Outer<T1 : Any?> {
 }
 
 fun test4(f: Function1<String, String>, g: Function1<Any, String>): Inner<Any?, String?> {
-  return Outer<String?>(j11 = f /*-> J<T1, T1> */).Inner<Any?>(j12 = g /*-> J<String?, T2> */)
+  return Outer<String?>(j11 = f /*-> J<String?, String?> */).Inner<Any?>(j12 = g /*-> J<String?, Any?> */)
 }
 
 fun testGenericJavaCtor1(f: Function1<String, Int>): G<String?> {
-  return G<String?, Int?>(x = f /*-> J<TCtor?, TClass?>? */)
+  return G<String?, Int?>(x = f /*-> J<Int?, String?>? */)
 }
 
 fun testGenericJavaCtor2(x: Any) {
   x as Function1<String, Int> /*~> Unit */
-  G<String?, Int?>(x = x /*as Function1<String, Int> */ /*-> J<TCtor?, TClass?>? */) /*~> Unit */
+  G<String?, Int?>(x = x /*as Function1<String, Int> */ /*-> J<Int?, String?>? */) /*~> Unit */
 }
