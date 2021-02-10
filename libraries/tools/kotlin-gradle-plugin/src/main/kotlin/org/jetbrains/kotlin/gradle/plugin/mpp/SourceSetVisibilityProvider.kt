@@ -111,7 +111,7 @@ internal class SourceSetVisibilityProvider(
 
                 someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
                     val configuration = firstConfigurationByVariant.getValue(variantName)
-                    resolvedVariantsProvider.getMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
+                    resolvedVariantsProvider.getHostSpecificMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
                         ?.let { sourceSetName to it }
                 }.toMap()
             }
@@ -123,7 +123,7 @@ internal class SourceSetVisibilityProvider(
     }
 }
 
-private fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
+internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
 
 private fun Project.resolvableConfigurationFromCompilationByScope(

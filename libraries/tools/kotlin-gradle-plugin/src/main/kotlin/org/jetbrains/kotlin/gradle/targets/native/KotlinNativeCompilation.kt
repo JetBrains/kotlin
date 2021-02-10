@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
@@ -74,9 +73,6 @@ class KotlinNativeCompilation(
 ) : AbstractKotlinNativeCompilation(target, konanTarget, name),
     KotlinCompilationWithResources<KotlinCommonOptions> {
 
-    private val project: Project
-        get() = target.project
-
     // Interop DSL.
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
         DefaultCInteropSettings(project, cinteropName, this)
@@ -92,15 +88,15 @@ class KotlinNativeCompilation(
     override val compileDependencyConfigurationName: String
         get() = lowerCamelCaseName(
             target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
+            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
             "compileKlibraries"
         )
 
     override val compileAllTaskName: String
-        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "klibrary")
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "klibrary")
 
     val binariesTaskName: String
-        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "binaries")
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "binaries")
 }
 
 class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :

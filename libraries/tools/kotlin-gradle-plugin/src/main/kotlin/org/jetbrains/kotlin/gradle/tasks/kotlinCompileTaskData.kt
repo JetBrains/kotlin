@@ -10,21 +10,22 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 
 internal open class KotlinCompileTaskData(
     val taskName: String,
     @field:Transient // cannot be serialized for Gradle Instant Execution, but actually is not needed when a task is deserialized
-    val compilation: KotlinCompilation<*>,
+    val compilation: KotlinCompilationData<*>,
     val destinationDir: Property<File>,
     val useModuleDetection: Property<Boolean>
 ) {
     private val project: Project
-        get() = compilation.target.project
+        get() = compilation.project
 
     private val taskBuildDirectory: File by project.provider {
-        File(File(compilation.target.project.buildDir, KOTLIN_BUILD_DIR_NAME), taskName)
+        File(File(compilation.project.buildDir, KOTLIN_BUILD_DIR_NAME), taskName)
     }
 
     //TODO
@@ -42,9 +43,9 @@ internal open class KotlinCompileTaskData(
 
         fun register(
             taskName: String,
-            compilation: KotlinCompilation<*>
+            compilation: KotlinCompilationData<*>
         ): KotlinCompileTaskData {
-            val project = compilation.target.project
+            val project = compilation.project
             val container = project.getTaskDataMap()
 
             @Suppress("UnstableApiUsage")

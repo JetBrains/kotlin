@@ -10,8 +10,18 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
+import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
+import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
+import java.lang.IllegalArgumentException
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency) = when (dependency) {
@@ -60,4 +70,57 @@ internal object ModuleIds {
 
     private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
         idOfRootModule(thisProject.project(projectPath))
+
+    // FIXME use capabilities to point to auxiliary modules
+    fun lossyFromModuleIdentifier(thisProject: Project, moduleIdentifier: KotlinModuleIdentifier): ModuleDependencyIdentifier {
+        when (moduleIdentifier) {
+            is LocalModuleIdentifier -> {
+                check(moduleIdentifier.buildId == thisProject.currentBuildId().name)
+                val dependencyProject = thisProject.project(moduleIdentifier.projectId)
+                val getRootPublication: () -> MavenPublication? = when (val topLevelExtension = dependencyProject.topLevelExtension) {
+                    is KotlinMultiplatformExtension -> {
+                        { topLevelExtension.rootSoftwareComponent.publicationDelegate }
+                    }
+                    is KotlinPm20ProjectExtension -> {
+                        { topLevelExtension.rootPublication }
+                    }
+                    else -> error("unexpected top-level extension $topLevelExtension")
+                }
+                val coordinatesProvider = MultiplatformRootPublicationCoordinatesProvider(dependencyProject, getRootPublication)
+                return ChangingModuleDependencyIdentifier({ coordinatesProvider.group }, { coordinatesProvider.name })
+            }
+            is MavenModuleIdentifier -> {
+                return ModuleDependencyIdentifier(moduleIdentifier.group, moduleIdentifier.name)
+            }
+            else -> error("unexpected module identifier $moduleIdentifier")
+        }
+    }
+}
+
+interface PublishedModuleCoordinatesProvider {
+    val group: String
+    val name: String
+    val version: String
+    val capabilities: Iterable<String>
+}
+
+class MultiplatformRootPublicationCoordinatesProvider(
+    project: Project,
+    val getPublication: () -> MavenPublication?
+) : PublishedModuleCoordinatesProvider {
+
+    override val group: String by project.provider {
+        getPublication()?.groupId ?: project.group.toString()
+    }
+
+    override val name: String by project.provider {
+        getPublication()?.artifactId ?: project.group.toString()
+    }
+
+    override val version: String by project.provider {
+        getPublication()?.artifactId ?: project.version.toString()
+    }
+
+    override val capabilities: Iterable<String>
+        get() = emptyList()
 }

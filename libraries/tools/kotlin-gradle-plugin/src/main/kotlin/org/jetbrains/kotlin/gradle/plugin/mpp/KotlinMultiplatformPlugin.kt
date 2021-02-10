@@ -10,6 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
@@ -49,7 +50,7 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 class KotlinMultiplatformPlugin(
     private val kotlinPluginVersion: String,
-    private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once we don't need it
+    private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once twe don't need it
 ) : Plugin<Project> {
 
     private class TargetFromPresetExtension(val targetsContainer: KotlinTargetsContainerWithPresets) {
@@ -285,11 +286,11 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
 }
 
 internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String?, artifactNameAppendix: String): TaskProvider<Jar> =
-    sourcesJarTask(compilation.target.project, lazy { compilation.allKotlinSourceSets }, componentName, artifactNameAppendix)
+    sourcesJarTask(compilation.target.project, lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } }, componentName, artifactNameAppendix)
 
 internal fun sourcesJarTask(
     project: Project,
-    sourceSets: Lazy<Set<KotlinSourceSet>>,
+    sourceSets: Lazy<Map<String, FileCollection>>,
     componentName: String?,
     artifactNameAppendix: String
 ): TaskProvider<Jar> {
@@ -306,9 +307,9 @@ internal fun sourcesJarTask(
 
     project.whenEvaluated {
         result.configure {
-            sourceSets.value.forEach { sourceSet ->
-                it.from(sourceSet.kotlin) { copySpec ->
-                    copySpec.into(sourceSet.name)
+            sourceSets.value.forEach { (sourceSetName, sourceSetFiles) ->
+                it.from(sourceSetFiles) { copySpec ->
+                    copySpec.into(sourceSetName)
                 }
             }
         }

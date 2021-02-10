@@ -78,7 +78,7 @@ constructor(
     val compilationId: String
         @Input get() = compilation.let {
             val target = it.target
-            target.project.path + "@" + target.name + ":" + it.compilationName
+            target.project.path + "@" + target.name + ":" + it.compilationPurpose
         }
 
     val nodeModulesToLoad: List<String>

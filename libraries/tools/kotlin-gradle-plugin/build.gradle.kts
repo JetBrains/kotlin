@@ -42,6 +42,7 @@ dependencies {
 
     compile(kotlinStdlib())
     compile(project(":kotlin-util-klib"))
+    compile(project(":kotlin-project-model"))
     compileOnly(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
@@ -218,6 +219,11 @@ pluginBundle {
         name = "kotlinNativeCocoapodsPlugin",
         id = "org.jetbrains.kotlin.native.cocoapods",
         display = "Kotlin Native plugin for CocoaPods integration"
+    )
+    create(
+        name = "kotlinMultiplatformPluginPm20",
+        id = "org.jetbrains.kotlin.multiplatform.pm20",
+        display = "Kotlin Multiplatform plugin with PM2.0"
     )
 }
 

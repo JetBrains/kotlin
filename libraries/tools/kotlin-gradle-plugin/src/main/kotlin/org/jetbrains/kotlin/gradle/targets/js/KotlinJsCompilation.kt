@@ -99,7 +99,7 @@ open class KotlinJsCompilation(
     private fun disambiguateNameInPlatform(simpleName: String): String {
         return lowerCamelCaseName(
             disambiguationClassifierInPlatform,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             simpleName
         )
     }
@@ -111,7 +111,7 @@ open class KotlinJsCompilation(
                 target.irTarget?.let {
                     target.disambiguationClassifierInPlatform
                 } ?: target.disambiguationClassifier,
-                compilationName
+                compilationPurpose
             )
         }
 }
