@@ -138,6 +138,24 @@ class DescriptorKindFilter(
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DescriptorKindFilter
+
+        if (excludes != other.excludes) return false
+        if (kindMask != other.kindMask) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = excludes.hashCode()
+        result = 31 * result + kindMask
+        return result
+    }
+
     companion object {
         private var nextMaskValue: Int = 0x01
         private fun nextMask() = nextMaskValue.apply { nextMaskValue = nextMaskValue shl 1 }
