@@ -49,6 +49,11 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
         runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGeneration/");
     }
 
+    @TestMetadata("kotlinFileGenerationCorrectErrorTypes")
+    public void testKotlinFileGenerationCorrectErrorTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationCorrectErrorTypes/");
+    }
+
     @TestMetadata("kotlinFileGenerationDefaultOutput")
     public void testKotlinFileGenerationDefaultOutput() throws Exception {
         runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationDefaultOutput/");

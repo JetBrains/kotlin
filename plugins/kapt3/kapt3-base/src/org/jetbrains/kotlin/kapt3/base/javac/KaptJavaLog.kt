@@ -210,6 +210,7 @@ class KaptJavaLog(
             "compiler.err.already.defined",
             "compiler.err.annotation.type.not.applicable",
             "compiler.err.doesnt.exist",
+            "compiler.err.cant.resolve.location",
             "compiler.err.duplicate.annotation.missing.container",
             "compiler.err.not.def.access.package.cant.access",
             "compiler.err.package.not.visible",
