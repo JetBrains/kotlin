@@ -56,8 +56,43 @@ class NativeCompilerDownloader(
             }
         }
 
+    fun CompilerVersion.toStringPre1_5_20(showMeta: Boolean, showBuild: Boolean) = buildString {
+        append(major)
+        append('.')
+        append(minor)
+        if (!(major <= 1 && minor <= 5 && maintenance <= 20))
+            return toString(showMeta, showBuild)
+        /**
+         * Once we've decide to make K/N version like K one (with droppable maintenance 0), but this breaks old publications,
+         * when did merging kotlin with kotlin/native after 1.5.0 release.
+         * older 1.5.20?
+         */
+        if (maintenance != 0) {
+            append('.')
+            append(maintenance)
+        }
+        if (milestone != -1) {
+            append("-M")
+            append(milestone)
+        }
+        if (showMeta) {
+            append('-')
+            append(meta.metaString)
+        }
+        if (showBuild && build != -1) {
+            append('-')
+            append(build)
+        }
+    }
+
+    val versionStringRepresentation = compilerVersion.toStringPre1_5_20(
+        compilerVersion.meta != MetaVersion.RELEASE,
+        compilerVersion.meta != MetaVersion.RELEASE
+    )
+
+
     private val dependencyNameWithVersion: String
-        get() = "$dependencyName-$compilerVersion"
+        get() = "$dependencyName-$versionStringRepresentation"
 
     private val dependencyFileName: String
         get() = "$dependencyNameWithVersion.$archiveExtension"
@@ -99,7 +134,7 @@ class NativeCompilerDownloader(
         val repoUrl = buildString {
             append("$BASE_DOWNLOAD_URL/")
             append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$compilerVersion/")
+            append("$versionStringRepresentation/")
             append(simpleOsName)
         }
         val dependencyUrl = "$repoUrl/$dependencyFileName"
@@ -109,7 +144,7 @@ class NativeCompilerDownloader(
         val compilerDependency = project.dependencies.create(
             mapOf(
                 "name" to dependencyName,
-                "version" to compilerVersion.toString(),
+                "version" to versionStringRepresentation,
                 "ext" to archiveExtension
             )
         )
