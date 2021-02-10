@@ -275,7 +275,7 @@ class ExpressionCodegen(
             return
 
         if (inlinedInto != null ||
-            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
+            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
             irFunction.origin.isSynthetic ||
             // TODO: refine this condition to not generate nullability assertions on parameters
             //       corresponding to captured variables and anonymous object super constructor arguments
@@ -309,6 +309,13 @@ class ExpressionCodegen(
             irFunction.valueParameters.forEach(::generateNonNullAssertion)
         }
     }
+
+    // * Operator functions require non-null assertions on parameters even if they are private.
+    // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
+    //   Such functions require non-null assertions on parameters.
+    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction) =
+        irFunction is IrSimpleFunction && irFunction.isOperator ||
+                irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
         val asmType = param.type.asmType
