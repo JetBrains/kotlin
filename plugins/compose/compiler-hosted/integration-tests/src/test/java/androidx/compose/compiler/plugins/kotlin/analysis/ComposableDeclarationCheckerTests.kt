@@ -127,6 +127,36 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
         )
     }
 
+    fun testComposableMainFun() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun <!COMPOSABLE_FUN_MAIN!>main<!>() {}
+        """
+        )
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun <!COMPOSABLE_FUN_MAIN!>main<!>(args: Array<String>) {
+                print(args)
+            }
+        """
+        )
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            class Foo
+
+            @Composable fun main(foo: Foo) {
+                print(foo)
+            }
+        """
+        )
+    }
+
     fun testMissingComposableOnOverride() {
         doTest(
             """
