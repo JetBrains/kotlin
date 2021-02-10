@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.CreatePropertyDelegateAccessorsActionFactory
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -86,15 +88,13 @@ class ChangeVariableMutabilityFix(
 
         val CAPTURED_MEMBER_VAL_INITIALIZATION_FACTORY = ReassignmentActionFactory(Errors.CAPTURED_MEMBER_VAL_INITIALIZATION)
 
-        val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object : KotlinSingleIntentionActionFactory() {
-            override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                val element = diagnostic.psiElement
-                return when (element) {
-                    is KtProperty, is KtParameter -> ChangeVariableMutabilityFix(element as KtValVarKeywordOwner, true)
-                    else -> null
+        val VAR_OVERRIDDEN_BY_VAL_FACTORY: QuickFixesPsiBasedFactory<PsiElement> =
+            quickFixesPsiBasedFactory { psiElement: PsiElement ->
+                when (psiElement) {
+                    is KtProperty, is KtParameter -> listOf(ChangeVariableMutabilityFix(psiElement as KtValVarKeywordOwner, true))
+                    else -> emptyList()
                 }
             }
-        }
 
         val VAR_ANNOTATION_PARAMETER_FACTORY: KotlinSingleIntentionActionFactory = object : KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
