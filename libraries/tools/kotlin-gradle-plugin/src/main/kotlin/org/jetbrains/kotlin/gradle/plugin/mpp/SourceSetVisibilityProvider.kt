@@ -123,7 +123,7 @@ internal class SourceSetVisibilityProvider(
     }
 }
 
-private fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
+internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
 
 private fun Project.resolvableConfigurationFromCompilationByScope(

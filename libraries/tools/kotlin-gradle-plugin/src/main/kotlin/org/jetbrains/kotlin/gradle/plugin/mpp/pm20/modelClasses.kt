@@ -5,35 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.*
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.project.model.*
+import org.jetbrains.kotlin.project.model.refinesClosure
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import java.util.concurrent.Callable
-
-//region Fragment
-
-//endregion Fragment
-
-//region Variant
-
-
-
-
 
 open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
     AbstractKotlinGradleVariantWithRuntimeDependenciesFactory<KotlinJvmVariant>(module) {

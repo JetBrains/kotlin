@@ -20,7 +20,7 @@ open class KotlinGradleModuleFactory(private val project: Project) : NamedDomain
     }
 
     protected open fun registerDefaultCommonFragment(module: KotlinGradleModule) {
-        module.fragments.create(KotlinGradleFragment.COMMON_FRAGMENT_NAME, KotlinGradleFragment::class.java)
+        module.fragments.register(KotlinGradleFragment.COMMON_FRAGMENT_NAME, KotlinGradleFragment::class.java)
     }
 
     protected open fun addDefaultRefinementDependencyOnCommon(module: KotlinGradleModule) {

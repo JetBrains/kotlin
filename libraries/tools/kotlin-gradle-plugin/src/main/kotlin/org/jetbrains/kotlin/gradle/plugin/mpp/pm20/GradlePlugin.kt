@@ -5,16 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.NamedDomainObjectProvider
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.*
+import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.buildKotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import java.util.concurrent.Callable
 
 abstract class KotlinPm20GradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -43,21 +62,17 @@ abstract class KotlinPm20GradlePlugin : Plugin<Project> {
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
             main { makePublic() }
         }
+        setupMetadataCompilationAndDependencyResolution(project)
     }
 
-    private fun setupMetadataCompilation() {
-        // TODO dependency transformations in tasks
-        // TODO classpath configurations
-        // TODO compilation data -> tasks
-        // TODO project structure metadata -> metadata artifact
-        // TODO task outputs -> metadata artifact
-        // TODO export the metadata artifact in consumable configurations
+    private fun setupMetadataCompilationAndDependencyResolution(project: Project) {
+        project.pm20Extension.modules.all { module ->
+            configureMetadataResolutionAndBuild(module)
+        }
     }
 }
 
-open class KotlinPm20ProjectExtension : KotlinTopLevelExtension() {
-    internal lateinit var project: Project
-
+open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
     val modules: NamedDomainObjectContainer<KotlinGradleModule> by lazy {
         project.objects.domainObjectContainer(
             KotlinGradleModule::class.java,
@@ -79,6 +94,11 @@ open class KotlinPm20ProjectExtension : KotlinTopLevelExtension() {
 
     fun main(configure: KotlinGradleModule.() -> Unit = { }) = main.apply(configure)
     fun test(configure: KotlinGradleModule.() -> Unit = { }) = test.apply(configure)
+
+    internal val metadataCompilationRegistryByModuleId: MutableMap<KotlinModuleIdentifier, MetadataCompilationRegistry> =
+        mutableMapOf()
+
+    internal var rootPublication: MavenPublication? = null
 }
 
 val KotlinGradleModule.jvm: KotlinJvmVariant

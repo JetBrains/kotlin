@@ -10,22 +10,33 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.project.model.*
 
-class GradleKotlinDependencyGraphResolver(
-    private val project: Project,
-    private val moduleResolver: ModuleDependencyResolver,
-    private val fragmentsResolver: ModuleFragmentsResolver
-) : KotlinDependencyGraphResolver {
+internal fun resolvableMetadataConfiguration(
+    module: KotlinGradleModule
+) = module.project.configurations.getByName(module.resolvableMetadataConfigurationName)
 
-    private val configurationToResolve: Configuration
-        get() = resolvableMetadataConfiguration(
+internal fun configurationToResolveMetadataDependencies(project: Project, requestingModule: KotlinModule): Configuration =
+    when (project.topLevelExtension) {
+        is KotlinPm20ProjectExtension -> resolvableMetadataConfiguration(requestingModule as KotlinGradleModule)
+        else -> resolvableMetadataConfiguration(
             project,
             project.kotlinExtension.sourceSets, // take dependencies from all source sets; TODO introduce consistency scopes?
             KotlinDependencyScope.compileScopes
         )
+    }
+
+
+class GradleKotlinDependencyGraphResolver(
+    private val project: Project,
+    private val moduleResolver: ModuleDependencyResolver
+) : KotlinDependencyGraphResolver {
+
+    private fun configurationToResolve(requestingModule: KotlinModule): Configuration =
+        configurationToResolveMetadataDependencies(project, requestingModule)
 
     override fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution {
         if (!requestingModule.representsProject(project))
@@ -40,11 +51,17 @@ class GradleKotlinDependencyGraphResolver(
             return nodeByModuleId.getOrPut(id) {
                 val module = if (isRoot)
                     requestingModule
-                else moduleResolver.resolveDependency(component.toModuleDependency())
+                else moduleResolver.resolveDependency(requestingModule, component.toModuleDependency())
                     .takeIf { component !in excludeLegacyMetadataModulesFromResult }
-                    ?: buildStubModule(component, component.variants.singleOrNull()?.displayName ?: "default")
+                    ?: buildSyntheticModule(component, component.variants.singleOrNull()?.displayName ?: "default")
 
-                val resolvedComponentDependencies = component.dependencies
+                val componentContainingTransitiveDependencies =
+                    (module as? ExternalImportedKotlinModule)
+                        ?.takeIf { it.hasLegacyMetadataModule }
+                        ?.let { (component.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
+                    ?: component
+
+                val resolvedComponentDependencies = componentContainingTransitiveDependencies.dependencies
                     .filterIsInstance<ResolvedDependencyResult>()
                     .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency.selected } }
                     .toMap()
@@ -61,7 +78,7 @@ class GradleKotlinDependencyGraphResolver(
 
         return DependencyGraphResolution.DependencyGraph(
             requestingModule,
-            nodeFromComponent(configurationToResolve.incoming.resolutionResult.root, isRoot = true)
+            nodeFromComponent(configurationToResolve(requestingModule).incoming.resolutionResult.root, isRoot = true)
         )
     }
 }

@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -60,7 +62,9 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
 
         args.moduleName = this@KotlinCompileCommon.moduleName
 
-        if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true) {
+        if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true ||
+            taskData.compilation is KotlinFragmentMetadataCompilationData
+        ) {
             args.expectActualLinker = true
         }
 
@@ -96,6 +100,14 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
             is KotlinCompilation<*> -> {
                 val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
                 outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.resolveAllDependsOnSourceSets())
+            }
+            is KotlinFragmentMetadataCompilationData -> {
+                val fragment = compilation.fragment
+                project.files(
+                    fragment.refinesClosure.minus(fragment).map {
+                        compilation.metadataCompilationRegistry.byFragment(it).output.classesDirs
+                    }
+                )
             }
             else -> error("unexpected compilation type") // FIXME support PM20 variant
         }

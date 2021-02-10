@@ -86,9 +86,6 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
         project.createKotlinExtension(projectExtensionClass).apply {
-            if (this is KotlinPm20ProjectExtension)
-                this.project = project // refactor this code to remove the specific plugin class?
-
             coreLibrariesVersion = kotlinPluginVersion
 
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =

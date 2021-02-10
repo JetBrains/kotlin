@@ -307,15 +307,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal // takes part in the compiler arguments
     val friendPaths: FileCollection = project.files(
-        project.provider {
-            taskData.compilation.run {
-                if (this !is AbstractKotlinCompilation<*>) return@run project.files() // FIXME support PM20
-                mutableListOf<FileCollection>().also { allCollections ->
-                    associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
-                    allCollections.add(friendArtifacts)
-                }
-            }
-        }
+        project.provider { taskData.compilation.friendPaths }
     )
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }

@@ -11,10 +11,12 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.TransformKotlinGranularMetadataForFragment
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
@@ -100,9 +102,9 @@ open class TransformKotlinGranularMetadata
             .associateWith { it.getExtractableMetadataFiles(outputsDir) }
 
     @get:Internal
-    internal val filesByResolution: Map<out MetadataDependencyResolution, FileCollection>
+    internal val filesByResolution: Map<MetadataDependencyResolution, FileCollection>
         get() = extractableFilesByResolution.mapValues { (_, value) ->
-            project.files(value.getMetadataFilesPerSourceSet(false).values)
+            project.files(value.getMetadataFilesPerSourceSet(false).values).builtBy(this)
         }
 
     private val extractableFiles by project.provider { extractableFilesByResolution.values }
@@ -116,4 +118,12 @@ open class TransformKotlinGranularMetadata
 
         extractableFiles.forEach { it.getMetadataFilesPerSourceSet(doProcessFiles = true) }
     }
+}
+
+internal class SourceSetResolvedMetadataProvider(
+    taskProvider: TaskProvider<out TransformKotlinGranularMetadata>
+) : ResolvedMetadataFilesProvider {
+    override val buildDependencies: Iterable<TaskProvider<*>> = listOf(taskProvider)
+    override val metadataResolutions: Iterable<MetadataDependencyResolution> by taskProvider.map { it.metadataDependencyResolutions }
+    override val metadataFilesByResolution: Map<MetadataDependencyResolution, FileCollection> by taskProvider.map { it.filesByResolution }
 }

@@ -236,6 +236,12 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             } else files()
         }
 
+    override val friendPaths: Iterable<FileCollection>
+        get() = mutableListOf<FileCollection>().also { allCollections ->
+            associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
+            allCollections.add(friendArtifacts)
+        }
+
     override val moduleName: String
         get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName() ?: ownModuleName
 

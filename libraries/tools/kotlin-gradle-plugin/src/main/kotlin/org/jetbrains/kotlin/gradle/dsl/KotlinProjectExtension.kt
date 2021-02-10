@@ -35,6 +35,9 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinTopL
 internal val Project.topLevelExtension: KotlinTopLevelExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinTopLevelExtension
 
+internal val Project.topLevelExtensionOrNull: KotlinTopLevelExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinTopLevelExtension?
+
 internal val Project.kotlinExtensionOrNull: KotlinProjectExtension?
     get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinProjectExtension
 

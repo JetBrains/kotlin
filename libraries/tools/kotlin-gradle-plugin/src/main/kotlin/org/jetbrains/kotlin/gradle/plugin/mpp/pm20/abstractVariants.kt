@@ -12,7 +12,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.fromPlatform
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KotlinModuleVariant
@@ -26,7 +26,7 @@ abstract class KotlinGradleVariant(
     abstract val platformType: KotlinPlatformType
 
     override val variantAttributes: Map<KotlinAttributeKey, String>
-        get() = mapOf(KotlinPlatformTypeAttribute to KotlinPlatformTypeAttribute.fromPlatform(platformType)) // TODO user attributes
+        get() = mapOf(KotlinPlatformTypeAttribute to kotlinPlatformTypeAttributeFromPlatform(platformType)) // TODO user attributes
 
     // TODO generalize with KotlinCompilation?
     val compileDependencyConfigurationName: String
@@ -48,7 +48,14 @@ abstract class KotlinGradleVariant(
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
     val apiElementsConfigurationName: String
         get() = disambiguateName("apiElements")
+
+    open val gradleVariantNames: Set<String>
+        get() = listOf(apiElementsConfigurationName, publishedConfigurationName(apiElementsConfigurationName)).toSet()
+
+    override fun toString(): String = "variant $fragmentName in $containingModule"
 }
+
+private fun kotlinPlatformTypeAttributeFromPlatform(platformType: KotlinPlatformType) = platformType.name
 
 // TODO: rewrite with the artifacts API
 internal val KotlinGradleVariant.defaultSourceArtifactTaskName: String
@@ -71,4 +78,8 @@ abstract class KotlinGradleVariantWithRuntimeDependencies(
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
     val runtimeElementsConfigurationName: String
         get() = disambiguateName("runtimeElements")
+
+    override val gradleVariantNames: Set<String>
+        get() = super.gradleVariantNames +
+                listOf(runtimeElementsConfigurationName, publishedConfigurationName(runtimeElementsConfigurationName))
 }

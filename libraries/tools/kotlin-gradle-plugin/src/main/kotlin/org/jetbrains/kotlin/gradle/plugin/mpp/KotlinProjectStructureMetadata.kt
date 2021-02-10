@@ -10,10 +10,16 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -27,10 +33,40 @@ import org.w3c.dom.NodeList
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 
-data class ModuleDependencyIdentifier(
-    val groupId: String?,
-    val moduleId: String
-)
+// FIXME support module classifiers for PM2.0 or drop this class in favor of KotlinModuleIdentifier
+open class ModuleDependencyIdentifier(
+    open val groupId: String?,
+    open val moduleId: String
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ModuleDependencyIdentifier) return false
+
+        if (groupId != other.groupId) return false
+        if (moduleId != other.moduleId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = groupId?.hashCode() ?: 0
+        result = 31 * result + moduleId.hashCode()
+        return result
+    }
+
+    operator fun component1(): String? = groupId
+    operator fun component2(): String = moduleId
+}
+
+class ChangingModuleDependencyIdentifier(
+    val groupIdProvider: () -> String?,
+    val moduleIdProvider: () -> String
+) : ModuleDependencyIdentifier(groupIdProvider(), moduleIdProvider()) {
+    override val groupId: String?
+        get() = groupIdProvider()
+    override val moduleId: String
+        get() = moduleIdProvider()
+}
 
 sealed class SourceSetMetadataLayout(
     @get:Input
@@ -96,6 +132,12 @@ data class KotlinProjectStructureMetadata(
 }
 
 internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjectStructureMetadata? {
+    val topLevelExtensionOrNull = project.topLevelExtensionOrNull
+    if (topLevelExtensionOrNull is KotlinPm20ProjectExtension) {
+        // FIXME: get module by ID, don't just take the main module
+        return buildProjectStructureMetadata(topLevelExtensionOrNull.main)
+    }
+
     val sourceSetsWithMetadataCompilations =
         project.multiplatformExtensionOrNull?.targets?.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)?.compilations?.associate {
             it.defaultSourceSet to it
@@ -138,6 +180,37 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
             sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject(project)
         },
+        isPublishedAsRoot = true
+    )
+}
+
+internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinProjectStructureMetadata {
+    val kotlinVariantToGradleVariantNames = module.variants.associate { it.name to it.gradleVariantNames }
+
+    fun <T> expandVariantKeys(map: Map<String, T>) =
+        map.entries.flatMap { (key, value) ->
+            kotlinVariantToGradleVariantNames[key].orEmpty().plus(key).map { it to value }
+        }.toMap()
+
+    val kotlinFragmentsPerKotlinVariant =
+        module.variants.associate { variant -> variant.name to variant.refinesClosure.map { it.name }.toSet() }
+    val fragmentRefinesRelation =
+        module.fragments.associate { it.name to it.directRefinesDependencies.map { it.name }.toSet() }
+
+    // FIXME: support native implementation-as-api-dependencies
+    val fragmentDependencies =
+        module.fragments.associate { fragment ->
+            fragment.name to fragment.declaredModuleDependencies.map {
+                ModuleIds.lossyFromModuleIdentifier(module.project, it.moduleIdentifier)
+            }.toSet()
+        }
+
+    return KotlinProjectStructureMetadata(
+        expandVariantKeys(kotlinFragmentsPerKotlinVariant),
+        fragmentRefinesRelation,
+        module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
+        fragmentDependencies,
+        emptySet(),
         isPublishedAsRoot = true
     )
 }

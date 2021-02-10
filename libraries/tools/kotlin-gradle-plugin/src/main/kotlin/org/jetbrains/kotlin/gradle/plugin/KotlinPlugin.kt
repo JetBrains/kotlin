@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMain
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -283,14 +284,14 @@ internal class Kotlin2JsSourceSetProcessor(
                     val baseName = if (kotlinCompilation.isMain()) {
                         project.name
                     } else {
-                        "${project.name}_${kotlinCompilation.name}"
+                        "${project.name}_${kotlinCompilation.compilationPurpose}"
                     }
                     kotlinTaskInstance.kotlinOptions.freeCompilerArgs += "$MODULE_NAME=${project.klibModuleName(baseName)}"
                 }
             }
 
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
-            if (kotlinCompilation is KotlinCompilation<*>) {
+            if (kotlinCompilation is KotlinCompilation<*>) { // FIXME support compiler plugins with PM20
                 subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)
             }
         }

@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.project.model
 // TODO think about state management: unresolved -> (known dependency graph?) ... -> completely resolved
 //      it seems to be important to learn whether or not the model is final
 interface ModuleDependencyResolver {
-    fun resolveDependency(moduleDependency: KotlinModuleDependency): KotlinModule?
+    fun resolveDependency(requestingModule: KotlinModule, moduleDependency: KotlinModuleDependency): KotlinModule?
 }
 
 // TODO merge with ModuleDependencyResolver?
@@ -34,4 +34,6 @@ sealed class DependencyGraphResolution(val requestingModule: KotlinModule) {
 class DependencyGraphNode(
     val module: KotlinModule,
     val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<DependencyGraphNode>>
-)
+) {
+    override fun toString(): String = "node ${module}"
+}
