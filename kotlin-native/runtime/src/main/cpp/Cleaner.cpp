@@ -64,8 +64,12 @@ RUNTIME_NOTHROW void DisposeCleaner(KRef thiz) {
 #endif
 }
 
+// ShutdownCleaners is called from runtime shutdown which is executed in the `runnable` thread state.
+// TODO: Shouldn't we switch state to `native` on the RuntimeShutdown side?
 void ShutdownCleaners(bool executeScheduledCleaners) {
     KInt worker = 0;
+    // Spin lock, switch to the native thread state.
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     do {
         worker = atomicGet(&globalCleanerWorker);
         RuntimeAssert(worker != kCleanerWorkerShutdown, "Cleaner worker must not be shutdown twice");
@@ -90,7 +94,7 @@ void ShutdownCleaners(bool executeScheduledCleaners) {
     RuntimeAssert(worker > 0, "Cleaner worker must be fully initialized here");
 
     atomicSet(&globalCleanerWorker, kCleanerWorkerShutdown);
-    Kotlin_CleanerImpl_shutdownCleanerWorker(worker, executeScheduledCleaners);
+    kotlin::CallKotlin(Kotlin_CleanerImpl_shutdownCleanerWorker, worker, executeScheduledCleaners);
     WaitNativeWorkerTermination(worker);
 }
 
@@ -104,7 +108,7 @@ extern "C" KInt Kotlin_CleanerImpl_getCleanerWorker() {
                 // Someone else is trying to initialize the worker. Try again.
                 continue;
             }
-            worker = Kotlin_CleanerImpl_createCleanerWorker();
+            worker = kotlin::CallKotlin(Kotlin_CleanerImpl_createCleanerWorker);
             if (!compareAndSet(&globalCleanerWorker, kCleanerWorkerInitializing, worker)) {
                 RuntimeCheck(false, "Someone interrupted worker initializing");
             }

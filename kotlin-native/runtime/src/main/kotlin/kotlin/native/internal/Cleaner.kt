@@ -126,7 +126,9 @@ private class CleanerImpl(
 ): Cleaner {}
 
 @SymbolName("Kotlin_Any_isShareable")
+@GCCritical // Fast: just a check for the legacy MM and always true for the new MM.
 external private fun Any?.isShareable(): Boolean
 
 @SymbolName("CreateStablePointer")
+@GCCritical // Modifies the root set.
 external private fun createStablePointer(obj: Any): NativePtr
