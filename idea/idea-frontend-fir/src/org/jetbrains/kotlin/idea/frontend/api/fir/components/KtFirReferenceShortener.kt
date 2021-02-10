@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.util.parentsOfType
 import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
@@ -65,11 +65,13 @@ internal class KtFirReferenceShortener(
     private val context = FirShorteningContext(firResolveState)
 
     override fun collectShortenings(file: KtFile, selection: TextRange): ShortenCommand {
-        resolveFileToBodyResolve(file)
-        val firFile = file.getOrBuildFirOfType<FirFile>(firResolveState)
+        val declarationToVisit = file.findSmallestDeclarationContainingSelection(selection)
+            ?: file.withDeclarationsResolvedToBodyResolve()
+
+        val firDeclaration = declarationToVisit.getOrBuildFir(firResolveState)
 
         val collector = ElementsToShortenCollector(context)
-        firFile.acceptChildren(collector)
+        firDeclaration.accept(collector)
 
         return ShortenCommandImpl(
             file,
@@ -79,12 +81,19 @@ internal class KtFirReferenceShortener(
         )
     }
 
-    private fun resolveFileToBodyResolve(file: KtFile) {
-        for (declaration in file.declarations) {
+    private fun KtFile.withDeclarationsResolvedToBodyResolve(): KtFile {
+        for (declaration in declarations) {
             declaration.getOrBuildFir(firResolveState) // temporary hack, resolves declaration to BODY_RESOLVE stage
         }
+
+        return this
     }
 }
+
+private fun KtFile.findSmallestDeclarationContainingSelection(selection: TextRange): KtDeclaration? =
+    findElementAt(selection.startOffset)
+        ?.parentsOfType<KtDeclaration>(withSelf = true)
+        ?.firstOrNull { selection in it.textRange }
 
 private data class AvailableClassifier(val classId: ClassId, val isFromStarOrPackageImport: Boolean)
 
