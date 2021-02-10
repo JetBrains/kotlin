@@ -12,7 +12,15 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
-
+/**
+ * Context that defines how type-checker operates, stores type-checker state,
+ * created by [TypeCheckerProviderContext.newBaseTypeCheckerContext] in most cases
+ *
+ * Stateful and shouldn't be reused
+ *
+ * Once some type-checker operation is performed using a [TypeCheckerProviderContext], for example a [AbstractTypeChecker.isSubtypeOf],
+ * new instance of particular [AbstractTypeCheckerContext] should be created, with properly specified type system context
+ */
 abstract class AbstractTypeCheckerContext() {
 
     abstract val typeSystemContext: TypeSystemContext
