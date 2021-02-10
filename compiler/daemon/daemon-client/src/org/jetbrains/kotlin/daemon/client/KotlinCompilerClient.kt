@@ -376,7 +376,7 @@ object KotlinCompilerClient {
                 "-D$JAVA_RMI_SERVER_HOSTNAME=$serverHostname")
         val javaVersion = System.getProperty("java.specification.version")?.toIntOrNull()
         val javaIllegalAccessWorkaround =
-            if (javaVersion != null && javaVersion >= 17)
+            if (javaVersion != null && javaVersion >= 16)
                 listOf("--illegal-access=permit")
             else emptyList()
         val args = listOf(
