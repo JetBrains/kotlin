@@ -349,7 +349,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
 
             @Composable
-            fun main() {
+            fun test() {
                 Foo { Leaf() }
             }
         """
@@ -366,7 +366,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
 
             @Composable
-            fun main() {
+            fun test() {
                 Foo { <!COMPOSABLE_INVOCATION!>Leaf<!>() }
             }
         """
