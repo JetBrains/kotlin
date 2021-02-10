@@ -848,6 +848,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.BACKING_FIELD_IN_INTERFACE) { firDiagnostic ->
+        BackingFieldInInterfaceImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD) { firDiagnostic ->
+        ExtensionPropertyWithBackingFieldImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD) { firDiagnostic ->
+        PropertyInitializerNoBackingFieldImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_DELEGATED_PROPERTY) { firDiagnostic ->
         AbstractDelegatedPropertyImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
