@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
@@ -436,7 +437,10 @@ class FirCallCompletionResultsWriterTransformer(
         // Control flow info is necessary prerequisite because we collect return expressions in that function
         //
         // Example: second lambda in the call like list.filter({}, {})
-        if (!dataFlowAnalyzer.isThereControlFlowInfoForAnonymousFunction(anonymousFunction)) return anonymousFunction.compose()
+        if (!dataFlowAnalyzer.isThereControlFlowInfoForAnonymousFunction(anonymousFunction)) {
+            // But, don't leave implicit type refs behind
+            return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
+        }
 
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->
             // From the argument mapping, the expected type of this anonymous function would be:
@@ -507,6 +511,33 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         return result
+    }
+
+    private fun transformImplicitTypeRefInAnonymousFunction(
+        anonymousFunction: FirAnonymousFunction
+    ): CompositeTransformResult<FirStatement> {
+        val implicitTypeTransformer = object : FirDefaultTransformer<Nothing?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+                @Suppress("UNCHECKED_CAST")
+                return (element.transformChildren(this, data) as E).compose()
+            }
+
+            override fun transformImplicitTypeRef(
+                implicitTypeRef: FirImplicitTypeRef,
+                data: Nothing?
+            ): CompositeTransformResult<FirTypeRef> =
+                buildErrorTypeRef {
+                    source = implicitTypeRef.source
+                    // NB: this error message assumes that it is used only if CFG for the anonymous function is not available
+                    diagnostic = ConeSimpleDiagnostic("Cannot infer type w/o CFG", DiagnosticKind.InferenceError)
+                }.compose()
+
+        }
+        // NB: if we transform simply all children, there would be too many type error reports.
+        anonymousFunction.transformReturnTypeRef(implicitTypeTransformer, null)
+        anonymousFunction.transformValueParameters(implicitTypeTransformer, null)
+        anonymousFunction.transformBody(implicitTypeTransformer, null)
+        return anonymousFunction.compose()
     }
 
     override fun transformReturnExpression(
