@@ -1,7 +1,7 @@
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-//            fun <T> lazy<Int>(() -> Int): Lazy<Int>
+//            fun <T> lazy<Int>(() -> T): Lazy<T>
 //            │      Int
 //            │      │ fun (Int).plus(Int): Int
 //  Int       │      │ │ Int

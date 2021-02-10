@@ -143,7 +143,7 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
                 return null
             }
 
-            val descriptor = resolvedCall.resultingDescriptor
+            val descriptor = resolvedCall.candidateDescriptor
             val typeArguments = resolvedCall.typeArguments
                 .takeIf { it.isNotEmpty() }
                 ?.values?.joinToString(", ", "<", ">") { renderType(it) } ?: ""

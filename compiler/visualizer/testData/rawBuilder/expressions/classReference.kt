@@ -13,14 +13,14 @@ fun test() {
 //  │
     A()::class
 
-//  class A  val <T> reflect/KClass<A>.java: java/lang/Class<A>
+//  class A  val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //  │        │
     A::class.java
-//                val <T> reflect/KClass<A>.java: java/lang/Class<A>
+//                val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //                │
     test.A::class.java
 //  constructor A()
-//  │          val <T> reflect/KClass<out A>.java: java/lang/Class<out A>
+//  │          val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //  │          │
     A()::class.java
 }

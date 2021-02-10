@@ -2,7 +2,7 @@
 package org.jetbrains.kotlin.test
 
 //  collections/List<Int>
-//  │           fun <T> collections/listOf<Int>(vararg Int): collections/List<Int>
+//  │           fun <T> collections/listOf<Int>(vararg T): collections/List<T>
 //  │           │      Int
 //  │           │      │  Int
 //  │           │      │  │  Int

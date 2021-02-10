@@ -74,15 +74,15 @@ fun bar(): Int {
 //             │
 fun test(list: List<Int>) {
 //      collections/MutableMap<Int, String>
-//      │     fun <K, V> collections/mutableMapOf<Int, String>(): collections/MutableMap<Int, String>
+//      │     fun <K, V> collections/mutableMapOf<Int, String>(): collections/MutableMap<K, V>
 //      │     │
     val map = mutableMapOf<Int, String>()
 //  test.list: collections/List<Int>
-//  │    fun <T> collections/Iterable<Int>.forEach<Int>((Int) -> Unit): Unit
+//  │    fun <T> collections/Iterable<T>.forEach<Int>((T) -> Unit): Unit
 //  │    │         val test.map: collections/MutableMap<Int, String>
-//  │    │         │   fun <K, V> collections/MutableMap<Int, String>.getOrPut<Int, String>(Int, () -> String): String
+//  │    │         │   fun <K, V> collections/MutableMap<K, V>.getOrPut<Int, String>(K, () -> V): V
 //  │    │         │   │        test.<anonymous>.it: Int
-//  │    │         │   │        │     fun <T> collections/mutableListOf<???>(): collections/MutableList<???>
+//  │    │         │   │        │     fun <T> collections/mutableListOf<???>(): collections/MutableList<T>
 //  │    │         │   │        │     │                  fun (String).plus(Any?): String
 //  │    │         │   │        │     │                  │
     list.forEach { map.getOrPut(it, { mutableListOf() }) += "" }
