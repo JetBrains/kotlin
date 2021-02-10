@@ -50,7 +50,10 @@ OBJ_GETTER(mm::InitSingleton, ThreadData* threadData, ObjHeader** location, cons
 
     // Spin lock.
     ObjHeader* value = nullptr;
-    while ((value = __sync_val_compare_and_swap(location, nullptr, initializing)) == initializing) {
+    {
+        ThreadStateGuard guard(ThreadState::kNative);
+        while ((value = __sync_val_compare_and_swap(location, nullptr, initializing)) == initializing) {
+        }
     }
     if (value != nullptr) {
         // Initialized by someone else.
