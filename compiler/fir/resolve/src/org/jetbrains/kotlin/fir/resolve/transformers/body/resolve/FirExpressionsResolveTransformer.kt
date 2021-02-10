@@ -262,7 +262,14 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         if (functionCall.calleeReference is FirResolvedNamedReference && functionCall.resultType is FirImplicitTypeRef) {
             storeTypeFromCallee(functionCall)
         }
-        if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
+        if (functionCall.calleeReference !is FirSimpleNamedReference) {
+            // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
+            // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
+            if (functionCall.calleeReference !is FirResolvedNamedReference) {
+                functionCall.transformChildren(transformer, data)
+            }
+            return functionCall.compose()
+        }
         if (functionCall.calleeReference is FirNamedReferenceWithCandidate) return functionCall.compose()
         dataFlowAnalyzer.enterCall()
         functionCall.transformAnnotations(transformer, data)
