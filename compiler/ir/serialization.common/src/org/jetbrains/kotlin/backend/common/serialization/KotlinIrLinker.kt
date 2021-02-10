@@ -681,7 +681,9 @@ abstract class KotlinIrLinker(
             deserializersForModules.entries.find { it.key.name == moduleName }?.value ?: error("No module for name '$moduleName' found")
         assert(signature == signature.topLevelSignature()) { "Signature '$signature' has to be top level" }
         if (signature !in moduleDeserializer) error("No signature $signature in module $moduleName")
-        return moduleDeserializer.deserializeIrSymbol(signature, topLevelKindToSymbolKind(kind))
+        return moduleDeserializer.deserializeIrSymbol(signature, topLevelKindToSymbolKind(kind)).also {
+            deserializeAllReachableTopLevels()
+        }
     }
 
     // The issue here is that an expect can not trigger its actual deserialization by reachability
