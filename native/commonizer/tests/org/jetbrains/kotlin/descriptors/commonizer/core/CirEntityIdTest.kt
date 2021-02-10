@@ -171,6 +171,30 @@ class CirEntityIdTest {
     }
 
     @Test
+    fun isNested() {
+        listOf(
+            "" to false,
+            "/" to false,
+            "foo/" to false,
+            "foo/bar/" to false,
+            "My" to false,
+            "My.Test" to true,
+            "My.Test.Class" to true,
+            "/My" to false,
+            "/My.Test" to true,
+            "/My.Test.Class" to true,
+            "foo/My" to false,
+            "foo/My.Test" to true,
+            "foo/My.Test.Class" to true,
+            "foo/bar/My" to false,
+            "foo/bar/My.Test" to true,
+            "foo/bar/My.Test.Class" to true,
+        ).forEach { (rawEntityId, isNested) ->
+            assertEquals(isNested, CirEntityId.create(rawEntityId).isNestedEntity)
+        }
+    }
+
+    @Test
     fun createNested() {
         val nested1 = CirName.create("Nested1")
         val nested2 = CirName.create("Nested2")
@@ -203,26 +227,24 @@ class CirEntityIdTest {
     }
 
     @Test
-    fun isNested() {
+    fun createParent() {
         listOf(
-            "" to false,
-            "/" to false,
-            "foo/" to false,
-            "foo/bar/" to false,
-            "My" to false,
-            "My.Test" to true,
-            "My.Test.Class" to true,
-            "/My" to false,
-            "/My.Test" to true,
-            "/My.Test.Class" to true,
-            "foo/My" to false,
-            "foo/My.Test" to true,
-            "foo/My.Test.Class" to true,
-            "foo/bar/My" to false,
-            "foo/bar/My.Test" to true,
-            "foo/bar/My.Test.Class" to true,
-        ).forEach { (rawEntityId, isNested) ->
-            assertEquals(isNested, CirEntityId.create(rawEntityId).isNestedEntity)
+            "" to null,
+            "foo/" to null,
+            "foo/bar/" to null,
+            "Outer" to null,
+            "foo/Outer" to null,
+            "foo/bar/Outer" to null,
+            "Outer.Nested1" to "Outer",
+            "foo/Outer.Nested1" to "foo/Outer",
+            "foo/bar/Outer.Nested1" to "foo/bar/Outer",
+            "Outer.Nested1.Nested2" to "Outer.Nested1",
+            "foo/Outer.Nested1.Nested2" to "foo/Outer.Nested1",
+            "foo/bar/Outer.Nested1.Nested2" to "foo/bar/Outer.Nested1"
+        ).forEach { (rawEntityId, rawParentEntityId) ->
+            val entityId = CirEntityId.create(rawEntityId)
+            val parentEntityId = rawParentEntityId?.let(CirEntityId::create)
+            assertSame(parentEntityId, entityId.getParentEntityId())
         }
     }
 }

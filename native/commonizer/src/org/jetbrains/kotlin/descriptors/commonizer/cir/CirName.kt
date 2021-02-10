@@ -102,9 +102,12 @@ class CirEntityId private constructor(val packageName: CirPackageName, val relat
         relativeNameSegments.joinTo(this, ".")
     }
 
+    val isNestedEntity: Boolean get() = relativeNameSegments.size > 1
+
     fun createNestedEntityId(entityName: CirName): CirEntityId = create(packageName, relativeNameSegments + entityName)
 
-    val isNestedEntity: Boolean get() = relativeNameSegments.size > 1
+    fun getParentEntityId(): CirEntityId? =
+        if (isNestedEntity) create(packageName, relativeNameSegments.copyOfRange(0, relativeNameSegments.size - 1)) else null
 
     companion object {
         fun create(entityId: String): CirEntityId {
