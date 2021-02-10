@@ -36,6 +36,8 @@
 #include "Types.h"
 #include "Worker.h"
 
+using namespace kotlin;
+
 extern "C" {
 
 RUNTIME_NORETURN void ThrowWorkerInvalidState();
@@ -125,6 +127,11 @@ class Worker {
 
   void startEventLoop();
 
+  // Cleans up the jobs in the queue and disposes stable pointers used by this worker.
+  // Called from runtime deinit when TLS may be deallocated, thus accepts the current
+  // MemoryState as a parameter.
+  void destroy(MemoryState* memoryState);
+
   void putJob(Job job, bool toFront);
   void putDelayedJob(Job job);
 
@@ -175,6 +182,8 @@ namespace {
 THREAD_LOCAL_VARIABLE Worker* g_worker = nullptr;
 
 KNativePtr transfer(ObjHolder* holder, KInt mode) {
+  // Operates fully in the runnable thread state.
+  AssertThreadState(ThreadState::kRunnable);
   void* result = CreateStablePointer(holder->obj());
   if (!ClearSubgraphReferences(holder->obj(), mode == CHECKED)) {
     DisposeStablePointer(result);
@@ -185,16 +194,24 @@ KNativePtr transfer(ObjHolder* holder, KInt mode) {
 }
 
 class Locker {
- public:
-  explicit Locker(pthread_mutex_t* lock) : lock_(lock) {
-    pthread_mutex_lock(lock_);
-  }
-  ~Locker() {
-     pthread_mutex_unlock(lock_);
-  }
+public:
+    explicit Locker(pthread_mutex_t* lock, bool assertThreadState = true) : lock_(lock) {
+        if (assertThreadState) {
+            AssertThreadState(ThreadState::kNative);
+        }
+        pthread_mutex_lock(lock_);
+    }
+    Locker(pthread_mutex_t* lock, MemoryState* memoryState) : lock_(lock) {
+        AssertThreadState(memoryState, ThreadState::kNative);
+        pthread_mutex_lock(lock_);
+    }
 
- private:
-  pthread_mutex_t* lock_;
+    ~Locker() {
+        pthread_mutex_unlock(lock_);
+    }
+
+private:
+    pthread_mutex_t* lock_;
 };
 
 class Future {
@@ -214,6 +231,8 @@ class Future {
     Locker locker(&lock_);
     if (result_ != nullptr) {
       // No one cared to consume result - dispose it.
+      // Disposing a stable pointer modifies the root set, so switch to the runnable thread state.
+      ThreadStateGuard guard(ThreadState::kRunnable);
       DisposeStablePointer(result_);
       result_ = nullptr;
     }
@@ -225,6 +244,8 @@ class Future {
       pthread_cond_wait(&cond_, &lock_);
     }
     // TODO: maybe use message from exception?
+    // Adopting a stable pointer and writing to the root set. So switch to the runnable thread state.
+    ThreadStateGuard guard(ThreadState::kRunnable);
     if (state_ == THROWN)
         ThrowIllegalStateException();
     auto result = AdoptStablePointer(result_, OBJ_RESULT);
@@ -292,9 +313,9 @@ class State {
     workers_.erase(it);
   }
 
-  void destroyWorkerUnlocked(Worker* worker) {
+  void destroyWorkerUnlocked(Worker* worker, MemoryState* memoryState) {
     {
-      Locker locker(&lock_);
+      Locker locker(&lock_, memoryState);
       auto id = worker->id();
       auto it = workers_.find(id);
       if (it != workers_.end()) {
@@ -302,6 +323,7 @@ class State {
       }
     }
     GC_UnregisterWorker(worker);
+    worker->destroy(memoryState);
     konanDestructInstance(worker);
   }
 
@@ -379,14 +401,14 @@ class State {
   // Returns `true` if something was indeed processed.
   bool processQueueUnlocked(KInt id) {
     // Can only process queue of the current worker.
-    if (::g_worker == nullptr || id != ::g_worker->id()) ThrowWorkerInvalidState();
+    if (::g_worker == nullptr || id != ::g_worker->id()) CallKotlinNoReturn(ThrowWorkerInvalidState);
     JobKind kind = ::g_worker->processQueueElement(false);
     return kind != JOB_NONE && kind != JOB_TERMINATE;
   }
 
   bool parkUnlocked(KInt id, KLong timeoutMicroseconds, KBoolean process) {
       // Can only park current worker.
-      if (::g_worker == nullptr || id != ::g_worker->id()) ThrowWorkerInvalidState();
+      if (::g_worker == nullptr || id != ::g_worker->id()) CallKotlinNoReturn(ThrowWorkerInvalidState);
       return ::g_worker->park(timeoutMicroseconds, process);
   }
 
@@ -402,9 +424,8 @@ class State {
     {
       Locker locker(&lock_);
       auto it = futures_.find(id);
-      if (it == futures_.end()) ThrowWorkerInvalidState();
+      if (it == futures_.end()) CallKotlinNoReturn(ThrowWorkerInvalidState);
       future = it->second;
-
     }
 
     KRef result = future->consumeResultUnlocked(OBJ_RESULT);
@@ -422,15 +443,16 @@ class State {
   }
 
   OBJ_GETTER(getWorkerNameUnlocked, KInt id) {
-    ObjHolder nameHolder;
-    {
-      Locker locker(&lock_);
-      auto it = workers_.find(id);
-      if (it == workers_.end()) {
-        ThrowWorkerInvalidState();
-      }
-      DerefStablePointer(it->second->name(), nameHolder.slot());
+    Locker locker(&lock_);
+    auto it = workers_.find(id);
+    if (it == workers_.end()) {
+      CallKotlinNoReturn(ThrowWorkerInvalidState);
     }
+
+    // Root set mutating via an ObjHolder -> switch thread state to runnable.
+    ThreadStateGuard guard(ThreadState::kRunnable);
+    ObjHolder nameHolder;
+    DerefStablePointer(it->second->name(), nameHolder.slot());
     RETURN_OBJ(nameHolder.obj());
   }
 
@@ -450,7 +472,9 @@ class State {
 
   void signalAnyFuture() {
     {
-      Locker locker(&lock_);
+      // Do not assert the current thread state since this method may be called
+      // from worker deinitialization sequence when TLS may be already deallocated.
+      Locker locker(&lock_, false);
       currentVersion_++;
     }
     pthread_cond_broadcast(&cond_);
@@ -466,7 +490,9 @@ class State {
   KInt nextFutureId() { return currentFutureId_++; }
 
   void destroyWorkerThreadDataUnlocked(KInt id) {
-    Locker locker(&lock_);
+    // We destroy worker data when its thread is already unresigtered from the memory subsystem,
+    // so there is no need to wrap the lock with a thread state switch.
+    Locker locker(&lock_, false);
     auto it = terminating_native_workers_.find(id);
     if (it == terminating_native_workers_.end()) return;
     // If this worker was not joined, detach it to free resources.
@@ -563,7 +589,9 @@ void Future::storeResultUnlocked(KNativePtr result, bool ok) {
 
 void Future::cancelUnlocked() {
   {
-    Locker locker(&lock_);
+    // Do not assert the current thread state since this method may be called
+    // from worker deinitialization sequence when TLS may be already deallocated.
+    Locker locker(&lock_, false);
     state_ = CANCELLED;
     result_ = nullptr;
     pthread_cond_broadcast(&cond_);
@@ -582,22 +610,28 @@ KInt startWorker(KBoolean errorReporting, KRef customName) {
 }
 
 KInt currentWorker() {
-  if (g_worker == nullptr) ThrowWorkerInvalidState();
+  if (g_worker == nullptr) CallKotlinNoReturn(ThrowWorkerInvalidState);
   return ::g_worker->id();
 }
 
 KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
-  ObjHolder holder;
-  WorkerLaunchpad(producer, holder.slot());
-  KNativePtr jobArgument = transfer(&holder, transferMode);
+  KNativePtr jobArgument;
+  {
+    // Here is a Kotlin call with ObjHolders, so we have to switch to the runnable thread state.
+    ThreadStateGuard guard(ThreadState::kRunnable);
+    ObjHolder holder;
+    WorkerLaunchpad(producer, holder.slot()); // Kotlin call.
+    jobArgument = transfer(&holder, transferMode);
+  }
+
   Future* future = theState()->addJobToWorkerUnlocked(id, jobFunction, jobArgument, false, transferMode);
-  if (future == nullptr) ThrowWorkerInvalidState();
+  if (future == nullptr) CallKotlinNoReturn(ThrowWorkerInvalidState);
   return future->id();
 }
 
 void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
   if (!theState()->executeJobAfterInWorkerUnlocked(id, job, afterMicroseconds))
-    ThrowWorkerInvalidState();
+    CallKotlinNoReturn(ThrowWorkerInvalidState);
 }
 
 KBoolean processQueue(KInt id) {
@@ -623,7 +657,7 @@ OBJ_GETTER(getWorkerName, KInt id) {
 KInt requestTermination(KInt id, KBoolean processScheduledJobs) {
   Future* future = theState()->addJobToWorkerUnlocked(
       id, nullptr, nullptr, /* toFront = */ !processScheduledJobs, UNCHECKED);
-  if (future == nullptr) ThrowWorkerInvalidState();
+  if (future == nullptr) CallKotlinNoReturn(ThrowWorkerInvalidState);
   return future->id();
 }
 
@@ -635,10 +669,12 @@ KInt versionToken() {
   return theState()->versionToken();
 }
 
+// Runs in the runnable thread state.
 OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
   RETURN_RESULT_OF(AdoptStablePointer, stable);
 }
 
+// Runs in the runnable thread state.
 KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
    ObjHolder result;
    WorkerLaunchpad(producer, result.slot());
@@ -652,59 +688,61 @@ KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
 #else
 
 KInt startWorker(KBoolean errorReporting, KRef customName) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KInt stateOfFuture(KInt id) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KInt execute(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 void executeAfter(KInt id, KRef job, KLong afterMicroseconds) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KBoolean processQueue(KInt id) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KBoolean park(KInt id, KLong timeoutMicroseconds, KBoolean process) {
-   ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KInt currentWorker() {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 OBJ_GETTER(consumeFuture, KInt id) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 OBJ_GETTER(getWorkerName, KInt id) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KInt requestTermination(KInt id, KBoolean processScheduledJobs) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KBoolean waitForAnyFuture(KInt versionToken, KInt millis) {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
 KInt versionToken() {
-  ThrowWorkerUnsupported();
+  CallKotlinNoReturn(ThrowWorkerUnsupported);
 }
 
+// Runs in the runnable thread state.
 OBJ_GETTER(attachObjectGraphInternal, KNativePtr stable) {
   ThrowWorkerUnsupported();
 }
 
+// Runs in the runnable thread state.
 KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
-   ThrowWorkerUnsupported();
+  ThrowWorkerUnsupported();
 }
 
 #endif  // WITH_WORKERS
@@ -722,6 +760,8 @@ KInt GetWorkerId(Worker* worker) {
 Worker* WorkerInit(KBoolean errorReporting) {
 #if WITH_WORKERS
   if (::g_worker != nullptr) return ::g_worker;
+  // TODO: This function is called from initRuntime. Do we really need to switch state here, not there?
+  ThreadStateGuard guard(ThreadState::kNative);
   Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0, nullptr, WorkerKind::kOther);
   ::g_worker = worker;
   return worker;
@@ -730,22 +770,33 @@ Worker* WorkerInit(KBoolean errorReporting) {
 #endif  // WITH_WORKERS
 }
 
-void WorkerDeinit(Worker* worker) {
+// The worker deinitialization requires proper thread state switching because
+// it contains locks and mutates the root set. But we call it from runtime
+// deinitialization when TLS may be already deallocated which makes a pointer to
+// the current thread data invalid. Thus we have to explicitly pass the MemoryState
+// pointer to the deinitialization sequence.
+void WorkerDeinit(Worker* worker, MemoryState* memoryState) {
 #if WITH_WORKERS
+  // TODO: This function is called from deinitRuntime. Do we really need to switch state here, not there?
+  ThreadStateGuard guard(memoryState, ThreadState::kNative);
   ::g_worker = nullptr;
-  theState()->destroyWorkerUnlocked(worker);
+  theState()->destroyWorkerUnlocked(worker, memoryState);
 #endif  // WITH_WORKERS
 }
 
 void WorkerDestroyThreadDataIfNeeded(KInt id) {
 #if WITH_WORKERS
+  // No need to switch thread state because the current thread is already unregistered
+  // and it's memory state is already deallocated at this point.
   theState()->destroyWorkerThreadDataUnlocked(id);
 #endif
 }
 
 void WaitNativeWorkersTermination() {
 #if WITH_WORKERS
-    theState()->waitNativeWorkersTerminationUnlocked(true, [](KInt worker) { return true; });
+  // TODO: This function is called from shutdownRuntime. Do we really need to switch state here, not there?
+  ThreadStateGuard guard(ThreadState::kNative);
+  theState()->waitNativeWorkersTerminationUnlocked(true, [](KInt worker) { return true; });
 #endif
 }
 
@@ -766,37 +817,6 @@ bool WorkerSchedule(KInt id, KNativePtr jobStablePtr) {
 #if WITH_WORKERS
 
 Worker::~Worker() {
-  // Cleanup jobs in the queue.
-  for (auto job : queue_) {
-    switch (job.kind) {
-      case JOB_REGULAR:
-        DisposeStablePointer(job.regularJob.argument);
-        job.regularJob.future->cancelUnlocked();
-        break;
-      case JOB_EXECUTE_AFTER: {
-        // TODO: what do we do here? Shall we execute them?
-        DisposeStablePointer(job.executeAfter.operation);
-        break;
-      }
-      case JOB_TERMINATE: {
-        // TODO: any more processing here?
-        job.terminationRequest.future->cancelUnlocked();
-        break;
-      }
-      case JOB_NONE: {
-        RuntimeCheck(false, "Cannot be in queue");
-        break;
-      }
-    }
-  }
-
-  for (auto job : delayed_) {
-    RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
-    DisposeStablePointer(job.executeAfter.operation);
-  }
-
-  if (name_ != nullptr) DisposeStablePointer(name_);
-
   pthread_mutex_destroy(&lock_);
   pthread_cond_destroy(&cond_);
 }
@@ -822,6 +842,53 @@ void* workerRoutine(void* argument) {
 
 void Worker::startEventLoop() {
   pthread_create(&thread_, nullptr, workerRoutine, this);
+}
+
+void Worker::destroy(MemoryState* memoryState) {
+    // TODO: May be use a single thread state guard in the beginning
+    //  of the method and place safepoints manually on back branches?
+    // Cleanup jobs in the queue.
+    for (auto job : queue_) {
+        switch (job.kind) {
+            case JOB_REGULAR:
+                {
+                    // Root set modification.
+                    ThreadStateGuard guard(memoryState, ThreadState::kRunnable);
+                    DisposeStablePointerInDeinit(job.regularJob.argument, memoryState);
+                }
+                job.regularJob.future->cancelUnlocked();
+                break;
+            case JOB_EXECUTE_AFTER: {
+                // TODO: what do we do here? Shall we execute them?
+                // Root set modification.
+                ThreadStateGuard guard(memoryState, ThreadState::kRunnable);
+                DisposeStablePointerInDeinit(job.executeAfter.operation, memoryState);
+                break;
+            }
+            case JOB_TERMINATE: {
+                // TODO: any more processing here?
+                job.terminationRequest.future->cancelUnlocked();
+                break;
+            }
+            case JOB_NONE: {
+                RuntimeCheck(false, "Cannot be in queue");
+                break;
+            }
+        }
+    }
+
+    for (auto job : delayed_) {
+        RuntimeAssert(job.kind == JOB_EXECUTE_AFTER, "Must be delayed");
+        // Root set modification.
+        ThreadStateGuard guard(memoryState, ThreadState::kRunnable);
+        DisposeStablePointerInDeinit(job.executeAfter.operation, memoryState);
+    }
+
+    if (name_ != nullptr) {
+        // Root set modification.
+        ThreadStateGuard guard(memoryState, ThreadState::kRunnable);
+        DisposeStablePointerInDeinit(name_, memoryState);
+    }
 }
 
 void Worker::putJob(Job job, bool toFront) {
@@ -928,8 +995,6 @@ bool Worker::park(KLong timeoutMicroseconds, bool process) {
 
 JobKind Worker::processQueueElement(bool blocking) {
   GC_CollectorCallback(this);
-  ObjHolder argumentHolder;
-  ObjHolder resultHolder;
   if (terminated_) return JOB_TERMINATE;
   Job job = getJob(blocking);
   switch (job.kind) {
@@ -950,6 +1015,9 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_EXECUTE_AFTER: {
+      // Switch to the runnable thread state to run the job callback and
+      // operate with its result via ObjHolders.
+      ThreadStateGuard guard(ThreadState::kRunnable);
       ObjHolder operationHolder, dummyHolder;
       KRef obj = DerefStablePointer(job.executeAfter.operation, operationHolder.slot());
       try {
@@ -965,25 +1033,35 @@ JobKind Worker::processQueueElement(bool blocking) {
       break;
     }
     case JOB_REGULAR: {
-      KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
       KNativePtr result = nullptr;
       bool ok = true;
-      try {
+      {
+        // Switch to the runnable thread state to:
+        //  - adopt a stable pointer (thus modify the root set),
+        //  - run the job callback,
+        //  - operate with the argument and the result of the callback via ObjHolders.
+        ThreadStateGuard guard(ThreadState::kRunnable);
+        ObjHolder argumentHolder;
+        ObjHolder resultHolder;
+        KRef argument = AdoptStablePointer(job.regularJob.argument, argumentHolder.slot());
+        try {
 #if KONAN_OBJC_INTEROP
-        konan::AutoreleasePool autoreleasePool;
+          konan::AutoreleasePool autoreleasePool;
 #endif
-        job.regularJob.function(argument, resultHolder.slot());
-        argumentHolder.clear();
-        // Transfer the result.
-        result = transfer(&resultHolder, job.regularJob.transferMode);
-       } catch (ExceptionObjHolder& e) {
-         ok = false;
-         if (errorReporting())
-           ReportUnhandledException(e.GetExceptionObject());
-       }
-       // Notify the future.
-       job.regularJob.future->storeResultUnlocked(result, ok);
-       break;
+          job.regularJob.function(argument, resultHolder.slot());
+          argumentHolder.clear();
+          // Transfer the result.
+          result = transfer(&resultHolder, job.regularJob.transferMode);
+        } catch (ExceptionObjHolder& e) {
+          ok = false;
+          if (errorReporting())
+            ReportUnhandledException(e.GetExceptionObject());
+        }
+      }
+      // Notify the future.
+      // storeResultUnlocked aquires a lock, thus we call it in the native thread state.
+      job.regularJob.future->storeResultUnlocked(result, ok);
+      break;
     }
     default: {
       RuntimeCheck(false, "Must be exhaustive");

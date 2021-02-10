@@ -236,10 +236,13 @@ void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // checks if subgraph referenced by given root is disjoint from the rest of
 // object graph, i.e. no external references exists.
 bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
-// Creates stable pointer out of the object.
+// Creates a stable pointer out of the object.
 void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
-// Disposes stable pointer to the object.
+// Disposes a stable pointer to the object.
 void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
+// Disposes a stable pointer to the object.
+// Accepts a MemoryState, thus can be called from deinitiliazation methods, when TLS is already deallocated.
+void DisposeStablePointerInDeinit(void* pointer, MemoryState* memoryState) RUNTIME_NOTHROW;
 // Translate stable pointer to object reference.
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.

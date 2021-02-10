@@ -352,6 +352,14 @@ extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
     mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
 }
 
+extern "C" RUNTIME_NOTHROW void DisposeStablePointerInDeinit(void* pointer, MemoryState* memoryState) {
+    if (!pointer)
+        return;
+
+    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
+    mm::StableRefRegistry::Instance().UnregisterStableRef(memoryState->GetThreadData(), node);
+}
+
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
     if (!pointer)
         RETURN_OBJ(nullptr);
