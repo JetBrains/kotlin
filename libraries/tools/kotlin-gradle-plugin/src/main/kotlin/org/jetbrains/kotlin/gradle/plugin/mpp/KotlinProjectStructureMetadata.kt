@@ -80,7 +80,7 @@ sealed class SourceSetMetadataLayout(
     override fun toString(): String = name
 
     companion object {
-        private val values = listOf(METADATA, KLIB)
+        private val values get() = listOf(METADATA, KLIB)
 
         fun byName(name: String): SourceSetMetadataLayout? = values.firstOrNull { it.name == name }
 
