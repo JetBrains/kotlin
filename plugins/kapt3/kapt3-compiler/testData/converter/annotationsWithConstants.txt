@@ -116,6 +116,45 @@ package app;
 import java.lang.System;
 
 @kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValue {
+
+    public abstract int[] ids();
+}
+
+////////////////////
+
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValueByte {
+
+    public abstract byte[] ids();
+}
+
+////////////////////
+
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValueString {
+
+    public abstract java.lang.String[] ids();
+}
+
+////////////////////
+
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
 public final class MyActivity {
     @BindField(id = lib.R.id.textView)
     private final int a = 0;
@@ -220,6 +259,30 @@ public final class MyActivity {
 
     @Bind(id = app.B.id.textView)
     public final void plainIntConstant() {
+    }
+
+    @MultiValue(ids = {})
+    public final void multi0() {
+    }
+
+    @MultiValue(ids = {app.B.id.textView})
+    public final void multi1() {
+    }
+
+    @MultiValue(ids = {app.B.id.textView, app.B.a3})
+    public final void multi2() {
+    }
+
+    @MultiValue(ids = {app.B.id.textView, app.B.a3})
+    public final void multi3() {
+    }
+
+    @MultiValueString(ids = {"A"})
+    public final void multi4() {
+    }
+
+    @MultiValueByte(ids = {app.B.a2})
+    public final void multi5() {
     }
 
     public final int getPropB() {
