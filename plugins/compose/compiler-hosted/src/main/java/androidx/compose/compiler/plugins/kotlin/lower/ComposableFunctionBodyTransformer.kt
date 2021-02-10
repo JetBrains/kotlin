@@ -21,6 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
+import androidx.compose.compiler.plugins.kotlin.hasExplicitGroupsAnnotation
 import androidx.compose.compiler.plugins.kotlin.hasReadonlyComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.hasNonRestartableComposableAnnotation
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
@@ -766,6 +767,12 @@ class ComposableFunctionBodyTransformer(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldElideGroups(): Boolean {
+        return descriptor.hasReadonlyComposableAnnotation() ||
+            descriptor.hasExplicitGroupsAnnotation()
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun IrFunction.isReadonly(): Boolean {
         return descriptor.hasReadonlyComposableAnnotation()
     }
 
@@ -2516,7 +2523,7 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitNormalComposableCall(expression: IrCall): IrExpression {
         encounteredComposableCall(
-            withGroups = !expression.symbol.owner.shouldElideGroups()
+            withGroups = !expression.symbol.owner.isReadonly()
         )
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
