@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.constants.*
@@ -704,20 +705,31 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             return null
         }
 
+        fun typeFromAsm() = signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type))
+
         // Enum type must be an identifier (Javac requirement)
-        val typeExpression = if (isEnum(field.access))
+        val typeExpression = if (isEnum(field.access)) {
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
-        else
+        } else if (descriptor is PropertyDescriptor && descriptor.isDelegated) {
             getNonErrorType(
-                (descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
+                (origin.element as? KtProperty)?.delegateExpression?.getType(kaptContext.bindingContext),
+                RETURN_TYPE,
+                ktTypeProvider = { null },
+                ifNonError = ::typeFromAsm
+            )
+        } else {
+            getNonErrorType(
+                (descriptor as? CallableDescriptor)?.returnType,
+                RETURN_TYPE,
                 ktTypeProvider = {
                     val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
                         ?.takeIf { it !is KtFunction }
 
                     fieldOrigin?.typeReference
                 },
-                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) }
+                ifNonError = ::typeFromAsm
             )
+        }
 
         lineMappings.registerField(containingClass, field)
 
