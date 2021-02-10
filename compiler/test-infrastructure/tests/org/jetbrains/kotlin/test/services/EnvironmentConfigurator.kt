@@ -27,10 +27,10 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
         configuration: CompilerConfiguration,
         module: TestModule,
     ) {
-        configureCompilerConfiguration(configuration, module)
         val extractor = DirectiveToConfigurationKeyExtractor()
         extractor.provideConfigurationKeys()
         extractor.configure(configuration, module.directives)
+        configureCompilerConfiguration(configuration, module)
     }
 
     open fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {}

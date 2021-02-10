@@ -326,10 +326,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     services.registerDependencyProvider(DependencyProviderImpl(services, moduleStructure.modules))
 
                     val keyConfiguration = CompilerConfiguration()
-                    module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JVM_TARGET)?.let {
-                        keyConfiguration.put(JVMConfigurationKeys.JVM_TARGET, it)
-                    }
-
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
                     with(configuratorForFlags) {
                         val extractor = DirectiveToConfigurationKeyExtractor()
