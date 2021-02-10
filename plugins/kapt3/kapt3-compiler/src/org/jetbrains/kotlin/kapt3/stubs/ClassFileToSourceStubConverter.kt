@@ -34,12 +34,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
-import org.jetbrains.kotlin.kapt3.base.mapJList
-import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
-import org.jetbrains.kotlin.kapt3.base.pairedListToMap
-import org.jetbrains.kotlin.kapt3.base.plus
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
@@ -53,6 +50,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -111,6 +109,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
+
+        private val KOTLIN_PACKAGE = FqName("kotlin")
+
+        private val ARRAY_OF_FUNCTIONS = (ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY.values + ArrayFqNames.ARRAY_OF_FUNCTION).toSet()
     }
 
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
@@ -1240,11 +1242,6 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private fun convertConstantValueArguments(containingClass: ClassNode, constantValue: Any?, args: List<KtExpression>): JCExpression? {
         val singleArg = args.singleOrNull()
 
-        if (constantValue.isOfPrimitiveType()) {
-            // Do not inline primitive constants
-            tryParseReferenceToIntConstant(singleArg)?.let { return it }
-        }
-
         fun tryParseTypeExpression(expression: KtExpression?): JCExpression? {
             if (expression is KtReferenceExpression) {
                 val descriptor = kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, expression]
@@ -1272,6 +1269,37 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             return treeMaker.Select(typeExpression, treeMaker.name("class"))
         }
 
+        fun unwrapArgumentExpression(): List<KtExpression?>? =
+            when (singleArg) {
+                is KtCallExpression -> {
+                    val resultingDescriptor = singleArg.getResolvedCall(kaptContext.bindingContext)?.resultingDescriptor
+
+                    if (resultingDescriptor is FunctionDescriptor && isArrayOfFunction(resultingDescriptor))
+                        singleArg.valueArguments.map { it.getArgumentExpression() }
+                    else
+                        null
+                }
+                is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
+                else -> null
+            }
+
+
+        if (constantValue.isOfPrimitiveType()) {
+            // Do not inline primitive constants
+            tryParseReferenceToIntConstant(singleArg)?.let { return it }
+        } else if (constantValue is List<*> &&
+            constantValue.isNotEmpty() &&
+            args.isNotEmpty() &&
+            constantValue.all { it.isOfPrimitiveType() }
+        ) {
+            unwrapArgumentExpression()?.let { argumentExpressions ->
+                val parsed = argumentExpressions.mapNotNull(::tryParseReferenceToIntConstant).toJavacList()
+                if (parsed.size == argumentExpressions.size) {
+                    return treeMaker.NewArray(null, null, parsed)
+                }
+            }
+        }
+
         // Unresolved class literal
         if (constantValue == null && singleArg is KtClassLiteralExpression) {
             tryParseTypeLiteralExpression(singleArg)?.let { return it }
@@ -1287,19 +1315,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         // Probably arrayOf(SomeUnresolvedType::class, ...)
         if (constantValue is List<*>) {
-            val callArgs = when (singleArg) {
-                is KtCallExpression -> {
-                    val resultingDescriptor = singleArg.getResolvedCall(kaptContext.bindingContext)?.resultingDescriptor
-
-                    if (resultingDescriptor is FunctionDescriptor && resultingDescriptor.fqNameSafe.asString() == "kotlin.arrayOf")
-                        singleArg.valueArguments.map { it.getArgumentExpression() }
-                    else
-                        null
-                }
-                is KtCollectionLiteralExpression -> singleArg.getInnerExpressions()
-                else -> null
-            }
-
+            val callArgs = unwrapArgumentExpression()
             // So we make sure something is absent in the constant value
             if (callArgs != null && callArgs.size != constantValue.size) {
                 val literalExpressions = mapJList(callArgs, ::tryParseTypeLiteralExpression)
@@ -1498,6 +1514,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             file to importsFromRoot.mapTo(mutableSetOf()) { it.asString() }
         }.toMap()
 
+    private fun isArrayOfFunction(d: FunctionDescriptor): Boolean {
+        val name = d.fqNameSafe
+        return name.parent() == KOTLIN_PACKAGE && ARRAY_OF_FUNCTIONS.contains(name.shortName())
+    }
 
 }
 
