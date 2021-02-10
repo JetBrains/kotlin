@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
+import kotlinx.metadata.Flag
+import kotlinx.metadata.KmConstructor
+import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassConstructorImpl
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 
@@ -30,6 +34,18 @@ object CirClassConstructorFactory {
             valueParameters = source.valueParameters.compactMap(CirValueParameterFactory::create),
             hasStableParameterNames = source.hasStableParameterNames(),
             isPrimary = source.isPrimary
+        )
+    }
+
+    fun create(source: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver): CirClassConstructor {
+        return create(
+            annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),
+            typeParameters = emptyList(), // TODO: nowhere to read constructor type parameters from
+            visibility = decodeVisibility(source.flags),
+            containingClass = containingClass,
+            valueParameters = source.valueParameters.compactMap { CirValueParameterFactory.create(it, typeResolver) },
+            hasStableParameterNames = !Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(source.flags),
+            isPrimary = !Flag.Constructor.IS_SECONDARY(source.flags)
         )
     }
 

@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
+import gnu.trove.TIntObjectHashMap
+import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassifiers
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.types.*
@@ -28,6 +33,56 @@ object CirTypeFactory {
     private val classTypeInterner = Interner<CirClassType>()
     private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
     private val typeParameterTypeInterner = Interner<CirTypeParameterType>()
+
+    fun create(source: KmType, typeResolver: CirTypeResolver): CirType {
+        @Suppress("NAME_SHADOWING")
+        val source = source.abbreviatedType ?: source
+        val isMarkedNullable = Flag.Type.IS_NULLABLE(source.flags)
+
+        return when (val classifier = source.classifier) {
+            is KmClassifier.Class -> {
+                val classId = CirEntityId.create(classifier.name)
+
+                val outerType = source.outerType?.let { outerType ->
+                    val outerClassType = create(outerType, typeResolver)
+                    check(outerClassType is CirClassType) { "Outer type of $classId is not a class: $outerClassType" }
+                    outerClassType
+                }
+
+                val clazz: CirProvided.Class = typeResolver.resolveClassifier(classId)
+
+                createClassType(
+                    classId = classId,
+                    outerType = outerType,
+                    visibility = clazz.visibility,
+                    arguments = createArguments(source.arguments, typeResolver),
+                    isMarkedNullable = isMarkedNullable
+                )
+            }
+            is KmClassifier.TypeAlias -> {
+                val typeAliasId = CirEntityId.create(classifier.name)
+
+                val arguments = createArguments(source.arguments, typeResolver)
+
+                val underlyingType = CirTypeAliasExpander.expand(
+                    CirTypeAliasExpansion.create(typeAliasId, arguments, isMarkedNullable, typeResolver)
+                )
+
+                createTypeAliasType(
+                    typeAliasId = typeAliasId,
+                    underlyingType = underlyingType,
+                    arguments = arguments,
+                    isMarkedNullable = isMarkedNullable
+                )
+            }
+            is KmClassifier.TypeParameter -> {
+                createTypeParameterType(
+                    index = typeResolver.resolveTypeParameterIndex(classifier.id),
+                    isMarkedNullable = isMarkedNullable
+                )
+            }
+        }
+    }
 
     fun create(source: KotlinType): CirType = source.unwrap().run {
         when (this) {
@@ -161,6 +216,13 @@ object CirTypeFactory {
     inline fun <T : CirSimpleType> makeNullableIfNecessary(type: T, necessary: Boolean): T =
         if (!necessary) type else makeNullable(type)
 
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun decodeVariance(variance: KmVariance): Variance = when (variance) {
+        KmVariance.INVARIANT -> Variance.INVARIANT
+        KmVariance.IN -> Variance.IN_VARIANCE
+        KmVariance.OUT -> Variance.OUT_VARIANCE
+    }
+
     fun unabbreviate(type: CirClassOrTypeAliasType): CirClassType = when (type) {
         is CirClassType -> {
             var hasAbbreviationsInArguments = false
@@ -239,6 +301,19 @@ object CirTypeFactory {
                 )
         }
 
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun createArguments(arguments: List<KmTypeProjection>, typeResolver: CirTypeResolver): List<CirTypeProjection> {
+        return arguments.compactMap { argument ->
+            val variance = argument.variance ?: return@compactMap CirStarTypeProjection
+            val argumentType = argument.type ?: return@compactMap CirStarTypeProjection
+
+            CirTypeProjectionImpl(
+                projectionKind = decodeVariance(variance),
+                type = create(argumentType, typeResolver)
+            )
+        }
+    }
+
     private inline val TypeParameterDescriptor.typeParameterIndex: Int
         get() {
             var index = index
@@ -256,4 +331,69 @@ object CirTypeFactory {
 
             return index
         }
+}
+
+typealias TypeParameterId = Int
+typealias TypeParameterIndex = Int
+
+abstract class CirTypeResolver : TypeParameterResolver {
+    abstract val providedClassifiers: CirProvidedClassifiers
+    protected abstract val typeParameterIndexOffset: Int
+
+    inline fun <reified T : CirProvided.Classifier> resolveClassifier(classifierId: CirEntityId): T {
+        val classifier = providedClassifiers.classifier(classifierId)
+            ?: error("Unresolved classifier: $classifierId")
+
+        check(classifier is T) {
+            "Resolved classifier $classifierId of type ${classifier::class.java.simpleName}. Expected: ${T::class.java.simpleName}."
+        }
+
+        return classifier
+    }
+
+    abstract fun resolveTypeParameterIndex(id: TypeParameterId): TypeParameterIndex
+    abstract override fun resolveTypeParameter(id: TypeParameterId): KmTypeParameter
+
+    private class TopLevel(override val providedClassifiers: CirProvidedClassifiers) : CirTypeResolver() {
+        override val typeParameterIndexOffset get() = 0
+
+        override fun resolveTypeParameterIndex(id: TypeParameterId) = error("Unresolved type parameter: id=$id")
+        override fun resolveTypeParameter(id: TypeParameterId) = error("Unresolved type parameter: id=$id")
+    }
+
+    private class Nested(
+        private val parent: CirTypeResolver,
+        private val typeParameterMapping: TIntObjectHashMap<TypeParameterInfo>
+    ) : CirTypeResolver() {
+        override val providedClassifiers get() = parent.providedClassifiers
+        override val typeParameterIndexOffset = typeParameterMapping.size() + parent.typeParameterIndexOffset
+
+        override fun resolveTypeParameterIndex(id: TypeParameterId) =
+            typeParameterMapping[id]?.index ?: parent.resolveTypeParameterIndex(id)
+
+        override fun resolveTypeParameter(id: TypeParameterId) =
+            typeParameterMapping[id]?.typeParameter ?: parent.resolveTypeParameter(id)
+    }
+
+    private class TypeParameterInfo(val index: TypeParameterIndex, val typeParameter: KmTypeParameter)
+
+    fun create(typeParameters: List<KmTypeParameter>): CirTypeResolver =
+        if (typeParameters.isEmpty())
+            this
+        else {
+            val mapping = TIntObjectHashMap<TypeParameterInfo>(typeParameters.size * 2)
+            typeParameters.forEachIndexed { localIndex, typeParameter ->
+                val typeParameterInfo = TypeParameterInfo(
+                    index = localIndex + typeParameterIndexOffset,
+                    typeParameter = typeParameter
+                )
+                mapping.put(typeParameter.id, typeParameterInfo)
+            }
+
+            Nested(this, mapping)
+        }
+
+    companion object {
+        fun create(providedClassifiers: CirProvidedClassifiers): CirTypeResolver = TopLevel(providedClassifiers)
+    }
 }

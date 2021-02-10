@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.metadata
 import kotlinx.metadata.Flag
 import kotlinx.metadata.Flags
 import kotlinx.metadata.flagsOf
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 
 internal const val NO_FLAGS: Flags = 0
+internal val ALWAYS_HAS_ANNOTATIONS: Flags = flagsOf(Flag.Common.HAS_ANNOTATIONS)
 
 internal fun CirFunction.functionFlags(isExpect: Boolean): Flags =
     flagsOfNotNull(
@@ -99,6 +97,48 @@ internal fun CirTypeAlias.typeAliasFlags(): Flags =
         hasAnnotationsFlag,
         visibilityFlag
     )
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun decodeVisibility(flags: Flags): DescriptorVisibility =
+    when {
+        Flag.Common.IS_PUBLIC(flags) -> DescriptorVisibilities.PUBLIC
+        Flag.Common.IS_PROTECTED(flags) -> DescriptorVisibilities.PROTECTED
+        Flag.Common.IS_INTERNAL(flags) -> DescriptorVisibilities.INTERNAL
+        Flag.Common.IS_PRIVATE(flags) -> DescriptorVisibilities.PRIVATE
+        else -> error("Can't decode visibility from flags: $flags")
+    }
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun decodeModality(flags: Flags): Modality =
+    when {
+        Flag.Common.IS_FINAL(flags) -> Modality.FINAL
+        Flag.Common.IS_ABSTRACT(flags) -> Modality.ABSTRACT
+        Flag.Common.IS_OPEN(flags) -> Modality.OPEN
+        Flag.Common.IS_SEALED(flags) -> Modality.SEALED
+        else -> error("Can't decode modality from flags: $flags")
+    }
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun decodeCallableKind(flags: Flags): CallableMemberDescriptor.Kind =
+    when {
+        Flag.Property.IS_DECLARATION(flags) /*|| Flag.Function.IS_DECLARATION(flags)*/ -> CallableMemberDescriptor.Kind.DECLARATION
+        Flag.Property.IS_FAKE_OVERRIDE(flags) /*|| Flag.Function.IS_FAKE_OVERRIDE(flags)*/ -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        Flag.Property.IS_DELEGATION(flags) /*|| Flag.Function.IS_DELEGATION(flags)*/ -> CallableMemberDescriptor.Kind.DELEGATION
+        Flag.Property.IS_SYNTHESIZED(flags) /*|| Flag.Function.IS_SYNTHESIZED(flags)*/ -> CallableMemberDescriptor.Kind.SYNTHESIZED
+        else -> error("Can't decode callable kind from flags: $flags")
+    }
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun decodeClassKind(flags: Flags): ClassKind =
+    when {
+        Flag.Class.IS_CLASS(flags) -> ClassKind.CLASS
+        Flag.Class.IS_INTERFACE(flags) -> ClassKind.INTERFACE
+        Flag.Class.IS_ENUM_CLASS(flags) -> ClassKind.ENUM_CLASS
+        Flag.Class.IS_ENUM_ENTRY(flags) -> ClassKind.ENUM_ENTRY
+        Flag.Class.IS_ANNOTATION_CLASS(flags) -> ClassKind.ANNOTATION_CLASS
+        Flag.Class.IS_OBJECT(flags) || Flag.Class.IS_COMPANION_OBJECT(flags) -> ClassKind.OBJECT
+        else -> error("Can't decode class kind from flags: $flags")
+    }
 
 private inline val CirHasAnnotations.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty()) Flag.Common.HAS_ANNOTATIONS else null

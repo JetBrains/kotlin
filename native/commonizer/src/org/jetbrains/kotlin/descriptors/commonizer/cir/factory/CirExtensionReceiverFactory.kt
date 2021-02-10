@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
+import kotlinx.metadata.KmType
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
@@ -16,6 +17,11 @@ object CirExtensionReceiverFactory {
     fun create(source: ReceiverParameterDescriptor): CirExtensionReceiver = create(
         annotations = source.annotations.compactMap(CirAnnotationFactory::create),
         type = CirTypeFactory.create(source.type)
+    )
+
+    fun create(receiverParameterType: KmType, typeResolver: CirTypeResolver): CirExtensionReceiver = create(
+        annotations = emptyList(), // TODO nowhere to read receiver annotations from, see KT-42490
+        type = CirTypeFactory.create(receiverParameterType, typeResolver)
     )
 
     @Suppress("NOTHING_TO_INLINE")

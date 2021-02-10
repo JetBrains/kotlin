@@ -133,6 +133,7 @@ internal fun CirClassConstructor.buildClassConstructor(
     flags = classConstructorFlags()
 ).also { constructor ->
     annotations.mapTo(constructor.annotations) { it.buildAnnotation() }
+    // TODO: nowhere to write constructor type parameters
     valueParameters.mapTo(constructor.valueParameters) { it.buildValueParameter(context) }
 }
 
@@ -156,11 +157,11 @@ internal fun CirProperty.buildProperty(
     getterFlags = getter?.propertyAccessorFlags(this, this) ?: NO_FLAGS,
     setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: NO_FLAGS
 ).also { property ->
-    // TODO unclear where to write backing/delegate field annotations, see KT-44625
     annotations.mapTo(property.annotations) { it.buildAnnotation() }
     getter?.annotations?.mapTo(property.getterAnnotations) { it.buildAnnotation() }
     setter?.annotations?.mapTo(property.setterAnnotations) { it.buildAnnotation() }
-    property.compileTimeValue = compileTimeInitializer?.takeIf { it !is CirConstantValue.NullValue }?.buildAnnotationArgument()
+    // TODO unclear where to write backing/delegate field annotations, see KT-44625
+    property.compileTimeValue = compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue }?.buildAnnotationArgument()
     typeParameters.buildTypeParameters(context, output = property.typeParameters)
     extensionReceiver?.let { receiver ->
         // TODO nowhere to write receiver annotations, see KT-42490

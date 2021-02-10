@@ -95,6 +95,15 @@ internal inline fun <K : Any, V> compactMapOf(key1: K, value1: V, key2: K, value
 
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 
+internal inline fun <reified T, reified K : Any> Collection<T>.foldToMap(keySelector: (T) -> K): Map<K, List<T>> {
+    val result = fold(THashMap<K, MutableList<T>>()) { accumulator, element ->
+        accumulator.getOrPut(keySelector(element)) { ArrayList() } += element
+        accumulator
+    }
+
+    return result.compactMapValues { (_, elements) -> elements.compact() }
+}
+
 internal fun Any?.isNull(): Boolean = this == null
 
 @Suppress("NOTHING_TO_INLINE")

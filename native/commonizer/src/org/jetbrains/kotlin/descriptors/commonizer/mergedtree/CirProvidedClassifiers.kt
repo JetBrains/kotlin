@@ -5,22 +5,29 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.types.Variance
 
 /** A set of classes and type aliases provided by libraries (either the libraries to commonize, or their dependency libraries)/ */
 interface CirProvidedClassifiers {
     fun hasClassifier(classifierId: CirEntityId): Boolean
-
-    // TODO: implement later
-    //fun classifier(classifierId: ClassId): Any?
+    fun classifier(classifierId: CirEntityId): CirProvided.Classifier?
 
     object EMPTY : CirProvidedClassifiers {
         override fun hasClassifier(classifierId: CirEntityId) = false
+        override fun classifier(classifierId: CirEntityId): CirProvided.Classifier? = null
     }
 
     private class CompositeClassifiers(val delegates: List<CirProvidedClassifiers>) : CirProvidedClassifiers {
         override fun hasClassifier(classifierId: CirEntityId) = delegates.any { it.hasClassifier(classifierId) }
+        override fun classifier(classifierId: CirEntityId): CirProvided.Classifier? {
+            for (delegate in delegates) {
+                delegate.classifier(classifierId)?.let { return it }
+            }
+            return null
+        }
     }
 
     companion object {
@@ -42,6 +49,55 @@ interface CirProvidedClassifiers {
         }
 
         fun by(modulesProvider: ModulesProvider?): CirProvidedClassifiers =
-            if (modulesProvider != null) CirProvidedClassifiersByModules(modulesProvider) else EMPTY
+            if (modulesProvider != null) CirProvidedClassifiersByModules.load(modulesProvider) else EMPTY
     }
 }
+
+object CirProvided {
+    /* Classifiers */
+    sealed interface Classifier {
+        val typeParameters: List<TypeParameter>
+    }
+
+    data class Class(
+        override val typeParameters: List<TypeParameter>,
+        val visibility: DescriptorVisibility
+    ) : Classifier
+
+    data class TypeAlias(
+        override val typeParameters: List<TypeParameter>,
+        val underlyingType: Type
+    ) : Classifier
+
+    /* Type parameter */
+    data class TypeParameter(val index: Int, val variance: Variance)
+
+    /* Types */
+    sealed interface Type {
+        val isMarkedNullable: Boolean
+    }
+
+    data class TypeParameterType(
+        val index: Int,
+        override val isMarkedNullable: Boolean
+    ) : Type
+
+    data class ClassType(
+        val classId: CirEntityId,
+        val outerType: ClassType?,
+        val arguments: List<TypeProjection>,
+        override val isMarkedNullable: Boolean
+    ) : Type
+
+    data class TypeAliasType(
+        val typeAliasId: CirEntityId,
+        val arguments: List<TypeProjection>,
+        override val isMarkedNullable: Boolean
+    ) : Type
+
+    /* Type projections */
+    sealed interface TypeProjection
+    object StarTypeProjection : TypeProjection
+    data class RegularTypeProjection(val variance: Variance, val type: Type) : TypeProjection
+}
+

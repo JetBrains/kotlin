@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import kotlinx.metadata.klib.KlibModuleMetadata
+import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.identityString
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
@@ -52,30 +53,46 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
 private val FILTER_OUT_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch ->
     var isAcceptableMismatch = false // don't filter it out by default
 
-    if (mismatch is Mismatch.MissingEntity) {
-        if (mismatch.kind == EntityKind.TypeKind.ABBREVIATED) {
-            val usefulPath = mismatch.path
-                .dropWhile { it !is PathElement.Package }
-                .drop(1)
+    when (mismatch) {
+        is Mismatch.MissingEntity -> when (mismatch.kind) {
+            EntityKind.TypeKind.ABBREVIATED -> {
+                val usefulPath = mismatch.path
+                    .dropWhile { it !is PathElement.Package }
+                    .drop(1)
 
-            if (mismatch.missingInA) {
-                if (usefulPath.size == 2
-                    && usefulPath[0] is PathElement.TypeAlias
-                    && (usefulPath[1] as? PathElement.Type)?.kind == EntityKind.TypeKind.EXPANDED
-                ) {
-                    // extra abbreviated type appeared in commonized declaration, it's OK
-                    isAcceptableMismatch = true
+                if (mismatch.missingInA) {
+                    if (usefulPath.size == 2
+                        && usefulPath[0] is PathElement.TypeAlias
+                        && (usefulPath[1] as? PathElement.Type)?.kind == EntityKind.TypeKind.EXPANDED
+                    ) {
+                        // extra abbreviated type appeared in commonized declaration, it's OK
+                        isAcceptableMismatch = true
+                    }
+                } else /*if (mismatch.missingInB)*/ {
+                    if (usefulPath.size > 2
+                        && usefulPath.any { (it as? PathElement.Type)?.kind == EntityKind.TypeKind.RETURN }
+                        && usefulPath[usefulPath.size - 2] is PathElement.TypeArgument
+                        && (usefulPath[usefulPath.size - 1] as? PathElement.Type)?.kind == EntityKind.TypeKind.TYPE_ARGUMENT
+                    ) {
+                        // extra abbreviated type gone in type argument of commonized declaration, it's OK
+                        isAcceptableMismatch = true
+                    }
                 }
-            } else /*if (mismatch.missingInB)*/ {
-                if (usefulPath.size > 2
-                    && usefulPath.any { (it as? PathElement.Type)?.kind == EntityKind.TypeKind.RETURN }
-                    && usefulPath[usefulPath.size - 2] is PathElement.TypeArgument
-                    && (usefulPath[usefulPath.size - 1] as? PathElement.Type)?.kind == EntityKind.TypeKind.TYPE_ARGUMENT
+            }
+            else -> Unit
+        }
+        is Mismatch.DifferentValues -> when (mismatch.kind) {
+            EntityKind.FlagKind.REGULAR, EntityKind.FlagKind.GETTER, EntityKind.FlagKind.SETTER -> {
+                if (mismatch.name == "HAS_ANNOTATIONS"
+                    && mismatch.valueA == true
+                    && mismatch.valueB == false
+                    && (mismatch.path.last() as? PathElement.Property)?.propertyA?.annotations.isNullOrEmpty()
                 ) {
-                    // extra abbreviated type gone in type argument of commonized declaration, it's OK
+                    // backing or delegate field annotations were not serialized (KT-44625) but the corresponding flag was raised, it's OK
                     isAcceptableMismatch = true
                 }
             }
+            else -> Unit
         }
     }
 

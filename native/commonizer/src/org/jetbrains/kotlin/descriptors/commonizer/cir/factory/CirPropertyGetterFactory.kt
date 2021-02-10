@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
+import kotlinx.metadata.Flag
+import kotlinx.metadata.KmProperty
+import kotlinx.metadata.klib.getterAnnotations
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertyGetter
@@ -33,6 +36,26 @@ object CirPropertyGetterFactory {
                 isExternal = source.isExternal,
                 isInline = source.isInline
             )
+    }
+
+    fun create(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
+        if (!Flag.Property.HAS_GETTER(source.flags))
+            return null
+
+        val getterFlags = source.getterFlags
+
+        val isDefault = !Flag.PropertyAccessor.IS_NOT_DEFAULT(getterFlags)
+        val annotations = CirAnnotationFactory.createAnnotations(getterFlags, typeResolver, source::getterAnnotations)
+
+        if (isDefault && annotations.isEmpty())
+            return DEFAULT_NO_ANNOTATIONS
+
+        return create(
+            annotations = annotations,
+            isDefault = isDefault,
+            isExternal = Flag.PropertyAccessor.IS_EXTERNAL(getterFlags),
+            isInline = Flag.PropertyAccessor.IS_INLINE(getterFlags)
+        )
     }
 
     fun create(

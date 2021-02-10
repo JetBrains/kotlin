@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
+import kotlinx.metadata.Flag
+import kotlinx.metadata.KmValueParameter
+import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
@@ -25,6 +28,16 @@ object CirValueParameterFactory {
         declaresDefaultValue = source.declaresDefaultValue(),
         isCrossinline = source.isCrossinline,
         isNoinline = source.isNoinline
+    )
+
+    fun create(source: KmValueParameter, typeResolver: CirTypeResolver): CirValueParameter = create(
+        annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),
+        name = CirName.create(source.name),
+        returnType = CirTypeFactory.create(source.type!!, typeResolver),
+        varargElementType = source.varargElementType?.let { CirTypeFactory.create(it, typeResolver) },
+        declaresDefaultValue = Flag.ValueParameter.DECLARES_DEFAULT_VALUE(source.flags),
+        isCrossinline = Flag.ValueParameter.IS_CROSSINLINE(source.flags),
+        isNoinline = Flag.ValueParameter.IS_NOINLINE(source.flags)
     )
 
     fun create(
