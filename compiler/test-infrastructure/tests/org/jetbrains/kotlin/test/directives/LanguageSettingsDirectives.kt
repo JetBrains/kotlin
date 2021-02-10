@@ -68,6 +68,12 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     )
 
     val ENABLE_JVM_PREVIEW by directive("Enable JVM preview features")
+    val EMIT_JVM_TYPE_ANNOTATIONS by directive("Enable emitting jvm type annotations")
+    val NO_OPTIMIZED_CALLABLE_REFERENCES by directive("Don't optimize callable references")
+    val DISABLE_PARAM_ASSERTIONS by directive("Disable assertions on parameters")
+    val DISABLE_CALL_ASSERTIONS by directive("Disable assertions on calls")
+    val NO_UNIFIED_NULL_CHECKS by directive("No unified null checks")
+    val PARAMETERS_METADATA by directive("Add parameters metadata for 1.8 reflection")
 
     // --------------------- Utils ---------------------
 
