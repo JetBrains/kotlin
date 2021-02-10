@@ -65,7 +65,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
+                model("codegen/box")
             }
 
             testClass<AbstractJvmIrAgainstOldBoxTest> {
@@ -85,7 +85,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractIrBytecodeTextTest> {
-                model("codegen/bytecodeText", excludeDirs = listOf("oldLanguageVersions"))
+                model("codegen/bytecodeText")
             }
 
             testClass<AbstractBlackBoxInlineCodegenTest> {
@@ -124,11 +124,11 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirBlackBoxCodegenTest> {
-                model("codegen/box", excludeDirs = listOf("oldLanguageVersions"))
+                model("codegen/box")
             }
 
             testClass<AbstractFirBlackBoxInlineCodegenTest> {
-                model("codegen/boxInline", excludeDirs = listOf("oldLanguageVersions"))
+                model("codegen/boxInline")
             }
         }
 
@@ -152,7 +152,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractFirBytecodeTextTest> {
-                model("codegen/bytecodeText", excludeDirs = listOf("oldLanguageVersions"))
+                model("codegen/bytecodeText")
             }
         }
     }
