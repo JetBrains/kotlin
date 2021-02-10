@@ -4,3 +4,4 @@ open class A {
 }
 
 class B(override var x: Int) : A()
+/* FIR_COMPARISON */
