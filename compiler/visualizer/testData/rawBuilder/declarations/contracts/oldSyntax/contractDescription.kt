@@ -15,8 +15,8 @@ fun test_1() {
 
 fun test_2() {
 //                   fun contracts/contract(contracts/ContractBuilder.() -> Unit): Unit
-//  package kotlin   │        contract@0
-//  │                │        │
+//                   │        contract@0
+//                   │        │
     kotlin.contracts.contract {
 //      this@0
 //      fun <R> (contracts/ContractBuilder).callsInPlace<???>(Function<???>, contracts/InvocationKind = ...): contracts/CallsInPlace
@@ -51,8 +51,8 @@ var test_3: Int = 1
 //      │
     set(value) {
 //                       fun contracts/contract(contracts/ContractBuilder.() -> Unit): Unit
-//      package kotlin   │        contract@0
-//      │                │        │
+//                       │        contract@0
+//                       │        │
         kotlin.contracts.contract {
 //          this@0
 //          fun <R> (contracts/ContractBuilder).callsInPlace<???>(Function<???>, contracts/InvocationKind = ...): contracts/CallsInPlace

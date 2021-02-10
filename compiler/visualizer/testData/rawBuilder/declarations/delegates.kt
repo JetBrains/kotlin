@@ -1,9 +1,4 @@
-// FIR_IGNORE
-//     package kotlin
-//     │
 import kotlin.properties.ReadWriteProperty
-//     package kotlin
-//     │
 import kotlin.reflect.KProperty
 
 //            fun <T> lazy<Int>(() -> Int): Lazy<Int>

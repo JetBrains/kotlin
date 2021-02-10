@@ -9,14 +9,10 @@ package org.jetbrains.kotlin.test
 //  │           │      │  │  │
 val listOfInt = listOf(1, 2, 3)
 //  java/util/ArrayList<Int>
-//  │          package java
-//  │          │         constructor java/util/ArrayList<E : Any!>()
-//  │          │         │
+//  │                    constructor java/util/ArrayList<E : Any!>()
+//  │                    │
 val javaList = java.util.ArrayList<Int>()
 
-//          package java
-//          │    package java/util
-//          │    │
 fun move(): java.util.ArrayList<Int> {
 //       Int     val listOfInt: collections/List<Int>
 //       │       │

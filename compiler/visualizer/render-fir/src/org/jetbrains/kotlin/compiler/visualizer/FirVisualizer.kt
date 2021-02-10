@@ -278,7 +278,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
     inner class FirRenderer : FirVisitor<Unit, StringBuilder>() {
         private val session = firFile.session
-        private val filePackage = firFile.packageFqName.toString().replace(".", "/")
+        private val filePackage = firFile.packageFqName.toString()
+        private val filePackageWithSlash = filePackage.replace(".", "/")
         private val symbolProvider = firFile.session.symbolProvider
 
         private fun FirTypeRef.renderWithNativeRenderer(): String {
@@ -288,17 +289,13 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }.replace("R|", "").replace("|", "")
         }
 
-        private fun removeCurrentFilePackage(fqName: String): String {
-            val withoutPackage = when {
-                fqName.startsWith(filePackage) && !fqName.substring(filePackage.length + 1).contains("/") ->
-                    fqName.replaceFirst("$filePackage/", "")
-                else -> fqName
-            }
+        private fun String.removeCurrentFilePackage(): String {
+            val withoutPackage = this.replaceFirst("$filePackage.", "").replaceFirst("$filePackageWithSlash/", "")
 
             return withoutPackage.let { if (it.startsWith("/")) it.substring(1) else it }
         }
 
-        private fun ClassId.getWithoutCurrentPackage() = removeCurrentFilePackage(this.asString())
+        private fun ClassId.getWithoutCurrentPackage() = this.asString().removeCurrentFilePackage()
 
         private fun <T : FirElement> renderListInTriangles(list: List<T>, data: StringBuilder, withSpace: Boolean = false) {
             if (list.isNotEmpty()) {
@@ -495,7 +492,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
-            data.append(resolvedTypeRef.renderWithNativeRenderer())
+            data.append((resolvedTypeRef.delegatedTypeRef ?: resolvedTypeRef).renderWithNativeRenderer().removeCurrentFilePackage())
             val coneType = resolvedTypeRef.type
             if (coneType is ConeClassLikeType) {
                 val original = coneType.directExpansionType(session)
@@ -518,8 +515,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val id = when (symbol) {
                 is FirCallableSymbol<*> -> {
                     val callableId = symbol.callableId
-                    val idWithPackage = callableId.toString().replaceFirst(".${callableId.callableName}", "")
-                    removeCurrentFilePackage(idWithPackage)
+                    callableId.toString()
+                        .replaceFirst(".${callableId.callableName}", "")
+                        .removeCurrentFilePackage()
                 }
                 is FirClassLikeSymbol<*> -> symbol.classId.getWithoutCurrentPackage()
                 else -> ""
@@ -529,10 +527,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 if (variable !is FirValueParameter) {
                     if (variable.isVar) data.append("var ") else if (variable.isVal) data.append("val ")
                 }
-                data.append(id)
-
-                data.append(": ")
-                variable.returnTypeRef.accept(this, data)
+                data.append(id).append(": ").append(variable.returnTypeRef.render())
             }
 
             when (symbol) {
@@ -560,7 +555,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         }
 
                         data.append(symbol.callableId.callableName).append(": ")
-                        symbol.fir.returnTypeRef.accept(this, data)
+                        data.append(symbol.fir.returnTypeRef.render())
                     }
 
                 }

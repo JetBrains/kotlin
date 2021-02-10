@@ -353,11 +353,12 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
         }
 
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: StringBuilder) {
-            data.append("package-fragment ${renderFqName(descriptor, removeCurrentPackage = false)}")
+            //data.append("package-fragment ${renderFqName(descriptor, removeCurrentPackage = false)}")
         }
 
         override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, data: StringBuilder) {
-            data.append("package ${renderFqName(descriptor, removeCurrentPackage = false)}")
+            // don't render package because support the same logic in fir is very hard
+            //data.append("package ${renderFqName(descriptor, removeCurrentPackage = false)}")
         }
 
         override fun visitVariableDescriptor(variable: VariableDescriptor, data: StringBuilder) {
