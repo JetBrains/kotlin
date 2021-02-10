@@ -912,7 +912,7 @@ tasks {
                 ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:compiler-components-for-jps:publish",
                 ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-stdlib-for-ide",
+                ":prepare:ide-plugin-dependencies:kotlin-stdlib-for-ide:publish",
                 ":kotlin-script-runtime:publish",
                 ":kotlin-script-util:publish",
                 ":kotlin-scripting-common:publish",
