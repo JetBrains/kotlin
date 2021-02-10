@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName.Companion.create
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName.Companion.create
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
