@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import java.util.concurrent.Callable
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
@@ -503,7 +504,7 @@ internal fun createTransformedMetadataClasspath(
     metadataResolutionProviders: Lazy<Iterable<ResolvedMetadataFilesProvider>>
 ): FileCollection {
     return project.files(
-        project.provider {
+        Callable {
             val allResolutionsByComponentId: Map<ComponentIdentifier, List<MetadataDependencyResolution>> =
                 mutableMapOf<ComponentIdentifier, MutableList<MetadataDependencyResolution>>().apply {
                     metadataResolutionProviders.value.forEach {

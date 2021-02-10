@@ -6,34 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.*
-import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.buildKotlinProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
-import java.util.concurrent.Callable
 
 abstract class KotlinPm20GradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -62,12 +42,13 @@ abstract class KotlinPm20GradlePlugin : Plugin<Project> {
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
             main { makePublic() }
         }
-        setupMetadataCompilationAndDependencyResolution(project)
+        setupFragmentsMetadata(project)
     }
 
-    private fun setupMetadataCompilationAndDependencyResolution(project: Project) {
+    private fun setupFragmentsMetadata(project: Project) {
         project.pm20Extension.modules.all { module ->
             configureMetadataResolutionAndBuild(module)
+            module.ifMadePublic { configureMetadataExposure(module) }
         }
     }
 }
