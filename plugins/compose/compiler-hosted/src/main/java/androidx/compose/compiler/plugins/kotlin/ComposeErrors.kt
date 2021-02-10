@@ -72,6 +72,12 @@ object ComposeErrors {
         )
 
     @JvmField
+    val COMPOSABLE_FUN_MAIN =
+        DiagnosticFactory0.create<PsiElement>(
+            Severity.ERROR
+        )
+
+    @JvmField
     val CAPTURED_COMPOSABLE_INVOCATION =
         DiagnosticFactory2.create<PsiElement, DeclarationDescriptor, DeclarationDescriptor>(
             Severity.ERROR

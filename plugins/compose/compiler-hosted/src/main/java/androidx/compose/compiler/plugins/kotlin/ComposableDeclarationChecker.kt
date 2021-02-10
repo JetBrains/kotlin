@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_FUN_MAIN
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_SUSPEND_FUN
 import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_VAR
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -99,6 +101,19 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                     checkType(param.type, typeRef, context)
                 }
             }
+        }
+        // NOTE: only use the MainFunctionDetector if the descriptor name is main, to avoid
+        // unnecessarily allocating this class
+        if (hasComposableAnnotation &&
+            descriptor.name.asString() == "main" &&
+            MainFunctionDetector(
+                    context.trace.bindingContext,
+                    context.languageVersionSettings
+                ).isMain(descriptor)
+        ) {
+            context.trace.report(
+                COMPOSABLE_FUN_MAIN.on(declaration.nameIdentifier ?: declaration)
+            )
         }
     }
 
