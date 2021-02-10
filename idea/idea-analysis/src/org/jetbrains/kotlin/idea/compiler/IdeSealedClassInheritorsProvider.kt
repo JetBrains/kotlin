@@ -10,12 +10,12 @@ import com.intellij.psi.*
 import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ClassInheritorsSearch.SearchParameters
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.containingPackage
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
@@ -57,8 +57,7 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
             GlobalSearchScope.fileScope(sealedKtClass.containingFile) // Kotlin version prior to 1.5
         }
 
-        val kotlinAsJavaSupport = KotlinAsJavaSupport.getInstance(sealedKtClass.project)
-        val lightClass = sealedKtClass.toLightClass() ?: kotlinAsJavaSupport.getFakeLightClass(sealedKtClass)
+        val lightClass = sealedKtClass.toLightClass() ?: KtFakeLightClass(sealedKtClass)
         val searchParameters = SearchParameters(lightClass, searchScope, false, true, false)
 
         return ClassInheritorsSearch.search(searchParameters)
