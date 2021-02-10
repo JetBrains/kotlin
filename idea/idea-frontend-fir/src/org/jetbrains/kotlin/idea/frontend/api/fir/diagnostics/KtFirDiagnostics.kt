@@ -689,6 +689,25 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val receiverType: KtType
     }
 
+    abstract class UnsafeImplicitInvokeCall : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UnsafeImplicitInvokeCall::class
+        abstract val receiverType: KtType
+    }
+
+    abstract class UnsafeInfixCall : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = UnsafeInfixCall::class
+        abstract val lhs: KtExpression
+        abstract val operator: String
+        abstract val rhs: KtExpression
+    }
+
+    abstract class UnsafeOperatorCall : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = UnsafeOperatorCall::class
+        abstract val lhs: KtExpression
+        abstract val operator: String
+        abstract val rhs: KtExpression
+    }
+
     abstract class NoElseInWhen : KtFirDiagnostic<KtWhenExpression>() {
         override val diagnosticClass get() = NoElseInWhen::class
         abstract val missingWhenCases: List<Any>

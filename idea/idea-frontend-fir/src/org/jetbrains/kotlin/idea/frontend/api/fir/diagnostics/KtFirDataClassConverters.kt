@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -970,6 +971,31 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.UNSAFE_CALL) { firDiagnostic ->
         UnsafeCallImpl(
             firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL) { firDiagnostic ->
+        UnsafeImplicitInvokeCallImpl(
+            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.UNSAFE_INFIX_CALL) { firDiagnostic ->
+        UnsafeInfixCallImpl(
+            firDiagnostic.a.source!!.psi as KtExpression,
+            firDiagnostic.b,
+            firDiagnostic.c.source!!.psi as KtExpression,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.UNSAFE_OPERATOR_CALL) { firDiagnostic ->
+        UnsafeOperatorCallImpl(
+            firDiagnostic.a.source!!.psi as KtExpression,
+            firDiagnostic.b,
+            firDiagnostic.c.source!!.psi as KtExpression,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

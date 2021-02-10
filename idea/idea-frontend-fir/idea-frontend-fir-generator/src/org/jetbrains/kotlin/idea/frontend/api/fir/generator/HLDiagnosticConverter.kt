@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticParamet
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtExpression
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
@@ -115,6 +117,14 @@ private object FirToKtConversionCreator {
         FirClass::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildClassLikeSymbol({0})",
             KtClassLikeSymbol::class.createType()
+        ),
+        FirExpression::class to HLFunctionCallConversion(
+            "{0}.source!!.psi as KtExpression",
+            KtExpression::class.createType(),
+            importsToAdd = listOf(
+                "org.jetbrains.kotlin.psi.KtExpression",
+                "org.jetbrains.kotlin.fir.psi"
+            )
         ),
         FirClassLikeSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildClassLikeSymbol({0}.fir as FirClass<*>)",
