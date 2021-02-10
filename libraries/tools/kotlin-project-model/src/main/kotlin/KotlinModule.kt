@@ -45,7 +45,7 @@ interface KotlinModule {
     // TODO: isSynthetic?
 }
 
-class BasicKotlinModule(
+open class BasicKotlinModule(
     override val moduleIdentifier: KotlinModuleIdentifier
 ) : KotlinModule {
     override val fragments = mutableListOf<BasicKotlinModuleFragment>()

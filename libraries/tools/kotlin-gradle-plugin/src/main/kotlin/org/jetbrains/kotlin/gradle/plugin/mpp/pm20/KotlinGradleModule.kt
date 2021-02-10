@@ -12,9 +12,8 @@ import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.project.model.KotlinModule
-import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
-import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.project.model.*
 import javax.inject.Inject
 
 open class KotlinGradleModule(
@@ -87,7 +86,15 @@ open class KotlinGradleModule(
 
     override val runtimeOnlyConfigurationName: String
         get() = common.runtimeOnlyConfigurationName
+
+    override fun toString(): String = "$moduleIdentifier (Gradle)"
 }
+
+internal val KotlinGradleModule.resolvableMetadataConfigurationName: String
+    get() = lowerCamelCaseName(name, "DependenciesMetadata")
 
 internal val KotlinGradleModule.isMain
     get() = moduleIdentifier.moduleClassifier == null
+
+fun KotlinGradleModule.variantsContainingFragment(fragment: KotlinModuleFragment): Iterable<KotlinGradleVariant> =
+    variants.filter { fragment in it.refinesClosure }

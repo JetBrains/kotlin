@@ -9,9 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 
 interface KotlinCompilationData<T : KotlinCommonOptions> {
     val project: Project
@@ -34,4 +36,11 @@ interface KotlinCompilationData<T : KotlinCommonOptions> {
     val ownModuleName: String
 
     val kotlinOptions: T
+
+    val friendPaths: Iterable<FileCollection>
+}
+
+fun KotlinCompilationData<*>.isMain(): Boolean = when (this) {
+    is KotlinCompilation<*> -> isMain()
+    else -> compilationPurpose == KotlinGradleModule.MAIN_MODULE_NAME
 }

@@ -58,6 +58,13 @@ class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinCom
     override val platformType: KotlinPlatformType
         get() = variant.platformType
 
+    override val friendPaths: Iterable<FileCollection>
+        // TODO for now, all output classes of the module are considered friends, even those not on the classpath
+        get() {
+            // FIXME support compiling against the JARs
+            return variant.containingModule.project.pm20Extension.modules.flatMap { it.variants.map { it.compilationOutputs.classesDirs } }
+        }
+
     override val moduleName: String
         get() = // TODO accurate module names that don't rely on all variants having a main counterpart
             variant.containingModule.project.pm20Extension.modules

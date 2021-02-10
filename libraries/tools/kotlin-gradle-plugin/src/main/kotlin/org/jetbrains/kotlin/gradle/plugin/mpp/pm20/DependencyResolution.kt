@@ -13,8 +13,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.capabilities.Capability
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.ProjectStructureMetadataModuleBuilder
-import org.jetbrains.kotlin.gradle.plugin.mpp.GradleProjectModuleBuilder
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
@@ -27,15 +26,11 @@ class GradleModuleDependencyResolver(
     private val projectModuleBuilder: GradleProjectModuleBuilder
 ) : ModuleDependencyResolver {
 
-    private val configurationToResolve: Configuration
-        get() = resolvableMetadataConfiguration(
-            project,
-            project.kotlinExtension.sourceSets, // take dependencies from all source sets; TODO introduce consistency scopes?
-            listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE, KotlinDependencyScope.COMPILE_ONLY_SCOPE)
-        )
+    private fun configurationToResolve(requestingModule: KotlinModule): Configuration =
+        configurationToResolveMetadataDependencies(project, requestingModule)
 
-    override fun resolveDependency(moduleDependency: KotlinModuleDependency): KotlinModule? {
-        val allComponents = configurationToResolve.incoming.resolutionResult.allComponents
+    override fun resolveDependency(requestingModule: KotlinModule, moduleDependency: KotlinModuleDependency): KotlinModule? {
+        val allComponents = configurationToResolve(requestingModule).incoming.resolutionResult.allComponents
         // TODO: optimize O(n) search, store the resolved components with dependency keys?
         val component = allComponents.find { it.id.matchesModuleDependency(moduleDependency) }
         val id = component?.id
@@ -48,8 +43,9 @@ class GradleModuleDependencyResolver(
                 projectModuleBuilder.buildModulesFromProject(project.project(id.projectPath))
                     .find { it.moduleIdentifier.moduleClassifier == classifier }
             id is ModuleComponentIdentifier -> {
-                val metadata = getProjectStructureMetadata(project, component, configurationToResolve) ?: return null
-                projectStructureMetadataModuleBuilder.getModule(id.toModuleIdentifier(classifier), metadata)
+                val metadata = getProjectStructureMetadata(project, component, configurationToResolve(requestingModule)) ?: return null
+                val result = projectStructureMetadataModuleBuilder.getModule(component, metadata)
+                result
             }
             else -> null
         }
@@ -110,9 +106,9 @@ class FragmentDependenciesDiscovery(
             val component = resolvedComponentQueue.removeFirst()
             visited.add(component)
 
-            val module = moduleResolver.resolveDependency(component.toModuleDependency())
+            val module = moduleResolver.resolveDependency(fragment.containingModule, component.toModuleDependency())
                 .takeIf { component !in excludeLegacyMetadataModulesFromResult }
-                ?: buildStubModule(component, component.variants.singleOrNull()?.displayName ?: "default")
+                ?: buildSyntheticModule(component, component.variants.singleOrNull()?.displayName ?: "default")
 
             val transitiveDepsToVisit = when (val fragmentsResolution = fragmentsResolver.getChosenFragments(fragment, module)) {
                 is FragmentResolution.ChosenFragments ->
@@ -126,9 +122,7 @@ class FragmentDependenciesDiscovery(
 
             // With legacy publication scheme, the root MPP module may have a single 'dependency' (available-at) to the metadata module
             val isMetadataModulePublishedSeparately =
-                getProjectStructureMetadata(project, component, configurationToResolve)
-                    ?.let { !it.isPublishedAsRoot }
-                    ?: false
+                (module is ExternalImportedKotlinModule) && module.hasLegacyMetadataModule
             val singleDependencyComponentOrNull = (component.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected
             if (isMetadataModulePublishedSeparately && singleDependencyComponentOrNull != null) {
                 newTransitiveDeps.add(singleDependencyComponentOrNull)
@@ -144,9 +138,9 @@ class FragmentDependenciesDiscovery(
 
 // refactor extract to a separate class/interface
 // TODO think about multi-variant stub modules for non-Kotlin modules which got more than one chosen variant
-internal fun buildStubModule(resolvedComponentResult: ResolvedComponentResult, singleVariantName: String): KotlinModule {
+internal fun buildSyntheticModule(resolvedComponentResult: ResolvedComponentResult, singleVariantName: String): ExternalSyntheticKotlinModule {
     val moduleDependency = resolvedComponentResult.toModuleDependency()
-    return BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
+    return ExternalSyntheticKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
         BasicKotlinModuleVariant(this@apply, singleVariantName).apply {
             fragments.add(this)
             this.declaredModuleDependencies.addAll(
@@ -155,7 +149,20 @@ internal fun buildStubModule(resolvedComponentResult: ResolvedComponentResult, s
                     .map { it.selected.toModuleDependency() }
             )
         }
-    }
+    })
+}
+
+internal class ExternalSyntheticKotlinModule(private val moduleData: BasicKotlinModule) : KotlinModule by moduleData {
+    override fun toString(): String = "synthetic $moduleData"
+}
+
+internal class ExternalImportedKotlinModule(
+    private val moduleData: BasicKotlinModule,
+    val projectStructureMetadata: KotlinProjectStructureMetadata
+) : KotlinModule by moduleData {
+    val hasLegacyMetadataModule = !projectStructureMetadata.isPublishedAsRoot
+
+    override fun toString(): String = "imported $moduleData"
 }
 
 class VariantDependencyDiscovery(

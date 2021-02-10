@@ -1,0 +1,198 @@
+/*
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
+
+import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.attributes.Usage
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.buildKotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import java.util.concurrent.Callable
+
+internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
+    val project = module.project
+    createResolvableMetadataConfigurationForModule(module)
+
+    val metadataCompilationRegistry = MetadataCompilationRegistry()
+    project.pm20Extension.metadataCompilationRegistryByModuleId[module.moduleIdentifier] =
+        metadataCompilationRegistry
+
+    configureMetadataCompilationsAndCreateRegistry(module, metadataCompilationRegistry)
+
+    configureMetadataJarTask(module, metadataCompilationRegistry)
+    generateAndExportProjectStructureMetadata(module)
+}
+
+private fun generateAndExportProjectStructureMetadata(
+    module: KotlinGradleModule
+) {
+    val project = module.project
+    val projectStructureMetadata = project.createGenerateProjectStructureMetadataTask(module.moduleClassifier)
+    project.tasks.withType<Jar>().named(metadataJarName(module)).configure { jar ->
+        jar.from(projectStructureMetadata.map { it.resultFile }) { spec ->
+            spec.into("META-INF")
+                .rename { MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME }
+        }
+    }
+    GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
+        checkNotNull(buildKotlinProjectStructureMetadata(project))
+    }
+}
+
+private fun createResolvableMetadataConfigurationForModule(module: KotlinGradleModule) {
+    val project = module.project
+    project.configurations.create(module.resolvableMetadataConfigurationName).apply {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        module.fragments.all { fragment ->
+            project.addExtendsFromRelation(name, fragment.apiConfigurationName)
+            project.addExtendsFromRelation(name, fragment.implementationConfigurationName)
+        }
+    }
+}
+
+private fun configureMetadataCompilationsAndCreateRegistry(
+    module: KotlinGradleModule,
+    metadataCompilationRegistry: MetadataCompilationRegistry
+) {
+    val project = module.project
+    val metadataResolutionByFragment = mutableMapOf<KotlinGradleFragment, FragmentGranularMetadataResolver>()
+    module.fragments.all { fragment ->
+        val transformation = FragmentGranularMetadataResolver(fragment, lazy {
+            fragment.refinesClosure.minus(fragment).map {
+                metadataResolutionByFragment.getValue(it)
+            }
+        })
+        metadataResolutionByFragment[fragment] = transformation
+        createExtractMetadataTask(project, fragment, transformation)
+    }
+    val compileAllTask = project.registerTask<DefaultTask>(lowerCamelCaseName(module.moduleClassifier, "metadataClasses"))
+    module.fragments.all { fragment ->
+        createMetadataCompilation(fragment, compileAllTask, metadataCompilationRegistry)
+    }
+}
+
+private fun configureMetadataJarTask(
+    module: KotlinGradleModule,
+    registry: MetadataCompilationRegistry
+) {
+    val project = module.project
+    val allMetadataJar = project.registerTask<Jar>(metadataJarName(module)) { task ->
+        task.archiveAppendix.set("metadata")
+        task.from()
+    }
+    registry.withAll { compilationData ->
+        allMetadataJar.configure { jar ->
+            jar.from(compilationData.output.allOutputs) { spec ->
+                spec.into(compilationData.fragment.fragmentName)
+            }
+        }
+    }
+}
+
+private fun metadataJarName(module: KotlinGradleModule) =
+    lowerCamelCaseName(module.moduleClassifier, "metadataJar")
+
+private fun createMetadataCompilation(
+    fragment: KotlinGradleFragment,
+    compileAllTask: TaskProvider<DefaultTask>,
+    metadataCompilationRegistry: MetadataCompilationRegistry
+): KotlinCompilationData<out KotlinMultiplatformCommonOptions> {
+    val module = fragment.containingModule
+    val project = module.project
+
+    val metadataCompilationData =
+        KotlinFragmentMetadataCompilationData(
+            project,
+            fragment,
+            module,
+            compileAllTask,
+            metadataCompilationRegistry,
+            lazy {
+                fragment.refinesClosure.map {
+                    FragmentResolvedMetadataProvider(
+                        project.tasks.withType<TransformKotlinGranularMetadataForFragment>()
+                            .named(transformFragmentMetadataTaskName(it))
+                    )
+                }
+            }
+        )
+    metadataCompilationRegistry.register(fragment, metadataCompilationData)
+
+    addSourcesToKotlinCompileTask(
+        project,
+        metadataCompilationData.compileKotlinTaskName,
+        /*FIXME*/ emptyList(),
+        { fragment.kotlinSourceRoots },
+        lazyOf(true)
+    )
+
+    KotlinCommonSourceSetProcessor(
+        metadataCompilationData,
+        KotlinTasksProvider(),
+        project.getKotlinPluginVersion() ?: "undefined"
+    ).run()
+
+    return metadataCompilationData
+}
+
+private fun createExtractMetadataTask(
+    project: Project,
+    fragment: KotlinGradleFragment,
+    transformation: FragmentGranularMetadataResolver
+) {
+    project.tasks.register(
+        transformFragmentMetadataTaskName(fragment),
+        TransformKotlinGranularMetadataForFragment::class.java,
+        fragment,
+        transformation
+    ).configure { task ->
+        task.dependsOn(Callable {
+            fragment.refinesClosure.mapNotNull { refined ->
+                if (refined !== fragment)
+                    project.tasks.named(transformFragmentMetadataTaskName(refined))
+                else null
+            }
+        })
+    }
+}
+
+// FIXME: use this function once more than one platform is supported
+private fun disableMetadataCompilationIfNotYetSupported(
+    metadataCompilationData: KotlinFragmentMetadataCompilationData
+) {
+    val fragment = metadataCompilationData.fragment
+    val platforms = fragment.containingModule.variantsContainingFragment(fragment).map { it.platformType }.toSet()
+    if (platforms != setOf(KotlinPlatformType.native) && platforms.size == 1
+        || platforms == setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
+    ) {
+        fragment.containingModule.project.tasks.named(metadataCompilationData.compileKotlinTaskName).configure {
+            it.enabled = false
+        }
+    }
+}
+
+private fun transformFragmentMetadataTaskName(fragment: KotlinModuleFragment) =
+    lowerCamelCaseName("resolve", fragment.disambiguateName("Metadata"))

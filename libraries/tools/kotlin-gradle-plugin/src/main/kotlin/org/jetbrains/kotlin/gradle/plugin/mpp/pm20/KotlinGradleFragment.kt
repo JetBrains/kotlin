@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KotlinModuleDependency
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
+import org.jetbrains.kotlin.project.model.refinesClosure
 import javax.inject.Inject
 
 open class KotlinGradleFragment @Inject constructor(
@@ -31,6 +33,8 @@ open class KotlinGradleFragment @Inject constructor(
     override fun getName(): String = fragmentName
 
     // TODO pull up to KotlinModuleFragment
+    // FIXME apply to compilation
+    // FIXME check for consistency
     val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
     protected val project: Project
@@ -80,7 +84,7 @@ open class KotlinGradleFragment @Inject constructor(
         get() = _directRefinesDependencies.map { it.get() }
 
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = TODO("Not yet implemented")
+        get() = project.configurations.getByName(apiConfigurationName).allDependencies.map { it.toModuleDependency(project) } // FIXME impl
 
     override val kotlinSourceRoots: SourceDirectorySet by lazy {
         project.objects.sourceDirectorySet(
@@ -104,7 +108,12 @@ open class KotlinGradleFragment @Inject constructor(
     companion object {
         const val COMMON_FRAGMENT_NAME = "common"
     }
+
+    override fun toString(): String = "fragment $fragmentName in $containingModule"
 }
 
 internal fun KotlinModuleFragment.disambiguateName(simpleName: String) =
     lowerCamelCaseName(fragmentName, containingModule.moduleIdentifier.moduleClassifier ?: KotlinGradleModule.MAIN_MODULE_NAME, simpleName)
+
+val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
+    get() = (this as KotlinModuleFragment).refinesClosure.map { it as KotlinGradleFragment }.toSet()

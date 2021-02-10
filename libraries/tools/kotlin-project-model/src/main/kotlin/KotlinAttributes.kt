@@ -17,6 +17,7 @@ open class KotlinAttributeKey(
 
 object KotlinPlatformTypeAttribute : KotlinAttributeKey("org.jetbrains.kotlin.platform.type") {
     const val JVM = "jvm"
+    const val ANDROID_JVM = "androidJvm"
     const val JS = "js"
     const val NATIVE = "native"
 }
