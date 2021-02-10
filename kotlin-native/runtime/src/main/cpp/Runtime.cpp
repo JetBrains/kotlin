@@ -163,7 +163,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
   auto workerId = GetWorkerId(state->worker);
-  WorkerDeinit(state->worker);
+  WorkerDeinit(state->worker, state->memoryState);
   DeinitMemory(state->memoryState, destroyRuntime);
   konanDestructInstance(state);
   WorkerDestroyThreadDataIfNeeded(workerId);
