@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.packageFqName
+import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
@@ -430,7 +431,7 @@ private fun resolveDependencies(
             noStdLib = false,
             noDefaultLibs = noDefaultLibs,
             noEndorsedLibs = noEndorsedLibs
-    ).getFullList()
+    ).getFullList(TopologicalLibraryOrder)
 }
 
 internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
