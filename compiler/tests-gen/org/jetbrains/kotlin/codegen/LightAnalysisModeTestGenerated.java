@@ -16517,6 +16517,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nestedIndyLambdas.kt");
             }
 
+            @TestMetadata("nullabilityAssertions.kt")
+            public void testNullabilityAssertions() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nullabilityAssertions.kt");
+            }
+
             @TestMetadata("primitiveValueParameters.kt")
             public void testPrimitiveValueParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/primitiveValueParameters.kt");

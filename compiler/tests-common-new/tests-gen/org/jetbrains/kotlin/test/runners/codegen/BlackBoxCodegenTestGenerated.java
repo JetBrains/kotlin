@@ -19788,6 +19788,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("nullabilityAssertions.kt")
+            public void testNullabilityAssertions() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/nullabilityAssertions.kt");
+            }
+
+            @Test
             @TestMetadata("primitiveValueParameters.kt")
             public void testPrimitiveValueParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/primitiveValueParameters.kt");
