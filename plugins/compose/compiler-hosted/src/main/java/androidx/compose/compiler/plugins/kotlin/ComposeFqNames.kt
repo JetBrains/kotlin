@@ -42,6 +42,7 @@ object ComposeFqNames {
     val CurrentComposerIntrinsic = fqNameFor("<get-currentComposer>")
     val DisallowComposableCalls = fqNameFor("DisallowComposableCalls")
     val ReadOnlyComposable = fqNameFor("ReadOnlyComposable")
+    val ExplicitGroupsComposable = fqNameFor("ExplicitGroupsComposable")
     val NonRestartableComposable = fqNameFor("NonRestartableComposable")
     val composableLambda = internalFqNameFor("composableLambda")
     val remember = fqNameFor("remember")
@@ -78,6 +79,8 @@ fun Annotated.hasNonRestartableComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.NonRestartableComposable) != null
 fun Annotated.hasReadonlyComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.ReadOnlyComposable) != null
+fun Annotated.hasExplicitGroupsAnnotation(): Boolean =
+    annotations.findAnnotation(ComposeFqNames.ExplicitGroupsComposable) != null
 fun Annotated.hasDisallowComposableCallsAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.DisallowComposableCalls) != null
 
