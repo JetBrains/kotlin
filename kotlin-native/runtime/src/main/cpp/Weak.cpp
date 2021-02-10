@@ -57,6 +57,7 @@ OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
 
 // See Weak.kt for implementation details.
 // Retrieve link on the counter object.
+// Operates fully in the `Runnable` state.
 OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
     if (referred->permanent()) {
         RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
