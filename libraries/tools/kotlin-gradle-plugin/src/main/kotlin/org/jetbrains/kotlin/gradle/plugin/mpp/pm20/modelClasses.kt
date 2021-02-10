@@ -32,7 +32,7 @@ open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
 
     override fun createElementsConfigurations(fragment: KotlinJvmVariant) {
         super.createElementsConfigurations(fragment)
-        listOf(fragment.apiConfigurationName, fragment.runtimeElementsConfigurationName).forEach {
+        listOf(fragment.apiElementsConfigurationName, fragment.runtimeElementsConfigurationName).forEach {
             project.artifacts.add(it, getOrCreateJarTask(fragment))
         }
     }
