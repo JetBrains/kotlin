@@ -114,7 +114,7 @@ class MultiplatformRootPublicationCoordinatesProvider(
     }
 
     override val name: String by project.provider {
-        getPublication()?.artifactId ?: project.group.toString()
+        getPublication()?.artifactId ?: project.name.toString()
     }
 
     override val version: String by project.provider {
