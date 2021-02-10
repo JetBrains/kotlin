@@ -3,8 +3,6 @@
 // SAM_CONVERSIONS: INDY
 // FILE: nullabilityAssertions.kt
 fun box(): String {
-    fun justSomeLocalFun() {}
-
     try {
         A.bar {}
     } catch (e: NullPointerException) {
