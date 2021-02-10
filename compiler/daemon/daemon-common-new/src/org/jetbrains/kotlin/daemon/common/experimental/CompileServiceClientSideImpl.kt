@@ -56,10 +56,12 @@ class CompileServiceClientSideImpl(
                     while (keepAliveSuccess()) {
                         delay(KEEPALIVE_PERIOD - millisecondsSinceLastUsed())
                     }
-                    runWithTimeout(timeout = KEEPALIVE_PERIOD / 2) {
+                    val keepAliveAcknowledgement = runWithTimeout(timeout = KEEPALIVE_PERIOD / 2) {
                         val id = sendMessage(keepAliveMessage)
                         readMessage<Server.KeepAliveAcknowledgement<*>>(id)
-                    } ?: if (!keepAliveSuccess()) readActor.send(StopAllRequests()).also {
+                    }
+                    if (keepAliveAcknowledgement == null && !keepAliveSuccess()) {
+                        readActor.send(StopAllRequests())
                     }
                 }
             }
