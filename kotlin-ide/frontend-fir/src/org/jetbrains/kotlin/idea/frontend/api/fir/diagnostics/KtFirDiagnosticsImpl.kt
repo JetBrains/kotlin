@@ -1110,6 +1110,34 @@ internal class UnsafeCallImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class UnsafeImplicitInvokeCallImpl(
+    override val receiverType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnsafeImplicitInvokeCall(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class UnsafeInfixCallImpl(
+    override val lhs: KtExpression,
+    override val operator: String,
+    override val rhs: KtExpression,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnsafeInfixCall(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class UnsafeOperatorCallImpl(
+    override val lhs: KtExpression,
+    override val operator: String,
+    override val rhs: KtExpression,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.UnsafeOperatorCall(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class NoElseInWhenImpl(
     override val missingWhenCases: List<Any>,
     firDiagnostic: FirPsiDiagnostic<*>,
