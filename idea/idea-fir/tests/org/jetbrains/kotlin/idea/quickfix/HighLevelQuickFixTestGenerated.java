@@ -449,4 +449,77 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             runTest("idea/testData/quickfix/override/typeMismatchOnOverride/returnTypeMismatchOnOverrideUnitInt.kt");
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/variables/changeMutability")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeMutability extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInChangeMutability() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
+        }
+
+        @TestMetadata("capturedMemberValInitialization.kt")
+        public void testCapturedMemberValInitialization() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/capturedMemberValInitialization.kt");
+        }
+
+        @TestMetadata("capturedValInitialization.kt")
+        public void testCapturedValInitialization() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/capturedValInitialization.kt");
+        }
+
+        @TestMetadata("const.kt")
+        public void testConst() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/const.kt");
+        }
+
+        @TestMetadata("funParameter.kt")
+        public void testFunParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/funParameter.kt");
+        }
+
+        @TestMetadata("localInGetter.kt")
+        public void testLocalInGetter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/localInGetter.kt");
+        }
+
+        @TestMetadata("valOverrideVar.kt")
+        public void testValOverrideVar() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valOverrideVar.kt");
+        }
+
+        @TestMetadata("valOverrideVarConstructorParameter.kt")
+        public void testValOverrideVarConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valOverrideVarConstructorParameter.kt");
+        }
+
+        @TestMetadata("valReassignmentLocal.kt")
+        public void testValReassignmentLocal() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentLocal.kt");
+        }
+
+        @TestMetadata("valReassignmentOuterDecl.kt")
+        public void testValReassignmentOuterDecl() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentOuterDecl.kt");
+        }
+
+        @TestMetadata("valReassignmentProperty.kt")
+        public void testValReassignmentProperty() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentProperty.kt");
+        }
+
+        @TestMetadata("valReassignmentPropertyConstructorParameter.kt")
+        public void testValReassignmentPropertyConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentPropertyConstructorParameter.kt");
+        }
+
+        @TestMetadata("valWithSetter.kt")
+        public void testValWithSetter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
+        }
+    }
 }

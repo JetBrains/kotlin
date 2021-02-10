@@ -5,3 +5,4 @@
 fun fun1(i: Int) {
     <caret>i = 2
 }
+/* FIR_COMPARISON */
