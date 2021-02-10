@@ -96,5 +96,8 @@ internal val KotlinGradleModule.resolvableMetadataConfigurationName: String
 internal val KotlinGradleModule.isMain
     get() = moduleIdentifier.moduleClassifier == null
 
-fun KotlinGradleModule.variantsContainingFragment(fragment: KotlinModuleFragment): Iterable<KotlinGradleVariant> =
+internal fun KotlinGradleModule.disambiguateName(simpleName: String) =
+    lowerCamelCaseName(moduleClassifier, simpleName)
+
+internal fun KotlinGradleModule.variantsContainingFragment(fragment: KotlinModuleFragment): Iterable<KotlinGradleVariant> =
     variants.filter { fragment in it.refinesClosure }

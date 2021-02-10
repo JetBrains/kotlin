@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.LazyCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.project.model.refinesClosure
@@ -68,7 +69,7 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
             isCanBeConsumed = false
             module.ifMadePublic {
                 isCanBeConsumed = true
-                // FIXME set capability
+                setModuleCapability(this, fragment.containingModule)
             }
             attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
             extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
@@ -111,7 +112,7 @@ abstract class AbstractKotlinGradleVariantWithRuntimeDependenciesFactory<T : Kot
             isCanBeConsumed = false
             module.ifMadePublic {
                 isCanBeConsumed = true
-                // FIXME set capability
+                setModuleCapability(this, fragment.containingModule)
             }
             configureRuntimeElementsConfiguration(fragment, this@apply)
             extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
@@ -119,4 +120,8 @@ abstract class AbstractKotlinGradleVariantWithRuntimeDependenciesFactory<T : Kot
             // FIXME + runtimeOnly
         }
     }
+}
+
+internal fun setModuleCapability(configuration: Configuration, module: KotlinGradleModule) {
+    configuration.outgoing.capability(LazyCapability.fromModule(module))
 }

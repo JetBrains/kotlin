@@ -206,19 +206,8 @@ class VariantDependencyDiscovery(
 private fun ModuleComponentIdentifier.toModuleIdentifier(classifier: String? = null): MavenModuleIdentifier =
     MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, classifier)
 
-internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean {
-    return when (val moduleId = module.moduleIdentifier) {
-        is LocalModuleIdentifier -> {
-            val projectId = this as? ProjectComponentIdentifier
-            projectId?.build?.name == moduleId.buildId && projectId.projectPath == moduleId.projectId
-        }
-        is MavenModuleIdentifier -> {
-            val componentId = this as? ModuleComponentIdentifier
-            componentId?.toModuleIdentifier() == moduleId
-        }
-        else -> false
-    }
-}
+internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean =
+    matchesModuleIdentifier(module.moduleIdentifier)
 
 internal fun ResolvedComponentResult.toModuleIdentifier(): KotlinModuleIdentifier {
     val capabilities = variants.flatMap { it.capabilities } // expected to be disjoint
@@ -251,7 +240,10 @@ internal fun ComponentSelector.toModuleDependency(): KotlinModuleDependency {
 }
 
 internal fun ComponentIdentifier.matchesModuleDependency(moduleDependency: KotlinModuleDependency) =
-    when (val id = moduleDependency.moduleIdentifier) {
+    matchesModuleIdentifier(moduleDependency.moduleIdentifier)
+
+internal fun ComponentIdentifier.matchesModuleIdentifier(id: KotlinModuleIdentifier): Boolean =
+    when (id) {
         is LocalModuleIdentifier -> {
             val projectId = this as? ProjectComponentIdentifier
             projectId?.build?.name == id.buildId && projectId.projectPath == id.projectId

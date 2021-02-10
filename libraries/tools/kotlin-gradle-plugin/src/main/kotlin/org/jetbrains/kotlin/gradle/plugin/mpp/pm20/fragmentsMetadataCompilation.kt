@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.buildKotlinProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -42,6 +38,21 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
 
     configureMetadataJarTask(module, metadataCompilationRegistry)
     generateAndExportProjectStructureMetadata(module)
+}
+
+internal fun configureMetadataExposure(module: KotlinGradleModule) {
+    val project = module.project
+    project.configurations.create(module.disambiguateName("metadataElements")).apply {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        project.artifacts.add(name, project.tasks.named(metadataJarName(module)))
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        module.fragments.all { fragment ->
+            // FIXME: native api-implementation
+            project.addExtendsFromRelation(name, fragment.apiConfigurationName)
+        }
+        setModuleCapability(this, module)
+    }
 }
 
 private fun generateAndExportProjectStructureMetadata(
