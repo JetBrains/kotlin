@@ -148,11 +148,11 @@ class Fir2IrTypeConverter(
             ConeStarProjection -> IrStarProjectionImpl
             is ConeKotlinTypeProjectionIn -> {
                 val irType = this.type.toIrType(typeContext)
-                makeTypeProjection(irType, Variance.IN_VARIANCE)
+                makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else Variance.IN_VARIANCE)
             }
             is ConeKotlinTypeProjectionOut -> {
                 val irType = this.type.toIrType(typeContext)
-                makeTypeProjection(irType, Variance.OUT_VARIANCE)
+                makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else Variance.OUT_VARIANCE)
             }
             is ConeKotlinType -> {
                 if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive(mutableSetOf())) {
