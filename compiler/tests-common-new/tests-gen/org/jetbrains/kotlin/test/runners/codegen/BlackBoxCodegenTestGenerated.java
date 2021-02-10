@@ -19940,6 +19940,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("nullabilityAssertions.kt")
+            public void testNullabilityAssertions() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/nullabilityAssertions.kt");
+            }
+
+            @Test
             @TestMetadata("possibleOverrideClash.kt")
             public void testPossibleOverrideClash() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/possibleOverrideClash.kt");
