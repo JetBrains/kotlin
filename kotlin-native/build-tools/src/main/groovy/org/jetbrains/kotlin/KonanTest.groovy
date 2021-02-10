@@ -419,7 +419,6 @@ fun runTest() {
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
             "external/compiler/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
             "external/compiler/codegen/box/coroutines/multiModule/",                                // KT-40121
-            "external/compiler/codegen/box/callableReference/genericConstructorReference.kt",       // KT-42631
             "external/compiler/codegen/box/defaultArguments/recursiveDefaultArguments.kt"           // KT-42684
     ]
 
