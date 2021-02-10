@@ -52,7 +52,8 @@ class CallAndReferenceGenerator(
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
     private val samResolver = FirSamResolverImpl(session, scopeSession)
 
-    private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
+    private fun FirTypeRef.toIrType(conversionTypeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
+        with(typeConverter) { toIrType(conversionTypeContext) }
 
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -608,7 +609,7 @@ class CallAndReferenceGenerator(
         if (!needSamConversion(argument, parameter)) {
             return this
         }
-        var samType = parameter.returnTypeRef.toIrType()
+        var samType = parameter.returnTypeRef.toIrType(ConversionTypeContext.WITH_INVARIANT)
         if (shouldUnwrapVarargType) {
             samType = samType.getArrayElementType(irBuiltIns)
         }
