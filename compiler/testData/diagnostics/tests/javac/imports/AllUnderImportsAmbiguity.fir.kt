@@ -24,4 +24,4 @@ package c
 import a.*
 import b.*
 
-fun test(): x = d().x()
+fun test(): <!UNRESOLVED_REFERENCE!>x<!> = d().x()

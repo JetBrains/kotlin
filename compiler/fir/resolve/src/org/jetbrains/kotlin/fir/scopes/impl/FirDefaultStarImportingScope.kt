@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.name.Name
 class FirDefaultStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
+    filter: FirImportingScopeFilter,
     priority: DefaultImportPriority
-) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir = false) {
+) : FirAbstractStarImportingScope(session, scopeSession, filter, lookupInFir = false) {
 
     // TODO: put languageVersionSettings into FirSession?
     override val starImports = run {
