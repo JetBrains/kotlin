@@ -1,4 +1,4 @@
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.EMIT_JVM_TYPE_ANNOTATIONS
+// EMIT_JVM_TYPE_ANNOTATIONS
 // TARGET_BACKEND: JVM
 
 // No virtual method getAnnotatedReturnType()Ljava/lang/reflect/AnnotatedType
