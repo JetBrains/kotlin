@@ -24470,6 +24470,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt44316.kt")
+            public void testKt44316() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/kt44316.kt");
+            }
+
+            @Test
             @TestMetadata("Local.kt")
             public void testLocal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/Local.kt");
