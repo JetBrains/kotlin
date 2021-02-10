@@ -574,25 +574,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                                 else
                                     irGet(receiver!!)
 
-                            // If a vararg parameter corresponds to exactly one KFunction argument, which is an array, that array
-                            // is forwarded as is.
-                            //
-                            //     fun f(x: (Int, Array<String>) -> String) = x(0, arrayOf("OK", "FAIL"))
-                            //     fun h(i: Int, vararg xs: String) = xs[i]
-                            //     f(::h)
-                            //
-                            parameter.isVararg && unboundIndex < argumentTypes.size && parameter.type == valueParameters[unboundIndex].type ->
-                                irGet(valueParameters[unboundIndex++])
-                            // In all other cases, excess arguments are packed into a new array.
-                            //
-                            //     fun g(x: (Int, String, String) -> String) = x(0, "OK", "FAIL")
-                            //     f(::h) == g(::h)
-                            //
-                            parameter.isVararg && (unboundIndex < argumentTypes.size || !parameter.hasDefaultValue()) ->
-                                irArray(parameter.type) {
-                                    (unboundIndex until argumentTypes.size).forEach { +irGet(valueParameters[unboundIndex++]) }
-                                }
-
                             unboundIndex >= argumentTypes.size ->
                                 // Default value argument (this pass doesn't handle suspend functions, otherwise
                                 // it could also be the continuation argument)
