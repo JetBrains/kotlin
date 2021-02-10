@@ -7,7 +7,7 @@ class B: A() {
         <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>invoke<!>()<!>
 
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> {
-            println(<!ILLEGAL_CONST_EXPRESSION!>'weird'<!>)
+            <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>println<!>(<!ILLEGAL_CONST_EXPRESSION!>'weird'<!>)<!>
         }
     }
 }
