@@ -9,8 +9,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinBundleIndependent
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -27,15 +28,15 @@ class RemoveModifierFix(
         val modifierText = modifier.value
         when {
             isRedundant ->
-                KotlinBundle.message("remove.redundant.0.modifier", modifierText)
+                KotlinBundleIndependent.message("remove.redundant.0.modifier", modifierText)
             modifier === KtTokens.ABSTRACT_KEYWORD || modifier === KtTokens.OPEN_KEYWORD ->
-                KotlinBundle.message("make.0.not.1", AddModifierFix.getElementName(element), modifierText)
+                KotlinBundleIndependent.message("make.0.not.1", getElementName(element), modifierText)
             else ->
-                KotlinBundle.message("remove.0.modifier", modifierText, modifier)
+                KotlinBundleIndependent.message("remove.0.modifier", modifierText, modifier)
         }
     }
 
-    override fun getFamilyName() = KotlinBundle.message("remove.modifier")
+    override fun getFamilyName() = KotlinBundleIndependent.message("remove.modifier")
 
     override fun getText() = text
 
@@ -136,6 +137,24 @@ class RemoveModifierFix(
                 } ?: return@quickFixesPsiBasedFactory emptyList()
                 listOf(RemoveModifierFix(funInterface, KtTokens.FUN_KEYWORD, isRedundant = false))
             }
+        }
+
+        fun getElementName(modifierListOwner: KtModifierListOwner): String {
+            var name: String? = null
+            if (modifierListOwner is PsiNameIdentifierOwner) {
+                val nameIdentifier = modifierListOwner.nameIdentifier
+                if (nameIdentifier != null) {
+                    name = nameIdentifier.text
+                } else if ((modifierListOwner as? KtObjectDeclaration)?.isCompanion() == true) {
+                    name = "companion object"
+                }
+            } else if (modifierListOwner is KtPropertyAccessor) {
+                name = modifierListOwner.namePlaceholder.text
+            }
+            if (name == null) {
+                name = modifierListOwner.text
+            }
+            return "'$name'"
         }
     }
 }
