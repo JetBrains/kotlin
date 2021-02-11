@@ -503,8 +503,10 @@ interface IrBuilderExtension {
     fun findEnumValuesMethod(enumClass: ClassDescriptor): IrFunction {
         assert(enumClass.kind == ClassKind.ENUM_CLASS)
         return compilerContext.referenceClass(enumClass.fqNameSafe)?.let {
-            it.owner.functions.find { it.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER && it.name == Name.identifier("values") }
-                ?: throw AssertionError("Enum class does not have .values() function")
+            it.owner.functions.find { f ->
+                (f.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER || (it.owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && f.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB))
+                        && f.name == Name.identifier("values")
+            } ?: throw AssertionError("Enum class does not have .values() function")
         } ?: error("Couldn't load class $enumClass")
     }
 
