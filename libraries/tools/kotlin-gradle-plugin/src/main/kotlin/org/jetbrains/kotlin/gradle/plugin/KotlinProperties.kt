@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -89,8 +88,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val usePreciseJavaTracking: Boolean?
         get() = booleanProperty("kotlin.incremental.usePreciseJavaTracking")
 
+    private val useFallbackCompilerSearchPropName = "kotlin.useFallbackCompilerSearch"
+
+    @Deprecated("Unsupported and will be removed in next major releases")
     val useFallbackCompilerSearch: Boolean?
-        get() = booleanProperty("kotlin.useFallbackCompilerSearch")
+        get() {
+            if (property(useFallbackCompilerSearchPropName) != null) {
+                SingleWarningPerBuild.show(
+                    project,
+                    "Project property '$useFallbackCompilerSearchPropName' is deprecated."
+                )
+            }
+            return booleanProperty(useFallbackCompilerSearchPropName)
+        }
 
     val keepMppDependenciesIntactInPoms: Boolean?
         get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")
