@@ -69,7 +69,7 @@ class CompilerConfigurationProviderImpl(
     }
 
     @OptIn(TestInfrastructureInternals::class)
-    protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
+    protected fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         val platform = module.targetPlatform
         val configFiles = when {
             platform.isJvm() -> EnvironmentConfigFiles.JVM_CONFIG_FILES
