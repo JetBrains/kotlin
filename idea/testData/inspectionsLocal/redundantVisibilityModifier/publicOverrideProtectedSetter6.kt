@@ -16,3 +16,5 @@ fun main() {
     val c = C()
     c.attribute = "test"
 }
+
+// IGNORE_FIR KT-44939

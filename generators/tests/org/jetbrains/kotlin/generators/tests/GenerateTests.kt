@@ -101,6 +101,7 @@ import org.jetbrains.kotlin.idea.imports.AbstractJsOptimizeImportsTest
 import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
 import org.jetbrains.kotlin.idea.index.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
 import org.jetbrains.kotlin.idea.inspections.AbstractHLInspectionTest
+import org.jetbrains.kotlin.idea.inspections.AbstractHLLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractMultiFileLocalInspectionTest
 import org.jetbrains.kotlin.idea.intentions.*
@@ -1115,6 +1116,7 @@ fun main(args: Array<String>) {
                 model("inspections/redundantUnitReturnType", pattern = pattern, singleClass = true)
             }
 
+
             testClass<AbstractHLIntentionTest> {
                 val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
@@ -1122,6 +1124,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirShortenRefsTest> {
                 model("shortenRefsFir", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestWithMuting")
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "idea") {
+            testClass<AbstractHLLocalInspectionTest> {
+                val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
+                model("testData/inspectionsLocal/redundantVisibilityModifier", pattern = pattern)
+                model("idea-fir/testData/inspectionsLocal", pattern = pattern)
             }
         }
 
