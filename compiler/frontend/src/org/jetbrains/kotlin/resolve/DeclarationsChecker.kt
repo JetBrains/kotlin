@@ -289,12 +289,22 @@ class DeclarationsChecker(
 
     private fun checkConstructorVisibility(constructorDescriptor: ClassConstructorDescriptor, declaration: KtDeclaration) {
         val visibilityModifier = declaration.visibilityModifier()
-        if (visibilityModifier != null && visibilityModifier.node?.elementType != KtTokens.PRIVATE_KEYWORD) {
-            val classDescriptor = constructorDescriptor.containingDeclaration
-            if (classDescriptor.kind == ClassKind.ENUM_CLASS) {
-                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_ENUM.on(visibilityModifier))
-            } else if (classDescriptor.modality == Modality.SEALED) {
-                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_SEALED.on(visibilityModifier))
+        val visibilityKeyword = visibilityModifier?.node?.elementType ?: return
+        val classDescriptor = constructorDescriptor.containingDeclaration
+
+        when {
+            classDescriptor.kind == ClassKind.ENUM_CLASS -> {
+                if (visibilityKeyword != KtTokens.PRIVATE_KEYWORD) {
+                    trace.report(NON_PRIVATE_CONSTRUCTOR_IN_ENUM.on(visibilityModifier))
+                }
+            }
+            classDescriptor.modality == Modality.SEALED -> {
+                val protectedIsAllowed =
+                    languageVersionSettings.supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)
+                if (!(visibilityKeyword == KtTokens.PRIVATE_KEYWORD || (protectedIsAllowed && visibilityKeyword == KtTokens.PROTECTED_KEYWORD))) {
+                    val factory = if (protectedIsAllowed) NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED else NON_PRIVATE_CONSTRUCTOR_IN_SEALED
+                    trace.report(factory.on(visibilityModifier))
+                }
             }
         }
     }
