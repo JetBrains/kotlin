@@ -38,7 +38,7 @@ final class TopLevelPrivate /* pkg.TopLevelPrivate*/ {
 }
 
 public abstract class Season /* pkg.Season*/ {
-  private  Season();//  .ctor()
+  protected  Season();//  .ctor()
 
 
   class Nested ...
@@ -53,7 +53,7 @@ public static final class Nested /* pkg.Season.Nested*/ extends pkg.Season {
 public abstract class SealedWithArgs /* pkg.SealedWithArgs*/ {
   private final int a;
 
-  private  SealedWithArgs(int);//  .ctor(int)
+  protected  SealedWithArgs(int);//  .ctor(int)
 
   public final int getA();//  getA()
 
