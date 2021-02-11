@@ -12,7 +12,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -22,8 +21,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -57,15 +54,18 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val COMMON = FlavorConfig("common", 3)
-    private val REFLECT = FlavorConfig("reflect", 1)
+    private val COMMON = FlavorConfig(TargetBackend.ANDROID,"common", 3)
+    private val REFLECT = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
-    class FlavorConfig(private val prefix: String, val limit: Int) {
+    private val COMMON_IR = FlavorConfig(TargetBackend.ANDROID_IR, "common_ir", 3)
+    private val REFLECT_IR = FlavorConfig(TargetBackend.ANDROID_IR,"reflect_ir", 1)
+
+    class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
 
         private var writtenFilesCount = 0
 
         fun printStatistics() {
-            println("FlavorTestCompiler: $prefix, generated file count: $writtenFilesCount")
+            println("FlavorTestCompiler for $backend: $prefix, generated file count: $writtenFilesCount")
         }
 
         fun getFlavorForNewFiles(newFilesCount: Int): String {
@@ -148,25 +148,47 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun generateTestsAndFlavourSuites() {
         println("Generating test files...")
 
-        generateTestMethodsForDirectories(File("compiler/testData/codegen/box"), File("compiler/testData/codegen/boxInline"))
+        val folders = arrayOf(
+            File("compiler/testData/codegen/box"),
+            File("compiler/testData/codegen/boxInline")
+        )
+
+        generateTestMethodsForDirectories(
+            TargetBackend.ANDROID,
+            COMMON,
+            REFLECT,
+            *folders
+        )
+
+        generateTestMethodsForDirectories(
+            TargetBackend.ANDROID_IR,
+            COMMON_IR,
+            REFLECT_IR,
+            *folders
+        )
 
         pendingUnitTestGenerators.values.forEach { it.generate() }
     }
 
-    private fun generateTestMethodsForDirectories(vararg dirs: File) {
+    private fun generateTestMethodsForDirectories(
+        backend: TargetBackend,
+        commonFlavor: FlavorConfig,
+        reflectionFlavor: FlavorConfig,
+        vararg dirs: File
+    ) {
         val holders = mutableMapOf<ConfigurationKey, FilesWriter>()
 
         for (dir in dirs) {
             val files = dir.listFiles() ?: error("Folder with testData is empty: ${dir.absolutePath}")
-            processFiles(files, holders)
+            processFiles(files, holders, backend, commonFlavor, reflectionFlavor)
         }
 
         holders.values.forEach {
             it.writeFilesOnDisk()
         }
 
-        COMMON.printStatistics()
-        REFLECT.printStatistics()
+        commonFlavor.printStatistics()
+        reflectionFlavor.printStatistics()
     }
 
     internal inner class FilesWriter(
@@ -254,7 +276,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     @Throws(IOException::class)
     private fun processFiles(
         files: Array<File>,
-        holders: MutableMap<ConfigurationKey, FilesWriter>
+        holders: MutableMap<ConfigurationKey, FilesWriter>,
+        backend: TargetBackend,
+        commmonFlavor: FlavorConfig,
+        reflectionFlavor: FlavorConfig
     ) {
         holders.values.forEach {
             it.writeFilesOnDiskIfNeeded()
@@ -264,7 +289,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             if (file.isDirectory) {
                 val listFiles = file.listFiles()
                 if (listFiles != null) {
-                    processFiles(listFiles, holders)
+                    processFiles(listFiles, holders, backend, commmonFlavor, reflectionFlavor)
                 }
             } else if (FileUtilRt.getExtension(file.name) != KotlinFileType.EXTENSION) {
                 // skip non kotlin files
@@ -273,7 +298,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file) ||
+                if (!InTextDirectivesUtils.isPassingTarget(backend.compatibleWith, file) ||
                     InTextDirectivesUtils.isIgnoredTarget(TargetBackend.ANDROID, file)
                 ) {
                     continue
@@ -304,7 +329,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (fullFileText.contains("// SKIP_JDK6")) continue
 
                 if (hasBoxMethod(fullFileText)) {
-                    val testConfiguration = createTestConfiguration(file)
+                    val testConfiguration = createTestConfiguration(file, backend)
                     val services = testConfiguration.testServices
 
                     val moduleStructure = try {
@@ -335,7 +360,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
-                    val compiler = if (kind.withReflection) REFLECT else COMMON
+                    val compiler = if (kind.withReflection) reflectionFlavor else commmonFlavor
                     val compilerConfigurationProvider = services.compilerConfigurationProvider as CompilerConfigurationProviderImpl
                     val filesHolder = holders.getOrPut(key) {
                         FilesWriter(compiler, compilerConfigurationProvider.createCompilerConfiguration(module)).also {
@@ -349,9 +374,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }
     }
 
-    private fun createTestConfiguration(testDataFile: File): TestConfiguration {
+    private fun createTestConfiguration(testDataFile: File, backend: TargetBackend): TestConfiguration {
         return TestConfigurationBuilder().apply {
-            testConfiguration()
+            configure(backend)
             testInfo = KotlinTestInfo(
                 "org.jetbrains.kotlin.android.tests.AndroidRunner",
                 "test${testDataFile.nameWithoutExtension.capitalize()}",
@@ -360,10 +385,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         }.build(testDataFile.path)
     }
 
-    private val testConfiguration: TestConfigurationBuilder.() -> Unit = {
+    private fun TestConfigurationBuilder.configure(backend: TargetBackend) {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
-            targetBackend = TargetBackend.ANDROID
+            targetBackend = backend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
@@ -385,9 +410,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
     }
-
-    private fun createTestFiles(file: File, expectedText: String): List<KotlinBaseTest.TestFile> =
-        CodegenTestCase.createTestFilesFromFile(file, expectedText, false, TargetBackend.JVM)
 
     companion object {
         const val GRADLE_VERSION = "6.8.1" // update GRADLE_SHA_256 on change

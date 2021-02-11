@@ -45,9 +45,9 @@ public class GradleRunner {
         OutputUtils.checkResult(result);
     }
 
-    public void build() {
+    public void assembleAndroidTest() {
         System.out.println("Building gradle project...");
-        GeneralCommandLine build = generateCommandLine("build");
+        GeneralCommandLine build = generateCommandLine("assembleAndroidTest");
         build.addParameter("--stacktrace");
         build.addParameter("--warn");
         RunResult result = RunUtils.execute(build);

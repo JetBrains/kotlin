@@ -71,15 +71,20 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         return rootSuite
     }
 
-    private fun processReport(suite: TestSuite, resultOutput: String) {
+    private fun processReport(rootSuite: TestSuite, resultOutput: String) {
         val reportFolder = File(flavorFolder())
         try {
             val folders = reportFolder.listFiles()
             assertTrue(folders != null && folders.isNotEmpty(), "No folders in ${reportFolder.path}")
+
             folders.forEach {
                 assertTrue("${it.path} is not directory") { it.isDirectory }
+                val isIr = it.name.contains("_ir")
                 val testCases = parseSingleReportInFolder(it)
-                testCases.forEach { aCase -> suite.addTest(aCase) }
+                testCases.forEach { aCase ->
+                    if (isIr) aCase.name += "_ir"
+                    rootSuite.addTest(aCase)
+                }
                 Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
             }
         } catch (e: Throwable) {
@@ -87,10 +92,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         }
     }
 
-    private fun renameFlavorFolder() {
-        val reportFolder = File(flavorFolder())
-        reportFolder.renameTo(File(reportFolder.parentFile, reportFolder.name + "_d8"))
-    }
 
     private fun flavorFolder() = pathManager.tmpFolder + "/build/test/results/connected/flavors"
 
@@ -119,7 +120,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
         private fun cleanAndBuildProject(gradleRunner: GradleRunner) {
             gradleRunner.clean()
-            gradleRunner.build()
+            gradleRunner.assembleAndroidTest()
         }
 
         @Throws(IOException::class, SAXException::class, ParserConfigurationException::class)
@@ -138,21 +139,14 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
             return (0 until testCases.length).map { i ->
                 val item = testCases.item(i) as Element
-                val failure = item.getElementsByTagName("failure")
+                val failure = item.getElementsByTagName("failure").takeIf { it.length != 0 }?.item(0)
                 val name = item.getAttribute("name")
 
-                if (failure.length == 0) {
-                    object : TestCase(name) {
-                        @Throws(Throwable::class)
-                        override fun runTest() {
-
-                        }
-                    }
-                } else {
-                    object : TestCase(name) {
-                        @Throws(Throwable::class)
-                        override fun runTest() {
-                            Assert.fail(failure.item(0).textContent)
+                object : TestCase(name) {
+                    @Throws(Throwable::class)
+                    override fun runTest() {
+                        if (failure != null) {
+                            Assert.fail(failure.textContent)
                         }
                     }
                 }
