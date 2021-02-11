@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 class AddSuspendModifierFix(
     element: KtModifierListOwner,
     private val declarationName: String?
-) : AddModifierFix(element, KtTokens.SUSPEND_KEYWORD) {
+) : AddModifierFixMpp(element, KtTokens.SUSPEND_KEYWORD) {
 
     override fun getText() = when (element) {
         is KtNamedFunction -> {

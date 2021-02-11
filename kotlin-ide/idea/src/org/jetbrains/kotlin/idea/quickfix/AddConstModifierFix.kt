@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.checkers.ConstModifierChecker
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-class AddConstModifierFix(property: KtProperty) : AddModifierFix(property, KtTokens.CONST_KEYWORD), CleanupFix {
+class AddConstModifierFix(property: KtProperty) : AddModifierFixMpp(property, KtTokens.CONST_KEYWORD), CleanupFix {
     private val pointer = property.createSmartPointer()
 
     override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
