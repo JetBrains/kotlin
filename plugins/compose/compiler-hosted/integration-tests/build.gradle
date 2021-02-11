@@ -33,7 +33,11 @@ dependencies {
     testImplementation(JUNIT)
     testImplementation(ROBOLECTRIC)
 
-    testImplementation("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    testImplementation(
+        project(
+           ":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged"
+        )
+    )
 
     testImplementation(KOTLIN_STDLIB)
     testImplementation(project(":compose:androidview:androidview"))
