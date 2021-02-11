@@ -1,21 +1,24 @@
+#include <string>
 #include "library.h"
 
 extern "C" {
 
 struct S {
-    const char* name;
+    std::string name;
 };
 
-struct S s = {
+S s = {
     .name = "initial"
 };
 
 void setContent(struct S* s, const char* name) {
+    // Note that copy here is intentional: we use it as a workaround
+    // for short lifetime of copy of the passed Kotlin string.
     s->name = name;
 }
 
 const char* getContent(struct S* s) {
-    return s->name;
+    return s->name.c_str();
 }
 
 union U {
