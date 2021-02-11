@@ -22,15 +22,6 @@ kotlin {
             commonWebpackConfig {
                 cssSupport.enabled = true
             }
-            runTask {
-                cssSupport.enabled = true
-            }
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    webpackConfig.cssSupport.enabled = true
-                }
-            }
         }
     }
     sourceSets {
