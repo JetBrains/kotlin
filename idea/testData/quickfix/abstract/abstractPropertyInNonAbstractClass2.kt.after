@@ -2,3 +2,4 @@
 class A() {
     var i : Int = 0
 }
+/* FIR_COMPARISON */
