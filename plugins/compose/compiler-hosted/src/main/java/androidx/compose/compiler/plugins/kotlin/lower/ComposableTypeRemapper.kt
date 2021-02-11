@@ -93,6 +93,12 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
+        if (declaration.symbol.isRemappedAndBound()) {
+            return symbolRemapper.getReferencedSimpleFunction(declaration.symbol).owner
+        }
+        if (declaration.symbol.isBoundButNotRemapped()) {
+            symbolRemapper.visitSimpleFunction(declaration)
+        }
         return super.visitSimpleFunction(declaration).also {
             it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
             it.copyMetadataFrom(declaration)
@@ -153,6 +159,18 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             }.copyAttributes(expression)
         }
         return super.visitConstructorCall(expression)
+    }
+
+    private fun IrFunction.hasComposableArguments(): Boolean {
+        if (
+            dispatchReceiverParameter?.type?.isComposable() == true ||
+            extensionReceiverParameter?.type?.isComposable() == true
+        ) return true
+
+        for (param in valueParameters) {
+            if (param.type.isComposable()) return true
+        }
+        return false
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -238,7 +256,40 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             }
         }
 
+        if (
+            ownerFn != null &&
+            ownerFn.hasComposableArguments()
+        ) {
+            val newFn = visitSimpleFunction(ownerFn).also {
+                it.overriddenSymbols = ownerFn.overriddenSymbols.map { override ->
+                    if (override.isBound) {
+                        visitSimpleFunction(override.owner).apply {
+                            parent = override.owner.parent
+                        }.symbol
+                    } else {
+                        override
+                    }
+                }
+                it.parent = ownerFn.parent
+                it.patchDeclarationParents(it.parent)
+            }
+            val newCallee = symbolRemapper.getReferencedSimpleFunction(newFn.symbol)
+            return shallowCopyCall(expression, newCallee).apply {
+                copyRemappedTypeArgumentsFrom(expression)
+                transformValueArguments(expression)
+            }
+        }
+
         return super.visitCall(expression)
+    }
+
+    private fun IrSimpleFunctionSymbol.isBoundButNotRemapped(): Boolean {
+        return this.isBound && symbolRemapper.getReferencedFunction(this) == this
+    }
+
+    private fun IrSimpleFunctionSymbol.isRemappedAndBound(): Boolean {
+        val symbol = symbolRemapper.getReferencedFunction(this)
+        return symbol.isBound && symbol != this
     }
 
     /* copied verbatim from DeepCopyIrTreeWithSymbols, except with newCallee as a parameter */

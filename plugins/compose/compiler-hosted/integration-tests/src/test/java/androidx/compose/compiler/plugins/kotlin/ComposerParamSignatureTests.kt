@@ -97,6 +97,37 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testInterfaceMethodWithComposableParameter(): Unit = validateBytecode(
+        """
+            @Composable
+            fun test1(cc: ControlledComposition) {
+                cc.setContent {}
+            }
+            fun test2(cc: ControlledComposition) {
+                cc.setContent {}
+            }
+        """
+    ) {
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/ControlledComposition.setContent (Lkotlin/jvm/functions/Function0;)V"))
+    }
+
+    @Test
+    fun testFakeOverrideFromSameModuleButLaterTraversal(): Unit = validateBytecode(
+        """
+            class B : A() {
+                fun test() {
+                    show {}
+                }
+            }
+            open class A {
+                fun show(content: @Composable () -> Unit) {}
+            }
+        """
+    ) {
+        assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/ControlledComposition.setContent (Lkotlin/jvm/functions/Function0;)V"))
+    }
+
+    @Test
     fun testPrimitiveChangedCalls(): Unit = validateBytecode(
         """
         @Composable fun Foo(
