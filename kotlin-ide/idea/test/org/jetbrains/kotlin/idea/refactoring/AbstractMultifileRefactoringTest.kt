@@ -24,11 +24,9 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.extractMultipleMarkerOffsets
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
 abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -53,7 +51,10 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
         val config = JsonParser().parse(FileUtil.loadFile(testFile, true)) as JsonObject
 
         doTestCommittingDocuments(testFile) { rootDir ->
-            runRefactoring(testFile.path, config, rootDir, project)
+            val opts = config.getNullableString("customCompilerOpts")?.prefixIfNot("// ") ?: ""
+            withCustomCompilerOptions(opts, project, module) {
+                runRefactoring(path, config, rootDir, project)
+            }
         }
     }
 
