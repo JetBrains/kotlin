@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesList
 import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesListBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.quickfix.fixes.ChangeTypeQuickFix
-import org.jetbrains.kotlin.lexer.KtTokens
 
 class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
     private val modifiers = KtQuickFixesListBuilder.registerPsiQuickFix {
@@ -19,12 +18,17 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerPsiQuickFixes(KtFirDiagnostic.RepeatedModifier::class, RemoveModifierFix.removeNonRedundantModifier)
         registerPsiQuickFixes(KtFirDiagnostic.DeprecatedModifierPair::class, RemoveModifierFix.removeRedundantModifier)
         registerPsiQuickFixes(KtFirDiagnostic.TypeParametersInEnum::class, RemoveModifierFix.removeRedundantModifier)
+        registerPsiQuickFixes(KtFirDiagnostic.RedundantOpenInInterface::class, RemoveModifierFix.removeRedundantOpenModifier)
+        registerPsiQuickFixes(KtFirDiagnostic.NonAbstractFunctionWithNoBody::class, AddFunctionBodyFix, AddModifierFix.addAbstractModifier)
         registerPsiQuickFixes(
-            KtFirDiagnostic.RedundantOpenInInterface::class,
-            RemoveModifierFix.createRemoveModifierFromListOwnerFactoryByModifierListOwner(
-                modifier = KtTokens.OPEN_KEYWORD,
-                isRedundant = true
-            )
+            KtFirDiagnostic.AbstractPropertyInNonAbstractClass::class,
+            AddModifierFix.addAbstractToContainingClass,
+            RemoveModifierFix.removeAbstractModifier
+        )
+        registerPsiQuickFixes(
+            KtFirDiagnostic.AbstractFunctionInNonAbstractClass::class,
+            AddModifierFix.addAbstractToContainingClass,
+            RemoveModifierFix.removeAbstractModifier
         )
     }
 

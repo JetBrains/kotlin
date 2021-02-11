@@ -51,8 +51,15 @@ class RemoveModifierFix(
     }
 
     companion object {
-        val removeRedundantModifier = createRemoveModifierFactory(isRedundant = true)
-        val removeNonRedundantModifier = createRemoveModifierFactory(isRedundant = false)
+        val removeRedundantModifier: QuickFixesPsiBasedFactory<PsiElement> = createRemoveModifierFactory(isRedundant = true)
+        val removeNonRedundantModifier: QuickFixesPsiBasedFactory<PsiElement> = createRemoveModifierFactory(isRedundant = false)
+        val removeAbstractModifier: QuickFixesPsiBasedFactory<PsiElement> =
+            createRemoveModifierFromListOwnerPsiBasedFactory(KtTokens.ABSTRACT_KEYWORD)
+        val removeRedundantOpenModifier: QuickFixesPsiBasedFactory<KtModifierListOwner> =
+            createRemoveModifierFromListOwnerFactoryByModifierListOwner(
+                modifier = KtTokens.OPEN_KEYWORD,
+                isRedundant = true
+            )
 
         @Deprecated(
             "For binary compatibility",
