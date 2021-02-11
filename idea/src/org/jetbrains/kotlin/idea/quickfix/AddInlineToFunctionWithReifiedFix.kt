@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class AddInlineToFunctionWithReifiedFix(function: KtNamedFunction) : AddModifierFix(function, KtTokens.INLINE_KEYWORD) {
+class AddInlineToFunctionWithReifiedFix(function: KtNamedFunction) : AddModifierFixMpp(function, KtTokens.INLINE_KEYWORD) {
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.cast(diagnostic)
