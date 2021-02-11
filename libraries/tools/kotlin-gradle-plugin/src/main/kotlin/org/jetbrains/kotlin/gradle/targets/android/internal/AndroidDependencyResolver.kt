@@ -146,7 +146,7 @@ object AndroidDependencyResolver {
         compileClasspathConf: Configuration
     ): List<AndroidDependency> {
         val viewConfig: (ArtifactView.ViewConfiguration) -> Unit = { config ->
-            config.attributes { it.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.JAR.type) }
+            config.attributes { it.attribute(AndroidArtifacts.ARTIFACT_TYPE, PROCESSED_JAR_ARTIFACT_TYPE.type) }
             config.isLenient = true
         }
 
@@ -189,4 +189,11 @@ object AndroidDependencyResolver {
         result.addAll(configs.flatMap { it.dependencies })
         doFindDependencies(implConfigs, configs.flatMap { it.extendsFrom }.filter { it !in implConfigs && visited.add(it) }, result)
     }
+
+    private val PROCESSED_JAR_ARTIFACT_TYPE: AndroidArtifacts.ArtifactType =
+        try {
+            AndroidArtifacts.ArtifactType.valueOf("PROCESSED_JAR")
+        } catch (e: IllegalArgumentException) {
+            AndroidArtifacts.ArtifactType.JAR
+        }
 }
