@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -44,8 +45,18 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 interface IrBuilderExtension {
     val compilerContext: SerializationPluginContext
 
+    private val throwMissedFieldExceptionFunc
+        get() = compilerContext.referenceFunctions(SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_FQ).singleOrNull()
+
+    private val throwMissedFieldExceptionArrayFunc
+        get() = compilerContext.referenceFunctions(SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_FQ).singleOrNull()
+
     private inline fun <reified T : IrDeclaration> IrClass.searchForDeclaration(descriptor: DeclarationDescriptor): T? {
         return declarations.singleOrNull { it.descriptor == descriptor } as? T
+    }
+
+    fun useFieldMissingOptimization(): Boolean {
+        return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
     }
 
     fun IrClass.contributeFunction(descriptor: FunctionDescriptor, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
@@ -230,6 +241,51 @@ interface IrBuilderExtension {
         return thisClass.searchForProperty(descriptor)
     }
 
+
+    /*
+      Create a function that creates `get property value expressions` for given corresponded constructor's param
+        (constructor_params) -> get_property_value_expression
+     */
+    fun IrBuilderWithScope.createPropertyByParamReplacer(
+        irClass: IrClass,
+        serialProperties: List<SerializableProperty>,
+        instance: IrValueParameter,
+        bindingContext: BindingContext
+    ): (ValueParameterDescriptor) -> IrExpression? {
+        fun SerializableProperty.irGet(): IrExpression {
+            val ownerType = instance.symbol.owner.type
+            return getProperty(
+                irGet(
+                    type = ownerType,
+                    variable = instance.symbol
+                ), getIrPropertyFrom(irClass)
+            )
+        }
+
+        val serialPropertiesMap = serialProperties.associateBy { it.descriptor }
+
+        val transientPropertiesMap =
+            irClass.declarations.asSequence()
+                .filterIsInstance<IrProperty>()
+                .filter { it.backingField != null }.filter { !serialPropertiesMap.containsKey(it.descriptor) }
+                .associateBy { it.symbol.descriptor }
+
+        return {
+            val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it]
+            if (propertyDescriptor != null) {
+                val value = serialPropertiesMap[propertyDescriptor]
+                value?.irGet() ?: transientPropertiesMap[propertyDescriptor]?.let { prop ->
+                    getProperty(
+                        irGet(instance),
+                        prop
+                    )
+                }
+            } else {
+                null
+            }
+        }
+    }
+
     fun IrBuilderWithScope.getProperty(receiver: IrExpression, property: IrProperty): IrExpression {
         return if (property.getter != null)
             irGet(property.getter!!.returnType, receiver, property.getter!!.symbol)
@@ -273,12 +329,11 @@ interface IrBuilderExtension {
         val maskSlotCount = seenVars.size
         if (maskSlotCount == 1) {
             val goldenMask = properties.goldenMask
-            val throwMissedFieldExceptionFunc =
-                compilerContext.referenceFunctions(SerialEntityNames.SINGLE_MASK_FIELD_MISSING_FUNC_FQ).single()
+
 
             throwErrorExpr = irInvoke(
                 null,
-                throwMissedFieldExceptionFunc,
+                throwMissedFieldExceptionFunc!!,
                 irGet(seenVars[0]),
                 irInt(goldenMask),
                 serialDescriptor,
@@ -295,8 +350,6 @@ interface IrBuilderExtension {
             )
         } else {
             val goldenMaskList = properties.goldenMaskList
-            val throwMissedFieldExceptionArrayFunc =
-                compilerContext.referenceFunctions(SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_FQ).single()
 
             var compositeExpression: IrExpression? = null
             for (i in goldenMaskList.indices) {
@@ -325,7 +378,7 @@ interface IrBuilderExtension {
             throwErrorExpr = irBlock {
                 +irInvoke(
                     null,
-                    throwMissedFieldExceptionArrayFunc,
+                    throwMissedFieldExceptionArrayFunc!!,
                     createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.indices.map { irGet(seenVars[it]) }),
                     createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.map { irInt(it) }),
                     serialDescriptor,
@@ -565,42 +618,45 @@ interface IrBuilderExtension {
         return defaultsMap + extractDefaultValuesFromConstructor(irClass.getSuperClassNotAny())
     }
 
-    class InitializerTransformer(
-        val paramGetExpr: (ValueParameterDescriptor) -> IrExpression?,
-        val thisData: Pair<IrValueSymbol, () -> IrExpression>? = null
-    ) : IrElementTransformer<Nothing?> {
-        override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression {
-            val symbol = expression.symbol
-            if (thisData != null && thisData.first == symbol) {
-                return thisData.second()
-            }
-
-            val descriptor = symbol.descriptor
-            if (descriptor is ValueParameterDescriptor) {
-                paramGetExpr(descriptor)?.let { return it }
-            }
-
-            return super.visitGetValue(expression, data)
-        }
-    }
-
-    fun createInitializerPreparer(
+    /*
+    Creates an initializer adapter function that can replaces IR expressions of getting constructor parameter value by some other expression.
+    Also adapter may replaces IR expression of getting `this` value by another expression.
+     */
+    fun createInitializerAdapter(
         irClass: IrClass,
-        paramGetExpr: (ValueParameterDescriptor) -> IrExpression?,
-        thisData: Pair<IrValueSymbol, () -> IrExpression>? = null
+        paramGetReplacer: (ValueParameterDescriptor) -> IrExpression?,
+        thisGetReplacer: Pair<IrValueSymbol, () -> IrExpression>? = null
     ): (IrExpressionBody) -> IrExpression {
-        val initializerTransformer = InitializerTransformer(paramGetExpr, thisData)
+        val initializerTransformer = object : IrElementTransformerVoid() {
+            // try to replace `get some value` expression
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                val symbol = expression.symbol
+                if (thisGetReplacer != null && thisGetReplacer.first == symbol) {
+                    // replace `get this value` expression
+                    return thisGetReplacer.second()
+                }
+
+                val descriptor = symbol.descriptor
+                if (descriptor is ValueParameterDescriptor) {
+                    // replace `get parameter value` expression
+                    paramGetReplacer(descriptor)?.let { return it }
+                }
+
+                // otherwise leave expression as it is
+                return super.visitGetValue(expression)
+            }
+        }
         val defaultsMap = extractDefaultValuesFromConstructor(irClass)
         return fun(initializer: IrExpressionBody): IrExpression {
-            val expr = initializer.expression
-            val irExpression =
-                if (expr is IrGetValueImpl && expr.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
+            val rawExpression = initializer.expression
+            val expression =
+                if (rawExpression is IrGetValueImpl && rawExpression.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
                     // this is a primary constructor property, use corresponding default of value parameter
-                    defaultsMap.getValue(expr.symbol.descriptor as ParameterDescriptor)!!
+                    defaultsMap.getValue(rawExpression.symbol.descriptor as ParameterDescriptor)!!
                 } else {
-                    expr
+                    rawExpression
                 }
-            return irExpression.deepCopyWithVariables().transform(initializerTransformer, null)
+            return expression.deepCopyWithVariables().transform(initializerTransformer, null)
         }
     }
 

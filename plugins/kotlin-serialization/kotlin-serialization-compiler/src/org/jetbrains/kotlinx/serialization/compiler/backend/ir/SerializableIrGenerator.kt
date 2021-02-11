@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -67,57 +68,37 @@ class SerializableIrGenerator(
             val thiz = irClass.thisReceiver!!
             val serializableProperties = properties.serializableProperties
 
-            fun SerializableProperty.irGet(): IrExpression {
-                val ownerType = thiz.symbol.owner.type
-                return getProperty(
-                    irGet(
-                        type = ownerType,
-                        variable = thiz.symbol
-                    ), getIrPropertyFrom(irClass)
-                )
-            }
-
             val serialDescs = serializableProperties.map { it.descriptor }.toSet()
 
-            val allProperties = irClass.declarations.asSequence()
-                .filterIsInstance<IrProperty>()
-                .filter { it.backingField != null }
+            val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
+                createPropertyByParamReplacer(irClass, serializableProperties, thiz, bindingContext)
+
+            val initializerAdapter: (IrExpressionBody) -> IrExpression = createInitializerAdapter(irClass, propertyByParamReplacer)
 
 
             var current: PropertyDescriptor? = null
-            val transientsAfter: MutableMap<PropertyDescriptor?, MutableList<IrProperty>> = mutableMapOf()
-            for (irProperty in allProperties) {
-                if (irProperty.descriptor in serialDescs) {
-                    current = irProperty.descriptor
-                } else {
-                    transientsAfter.getOrPutNullable(current, { mutableListOf() }).add(irProperty)
+            val statementsAfterSerializableProperty: MutableMap<PropertyDescriptor?, MutableList<IrStatement>> = mutableMapOf()
+            irClass.declarations.asSequence().forEach {
+                when {
+                    // only properties with backing field
+                    it is IrProperty && it.backingField != null -> {
+                        if (it.descriptor in serialDescs) {
+                            current = it.descriptor
+                        } else if (it.backingField?.initializer != null) {
+                            // skip transient lateinit or deferred properties (with null initializer)
+                            val expression = initializerAdapter(it.backingField!!.initializer!!)
+
+                            statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
+                                .add(irSetField(irGet(thiz), it.backingField!!, expression))
+                        }
+                    }
+                    it is IrAnonymousInitializer -> {
+                        val statements = it.body.deepCopyWithVariables().statements
+                        statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
+                            .addAll(statements)
+                    }
                 }
             }
-
-            val transients = irClass.declarations.asSequence()
-                .filterIsInstance<IrProperty>()
-                .filter { it.descriptor !in serialDescs }
-                .filter { it.backingField != null }
-            val serialPropertiesMap = serializableProperties.associateBy { it.descriptor }
-            val transientPropertiesMap = transients.associateBy { it.symbol.descriptor }
-
-            val paramReplacer: (ValueParameterDescriptor) -> IrExpression? = {
-                val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it]
-                if (propertyDescriptor != null) {
-                    val value = serialPropertiesMap[propertyDescriptor]
-                    value?.irGet() ?: transientPropertiesMap[propertyDescriptor]?.let { prop -> getProperty(irGet(thiz), prop) }
-                } else {
-                    null
-                }
-            }
-
-            val fieldInitializer: (IrExpressionBody) -> IrExpression? = createInitializerPreparer(irClass, paramReplacer)
-
-            val setTransients: (List<IrProperty>) -> Unit = { properties ->
-                properties.asSequence().mapNotNull { prop -> fieldInitializer(prop.backingField!!.initializer!!).let { prop to it } }
-                    .forEach { (prop, expr) -> +irSetField(irGet(thiz), prop.backingField!!, expr!!) }
-            }
-
 
             // Missing field exception parts
             val exceptionFqn = getSerializationPackageFqn(MISSING_FIELD_EXC)
@@ -133,7 +114,7 @@ class SerializableIrGenerator(
             var startPropOffset: Int = 0
 
 
-            if (useFieldMissingOptimization &&
+            if (useFieldMissingOptimization() &&
                 // for abstract classes fields MUST BE checked in child classes
                 !serializableDescriptor.isAbstractSerializableClass() && !serializableDescriptor.isSealedSerializableClass()
             ) {
@@ -147,7 +128,7 @@ class SerializableIrGenerator(
                 else -> generateSuperNonSerializableCall(superClass)
             }
 
-            transientsAfter[null]?.let { setTransients(it) }
+            statementsAfterSerializableProperty[null]?.forEach { +it }
             for (index in startPropOffset until serializableProperties.size) {
                 val prop = serializableProperties[index]
                 val paramRef = ctor.valueParameters[index + seenVarsOffset]
@@ -158,14 +139,14 @@ class SerializableIrGenerator(
 
                 val ifNotSeenExpr: IrExpression = if (prop.optional) {
                     val initializerBody =
-                        requireNotNull(fieldInitializer(prop.irField.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
+                        requireNotNull(initializerAdapter(prop.irField.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
                     irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
                 } else {
                     // property required
-                    if (useFieldMissingOptimization) {
+                    if (useFieldMissingOptimization()) {
                         // field definitely not empty as it's checked before - no need another IF, only assign property from param
                         +assignParamExpr
-                        transientsAfter[prop.descriptor]?.let { setTransients(it) }
+                        statementsAfterSerializableProperty[prop.descriptor]?.forEach { +it }
                         continue
                     } else {
                         irThrow(irInvoke(null, exceptionCtorRef, irString(prop.name), typeHint = exceptionType))
@@ -184,16 +165,8 @@ class SerializableIrGenerator(
 
                 +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
 
-                transientsAfter[prop.descriptor]?.let { setTransients(it) }
+                statementsAfterSerializableProperty[prop.descriptor]?.forEach { +it }
             }
-
-            // init blocks
-            // todo remove value overwrite?
-            irClass.declarations.asSequence()
-                .filterIsInstance<IrAnonymousInitializer>()
-                .forEach { initializer ->
-                    initializer.body.deepCopyWithVariables().statements.forEach { +it }
-                }
         }
 
     private fun IrBlockBodyBuilder.getSerialDescriptorExpr(): IrExpression {

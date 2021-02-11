@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -281,27 +281,12 @@ open class SerializerIrGenerator(
             -1
         }
 
-        val serialDescs = serializableProperties.map { it.descriptor }.toSet()
-        val transients = serializableIrClass.declarations.asSequence()
-            .filterIsInstance<IrProperty>()
-            .filter { it.descriptor !in serialDescs }
-            .filter { it.backingField != null }
-        val serialPropertiesMap = serializableProperties.associateBy { it.descriptor }
-        val transientPropertiesMap = transients.associateBy { it.symbol.descriptor }
-
-        val paramReplacer: (ValueParameterDescriptor) -> IrExpression? = {
-            val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it]
-            if (propertyDescriptor != null) {
-                val value = serialPropertiesMap[propertyDescriptor]
-                value?.irGet() ?: transientPropertiesMap[propertyDescriptor]?.let { prop -> getProperty(irGet(objectToSerialize), prop) }
-            } else {
-                null
-            }
-        }
+        val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
+            createPropertyByParamReplacer(serializableIrClass, serializableProperties, objectToSerialize, bindingContext)
 
         val thisSymbol = serializableIrClass.thisReceiver!!.symbol
-        val prepareInitializer: (IrExpressionBody) -> IrExpression =
-            createInitializerPreparer(serializableIrClass, paramReplacer, thisSymbol to { irGet(objectToSerialize) })
+        val initializerAdapter: (IrExpressionBody) -> IrExpression =
+            createInitializerAdapter(serializableIrClass, propertyByParamReplacer, thisSymbol to { irGet(objectToSerialize) })
 
         //  internal serialization via virtual calls?
         for ((index, property) in serializableProperties.withIndex()) {
@@ -334,7 +319,7 @@ open class SerializerIrGenerator(
                 // block {obj.prop != DEFAULT_VALUE} may contain several statements
                 val shouldEncodeFunc = kOutputClass.referenceMethod(CallingConventions.shouldEncodeDefault)
                 val partA = irInvoke(irGet(localOutput), shouldEncodeFunc, irGet(localSerialDesc), irInt(index))
-                val partB = irNotEquals(property.irGet(), prepareInitializer(property.irField.initializer!!))
+                val partB = irNotEquals(property.irGet(), initializerAdapter(property.irField.initializer!!))
                 // Ir infrastructure does not have dedicated symbol for ||, so
                 //  `a || b == if (a) true else b`, see org.jetbrains.kotlin.ir.builders.PrimitivesKt.oror
                 val condition = irIfThenElse(compilerContext.irBuiltIns.booleanType, partA, irTrue(), partB)
@@ -414,7 +399,7 @@ open class SerializerIrGenerator(
         val blocksCnt = serializableProperties.bitMaskSlotCount()
 
         val serialPropertiesIndexes = serializableProperties
-            .mapIndexed { i, property -> Pair(property, i) }
+            .mapIndexed { i, property -> property to i }
             .associate { (p, i) -> p.descriptor to i }
 
         val transients = serializableIrClass.declarations.asSequence()
@@ -529,18 +514,17 @@ open class SerializerIrGenerator(
             +irReturn(irInvoke(null, ctor, typeArgs, args))
         } else {
             // check properties presence
-            if (useFieldMissingOptimization) {
-                val irProperty = irClass.searchForProperty(generatedSerialDescPropertyDescriptor!!)
-                val serialDescriptorExpr = irGetField(null, irProperty.backingField!!)
-                generateGoldenMaskCheck(bitMasks, properties, serialDescriptorExpr)
-            }
+            val serialDescIrProperty = irClass.searchForProperty(generatedSerialDescPropertyDescriptor!!)
+            val serialDescriptorExpr = irGetField(null, serialDescIrProperty.backingField!!)
+            generateGoldenMaskCheck(bitMasks, properties, serialDescriptorExpr)
+
 
             val ctor: IrConstructorSymbol =
                 compilerContext.referenceConstructors(serializableDescriptor.fqNameSafe).single { it.owner.isPrimary }
             val params = ctor.owner.valueParameters
 
 
-            val paramReplacer: (ValueParameterDescriptor) -> IrExpression? = {
+            val variableByParamReplacer: (ValueParameterDescriptor) -> IrExpression? = {
                 val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, it]
                 if (propertyDescriptor != null) {
                     val serializable = serialPropertiesMap[propertyDescriptor]
@@ -549,7 +533,8 @@ open class SerializerIrGenerator(
                     null
                 }
             }
-            val prepareInitializer: (IrExpressionBody) -> IrExpression = createInitializerPreparer(serializableIrClass, paramReplacer)
+            val initializerAdapter: (IrExpressionBody) -> IrExpression =
+                createInitializerAdapter(serializableIrClass, variableByParamReplacer)
 
             // constructor args:
             val ctorArgs = params.map { parameter ->
@@ -573,7 +558,7 @@ open class SerializerIrGenerator(
 
                         // if(mask$j && propertyMask == 0) local$i = <initializer>
                         val defaultValueExp = parameter.defaultValue!!
-                        val expr = prepareInitializer(defaultValueExp)
+                        val expr = initializerAdapter(defaultValueExp)
                         +irIfThen(propNotSeenTest, irSet(serialProperty.symbol, expr))
                     }
                     serialProperty.get()
@@ -581,7 +566,7 @@ open class SerializerIrGenerator(
                     val transientVar = transientsPropertiesMap.getValue(propertyDescriptor)
                     if (parameterDescriptor.hasDefaultValue()) {
                         val defaultValueExp = parameter.defaultValue!!
-                        val expr = prepareInitializer(defaultValueExp)
+                        val expr = initializerAdapter(defaultValueExp)
                         +irSet(transientVar.symbol, expr)
                     }
                     transientVar.get()

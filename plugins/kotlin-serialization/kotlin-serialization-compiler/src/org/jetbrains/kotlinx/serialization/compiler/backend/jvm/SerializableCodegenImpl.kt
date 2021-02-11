@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2021 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ARRAY_MASK_FIELD_MISSING_FUNC_NAME
@@ -45,6 +47,8 @@ class SerializableCodegenImpl(
 ) : SerializableCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
 
     private val thisAsmType = classCodegen.typeMapper.mapClass(serializableDescriptor)
+    private val fieldMissingOptimizationVersion = ApiVersion.parse("1.1")!!
+    private val useFieldMissingOptimization = canUseFieldMissingOptimization()
 
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
@@ -403,5 +407,13 @@ class SerializableCodegenImpl(
         )
         this.gen(param.defaultValue, mapType)
         this.v.putfield(thisAsmType.internalName, prop.name.asString(), mapType.descriptor)
+    }
+
+    private fun canUseFieldMissingOptimization(): Boolean {
+        val implementationVersion = VersionReader.getVersionsForCurrentModuleFromContext(
+            currentDeclaration.module,
+            bindingContext
+        )?.implementationVersion
+        return if (implementationVersion != null) implementationVersion >= fieldMissingOptimizationVersion else false
     }
 }
