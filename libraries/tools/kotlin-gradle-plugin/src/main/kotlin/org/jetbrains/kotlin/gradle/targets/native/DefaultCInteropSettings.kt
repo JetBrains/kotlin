@@ -42,6 +42,8 @@ open class DefaultCInteropSettings @Inject constructor(
 
     override fun getName(): String = name
 
+    var stub: FileCollection? = null
+
     val target: KotlinNativeTarget
         get() = compilation.target
 

@@ -997,9 +997,20 @@ open class CInteropProcess : DefaultTask() {
     val kotlinNativeVersion: String
         @Input get() = project.konanVersion.toString()
 
+    @get:Optional
+    @get:InputFiles
+    val stub
+        get() = settings.stub
+
     // Task action.
     @TaskAction
     fun processInterop() {
+        outputFile.parentFile.mkdirs()
+        stub?.let { stub ->
+            stub.singleFile.copyTo(outputFile, true)
+            return
+        }
+
         val args = mutableListOf<String>().apply {
             addArg("-o", outputFile.absolutePath)
 
@@ -1030,8 +1041,6 @@ open class CInteropProcess : DefaultTask() {
 
             addAll(extraOpts)
         }
-
-        outputFile.parentFile.mkdirs()
         KotlinNativeCInteropRunner(project).run(args)
     }
 }

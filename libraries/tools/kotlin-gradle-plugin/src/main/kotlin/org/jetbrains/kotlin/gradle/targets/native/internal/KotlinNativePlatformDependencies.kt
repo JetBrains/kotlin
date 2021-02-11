@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSou
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativePlatformDependency.*
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -107,11 +106,13 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
 
         val targetGroups: List<CommonizedCommon> = dependencies.keys.filterIsInstance<CommonizedCommon>()
 
-        val commonizerTaskProvider = project.registerTask(
-            COMMONIZER_TASK_NAME,
+        val commonizeNativeDistributionTask = project.registerTask(
+            NATIVE_DISTRIBUTION_COMMONIZER_TASK_NAME,
             CommonizerTask::class.java
-        ) { commonizerTask ->
-            commonizerTask.targetGroups = targetGroups.map { it.targets }.toSet()
+        ) { commonizerTask -> commonizerTask.targetGroups = targetGroups.map { it.targets }.toSet() }
+
+        project.runCommonizerTask.configure {
+            it.dependsOn(commonizeNativeDistributionTask)
         }
 
 
@@ -144,7 +145,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
                     val commonizedLibsDir = project.nativeDistributionCommonizerOutputDirectory(dependency.targets)
                     project.files(Callable {
                         libsInCommonDir(commonizedLibsDir)
-                    }).builtBy(commonizerTaskProvider)
+                    }).builtBy(commonizeNativeDistributionTask)
 
                 }
 
@@ -153,7 +154,7 @@ private class NativePlatformDependencyResolver(val project: Project, val kotlinV
                     val commonizedLibsDir = project.nativeDistributionCommonizerOutputDirectory(dependency.common.targets)
                     project.files(Callable {
                         libsInPlatformDir(commonizedLibsDir, dependency.target) + libsInCommonDir(commonizedLibsDir)
-                    }).builtBy(commonizerTaskProvider)
+                    }).builtBy(commonizeNativeDistributionTask)
                 }
             }
 

@@ -26,7 +26,7 @@ import java.time.*
 import java.util.*
 import javax.inject.Inject
 
-internal const val COMMONIZER_TASK_NAME = "runCommonizer"
+internal const val NATIVE_DISTRIBUTION_COMMONIZER_TASK_NAME = "commonizeNativeDistribution"
 
 internal typealias KonanTargetGroup = Set<KonanTarget>
 
