@@ -192,9 +192,10 @@ class SymbolTable(
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun set(s: S) {
-            s.signature?.let {
-                idSigToSymbol[it] = s
-            } ?: if (s.hasDescriptor) {
+            val signature = s.signature
+            if (signature != null) {
+                idSigToSymbol[signature] = s
+            } else if (s.hasDescriptor) {
                 descriptorToSymbol[s.descriptor] = s
             }
         }
