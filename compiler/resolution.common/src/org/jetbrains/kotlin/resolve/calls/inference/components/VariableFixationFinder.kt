@@ -70,7 +70,7 @@ class VariableFixationFinder(
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
         inferenceCompatibilityModeEnabled -> {
             when {
-                variableHasLowerProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
+                variableHasLowerNonNothingProperConstraint(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
                 else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
             }
         }
@@ -159,12 +159,13 @@ class VariableFixationFinder(
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
         notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
 
-    private fun Context.variableHasLowerProperConstraint(variable: TypeConstructorMarker): Boolean =
-        notFixedTypeVariables[variable]?.constraints?.let { constraints ->
-            constraints.any {
-                it.kind.isLower() && isProperArgumentConstraint(it)
-            }
-        } ?: false
+    private fun Context.variableHasLowerNonNothingProperConstraint(variable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
+
+        return constraints.any {
+            it.kind.isLower() && isProperArgumentConstraint(it) && !it.type.typeConstructor().isNothingConstructor()
+        }
+    }
 }
 
 inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
