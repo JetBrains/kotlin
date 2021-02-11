@@ -126,11 +126,13 @@ object AndroidDependencyResolver {
             if (entry.key == "androidMain") {
                 // this is a terrible hack, but looks like the only way, other than proper support via light-classes
                 val task = project.tasks.findByName("processDebugResources")
-                getClassOrNull("com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask")?.let { linkAppClass ->
-                    @Suppress("UNCHECKED_CAST")
-                    val rClassOutputJar =
-                        linkAppClass.getMethodOrNull("getRClassOutputJar")?.invoke(task) as Provider<FileSystemLocation>?
-                    rClassOutputJar?.orNull?.asFile?.let { result += AndroidDependency("R.jar", it) }
+                if (task != null) {
+                    getClassOrNull("com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask")?.let { linkAppClass ->
+                        @Suppress("UNCHECKED_CAST")
+                        val rClassOutputJar =
+                            linkAppClass.getMethodOrNull("getRClassOutputJar")?.invoke(task) as Provider<FileSystemLocation>?
+                        rClassOutputJar?.orNull?.asFile?.let { result += AndroidDependency("R.jar", it) }
+                    }
                 }
             }
 
