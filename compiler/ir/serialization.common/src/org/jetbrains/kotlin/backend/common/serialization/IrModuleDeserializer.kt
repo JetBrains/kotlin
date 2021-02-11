@@ -62,6 +62,8 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
     open val strategy: DeserializationStrategy = DeserializationStrategy.ONLY_DECLARATION_HEADERS
 
     open val isCurrent = false
+
+    open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
@@ -194,6 +196,10 @@ class IrModuleDeserializerWithBuiltIns(
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
     override val isCurrent get() = delegate.isCurrent
+
+    override fun fileDeserializers(): Collection<IrFileDeserializer> {
+        return delegate.fileDeserializers()
+    }
 }
 
 open class CurrentModuleDeserializer(

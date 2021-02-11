@@ -329,6 +329,8 @@ abstract class KotlinIrLinker(
 
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.WITH_INLINE_BODIES)
+
+    open fun captureBodyIndex(file: IrFile, body: IrBody, index: Int): Unit {}
 }
 
 enum class DeserializationStrategy(
