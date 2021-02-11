@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
+import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -84,11 +86,11 @@ internal class FirModuleResolveStateForCompletion(
     }
 
 
-    override fun getDiagnostics(element: KtElement): List<FirPsiDiagnostic<*>> {
+    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> {
         error("Diagnostics should not be retrieved in completion")
     }
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>> {
+    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
         error("Diagnostics should not be retrieved in completion")
     }
 

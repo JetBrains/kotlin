@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
+import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
@@ -133,7 +134,7 @@ internal object FirIdeSessionFactory {
             registerJavaSpecificResolveComponents()
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 if (isRootModule) {
-                    registerCommonCheckers()
+                    registerExtendedCommonCheckers()
                 }
             }.configure()
         }

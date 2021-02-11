@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.getDefaultMessageWithFactoryName
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
 import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixService
+import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinHighLevelDiagnosticHighlightingPass(
@@ -43,7 +44,7 @@ class KotlinHighLevelDiagnosticHighlightingPass(
 
     override fun doCollectInformation(progress: ProgressIndicator) {
         analyze(ktFile) {
-            ktFile.collectDiagnosticsForFile().forEach { diagnostic ->
+            ktFile.collectDiagnosticsForFile(KtDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS).forEach { diagnostic ->
                 addDiagnostic(diagnostic)
             }
         }

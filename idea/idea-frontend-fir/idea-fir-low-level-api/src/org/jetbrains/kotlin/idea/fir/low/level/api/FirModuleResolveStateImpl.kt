@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
@@ -69,11 +70,11 @@ internal class FirModuleResolveStateImpl(
     override fun getFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
 
-    override fun getDiagnostics(element: KtElement): List<FirPsiDiagnostic<*>> =
-        diagnosticsCollector.getDiagnosticsFor(element)
+    override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> =
+        diagnosticsCollector.getDiagnosticsFor(element, filter)
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>> =
-        diagnosticsCollector.collectDiagnosticsForFile(ktFile)
+    override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
+        diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
 
     override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
         val cache = sessionProvider.getModuleCache(ktFile.getModuleInfo() as ModuleSourceInfo)
@@ -119,7 +120,7 @@ internal class FirModuleResolveStateImpl(
                 container,
                 cache,
                 FirResolvePhase.BODY_RESOLVE,
-                checkPCE = false /*TODO*/,
+                checkPCE = false, /*TODO*/
                 towerDataContextCollector = collector,
             )
         }

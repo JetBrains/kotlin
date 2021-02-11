@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 
 internal class FirIdeFileDiagnosticsCollector private constructor(
     session: FirSession,
+    useExtendedCheckers: Boolean,
 ) : AbstractFirIdeDiagnosticsCollector(
     session,
+    useExtendedCheckers,
 ) {
     private val result = mutableListOf<FirPsiDiagnostic<*>>()
 
@@ -22,8 +23,8 @@ internal class FirIdeFileDiagnosticsCollector private constructor(
     }
 
     companion object {
-        fun collectForFile(firFile: FirFile): List<FirPsiDiagnostic<*>> =
-            FirIdeFileDiagnosticsCollector(firFile.session).let { collector ->
+        fun collectForFile(firFile: FirFile, useExtendedCheckers: Boolean): List<FirPsiDiagnostic<*>> =
+            FirIdeFileDiagnosticsCollector(firFile.session, useExtendedCheckers).let { collector ->
                 collector.collectDiagnostics(firFile)
                 collector.result
             }

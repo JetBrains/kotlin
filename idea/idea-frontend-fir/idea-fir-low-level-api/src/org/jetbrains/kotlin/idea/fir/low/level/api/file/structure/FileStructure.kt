@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -56,10 +57,21 @@ internal class FileStructure(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun getAllDiagnosticsForFile(): Collection<FirPsiDiagnostic<*>> {
+    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
         val structureElements = getAllStructureElements()
         return buildSet {
-            structureElements.forEach { it.diagnostics.forEach { diagnostics -> addAll(diagnostics) } }
+            collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
+        }
+    }
+
+    private fun MutableSet<FirPsiDiagnostic<*>>.collectDiagnosticsFromStructureElements(
+        structureElements: Collection<FileStructureElement>,
+        diagnosticCheckerFilter: DiagnosticCheckerFilter
+    ) {
+        structureElements.forEach { structureElement ->
+            structureElement.diagnostics.forEach(diagnosticCheckerFilter) { diagnostics ->
+                addAll(diagnostics)
+            }
         }
     }
 

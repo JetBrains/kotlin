@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import kotlin.reflect.KClass
 
 /**
  * The entry point into all frontend-related work. Has the following contracts:
@@ -91,9 +92,11 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtClassOrObjectSymbol.buildSelfClassType(): KtType = typeProvider.buildSelfClassType(this)
 
-    fun KtElement.getDiagnostics(): Collection<KtDiagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
+    fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnostic> =
+        diagnosticProvider.getDiagnosticsForElement(this, filter)
 
-    fun KtFile.collectDiagnosticsForFile(): Collection<KtDiagnosticWithPsi<*>> = diagnosticProvider.collectDiagnosticsForFile(this)
+    fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
+        diagnosticProvider.collectDiagnosticsForFile(this, filter)
 
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
