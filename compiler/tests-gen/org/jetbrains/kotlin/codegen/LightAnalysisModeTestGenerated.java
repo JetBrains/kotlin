@@ -12258,6 +12258,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");
         }
 
+        @TestMetadata("KotlinDocumentationProvider.kt")
+        public void testKotlinDocumentationProvider() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");
+        }
+
         @TestMetadata("NameHighlighter.kt")
         public void testNameHighlighter() throws Exception {
             runTest("compiler/testData/codegen/box/fir/NameHighlighter.kt");
