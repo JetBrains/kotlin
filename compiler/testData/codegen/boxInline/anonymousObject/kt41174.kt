@@ -1,0 +1,14 @@
+// TARGET_BACKEND: JVM
+// WITH_RUNTIME
+// FULL_JDK
+// FILE: 1.kt
+
+inline fun foo(crossinline init: (String) -> String): String =
+    listOf("OK").stream().map { init(it) }.findFirst().get()
+
+inline fun bar(crossinline init: (String) -> String): String =
+    foo { foo(init) }
+
+// FILE: 2.kt
+
+fun box(): String = bar { it }

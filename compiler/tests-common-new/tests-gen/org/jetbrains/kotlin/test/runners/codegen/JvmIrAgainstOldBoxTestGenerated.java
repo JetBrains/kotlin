@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxTest {
     @Test
+    @TestMetadata("adaptedSuspendFunctionReference.kt")
+    public void testAdaptedSuspendFunctionReference() throws Exception {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/adaptedSuspendFunctionReference.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
@@ -510,6 +516,12 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         @TestMetadata("defaultWithInlineClassAndReceivers.kt")
         public void testDefaultWithInlineClassAndReceivers() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/defaultWithInlineClassAndReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("funInterface.kt")
+        public void testFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/funInterface.kt");
         }
 
         @Test
