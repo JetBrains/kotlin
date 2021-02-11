@@ -49,6 +49,11 @@ class KotlinBinaryClassCache : Disposable {
     }
 
     override fun dispose() {
+        cache.get().apply {
+            result = null
+            virtualFile = null
+        }
+
         // This is only relevant for tests. We create a new instance of Application for each test, and so a new instance of this service is
         // also created for each test. However all tests share the same event dispatch thread, which would collect all instances of this
         // thread-local if they're not removed properly. Each instance would transitively retain VFS resulting in OutOfMemoryError
