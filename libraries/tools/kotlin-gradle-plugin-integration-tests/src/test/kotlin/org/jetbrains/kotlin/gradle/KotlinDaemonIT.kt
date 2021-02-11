@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertTrue
 
 // todo: test client file creation/deletion
 // todo: test daemon start (does not start every build)
@@ -89,6 +90,45 @@ class KotlinDaemonIT : BaseGradleIT() {
             clientFiles.forEach { clientFile ->
                 assert(!clientFile.exists()) { "Client file $clientFile is expected to be deleted!" }
             }
+        }
+    }
+
+    @Test
+    fun testGradleBuildClasspathShouldNotBeLeakedIntoDaemonClasspath() {
+        val testProject = Project("kotlinProject")
+        testProject.setupWorkingDir()
+
+        testProject.build("assemble") {
+            assertGradleClasspathNotLeaked()
+        }
+    }
+
+    @Test
+    fun testGradleBuildClasspathShouldNotBeLeakedIntoDaemonClasspathOnUsingCustomCompilerJar() {
+        val testProject = Project(
+            projectName = "customCompilerFile",
+        )
+        testProject.setupWorkingDir()
+
+        // copy compiler embeddable into project dir using custom name
+        val classpath = System.getProperty("java.class.path").split(File.pathSeparator)
+        val kotlinEmbeddableJar = File(classpath.find { it.contains("kotlin-compiler-embeddable") }!!)
+
+        val compilerJar = File(testProject.projectDir, "compiler.jar")
+        kotlinEmbeddableJar.copyTo(compilerJar)
+
+        testProject.build("build") {
+            assertGradleClasspathNotLeaked()
+        }
+    }
+
+    private fun CompiledProject.assertGradleClasspathNotLeaked() {
+        assertContains("Kotlin compiler classpath:")
+        val daemonClasspath = output.lineSequence().find {
+            it.contains("Kotlin compiler classpath:")
+        }!!
+        assertTrue("Daemon classpath contains embeddable daemon jar leaked from Gradle dist classpath: $daemonClasspath") {
+            !daemonClasspath.contains(".gradle/wrapper/dists")
         }
     }
 }
