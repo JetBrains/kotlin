@@ -1,7 +1,7 @@
 package
 
 public sealed class Tree {
-    internal constructor Tree()
+    protected constructor Tree()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun max(): kotlin.Int

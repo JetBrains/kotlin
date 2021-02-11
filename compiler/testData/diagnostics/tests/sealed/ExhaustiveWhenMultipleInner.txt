@@ -6,7 +6,7 @@ public fun fooWithElse(/*0*/ s: Sealed): kotlin.Int
 public fun fooWithoutElse(/*0*/ s: Sealed): kotlin.Int
 
 public sealed class Sealed {
-    internal constructor Sealed()
+    protected constructor Sealed()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

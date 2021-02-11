@@ -3,7 +3,7 @@ package
 public fun priority(/*0*/ op: Operation): kotlin.Int
 
 public sealed class Operation {
-    internal constructor Operation(/*0*/ left: kotlin.Int, /*1*/ right: kotlin.Int)
+    protected constructor Operation(/*0*/ left: kotlin.Int, /*1*/ right: kotlin.Int)
     public final val left: kotlin.Int
     public final val right: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
