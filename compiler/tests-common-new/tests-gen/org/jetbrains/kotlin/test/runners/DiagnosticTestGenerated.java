@@ -24590,6 +24590,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("protectedConstructors_disabled.kt")
+            public void testProtectedConstructors_disabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/protectedConstructors_disabled.kt");
+            }
+
+            @Test
+            @TestMetadata("protectedConstructors_enabled.kt")
+            public void testProtectedConstructors_enabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/protectedConstructors_enabled.kt");
+            }
+
+            @Test
             @TestMetadata("RedundantAbstract.kt")
             public void testRedundantAbstract() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/RedundantAbstract.kt");
