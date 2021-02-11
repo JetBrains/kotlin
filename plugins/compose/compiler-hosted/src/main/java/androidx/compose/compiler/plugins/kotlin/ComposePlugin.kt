@@ -146,6 +146,11 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                             " `suppressKotlinVersionCompatibilityCheck` but don't say I didn't" +
                             " warn you!)."
                     )
+
+                    // Return without registering the Compose plugin because the registration
+                    // APIs may have changed and thus throw an exception during registration,
+                    // preventing the diagnostic from being emitted.
+                    return
                 }
             }
 
