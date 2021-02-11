@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -161,7 +161,7 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
     }
 
     private fun createFakeResolvedImport(fqNameToImport: FqName): FirResolvedImport? {
-        val packageOrClass = resolveToPackageOrClass(firSession.firSymbolProvider, fqNameToImport) ?: return null
+        val packageOrClass = resolveToPackageOrClass(firSession.symbolProvider, fqNameToImport) ?: return null
 
         val delegateImport = buildImport {
             importedFqName = fqNameToImport
