@@ -377,6 +377,19 @@ __attribute__((swift_name("EmptyEnum")))
 + (KtKotlinArray<KtEmptyEnum *> *)values __attribute__((swift_name("values()")));
 @end;
 
+__attribute__((swift_name("FunInterface")))
+@protocol KtFunInterface
+@required
+- (int32_t)run __attribute__((swift_name("run()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("FunInterfacesKt")))
+@interface KtFunInterfacesKt : KtBase
++ (id<KtFunInterface>)getObject __attribute__((swift_name("getObject()")));
++ (id<KtFunInterface>)getLambda __attribute__((swift_name("getLambda()")));
+@end;
+
 __attribute__((swift_name("FHolder")))
 @interface KtFHolder : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
