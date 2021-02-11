@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.idea.imports.AbstractJsOptimizeImportsTest
 import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
 import org.jetbrains.kotlin.idea.index.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
 import org.jetbrains.kotlin.idea.inspections.AbstractHLInspectionTest
+import org.jetbrains.kotlin.idea.inspections.AbstractHLLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractMultiFileLocalInspectionTest
 import org.jetbrains.kotlin.idea.intentions.*
@@ -758,6 +759,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
                 model("inspections/redundantUnitReturnType", pattern = pattern)
             }
 
+
             testClass<AbstractHLIntentionTest> {
                 val pattern = "^([\\w\\-_]+)\\.(kt|kts)$".toRegex()
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
@@ -1089,6 +1091,14 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("checker/rendering")
             model("checker/infos")
             model("checker/diagnosticsMessage")
+        }
+    }
+
+    testGroup("fir", testDataPath = "../idea/testData") {
+        testClass<AbstractHLLocalInspectionTest> {
+            val pattern = "^([\\w\\-_]+)\\.(kt|kts)$".toRegex()
+            model("testData/inspectionsLocal/redundantVisibilityModifier", pattern = pattern)
+            model("idea-fir/testData/inspectionsLocal", pattern = pattern)
         }
     }
 
