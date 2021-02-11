@@ -535,6 +535,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         resolvedCallableReference.configure {
             +fieldList("inferredTypeArguments", coneKotlinTypeType)
+            +field("mappedArguments", callableReferenceMappedArgumentsType)
         }
 
         delegateFieldReference.configure {
