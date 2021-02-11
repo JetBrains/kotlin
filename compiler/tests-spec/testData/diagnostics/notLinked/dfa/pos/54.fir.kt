@@ -19,8 +19,8 @@ fun case_1() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -41,8 +41,8 @@ fun case_2() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -107,8 +107,8 @@ fun case_5() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -240,12 +240,12 @@ fun case_12() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
         while (if (true) { b = a; true } else true) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
     }
 }
 
@@ -276,8 +276,8 @@ fun case_14() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
         while (true) {
             if (true) { b = a; } else 3
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>.length
         }
     }
 }

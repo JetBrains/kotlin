@@ -26,7 +26,10 @@ import kotlin.contracts.contract
 @OptIn(DfaInternals::class)
 class VariableStorage(private val session: FirSession) {
     private var counter = 1
-    private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
+    private val _realVariables: MutableMap<Identifier, RealVariable> = HashMap()
+    val realVariables: Map<Identifier, RealVariable>
+        get() = _realVariables
+
     private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
 
     fun clear(): VariableStorage = VariableStorage(session)
@@ -34,7 +37,7 @@ class VariableStorage(private val session: FirSession) {
     fun getOrCreateRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(flow, symbol, realFir)
-        return realVariables.getOrPut(identifier) { createRealVariableInternal(flow, identifier, realFir) }
+        return _realVariables.getOrPut(identifier) { createRealVariableInternal(flow, identifier, realFir) }
     }
 
     private fun getOrCreateRealVariable(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
@@ -108,7 +111,7 @@ class VariableStorage(private val session: FirSession) {
     fun getRealVariableWithoutUnwrappingAlias(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
         val realFir = fir.unwrapElement()
         return symbol.takeIf { it.isStable(realFir) }?.let {
-            realVariables[getIdentifierBySymbol(flow, it, realFir.unwrapElement())]
+            _realVariables[getIdentifierBySymbol(flow, it, realFir.unwrapElement())]
         }
     }
 
@@ -131,7 +134,7 @@ class VariableStorage(private val session: FirSession) {
     }
 
     fun removeRealVariable(symbol: AbstractFirBasedSymbol<*>) {
-        realVariables.remove(Identifier(symbol, null, null))
+        _realVariables.remove(Identifier(symbol, null, null))
     }
 
     fun removeSyntheticVariable(variable: DataFlowVariable) {

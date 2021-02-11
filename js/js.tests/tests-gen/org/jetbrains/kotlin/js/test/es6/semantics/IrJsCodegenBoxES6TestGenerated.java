@@ -25530,6 +25530,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/smartCasts/kt42517.kt");
         }
 
+        @TestMetadata("kt44804.kt")
+        public void testKt44804() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/kt44804.kt");
+        }
+
         @TestMetadata("lambdaArgumentWithoutType.kt")
         public void testLambdaArgumentWithoutType() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/lambdaArgumentWithoutType.kt");

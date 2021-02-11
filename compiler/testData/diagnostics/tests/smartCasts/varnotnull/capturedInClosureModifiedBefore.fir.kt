@@ -30,7 +30,7 @@ fun baz(s: String?) {
             x.hashCode()
         }
         run {
-            x.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
             x = null
         }
     }
@@ -40,11 +40,11 @@ fun gaz(s: String?) {
     var x = s
     if (x != null) {
         run {
-            x.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
             x = null
         }
         run {
-            x.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
         }
     }
 }

@@ -29,19 +29,20 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
     variableStorage: VariableStorage,
     flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
-    val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>
+    val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>,
+    val preliminaryLoopVisitor: PreliminaryLoopVisitor
 ) {
     var flowOnNodes = flowOnNodes
         private set
@@ -54,13 +55,15 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
 
         variableStorage = variableStorage.clear()
         flowOnNodes = mutableMapOf()
+
+        preliminaryLoopVisitor.resetState()
     }
 
     companion object {
-        fun <FLOW : Flow> empty(session: FirSession) =
+        fun <FLOW : Flow> empty(session: FirSession): DataFlowAnalyzerContext<FLOW> =
             DataFlowAnalyzerContext<FLOW>(
                 ControlFlowGraphBuilder(), VariableStorage(session),
-                mutableMapOf(), mutableMapOf()
+                mutableMapOf(), mutableMapOf(), PreliminaryLoopVisitor()
             )
     }
 }
@@ -210,12 +213,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         // TODO: questionable
         postponedLambdaExitNode?.mergeIncomingFlow()
         functionExitNode.mergeIncomingFlow()
+        exitCapturingStatement(anonymousFunction)
         return FirControlFlowGraphReferenceImpl(graph)
     }
 
     fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunction)
         enterNode.mergeIncomingFlow()
+        enterCapturingStatement(enterNode, anonymousFunction)
         exitNode.mergeIncomingFlow()
         enterNode.flow = enterNode.flow.fork()
     }
@@ -236,12 +241,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     }
 
     private fun exitLocalClass(klass: FirRegularClass): ControlFlowGraph {
+        // TODO: support capturing of mutable properties, KT-44877
         val (node, controlFlowGraph) = graphBuilder.exitLocalClass(klass)
         node.mergeIncomingFlow()
         return controlFlowGraph
     }
 
     fun exitAnonymousObject(anonymousObject: FirAnonymousObject): ControlFlowGraph {
+        // TODO: support capturing of mutable properties, KT-44877
         val (node, controlFlowGraph) = graphBuilder.exitAnonymousObject(anonymousObject)
         node.mergeIncomingFlow()
         return controlFlowGraph
@@ -601,11 +608,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 shouldRemoveSynthetics = true
             )
         }
+        exitCapturingStatement(exitNode.fir)
     }
 
     fun enterWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopConditionEnterNode) = graphBuilder.enterWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
+        enterCapturingStatement(loopEnterNode, loop)
         loopConditionEnterNode.mergeIncomingFlow()
     }
 
@@ -630,11 +639,30 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         exitCommonLoop(exitNode)
     }
 
+    private fun enterCapturingStatement(node: CFGNode<*>, statement: FirStatement) {
+        val reassignedNames = context.preliminaryLoopVisitor.enterCapturingStatement(statement)
+        if (reassignedNames.isEmpty()) return
+        val possiblyChangedVariables = variableStorage.realVariables.filterKeys {
+            val fir = (it.symbol as? FirVariableSymbol<*>)?.fir ?: return@filterKeys false
+            fir.isVar && fir.name in reassignedNames
+        }.values
+        if (possiblyChangedVariables.isEmpty()) return
+        val flow = node.flow
+        for (variable in possiblyChangedVariables) {
+            logicSystem.removeAllAboutVariableIncludingAliasInformation(flow, variable)
+        }
+    }
+
+    private fun exitCapturingStatement(statement: FirStatement) {
+        context.preliminaryLoopVisitor.exitCapturingStatement(statement)
+    }
+
     // ----------------------------------- Do while Loop -----------------------------------
 
     fun enterDoWhileLoop(loop: FirLoop) {
         val (loopEnterNode, loopBlockEnterNode) = graphBuilder.enterDoWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
+        enterCapturingStatement(loopEnterNode, loop)
         loopBlockEnterNode.mergeIncomingFlow()
     }
 
