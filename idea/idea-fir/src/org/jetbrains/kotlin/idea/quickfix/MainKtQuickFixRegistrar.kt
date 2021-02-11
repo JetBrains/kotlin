@@ -10,14 +10,12 @@ import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixRegistrar
 import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesList
 import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixesListBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
-import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix.Companion.VAR_OVERRIDDEN_BY_VAL_FACTORY
 import org.jetbrains.kotlin.idea.quickfix.fixes.ChangeTypeQuickFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
     private val modifiers = KtQuickFixesListBuilder.registerPsiQuickFix {
-        // RemoveModifierFix
         registerPsiQuickFix<PsiElement, KtFirDiagnostic.RedundantModifier>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = true))
         registerPsiQuickFix<PsiElement, KtFirDiagnostic.IncompatibleModifiers>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
         registerPsiQuickFix<PsiElement, KtFirDiagnostic.RepeatedModifier>(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
@@ -29,9 +27,6 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
                 isRedundant = true
             )
         )
-
-        // ChangeVariableMutabilityFix
-        registerPsiQuickFix<PsiElement, KtFirDiagnostic.VarOverriddenByVal>(VAR_OVERRIDDEN_BY_VAL_FACTORY)
     }
 
     private val overrides = KtQuickFixesListBuilder.registerPsiQuickFix {
@@ -40,8 +35,13 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
         registerApplicator(ChangeTypeQuickFix.changeVariableReturnTypeOnOverride)
     }
 
+    private val mutability = KtQuickFixesListBuilder.registerPsiQuickFix {
+        registerPsiQuickFix<PsiElement, KtFirDiagnostic.VarOverriddenByVal>(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
+    }
+
     override val list: KtQuickFixesList = KtQuickFixesList.createCombined(
         modifiers,
         overrides,
+        mutability,
     )
 }
