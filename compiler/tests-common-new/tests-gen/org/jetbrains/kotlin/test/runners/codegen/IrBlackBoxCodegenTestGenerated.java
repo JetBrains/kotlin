@@ -14883,6 +14883,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("KotlinDocumentationProvider.kt")
+        public void testKotlinDocumentationProvider() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/KotlinDocumentationProvider.kt");
+        }
+
+        @Test
         @TestMetadata("LookupTags.kt")
         public void testLookupTags() throws Exception {
             runTest("compiler/testData/codegen/box/fir/LookupTags.kt");

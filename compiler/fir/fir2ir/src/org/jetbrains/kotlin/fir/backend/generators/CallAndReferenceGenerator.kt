@@ -626,7 +626,10 @@ class CallAndReferenceGenerator(
         if (!needSamConversion(argument, parameter)) {
             return this
         }
-        val samFirType = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let { substitutor.substituteOrSelf(it) }
+        val samFirType = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let {
+            val substituted = substitutor.substituteOrSelf(it)
+            if (substituted is ConeRawType) substituted.lowerBound else substituted
+        }
         var samType = samFirType?.toIrType(ConversionTypeContext.WITH_INVARIANT) ?: createErrorType()
         if (shouldUnwrapVarargType) {
             samType = samType.getArrayElementType(irBuiltIns)
