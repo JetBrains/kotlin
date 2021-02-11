@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativ
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.toStringPre1_5_20
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -54,7 +55,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
         // Clean existing installation directories.
         val osName = HostManager.simpleOsName()
         val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$oldCompilerVersion")
-        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$currentCompilerVersion")
+        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-${currentCompilerVersion.toStringPre1_5_20()}")
 
         for (compilerDirectory in listOf(oldCompilerDir, currentCompilerDir)) {
             compilerDirectory.deleteRecursively()
