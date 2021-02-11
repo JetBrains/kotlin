@@ -111,7 +111,7 @@ FILE: RedundantVisibilityModifierChecker.kt
 
     }
     public sealed class G : R|kotlin/Any| {
-        private constructor(y: R|kotlin/Int|): R|G| {
+        protected constructor(y: R|kotlin/Int|): R|G| {
             super<R|kotlin/Any|>()
         }
 

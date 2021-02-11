@@ -190,8 +190,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonPrivateConstructorInEnum::class
     }
 
-    abstract class NonPrivateConstructorInSealed : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = NonPrivateConstructorInSealed::class
+    abstract class NonPrivateOrProtectedConstructorInSealed : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NonPrivateOrProtectedConstructorInSealed::class
     }
 
     abstract class CyclicConstructorDelegationCall : KtFirDiagnostic<PsiElement>() {

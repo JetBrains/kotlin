@@ -657,11 +657,11 @@ class RawFirBuilder(
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
             fun defaultVisibility() = when {
                 owner is KtObjectDeclaration || owner.hasModifier(ENUM_KEYWORD) || owner is KtEnumEntry -> Visibilities.Private
-                owner.hasModifier(SEALED_KEYWORD) -> Visibilities.Private
+                owner.hasModifier(SEALED_KEYWORD) -> Visibilities.Protected
                 else -> Visibilities.Unknown
             }
 
-            val explicitVisibility = this?.visibility
+            val explicitVisibility = this?.visibility?.takeUnless { it == Visibilities.Unknown }
             val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
                 isExpect = this@toFirConstructor?.hasExpectModifier() == true || owner.hasExpectModifier()
                 isActual = this@toFirConstructor?.hasActualModifier() == true

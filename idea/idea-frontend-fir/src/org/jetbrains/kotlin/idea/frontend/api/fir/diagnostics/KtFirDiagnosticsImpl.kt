@@ -299,10 +299,10 @@ internal class NonPrivateConstructorInEnumImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
-internal class NonPrivateConstructorInSealedImpl(
+internal class NonPrivateOrProtectedConstructorInSealedImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NonPrivateConstructorInSealed(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.NonPrivateOrProtectedConstructorInSealed(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

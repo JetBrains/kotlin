@@ -260,8 +260,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED) { firDiagnostic ->
-        NonPrivateConstructorInSealedImpl(
+    add(FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED) { firDiagnostic ->
+        NonPrivateOrProtectedConstructorInSealedImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

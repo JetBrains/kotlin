@@ -6,7 +6,7 @@ FILE: redundantModifier.kt
 
     }
     public sealed class B : R|kotlin/Any| {
-        private constructor(): R|B| {
+        protected constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 

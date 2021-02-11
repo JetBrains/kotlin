@@ -1,6 +1,6 @@
 FILE: recursiveCallOnWhenWithSealedClass.kt
     public sealed class Maybe<T> : R|kotlin/Any| {
-        private constructor<T>(): R|Maybe<T>| {
+        protected constructor<T>(): R|Maybe<T>| {
             super<R|kotlin/Any|>()
         }
 

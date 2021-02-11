@@ -1,6 +1,6 @@
 FILE: a.kt
     public sealed class Base : R|kotlin/Any| {
-        private constructor(): R|Base| {
+        protected constructor(): R|Base| {
             super<R|kotlin/Any|>()
         }
 

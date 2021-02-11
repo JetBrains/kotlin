@@ -740,7 +740,9 @@ class DeclarationsConverter(
             extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
         }
 
-        val explicitVisibility = if (primaryConstructor != null) modifiers.getVisibility() else null
+        val explicitVisibility = runIf(primaryConstructor != null) {
+            modifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
+        }
         val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility, Modality.FINAL).apply {
             isExpect = modifiers.hasExpect() || classWrapper.hasExpect()
             isActual = modifiers.hasActual()
