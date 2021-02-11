@@ -56,17 +56,20 @@ class NativeCompilerDownloader(
             }
         }
 
-    fun CompilerVersion.toStringPre1_5_20(showMeta: Boolean, showBuild: Boolean) = buildString {
+    /**
+     * Once we've decide to make K/N version like K one (with droppable maintenance 0), but this breaks old publications,
+     * when did merging kotlin with kotlin/native after 1.5.0 release.
+     * older 1.5.20?
+     */
+    private fun CompilerVersion.toStringPre1_5_20(showMeta: Boolean, showBuild: Boolean) = buildString {
+        if (major > 1
+            || minor > 5
+            || maintenance > 20
+        )
+            return toString(showMeta, showBuild)
         append(major)
         append('.')
         append(minor)
-        if (!(major <= 1 && minor <= 5 && maintenance <= 20))
-            return toString(showMeta, showBuild)
-        /**
-         * Once we've decide to make K/N version like K one (with droppable maintenance 0), but this breaks old publications,
-         * when did merging kotlin with kotlin/native after 1.5.0 release.
-         * older 1.5.20?
-         */
         if (maintenance != 0) {
             append('.')
             append(maintenance)
