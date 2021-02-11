@@ -5,7 +5,7 @@ public final annotation class Ann : kotlin.Annotation {
 }
 
 public sealed class Sealed {
-    /*primary*/ @test.Ann internal constructor Sealed(/*0*/ @test.Ann z: test.Z)
+    /*primary*/ @test.Ann protected constructor Sealed(/*0*/ @test.Ann z: test.Z)
     public final val z: test.Z
         public final fun <get-z>(): test.Z
 
