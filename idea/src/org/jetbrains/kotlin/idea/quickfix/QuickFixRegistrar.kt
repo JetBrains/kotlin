@@ -66,7 +66,7 @@ class QuickFixRegistrar : QuickFixContributor {
         }
 
         val removeAbstractModifierFactory = createRemoveModifierFromListOwnerPsiBasedFactory(ABSTRACT_KEYWORD )
-        val addAbstractModifierFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD)
+        val addAbstractModifierFactory = AddModifierFixMpp.createFactory(ABSTRACT_KEYWORD)
 
         ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.registerFactory(removeAbstractModifierFactory)
 
@@ -83,7 +83,7 @@ class QuickFixRegistrar : QuickFixContributor {
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(InitializePropertyQuickFixFactory)
         MUST_BE_INITIALIZED.registerFactory(InitializePropertyQuickFixFactory)
 
-        val addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, KtClassOrObject::class.java)
+        val addAbstractToClassFactory = AddModifierFixMpp.createFactory(ABSTRACT_KEYWORD, KtClassOrObject::class.java)
         ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
 
         ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
@@ -104,7 +104,7 @@ class QuickFixRegistrar : QuickFixContributor {
             AddFunctionToSupertypeFix,
             AddPropertyToSupertypeFix
         )
-        VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
+        VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFixMpp.createFactory(OVERRIDE_KEYWORD))
 
         USELESS_CAST.registerFactory(RemoveUselessCastFix)
 
@@ -128,7 +128,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         val removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerPsiBasedFactory(OPEN_KEYWORD)
         NON_FINAL_MEMBER_IN_FINAL_CLASS.registerFactory(
-            AddModifierFix.createFactory(OPEN_KEYWORD, KtClass::class.java),
+            AddModifierFixMpp.createFactory(OPEN_KEYWORD, KtClass::class.java),
             removeOpenModifierFactory
         )
         NON_FINAL_MEMBER_IN_OBJECT.registerFactory(removeOpenModifierFactory)
@@ -138,7 +138,7 @@ class QuickFixRegistrar : QuickFixContributor {
         SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
         PRIVATE_SETTER_FOR_OPEN_PROPERTY.registerFactory(
-            AddModifierFix.createFactory(FINAL_KEYWORD, KtProperty::class.java),
+            AddModifierFixMpp.createFactory(FINAL_KEYWORD, KtProperty::class.java),
             removeModifierFactory
         )
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
@@ -296,16 +296,16 @@ class QuickFixRegistrar : QuickFixContributor {
         UNCHECKED_CAST.registerFactory(ChangeToStarProjectionFix)
         CANNOT_CHECK_FOR_ERASED.registerFactory(ChangeToStarProjectionFix)
 
-        INACCESSIBLE_OUTER_CLASS_EXPRESSION.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD, KtClass::class.java))
+        INACCESSIBLE_OUTER_CLASS_EXPRESSION.registerFactory(AddModifierFixMpp.createFactory(INNER_KEYWORD, KtClass::class.java))
 
-        FINAL_SUPERTYPE.registerFactory(AddModifierFix.MakeClassOpenFactory)
-        FINAL_UPPER_BOUND.registerFactory(AddModifierFix.MakeClassOpenFactory)
+        FINAL_SUPERTYPE.registerFactory(AddModifierFixMpp.MakeClassOpenFactory)
+        FINAL_UPPER_BOUND.registerFactory(AddModifierFixMpp.MakeClassOpenFactory)
 
         OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix)
 
         PARAMETER_NAME_CHANGED_ON_OVERRIDE.registerFactory(RenameParameterToMatchOverriddenMethodFix)
 
-        NESTED_CLASS_NOT_ALLOWED.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD))
+        NESTED_CLASS_NOT_ALLOWED.registerFactory(AddModifierFixMpp.createFactory(INNER_KEYWORD))
 
         CONFLICTING_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
         PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
@@ -546,7 +546,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NO_ACTUAL_FOR_EXPECT.registerFactory(CreateActualFix)
         NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.registerFactory(AddActualFix)
 
-        ACTUAL_MISSING.registerFactory(AddModifierFix.createFactory(ACTUAL_KEYWORD))
+        ACTUAL_MISSING.registerFactory(AddModifierFixMpp.createFactory(ACTUAL_KEYWORD))
 
         CAST_NEVER_SUCCEEDS.registerFactory(ReplacePrimitiveCastWithNumberConversionFix)
 
@@ -569,7 +569,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         CONFLICTING_OVERLOADS.registerFactory(ChangeSuspendInHierarchyFix)
 
-        MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AddModifierFix.AddLateinitFactory)
+        MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(AddModifierFixMpp.AddLateinitFactory)
 
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
 
