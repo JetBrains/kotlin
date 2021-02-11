@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -15,9 +16,12 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
-class FirControlFlowAnalyzer(session: FirSession) {
-    private val cfaCheckers = session.checkersComponent.declarationCheckers.controlFlowAnalyserCheckers
-    private val variableAssignmentCheckers = session.checkersComponent.declarationCheckers.variableAssignmentCfaBasedCheckers
+class FirControlFlowAnalyzer(
+    session: FirSession,
+    declarationCheckers: DeclarationCheckers = session.checkersComponent.declarationCheckers
+) {
+    private val cfaCheckers = declarationCheckers.controlFlowAnalyserCheckers
+    private val variableAssignmentCheckers = declarationCheckers.variableAssignmentCfaBasedCheckers
 
     // Currently declaration in analyzeXXX is not used, but it may be useful in future
     @Suppress("UNUSED_PARAMETER")
