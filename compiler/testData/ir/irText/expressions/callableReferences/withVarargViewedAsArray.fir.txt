@@ -82,4 +82,11 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
   FUN name:testArrayAndDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useStringArray (fn: kotlin.Function1<kotlin.Array<kotlin.String>, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUNCTION_REFERENCE 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
+        fn: FUN_EXPR type=kotlin.Function1<kotlin.Array<out kotlin.String>, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:zap visibility:local modality:FINAL <> (p0:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Array<out kotlin.String>
+            BLOCK_BODY
+              CALL 'public final fun zap (vararg b: kotlin.String, k: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                b: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                  SPREAD_ELEMENT
+                    GET_VAR 'p0: kotlin.Array<out kotlin.String> declared in <root>.testArrayAndDefaults.zap' type=kotlin.Array<out kotlin.String> origin=null

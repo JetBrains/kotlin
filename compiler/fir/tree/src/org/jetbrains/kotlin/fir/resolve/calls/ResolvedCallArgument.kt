@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 
 sealed class ResolvedCallArgument {
@@ -24,3 +25,5 @@ sealed class ResolvedCallArgument {
 
     class VarargArgument(override val arguments: List<FirExpression>) : ResolvedCallArgument()
 }
+
+typealias CallableReferenceMappedArguments = Map<FirValueParameter, ResolvedCallArgument>

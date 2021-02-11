@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.component1

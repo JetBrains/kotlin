@@ -51,8 +51,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         }
 
         candidate.resultingTypeForCallableReference = resultingType
-        candidate.usesSuspendConversion =
-            callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+        candidate.callableReferenceAdaptation = callableReferenceAdaptation
         candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
             addOtherSystem(candidate.system.asReadOnlyStorage())
 
@@ -133,7 +132,7 @@ internal class CallableReferenceAdaptation(
     val argumentTypes: Array<ConeKotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: Map<FirValueParameter, ResolvedCallArgument>,
+    val mappedArguments: CallableReferenceMappedArguments,
     val suspendConversionStrategy: SuspendConversionStrategy
 )
 
@@ -351,7 +350,7 @@ private fun createFakeArgumentsForReference(
     }
 }
 
-private class FirFakeArgumentForCallableReference(
+class FirFakeArgumentForCallableReference(
     val index: Int
 ) : FirExpression() {
     override val source: FirSourceElement?
