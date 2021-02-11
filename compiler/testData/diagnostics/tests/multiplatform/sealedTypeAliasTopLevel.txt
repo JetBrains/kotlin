@@ -37,7 +37,7 @@ public actual object Online : P {
 }
 
 public sealed class P {
-    internal constructor P()
+    protected constructor P()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

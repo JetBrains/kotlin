@@ -5,14 +5,14 @@ public fun test2(/*0*/ a: A): kotlin.Any
 public fun test3(/*0*/ a: A): kotlin.Any
 
 public sealed class A {
-    internal constructor A()
+    protected constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public sealed class B : A {
-    internal constructor B()
+    protected constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

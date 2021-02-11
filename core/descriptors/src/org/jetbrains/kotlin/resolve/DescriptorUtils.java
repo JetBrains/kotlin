@@ -390,7 +390,7 @@ public class DescriptorUtils {
         }
         if (isSealedClass(classDescriptor)) {
             if (freedomForSealedInterfacesSupported) {
-                return DescriptorVisibilities.INTERNAL;
+                return DescriptorVisibilities.PROTECTED;
             } else {
                 return DescriptorVisibilities.PRIVATE;
             }

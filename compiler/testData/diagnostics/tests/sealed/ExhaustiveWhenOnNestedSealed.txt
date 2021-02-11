@@ -3,7 +3,7 @@ package
 public fun foo(/*0*/ s: Sealed, /*1*/ nf: Sealed.NonFirst): kotlin.Int
 
 public sealed class Sealed {
-    internal constructor Sealed()
+    protected constructor Sealed()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -16,7 +16,7 @@ public sealed class Sealed {
     }
 
     public sealed class NonFirst {
-        internal constructor NonFirst()
+        protected constructor NonFirst()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

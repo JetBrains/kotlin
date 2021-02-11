@@ -51,7 +51,7 @@ public object D : A {
 }
 
 public sealed class E : A {
-    internal constructor E()
+    protected constructor E()
     internal final override /*1*/ tailrec /*fake_override*/ fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
     internal open override /*1*/ tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
     protected open override /*1*/ tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
