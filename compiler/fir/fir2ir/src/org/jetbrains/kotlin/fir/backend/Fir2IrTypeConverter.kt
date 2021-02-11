@@ -105,9 +105,10 @@ class Fir2IrTypeConverter(
                     if (annotations.any { it.classId == attributeAnnotation.classId }) continue
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
+                val expandedType = fullyExpandedType(session)
                 IrSimpleTypeImpl(
-                    irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
-                    fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument(typeContext) },
+                    irSymbol, !typeContext.definitelyNotNull && expandedType.isMarkedNullable,
+                    expandedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
                     typeAnnotations
                 )
             }
