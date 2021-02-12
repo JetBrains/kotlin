@@ -100,7 +100,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             ForceResolveUtil.forceResolveAllContents(functionDescriptor.returnType)
         } else {
             components.expressionTypingServices.checkFunctionReturnType(
-                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace
+                functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace, context
             )
         }
 
