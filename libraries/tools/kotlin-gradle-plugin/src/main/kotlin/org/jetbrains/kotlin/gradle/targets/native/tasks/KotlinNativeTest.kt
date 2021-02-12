@@ -114,7 +114,7 @@ abstract class KotlinNativeTest : KotlinTest() {
             prependSuiteName = targetName != null,
             treatFailedTestOutputAsStacktrace = false,
             stackTraceParser = ::parseKotlinNativeStackTraceAsJvm,
-            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
+            escapeTCMessagesInLog = project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
         )
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.

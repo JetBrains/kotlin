@@ -59,7 +59,9 @@ class KotlinKarma(
     private var configDirectory: File by property {
         defaultConfigDirectory
     }
-    private val isTeamCity = project.hasProperty(TC_PROJECT_PROPERTY)
+    private val isTeamCity by lazy {
+        project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+    }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
