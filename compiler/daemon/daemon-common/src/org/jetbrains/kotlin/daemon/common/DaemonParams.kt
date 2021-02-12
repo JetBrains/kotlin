@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
@@ -24,53 +24,47 @@ import java.security.MessageDigest
 import java.util.*
 import kotlin.reflect.KMutableProperty1
 
+const val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
+const val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
+const val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.daemon.KotlinCompileDaemon"
+const val COMPILE_DAEMON_FIND_PORT_ATTEMPTS: Int = 10
+const val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
+const val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
+const val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
+const val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
+const val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
+const val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
+const val COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S: Int = 60
+const val COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS: Long = 1000L // 1 sec
+const val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
+const val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
+const val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
+const val COMPILE_DAEMON_IS_READY_MESSAGE = "Kotlin compile daemon is ready"
 
-val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
-val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
-val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.daemon.KotlinCompileDaemon"
-val COMPILE_DAEMON_FIND_PORT_ATTEMPTS: Int = 10
-val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
-val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
-val COMPILE_DAEMON_ENABLED_PROPERTY: String = "kotlin.daemon.enabled"
-val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String = "kotlin.daemon.jvm.options"
-val COMPILE_DAEMON_OPTIONS_PROPERTY: String = "kotlin.daemon.options"
-val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.client.alive.path"
-val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
-val COMPILE_DAEMON_REPORT_PERF_PROPERTY: String = "kotlin.daemon.perf"
-val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbose"
-val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
-val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
-val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
-val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
-val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
-val COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S: Int = 60
-val COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS: Long = 1000L // 1 sec
-val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
-val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
-val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
-val COMPILE_DAEMON_IS_READY_MESSAGE = "Kotlin compile daemon is ready"
-
-val COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS: String = "kotlin.daemon.custom.run.files.path.for.tests"
-val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
-    System.getProperty(COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS)
-        ?: FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
+val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String
+    get() = CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.value ?: FileSystem.getRuntimeStateFilesPath(
+        "kotlin",
+        "daemon"
+    )
 
 val CLASSPATH_ID_DIGEST = "MD5"
 
 
-open class PropMapper<C, V, out P : KMutableProperty1<C, V>>(val dest: C,
-                                                             val prop: P,
-                                                             val names: List<String> = listOf(prop.name),
-                                                             val fromString: (String) -> V,
-                                                             val toString: ((V) -> String?) = { it.toString() },
-                                                             val skipIf: ((V) -> Boolean) = { false },
-                                                             val mergeDelimiter: String? = null) {
+open class PropMapper<C, V, out P : KMutableProperty1<C, V>>(
+    val dest: C,
+    val prop: P,
+    val names: List<String> = listOf(prop.name),
+    val fromString: (String) -> V,
+    val toString: ((V) -> String?) = { it.toString() },
+    val skipIf: ((V) -> Boolean) = { false },
+    val mergeDelimiter: String? = null
+) {
     open fun toArgs(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> =
-            when {
-                skipIf(prop.get(dest)) -> listOf<String>()
-                mergeDelimiter != null -> listOf(listOfNotNull(prefix + names.first(), toString(prop.get(dest))).joinToString(mergeDelimiter))
-                else -> listOfNotNull(prefix + names.first(), toString(prop.get(dest)))
-            }
+        when {
+            skipIf(prop.get(dest)) -> listOf<String>()
+            mergeDelimiter != null -> listOf(listOfNotNull(prefix + names.first(), toString(prop.get(dest))).joinToString(mergeDelimiter))
+            else -> listOfNotNull(prefix + names.first(), toString(prop.get(dest)))
+        }
 
     open fun apply(s: String) = prop.set(dest, fromString(s))
 }
@@ -255,7 +249,7 @@ data class CompilerId(
 }
 
 
-fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
+fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != null
 
 fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                               vararg additionalParams: String,
@@ -289,16 +283,16 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
 
         if (inheritOtherJvmOptions) {
             opts.jvmParams.addAll(
-                    otherArgs.filterNot {
-                        it.startsWith("agentlib") ||
-                        it.startsWith("D" + COMPILE_DAEMON_LOG_PATH_PROPERTY) ||
-                        it.startsWith("D" + KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) ||
-                        it.startsWith("D" + COMPILE_DAEMON_JVM_OPTIONS_PROPERTY) ||
-                        it.startsWith("D" + COMPILE_DAEMON_OPTIONS_PROPERTY)
-                    })
+                otherArgs.filterNot {
+                    it.startsWith("agentlib") ||
+                            it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property) ||
+                            it.startsWith("D" + CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.property) ||
+                            it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.property) ||
+                            it.startsWith("D" + CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property)
+                })
         }
     }
-    System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
+    CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.value?.let {
         opts.jvmParams.addAll(
                 it.trimQuotes()
                   .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
@@ -311,8 +305,8 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
     opts.jvmParams.addAll(additionalParams)
 
     if (inheritAdditionalProperties) {
-        System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"") }
-        System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
+        CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"$it\"") }
+        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.property}") }
     }
 
     if (opts.jvmParams.none { it.matches(jvmAssertArgsRegex) }) {
@@ -338,15 +332,15 @@ fun configureDaemonJVMOptions(
     )
 
 fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
-    System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)?.let {
+    CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.value?.let {
         val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
         if (unrecognized.any())
             throw IllegalArgumentException(
-                    "Unrecognized daemon options passed via property $COMPILE_DAEMON_OPTIONS_PROPERTY: " + unrecognized.joinToString(" ") +
+                    "Unrecognized daemon options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(" ") +
                     "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() }))
     }
-    System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)?.let { opts.verbose = true }
-    System.getProperty(COMPILE_DAEMON_REPORT_PERF_PROPERTY)?.let { opts.reportPerf = true }
+    CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value?.let { opts.verbose = true }
+    CompilerSystemProperties.COMPILE_DAEMON_REPORT_PERF_PROPERTY.value?.let { opts.reportPerf = true }
     return opts
 }
 

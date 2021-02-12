@@ -205,8 +205,8 @@ abstract class CLITool<A : CommonToolArguments> {
             if (System.getProperty("java.awt.headless") == null) {
                 System.setProperty("java.awt.headless", "true")
             }
-            if (System.getProperty(PlainTextMessageRenderer.KOTLIN_COLORS_ENABLED_PROPERTY) == null) {
-                System.setProperty(PlainTextMessageRenderer.KOTLIN_COLORS_ENABLED_PROPERTY, "true")
+            if (CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.value == null) {
+                CompilerSystemProperties.KOTLIN_COLORS_ENABLED_PROPERTY.value = "true"
             }
 
             setupIdeaStandaloneExecution()
