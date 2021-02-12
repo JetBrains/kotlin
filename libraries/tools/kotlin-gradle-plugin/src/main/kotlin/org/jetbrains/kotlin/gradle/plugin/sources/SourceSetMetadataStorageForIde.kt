@@ -39,4 +39,7 @@ object SourceSetMetadataStorageForIde {
     }
 
     fun sourceSetStorage(project: Project, sourceSetName: String) = projectStorage(project).resolve(sourceSetName)
+
+    internal fun sourceSetStorageWithScope(project: Project, sourceSetName: String, scope: KotlinDependencyScope) =
+        sourceSetStorage(project, sourceSetName).resolve(scope.scopeName)
 }
