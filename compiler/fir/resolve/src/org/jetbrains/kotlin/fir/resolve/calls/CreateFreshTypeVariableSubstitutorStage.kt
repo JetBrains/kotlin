@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.renderWithType
@@ -15,8 +14,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
@@ -32,7 +31,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         }
         val csBuilder = candidate.system.getBuilder()
         val (substitutor, freshVariables) =
-            createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, candidate, csBuilder, callInfo.session)
+            createToFreshVariableSubstitutorAndAddInitialConstraints(declaration, csBuilder)
         candidate.substitutor = substitutor
         candidate.freshVariables = freshVariables
 
@@ -102,7 +101,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         return symbol.fir.bounds.any {
             val type = it.coneType
             type is ConeFlexibleType || with(context) {
-                (type.typeConstructor() as? FirTypeParameterSymbol)?.fir?.shouldBeFlexible(context) ?: false
+                (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir?.shouldBeFlexible(context) ?: false
             }
         }
     }
@@ -111,9 +110,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
 private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
     declaration: FirTypeParameterRefsOwner,
-    candidate: Candidate,
-    csBuilder: ConstraintSystemOperation,
-    session: FirSession
+    csBuilder: ConstraintSystemOperation
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
 
     val typeParameters = declaration.typeParameters
@@ -153,26 +150,5 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         }
     }
 
-//    if (candidateDescriptor is TypeAliasConstructorDescriptor) {
-//        val typeAliasDescriptor = candidateDescriptor.typeAliasDescriptor
-//        val originalTypes = typeAliasDescriptor.underlyingType.arguments.map { it.type }
-//        val originalTypeParameters = candidateDescriptor.underlyingConstructorDescriptor.typeParameters
-//        for (index in typeParameters.indices) {
-//            val typeParameter = typeParameters[index]
-//            val freshVariable = freshTypeVariables[index]
-//            val typeMapping = originalTypes.mapIndexedNotNull { i: Int, kotlinType: KotlinType ->
-//                if (kotlinType == typeParameter.defaultType) i else null
-//            }
-//            for (originalIndex in typeMapping) {
-//                // there can be null in case we already captured type parameter in outer class (in case of inner classes)
-//                // see test innerClassTypeAliasConstructor.kt
-//                val originalTypeParameter = originalTypeParameters.getOrNull(originalIndex) ?: continue
-//                val position = DeclaredUpperBoundConstraintPosition(originalTypeParameter)
-//                for (upperBound in originalTypeParameter.upperBounds) {
-//                    freshVariable.addSubtypeConstraint(upperBound, position)
-//                }
-//            }
-//        }
-//    }
     return toFreshVariables to freshTypeVariables
 }

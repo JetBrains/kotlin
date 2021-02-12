@@ -112,9 +112,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         if (property.isLocal) {
             prepareSignatureForBodyResolve(property)
-            property.transformStatus(this, property.resolveStatus(property.status).mode())
-            property.getter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
-            property.setter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
+            property.transformStatus(this, property.resolveStatus().mode())
+            property.getter?.let { it.transformStatus(this, it.resolveStatus().mode()) }
+            property.setter?.let { it.transformStatus(this, it.resolveStatus().mode()) }
             return transformLocalVariable(property)
         }
 
@@ -367,7 +367,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun FirDeclaration.resolveStatus(status: FirDeclarationStatus, containingClass: FirClass<*>? = null): FirDeclarationStatus {
+    private fun FirDeclaration.resolveStatus(containingClass: FirClass<*>? = null): FirDeclarationStatus {
         val containingDeclaration = context.containerIfAny
         return statusResolver.resolveStatus(
             this,
@@ -528,7 +528,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(simpleFunction)
-                simpleFunction.transformStatus(this, simpleFunction.resolveStatus(simpleFunction.status).mode())
+                simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
             }
 
             withFullBodyResolve {

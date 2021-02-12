@@ -242,6 +242,7 @@ object FirOverrideChecker : FirRegularClassChecker() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER") // TODO: delete me after implementing body
     private fun DiagnosticReporter.reportNothingToOverride(declaration: FirMemberDeclaration, context: CheckerContext) {
         // TODO: not ready yet, e.g., Collections
         // reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE, declaration, context)
