@@ -564,5 +564,10 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         public void testValWithSetter() throws Exception {
             runTest("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
         }
+
+        @TestMetadata("varAnnotationParameter.kt")
+        public void testVarAnnotationParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/varAnnotationParameter.kt");
+        }
     }
 }

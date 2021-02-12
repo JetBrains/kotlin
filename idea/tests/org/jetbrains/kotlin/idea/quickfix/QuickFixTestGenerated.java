@@ -15167,6 +15167,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
             }
 
+            @TestMetadata("varAnnotationParameter.kt")
+            public void testVarAnnotationParameter() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/varAnnotationParameter.kt");
+            }
+
             @TestMetadata("idea/testData/quickfix/variables/changeMutability/canBeVal")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
