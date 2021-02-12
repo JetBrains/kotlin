@@ -70,8 +70,8 @@ class FakeOverrideGenerator(
         val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.filterIsInstance<FirSymbolOwner<*>>().mapTo(mutableSetOf(), FirSymbolOwner<*>::symbol)
+        val isLocal = klass !is FirRegularClass || klass.isLocal
         for (name in superTypesCallableNames) {
-            val isLocal = klass !is FirRegularClass || klass.isLocal
             useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
                 createFakeOverriddenIfNeeded(
                     klass, this, isLocal, functionSymbol,
