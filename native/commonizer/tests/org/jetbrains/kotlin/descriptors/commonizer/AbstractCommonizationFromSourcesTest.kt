@@ -238,8 +238,6 @@ private class AnalyzedModules(
                 createModules(sharedTarget, commonizedRoots, dependencies, parentDisposable)
                     .mapValues { (_, moduleDescriptor) -> MockModulesProvider.SERIALIZER.serializeModule(moduleDescriptor) }
 
-
-
             return AnalyzedModules(originalModules, commonizedModules, dependeeModules)
         }
 
