@@ -17,10 +17,10 @@ abstract class MasterPluginVersionGradleImportingTestCase : MultiplePluginVersio
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
         fun data(): Collection<Array<Any>> {
-            return (AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS).map { gradleVersion ->
+            return (SUPPORTED_GRADLE_VERSIONS).map { gradleVersion ->
                 arrayOf<Any>(
-                    gradleVersion[0],
-                    LATEST_SUPPORTED_VERSION
+                    gradleVersion,
+                    MASTER_VERSION_OF_PLUGIN
                 )
             }.toList()
         }

@@ -4,19 +4,24 @@
  */
 package org.jetbrains.kotlin.idea.codeInsight.gradle;
 
-import org.gradle.util.GradleVersion;
 import org.hamcrest.CustomMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
-import org.jetbrains.plugins.gradle.tooling.util.VersionMatcher;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 // modified copy of org.jetbrains.plugins.gradle.tooling.VersionMatcherRule
 public class PluginTargetVersionsRule extends TestWatcher {
+
+    private final String[][] versionRules = {{"1.3.0 <=> 1.4.0", "4.0+"}, {"1.4.0+", "6.0+"}};
+    //Specify rules for different version Kotlin Gradle plugin and Gradle
 
     private class TargetVersionsImpl implements TargetVersions {
         private final String value;
@@ -41,40 +46,46 @@ public class PluginTargetVersionsRule extends TestWatcher {
         }
     }
 
+    @Nullable
+    private CustomMatcher<String> gradleVersionMatcher;
 
     @Nullable
-    private CustomMatcher gradleVersionMatcher;
+    private CustomMatcher<String> pluginVersionMatcher;
 
-    @Nullable
-    private CustomMatcher pluginVersionMatcher;
+    private boolean skipForMaster;
 
-    @Nullable
-    private CustomMatcher gradleVersionMatcherForLatestPlugin;
+    private final List<CustomMatcher<String>[]> versionCombinationsMatcher = new ArrayList<>();
 
-    @NotNull
-    public boolean matches(String gradleVersion, String pluginVersion, boolean isLatestPluginVersion) {
-        boolean matchGradleVersion = gradleVersionMatcher == null || gradleVersionMatcher.matches(gradleVersion);
-        if (isLatestPluginVersion) {
-            if (gradleVersionMatcherForLatestPlugin != null) {
-                return gradleVersionMatcherForLatestPlugin.matches(gradleVersion);
-            }
-            return matchGradleVersion;
+    public boolean matches(String gradleVersion, String pluginVersion, boolean isMaster) {
+        if (skipForMaster && isMaster) {
+            return false;
         }
+        boolean matchGradleVersion = gradleVersionMatcher == null || gradleVersionMatcher.matches(gradleVersion);
         boolean pluginVersionMatches = pluginVersionMatcher == null || pluginVersionMatcher.matches(pluginVersion);
-        return matchGradleVersion && pluginVersionMatches;
+        return matchGradleVersion && pluginVersionMatches &&
+               versionCombinationsMatcher.stream().anyMatch(i -> i[0].matches(pluginVersion) && i[1].matches(gradleVersion));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void starting(Description d) {
-        final PluginTargetVersions pluginTargetVersions = d.getAnnotation(PluginTargetVersions.class);
+        Arrays.stream(versionRules).forEach(i -> versionCombinationsMatcher.add(
+                new CustomMatcher[] {
+                        VersionMatcherRule.produceMatcher("Plugin", new TargetVersionsImpl(i[0])),
+                        VersionMatcherRule.produceMatcher("Gradle", new TargetVersionsImpl(i[1]))
+                }));
+
+        PluginTargetVersions pluginTargetVersions = d.getAnnotation(PluginTargetVersions.class);
         if (d.getAnnotation(TargetVersions.class) != null && pluginTargetVersions != null) {
             throw new IllegalArgumentException(String.format("Annotations %s and %s could not be used together. ",
                                                              TargetVersions.class.getName(), PluginTargetVersions.class.getName()));
         }
         if (pluginTargetVersions == null) return;
 
-        gradleVersionMatcher = pluginTargetVersions.gradleVersion().isEmpty() ? null : VersionMatcherRule.produceMatcher("Gradle", new TargetVersionsImpl(pluginTargetVersions.gradleVersion()));
-        pluginVersionMatcher = pluginTargetVersions.pluginVersion().isEmpty() ? null : VersionMatcherRule.produceMatcher("Plugin", new TargetVersionsImpl(pluginTargetVersions.pluginVersion()));
-        gradleVersionMatcherForLatestPlugin = pluginTargetVersions.gradleVersionForLatestPlugin().isEmpty() ? null : VersionMatcherRule.produceMatcher("Gradle for latest plugin", new TargetVersionsImpl(pluginTargetVersions.gradleVersionForLatestPlugin()));
+        gradleVersionMatcher = pluginTargetVersions.gradleVersion().isEmpty() ? null : VersionMatcherRule
+                .produceMatcher("Gradle", new TargetVersionsImpl(pluginTargetVersions.gradleVersion()));
+        pluginVersionMatcher = pluginTargetVersions.pluginVersion().isEmpty() ? null : VersionMatcherRule
+                .produceMatcher("Plugin", new TargetVersionsImpl(pluginTargetVersions.pluginVersion()));
+        skipForMaster = pluginTargetVersions.skipForMaster();
     }
 }
