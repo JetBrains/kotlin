@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.compilerRunner
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.api.GlobalOptions
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -295,7 +295,7 @@ class JpsKotlinCompilerRunner {
         // unfortunately it cannot be currently set by default globally, because it breaks many tests
         // since there is no reliable way so far to detect running under tests, switching it on only for parallel builds
         if (System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false").toBoolean())
-            System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
+            CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
         val rc = environment.withProgressReporter { progress ->
             progress.compilationStarted()
