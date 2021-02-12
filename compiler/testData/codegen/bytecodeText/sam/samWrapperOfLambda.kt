@@ -1,3 +1,4 @@
+// KOTLIN_CONFIGURATION_FLAGS: SAM_CONVERSIONS=INDY
 // FILE: JFoo.java
 
 public class JFoo {
