@@ -596,7 +596,7 @@ internal class InapplicableLateinitModifierImpl(
     override val reason: String,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.InapplicableLateinitModifier(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.InapplicableLateinitModifier(), KtAbstractFirDiagnostic<KtModifierListOwner> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

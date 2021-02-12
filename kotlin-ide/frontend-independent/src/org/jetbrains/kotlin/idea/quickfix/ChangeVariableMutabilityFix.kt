@@ -64,9 +64,9 @@ class ChangeVariableMutabilityFix(
                 listOf(ChangeVariableMutabilityFix(psiElement, false))
             }
 
-        val LATEINIT_VAL_FACTORY: QuickFixesPsiBasedFactory<PsiElement> =
-            quickFixesPsiBasedFactory { psiElement: PsiElement ->
-                val property = psiElement.getStrictParentOfType<KtProperty>() ?: return@quickFixesPsiBasedFactory emptyList()
+        val LATEINIT_VAL_FACTORY: QuickFixesPsiBasedFactory<KtModifierListOwner> =
+            quickFixesPsiBasedFactory { psiElement: KtModifierListOwner ->
+                val property = psiElement as? KtProperty ?: return@quickFixesPsiBasedFactory emptyList()
                 if (property.valOrVarKeyword.text != "val") {
                     emptyList()
                 } else {

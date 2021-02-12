@@ -58,8 +58,7 @@ class RemoveNullableFix(
 
     object LATEINIT_FACTORY : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtNullableType>? {
-            val lateinitElement = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement
-            val property = lateinitElement.getStrictParentOfType<KtProperty>() ?: return null
+            val property = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement as? KtProperty ?: return null
             val typeReference = property.typeReference ?: return null
             val typeElement = (typeReference.typeElement ?: return null) as? KtNullableType ?: return null
             if (typeElement.innerType == null) return null
