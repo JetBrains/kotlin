@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.test
 
 abstract class Base<T>(var x: T) {
-    fun replace(newValue: T)
+    abstract fun replace(newValue: T)
 }
 
 class Derived(var x: Int): Base<Int>(x) {
