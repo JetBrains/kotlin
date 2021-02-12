@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.compiler.visualizer
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 
 class Psi2FirMapper(val map: MutableMap<PsiElement, MutableList<FirElement>>) : FirVisitorVoid() {
     override fun visitElement(element: FirElement) {
@@ -19,5 +21,17 @@ class Psi2FirMapper(val map: MutableMap<PsiElement, MutableList<FirElement>>) : 
             }
         }
         element.acceptChildren(this)
+    }
+
+    override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
+        visitElement(callableReferenceAccess.extensionReceiver)
+        visitElement(callableReferenceAccess.dispatchReceiver)
+        callableReferenceAccess.explicitReceiver?.let { visitElement(it) }
+
+        val psi = (callableReferenceAccess.calleeReference.psi as? KtCallableReferenceExpression)?.children?.last()
+            ?: return callableReferenceAccess.calleeReference.accept(this)
+        if (map.putIfAbsent(psi, mutableListOf(callableReferenceAccess.calleeReference)) != null) {
+            map[psi]?.add(callableReferenceAccess.calleeReference)
+        }
     }
 }

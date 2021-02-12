@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
@@ -201,6 +198,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (expression is KtOperationReferenceExpression) return
 
             expression.firstOfTypeWithLocalReplace<FirResolvedNamedReference> { this.name.asString() }
+                ?: expression.firstOfTypeWithLocalReplace<FirResolvedCallableReference> { this.name.asString() }
                 ?: expression.firstOfTypeWithRender<FirResolvedQualifier>()
                 ?: expression.firstOfTypeWithRender<FirElement>() //fallback for errors
             super.visitReferenceExpression(expression)
@@ -216,17 +214,23 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitBinaryExpression(expression: KtBinaryExpression) {
-            if (expression.operationReference.getReferencedName() == "?:") {
-                expression.left?.accept(this)
-                expression.right?.accept(this)
-                return
+            val operation = expression.operationReference
+            when {
+                operation.getReferencedName() == "?:" -> {
+                    expression.left?.accept(this)
+                    expression.right?.accept(this)
+                }
+                operation.getReferencedName() == "==" -> {
+                    expression.left?.accept(this)
+                    expression.firstOfTypeWithRender<FirEqualityOperatorCall>(operation)
+                    expression.right?.accept(this)
+                }
+                else -> {
+                    expression.allOfTypeWithLocalReplace<FirFunctionCall>(operation) { this.calleeReference.name.asString() }
+                        ?: expression.firstOfTypeWithLocalReplace<FirVariableAssignment>(operation) { this.lValue.toString() }
+                    super.visitBinaryExpression(expression)
+                }
             }
-
-            expression.operationReference.let {
-                expression.allOfTypeWithLocalReplace<FirFunctionCall>(it) { this.calleeReference.name.asString() }
-                    ?: expression.firstOfTypeWithLocalReplace<FirVariableAssignment>(it) { this.lValue.toString() }
-            }
-            super.visitBinaryExpression(expression)
         }
 
         override fun visitIfExpression(expression: KtIfExpression) {
@@ -283,10 +287,13 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private val symbolProvider = firFile.session.symbolProvider
 
         private fun FirTypeRef.renderWithNativeRenderer(): String {
-            return buildString {
+            var result = buildString {
                 val nativeRenderer = org.jetbrains.kotlin.fir.FirRenderer(this)
                 this@renderWithNativeRenderer.accept(nativeRenderer)
-            }.replace("R|", "").replace("|", "")
+            }
+            if (result.startsWith("R|")) result = result.substring(2)
+            if (result.endsWith("|")) result = result.substring(0, result.length - 1)
+            return result
         }
 
         private fun String.removeCurrentFilePackage(): String {
@@ -392,6 +399,16 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append(renderSymbol(symbol))
         }
 
+        override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: StringBuilder) {
+            val symbol = resolvedCallableReference.resolvedSymbol
+            data.append(renderSymbol(symbol))
+            (symbol.fir as? FirFunction<*>)?.let {
+                visitValueParameters(it.valueParameters, data)
+                data.append(": ")
+                it.returnTypeRef.accept(this, data)
+            }
+        }
+
         override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: StringBuilder) {
             val reference = annotationCall.calleeReference
             visitConstructor(reference, data)
@@ -443,15 +460,12 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         data.append(renderSymbol(callee.resolvedSymbol))
                         visitArguments(functionCall.arguments, data)
                     } else {
-                        data.append("fun ")
-                        val firFunction = callee.resolvedSymbol.fir as? FirTypeParametersOwner
-                        firFunction?.let { renderListInTriangles(it.typeParameters, data, true) }
-
                         data.append(renderSymbol(callee.resolvedSymbol))
                         renderListInTriangles(functionCall.typeArguments, data)
-                        visitValueParameters(callee.resolvedSymbol.firUnsafe<FirFunction<*>>().valueParameters, data)
+                        val fir = callee.resolvedSymbol.firUnsafe<FirFunction<*>>()
+                        visitValueParameters(fir.valueParameters, data)
                         data.append(": ")
-                        functionCall.typeRef.accept(this, data)
+                        fir.returnTypeRef.accept(this, data)
                     }
                 }
                 is FirErrorNamedReference -> data.append("[ERROR : ${callee.diagnostic.reason}]")
@@ -478,7 +492,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: StringBuilder) {
-            data.append("variable assignment")
+            //data.append("variable assignment")
         }
 
         override fun visitStarProjection(starProjection: FirStarProjection, data: StringBuilder) {
@@ -492,7 +506,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
-            data.append((resolvedTypeRef.delegatedTypeRef ?: resolvedTypeRef).renderWithNativeRenderer().removeCurrentFilePackage())
+            data.append(resolvedTypeRef.renderWithNativeRenderer().removeCurrentFilePackage())
             val coneType = resolvedTypeRef.type
             if (coneType is ConeClassLikeType) {
                 val original = coneType.directExpansionType(session)
@@ -532,6 +546,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
             when (symbol) {
                 is FirNamedFunctionSymbol -> {
+                    data.append("fun ")
+                    renderListInTriangles(symbol.fir.typeParameters, data, true)
+
                     val callableName = symbol.callableId.callableName
                     val receiverType = symbol.fir.receiverTypeRef
                     if (receiverType == null) {
