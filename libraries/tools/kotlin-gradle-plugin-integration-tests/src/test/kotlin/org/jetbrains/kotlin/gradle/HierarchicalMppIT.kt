@@ -585,6 +585,41 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testMixedScopesFilesExistKt44845() {
+        publishThirdPartyLib(withGranularMetadata = true)
+
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            gradleBuildScript().appendText(
+                """
+                ${"\n"}
+                dependencies {
+                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+                }
+            """.trimIndent()
+            )
+
+            testDependencyTransformations { reports ->
+                val reportsForJvmAndJsMain = reports.filter { it.sourceSetName == "jvmAndJsMain" }
+                val thirdPartyLib = reportsForJvmAndJsMain.single {
+                    it.scope == "api" && it.groupAndModule.startsWith("com.example")
+                }
+                val coroutinesCore = reportsForJvmAndJsMain.single {
+                    it.scope == "implementation" && it.groupAndModule.contains("kotlinx-coroutines-core")
+                }
+                val serialization = reportsForJvmAndJsMain.single {
+                    it.scope == "compileOnly" && it.groupAndModule.contains("kotlinx-serialization-json")
+                }
+                listOf(thirdPartyLib, coroutinesCore, serialization).forEach { report ->
+                    assertTrue(report.newVisibleSourceSets.isNotEmpty(), "Expected visible source sets for $report")
+                    assertTrue(report.useFiles.isNotEmpty(), "Expected non-empty useFiles for $report")
+                    report.useFiles.forEach { assertTrue(it.isFile, "Expected $it to exist for $report") }
+                }
+            }
+        }
+    }
+
     private fun Project.testDependencyTransformations(
         subproject: String? = null,
         check: CompiledProject.(reports: Iterable<DependencyTransformationReport>) -> Unit
