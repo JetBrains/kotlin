@@ -402,8 +402,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Redeclarations
             map.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class")
-            map.put(CONFLICTING_OVERLOADS, "Conflicting overloads: {0}", TO_STRING) // *
-            map.put(REDECLARATION, "Conflicting declarations: {0}", TO_STRING) // *
+            map.put(CONFLICTING_OVERLOADS, "Conflicting overloads: {0}", SYMBOLS) // *
+            map.put(REDECLARATION, "Conflicting declarations: {0}", SYMBOLS) // *
             map.put(ANY_METHOD_IMPLEMENTED_IN_INTERFACE, "An interface may not implement a method of 'Any'") // &
 
             // Invalid local declarations
