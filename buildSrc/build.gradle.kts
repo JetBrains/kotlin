@@ -115,14 +115,16 @@ tasks.clean {
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
     kotlin.srcDir("src/main/kotlin")
-    kotlin.srcDir("../kotlin-native/shared/src/library/kotlin")
-    kotlin.srcDir("../kotlin-native/shared/src/main/kotlin")
-    kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
-    kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
-    kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
-    kotlin.srcDir("../compiler/util-klib/src")
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        kotlin.srcDir("../kotlin-native/shared/src/library/kotlin")
+        kotlin.srcDir("../kotlin-native/shared/src/main/kotlin")
+        kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
+        kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
+        kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
+        kotlin.srcDir("../compiler/util-klib/src")
+        kotlin.srcDir("../native/utils/src")
+    }
     kotlin.srcDir(project.kotlinNativeVersionSrc())
-    kotlin.srcDir("../native/utils/src")
     kotlin.exclude("**/benchmark/SwiftBenchmarkingPlugin.kt")
 }
 
@@ -171,6 +173,9 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
+    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
+    }
 }
 
 samWithReceiver {
@@ -194,7 +199,9 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks["build"].dependsOn(":prepare-deps:build")
 sourceSets["main"].withConvention(org.gradle.api.tasks.GroovySourceSet::class) {
-    groovy.srcDir("../kotlin-native/build-tools/src/main/groovy")
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        groovy.srcDir("../kotlin-native/build-tools/src/main/groovy")
+    }
 }
 
 tasks.named("compileGroovy", GroovyCompile::class.java) {
