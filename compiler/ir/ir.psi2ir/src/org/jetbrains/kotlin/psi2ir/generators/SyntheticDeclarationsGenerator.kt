@@ -11,11 +11,18 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDescriptorVisitor<Unit, IrDeclarationContainer?> {
+class SyntheticDeclarationsGenerator(
+        context: GeneratorContext
+) : DeclarationDescriptorVisitor<Unit, IrDeclarationContainer?> {
 
-    private val generator = StandaloneDeclarationGenerator(context)
+    private val generator = StandaloneDeclarationGenerator(
+            context.typeTranslator,
+            context.symbolTable,
+            context.irFactory,
+    )
     private val symbolTable = context.symbolTable
 
     companion object {

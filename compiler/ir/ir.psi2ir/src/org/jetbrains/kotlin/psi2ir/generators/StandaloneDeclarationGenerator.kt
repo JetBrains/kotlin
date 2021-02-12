@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.KtParameter
@@ -24,16 +27,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 
-class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
-    private val typeTranslator = context.typeTranslator
-    private val symbolTable = context.symbolTable
-    private val irFactory = context.irFactory
+class StandaloneDeclarationGenerator(
+        val typeTranslator: TypeTranslator,
+        val symbolTable: SymbolTable,
+        val irFactory: IrFactory,
+) {
 
     // TODO: use this generator in psi2ir too
 
     fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    protected fun generateGlobalTypeParametersDeclarations(
+    private fun generateGlobalTypeParametersDeclarations(
         irTypeParametersOwner: IrTypeParametersContainer,
         from: List<TypeParameterDescriptor>
     ) {
@@ -42,7 +46,13 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         }
     }
 
-    fun generateScopedTypeParameterDeclarations(
+    private fun IrDeclaration.generateAnnotations(annotated: Annotated) {
+        annotations += annotated.annotations.map {
+            typeTranslator.constantValueGenerator.generateAnnotationConstructorCall(it)!!
+        }
+    }
+
+    private fun generateScopedTypeParameterDeclarations(
         irTypeParametersOwner: IrTypeParametersContainer,
         from: List<TypeParameterDescriptor>
     ) {
@@ -66,6 +76,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
                 typeParameterDescriptor
             ).also {
                 it.parent = irTypeParametersOwner
+                it.generateAnnotations(typeParameterDescriptor)
             }
         }
 
@@ -81,13 +92,14 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
         symbolTable.withScope(irClass) {
             irClass.metadata = DescriptorMetadataSource.Class(descriptor)
+            irClass.generateAnnotations(descriptor)
 
             generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
             irClass.superTypes = descriptor.typeConstructor.supertypes.map {
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.declareValueParameter(
+            irClass.thisReceiver = symbolTable.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
                 descriptor.thisAsReceiverParameter,
@@ -103,7 +115,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     ): IrEnumEntry {
         // TODO: corresponging class?
         val irEntry = irFactory.createEnumEntry(startOffset, endOffset, origin, symbol, descriptor.name)
-
+        irEntry.generateAnnotations(descriptor)
         return irEntry
     }
 
@@ -118,20 +130,23 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
             startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin
         ).also {
             generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
+            it.generateAnnotations(descriptor)
         }
     }
 
-    protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
+    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
         return symbolTable.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
-        )
+        ).also {
+            it.generateAnnotations(descriptor)
+        }
     }
 
-    protected fun generateValueParameterDeclarations(
+    private fun generateValueParameterDeclarations(
         irFunction: IrFunction,
         functionDescriptor: FunctionDescriptor,
         defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody?
@@ -167,6 +182,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
             )
         }
         irConstructor.metadata = DescriptorMetadataSource.Function(descriptor)
+        irConstructor.generateAnnotations(descriptor)
 
         symbolTable.withScope(irConstructor) {
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
@@ -178,7 +194,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         return irConstructor
     }
 
-    protected fun generateOverridenSymbols(irFunction: IrSimpleFunction, overridens: Collection<FunctionDescriptor>) {
+    private fun generateOverridenSymbols(irFunction: IrSimpleFunction, overridens: Collection<FunctionDescriptor>) {
         irFunction.overriddenSymbols = overridens.map { symbolTable.referenceSimpleFunction(it.original) }
     }
 
@@ -193,6 +209,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
             )
         }
         irFunction.metadata = DescriptorMetadataSource.Function(descriptor)
+        irFunction.generateAnnotations(descriptor)
 
         symbolTable.withScope(irFunction) {
             generateOverridenSymbols(irFunction, descriptor.overriddenDescriptors)
@@ -221,6 +238,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         )
 
         irProperty.metadata = DescriptorMetadataSource.Property(descriptor)
+        irProperty.generateAnnotations(descriptor)
 
         return irProperty
     }
