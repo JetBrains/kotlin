@@ -5443,6 +5443,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("whenOr.kt")
+        public void testWhenOr() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/whenOr.kt");
+        }
+
+        @Test
         @TestMetadata("withoutElse.kt")
         public void testWithoutElse() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/withoutElse.kt");
