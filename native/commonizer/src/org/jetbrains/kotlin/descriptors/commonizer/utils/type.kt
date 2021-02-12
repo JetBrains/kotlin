@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
@@ -42,6 +40,9 @@ internal val ClassifierDescriptorWithTypeParameters.classifierId: CirEntityId
         else -> error("Unexpected containing declaration type for $this: ${owner::class}, $owner")
     }
 
+internal inline val TypeParameterDescriptor.filteredUpperBounds: List<KotlinType>
+    get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny() == true } ?: emptyList()
+
 internal val KotlinType.signature: CirTypeSignature
     get() {
         // use of interner saves up to 95% of duplicates
@@ -55,17 +56,17 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
         append(typeParameterDescriptor.name.asString())
 
         if (exploredTypeParameters.add(type.makeNotNullable())) { // print upper bounds once the first time when type parameter type is met
-            append(":[")
-            typeParameterDescriptor.upperBounds.forEachIndexed { index, upperBound ->
+            append(':').append('[')
+            typeParameterDescriptor.filteredUpperBounds.forEachIndexed { index, upperBound ->
                 if (index > 0)
-                    append(",")
+                    append(',')
                 buildTypeSignature(upperBound, exploredTypeParameters)
             }
-            append("]")
+            append(']')
         }
 
         if (type.isMarkedNullable)
-            append("?")
+            append('?')
     } else {
         // N.B. this is classifier type
         val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
@@ -73,25 +74,25 @@ private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParam
 
         val arguments = abbreviation.arguments
         if (arguments.isNotEmpty()) {
-            append("<")
+            append('<')
             arguments.forEachIndexed { index, argument ->
                 if (index > 0)
-                    append(",")
+                    append(',')
 
                 if (argument.isStarProjection)
-                    append("*")
+                    append('*')
                 else {
                     val variance = argument.projectionKind
                     if (variance != Variance.INVARIANT)
-                        append(variance).append(" ")
+                        append(variance.label).append(' ')
                     buildTypeSignature(argument.type, exploredTypeParameters)
                 }
             }
-            append(">")
+            append('>')
         }
 
         if (abbreviation.isMarkedNullable)
-            append("?")
+            append('?')
     }
 }
 
