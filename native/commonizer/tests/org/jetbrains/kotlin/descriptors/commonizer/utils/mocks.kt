@@ -190,7 +190,9 @@ internal class MockModulesProvider private constructor(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             metadataVersion = KlibMetadataVersion.INSTANCE,
             skipExpects = false,
-            project = null
+            project = null,
+            includeOnlyModuleContent = true,
+            allowErrorTypes = false
         )
     }
 }
