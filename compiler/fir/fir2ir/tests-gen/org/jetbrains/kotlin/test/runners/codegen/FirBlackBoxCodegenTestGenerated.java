@@ -16724,6 +16724,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
+            public void testPropagateInferenceSessionIntoDeclarationAnalyzers() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/propagateInferenceSessionIntoDeclarationAnalyzers.kt");
+            }
+
+            @Test
             @TestMetadata("specialCallsWithCallableReferences.kt")
             public void testSpecialCallsWithCallableReferences() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/specialCallsWithCallableReferences.kt");

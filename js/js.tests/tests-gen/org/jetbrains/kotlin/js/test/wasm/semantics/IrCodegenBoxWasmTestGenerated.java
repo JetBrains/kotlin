@@ -6208,6 +6208,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/inference/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
             }
 
+            @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
+            public void testPropagateInferenceSessionIntoDeclarationAnalyzers() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/propagateInferenceSessionIntoDeclarationAnalyzers.kt");
+            }
+
             @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
             public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
