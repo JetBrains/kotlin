@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(x: Int): Int {
     return when (x) {
         1, 1, 2 -> 1001
