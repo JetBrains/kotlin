@@ -156,7 +156,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val INAPPLICABLE_CANDIDATE by error<FirSourceElement, PsiElement> {
             parameter<AbstractFirBasedSymbol<*>>("candidate")
         }
-        val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, PsiElement> {
+        val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }
     }

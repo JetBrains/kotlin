@@ -121,8 +121,7 @@ class RemoveModifierFix(
 
         fun createRemoveLateinitFactory(): QuickFixesPsiBasedFactory<PsiElement> {
             return quickFixesPsiBasedFactory { psiElement: PsiElement ->
-                val modifierList = psiElement.parent as? KtDeclarationModifierList ?: return@quickFixesPsiBasedFactory emptyList()
-                val property = modifierList.parent as? KtProperty ?: return@quickFixesPsiBasedFactory emptyList()
+                val property = psiElement as? KtProperty ?: return@quickFixesPsiBasedFactory emptyList()
                 if (!property.hasModifier(KtTokens.LATEINIT_KEYWORD)) return@quickFixesPsiBasedFactory emptyList()
                 listOf(RemoveModifierFix(property, KtTokens.LATEINIT_KEYWORD, isRedundant = false))
             }

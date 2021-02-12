@@ -118,8 +118,7 @@ open class RemovePartsFromPropertyFix(
 
     object LateInitFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtProperty>? {
-            val element = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement
-            val property = PsiTreeUtil.getParentOfType(element, KtProperty::class.java) ?: return null
+            val property = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement as? KtProperty ?: return null
             val hasInitializer = property.hasInitializer()
             val hasGetter = property.getter?.bodyExpression != null
             val hasSetter = property.setter?.bodyExpression != null
