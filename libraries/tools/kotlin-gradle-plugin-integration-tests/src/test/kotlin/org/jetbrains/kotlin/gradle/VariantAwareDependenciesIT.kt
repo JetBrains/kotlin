@@ -341,7 +341,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
         build("resolveCustom") {
             assertSuccessful()
-            val printedLine = output.lines().single { "###" in it }.substringAfter("###")
+            val printedLine = output.lines().single { "###[" in it }.substringAfter("###")
             val items = printedLine.removeSurrounding("[", "]").split(", ")
             assertTrue(items.toString()) { items.any { "kotlinx-cli-jvm" in it } }
         }
