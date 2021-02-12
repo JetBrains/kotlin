@@ -156,7 +156,7 @@ class DefaultKotlinSourceSet(
                 ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
-        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorage(project, this@DefaultKotlinSourceSet.name)
+        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorageWithScope(project, this@DefaultKotlinSourceSet.name, scope)
 
         if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
             if (baseDir.isDirectory) {
