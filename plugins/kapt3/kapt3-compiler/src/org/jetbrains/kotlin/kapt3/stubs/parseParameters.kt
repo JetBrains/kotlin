@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.kapt3.util.isAbstract
 import org.jetbrains.kotlin.kapt3.util.isEnum
@@ -72,8 +71,7 @@ internal fun MethodNode.getParametersInfo(
 
         // @JvmOverloads constructors and ordinary methods don't have "this" local variable
         name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
-
-        name = name ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifier
+                ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifier
                 ?: "p${index - startParameterIndex}"
 
         // Property setters has bad parameter names
