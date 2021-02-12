@@ -24972,6 +24972,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/smartCasts/kt44804.kt");
         }
 
+        @TestMetadata("kt44814.kt")
+        public void testKt44814() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/kt44814.kt");
+        }
+
         @TestMetadata("lambdaArgumentWithoutType.kt")
         public void testLambdaArgumentWithoutType() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/lambdaArgumentWithoutType.kt");

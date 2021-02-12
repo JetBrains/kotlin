@@ -79,6 +79,7 @@ class ControlFlowGraphBuilder {
     private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<PostponedLambdaExitNode> = mutableListOf()
 
     private val whenExitNodes: NodeStorage<FirWhenExpression, WhenExitNode> = NodeStorage()
+    private val whenBranchIndices: Stack<Map<FirWhenBranch, Int>> = stackOf()
 
     private val binaryAndExitNodes: Stack<BinaryAndExitNode> = stackOf()
     private val binaryOrExitNodes: Stack<BinaryOrExitNode> = stackOf()
@@ -596,6 +597,7 @@ class ControlFlowGraphBuilder {
         val node = createWhenEnterNode(whenExpression)
         addNewSimpleNode(node)
         whenExitNodes.push(createWhenExitNode(whenExpression))
+        whenBranchIndices.push(whenExpression.branches.mapIndexed { index, branch -> branch to index }.toMap())
         levelCounter++
         return node
     }
@@ -613,6 +615,7 @@ class ControlFlowGraphBuilder {
             lastNodes.push(it)
             addEdge(conditionExitNode, it)
         }
+        levelCounter += whenBranchIndices.top().getValue(whenBranch)
         return conditionExitNode to branchEnterNode
     }
 
@@ -622,6 +625,7 @@ class ControlFlowGraphBuilder {
         popAndAddEdge(node)
         val whenExitNode = whenExitNodes.top()
         addEdge(node, whenExitNode, propagateDeadness = false)
+        levelCounter -= whenBranchIndices.top().getValue(whenBranch)
         return node
     }
 
@@ -640,6 +644,7 @@ class ControlFlowGraphBuilder {
         lastNodes.push(whenExitNode)
         dropPostponedLambdasForNonDeterministicCalls()
         levelCounter--
+        whenBranchIndices.pop()
         return whenExitNode to syntheticElseBranchNode
     }
 

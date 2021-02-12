@@ -37441,6 +37441,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt44814.kt")
+        public void testKt44814() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/kt44814.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaArgumentWithoutType.kt")
         public void testLambdaArgumentWithoutType() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/lambdaArgumentWithoutType.kt");
