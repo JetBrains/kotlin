@@ -33,7 +33,7 @@ private val patterns = buildList {
     createPattern(
         "SAM_CONVERSIONS",
         JVMConfigurationKeys.SAM_CONVERSIONS,
-        JvmSamConversions.Companion::fromString
+        JvmClosureGenerationScheme.Companion::fromString
     )
     createPattern(
         "LAMBDAS",
