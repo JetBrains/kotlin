@@ -2396,6 +2396,11 @@ task hash_map0(type: KonanLocalTest) {
     source = "runtime/collections/hash_map0.kt"
 }
 
+task hash_map1(type: KonanLocalTest) {
+    goldValue = "OK\n"
+    source = "runtime/collections/hash_map1.kt"
+}
+
 task hash_set0(type: KonanLocalTest) {
     goldValue = "OK\n"
     source = "runtime/collections/hash_set0.kt"

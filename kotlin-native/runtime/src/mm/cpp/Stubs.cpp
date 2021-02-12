@@ -42,30 +42,6 @@ void Kotlin_native_internal_GC_start(ObjHeader*) {
     TODO();
 }
 
-void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value) {
-    TODO();
-}
-
-int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
-    TODO();
-}
-
-int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*) {
-    TODO();
-}
-
-void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
-    TODO();
-}
-
-int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*) {
-    TODO();
-}
-
 void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, int32_t value) {
     TODO();
 }

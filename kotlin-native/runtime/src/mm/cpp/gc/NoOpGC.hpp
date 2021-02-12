@@ -38,10 +38,18 @@ public:
     private:
     };
 
-    NoOpGC() noexcept = default;
+    NoOpGC() noexcept {}
     ~NoOpGC() = default;
 
+    void SetThreshold(size_t value) noexcept { threshold_ = value; }
+    size_t GetThreshold() noexcept { return threshold_; }
+
+    void SetAllocationThresholdBytes(size_t value) noexcept { allocationThresholdBytes_ = value; }
+    size_t GetAllocationThresholdBytes() noexcept { return allocationThresholdBytes_; }
+
 private:
+    size_t threshold_ = 0;
+    size_t allocationThresholdBytes_ = 0;
 };
 
 } // namespace mm

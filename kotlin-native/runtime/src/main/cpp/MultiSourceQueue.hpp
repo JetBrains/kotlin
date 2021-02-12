@@ -71,6 +71,11 @@ public:
             owner_.deletionQueue_.splice(owner_.deletionQueue_.end(), deletionQueue_);
         }
 
+        void ClearForTests() noexcept {
+            queue_.clear();
+            deletionQueue_.clear();
+        }
+
     private:
         MultiSourceQueue& owner_; // weak
         KStdList<Node> queue_;
