@@ -48,7 +48,7 @@ open class KotlinTestReport : TestReport() {
     @Transient
     private var parent: KotlinTestReport? = null
 
-    // TODO: used in task action when the task is aggregate report, non compatible with configuration cache
+    // TODO: this field is used in task action when the task is aggregate report, which makes it incompatible with configuration cache
     @Internal
     val children = mutableListOf<TaskProvider<KotlinTestReport>>()
 
@@ -158,8 +158,10 @@ open class KotlinTestReport : TestReport() {
         val allSuppressedRunningFailures = mutableListOf<Pair<String, Error>>()
 
         fun visitSuppressedRunningFailures(report: KotlinTestReport) {
-            report.suppressedRunningFailureListeners.filter { it.failure != null }.forEach {
-                allSuppressedRunningFailures.add(it.taskPath to it.failure!!)
+            report.suppressedRunningFailureListeners.forEach { listener ->
+                listener.failures.forEach { failure ->
+                    allSuppressedRunningFailures.add(listener.taskPath to failure)
+                }
             }
 
             report.children.forEach {
@@ -246,10 +248,19 @@ open class KotlinTestReport : TestReport() {
 
     private class SuppressedTestRunningFailureListener(val taskPath: String) : KotlinTestRunnerListener {
         @Transient
-        var failure: Error? = null
+        private var failuresMutable: MutableList<Error>? = mutableListOf()
+
+        val failures: List<Error>
+            get() = failuresMutable ?: emptyList()
 
         override fun runningFailure(failure: Error) {
-            this.failure = failure
+            var failures = failuresMutable
+            if (failures == null) {
+                // it is possible after deserialization
+                failures = mutableListOf()
+                failuresMutable = failures
+            }
+            failures.add(failure)
         }
     }
 
