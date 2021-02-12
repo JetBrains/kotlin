@@ -50,8 +50,28 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
 }
 
 private val FILTER_OUR_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch ->
-    when (mismatch) {
-        is Mismatch.MissingEntity -> mismatch.kind == "AbbreviationType" && mismatch.missingInA
-        is Mismatch.DifferentValues -> false
+    var isAcceptableMismatch = false // don't filter it out by default
+
+    if (mismatch is Mismatch.MissingEntity) {
+        if (mismatch.kind == "AbbreviatedType") {
+            val usefulPath = mismatch.path
+                .dropWhile { !it.startsWith("Package ") }
+                .drop(1)
+                .joinToString(" > ") { it.substringBefore(' ') }
+
+            if (mismatch.missingInA) {
+                if (usefulPath == "TypeAlias > ExpandedType") {
+                    // extra abbreviated type appeared in commonized declaration, it's OK
+                    isAcceptableMismatch = true
+                }
+            } else /*if (mismatch.missingInB)*/ {
+                if ("> ReturnType >" in usefulPath && usefulPath.endsWith("TypeProjection > Type")) {
+                    // extra abbreviated type gone in type argument of commonized declaration, it's OK
+                    isAcceptableMismatch = true
+                }
+            }
+        }
     }
+
+    !isAcceptableMismatch
 }
