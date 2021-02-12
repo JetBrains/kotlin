@@ -17,4 +17,6 @@ class FunctionCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTes
     fun testSpecifics() = doTestSuccessfulCommonization()
 
     fun testSignaturesWithNullableTypealiases() = doTestSuccessfulCommonization()
+
+    fun testOverloadingByUpperBounds() = doTestSuccessfulCommonization()
 }
