@@ -332,7 +332,7 @@ class SamEqualsHashCodeMethodsGenerator(
             overriddenSymbols = klass.superTypes.mapNotNull {
                 it.getClass()?.functions?.singleOrNull(::isHashCode)?.symbol
             }
-            val hashCode = builtIns.anyClass.owner.functions.single(::isHashCode).symbol
+            val hashCode = context.irBuiltIns.functionClass.owner.functions.single(::isHashCode).symbol
             body = context.createIrBuilder(symbol).run {
                 irExprBody(
                     irCall(hashCode).also {
