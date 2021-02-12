@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1257
 //KT-42357
 
 // FILE: main.kt
