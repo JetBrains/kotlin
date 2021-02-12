@@ -102,7 +102,9 @@ abstract class MultiplePluginVersionGradleImportingTestCase : ExternalSystemImpo
 
     @JvmField
     @Parameterized.Parameter(1)
-    var gradleKotlinPluginVersion: String = ""
+    var gradleKotlinPluginParameter: String = ""
+
+    open val gradleKotlinPluginVersion: String get() = if (gradleKotlinPluginParameter == "master") MASTER_VERSION_OF_PLUGIN else gradleKotlinPluginParameter
 
     @Rule
     @JvmField
@@ -133,7 +135,7 @@ abstract class MultiplePluginVersionGradleImportingTestCase : ExternalSystemImpo
             "-Xmx256m -XX:MaxPermSize=64m"
         else ->
             // 128M should be enough for gradle 5.0+ (leak is fixed), and <4.0 (amount of tests is less)
-            "-Xms128M -Xmx192m -XX:MaxPermSize=64m"
+            "-Xms128M -Xmx256m -XX:MaxPermSize=64m"
     }
 
     override fun setUp() {
@@ -443,23 +445,19 @@ abstract class MultiplePluginVersionGradleImportingTestCase : ExternalSystemImpo
     private fun getDefaultPropertiesMap(): Map<String, String> {
         val defaultProperties = HashMap<String, String>()
         defaultProperties["kotlin_plugin_version"] = gradleKotlinPluginVersion
-        defaultProperties["kotlin_plugin_repositories"] = repositories(false)
-        defaultProperties["kts_kotlin_plugin_repositories"] = repositories(true)
+        defaultProperties["kotlin_plugin_repositories"] = repositories()
+        defaultProperties["kts_kotlin_plugin_repositories"] = repositories()
 
         return defaultProperties
     }
 
-    private fun repositories(useKts: Boolean): String {
-        val customRepositories = arrayOf(
-            "https://dl.bintray.com/kotlin/kotlin-dev",
-        )
-        val customMavenRepositories = customRepositories.joinToString("\n") { if (useKts) "maven(\"$it\")" else "maven { url '$it' } " }
+    private fun repositories(): String {
         return """
-            mavenCentral()
             mavenLocal()
+            mavenCentral()
+            gradlePluginPortal()
             google()
             jcenter()
-            $customMavenRepositories
         """.trimIndent()
     }
 
@@ -476,6 +474,7 @@ abstract class MultiplePluginVersionGradleImportingTestCase : ExternalSystemImpo
 
         const val RELEASED_A_YEAR_AGO_GRADLE_PLUGIN_VERSION = "1.3.72"
         const val LATEST_STABLE_RELEASE_GRADLE_PLUGIN_VERSION = "1.4.30"
+
         val MASTER_VERSION_OF_PLUGIN
             get() = File("libraries/tools/kotlin-gradle-plugin/build/libs").listFiles()?.map { it.name }
                 ?.firstOrNull { it.contains("-original.jar") }?.replace(
@@ -485,13 +484,13 @@ abstract class MultiplePluginVersionGradleImportingTestCase : ExternalSystemImpo
 
         const val LATEST_SUPPORTED_GRADLE_VERSION = "6.5.1"
 
-        val SUPPORTED_GRADLE_VERSIONS = arrayOf("4.9", "5.6.4", LATEST_SUPPORTED_GRADLE_VERSION)
+        val SUPPORTED_GRADLE_VERSIONS = arrayOf("4.9", "6.1.1", LATEST_SUPPORTED_GRADLE_VERSION)
 
         private val LOCAL_RUN_PARAMS: Array<Any> =
             System.getenv("IMPORTING_TESTS_LOCAL_RUN_PARAMS") // You can specify versions for local run. For example: "6.7.1:1.4.30"
                 ?.replace(" ", "")
                 ?.split(":")?.toTypedArray()
-                ?: arrayOf(LATEST_SUPPORTED_GRADLE_VERSION, MASTER_VERSION_OF_PLUGIN)
+                ?: arrayOf(LATEST_SUPPORTED_GRADLE_VERSION, "master")
 
         private val isTeamcityBuild = UsefulTestCase.IS_UNDER_TEAMCITY
 
@@ -499,17 +498,16 @@ abstract class MultiplePluginVersionGradleImportingTestCase : ExternalSystemImpo
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
         fun data(): Collection<Array<Any>> {
             if (isTeamcityBuild)
-                return listOf(LOCAL_RUN_PARAMS)
-
-            return (SUPPORTED_GRADLE_VERSIONS).flatMap { gradleVersion ->
-                arrayOf(
-                    RELEASED_A_YEAR_AGO_GRADLE_PLUGIN_VERSION,
-                    LATEST_STABLE_RELEASE_GRADLE_PLUGIN_VERSION,
-                    MASTER_VERSION_OF_PLUGIN
-                ).map { pluginVersion ->
-                    arrayOf(gradleVersion, pluginVersion)
+                return (SUPPORTED_GRADLE_VERSIONS).flatMap { gradleVersion ->
+                    arrayOf(
+                        RELEASED_A_YEAR_AGO_GRADLE_PLUGIN_VERSION,
+                        LATEST_STABLE_RELEASE_GRADLE_PLUGIN_VERSION,
+                        "master"
+                    ).map { pluginVersion ->
+                        arrayOf(gradleVersion, pluginVersion)
+                    }
                 }
-            }
+            return listOf(LOCAL_RUN_PARAMS)
         }
     }
 }

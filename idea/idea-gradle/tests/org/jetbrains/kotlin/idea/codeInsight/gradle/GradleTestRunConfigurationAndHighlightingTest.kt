@@ -18,26 +18,31 @@ import org.jetbrains.kotlin.gradle.GradleDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.gradle.checkFiles
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 import java.io.File
 
-class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() {
+class GradleTestRunConfigurationAndHighlightingTest : MultiplePluginVersionGradleImportingTestCase() {
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testExpectClassWithTests() {
         doTest()
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun preferredConfigurations() {
         doTest()
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun multiplatformTestsInObject() {
         doTest()
     }
 
     @Test
+    @PluginTargetVersions(skipForMaster = true)
     fun testMultiprojectBuild() {
         doTest()
     }

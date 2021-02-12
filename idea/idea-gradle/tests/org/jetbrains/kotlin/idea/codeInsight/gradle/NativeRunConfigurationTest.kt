@@ -12,7 +12,7 @@ import com.intellij.execution.actions.ConfigurationFromContext
 import org.jetbrains.kotlin.gradle.GradleDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
 class NativeRunConfigurationTest : MasterPluginVersionGradleImportingTestCase() {
@@ -20,13 +20,13 @@ class NativeRunConfigurationTest : MasterPluginVersionGradleImportingTestCase() 
     override fun testDataDirName(): String = "nativeRunConfiguration"
 
     @Test
-    @TargetVersions("6.0+")
+    @PluginTargetVersions(gradleVersion = "6.0+")
     fun multiplatformNativeRunGutter() {
         doTest()
     }
 
     @Test
-    @TargetVersions("6.0+")
+    @PluginTargetVersions(gradleVersion = "6.0+")
     fun customEntryPointWithoutRunGutter() {
         doTest()
     }

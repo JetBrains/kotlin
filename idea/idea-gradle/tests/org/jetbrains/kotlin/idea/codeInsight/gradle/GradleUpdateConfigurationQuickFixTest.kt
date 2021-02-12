@@ -25,12 +25,12 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
 
-class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
+class GradleUpdateConfigurationQuickFixTest : MultiplePluginVersionGradleImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
     fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/gradle/languageFeature/" + getTestName(true).substringBefore('_')
@@ -49,25 +49,25 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.7 <=> 6.0")
+    @PluginTargetVersions(gradleVersion = "4.7 <=> 6.0")
     fun testUpdateLanguageVersion() {
         doTest("Set module language version to 1.1")
     }
 
     @Test
-    @TargetVersions("4.7 <=> 6.0")
+    @PluginTargetVersions(gradleVersion = "4.7 <=> 6.0")
     fun testUpdateApiVersion() {
         doTest("Set module API version to 1.1")
     }
 
     @Test
-    @TargetVersions("4.7 <=> 6.0")
+    @PluginTargetVersions(gradleVersion = "4.7 <=> 6.0")
     fun testUpdateLanguageAndApiVersion() {
         doTest("Set module language version to 1.1")
     }
 
     @Test
-    @TargetVersions("4.7 <=> 6.0")
+    @PluginTargetVersions(gradleVersion = "4.7 <=> 6.0")
     fun testAddKotlinReflect() {
         doTest("Add 'kotlin-reflect.jar' to the classpath")
     }
@@ -75,7 +75,7 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     private fun doTest(intentionName: String) {
         val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataPath(), "build.gradle").readText())
         val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
-        importProject()
+        importProject(false)
         runInEdtAndWait {
             codeInsightTestFixture.configureFromExistingVirtualFile(sourceVFile)
             codeInsightTestFixture.launchAction(codeInsightTestFixture.findSingleIntention(intentionName))

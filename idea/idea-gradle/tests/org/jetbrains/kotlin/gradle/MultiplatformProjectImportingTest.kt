@@ -25,7 +25,6 @@ import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.facetSettings
-import org.jetbrains.kotlin.idea.codeInsight.gradle.legacyMppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -58,7 +57,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testPlatformToCommonDependency() {
         val files = configureByFiles()
         importProject()
@@ -79,7 +78,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testPlatformToCommonExpectedByDependency() {
         configureByFiles()
         importProject()
@@ -94,7 +93,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testPlatformToCommonDependencyRoot() {
         configureByFiles()
         importProject()
@@ -105,7 +104,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testMultiProject() {
         configureByFiles()
         importProject()
@@ -120,7 +119,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testDependenciesReachableViaImpl() {
         configureByFiles()
         importProject()
@@ -137,7 +136,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testTransitiveImplement() {
         configureByFiles()
 
@@ -186,7 +185,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testTransitiveImplementWithNonDefaultConfig() {
         configureByFiles()
 
@@ -231,7 +230,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testTransitiveImplementWithAndroid() {
         configureByFiles()
 
@@ -262,7 +261,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun simpleAndroidAppWithCommonModule() {
         configureByFiles()
 
@@ -291,7 +290,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testJsTestOutputFile() {
         configureByFiles()
 
@@ -308,7 +307,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     }
 
     @Test
-    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
+    @PluginTargetVersions()
     fun testJsProductionOutputFile() {
         configureByFiles()
         importProject()
