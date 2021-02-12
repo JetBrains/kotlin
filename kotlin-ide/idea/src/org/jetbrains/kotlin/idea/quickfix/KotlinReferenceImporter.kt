@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinReferenceImporter : ReferenceImporter {
+    override fun isAddUnambiguousImportsOnTheFlyEnabled(file: PsiFile): Boolean =
+        file is KtFile && KotlinCodeInsightSettings.getInstance().addUnambiguousImportsOnTheFly
+
     override fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile): Boolean {
-        if (file !is KtFile) return false
+        if (file !is KtFile || !DaemonListeners.canChangeFileSilently(file)) return false
 
         fun hasUnresolvedImportWhichCanImport(name: String): Boolean {
             return file.importDirectives.any {
@@ -37,8 +40,6 @@ class KotlinReferenceImporter : ReferenceImporter {
         }
 
         fun KtSimpleNameExpression.autoImport(): Boolean {
-            if (!KotlinCodeInsightSettings.getInstance().addUnambiguousImportsOnTheFly) return false
-            if (!DaemonListeners.canChangeFileSilently(file)) return false
             if (hasUnresolvedImportWhichCanImport(getReferencedName())) return false
 
             val bindingContext = analyze(BodyResolveMode.PARTIAL)
