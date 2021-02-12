@@ -28,7 +28,9 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     private val npmProject = compilation.npmProject
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
-    private val isTeamCity = project.hasProperty(TC_PROJECT_PROPERTY)
+    private val isTeamCity by lazy {
+        project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+    }
 
     override val settingsState: String
         get() = "mocha"
