@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,20 +52,20 @@ class MeasureTimeTest {
         val timeSource = TestTimeSource()
         val expectedNs = Random.nextLong(1_000_000_000L)
         val elapsed = timeSource.measureTime {
-            timeSource += expectedNs.nanoseconds
+            timeSource += Duration.nanoseconds(expectedNs)
         }
 
-        assertEquals(expectedNs.nanoseconds, elapsed)
+        assertEquals(Duration.nanoseconds(expectedNs), elapsed)
 
         val expectedResult: Long
 
         val (result, elapsed2) = timeSource.measureTimedValue {
-            timeSource += expectedNs.nanoseconds
+            timeSource += Duration.nanoseconds(expectedNs)
             expectedResult = expectedNs
             expectedNs
         }
 
         assertEquals(expectedResult, result)
-        assertEquals(result.nanoseconds, elapsed2)
+        assertEquals(Duration.nanoseconds(result), elapsed2)
     }
 }
