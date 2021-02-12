@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,23 +19,27 @@ class TimeMarkTest {
             assertEquals(!hasPassed, this.hasNotPassedNow(), "Expected mark in the future")
             assertEquals(hasPassed, this.hasPassedNow(), "Expected mark in the past")
 
-            assertEquals(!hasPassed, this.elapsedNow() < Duration.ZERO, "Mark elapsed: ${this.elapsedNow()}, expected hasPassed: $hasPassed")
+            assertEquals(
+                !hasPassed,
+                this.elapsedNow() < Duration.ZERO,
+                "Mark elapsed: ${this.elapsedNow()}, expected hasPassed: $hasPassed"
+            )
         }
 
         val mark = timeSource.markNow()
-        val markFuture1 = (mark + 1.milliseconds).apply { assertHasPassed(false) }
-        val markFuture2 = (mark - (-1).milliseconds).apply { assertHasPassed(false) }
+        val markFuture1 = (mark + Duration.milliseconds(1)).apply { assertHasPassed(false) }
+        val markFuture2 = (mark - Duration.milliseconds((-1))).apply { assertHasPassed(false) }
 
-        val markPast1 = (mark - 1.milliseconds).apply { assertHasPassed(true) }
-        val markPast2 = (markFuture1 + (-2).milliseconds).apply { assertHasPassed(true) }
+        val markPast1 = (mark - Duration.milliseconds(1)).apply { assertHasPassed(true) }
+        val markPast2 = (markFuture1 + Duration.milliseconds((-2))).apply { assertHasPassed(true) }
 
-        timeSource += 500_000.nanoseconds
+        timeSource += Duration.nanoseconds(500_000)
 
         val elapsed = mark.elapsedNow()
-        val elapsedFromFuture = elapsed - 1.milliseconds
-        val elapsedFromPast = elapsed + 1.milliseconds
+        val elapsedFromFuture = elapsed - Duration.milliseconds(1)
+        val elapsedFromPast = elapsed + Duration.milliseconds(1)
 
-        assertEquals(0.5.milliseconds, elapsed)
+        assertEquals(Duration.milliseconds(0.5), elapsed)
         assertEquals(elapsedFromFuture, markFuture1.elapsedNow())
         assertEquals(elapsedFromFuture, markFuture2.elapsedNow())
 
@@ -45,7 +49,7 @@ class TimeMarkTest {
         markFuture1.assertHasPassed(false)
         markPast1.assertHasPassed(true)
 
-        timeSource += 1.milliseconds
+        timeSource += Duration.milliseconds(1)
 
         markFuture1.assertHasPassed(true)
         markPast1.assertHasPassed(true)

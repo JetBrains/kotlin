@@ -5697,8 +5697,29 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 
 public final class kotlin/time/Duration$Companion {
 	public final fun convert (DLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/TimeUnit;)D
+	public final fun days-UwyO8pc (D)D
+	public final fun days-UwyO8pc (I)D
+	public final fun days-UwyO8pc (J)D
 	public final fun getINFINITE-UwyO8pc ()D
 	public final fun getZERO-UwyO8pc ()D
+	public final fun hours-UwyO8pc (D)D
+	public final fun hours-UwyO8pc (I)D
+	public final fun hours-UwyO8pc (J)D
+	public final fun microseconds-UwyO8pc (D)D
+	public final fun microseconds-UwyO8pc (I)D
+	public final fun microseconds-UwyO8pc (J)D
+	public final fun milliseconds-UwyO8pc (D)D
+	public final fun milliseconds-UwyO8pc (I)D
+	public final fun milliseconds-UwyO8pc (J)D
+	public final fun minutes-UwyO8pc (D)D
+	public final fun minutes-UwyO8pc (I)D
+	public final fun minutes-UwyO8pc (J)D
+	public final fun nanoseconds-UwyO8pc (D)D
+	public final fun nanoseconds-UwyO8pc (I)D
+	public final fun nanoseconds-UwyO8pc (J)D
+	public final fun seconds-UwyO8pc (D)D
+	public final fun seconds-UwyO8pc (I)D
+	public final fun seconds-UwyO8pc (J)D
 }
 
 public final class kotlin/time/DurationKt {
