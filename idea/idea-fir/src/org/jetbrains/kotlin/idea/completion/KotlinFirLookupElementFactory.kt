@@ -16,13 +16,19 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
+import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.render
@@ -53,9 +59,19 @@ internal class KotlinFirLookupElementFactory {
  */
 private class UniqueLookupObject
 
+private data class ClassifierLookupObject(val shortName: Name, val classId: ClassId?)
+
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
+        return LookupElementBuilder.create(ClassifierLookupObject(symbol.name, symbol.classIdIfNonLocal), symbol.name.asString())
+            .withInsertHandler(createInsertHandler(symbol))
+    }
+
+    private fun createInsertHandler(symbol: KtClassLikeSymbol): InsertHandler<LookupElement> {
+        val classFqName = symbol.classIdIfNonLocal?.asSingleFqName()
+            ?: return QuotedNamesAwareInsertionHandler(symbol.name)
+
+        return ClassifierInsertionHandler(classFqName)
     }
 }
 
@@ -115,11 +131,25 @@ private class FunctionLookupElementFactory {
     }
 
     private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
-        return FunctionInsertionHandler(
-            symbol.name,
-            inputValueArguments = symbol.valueParameters.isNotEmpty(),
-            insertEmptyLambda = insertLambdaBraces(symbol)
-        )
+        val functionFqName = symbol.callableIdIfNonLocal
+
+        return if (functionFqName != null && canBeCalledByFqName(symbol)) {
+            ShorteningFunctionInsertionHandler(
+                functionFqName,
+                inputValueArguments = symbol.valueParameters.isNotEmpty(),
+                insertEmptyLambda = insertLambdaBraces(symbol)
+            )
+        } else {
+            SimpleFunctionInsertionHandler(
+                symbol.name,
+                inputValueArguments = symbol.valueParameters.isNotEmpty(),
+                insertEmptyLambda = insertLambdaBraces(symbol)
+            )
+        }
+    }
+
+    private fun canBeCalledByFqName(symbol: KtFunctionSymbol): Boolean {
+        return !symbol.isExtension && symbol.dispatchType == null
     }
 
     companion object {
@@ -128,23 +158,25 @@ private class FunctionLookupElementFactory {
 }
 
 /**
- * A partial copy from `KotlinFunctionInsertHandler.Normal`.
+ * The simplest implementation of the insertion handler for a classifiers.
  */
-private class FunctionInsertionHandler(
+private class ClassifierInsertionHandler(private val fqName: FqName) : InsertHandler<LookupElement> {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val targetFile = context.file as? KtFile ?: return
+
+        context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
+        context.commitDocument()
+
+        shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+    }
+}
+
+private abstract class AbstractFunctionInsertionHandler(
     name: Name,
     private val inputValueArguments: Boolean,
     private val insertEmptyLambda: Boolean
 ) : QuotedNamesAwareInsertionHandler(name) {
-    override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        super.handleInsert(context, item)
-
-        val startOffset = context.startOffset
-        val element = context.file.findElementAt(startOffset) ?: return
-
-        addArguments(context, element)
-    }
-
-    private fun addArguments(context: InsertionContext, offsetElement: PsiElement) {
+    protected fun addArguments(context: InsertionContext, offsetElement: PsiElement) {
         val completionChar = context.completionChar
         if (completionChar == '(') { //TODO: more correct behavior related to braces type
             context.setAddCompletionChar(false)
@@ -215,6 +247,47 @@ private class FunctionInsertionHandler(
     }
 }
 
+private class SimpleFunctionInsertionHandler(
+    name: Name,
+    inputValueArguments: Boolean,
+    insertEmptyLambda: Boolean
+) : AbstractFunctionInsertionHandler(name, inputValueArguments, insertEmptyLambda) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        super.handleInsert(context, item)
+
+        val startOffset = context.startOffset
+        val element = context.file.findElementAt(startOffset) ?: return
+
+        addArguments(context, element)
+    }
+}
+
+private class ShorteningFunctionInsertionHandler(
+    private val name: FqName,
+    inputValueArguments: Boolean,
+    insertEmptyLambda: Boolean,
+) : AbstractFunctionInsertionHandler(name.shortName(), inputValueArguments, insertEmptyLambda) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val targetFile = context.file as? KtFile ?: return
+        super.handleInsert(context, item)
+
+        val startOffset = context.startOffset
+        val element = context.file.findElementAt(startOffset) ?: return
+
+        context.document.replaceString(
+            context.startOffset,
+            context.tailOffset,
+            name.withRootPrefixIfNeeded().render()
+        )
+        context.commitDocument()
+
+        addArguments(context, element)
+        context.commitDocument()
+
+        shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+    }
+}
+
 private open class QuotedNamesAwareInsertionHandler(private val name: Name) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val startOffset = context.startOffset
@@ -249,4 +322,20 @@ private fun CharSequence.indexOfSkippingSpace(c: Char, startIndex: Int): Int? {
         if (currentChar != ' ' && currentChar != '\t') return null
     }
     return null
+}
+
+private fun shortenReferences(targetFile: KtFile, textRange: TextRange) {
+    val shortenings = withAllowedResolve {
+        analyze(targetFile) {
+            collectPossibleReferenceShortenings(targetFile, textRange)
+        }
+    }
+
+    shortenings.invokeShortening()
+}
+
+// FIXME: This is a hack, we should think how we can get rid of it
+private inline fun <T> withAllowedResolve(action: () -> T): T {
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    return hackyAllowRunningOnEdt(action)
 }

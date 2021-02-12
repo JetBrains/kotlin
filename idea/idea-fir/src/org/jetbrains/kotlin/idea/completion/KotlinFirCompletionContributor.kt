@@ -10,7 +10,9 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.completion.weighers.Weighers
+import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
@@ -39,7 +41,12 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
         val resultSet = createResultSet(parameters, result)
-        KotlinAvailableScopesCompletionProvider(resultSet.prefixMatcher).addCompletions(parameters, resultSet)
+        val indexHelper = IndexHelper(
+            parameters.position.project,
+            parameters.position.getModuleInfo().contentScope()
+        )
+
+        KotlinCommonCompletionProvider(resultSet.prefixMatcher, indexHelper).addCompletions(parameters, resultSet)
     }
 
     private fun createResultSet(parameters: CompletionParameters, result: CompletionResultSet): CompletionResultSet =
@@ -72,7 +79,15 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
     }
 }
 
-private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatcher) {
+/**
+ * Currently, this class is responsible for collecting all possible completion variants.
+ *
+ * TODO refactor it, try to split into several classes, or decompose it into several classes.
+ */
+private class KotlinCommonCompletionProvider(
+    prefixMatcher: PrefixMatcher,
+    private val indexHelper: IndexHelper
+) {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
 
     private val scopeNameFilter: KtScopeNameFilter =
@@ -138,8 +153,11 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         implicitScopes: KtScope,
         expectedType: KtType?,
     ) {
-        val availableClasses = implicitScopes.getClassifierSymbols(scopeNameFilter)
-        availableClasses.forEach { addSymbolToCompletion(result, expectedType, it) }
+        val classesFromScopes = implicitScopes.getClassifierSymbols(scopeNameFilter)
+        classesFromScopes.forEach { addSymbolToCompletion(result, expectedType, it) }
+
+        val kotlinClassesFromIndices = indexHelper.getKotlinClasses(scopeNameFilter, psiFilter = { it !is KtEnumEntry })
+        kotlinClassesFromIndices.forEach { addSymbolToCompletion(result, expectedType, it.getSymbol()) }
     }
 
     private fun KtAnalysisSession.collectDotCompletion(

@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper.Companion.asStringForIndexes
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
@@ -72,6 +73,18 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
             .get(packageFqName.asStringForIndexes(), project, scope)
             .mapNotNullTo(hashSetOf()) { it.nameAsName }
 
+    fun getKotlinClasses(
+        nameFilter: (Name) -> Boolean,
+        psiFilter: (element: KtClassOrObject) -> Boolean = { true }
+    ): Collection<KtClassOrObject> {
+        val index = KotlinFullClassNameIndex.getInstance()
+        return index.getAllKeys(project).asSequence()
+            .onEach { ProgressManager.checkCanceled() }
+            .filter { fqName -> nameFilter(getShortName(fqName)) }
+            .flatMap { fqName -> index[fqName, project, scope] }
+            .filter(psiFilter)
+            .toList()
+    }
 
     companion object {
         private fun CallableId.asStringForIndexes(): String =
@@ -82,5 +95,7 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
 
         private fun ClassId.asStringForIndexes(): String =
             asSingleFqName().asStringForIndexes()
+
+        private fun getShortName(fqName: String) = Name.identifier(fqName.substringAfterLast('.'))
     }
 }
