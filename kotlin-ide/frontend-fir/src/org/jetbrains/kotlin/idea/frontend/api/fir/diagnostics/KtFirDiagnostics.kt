@@ -521,12 +521,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ConflictingOverloads : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingOverloads::class
-        abstract val conflictingOverloads: String
+        abstract val conflictingOverloads: List<KtSymbol>
     }
 
     abstract class Redeclaration : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Redeclaration::class
-        abstract val conflictingDeclaration: String
+        abstract val conflictingDeclarations: List<KtSymbol>
     }
 
     abstract class AnyMethodImplementedInInterface : KtFirDiagnostic<PsiElement>() {

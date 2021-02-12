@@ -830,7 +830,7 @@ internal class ManyCompanionObjectsImpl(
 }
 
 internal class ConflictingOverloadsImpl(
-    override val conflictingOverloads: String,
+    override val conflictingOverloads: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ConflictingOverloads(), KtAbstractFirDiagnostic<PsiElement> {
@@ -838,7 +838,7 @@ internal class ConflictingOverloadsImpl(
 }
 
 internal class RedeclarationImpl(
-    override val conflictingDeclaration: String,
+    override val conflictingDeclarations: List<KtSymbol>,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.Redeclaration(), KtAbstractFirDiagnostic<PsiElement> {
