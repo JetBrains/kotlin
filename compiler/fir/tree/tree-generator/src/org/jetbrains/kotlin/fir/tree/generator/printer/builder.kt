@@ -154,7 +154,7 @@ private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: B
             println()
             withIndent {
                 println("get() = throw IllegalStateException()")
-                println("set(value) {")
+                println("set(_) {")
                 withIndent {
                     println("throw IllegalStateException()")
                 }

@@ -45,7 +45,7 @@ class FirBreakExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerBuil
     @Deprecated("Modification of 'typeRef' has no impact for FirBreakExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 }
