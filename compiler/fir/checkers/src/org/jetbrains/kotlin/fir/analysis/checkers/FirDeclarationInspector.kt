@@ -149,6 +149,12 @@ interface FirDeclarationPresenter {
         appendRepresentation(it.symbol.callableId)
     }
 
+    fun StringBuilder.appendOperatorTag(it: FirSimpleFunction) {
+        if (it.isOperator) {
+            append("operator ")
+        }
+    }
+
     fun represent(it: FirSimpleFunction) = buildString {
         append('<')
         it.typeParameters.forEach {
@@ -161,9 +167,7 @@ interface FirDeclarationPresenter {
             appendRepresentation(it)
         }
         append(']')
-        if (it.isOperator) {
-            append("operator ")
-        }
+        appendOperatorTag(it)
         appendRepresentation(it.symbol.callableId)
         append('(')
         it.valueParameters.forEach {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), FirDeclarationPresenter {
@@ -33,26 +34,14 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
         inspector = this
     }
 
-    @Suppress("DuplicatedCode")
-    override fun represent(it: FirSimpleFunction) = buildString {
-        append('<')
-        it.typeParameters.forEach {
-            appendRepresentation(it)
-            append(',')
-        }
-        append('>')
-        append('[')
-        it.receiverTypeRef?.let {
-            appendRepresentation(it)
-        }
-        append(']')
-        append(it.name.asString())
-        append('(')
-        it.valueParameters.forEach {
-            appendRepresentation(it)
-            append(',')
-        }
-        append(')')
+    // We need representations that look like JVM signatures. Thus, just function names, not fully qualified ones.
+    override fun StringBuilder.appendRepresentation(it: CallableId) {
+        append(it.callableName)
+    }
+
+    // We need representations that look like JVM signatures. Hence, no need to represent operator.
+    override fun StringBuilder.appendOperatorTag(it: FirSimpleFunction) {
+        // Intentionally empty
     }
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -61,9 +50,11 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
         }
 
         for (it in declaration.declarations) {
+            if (it !is FirSimpleFunction || !it.isOverride || !it.hasBody) continue
+
             val inspector = getInspector(context)
 
-            if (it is FirSimpleFunction && inspector.contains(it) && it.body != null && it.isOverride) {
+            if (inspector.contains(it)) {
                 reporter.reportOn(it.source, FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE, context)
             }
         }
