@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
@@ -83,7 +84,7 @@ class FirAnalyzerFacade(
 
     fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
         if (scopeSession == null) runResolution()
-        val signaturer = IdSignatureDescriptor(JvmManglerDesc())
+        val signaturer = JvmIdSignatureDescriptor(JvmManglerDesc())
 
         return Fir2IrConverter.createModuleFragment(
             session, scopeSession!!, firFiles!!,
