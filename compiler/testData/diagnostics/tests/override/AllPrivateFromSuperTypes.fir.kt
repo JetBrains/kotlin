@@ -10,5 +10,5 @@ open class C {
 }
 
 class Subject : C(), A {
-    val c = <!HIDDEN!>a<!>
+    val c = <!NONE_APPLICABLE!>a<!>
 }
