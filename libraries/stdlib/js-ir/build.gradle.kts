@@ -76,6 +76,9 @@ val jsMainSources by task<Sync> {
 
     into("$buildDir/jsMainSources")
 
+    val unimplementedNativeBuiltIns = unimplementedNativeBuiltIns
+    val buildDir = buildDir
+    val builtInsHeader = builtInsHeader
     doLast {
         unimplementedNativeBuiltIns.forEach { path ->
             val file = File("$buildDir/jsMainSources/$path")

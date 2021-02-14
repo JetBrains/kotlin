@@ -4,6 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlinx.metadata.jvm.KmModuleVisitor
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import org.gradle.kotlin.dsl.support.serviceOf
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 
@@ -157,8 +158,12 @@ val proguard by task<CacheableProguardTask> {
 }
 
 val relocateCoreSources by task<Copy> {
+    val relocatedCoreSrc = relocatedCoreSrc
+    val fs = serviceOf<FileSystemOperations>()
     doFirst {
-        delete(relocatedCoreSrc)
+        fs.delete {
+            delete(relocatedCoreSrc)
+        }
     }
 
     from("$core/descriptors/src")

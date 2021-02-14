@@ -21,12 +21,14 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.kotlin.dsl.*
 import java.io.File
+import javax.inject.Inject
 
 fun Project.configureFormInstrumentation() {
     plugins.matching { it::class.java.canonicalName.startsWith("org.jetbrains.kotlin.gradle.plugin") }.all {
@@ -76,7 +78,7 @@ fun Project.configureFormInstrumentation() {
     }
 
     afterEvaluate {
-        sourceSets.all { sourceSetParam ->
+        sourceSets.forEach { sourceSetParam ->
             // This copy will ignore filters, but they are unlikely to be used.
             val classesDirs = (sourceSetParam.output.classesDirs as ConfigurableFileCollection).from as Collection<Any>
 
@@ -88,7 +90,7 @@ fun Project.configureFormInstrumentation() {
             (sourceSetParam.output.classesDirs as ConfigurableFileCollection).setFrom(instrumentedClassesDir)
             val instrumentTask =
                 project.tasks.register(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java) {
-                    dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
+                    dependsOn(sourceSetParam.classesTaskName)
                     sourceSet = sourceSetParam
                     instrumentationClasspathConfiguration = instrumentationClasspathCfg
                     originalClassesDirs = classesDirsCopy
@@ -98,14 +100,12 @@ fun Project.configureFormInstrumentation() {
 
             // Ensure that our task is invoked when the source set is built
             sourceSetParam.compiledBy(instrumentTask)
-            @Suppress("UNUSED_EXPRESSION")
-            true
         }
     }
 }
 
 @CacheableTask
-open class IntelliJInstrumentCodeTask : ConventionTask() {
+abstract class IntelliJInstrumentCodeTask : ConventionTask() {
     companion object {
         private const val FILTER_ANNOTATION_REGEXP_CLASS = "com.intellij.ant.ClassFilterAnnotationRegexp"
         private const val LOADER_REF = "java2.loader"
@@ -122,7 +122,8 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
-    var originalClassesDirs: FileCollection? = null
+    @SkipWhenEmpty
+    lateinit var originalClassesDirs: FileCollection
 
     @get:Input
     var instrumentNotNull: Boolean = false
@@ -135,6 +136,12 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         sourceSet.compileClasspath
     }
 
+    // Instrumentation needs to have access to sources of forms for inclusion
+    private val depSourceDirectorySets by lazy {
+        project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
+            .map { p -> p.dependencyProject.mainSourceSet.allSource.sourceDirectories }
+    }
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val sourceDirs: FileCollection by lazy {
@@ -144,10 +151,13 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     @get:OutputDirectory
     lateinit var output: File
 
+    @get:Inject
+    abstract val fs: FileSystemOperations
+
     @TaskAction
     fun instrumentClasses() {
         logger.info(
-            "input files are: ${originalClassesDirs?.joinToString(
+            "input files are: ${originalClassesDirs.joinToString(
                 "; ",
                 transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)"}" })}"
         )
@@ -174,7 +184,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     }
 
     private fun copyOriginalClasses() {
-        project.copy {
+        fs.copy {
             from(originalClassesDirs)
             into(output)
         }
@@ -194,9 +204,6 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     private fun instrumentCode(srcDirs: FileCollection, instrumentNotNull: Boolean) {
         val headlessOldValue = System.setProperty("java.awt.headless", "true")
 
-        // Instrumentation needs to have access to sources of forms for inclusion
-        val depSourceDirectorySets = project.configurations["compile"].dependencies.withType(ProjectDependency::class.java)
-            .map { p -> p.dependencyProject.mainSourceSet.allSource.sourceDirectories }
         val instrumentationClasspath =
             depSourceDirectorySets.fold(compileClasspath) { acc, v -> acc + v }.asPath.also {
                 logger.info("Using following dependency source dirs: $it")
