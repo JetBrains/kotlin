@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -127,7 +128,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
             val logFile: Path = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+            val daemonJVMOptions = configureDaemonJVMOptions("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             val jar = tmpdir.absolutePath + File.separator + "hello.jar"
 
@@ -167,7 +168,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
             val logFile: Path = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+            val daemonJVMOptions = configureDaemonJVMOptions("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             try {
                 val (code, outputs) = compileOnDaemon(

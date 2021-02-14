@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.experimental.integration
 
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -217,7 +218,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
             log.info("creating daemonJVMOptions")
             val daemonJVMOptions = configureDaemonJVMOptions(
-                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
+                "D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${externalLogFile.loggerCompatiblePath}\"",
                 inheritMemoryLimits = false,
                 inheritOtherJvmOptions = false,
                 inheritAdditionalProperties = false
@@ -278,7 +279,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 reportPerf = true
             )
             val daemonJVMOptions = configureDaemonJVMOptions(
-                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
+                "D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${externalLogFile.loggerCompatiblePath}\"",
                 inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
             )
             try {

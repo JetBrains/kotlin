@@ -45,6 +45,8 @@ enum class CompilerSystemProperties(val property: String) {
             systemPropertySetter(property, value!!)
         }
 
+    fun clear(): String? = systemPropertyCleaner(property)
+
     companion object {
         var systemPropertyGetter: (String) -> String? = {
             System.getProperty(it)
@@ -52,6 +54,10 @@ enum class CompilerSystemProperties(val property: String) {
 
         var systemPropertySetter: (String, String) -> String? = { key, value ->
             System.setProperty(key, value)
+        }
+
+        var systemPropertyCleaner: (String) -> String? = { key ->
+            System.clearProperty(key)
         }
     }
 }
