@@ -336,16 +336,19 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs) {
         CompilerSystemProperties.systemPropertyGetter = {
-            val value = if (it in kotlinDaemonProperties) kotlinDaemonProperties[it] else System.getProperty(it)
-            logger.warn("System property read $it = $value (declared: ${it in kotlinDaemonProperties})")
-            value
+            if (it in kotlinDaemonProperties) kotlinDaemonProperties[it] else System.getProperty(it)
         }
         CompilerSystemProperties.systemPropertySetter = setter@{ key, value ->
             val oldValue = kotlinDaemonProperties[key]
             if (oldValue == value) return@setter oldValue
             kotlinDaemonProperties[key] = value
             System.setProperty(key, value)
-            logger.warn("System property set $key = $value (was: $oldValue)")
+            oldValue
+        }
+        CompilerSystemProperties.systemPropertyCleaner = {
+            val oldValue = kotlinDaemonProperties[it]
+            kotlinDaemonProperties.remove(it)
+            System.clearProperty(it)
             oldValue
         }
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
