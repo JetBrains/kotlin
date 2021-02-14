@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY
 import org.jetbrains.kotlin.daemon.common.OSKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -69,7 +69,7 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     // TODO: add JS tests
     fun testDaemon() {
         withDaemon {
-            withSystemProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "true") {
+            withSystemProperty(CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.property, "true") {
                 withSystemProperty(JpsKotlinCompilerRunner.FAIL_ON_FALLBACK_PROPERTY, "true") {
                     testLoadingKotlinFromDifferentModules()
                 }
