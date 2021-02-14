@@ -590,8 +590,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         addKey("-tr", processTests)
         addArgIfNotNull("-entry", entryPoint)
         when (embedBitcode) {
-            BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")
-            BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
+            Framework.BitcodeEmbeddingMode.MARKER -> add("-Xembed-bitcode-marker")
+            Framework.BitcodeEmbeddingMode.BITCODE -> add("-Xembed-bitcode")
             else -> { /* Do nothing. */
             }
         }

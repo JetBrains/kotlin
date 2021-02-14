@@ -244,12 +244,12 @@ class Framework(
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
-    var embedBitcode: BitcodeEmbeddingMode = buildType.embedBitcode(konanTarget)
+    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = buildType.embedBitcode(konanTarget)
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
      */
-    fun embedBitcode(mode: BitcodeEmbeddingMode) {
+    fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
         embedBitcode = mode
     }
 
@@ -263,15 +263,21 @@ class Framework(
      *     marker - Embed placeholder LLVM IR data as a marker.
      *              Has the same effect as the -Xembed-bitcode-marker command line option.
      */
-    fun embedBitcode(mode: String) = embedBitcode(BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
+    fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
 
     /**
      * Specifies if the framework is linked as a static library (false by default).
      */
     var isStatic = false
 
+    object BitcodeEmbeddingMode {
+        val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
+        val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
+        val MARKER = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.MARKER
+    }
+
     companion object {
-        val frameworkTargets = Attribute.of(
+        val frameworkTargets: Attribute<Set<*>> = Attribute.of(
             "org.jetbrains.kotlin.native.framework.targets",
             Set::class.java
         )
