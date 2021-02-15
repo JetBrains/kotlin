@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
@@ -63,7 +64,11 @@ class KotlinKarma(
         defaultConfigDirectory
     }
     private val isTeamCity by lazy {
-        project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        if (isConfigurationCacheAvailable(project.gradle)) {
+            project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        } else {
+            project.hasProperty(TC_PROJECT_PROPERTY)
+        }
     }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>

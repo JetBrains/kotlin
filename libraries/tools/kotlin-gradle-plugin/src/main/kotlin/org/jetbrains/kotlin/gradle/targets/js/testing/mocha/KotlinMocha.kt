@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
 
 class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, private val basePath: String) :
@@ -29,7 +30,11 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
     private val isTeamCity by lazy {
-        project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        if (isConfigurationCacheAvailable(project.gradle)) {
+            project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        } else {
+            project.hasProperty(TC_PROJECT_PROPERTY)
+        }
     }
 
     override val settingsState: String
