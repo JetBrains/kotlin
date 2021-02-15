@@ -19,6 +19,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
@@ -109,7 +111,7 @@ private class FunctionLookupElementFactory {
 
     private fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
         val singleParam = symbol.valueParameters.singleOrNull()
-        return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type.isBuiltInFunctionalType()
+        return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type is KtFunctionalType
     }
 
     private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {

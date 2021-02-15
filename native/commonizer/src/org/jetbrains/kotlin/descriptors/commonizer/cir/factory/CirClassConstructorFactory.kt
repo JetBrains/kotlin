@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 
 object CirClassConstructorFactory {
-    fun create(source: ClassConstructorDescriptor): CirClassConstructor {
+    fun create(source: ClassConstructorDescriptor, containingClass: CirContainingClass): CirClassConstructor {
         check(source.kind == CallableMemberDescriptor.Kind.DECLARATION) {
             "Unexpected ${CallableMemberDescriptor.Kind::class.java} for class constructor $source, ${source::class.java}: ${source.kind}"
         }
@@ -26,7 +26,7 @@ object CirClassConstructorFactory {
                 typeParameter.takeIf { it.containingDeclaration == source }?.let(CirTypeParameterFactory::create)
             },
             visibility = source.visibility,
-            containingClassDetails = CirContainingClassDetailsFactory.create(source),
+            containingClass = containingClass,
             valueParameters = source.valueParameters.compactMap(CirValueParameterFactory::create),
             hasStableParameterNames = source.hasStableParameterNames(),
             isPrimary = source.isPrimary
@@ -38,7 +38,7 @@ object CirClassConstructorFactory {
         annotations: List<CirAnnotation>,
         typeParameters: List<CirTypeParameter>,
         visibility: DescriptorVisibility,
-        containingClassDetails: CirContainingClassDetails,
+        containingClass: CirContainingClass,
         valueParameters: List<CirValueParameter>,
         hasStableParameterNames: Boolean,
         isPrimary: Boolean
@@ -47,7 +47,7 @@ object CirClassConstructorFactory {
             annotations = annotations,
             typeParameters = typeParameters,
             visibility = visibility,
-            containingClassDetails = containingClassDetails,
+            containingClass = containingClass,
             valueParameters = valueParameters,
             hasStableParameterNames = hasStableParameterNames,
             isPrimary = isPrimary

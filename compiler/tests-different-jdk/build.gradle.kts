@@ -69,38 +69,48 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     }
 }
 
+//JDK 8
+codegenTest(target = 6, jvm = 8) {}
+
+// This is default one and is executed in default build configuration
 codegenTest(target = 8, jvm = 8) {}
 
-// Switch TC builds to...
+//JDK 11
 codegenTest(target = 6, jvm = 11) {}
 
 codegenTest(target = 8, jvm = 11) {}
 
 codegenTest(target = 11, jvm = 11) {}
 
-//...and delete old tasks..
-codegenTest(target = 6, jvm = 9) {}
+//JDK 15
+codegenTest(target = 6, jvm = 15) {
+    jvmArgs( "-XX:-FailOverToOldVerifier")
+}
 
-codegenTest(target = 8, jvm = 9) {}
+codegenTest(target = 8, jvm = 15) {
+    jvmArgs( "-XX:-FailOverToOldVerifier")
+}
 
-codegenTest(target = 9, jvm = 9) {}
+codegenTest(target = 15, jvm = 15) {
+    jvmArgs( "-XX:-FailOverToOldVerifier")
+    systemProperty("kotlin.test.box.d8.disable", true)
+}
 
 //..also add this two tasks to build after adding fresh jdks to build agents
 val mostRecentJdk = JdkMajorVersion.values().last().name
 
-codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
-}
+//LAST JDK from JdkMajorVersion available on machine
+codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {}
 
-codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
-}
+codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {}
 
 codegenTest(
     mostRecentJdk.substringAfter('_').toInt(),
     targetInTestClass = "Last",
     jvm = "Last",
     jdk = mostRecentJdk
-) {}
+) {
+    systemProperty("kotlin.test.box.d8.disable", true)
+}
 
 testsJar()

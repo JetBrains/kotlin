@@ -58,7 +58,7 @@ class ControlFlowGraphBuilder {
     private val shouldPassFlowFromInplaceLambda: Stack<Boolean> = stackOf(true)
 
     private enum class Mode {
-        Function, TopLevel, Body, ClassInitializer, PropertyInitializer
+        Function, TopLevel, Body, ClassInitializer, PropertyInitializer, FieldInitializer
     }
 
     // ----------------------------------- Node caches -----------------------------------
@@ -133,7 +133,6 @@ class ControlFlowGraphBuilder {
 
         fun CFGNode<*>.extractArgument(): FirElement? = when (this) {
             is FunctionEnterNode, is TryMainBlockEnterNode, is CatchClauseEnterNode -> null
-            is ExitSafeCallNode -> lastPreviousNode.extractArgument()
             is StubNode, is BlockExitNode -> firstPreviousNode.extractArgument()
             else -> fir.extractArgument()
         }
@@ -517,6 +516,35 @@ class ControlFlowGraphBuilder {
     fun exitProperty(property: FirProperty): Pair<PropertyInitializerExitNode, ControlFlowGraph>? {
         if (property.initializer == null && property.delegate == null) return null
         val exitNode = exitTargetsForTry.pop() as PropertyInitializerExitNode
+        popAndAddEdge(exitNode)
+        val graph = popGraph()
+        assert(exitNode == graph.exitNode)
+        return exitNode to graph
+    }
+
+    // ----------------------------------- Field -----------------------------------
+
+    fun enterField(field: FirField): FieldInitializerEnterNode? {
+        if (field.initializer == null) return null
+
+        val graph = ControlFlowGraph(field, "val ${field.name}", ControlFlowGraph.Kind.FieldInitializer)
+        pushGraph(graph, Mode.FieldInitializer)
+
+        val enterNode = createFieldInitializerEnterNode(field)
+        val exitNode = createFieldInitializerExitNode(field)
+        exitTargetsForTry.push(exitNode)
+
+        enterToLocalClassesMembers[field.symbol]?.let {
+            addEdge(it, enterNode, preferredKind = EdgeKind.DfgForward)
+        }
+
+        lastNodes.push(enterNode)
+        return enterNode
+    }
+
+    fun exitField(field: FirField): Pair<FieldInitializerExitNode, ControlFlowGraph>? {
+        if (field.initializer == null) return null
+        val exitNode = exitTargetsForTry.pop() as FieldInitializerExitNode
         popAndAddEdge(exitNode)
         val graph = popGraph()
         assert(exitNode == graph.exitNode)
@@ -1090,8 +1118,9 @@ class ControlFlowGraphBuilder {
          *   lastNode -> exitNode
          * instead of
          *   lastNode -> enterNode -> exitNode
-         * because of we need to fork flow on `enterNode`, so `exitNode`
+         * because we need to fork flow before `enterNode`, so `exitNode`
          *   will have unchanged flow from `lastNode`
+         *   which corresponds to a path with nullable receiver.
          */
         val lastNode = lastNodes.pop()
         val enterNode = createEnterSafeCallNode(safeCall)
@@ -1104,6 +1133,12 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitSafeCall(): ExitSafeCallNode {
+        // There will be two paths towards this exit safe call node:
+        // one from the node prior to the enclosing safe call, and
+        // the other from the selector part in the enclosing safe call.
+        // Note that *neither* points to the safe call directly.
+        // So, when it comes to the real exit of the enclosing block/function,
+        // the safe call bound to this exit safe call node should be retrieved.
         return exitSafeCallNodes.pop().also {
             addNewSimpleNode(it)
             it.updateDeadStatus()

@@ -91,7 +91,8 @@ class Fir2IrResultsConverter(
                 phaseConfig,
                 irProviders,
                 extensions,
-                FirJvmBackendExtension(inputArtifact.session, components)
+                FirJvmBackendExtension(inputArtifact.session, components),
+                {},
             )
         )
     }

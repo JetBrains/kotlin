@@ -31,14 +31,20 @@ import org.junit.runner.RunWith
 @UseTechnicalNames
 abstract class CustomJvmTargetOnJvmBaseTest
 
+// JDK 6
 @RunOnlyJdk6Test
 @Execution(ExecutionMode.SAME_THREAD)
 @RunWith(JUnitPlatformRunnerForJdk6::class)
 class JvmTarget6OnJvm6 : CustomJvmTargetOnJvmBaseTest()
 
+// JDK 8
+@RunWith(JUnitPlatform::class)
+class JvmTarget6OnJvm8 : CustomJvmTargetOnJvmBaseTest()
+
 @RunWith(JUnitPlatform::class)
 class JvmTarget8OnJvm8 : CustomJvmTargetOnJvmBaseTest()
 
+// JDK 11
 @RunWith(JUnitPlatform::class)
 class JvmTarget6OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
@@ -48,6 +54,17 @@ class JvmTarget8OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 @RunWith(JUnitPlatform::class)
 class JvmTarget11OnJvm11 : CustomJvmTargetOnJvmBaseTest()
 
+// JDK 15
+@RunWith(JUnitPlatform::class)
+class JvmTarget6OnJvm15 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget8OnJvm15 : CustomJvmTargetOnJvmBaseTest()
+
+@RunWith(JUnitPlatform::class)
+class JvmTarget15OnJvm15 : CustomJvmTargetOnJvmBaseTest()
+
+// LAST JDK from JdkMajorVersion available on machine
 @RunWith(JUnitPlatform::class)
 class JvmTarget6OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
@@ -56,14 +73,3 @@ class JvmTarget8OnJvmLast : CustomJvmTargetOnJvmBaseTest()
 
 @RunWith(JUnitPlatform::class)
 class JvmTargetLastOnJvmLast : CustomJvmTargetOnJvmBaseTest()
-
-//TODO: delete old tasks
-@RunWith(JUnitPlatform::class)
-class JvmTarget6OnJvm9 : CustomJvmTargetOnJvmBaseTest()
-
-@RunWith(JUnitPlatform::class)
-class JvmTarget8OnJvm9 : CustomJvmTargetOnJvmBaseTest()
-
-@RunWith(JUnitPlatform::class)
-class JvmTarget9OnJvm9 : CustomJvmTargetOnJvmBaseTest()
-

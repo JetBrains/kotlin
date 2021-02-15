@@ -13645,6 +13645,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("ofNonNullableResultType.kt")
+        public void testOfNonNullableResultType() throws Exception {
+            runTest("compiler/testData/codegen/box/elvis/ofNonNullableResultType.kt");
+        }
+
+        @Test
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/elvis/primitive.kt");
@@ -14623,6 +14629,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         public void testPropertySetter() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/propertySetter.kt");
         }
+
+        @Test
+        @TestMetadata("varianceOverload.kt")
+        public void testVarianceOverload() throws Exception {
+            runTest("compiler/testData/codegen/box/fakeOverride/varianceOverload.kt");
+        }
     }
 
     @Nested
@@ -14835,9 +14847,21 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("Fir2IrClassifierStorage.kt")
+        public void testFir2IrClassifierStorage() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/Fir2IrClassifierStorage.kt");
+        }
+
+        @Test
         @TestMetadata("IrBuiltIns.kt")
         public void testIrBuiltIns() throws Exception {
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");
+        }
+
+        @Test
+        @TestMetadata("LookupTags.kt")
+        public void testLookupTags() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/LookupTags.kt");
         }
 
         @Test
@@ -16934,6 +16958,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("conformToComparableAndCallInterfaceMethod.kt")
         public void testConformToComparableAndCallInterfaceMethod() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorCallableReference.kt")
+        public void testConstructorCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt");
         }
 
         @Test
@@ -38758,6 +38788,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("enumEntryQualifier.kt")
         public void testEnumEntryQualifier() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/enumEntryQualifier.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionFunction.kt")
+        public void testExtensionFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/extensionFunction.kt");
         }
 
         @Test

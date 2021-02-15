@@ -59,10 +59,10 @@ class Fir2IrConversionScope {
         return function
     }
 
-    private val propertyStack = mutableListOf<IrProperty>()
+    private val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
 
-    fun withProperty(property: IrProperty, f: IrProperty.() -> Unit): IrProperty {
-        propertyStack += property
+    fun withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> Unit): IrProperty {
+        propertyStack += (property to firProperty)
         property.f()
         propertyStack.removeAt(propertyStack.size - 1)
         return property
@@ -99,6 +99,15 @@ class Fir2IrConversionScope {
         val irTarget = (firTarget as? FirFunction)?.let {
             when (it) {
                 is FirConstructor -> declarationStorage.getCachedIrConstructor(it)
+                is FirPropertyAccessor -> {
+                    for ((property, firProperty) in propertyStack.asReversed()) {
+                        if (firProperty?.getter === firTarget) {
+                            return@let property.getter
+                        } else if (firProperty?.setter === firTarget) {
+                            return@let property.setter
+                        }
+                    }
+                }
                 else -> declarationStorage.getCachedIrFunction(it)
             }
         }

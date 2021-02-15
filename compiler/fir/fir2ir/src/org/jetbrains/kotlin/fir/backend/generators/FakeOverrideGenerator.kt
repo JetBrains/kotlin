@@ -41,7 +41,7 @@ class FakeOverrideGenerator(
     }
 
     private fun IrProperty.withProperty(f: IrProperty.() -> Unit): IrProperty {
-        return conversionScope.withProperty(this, f)
+        return conversionScope.withProperty(this, firProperty = null, f)
     }
 
     private fun FirCallableMemberDeclaration<*>.allowsToHaveFakeOverrideIn(klass: FirClass<*>): Boolean {

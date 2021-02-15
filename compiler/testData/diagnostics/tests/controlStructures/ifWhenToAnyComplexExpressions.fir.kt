@@ -11,7 +11,7 @@ fun testMixedIfAndWhen() =
                 else 1
                     true -> if (true) 42
                 else println()
-                else -> if (true) println()
+                else -> <!INVALID_IF_AS_EXPRESSION!>if<!> (true) println()
             }
         else println()
 

@@ -26,7 +26,7 @@ class ParcelizeQuickFixContributor : QuickFixContributor {
     override fun registerQuickFixes(quickFixes: QuickFixes) {
         quickFixes.register(
             ErrorsParcelize.PARCELABLE_CANT_BE_INNER_CLASS,
-            RemoveModifierFix.createRemoveModifierFromListOwnerFactory(KtTokens.INNER_KEYWORD, false)
+            RemoveModifierFix.createRemoveModifierFromListOwnerPsiBasedFactory(KtTokens.INNER_KEYWORD, false)
         )
 
         quickFixes.register(ErrorsParcelize.NO_PARCELABLE_SUPERTYPE, ParcelizeAddSupertypeQuickFix.Factory)

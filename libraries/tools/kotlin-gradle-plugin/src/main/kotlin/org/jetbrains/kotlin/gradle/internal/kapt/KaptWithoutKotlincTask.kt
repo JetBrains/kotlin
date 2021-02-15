@@ -140,7 +140,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(private val workerExec
 
     internal fun getValue(propertyName: String): String? =
         if (isGradleVersionAtLeast(6, 5)) {
-            providers.systemProperty(propertyName).forUseAtConfigurationTime().orNull
+            providers.gradleProperty(propertyName).forUseAtConfigurationTime().orNull
         } else {
             project.findProperty(propertyName) as String?
         }

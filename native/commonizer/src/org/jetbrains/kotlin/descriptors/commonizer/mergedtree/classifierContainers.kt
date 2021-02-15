@@ -10,11 +10,10 @@ import gnu.trove.THashSet
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.commonizer.utils.resolveClassOrTypeAlias
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -31,27 +30,27 @@ class CirKnownClassifiers(
 
 interface CirCommonizedClassifiers {
     /* Accessors */
-    fun classNode(classId: ClassId): CirClassNode?
-    fun typeAliasNode(typeAliasId: ClassId): CirTypeAliasNode?
+    fun classNode(classId: CirEntityId): CirClassNode?
+    fun typeAliasNode(typeAliasId: CirEntityId): CirTypeAliasNode?
 
     /* Mutators */
-    fun addClassNode(classId: ClassId, node: CirClassNode)
-    fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode)
+    fun addClassNode(classId: CirEntityId, node: CirClassNode)
+    fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode)
 
     companion object {
         fun default() = object : CirCommonizedClassifiers {
-            private val classNodes = THashMap<ClassId, CirClassNode>()
-            private val typeAliases = THashMap<ClassId, CirTypeAliasNode>()
+            private val classNodes = THashMap<CirEntityId, CirClassNode>()
+            private val typeAliases = THashMap<CirEntityId, CirTypeAliasNode>()
 
-            override fun classNode(classId: ClassId) = classNodes[classId]
-            override fun typeAliasNode(typeAliasId: ClassId) = typeAliases[typeAliasId]
+            override fun classNode(classId: CirEntityId) = classNodes[classId]
+            override fun typeAliasNode(typeAliasId: CirEntityId) = typeAliases[typeAliasId]
 
-            override fun addClassNode(classId: ClassId, node: CirClassNode) {
+            override fun addClassNode(classId: CirEntityId, node: CirClassNode) {
                 val oldNode = classNodes.put(classId, node)
                 check(oldNode == null) { "Rewriting class node $classId" }
             }
 
-            override fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode) {
+            override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) {
                 val oldNode = typeAliases.put(typeAliasId, node)
                 check(oldNode == null) { "Rewriting type alias node $typeAliasId" }
             }
@@ -61,19 +60,19 @@ interface CirCommonizedClassifiers {
 
 interface CirForwardDeclarations {
     /* Accessors */
-    fun isExportedForwardDeclaration(classId: ClassId): Boolean
+    fun isExportedForwardDeclaration(classId: CirEntityId): Boolean
 
     /* Mutators */
-    fun addExportedForwardDeclaration(classId: ClassId)
+    fun addExportedForwardDeclaration(classId: CirEntityId)
 
     companion object {
         fun default() = object : CirForwardDeclarations {
-            private val exportedForwardDeclarations = THashSet<ClassId>()
+            private val exportedForwardDeclarations = THashSet<CirEntityId>()
 
-            override fun isExportedForwardDeclaration(classId: ClassId) = classId in exportedForwardDeclarations
+            override fun isExportedForwardDeclaration(classId: CirEntityId) = classId in exportedForwardDeclarations
 
-            override fun addExportedForwardDeclaration(classId: ClassId) {
-                check(!classId.packageFqName.isUnderKotlinNativeSyntheticPackages)
+            override fun addExportedForwardDeclaration(classId: CirEntityId) {
+                check(!classId.packageName.isUnderKotlinNativeSyntheticPackages)
                 exportedForwardDeclarations += classId
             }
         }
@@ -81,45 +80,43 @@ interface CirForwardDeclarations {
 }
 
 interface CirProvidedClassifiers {
-    fun hasClassifier(classifierId: ClassId): Boolean
+    fun hasClassifier(classifierId: CirEntityId): Boolean
 
     // TODO: implement later
     //fun classifier(classifierId: ClassId): Any?
 
     companion object {
         internal val EMPTY = object : CirProvidedClassifiers {
-            override fun hasClassifier(classifierId: ClassId) = false
+            override fun hasClassifier(classifierId: CirEntityId) = false
         }
 
         // N.B. This is suboptimal implementation. It will be replaced by another implementation that will
         // retrieve classifier information directly from the metadata.
         fun fromModules(storageManager: StorageManager, modules: () -> Collection<ModuleDescriptor>) = object : CirProvidedClassifiers {
-            private val nonEmptyMemberScopes: Map<FqName, MemberScope> by storageManager.createLazyValue {
-                THashMap<FqName, MemberScope>().apply {
+            private val nonEmptyMemberScopes: Map<CirPackageName, MemberScope> by storageManager.createLazyValue {
+                THashMap<CirPackageName, MemberScope>().apply {
                     for (module in modules()) {
-                        module.collectNonEmptyPackageMemberScopes(probeRootPackageForEmptiness = true) { packageFqName, memberScope ->
-                            this[packageFqName.intern()] = memberScope
+                        module.collectNonEmptyPackageMemberScopes(probeRootPackageForEmptiness = true) { packageName, memberScope ->
+                            this[packageName] = memberScope
                         }
                     }
                 }
             }
 
-            private val presentClassifiers = THashSet<ClassId>()
-            private val missingClassifiers = THashSet<ClassId>()
+            private val presentClassifiers = THashSet<CirEntityId>()
+            private val missingClassifiers = THashSet<CirEntityId>()
 
-            override fun hasClassifier(classifierId: ClassId): Boolean {
-                val relativeClassName: FqName = classifierId.relativeClassName
-                if (relativeClassName.isRoot)
+            override fun hasClassifier(classifierId: CirEntityId): Boolean {
+                if (classifierId.relativeNameSegments.isEmpty())
                     return false
 
-                val packageFqName = classifierId.packageFqName
-                val memberScope = nonEmptyMemberScopes[packageFqName] ?: return false
+                val memberScope = nonEmptyMemberScopes[classifierId.packageName] ?: return false
 
                 return when (classifierId) {
                     in presentClassifiers -> true
                     in missingClassifiers -> false
                     else -> {
-                        val found = memberScope.resolveClassOrTypeAlias(relativeClassName) != null
+                        val found = memberScope.resolveClassOrTypeAlias(classifierId.relativeNameSegments) != null
                         when (found) {
                             true -> presentClassifiers += classifierId
                             false -> missingClassifiers += classifierId

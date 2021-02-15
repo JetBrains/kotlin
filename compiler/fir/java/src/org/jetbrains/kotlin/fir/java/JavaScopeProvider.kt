@@ -208,7 +208,7 @@ class JavaScopeProvider(
         return lazyNestedClassifierScope(
             klass.classId,
             (klass as FirJavaClass).existingNestedClassifierNames,
-            useSiteSession.firSymbolProvider
+            useSiteSession.symbolProvider
         )
     }
 }

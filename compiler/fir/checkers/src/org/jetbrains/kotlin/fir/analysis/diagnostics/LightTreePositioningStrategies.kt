@@ -334,6 +334,28 @@ object LightTreePositioningStrategies {
             return super.mark(node, startOffset, endOffset, tree)
         }
     }
+
+    val WHEN_EXPRESSION = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.whenKeyword(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val IF_EXPRESSION = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.ifKeyword(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -353,6 +375,12 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.dotOperator(node: Ligh
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.initKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.INIT_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.whenKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.WHEN_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.ifKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.IF_KEYWORD)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)

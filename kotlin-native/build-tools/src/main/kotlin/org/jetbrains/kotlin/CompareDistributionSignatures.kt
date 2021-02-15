@@ -5,6 +5,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Compares SignatureIds of the current distribution and the given older one.
@@ -60,6 +64,12 @@ open class CompareDistributionSignatures : DefaultTask() {
 
     @TaskAction
     fun run() {
+        check(looksLikeKotlinNativeDistribution(Paths.get(oldDistribution))) {
+            """
+            `$oldDistribution` doesn't look like Kotlin/Native distribution. 
+            Make sure to provide an absolute path to it.
+            """.trimIndent()
+        }
         val platformLibsDiff = computeDiff()
         if (platformLibsDiff.missingLibs.isNotEmpty()) {
             messageBuilder.apply {
@@ -114,10 +124,24 @@ open class CompareDistributionSignatures : DefaultTask() {
     )
 
     private fun String.stdlib(): File =
-            File("$this/klib/common/stdlib")
+            File("$this/klib/common/stdlib").also {
+                check(it.exists()) {
+                    """
+                    `${it.absolutePath}` doesn't exists.
+                    If $oldDistribution has a different directory layout then it is time to update this comparator.
+                    """.trimIndent()
+                }
+            }
 
     private fun String.platformLibs(target: String): File =
-            File("$this/klib/platform/$target")
+            File("$this/klib/platform/$target").also {
+                check(it.exists()) {
+                    """
+                    `${it.absolutePath}` doesn't exists.
+                    Make sure that given distribution actually supports $target.
+                    """.trimIndent()
+                }
+            }
 
 
     private fun getKlibSignatures(klib: File): List<String> {
@@ -136,5 +160,13 @@ open class CompareDistributionSignatures : DefaultTask() {
                 newKlibSignatures - oldKlibSignatures,
                 oldKlibSignatures - newKlibSignatures,
         )
+    }
+
+    private fun looksLikeKotlinNativeDistribution(directory: Path): Boolean {
+        val distributionComponents = directory.run {
+            val konanDir = resolve("konan")
+            setOf(resolve("bin"), resolve("klib"), konanDir, konanDir.resolve("konan.properties"))
+        }
+        return distributionComponents.all { Files.exists(it, LinkOption.NOFOLLOW_LINKS) }
     }
 }

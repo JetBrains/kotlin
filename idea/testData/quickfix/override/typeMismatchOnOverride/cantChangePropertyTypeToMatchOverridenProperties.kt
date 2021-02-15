@@ -11,3 +11,4 @@ interface B {
 interface C : A, B {
     override var x: Int<caret>
 }
+/* FIR_COMPARISON */

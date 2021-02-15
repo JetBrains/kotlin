@@ -138,9 +138,6 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
 
         commonFlow.addVariableAliases(aliasedVariablesThatDontChangeAlias)
-
-        updateAllReceivers(commonFlow)
-
         return commonFlow
     }
 

@@ -446,8 +446,14 @@ class DiagnosticReporterByTrackingStrategy(
 
                 if (isDiagnosticRedundant) return
                 val expression = when (val atom = error.resolvedAtom.atom) {
-                    is PSIKotlinCallForInvoke -> (atom.psiCall as? CallTransformer.CallForImplicitInvoke)?.outerCall?.calleeExpression
-                    is PSIKotlinCall -> atom.psiCall.calleeExpression
+                    is PSIKotlinCall -> {
+                        val psiCall = atom.psiCall
+                        if (psiCall is CallTransformer.CallForImplicitInvoke) {
+                            psiCall.outerCall.calleeExpression
+                        } else {
+                            psiCall.calleeExpression
+                        }
+                    }
                     is PSIKotlinCallArgument -> atom.valueArgument.getArgumentExpression()
                     else -> call.calleeExpression
                 } ?: return

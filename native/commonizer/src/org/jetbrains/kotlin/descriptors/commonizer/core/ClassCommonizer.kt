@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.name.Name
 
 class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClass, CirClass>() {
-    private lateinit var name: Name
+    private lateinit var name: CirName
     private lateinit var kind: ClassKind
     private val typeParameters = TypeParameterListCommonizer(classifiers)
     private val modality = ModalityCommonizer()

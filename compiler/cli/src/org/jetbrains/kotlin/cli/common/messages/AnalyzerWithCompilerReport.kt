@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -71,6 +72,9 @@ class AnalyzerWithCompilerReport(
                 message.append("    class ").append(fqName)
                     .append(", unresolved supertypes: ").append(unresolved!!.joinToString())
                     .append("\n")
+            }
+            if (!languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)) {
+                message.append("Adding -Xextended-compiler-checks argument might provide additional information.\n")
             }
             messageCollector.report(ERROR, message.toString())
         }

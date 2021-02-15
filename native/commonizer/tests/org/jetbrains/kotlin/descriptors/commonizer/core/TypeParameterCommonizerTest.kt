@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.junit.Test
 
@@ -90,7 +90,7 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
             upperBounds: List<String> = listOf("kotlin.Any")
         ) = CirTypeParameterFactory.create(
             annotations = emptyList(),
-            name = Name.identifier(name),
+            name = CirName.create(name),
             isReified = isReified,
             variance = variance,
             upperBounds = upperBounds.map { CirTypeFactory.create(mockClassType(it)) }

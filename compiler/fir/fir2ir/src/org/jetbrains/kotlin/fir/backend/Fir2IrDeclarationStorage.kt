@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
-    private val visitor: Fir2IrVisitor,
     private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
 
@@ -754,32 +752,29 @@ class Fir2IrDeclarationStorage(
                     val delegate = property.delegate
                     val getter = property.getter
                     val setter = property.setter
-                    if (property.isConst || (property.modality != Modality.ABSTRACT && (irParent !is IrClass || !irParent.isInterface))) {
-                        if (property.hasBackingField) {
-                            backingField = if (delegate != null) {
-                                createBackingField(
-                                    property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                                    components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                    Name.identifier("${property.name}\$delegate"), true, delegate
-                                )
-                            } else {
-                                createBackingField(
-                                    property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                                    components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
-                                    property.name, property.isVal, initializer, type
-                                ).also { field ->
-                                    if (initializer is FirConstExpression<*>) {
-                                        // TODO: Normally we shouldn't have error type here
-                                        val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
-                                        field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
-                                    }
+                    if (delegate != null || property.hasBackingField) {
+                        backingField = if (delegate != null) {
+                            createBackingField(
+                                property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
+                                components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                Name.identifier("${property.name}\$delegate"), true, delegate
+                            )
+                        } else {
+                            createBackingField(
+                                property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
+                                components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
+                                property.name, property.isVal, initializer, type
+                            ).also { field ->
+                                if (initializer is FirConstExpression<*>) {
+                                    // TODO: Normally we shouldn't have error type here
+                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
+                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
                         }
-                        if (irParent != null) {
-                            backingField?.parent = irParent
-                        }
-
+                    }
+                    if (irParent != null) {
+                        backingField?.parent = irParent
                     }
                     this.getter = createIrPropertyAccessor(
                         getter, property, this, type, irParent, thisReceiverOwner, false,
@@ -850,12 +845,11 @@ class Fir2IrDeclarationStorage(
                 isExternal = false,
                 isStatic = field.isStatic
             ).apply {
-                field.initializer?.let {
-                    val expression = visitor.convertToIrExpression(it)
-                    expression.type = type
-                    initializer = irFactory.createExpressionBody(expression)
-                }
                 fieldCache[field] = this
+                val initializer = field.initializer
+                if (initializer is FirConstExpression<*>) {
+                    this.initializer = factory.createExpressionBody(initializer.toIrConst(type))
+                }
             }
         }
     }

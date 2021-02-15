@@ -9,44 +9,81 @@ import com.intellij.codeHighlighting.TextEditorHighlightingPass
 import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory
 import com.intellij.codeHighlighting.TextEditorHighlightingPassFactoryRegistrar
 import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar
+import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.lang.annotation.AnnotationBuilder
+import com.intellij.lang.annotation.AnnotationSession
+import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyze
-import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
-import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.getDefaultMessageWithFactoryName
+import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KtFirDiagnostic
+import org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixService
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 class KotlinHighLevelDiagnosticHighlightingPass(
     private val ktFile: KtFile,
     document: Document,
 ) : TextEditorHighlightingPass(ktFile.project, document) {
-    private val diagnosticInfos = mutableListOf<HighlightInfo>()
 
-    override fun doCollectInformation(progress: ProgressIndicator) = analyze(ktFile) {
-        ktFile.collectDiagnosticsForFile().forEach { diagnostic ->
-            if (!diagnostic.isValid) return@forEach
-            diagnostic.textRanges.forEach { range ->
-                HighlightInfo.newHighlightInfo(HighlightInfoType.ERROR/*TODO*/)
-                    .descriptionAndTooltip(Diagnostic2Annotation.getMessage(diagnostic, IdeErrorMessages::render))
-                    .range(range)
-                    .create()
-                    ?.let(diagnosticInfos::add)
+    @Suppress("UnstableApiUsage")
+    val annotationHolder = AnnotationHolderImpl(AnnotationSession(ktFile))
+
+    override fun doCollectInformation(progress: ProgressIndicator) {
+        analyze(ktFile) {
+            ktFile.collectDiagnosticsForFile().forEach { diagnostic ->
+                addDiagnostic(diagnostic)
             }
         }
     }
 
+    private fun KtAnalysisSession.addDiagnostic(diagnostic: KtDiagnosticWithPsi<*>) {
+        val fixes = with(service<KtQuickFixService>()) { getQuickFixesFor(diagnostic as KtFirDiagnostic) }
+        annotationHolder.runAnnotatorWithContext(diagnostic.psi) { _, _ ->
+            diagnostic.textRanges.forEach { range ->
+                annotationHolder.newAnnotation(diagnostic.getHighlightSeverity(), diagnostic.getMessageToRender())
+                    .addFixes(fixes)
+                    .range(range)
+                    .create()
+            }
+        }
+    }
+
+    private fun KtDiagnosticWithPsi<*>.getHighlightSeverity() = when (severity) {
+        Severity.INFO -> HighlightSeverity.INFORMATION
+        Severity.ERROR -> HighlightSeverity.ERROR
+        Severity.WARNING -> HighlightSeverity.WARNING
+    }
+
+
+    private fun AnnotationBuilder.addFixes(fixes: List<IntentionAction>) =
+        fixes.fold(this, AnnotationBuilder::withFix)
+
+    private fun KtDiagnostic.getMessageToRender(): String =
+        if (isInternalOrUnitTestMode())
+            getDefaultMessageWithFactoryName()
+        else defaultMessage
+
+    private fun isInternalOrUnitTestMode(): Boolean {
+        val application = ApplicationManager.getApplication()
+        return application.isInternal || application.isUnitTestMode
+    }
+
 
     override fun doApplyInformationToEditor() {
+        val diagnosticInfos = annotationHolder.map(HighlightInfo::fromAnnotation)
         UpdateHighlightersUtil.setHighlightersToEditor(
             myProject, myDocument!!, /*startOffset=*/0, ktFile.textLength, diagnosticInfos, colorsScheme, id
         )

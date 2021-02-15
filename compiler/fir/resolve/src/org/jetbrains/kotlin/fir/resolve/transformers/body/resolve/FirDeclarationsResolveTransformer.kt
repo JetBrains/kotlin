@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -155,6 +156,36 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     }
                     property.compose()
                 }
+            }
+        }
+    }
+
+    override fun transformField(field: FirField, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        val returnTypeRef = field.returnTypeRef
+        if (implicitTypeOnly) return field.compose()
+        if (field.resolvePhase == transformerPhase) return field.compose()
+        if (field.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
+            transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
+            return field.compose()
+        }
+        dataFlowAnalyzer.enterField(field)
+        return withFullBodyResolve {
+            withLocalScopeCleanup {
+                val primaryConstructorParametersScope = context.getPrimaryConstructorAllParametersScope()
+                context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                    context.withContainer(field) {
+                        withLocalScopeCleanup {
+                            addLocalScope(primaryConstructorParametersScope)
+                            field.transformChildren(transformer, withExpectedType(returnTypeRef))
+                        }
+                        if (field.initializer != null) {
+                            storeVariableReturnType(field)
+                        }
+                    }
+                }
+                transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
+                dataFlowAnalyzer.exitField(field)
+                field.compose()
             }
         }
     }
@@ -780,13 +811,28 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     dataFlowAnalyzer,
                 )
                 lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
-                val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)
-                    .mapNotNull { (it as? FirExpression)?.resultType?.coneType }
-                lambda.replaceReturnTypeRef(
-                    lambda.returnTypeRef.resolvedTypeFromPrototype(
-                        inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.type
-                    )
-                )
+
+                val returnStatements = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambda)
+                val returnExpressionsExceptLast =
+                    if (returnStatements.size > 1)
+                        returnStatements - lambda.body?.statements?.lastOrNull()
+                    else
+                        returnStatements
+                val implicitReturns = returnExpressionsExceptLast.filter {
+                    (it as? FirExpression)?.typeRef is FirImplicitUnitTypeRef
+                }
+                val returnType =
+                    if (implicitReturns.isNotEmpty()) {
+                        // i.e., early return, e.g., l@{ ... return@l ... }
+                        // Note that the last statement will be coerced to Unit if needed.
+                        session.builtinTypes.unitType.type
+                    } else {
+                        // Otherwise, compute the common super type of all possible return expressions
+                        inferenceComponents.ctx.commonSuperTypeOrNull(
+                            returnStatements.mapNotNull { (it as? FirExpression)?.resultType?.coneType }
+                        ) ?: session.builtinTypes.unitType.type
+                    }
+                lambda.replaceReturnTypeRef(lambda.returnTypeRef.resolvedTypeFromPrototype(returnType))
                 lambda.replaceTypeRef(
                     lambda.constructFunctionalTypeRef(
                         isSuspend = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true

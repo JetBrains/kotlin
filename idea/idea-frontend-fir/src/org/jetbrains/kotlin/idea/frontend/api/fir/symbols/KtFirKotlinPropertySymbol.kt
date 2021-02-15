@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignatu
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
@@ -38,13 +39,14 @@ internal class KtFirKotlinPropertySymbol(
     fir: FirProperty,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder
+    _builder: KtSymbolByFirBuilder
 ) : KtKotlinPropertySymbol(), KtFirSymbol<FirProperty> {
     init {
         assert(!fir.isLocal)
         check(fir !is FirSyntheticProperty)
     }
 
+    private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 

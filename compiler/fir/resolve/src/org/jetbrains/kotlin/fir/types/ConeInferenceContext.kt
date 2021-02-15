@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeContext {
 
-    val symbolProvider: FirSymbolProvider get() = session.firSymbolProvider
+    val symbolProvider: FirSymbolProvider get() = session.symbolProvider
 
     override fun nullableNothingType(): SimpleTypeMarker {
         return session.builtinTypes.nullableNothingType.type//StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), true)
@@ -472,7 +472,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val classId = if (isSuspend)
             StandardNames.getSuspendFunctionClassId(parametersNumber)
         else StandardNames.getFunctionClassId(parametersNumber)
-        return session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
+        return session.symbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
             ?: error("Can't find Function type")
     }
 
@@ -480,7 +480,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val classId = if (isSuspend)
             StandardNames.getKSuspendFunctionClassId(parametersNumber)
         else StandardNames.getKFunctionClassId(parametersNumber)
-        return session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
+        return session.symbolProvider.getClassLikeSymbolByFqName(classId)?.toLookupTag()
             ?: error("Can't find KFunction type")
     }
 }

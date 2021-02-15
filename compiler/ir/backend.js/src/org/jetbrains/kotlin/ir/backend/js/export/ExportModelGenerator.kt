@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
@@ -80,7 +83,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
         val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) +
-            constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
+                constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
         return ExportedConstructor(allValueParameters.map { exportParameter(it) })
     }
 
@@ -192,7 +195,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             ?.let { exportType(it).takeIf { it !is ExportedType.ErrorType } }
 
         val superInterfaces = klass.superTypes
-            .filter {it.classifierOrFail.isInterface }
+            .filter { it.classifierOrFail.isInterface }
             .map { exportType(it) }
             .filter { it !is ExportedType.ErrorType }
 
@@ -398,6 +401,17 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     if (context?.additionalExportedDeclarations?.contains(declaration) == true)
         return true
 
+    if (declaration is IrSimpleFunction) {
+        val overriddenNonEmpty = declaration
+            .overriddenSymbols
+            .isNotEmpty()
+
+        if (overriddenNonEmpty) {
+            return declaration.isOverriddenExported(context) ||
+                    declaration.isMethodOfAny() // Handle names for special functions
+        }
+    }
+
     if (declaration.isJsExport())
         return true
 
@@ -407,6 +421,10 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
         else -> false
     }
 }
+
+private fun IrSimpleFunction.isOverriddenExported(context: JsIrBackendContext?): Boolean =
+    overriddenSymbols
+        .any { shouldDeclarationBeExported(it.owner, context) }
 
 fun IrDeclaration.isExported(context: JsIrBackendContext?): Boolean {
     val candidate = getExportCandidate(this) ?: return false

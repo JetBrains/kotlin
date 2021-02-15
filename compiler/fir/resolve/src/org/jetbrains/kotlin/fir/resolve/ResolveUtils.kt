@@ -283,7 +283,7 @@ fun CallableId.isIterator(): Boolean =
     callableName.asString() == "iterator" && packageName.asString() in arrayOf("kotlin.collections", "kotlin.ranges")
 
 fun FirAnnotationCall.fqName(session: FirSession): FqName? {
-    val symbol = session.firSymbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
+    val symbol = session.symbolProvider.getSymbolByTypeRef<FirRegularClassSymbol>(annotationTypeRef) ?: return null
     return symbol.classId.asSingleFqName()
 }
 
@@ -327,7 +327,7 @@ fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): Fi
             // TODO: How to retrieve local annotaiton's constructor?
             null
         } else {
-            (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
+            (session.symbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
         }
     }
 }

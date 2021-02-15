@@ -20,6 +20,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.idea.caches.resolve.ResolveInDispatchThreadException
 import org.jetbrains.kotlin.idea.caches.resolve.forceCheckForResolveInDispatchThreadInTests
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -50,7 +51,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
     }
 
     @Throws(Exception::class)
-    protected fun doTest(beforeFileName: String) {
+    protected open fun doTest(beforeFileName: String) {
         val beforeFileText = FileUtil.loadFile(File(beforeFileName))
         withCustomCompilerOptions(beforeFileText, project, module) {
             val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
@@ -231,7 +232,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 }
             } else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-                DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
+                checkAvailableActionsAreExpected(actions)
             }
         }
     }
@@ -259,7 +260,11 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
         return null
     }
 
-    private fun checkForUnexpectedErrors() = DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
+    protected open fun checkAvailableActionsAreExpected(actions: List<IntentionAction>) {
+        DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
+    }
+
+    protected open fun checkForUnexpectedErrors() = DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
 
     override fun getTestDataPath(): String {
         // Ensure full path is returned. Otherwise FileComparisonFailureException does not provide link to file diff

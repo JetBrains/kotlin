@@ -59,8 +59,8 @@ You also can use [Gradle properties](https://docs.gradle.org/current/userguide/b
 Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
 
 ```bash
-$ brew tap caskroom/versions
-$ brew cask install java6
+$ brew tap homebrew/cask-versions
+$ brew install --cask java6
 ```
 
 On Windows you might need to add long paths setting to the repo:

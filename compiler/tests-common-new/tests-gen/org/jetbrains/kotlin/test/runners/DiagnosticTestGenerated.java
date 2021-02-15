@@ -11842,6 +11842,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("errorsOnImplicitInvokeInSimpleCall.kt")
+            public void testErrorsOnImplicitInvokeInSimpleCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/errorsOnImplicitInvokeInSimpleCall.kt");
+            }
+
+            @Test
             @TestMetadata("expectedTypeAdditionalTest.kt")
             public void testExpectedTypeAdditionalTest() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/expectedTypeAdditionalTest.kt");
@@ -24476,6 +24482,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt44316.kt")
+            public void testKt44316() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/kt44316.kt");
+            }
+
+            @Test
             @TestMetadata("Local.kt")
             public void testLocal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/Local.kt");
@@ -30732,6 +30744,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("assignedInSynchronized.kt")
         public void testAssignedInSynchronized() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/assignedInSynchronized.kt");
+        }
+
+        @Test
+        @TestMetadata("buildLazyValueForMap.kt")
+        public void testBuildLazyValueForMap() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/buildLazyValueForMap.kt");
         }
 
         @Test

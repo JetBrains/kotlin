@@ -6,23 +6,25 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import gnu.trove.THashMap
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackage
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirPackageNode(
     override val targetDeclarations: CommonizedGroup<CirPackage>,
-    override val commonDeclaration: NullableLazyValue<CirPackage>,
-    override val fqName: FqName,
-    val moduleName: Name
-) : CirNodeWithFqName<CirPackage, CirPackage> {
+    override val commonDeclaration: NullableLazyValue<CirPackage>
+) : CirNodeWithMembers<CirPackage, CirPackage> {
 
-    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
-    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
-    val classes: MutableMap<Name, CirClassNode> = THashMap()
-    val typeAliases: MutableMap<Name, CirTypeAliasNode> = THashMap()
+    override val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = THashMap()
+    override val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = THashMap()
+    override val classes: MutableMap<CirName, CirClassNode> = THashMap()
+    val typeAliases: MutableMap<CirName, CirTypeAliasNode> = THashMap()
+
+    val packageName: CirPackageName
+        get() = targetDeclarations.firstNonNull().packageName
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T) =
         visitor.visitPackageNode(this, data)

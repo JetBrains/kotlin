@@ -56,10 +56,6 @@ class AnnotationLoader {
                 super/*Any*/()
                 /* <init>() */
 
-                <this>.#<$$delegate_0> = visitor
-              }
-
-              override fun visit() {
               }
 
               override fun visitArray(): Visitor? {
@@ -70,7 +66,9 @@ class AnnotationLoader {
                 return <this>.#<$$delegate_0>.visitAnnotation()
               }
 
-              local /* final field */ val <$$delegate_0>: Visitor
+              local /* final field */ val <$$delegate_0>: Visitor = visitor
+              override fun visit() {
+              }
 
             }
 

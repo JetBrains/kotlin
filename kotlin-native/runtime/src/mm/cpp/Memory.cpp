@@ -263,6 +263,48 @@ extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
     ThrowIllegalArgumentException();
 }
 
+extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value) {
+    if (value < 0) {
+        ThrowIllegalArgumentException();
+    }
+    mm::GlobalData::Instance().gc().SetThreshold(static_cast<size_t>(value));
+}
+
+extern "C" int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
+    auto threshold = mm::GlobalData::Instance().gc().GetThreshold();
+    auto maxValue = std::numeric_limits<int32_t>::max();
+    if (threshold > static_cast<size_t>(maxValue)) {
+        return maxValue;
+    }
+    return static_cast<int32_t>(maxValue);
+}
+
+extern "C" void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
+    // TODO: Remove when legacy MM is gone.
+    ThrowIllegalArgumentException();
+}
+
+extern "C" int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*) {
+    // TODO: Remove when legacy MM is gone.
+    ThrowIllegalArgumentException();
+}
+
+extern "C" void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
+    if (value < 0) {
+        ThrowIllegalArgumentException();
+    }
+    mm::GlobalData::Instance().gc().SetAllocationThresholdBytes(static_cast<size_t>(value));
+}
+
+extern "C" int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*) {
+    auto threshold = mm::GlobalData::Instance().gc().GetAllocationThresholdBytes();
+    auto maxValue = std::numeric_limits<int64_t>::max();
+    if (threshold > static_cast<size_t>(maxValue)) {
+        return maxValue;
+    }
+    return static_cast<int64_t>(maxValue);
+}
+
 extern "C" OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*) {
     // TODO: Remove when legacy MM is gone.
     RETURN_OBJ(nullptr);

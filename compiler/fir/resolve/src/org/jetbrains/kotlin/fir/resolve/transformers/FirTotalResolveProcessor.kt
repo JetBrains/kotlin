@@ -24,7 +24,7 @@ class FirTotalResolveProcessor(session: FirSession) {
                     }
                 }
                 is FirGlobalResolveProcessor -> {
-                    processor.process()
+                    processor.process(files)
                 }
             }
         }

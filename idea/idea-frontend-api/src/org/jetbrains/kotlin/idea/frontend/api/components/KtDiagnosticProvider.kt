@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
-    abstract fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic>
-    abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic>
+    abstract fun getDiagnosticsForElement(element: KtElement): Collection<KtDiagnosticWithPsi<*>>
+    abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<KtDiagnosticWithPsi<*>>
 }

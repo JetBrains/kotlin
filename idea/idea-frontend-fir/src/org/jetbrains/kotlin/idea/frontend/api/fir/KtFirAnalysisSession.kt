@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getFirFile
@@ -40,12 +40,12 @@ private constructor(
 
     override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this, token)
     override val expressionTypeProvider: KtExpressionTypeProvider = KtFirExpressionTypeProvider(this, token)
-    override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this, token)
+    public override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this, token)
     override val containingDeclarationProvider = KtFirSymbolContainingDeclarationProvider(this, token)
     override val callResolver: KtCallResolver = KtFirCallResolver(this, token)
     override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
-        KtFirSymbolProvider(this, firResolveState.rootModuleSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
+        KtFirSymbolProvider(this, firResolveState.rootModuleSession.symbolProvider, firResolveState, firSymbolBuilder, token)
     override val completionCandidateChecker: KtCompletionCandidateChecker = KtFirCompletionCandidateChecker(this, token)
     override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider =
         KtFirSymbolDeclarationOverridesProvider(this, token)

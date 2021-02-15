@@ -15,10 +15,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.stats.DeclarationType
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector.StatsKey
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_CONSTRUCTOR_NAME
-import org.jetbrains.kotlin.descriptors.commonizer.utils.strip
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.MetadataBuildingVisitorContext.Path
@@ -65,8 +61,8 @@ private class MetadataBuildingVisitor(
         val cirModule = moduleContext.get<CirModule>(node) ?: return null
 
         val fragments: MutableCollection<KmModuleFragment> = mutableListOf()
-        node.packages.mapNotNullTo(fragments) { (packageFqName, packageNode) ->
-            val packageContext = moduleContext.packageContext(packageFqName)
+        node.packages.mapNotNullTo(fragments) { (packageName, packageNode) ->
+            val packageContext = moduleContext.packageContext(packageName)
             packageNode.accept(this, packageContext)?.cast()
         }
 
@@ -106,7 +102,7 @@ private class MetadataBuildingVisitor(
                 }
             }
 
-            linkSealedClassesWithSubclasses(cirPackage.fqName, classConsumer)
+            linkSealedClassesWithSubclasses(cirPackage.packageName, classConsumer)
 
             val topLevelFunctions: Collection<KmFunction> = node.functions.mapNotNull { (functionKey, functionNode) ->
                 val functionContext = packageContext.callableMemberContext(functionKey.name)
@@ -221,12 +217,12 @@ private class MetadataBuildingVisitor(
                 Flag.Class.IS_ENUM_CLASS(clazz.flags) -> DeclarationType.ENUM_CLASS
                 Flag.Class.IS_ENUM_ENTRY(clazz.flags) -> DeclarationType.ENUM_ENTRY
                 Flag.Class.IS_INTERFACE(clazz.flags) -> when {
-                    (classContext.currentPath as Path.Classifier).classifierId.isNestedClass -> DeclarationType.NESTED_INTERFACE
+                    (classContext.currentPath as Path.Classifier).classifierId.isNestedEntity -> DeclarationType.NESTED_INTERFACE
                     else -> DeclarationType.TOP_LEVEL_INTERFACE
                 }
                 else -> when {
                     Flag.Class.IS_COMPANION_OBJECT(clazz.flags) -> DeclarationType.COMPANION_OBJECT
-                    (classContext.currentPath as Path.Classifier).classifierId.isNestedClass -> DeclarationType.NESTED_CLASS
+                    (classContext.currentPath as Path.Classifier).classifierId.isNestedEntity -> DeclarationType.NESTED_CLASS
                     else -> DeclarationType.TOP_LEVEL_CLASS
                 }
             }
@@ -246,7 +242,7 @@ private class MetadataBuildingVisitor(
             propertyNode: CirPropertyNode
         ) = logDeclaration(propertyContext.targetIndex) {
             val declarationType = when {
-                (propertyContext.currentPath as Path.CallableMember).memberId.isNestedClass -> DeclarationType.NESTED_VAL
+                (propertyContext.currentPath as Path.CallableMember).memberId.isNestedEntity -> DeclarationType.NESTED_VAL
                 propertyNode.targetDeclarations.firstNonNull().isConst -> DeclarationType.TOP_LEVEL_CONST_VAL
                 else -> DeclarationType.TOP_LEVEL_VAL
             }
@@ -266,7 +262,7 @@ private class MetadataBuildingVisitor(
             functionKey: FunctionApproximationKey
         ) = logDeclaration(functionContext.targetIndex) {
             val declarationType = when {
-                (functionContext.currentPath as Path.CallableMember).memberId.isNestedClass -> DeclarationType.NESTED_FUN
+                (functionContext.currentPath as Path.CallableMember).memberId.isNestedEntity -> DeclarationType.NESTED_FUN
                 else -> DeclarationType.TOP_LEVEL_FUN
             }
 
@@ -308,31 +304,30 @@ internal data class MetadataBuildingVisitorContext(
         }
 
         @Suppress("MemberVisibilityCanBePrivate")
-        class Module(val moduleName: Name) : Path() {
-            override fun toString() = moduleName.strip()
+        class Module(val moduleName: CirName) : Path() {
+            override fun toString() = moduleName.toStrippedString()
         }
 
-        class Package(val packageFqName: FqName) : Path() {
-            fun nestedClassifier(classifierName: Name) = Classifier(ClassId(packageFqName, classifierName))
-            fun nestedCallableMember(memberName: Name) = CallableMember(ClassId(packageFqName, memberName))
+        class Package(val packageName: CirPackageName) : Path() {
+            fun nestedClassifier(classifierName: CirName) = Classifier(CirEntityId.create(packageName, classifierName))
+            fun nestedCallableMember(memberName: CirName) = CallableMember(CirEntityId.create(packageName, memberName))
 
-            override fun toString() = packageFqName.asString()
+            override fun toString() = packageName.toString()
         }
 
-        class Classifier(val classifierId: ClassId) : Path() {
-            fun nestedClassifier(classifierName: Name) = Classifier(classifierId.createNestedClassId(classifierName))
-            fun nestedCallableMember(memberName: Name) = CallableMember(classifierId.createNestedClassId(memberName))
+        class Classifier(val classifierId: CirEntityId) : Path() {
+            fun nestedClassifier(classifierName: CirName) = Classifier(classifierId.createNestedEntityId(classifierName))
+            fun nestedCallableMember(memberName: CirName) = CallableMember(classifierId.createNestedEntityId(memberName))
 
-            override fun toString() = classifierId.asString()
+            override fun toString() = classifierId.toString()
         }
 
-        class CallableMember(val memberId: ClassId) : Path() {
-            override fun toString() = memberId.asString()
+        class CallableMember(val memberId: CirEntityId) : Path() {
+            override fun toString() = memberId.toString()
         }
     }
 
-    fun moduleContext(moduleName: Name): MetadataBuildingVisitorContext {
-        check(moduleName.isSpecial)
+    fun moduleContext(moduleName: CirName): MetadataBuildingVisitorContext {
         check(currentPath is Path.Empty)
 
         return MetadataBuildingVisitorContext(
@@ -344,7 +339,7 @@ internal data class MetadataBuildingVisitorContext(
         )
     }
 
-    fun packageContext(packageFqName: FqName): MetadataBuildingVisitorContext {
+    fun packageContext(packageName: CirPackageName): MetadataBuildingVisitorContext {
         check(currentPath is Path.Module)
 
         return MetadataBuildingVisitorContext(
@@ -352,12 +347,12 @@ internal data class MetadataBuildingVisitorContext(
             target = target,
             isCommon = isCommon,
             typeParameterIndexOffset = 0,
-            currentPath = Path.Package(packageFqName)
+            currentPath = Path.Package(packageName)
         )
     }
 
     fun classifierContext(
-        classifierName: Name,
+        classifierName: CirName,
         outerClassTypeParametersCount: Int = 0
     ): MetadataBuildingVisitorContext {
         val newPath = when (currentPath) {
@@ -382,7 +377,7 @@ internal data class MetadataBuildingVisitorContext(
     }
 
     fun callableMemberContext(
-        memberName: Name,
+        memberName: CirName,
         ownerClassTypeParametersCount: Int = 0
     ): MetadataBuildingVisitorContext {
         val newPath = when (currentPath) {

@@ -16,10 +16,14 @@ class B {
         override fun foo(k: String): String {
             return "O" + k
         }
+
+        fun bar(k: String): String {
+            return foo(k)
+        }
     }
 }
 
 // FILE: test.js
 function box() {
-    return new this["export-nested-class"].B.Foo().foo("K");
+    return new this["export-nested-class"].B.Foo().bar("K");
 }

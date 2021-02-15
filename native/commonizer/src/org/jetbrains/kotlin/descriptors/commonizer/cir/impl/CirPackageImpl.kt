@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackage
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 
 data class CirPackageImpl(
-    override val fqName: FqName
+    override val packageName: CirPackageName
 ) : CirPackage

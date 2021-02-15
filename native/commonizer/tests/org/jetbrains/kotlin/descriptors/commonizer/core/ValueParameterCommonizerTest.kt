@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.TypeCommonizerTest.Compa
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
-import org.jetbrains.kotlin.name.Name
 import org.junit.Test
 
 class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, CirValueParameter>() {
@@ -158,7 +158,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
             val returnType = CirTypeFactory.create(mockClassType(returnTypeFqName))
 
             return CirTestValueParameter(
-                name = Name.identifier(name),
+                name = CirName.create(name),
                 annotations = emptyList(),
                 returnType = returnType,
                 varargElementType = returnType.takeIf { hasVarargElementType }, // the vararg type itself does not matter here, only it's presence matters
@@ -171,7 +171,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 }
 
 internal data class CirTestValueParameter(
-    override val name: Name,
+    override val name: CirName,
     override val annotations: List<CirAnnotation>,
     override val returnType: CirType,
     override val varargElementType: CirType?,

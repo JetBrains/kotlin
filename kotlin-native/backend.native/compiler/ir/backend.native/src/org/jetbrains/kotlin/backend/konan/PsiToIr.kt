@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -67,6 +68,9 @@ internal fun Context.psiToIr(
 
         object : IrDeserializer {
             override fun getDeclaration(symbol: IrSymbol) = stubGenerator.getDeclaration(symbol)
+            override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
+                error("Should not be called")
+            }
         }
     } else {
         val irProviderForCEnumsAndCStructs =

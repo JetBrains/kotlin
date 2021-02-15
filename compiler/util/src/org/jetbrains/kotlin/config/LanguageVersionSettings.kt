@@ -382,6 +382,9 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
             }
             append(" $char$feature")
         }
+        analysisFlags.forEach { (flag, value) ->
+            append(" $flag:$value")
+        }
     }
 
     override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||

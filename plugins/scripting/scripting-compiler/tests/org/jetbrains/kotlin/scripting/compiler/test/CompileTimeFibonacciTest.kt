@@ -157,7 +157,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                             )
                     }
                     ?.valueOr { return@onAnnotations it }
-                    ?.max() ?: return@onAnnotations context.compilationConfiguration.asSuccess()
+                    ?.maxOrNull() ?: return@onAnnotations context.compilationConfiguration.asSuccess()
 
                 val sourceCode = fibUntil(maxFibonacciNumber)
                     .mapIndexed { index, number -> "val FIB_${index + 1} = $number" }

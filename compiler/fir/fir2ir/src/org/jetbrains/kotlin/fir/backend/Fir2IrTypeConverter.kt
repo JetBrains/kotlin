@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
@@ -84,13 +86,13 @@ class Fir2IrTypeConverter(
         return when (this) {
             is ConeKotlinErrorType -> createErrorType()
             is ConeLookupTagBasedType -> {
-                val classId = this.classId
-                val irSymbol = getBuiltInClassSymbol(classId) ?: run {
-                    val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
-                    firSymbol.toSymbol(session, classifierStorage, typeContext)
-                }
-                val typeAnnotations: MutableList<IrConstructorCall> = mutableListOf()
+                val typeAnnotations = mutableListOf<IrConstructorCall>()
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
+                val irSymbol = getBuiltInClassSymbol(classId)
+                    ?: lookupTag.toSymbol(session)?.toSymbol(session, classifierStorage, typeContext) {
+                        typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
+                    }
+                    ?: return createErrorType()
                 if (hasEnhancedNullability) {
                     builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
                         typeAnnotations += it

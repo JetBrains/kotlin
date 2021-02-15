@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -68,10 +69,10 @@ internal class FirModuleResolveStateImpl(
     override fun getFirFile(ktFile: KtFile): FirFile =
         firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
 
-    override fun getDiagnostics(element: KtElement): List<Diagnostic> =
+    override fun getDiagnostics(element: KtElement): List<FirPsiDiagnostic<*>> =
         diagnosticsCollector.getDiagnosticsFor(element)
 
-    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
+    override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile)
 
     override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {

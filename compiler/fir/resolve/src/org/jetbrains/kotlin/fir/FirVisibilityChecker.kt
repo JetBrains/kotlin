@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -65,17 +65,24 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerId = symbol.getOwnerId()
                 if (declaration.session == session) {
-                    if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
-                        val candidateFile = when (symbol) {
-                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                            else -> null
+                    when {
+                        ownerId == null -> {
+                            val candidateFile = when (symbol) {
+                                is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
+                                is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+                                else -> null
+                            }
+                            // Top-level: visible in file
+                            candidateFile == useSiteFile
                         }
-                        // Top-level: visible in file
-                        candidateFile == useSiteFile
-                    } else {
-                        // Member: visible inside parent class, including all its member classes
-                        canSeePrivateMemberOf(containingDeclarations, ownerId, session)
+                        declaration is FirConstructor && declaration.isFromSealedClass -> {
+                            // Sealed class constructor: visible in same package
+                            declaration.symbol.callableId.packageName == useSiteFile.packageFqName
+                        }
+                        else -> {
+                            // Member: visible inside parent class, including all its member classes
+                            canSeePrivateMemberOf(containingDeclarations, ownerId, session)
+                        }
                     }
                 } else {
                     declaration is FirSimpleFunction && declaration.isAllowedToBeAccessedFromOutside()
@@ -133,7 +140,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     private fun ClassId.ownerIfCompanion(session: FirSession): ClassId? {
         if (outerClassId == null || isLocal) return null
-        val ownerSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
+        val ownerSymbol = session.symbolProvider.getClassLikeSymbolByFqName(this) as? FirRegularClassSymbol
 
         return outerClassId.takeIf { ownerSymbol?.fir?.isCompanion == true }
     }

@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassOrTypeAliasType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAliasType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeProjection
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
-import org.jetbrains.kotlin.name.ClassId
 
 data class CirTypeAliasTypeImpl(
-    override val classifierId: ClassId,
+    override val classifierId: CirEntityId,
     override val underlyingType: CirClassOrTypeAliasType,
     override val arguments: List<CirTypeProjection>,
     override val isMarkedNullable: Boolean

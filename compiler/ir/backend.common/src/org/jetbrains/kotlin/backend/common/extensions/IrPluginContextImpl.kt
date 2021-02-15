@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -133,5 +134,15 @@ open class IrPluginContextImpl constructor(
             val descriptors = scope.getContributedVariables(fqName.shortName(), NoLookupLocation.FROM_BACKEND)
             descriptors.map { st.referenceProperty(it) }
         }
+    }
+
+    override fun referenceTopLevel(
+        signature: IdSignature,
+        kind: IrDeserializer.TopLevelSymbolKind,
+        moduleDescriptor: ModuleDescriptor
+    ): IrSymbol? {
+        val symbol = linker.resolveBySignatureInModule(signature, kind, moduleDescriptor.name)
+        linker.postProcess()
+        return symbol
     }
 }

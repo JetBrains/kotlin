@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
@@ -273,6 +273,7 @@ private fun createInitialCompilerConfiguration(
 internal fun collectRefinedSourcesAndUpdateEnvironment(
     context: SharedScriptCompilationContext,
     mainKtFile: KtFile,
+    initialConfiguration: ScriptCompilationConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector
 ): Pair<List<KtFile>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainKtFile)
@@ -280,7 +281,8 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
         collectScriptsCompilationDependencies(
             context.environment.configuration,
             context.environment.project,
-            sourceFiles
+            sourceFiles,
+            initialConfiguration
         )
 
     context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))

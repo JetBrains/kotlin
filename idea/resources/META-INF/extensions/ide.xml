@@ -38,6 +38,10 @@
                         interface="kotlin.script.experimental.intellij.ScriptDefinitionsProvider"
                         area="IDEA_PROJECT" dynamic="true"/>
 
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.ideScriptConfigurationControlFacade"
+                        interface="kotlin.script.experimental.intellij.IdeScriptConfigurationControlFacade"
+                        area="IDEA_PROJECT" dynamic="true"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.syntheticScopeProviderExtension"
                         interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
                         area="IDEA_PROJECT"/>
@@ -97,6 +101,8 @@
 
         <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
                                    implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
+
+        <ideScriptConfigurationControlFacade implementation="org.jetbrains.kotlin.idea.script.DefaultIdeScriptingConfigurationFacade"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
         <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchAdditionalIdeaDependenciesProvider"/>

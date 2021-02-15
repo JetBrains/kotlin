@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.dfa.symbol
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -224,7 +223,7 @@ abstract class AbstractFirStatusResolveTransformer(
     protected val containingClass: FirClass<*>? get() = classes.lastOrNull()
 
     private val firProvider = session.firProvider
-    private val symbolProvider = session.firSymbolProvider
+    private val symbolProvider = session.symbolProvider
 
     protected abstract fun FirDeclaration.needResolveMembers(): Boolean
     protected abstract fun FirDeclaration.needResolveNestedClassifiers(): Boolean

@@ -2117,6 +2117,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("Fir2IrClassifierStorage.kt")
+        public void testFir2IrClassifierStorage() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
+        }
+
+        @Test
         @TestMetadata("FirBuilder.kt")
         public void testFirBuilder() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
@@ -2180,6 +2186,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
         public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
+        }
+
+        @Test
+        @TestMetadata("SafeLetWithReturn.kt")
+        public void testSafeLetWithReturn() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SafeLetWithReturn.kt");
         }
 
         @Test

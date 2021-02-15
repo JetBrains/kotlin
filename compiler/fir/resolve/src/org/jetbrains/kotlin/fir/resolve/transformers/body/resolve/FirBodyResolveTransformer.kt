@@ -259,6 +259,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformProperty(property, data)
     }
 
+    override fun transformField(field: FirField, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        return declarationsTransformer.transformField(field, data)
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return declarationsTransformer.transformRegularClass(regularClass, data)
     }

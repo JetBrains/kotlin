@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
-    //TODO get rid of it
-    abstract fun isBuiltinFunctionalType(type: KtType): Boolean
-
     abstract val builtinTypes: KtBuiltinTypes
+
+    abstract fun approximateToPublicDenotable(type: KtType): KtType?
 
     abstract fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType
 }

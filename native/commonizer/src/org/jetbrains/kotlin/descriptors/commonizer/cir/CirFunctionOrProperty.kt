@@ -26,5 +26,5 @@ interface CirFunctionOrProperty :
     fun isVirtual(): Boolean =
         visibility != DescriptorVisibilities.PRIVATE
                 && modality != Modality.FINAL
-                && !(containingClassDetails?.modality == Modality.FINAL && containingClassDetails?.kind != ClassKind.ENUM_CLASS)
+                && !(containingClass?.modality == Modality.FINAL && containingClass?.kind != ClassKind.ENUM_CLASS)
 }

@@ -1,5 +1,3 @@
-// FIR_COMPARISON
-
 class A
 
 fun f() {

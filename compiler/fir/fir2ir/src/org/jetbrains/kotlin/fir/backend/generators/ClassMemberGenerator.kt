@@ -174,6 +174,18 @@ internal class ClassMemberGenerator(
         return irProperty
     }
 
+    fun convertFieldContent(irField: IrField, field: FirField): IrField {
+        conversionScope.withParent(irField) {
+            declarationStorage.enterScope(irField)
+            val initializerExpression = field.initializer
+            if (irField.initializer == null && initializerExpression != null) {
+                irField.initializer = irFactory.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
+            }
+            declarationStorage.leaveScope(irField)
+        }
+        return irField
+    }
+
     private fun IrProperty.initializeBackingField(
         property: FirProperty,
         initializerExpression: FirExpression?

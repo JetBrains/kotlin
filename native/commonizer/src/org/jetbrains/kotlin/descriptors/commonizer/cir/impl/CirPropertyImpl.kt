@@ -9,16 +9,14 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 data class CirPropertyImpl(
     override val annotations: List<CirAnnotation>,
-    override val name: Name,
+    override val name: CirName,
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: DescriptorVisibility,
     override val modality: Modality,
-    override val containingClassDetails: CirContainingClassDetails?,
+    override val containingClass: CirContainingClass?,
     override val isExternal: Boolean,
     override val extensionReceiver: CirExtensionReceiver?,
     override val returnType: CirType,
@@ -31,7 +29,7 @@ data class CirPropertyImpl(
     override val setter: CirPropertySetter?,
     override val backingFieldAnnotations: List<CirAnnotation>?,
     override val delegateFieldAnnotations: List<CirAnnotation>?,
-    override val compileTimeInitializer: ConstantValue<*>?
+    override val compileTimeInitializer: CirConstantValue<*>?
 ) : CirProperty {
     // const property in "common" fragment is already lifted up
     override val isLiftedUp get() = isConst

@@ -177,4 +177,12 @@ public class Printer {
     public String toString() {
         return out.toString();
     }
+
+    public int getCurrentIndentLengthInUnits() {
+        return indent.length() / indentUnit.length();
+    }
+
+    public int getIndentUnitLength() {
+        return indentUnit.length();
+    }
 }

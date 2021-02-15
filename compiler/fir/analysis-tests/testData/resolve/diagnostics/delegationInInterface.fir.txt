@@ -6,7 +6,7 @@ FILE: delegationInInterface.kt
 
     }
     public abstract interface B : R|A| {
-        local final field <$$delegate_0>: R|A|
+        local final field <$$delegate_0>: R|A| = <Unresolved name: a>#
 
         public abstract val a: R|A|
             public get(): R|A|
@@ -15,6 +15,6 @@ FILE: delegationInInterface.kt
     public final val test: R|A| = R|/A.A|()
         public get(): R|A|
     public abstract interface C : R|A| {
-        local final field <$$delegate_0>: R|A|
+        local final field <$$delegate_0>: R|A| = R|/test|
 
     }

@@ -210,7 +210,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
 
-            defaultNull("delegateFieldSymbol", "receiverTypeRef", "initializer", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("delegateFieldSymbol", "receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(enumEntry) {

@@ -11,13 +11,13 @@ interface Order {
 fun foo(o: Any) {
     val order = o as? Order
     if (order?.expired ?: false) {
-        order<!UNSAFE_CALL!>.<!>doSomething()
+        order.doSomething()
     }
     else {
 
     }
     if (order?.notExpired() ?: false) {
-        order<!UNSAFE_CALL!>.<!>doSomething()
+        order.doSomething()
     }
 }
 

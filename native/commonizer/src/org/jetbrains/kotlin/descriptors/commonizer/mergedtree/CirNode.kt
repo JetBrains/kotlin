@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
@@ -23,11 +23,11 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
             get() = targetDeclarations.size + 1
 
         fun toString(node: CirNode<*, *>) = buildString {
-            if (node is CirNodeWithFqName) {
-                append("fqName=").append(node.fqName.asString()).append(", ")
+            if (node is CirPackageNode) {
+                append("packageName=").append(node.packageName).append(", ")
             }
-            if (node is CirNodeWithClassId) {
-                append("classId=").append(node.classId.asString()).append(", ")
+            if (node is CirNodeWithClassifierId) {
+                append("classifierId=").append(node.classifierId).append(", ")
             }
             append("target=")
             node.targetDeclarations.joinTo(this)
@@ -37,3 +37,17 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     }
 }
 
+interface CirNodeWithClassifierId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
+    val classifierId: CirEntityId
+}
+
+interface CirNodeWithLiftingUp<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+    val isLiftedUp: Boolean
+        get() = (commonDeclaration() as? CirLiftedUpDeclaration)?.isLiftedUp == true
+}
+
+interface CirNodeWithMembers<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {
+    val properties: MutableMap<PropertyApproximationKey, CirPropertyNode>
+    val functions: MutableMap<FunctionApproximationKey, CirFunctionNode>
+    val classes: MutableMap<CirName, CirClassNode>
+}

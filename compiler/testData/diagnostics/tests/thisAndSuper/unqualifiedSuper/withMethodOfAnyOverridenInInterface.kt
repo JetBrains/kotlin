@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IWithToString {
     override fun toString(): String
 }

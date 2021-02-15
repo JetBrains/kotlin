@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbolWithKind {
+abstract class KtFunctionLikeSymbol : KtCallableSymbol(), KtSymbolWithKind {
     abstract val valueParameters: List<KtParameterSymbol>
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionLikeSymbol>

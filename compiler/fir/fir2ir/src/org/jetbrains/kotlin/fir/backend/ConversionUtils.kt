@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -86,16 +87,17 @@ class ConversionTypeContext internal constructor(
 fun FirClassifierSymbol<*>.toSymbol(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
-    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+    handleAnnotations: ((List<FirAnnotationCall>) -> Unit)? = null
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
             classifierStorage.getIrTypeParameterSymbol(this, typeContext)
         }
         is FirTypeAliasSymbol -> {
-            val typeAlias = fir
-            val coneClassLikeType = typeAlias.expandedTypeRef.coneType as ConeClassLikeType
-            coneClassLikeType.lookupTag.toSymbol(session)!!.toSymbol(session, classifierStorage)
+            handleAnnotations?.invoke(fir.expandedTypeRef.annotations)
+            val coneClassLikeType = fir.expandedTypeRef.coneType as ConeClassLikeType
+            coneClassLikeType.lookupTag.toSymbol(session)!!.toSymbol(session, classifierStorage, typeContext, handleAnnotations)
         }
         is FirClassSymbol -> {
             classifierStorage.getIrClassSymbol(this)

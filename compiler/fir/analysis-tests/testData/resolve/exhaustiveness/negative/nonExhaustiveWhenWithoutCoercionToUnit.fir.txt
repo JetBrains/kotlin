@@ -1,0 +1,15 @@
+FILE: nonExhaustiveWhenWithoutCoercionToUnit.kt
+    public final fun <T> run(block: R|() -> T|): R|T| {
+        ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+            when (R|<local>/a|) {
+                ($subj$ is R|kotlin/String|) ->  {
+                    Int(1)
+                }
+            }
+
+        }
+        )
+    }

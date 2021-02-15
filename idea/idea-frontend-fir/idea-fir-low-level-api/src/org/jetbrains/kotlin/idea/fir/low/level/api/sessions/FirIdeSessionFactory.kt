@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
@@ -108,7 +108,7 @@ internal object FirIdeSessionFactory {
                                 builtinsAndCloneableSession,
                                 builtinTypes,
                                 librariesCache
-                            ).firSymbolProvider
+                            ).symbolProvider
                         )
                         dependentModules
                             .mapTo(this) {
@@ -122,7 +122,7 @@ internal object FirIdeSessionFactory {
                                     sessionsCache,
                                     isRootModule = false,
                                     librariesCache,
-                                ).firSymbolProvider
+                                ).symbolProvider
                             }
                     }
                 )
@@ -185,7 +185,7 @@ internal object FirIdeSessionFactory {
                             )
                         )
                         add(javaSymbolProvider)
-                        addAll((builtinsAndCloneableSession.firSymbolProvider as FirCompositeSymbolProvider).providers)
+                        addAll((builtinsAndCloneableSession.symbolProvider as FirCompositeSymbolProvider).providers)
                     }
                 )
             )

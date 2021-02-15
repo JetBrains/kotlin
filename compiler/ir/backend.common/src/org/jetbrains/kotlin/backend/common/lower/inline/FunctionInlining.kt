@@ -225,8 +225,6 @@ class FunctionInlining(
                 else (copyIrElement.copy(argument) as IrExpression)
             }
 
-            //-----------------------------------------------------------------//
-
             override fun visitCall(expression: IrCall): IrExpression {
                 if (!isLambdaCall(expression))
                     return super.visitCall(expression)
@@ -236,119 +234,133 @@ class FunctionInlining(
                 if ((dispatchReceiver.symbol.owner as? IrValueParameter)?.isNoinline == true)
                     return super.visitCall(expression)
 
-                if (functionArgument is IrFunctionReference) {
-                    functionArgument.transformChildrenVoid(this)
-
-                    val function = functionArgument.symbol.owner
-                    val functionParameters = function.explicitParameters
-                    val boundFunctionParameters = functionArgument.getArgumentsWithIr()
-                    val unboundFunctionParameters = functionParameters - boundFunctionParameters.map { it.first }
-                    val boundFunctionParametersMap = boundFunctionParameters.associate { it.first to it.second }
-
-                    var unboundIndex = 0
-                    val unboundArgsSet = unboundFunctionParameters.toSet()
-                    val valueParameters = expression.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
-
-                    val superType = functionArgument.type as IrSimpleType
-                    val superTypeArgumentsMap = expression.symbol.owner.parentAsClass.typeParameters.associate { typeParam ->
-                        typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
-                    }
-
-                    val immediateCall = with(expression) {
-                        when (function) {
-                            is IrConstructor -> {
-                                val classTypeParametersCount = function.parentAsClass.typeParameters.size
-                                IrConstructorCallImpl.fromSymbolOwner(
-                                    startOffset,
-                                    endOffset,
-                                    function.returnType,
-                                    function.symbol,
-                                    classTypeParametersCount
-                                )
-                            }
-                            is IrSimpleFunction ->
-                                IrCallImpl(
-                                    startOffset,
-                                    endOffset,
-                                    function.returnType,
-                                    function.symbol,
-                                    function.typeParameters.size,
-                                    function.valueParameters.size
-                                )
-                            else ->
-                                error("Unknown function kind : ${function.render()}")
-                        }
-                    }.apply {
-                        for (parameter in functionParameters) {
-                            val argument =
-                                if (parameter !in unboundArgsSet) {
-                                    val arg = boundFunctionParametersMap[parameter]!!
-                                    if (arg is IrGetValueWithoutLocation)
-                                        arg.withLocation(expression.startOffset, expression.endOffset)
-                                    else arg
-                                } else {
-                                    if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
-                                        copyIrElement.copy(parameter.defaultValue!!.expression) as IrExpression
-                                    else if (!parameter.isVararg) {
-                                        assert(unboundIndex < valueParameters.size) {
-                                            "Attempt to use unbound parameter outside of the callee's value parameters"
-                                        }
-                                        valueParameters[unboundIndex++].second
-                                    } else {
-                                        val elements = mutableListOf<IrVarargElement>()
-                                        while (unboundIndex < valueParameters.size) {
-                                            val (param, value) = valueParameters[unboundIndex++]
-                                            val substitutedParamType = param.type.substitute(superTypeArgumentsMap)
-                                            if (substitutedParamType == parameter.varargElementType!!)
-                                                elements += value
-                                            else
-                                                elements += IrSpreadElementImpl(expression.startOffset, expression.endOffset, value)
-                                        }
-                                        IrVarargImpl(
-                                            expression.startOffset, expression.endOffset,
-                                            parameter.type,
-                                            parameter.varargElementType!!,
-                                            elements
-                                        )
-                                    }
-                                }
-                            when (parameter) {
-                                function.dispatchReceiverParameter ->
-                                    this.dispatchReceiver = argument.implicitCastIfNeededTo(function.dispatchReceiverParameter!!.type)
-
-                                function.extensionReceiverParameter ->
-                                    this.extensionReceiver = argument.implicitCastIfNeededTo(function.extensionReceiverParameter!!.type)
-
-                                else ->
-                                    putValueArgument(
-                                        parameter.index,
-                                        argument.implicitCastIfNeededTo(function.valueParameters[parameter.index].type)
-                                    )
-                            }
-                        }
-                        assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
-                        for (index in 0 until functionArgument.typeArgumentsCount)
-                            putTypeArgument(index, functionArgument.getTypeArgument(index))
-                    }.implicitCastIfNeededTo(expression.type)
-                    return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
+                return when {
+                    functionArgument is IrFunctionReference -> inlineFunctionReference(expression, functionArgument)
+                    functionArgument.isAdaptedFunctionReference() -> inlineAdaptedFunctionReference(expression, functionArgument as IrBlock)
+                    functionArgument is IrFunctionExpression -> inlineFunctionExpression(expression, functionArgument)
+                    else -> super.visitCall(expression)
                 }
-                if (functionArgument !is IrFunctionExpression)
-                    return super.visitCall(expression)
+            }
 
+            fun inlineFunctionExpression(irCall: IrCall, irFunctionExpression: IrFunctionExpression): IrExpression {
                 // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
                 val newExpression = inlineFunction(
-                    expression,
-                    functionArgument.function,
+                    irCall,
+                    irFunctionExpression.function,
                     false
                 )
                 // Substitute lambda arguments with target function arguments.
-                return newExpression.transform(
-                    this,
-                    null
+                return newExpression.transform(this, null)
+            }
+
+            fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrExpression {
+                val irFunction = irBlock.statements[0] as IrFunction
+                irFunction.transformChildrenVoid(this)
+                val irFunctionReference = irBlock.statements[1] as IrFunctionReference
+                val inlinedFunctionReference = inlineFunctionReference(irCall, irFunctionReference)
+                return IrBlockImpl(
+                    irCall.startOffset, irCall.endOffset,
+                    inlinedFunctionReference.type, origin = null,
+                    statements = listOf(irFunction, inlinedFunctionReference)
                 )
             }
 
-            //-----------------------------------------------------------------//
+            fun inlineFunctionReference(irCall: IrCall, irFunctionReference: IrFunctionReference): IrExpression {
+                irFunctionReference.transformChildrenVoid(this)
+
+                val function = irFunctionReference.symbol.owner
+                val functionParameters = function.explicitParameters
+                val boundFunctionParameters = irFunctionReference.getArgumentsWithIr()
+                val unboundFunctionParameters = functionParameters - boundFunctionParameters.map { it.first }
+                val boundFunctionParametersMap = boundFunctionParameters.associate { it.first to it.second }
+
+                var unboundIndex = 0
+                val unboundArgsSet = unboundFunctionParameters.toSet()
+                val valueParameters = irCall.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
+
+                val superType = irFunctionReference.type as IrSimpleType
+                val superTypeArgumentsMap = irCall.symbol.owner.parentAsClass.typeParameters.associate { typeParam ->
+                    typeParam.symbol to superType.arguments[typeParam.index].typeOrNull!!
+                }
+
+                val immediateCall = with(irCall) {
+                    when (function) {
+                        is IrConstructor -> {
+                            val classTypeParametersCount = function.parentAsClass.typeParameters.size
+                            IrConstructorCallImpl.fromSymbolOwner(
+                                startOffset,
+                                endOffset,
+                                function.returnType,
+                                function.symbol,
+                                classTypeParametersCount
+                            )
+                        }
+                        is IrSimpleFunction ->
+                            IrCallImpl(
+                                startOffset,
+                                endOffset,
+                                function.returnType,
+                                function.symbol,
+                                function.typeParameters.size,
+                                function.valueParameters.size
+                            )
+                        else ->
+                            kotlin.error("Unknown function kind : ${function.render()}")
+                    }
+                }.apply {
+                    for (parameter in functionParameters) {
+                        val argument =
+                            if (parameter !in unboundArgsSet) {
+                                val arg = boundFunctionParametersMap[parameter]!!
+                                if (arg is IrGetValueWithoutLocation)
+                                    arg.withLocation(irCall.startOffset, irCall.endOffset)
+                                else arg
+                            } else {
+                                if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
+                                    copyIrElement.copy(parameter.defaultValue!!.expression) as IrExpression
+                                else if (!parameter.isVararg) {
+                                    assert(unboundIndex < valueParameters.size) {
+                                        "Attempt to use unbound parameter outside of the callee's value parameters"
+                                    }
+                                    valueParameters[unboundIndex++].second
+                                } else {
+                                    val elements = mutableListOf<IrVarargElement>()
+                                    while (unboundIndex < valueParameters.size) {
+                                        val (param, value) = valueParameters[unboundIndex++]
+                                        val substitutedParamType = param.type.substitute(superTypeArgumentsMap)
+                                        if (substitutedParamType == parameter.varargElementType!!)
+                                            elements += value
+                                        else
+                                            elements += IrSpreadElementImpl(irCall.startOffset, irCall.endOffset, value)
+                                    }
+                                    IrVarargImpl(
+                                        irCall.startOffset, irCall.endOffset,
+                                        parameter.type,
+                                        parameter.varargElementType!!,
+                                        elements
+                                    )
+                                }
+                            }
+                        when (parameter) {
+                            function.dispatchReceiverParameter ->
+                                this.dispatchReceiver = argument.implicitCastIfNeededTo(function.dispatchReceiverParameter!!.type)
+
+                            function.extensionReceiverParameter ->
+                                this.extensionReceiver = argument.implicitCastIfNeededTo(function.extensionReceiverParameter!!.type)
+
+                            else ->
+                                putValueArgument(
+                                    parameter.index,
+                                    argument.implicitCastIfNeededTo(function.valueParameters[parameter.index].type)
+                                )
+                        }
+                    }
+                    assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
+                    for (index in 0 until irFunctionReference.typeArgumentsCount)
+                        putTypeArgument(index, irFunctionReference.getTypeArgument(index))
+                }.implicitCastIfNeededTo(irCall.type)
+                return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
+            }
 
             override fun visitElement(element: IrElement) = element.accept(this, null)
         }
@@ -369,7 +381,8 @@ class FunctionInlining(
                     && irCall.dispatchReceiver is IrGetValue
         }
 
-        //-------------------------------------------------------------------------//
+        private fun IrExpression.isAdaptedFunctionReference() =
+            this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,
@@ -379,7 +392,8 @@ class FunctionInlining(
             val isInlinableLambdaArgument: Boolean
                 get() = parameter.isInlineParameter() &&
                         (argumentExpression is IrFunctionReference
-                                || argumentExpression is IrFunctionExpression)
+                                || argumentExpression is IrFunctionExpression
+                                || argumentExpression.isAdaptedFunctionReference())
 
             val isImmutableVariableLoad: Boolean
                 get() = argumentExpression.let { argument ->

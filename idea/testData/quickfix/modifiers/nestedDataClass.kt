@@ -7,3 +7,4 @@ class A() {
         data class <caret>C
     }
 }
+/* FIR_COMPARISON */

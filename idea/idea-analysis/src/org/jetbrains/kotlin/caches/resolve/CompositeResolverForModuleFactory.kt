@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
+import org.jetbrains.kotlin.idea.compiler.IdeSealedClassInheritorsProvider
 import org.jetbrains.kotlin.idea.configuration.IdeBuiltInsLoadingState
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
@@ -189,7 +190,7 @@ class CompositeResolverForModuleFactory(
         }
 
         // Called by all normal containers set-ups
-        configureModule(moduleContext, targetPlatform, analyzerServices, trace, languageVersionSettings,)
+        configureModule(moduleContext, targetPlatform, analyzerServices, trace, languageVersionSettings, IdeSealedClassInheritorsProvider)
         configureStandardResolveComponents()
         useInstance(moduleContentScope)
         useInstance(declarationProviderFactory)

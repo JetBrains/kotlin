@@ -127,7 +127,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val container: FirDeclaration get() = context.containerIfAny!!
 
         override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
-        override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
+        override val symbolProvider: FirSymbolProvider = session.symbolProvider
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()
 

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -79,7 +79,7 @@ open class FirJvmMangleComputer(
             else -> return
         }
         if (parentClassId != null && !parentClassId.isLocal) {
-            val parentClassLike = this@FirJvmMangleComputer.session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
+            val parentClassLike = this@FirJvmMangleComputer.session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)?.fir
                 ?: error("Attempt to find parent ($parentClassId) for probably-local declaration!")
             if (parentClassLike is FirRegularClass || parentClassLike is FirTypeAlias) {
                 parentClassLike.accept(this@FirJvmMangleComputer, false)

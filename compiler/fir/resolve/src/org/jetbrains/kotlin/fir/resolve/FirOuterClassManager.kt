@@ -17,7 +17,7 @@ class FirOuterClassManager(
     private val session: FirSession,
     private val outerLocalClassForNested: Map<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>>,
 ) {
-    private val symbolProvider = session.firSymbolProvider
+    private val symbolProvider = session.symbolProvider
 
     fun outerClass(classSymbol: FirClassLikeSymbol<*>): FirClassLikeSymbol<*>? {
         if (classSymbol !is FirClassSymbol<*>) return null

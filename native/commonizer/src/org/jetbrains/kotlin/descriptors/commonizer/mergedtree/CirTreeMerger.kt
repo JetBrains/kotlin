@@ -10,15 +10,11 @@ import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
 /**
@@ -76,7 +72,7 @@ class CirTreeMerger(
         val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { targetProvider ->
             targetProvider.modulesProvider.loadModuleInfos().associateBy { it.name }
         }
-        val commonModuleNames = allModuleInfos.map { it.keys }.reduce { a, b -> a intersect b }
+        val commonModuleNames = parameters.getCommonModuleNames()
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             val commonModuleInfos = allModuleInfos[targetIndex].filterKeys { it in commonModuleNames }
@@ -110,159 +106,147 @@ class CirTreeMerger(
         val allDependeeModules = targetDependeeModules + dependeeModules
 
         val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules(allDependeeModules)
-        val modules: MutableMap<Name, CirModuleNode> = rootNode.modules
 
         moduleDescriptors.forEach { (name, moduleDescriptor) ->
             val moduleInfo = commonModuleInfos[name] ?: return@forEach
-            processModule(modules, targetIndex, moduleInfo, moduleDescriptor)
+            processModule(rootNode, targetIndex, moduleInfo, moduleDescriptor)
         }
     }
 
     private fun processModule(
-        modules: MutableMap<Name, CirModuleNode>,
+        rootNode: CirRootNode,
         targetIndex: Int,
         moduleInfo: ModuleInfo,
         moduleDescriptor: ModuleDescriptor
     ) {
         processCInteropModuleAttributes(moduleInfo)
 
-        val moduleName: Name = moduleDescriptor.name.intern()
-        val moduleNode: CirModuleNode = modules.getOrPut(moduleName) {
+        val moduleName: CirName = CirName.create(moduleDescriptor.name)
+        val moduleNode: CirModuleNode = rootNode.modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, size)
         }
-        moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleDescriptor)
+        moduleNode.targetDeclarations[targetIndex] = CirModuleFactory.create(moduleName)
 
-        val packages: MutableMap<FqName, CirPackageNode> = moduleNode.packages
-
-        moduleDescriptor.collectNonEmptyPackageMemberScopes { packageFqName, packageMemberScope ->
-            processPackage(packages, targetIndex, packageFqName.intern(), packageMemberScope, moduleName)
+        moduleDescriptor.collectNonEmptyPackageMemberScopes { packageName, packageMemberScope ->
+            processPackage(moduleNode, targetIndex, packageName, packageMemberScope)
         }
     }
 
     private fun processPackage(
-        packages: MutableMap<FqName, CirPackageNode>,
+        moduleNode: CirModuleNode,
         targetIndex: Int,
-        packageFqName: FqName,
-        packageMemberScope: MemberScope,
-        moduleName: Name
+        packageName: CirPackageName,
+        packageMemberScope: MemberScope
     ) {
-        val packageNode: CirPackageNode = packages.getOrPut(packageFqName) {
-            buildPackageNode(storageManager, size, packageFqName, moduleName)
+        val packageNode: CirPackageNode = moduleNode.packages.getOrPut(packageName) {
+            buildPackageNode(storageManager, size)
         }
-        packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageFqName)
-
-        val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = packageNode.properties
-        val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = packageNode.functions
-        val classes: MutableMap<Name, CirClassNode> = packageNode.classes
-        val typeAliases: MutableMap<Name, CirTypeAliasNode> = packageNode.typeAliases
+        packageNode.targetDeclarations[targetIndex] = CirPackageFactory.create(packageName)
 
         packageMemberScope.collectMembers(
             PropertyCollector { propertyDescriptor ->
-                processProperty(properties, targetIndex, propertyDescriptor, null)
+                processProperty(packageNode, targetIndex, propertyDescriptor)
             },
             FunctionCollector { functionDescriptor ->
-                processFunction(functions, targetIndex, functionDescriptor, null)
+                processFunction(packageNode, targetIndex, functionDescriptor)
             },
             ClassCollector { classDescriptor ->
-                processClass(classes, targetIndex, classDescriptor, null) { className ->
-                    internedClassId(packageFqName, className)
+                processClass(packageNode, targetIndex, classDescriptor) { className ->
+                    CirEntityId.create(packageName, className)
                 }
             },
             TypeAliasCollector { typeAliasDescriptor ->
-                processTypeAlias(typeAliases, targetIndex, typeAliasDescriptor, packageFqName)
+                processTypeAlias(packageNode, targetIndex, typeAliasDescriptor)
             }
         )
     }
 
     private fun processProperty(
-        properties: MutableMap<PropertyApproximationKey, CirPropertyNode>,
+        ownerNode: CirNodeWithMembers<*, *>,
         targetIndex: Int,
-        propertyDescriptor: PropertyDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
+        propertyDescriptor: PropertyDescriptor
     ) {
-        val propertyNode: CirPropertyNode = properties.getOrPut(PropertyApproximationKey(propertyDescriptor)) {
-            buildPropertyNode(storageManager, size, classifiers, parentCommonDeclaration)
+        val propertyNode: CirPropertyNode = ownerNode.properties.getOrPut(PropertyApproximationKey(propertyDescriptor)) {
+            buildPropertyNode(storageManager, size, classifiers, (ownerNode as? CirClassNode)?.commonDeclaration)
         }
-        propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(propertyDescriptor)
+        propertyNode.targetDeclarations[targetIndex] = CirPropertyFactory.create(
+            source = propertyDescriptor,
+            containingClass = (ownerNode as? CirClassNode)?.targetDeclarations?.get(targetIndex)
+        )
     }
 
     private fun processFunction(
-        functions: MutableMap<FunctionApproximationKey, CirFunctionNode>,
+        ownerNode: CirNodeWithMembers<*, *>,
         targetIndex: Int,
-        functionDescriptor: SimpleFunctionDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
+        functionDescriptor: SimpleFunctionDescriptor
     ) {
-        val functionNode: CirFunctionNode = functions.getOrPut(FunctionApproximationKey(functionDescriptor)) {
-            buildFunctionNode(storageManager, size, classifiers, parentCommonDeclaration)
+        val functionNode: CirFunctionNode = ownerNode.functions.getOrPut(FunctionApproximationKey(functionDescriptor)) {
+            buildFunctionNode(storageManager, size, classifiers, (ownerNode as? CirClassNode)?.commonDeclaration)
         }
-        functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(functionDescriptor)
+        functionNode.targetDeclarations[targetIndex] = CirFunctionFactory.create(
+            source = functionDescriptor,
+            containingClass = (ownerNode as? CirClassNode)?.targetDeclarations?.get(targetIndex)
+        )
     }
 
     private fun processClass(
-        classes: MutableMap<Name, CirClassNode>,
+        ownerNode: CirNodeWithMembers<*, *>,
         targetIndex: Int,
         classDescriptor: ClassDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?,
-        classIdFunction: (Name) -> ClassId
+        classIdFunction: (CirName) -> CirEntityId
     ) {
-        val className = classDescriptor.name.intern()
+        val className = CirName.create(classDescriptor.name)
         val classId = classIdFunction(className)
 
-        val classNode: CirClassNode = classes.getOrPut(className) {
-            buildClassNode(storageManager, size, classifiers, parentCommonDeclaration, classId)
+        val classNode: CirClassNode = ownerNode.classes.getOrPut(className) {
+            buildClassNode(storageManager, size, classifiers, (ownerNode as? CirClassNode)?.commonDeclaration, classId)
         }
         classNode.targetDeclarations[targetIndex] = CirClassFactory.create(classDescriptor)
 
-        val parentCommonDeclarationForMembers: NullableLazyValue<CirClass> = classNode.commonDeclaration
-
-        val constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode> = classNode.constructors
-        val properties: MutableMap<PropertyApproximationKey, CirPropertyNode> = classNode.properties
-        val functions: MutableMap<FunctionApproximationKey, CirFunctionNode> = classNode.functions
-        val nestedClasses: MutableMap<Name, CirClassNode> = classNode.classes
-
         if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
             classDescriptor.constructors.forEach { constructorDescriptor ->
-                processClassConstructor(constructors, targetIndex, constructorDescriptor, parentCommonDeclarationForMembers)
+                processClassConstructor(classNode, targetIndex, constructorDescriptor)
             }
         }
 
         classDescriptor.unsubstitutedMemberScope.collectMembers(
             PropertyCollector { propertyDescriptor ->
-                processProperty(properties, targetIndex, propertyDescriptor, parentCommonDeclarationForMembers)
+                processProperty(classNode, targetIndex, propertyDescriptor)
             },
             FunctionCollector { functionDescriptor ->
-                processFunction(functions, targetIndex, functionDescriptor, parentCommonDeclarationForMembers)
+                processFunction(classNode, targetIndex, functionDescriptor)
             },
             ClassCollector { nestedClassDescriptor ->
-                processClass(nestedClasses, targetIndex, nestedClassDescriptor, parentCommonDeclarationForMembers) { nestedClassName ->
-                    internedClassId(classId, nestedClassName)
+                processClass(classNode, targetIndex, nestedClassDescriptor) { nestedClassName ->
+                    classId.createNestedEntityId(nestedClassName)
                 }
             }
         )
     }
 
     private fun processClassConstructor(
-        constructors: MutableMap<ConstructorApproximationKey, CirClassConstructorNode>,
+        classNode: CirClassNode,
         targetIndex: Int,
-        constructorDescriptor: ClassConstructorDescriptor,
-        parentCommonDeclaration: NullableLazyValue<*>?
+        constructorDescriptor: ClassConstructorDescriptor
     ) {
-        val constructorNode: CirClassConstructorNode = constructors.getOrPut(ConstructorApproximationKey(constructorDescriptor)) {
-            buildClassConstructorNode(storageManager, size, classifiers, parentCommonDeclaration)
+        val constructorNode: CirClassConstructorNode = classNode.constructors.getOrPut(ConstructorApproximationKey(constructorDescriptor)) {
+            buildClassConstructorNode(storageManager, size, classifiers, classNode.commonDeclaration)
         }
-        constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(constructorDescriptor)
+        constructorNode.targetDeclarations[targetIndex] = CirClassConstructorFactory.create(
+            source = constructorDescriptor,
+            containingClass = classNode.targetDeclarations[targetIndex]!!
+        )
     }
 
     private fun processTypeAlias(
-        typeAliases: MutableMap<Name, CirTypeAliasNode>,
+        packageNode: CirPackageNode,
         targetIndex: Int,
-        typeAliasDescriptor: TypeAliasDescriptor,
-        packageFqName: FqName
+        typeAliasDescriptor: TypeAliasDescriptor
     ) {
-        val typeAliasName = typeAliasDescriptor.name.intern()
-        val typeAliasClassId = internedClassId(packageFqName, typeAliasName)
+        val typeAliasName = CirName.create(typeAliasDescriptor.name)
+        val typeAliasClassId = CirEntityId.create(packageNode.packageName, typeAliasName)
 
-        val typeAliasNode: CirTypeAliasNode = typeAliases.getOrPut(typeAliasName) {
+        val typeAliasNode: CirTypeAliasNode = packageNode.typeAliases.getOrPut(typeAliasName) {
             buildTypeAliasNode(storageManager, size, classifiers, typeAliasClassId)
         }
         typeAliasNode.targetDeclarations[targetIndex] = CirTypeAliasFactory.create(typeAliasDescriptor)
@@ -271,12 +255,12 @@ class CirTreeMerger(
     private fun processCInteropModuleAttributes(moduleInfo: ModuleInfo) {
         val cInteropAttributes = moduleInfo.cInteropAttributes ?: return
         val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return
-        val mainPackageFqName = FqName(cInteropAttributes.mainPackageFqName).intern()
+        val mainPackageFqName = CirPackageName.create(cInteropAttributes.mainPackageFqName)
 
         exportForwardDeclarations.forEach { classFqName ->
             // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
-            val className = Name.identifier(classFqName.substringAfterLast('.')).intern()
-            classifiers.forwardDeclarations.addExportedForwardDeclaration(internedClassId(mainPackageFqName, className))
+            val className = CirName.create(classFqName.substringAfterLast('.'))
+            classifiers.forwardDeclarations.addExportedForwardDeclaration(CirEntityId.create(mainPackageFqName, className))
         }
     }
 }

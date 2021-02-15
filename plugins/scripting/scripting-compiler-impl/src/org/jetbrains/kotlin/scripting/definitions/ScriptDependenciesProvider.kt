@@ -13,6 +13,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
@@ -34,6 +35,11 @@ open class ScriptDependenciesProvider constructor(
     }
 
     open fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = null
+
+    // TODO: consider fixing implementations and removing default implementation
+    open fun getScriptConfigurationResult(
+        file: KtFile, providedConfiguration: ScriptCompilationConfiguration?
+    ): ScriptCompilationConfigurationResult? = getScriptConfigurationResult(file)
 
     open fun getScriptConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? = getScriptConfigurationResult(file)?.valueOrNull()
 

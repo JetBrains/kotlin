@@ -10,3 +10,4 @@ interface T {
 fun test() {
     val o = <caret>object : T {}
 }
+/* FIR_COMPARISON */

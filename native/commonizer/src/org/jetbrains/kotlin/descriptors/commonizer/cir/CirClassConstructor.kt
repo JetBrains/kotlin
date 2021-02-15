@@ -14,5 +14,5 @@ interface CirClassConstructor :
     CirCallableMemberWithParameters {
 
     val isPrimary: Boolean
-    override val containingClassDetails: CirContainingClassDetails // non-nullable
+    override val containingClass: CirContainingClass // non-nullable
 }

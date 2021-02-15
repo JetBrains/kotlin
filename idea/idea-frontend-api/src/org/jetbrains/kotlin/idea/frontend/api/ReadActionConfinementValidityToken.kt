@@ -23,21 +23,26 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
         error("Getting invalidation reason for valid validity token")
     }
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class, ForbidKtResolveInternals::class)
     override fun isAccessible(): Boolean {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return false
+        if (ForbidKtResolve.resovleIsForbidenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
         return true
     }
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class, ForbidKtResolveInternals::class)
     override fun getInaccessibilityReason(): String {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
         if (!application.isReadAccessAllowed) return "Called outside read action"
+        ForbidKtResolve.resovleIsForbidenInActionWithName.get()?.let { actionName ->
+            return "Resolve is forbidden in $actionName"
+        }
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
+
 
     companion object {
         @HackToForceAllowRunningAnalyzeOnEDT

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.caches
 
-abstract class FirCache<in KEY : Any, out VALUE, in CONTEXT> {
-    abstract fun getValue(key: KEY, context: CONTEXT): VALUE
-    abstract fun getValueIfComputed(key: KEY): VALUE?
+abstract class FirCache<in K : Any, out V, in CONTEXT> {
+    abstract fun getValue(key: K, context: CONTEXT): V
+    abstract fun getValueIfComputed(key: K): V?
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun <KEY : Any, VALUE> FirCache<KEY, VALUE, Nothing?>.getValue(key: KEY): VALUE =
+inline fun <K : Any, V> FirCache<K, V, Nothing?>.getValue(key: K): V =
     getValue(key, null)

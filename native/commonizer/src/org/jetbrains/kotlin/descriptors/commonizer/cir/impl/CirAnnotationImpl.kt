@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 data class CirAnnotationImpl(
     override val type: CirClassType,
-    override val constantValueArguments: Map<Name, ConstantValue<*>>,
-    override val annotationValueArguments: Map<Name, CirAnnotation>
+    override val constantValueArguments: Map<CirName, CirConstantValue<*>>,
+    override val annotationValueArguments: Map<CirName, CirAnnotation>
 ) : CirAnnotation {
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0

@@ -8,7 +8,6 @@
 using namespace kotlin;
 
 mm::GlobalData::GlobalData() = default;
-mm::GlobalData::~GlobalData() = default;
 
 // static
-mm::GlobalData mm::GlobalData::instance_;
+mm::GlobalData mm::GlobalData::instance_ [[clang::no_destroy]];

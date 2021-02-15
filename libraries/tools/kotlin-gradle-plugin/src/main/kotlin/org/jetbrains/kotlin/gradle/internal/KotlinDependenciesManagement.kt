@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal fun customizeKotlinDependencies(project: Project) {
     configureStdlibDefaultDependency(project)
-    configureKotlinTestDependencies(project)
     configureKotlinTestDependency(project)
     configureDefaultVersionsResolutionStrategy(project)
 }
@@ -287,113 +286,6 @@ private fun kotlinTestCapabilityForJvmSourceSet(project: Project, kotlinSourceSe
 
 internal const val KOTLIN_TEST_ROOT_MODULE_NAME = "kotlin-test"
 
-
-internal fun configureKotlinTestDependencies(project: Project) {
-    fun isKotlinTestMultiplatformDependency(dependency: Dependency) =
-        dependency.group == KOTLIN_MODULE_GROUP && dependency.name == KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME
-
-    KotlinDependencyScope.values().forEach { scope ->
-        val versionOrNullBySourceSet = mutableMapOf<KotlinSourceSet, String?>()
-
-        project.kotlinExtension.sourceSets.all { kotlinSourceSet ->
-            val configuration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, scope)
-            var finalizingDependencies = false
-
-            configuration.dependencies.matching(::isKotlinTestMultiplatformDependency).apply {
-                firstOrNull()?.let { versionOrNullBySourceSet[kotlinSourceSet] = it.version }
-                whenObjectRemoved {
-                    if (!finalizingDependencies && !any())
-                        versionOrNullBySourceSet.remove(kotlinSourceSet)
-                }
-                whenObjectAdded { item ->
-                    versionOrNullBySourceSet[kotlinSourceSet] = item.version
-                }
-            }
-
-            project.tryWithDependenciesIfUnresolved(configuration) { dependencies ->
-                val parentOrOwnVersions: List<String?> =
-                    kotlinSourceSet.getSourceSetHierarchy().filter(versionOrNullBySourceSet::contains).map(versionOrNullBySourceSet::get)
-
-                finalizingDependencies = true
-
-                parentOrOwnVersions.distinct().forEach { version -> // add dependencies with each version and let Gradle disambiguate them
-                    val dependenciesToAdd = kotlinTestDependenciesForSourceSet(project, kotlinSourceSet, version)
-                    dependenciesToAdd.filterIsInstance<ExternalDependency>().forEach {
-                        if (it.version == null) {
-                            it.version { constraint -> constraint.require(project.kotlinExtension.coreLibrariesVersion) }
-                        }
-                    }
-                    dependencies.addAll(dependenciesToAdd)
-                    dependencies.removeIf(::isKotlinTestMultiplatformDependency)
-                }
-            }
-        }
-    }
-}
-
-private fun kotlinTestDependenciesForSourceSet(project: Project, kotlinSourceSet: KotlinSourceSet, version: String?): List<Dependency> {
-    val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(kotlinSourceSet)
-        .filter { it.target !is KotlinMetadataTarget }
-
-    val platformTypes = compilations.mapTo(mutableSetOf()) { it.platformType }
-
-    return when {
-        platformTypes.isEmpty() -> emptyList()
-        setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm).containsAll(platformTypes) -> listOf(
-            kotlinTestDependenciesForJvm(project, compilations, version)
-        )
-        platformTypes.singleOrNull() == KotlinPlatformType.js -> listOf(
-            project.kotlinDependency("kotlin-test-js", version)
-        )
-        platformTypes.singleOrNull() == KotlinPlatformType.native -> emptyList()
-        else -> listOf(
-            project.kotlinDependency("kotlin-test-common", version),
-            project.kotlinDependency("kotlin-test-annotations-common", version)
-        )
-    }
-}
-
-internal const val KOTLIN_TEST_MULTIPLATFORM_MODULE_NAME = "kotlin-test-multiplatform"
-
-private fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
-    project.dependencies.create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
-
-private fun kotlinTestDependenciesForJvm(project: Project, compilations: Iterable<KotlinCompilation<*>>, version: String?): Dependency {
-    val testTaskLists: List<List<Task>?> = compilations.map { compilation ->
-        val target = compilation.target
-        when {
-            target is KotlinTargetWithTests<*, *> ->
-                target.findTestRunsByCompilation(compilation)?.filterIsInstance<KotlinTaskTestRun<*, *>>()?.map { it.executionTask.get() }
-            target is KotlinWithJavaTarget<*> ->
-                if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME)
-                    project.locateTask<AbstractTestTask>(target.testTaskName)?.get()?.let(::listOf)
-                else null
-            compilation is KotlinJvmAndroidCompilation -> when (compilation.androidVariant) {
-                is UnitTestVariant ->
-                    project.locateTask<AbstractTestTask>(lowerCamelCaseName("test", compilation.androidVariant.name))?.get()?.let(::listOf)
-                is TestVariant -> (compilation.androidVariant as TestVariant).connectedInstrumentTest?.let(::listOf)
-                else -> null
-            }
-            else -> null
-        }
-    }
-    if (null in testTaskLists) {
-        return project.kotlinDependency("kotlin-test", version)
-    }
-    val testTasks = testTaskLists.flatMap { checkNotNull(it) }
-    val frameworks = testTasks.mapTo(mutableSetOf()) { testTask ->
-        when (testTask) {
-            is Test -> testFrameworkOf(testTask)
-            else -> // Android connected test tasks don't inherit from Test, but we use JUnit for them
-                KotlinTestJvmFramework.junit
-        }
-    }
-    return when {
-        frameworks.size > 1 -> project.kotlinDependency("kotlin-test", version)
-        else -> project.kotlinDependency("kotlin-test-${frameworks.single().name}", version)
-    }
-}
-
 private enum class KotlinTestJvmFramework {
     junit, testng, junit5
 }
@@ -416,6 +308,9 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(byCompilation:
     return testRuns.filter { it.executionSource.isProducedFromTheCompilation() }.takeIf { it.isNotEmpty() }
 }
 //endregion
+
+private fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
+        project.dependencies.create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 private fun Project.tryWithDependenciesIfUnresolved(configuration: Configuration, action: (DependencySet) -> Unit) {
     fun reportAlreadyResolved() {

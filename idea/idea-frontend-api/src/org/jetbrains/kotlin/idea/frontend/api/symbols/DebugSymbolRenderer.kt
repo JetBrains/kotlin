@@ -66,5 +66,5 @@ object DebugSymbolRenderer {
         else -> value::class.simpleName!!
     }
 
-    private val ignoredPropertyNames = setOf("firRef", "psi", "token")
+    private val ignoredPropertyNames = setOf("firRef", "psi", "token", "builder")
 }

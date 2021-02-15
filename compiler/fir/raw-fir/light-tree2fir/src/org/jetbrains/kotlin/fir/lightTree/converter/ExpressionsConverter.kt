@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -664,6 +665,7 @@ class ExpressionsConverter(
             source = whenExpression.toFirSourceElement()
             this.subject = subjectExpression
             this.subjectVariable = subjectVariable
+            usedAsExpression = whenExpression.usedAsExpression
             for (entry in whenEntries) {
                 val branch = entry.firBlock
                 branches += if (!entry.isElse) {
@@ -1082,6 +1084,7 @@ class ExpressionsConverter(
         }
 
         return buildWhenExpression {
+            source = ifExpression.toFirSourceElement()
             val trueBranch = convertLoopBody(thenBlock)
             branches += buildWhenBranch {
                 source = thenBlock?.toFirSourceElement()
@@ -1095,10 +1098,26 @@ class ExpressionsConverter(
                     condition = buildElseIfTrueCondition()
                     result = elseBranch
                 }
-
             }
+            usedAsExpression = ifExpression.usedAsExpression
         }
     }
+
+    private val LighterASTNode.usedAsExpression: Boolean
+        get() {
+            var parent = getParent() ?: return true
+            if (parent.elementType == ANNOTATED_EXPRESSION) {
+                parent = parent.getParent() ?: return true
+            }
+            val parentTokenType = parent.tokenType
+            if (parentTokenType == BLOCK) return false
+            if (parentTokenType == THEN || parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {
+                return parent.getParent()?.usedAsExpression ?: true
+            }
+            if (parentTokenType != BODY) return true
+            val type = parent.getParent()?.tokenType ?: return true
+            return !(type == FOR || type == WHILE || type == DO_WHILE)
+        }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseJump

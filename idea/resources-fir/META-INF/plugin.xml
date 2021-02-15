@@ -37,8 +37,12 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
   <xi:include href="jps.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="idea.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="caches.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="firInspections.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="firIntentions.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <xi:include href="extensions/ide-frontend-independent.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <xi:include href="extensions.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
 
   <!-- CIDR-PLUGIN-EXCLUDE-START -->
@@ -267,7 +271,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.FirPluginOracleService"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.FirPluginOracleServiceFirImpl"/>
 
-
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.fir.api.fixes.KtQuickFixService"/>
 
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 
@@ -287,10 +291,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
               fieldName="INSTANCE"
               extensions="kotlin_module"/>
 
-   <!-- <intentionAction>
-      <className>org.jetbrains.kotlin.idea.fir.inspections.AddFunctionReturnTypeIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>-->
+
 
   </extensions>
 </idea-plugin>

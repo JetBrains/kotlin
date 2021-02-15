@@ -25,7 +25,7 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
     if (this is ConeClassLookupTagWithFixedSymbol) {
         return this.symbol
     }
-    val firSymbolProvider = useSiteSession.firSymbolProvider
+    val firSymbolProvider = useSiteSession.symbolProvider
     (this as? ConeClassLikeLookupTagImpl)?.boundSymbol?.takeIf { it.key === useSiteSession }?.let { return it.value }
 
     return firSymbolProvider.getClassLikeSymbolByFqName(classId).also {
@@ -40,7 +40,7 @@ fun ConeClassLikeLookupTag.toSymbolOrError(useSiteSession: FirSession): FirClass
 
 
 fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? =
-    session.firSymbolProvider.getSymbolByLookupTag(this)?.fir as? FirRegularClass
+    session.symbolProvider.getSymbolByLookupTag(this)?.fir as? FirRegularClass
 
 @OptIn(LookupTagInternals::class)
 fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {

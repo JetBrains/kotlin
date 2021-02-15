@@ -1,0 +1,8 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.fir.intentions.declarations.HLSpecifyExplicitTypeForCallableDeclarationIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+  </extensions>
+</idea-plugin>

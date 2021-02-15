@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
@@ -26,8 +26,8 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
             ?.fir.safeAs<FirConstructor>()
             ?: return
 
-        val typeFir = constructorFir.returnTypeRef.safeAs<FirResolvedTypeRef>()
-            ?.type.safeAs<ConeClassLikeType>()
+        val typeFir = constructorFir.returnTypeRef.coneType
+            .safeAs<ConeClassLikeType>()
             ?.lookupTag?.toSymbol(context.session)
             ?.fir as? FirRegularClass
             ?: return

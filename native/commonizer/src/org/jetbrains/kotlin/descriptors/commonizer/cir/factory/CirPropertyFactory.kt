@@ -11,30 +11,24 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.checkConstantSupportedInCommonization
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 object CirPropertyFactory {
-    fun create(source: PropertyDescriptor): CirProperty {
-        val compileTimeInitializer: ConstantValue<*>? = source.compileTimeInitializer
-        if (compileTimeInitializer != null) {
-            checkConstantSupportedInCommonization(
-                constantValue = compileTimeInitializer,
+    fun create(source: PropertyDescriptor, containingClass: CirContainingClass?): CirProperty {
+        val compileTimeInitializer = source.compileTimeInitializer?.let { constantValue ->
+            CirConstantValueFactory.createSafely(
+                constantValue = constantValue,
                 owner = source,
-                allowAnnotationValues = false
             )
         }
 
         return create(
             annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-            name = source.name.intern(),
+            name = CirName.create(source.name),
             typeParameters = source.typeParameters.compactMap(CirTypeParameterFactory::create),
             visibility = source.visibility,
             modality = source.modality,
-            containingClassDetails = CirContainingClassDetailsFactory.create(source),
+            containingClass = containingClass,
             isExternal = source.isExternal,
             extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
             returnType = CirTypeFactory.create(source.returnType!!),
@@ -47,18 +41,18 @@ object CirPropertyFactory {
             setter = source.setter?.let(CirPropertySetterFactory::create),
             backingFieldAnnotations = source.backingField?.annotations?.compactMap(CirAnnotationFactory::create),
             delegateFieldAnnotations = source.delegateField?.annotations?.compactMap(CirAnnotationFactory::create),
-            compileTimeInitializer = source.compileTimeInitializer
+            compileTimeInitializer = compileTimeInitializer
         )
     }
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
         annotations: List<CirAnnotation>,
-        name: Name,
+        name: CirName,
         typeParameters: List<CirTypeParameter>,
         visibility: DescriptorVisibility,
         modality: Modality,
-        containingClassDetails: CirContainingClassDetails?,
+        containingClass: CirContainingClass?,
         isExternal: Boolean,
         extensionReceiver: CirExtensionReceiver?,
         returnType: CirType,
@@ -71,7 +65,7 @@ object CirPropertyFactory {
         setter: CirPropertySetter?,
         backingFieldAnnotations: List<CirAnnotation>?,
         delegateFieldAnnotations: List<CirAnnotation>?,
-        compileTimeInitializer: ConstantValue<*>?
+        compileTimeInitializer: CirConstantValue<*>?
     ): CirProperty {
         return CirPropertyImpl(
             annotations = annotations,
@@ -79,7 +73,7 @@ object CirPropertyFactory {
             typeParameters = typeParameters,
             visibility = visibility,
             modality = modality,
-            containingClassDetails = containingClassDetails,
+            containingClass = containingClass,
             isExternal = isExternal,
             extensionReceiver = extensionReceiver,
             returnType = returnType,

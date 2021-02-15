@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -731,7 +732,23 @@ class CallAndReferenceGenerator(
                     symbol.owner as? IrFunction
                         ?: (symbol.owner as? IrProperty)?.getter
                 if (ownerFunction?.dispatchReceiverParameter != null) {
-                    dispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
+                    val baseDispatchReceiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
+                    dispatchReceiver =
+                        if (!ownerFunction.isMethodOfAny() || baseDispatchReceiver?.type?.classOrNull?.owner?.isInterface != true) {
+                            baseDispatchReceiver
+                        } else {
+                            // NB: for FE 1.0, this type cast is added by InterfaceObjectCallsLowering
+                            // However, it doesn't work for FIR due to different f/o structure
+                            // (FIR calls Any method directly, but FE 1.0 calls its interface f/o instead)
+                            IrTypeOperatorCallImpl(
+                                baseDispatchReceiver.startOffset,
+                                baseDispatchReceiver.endOffset,
+                                irBuiltIns.anyType,
+                                IrTypeOperator.IMPLICIT_CAST,
+                                irBuiltIns.anyType,
+                                baseDispatchReceiver
+                            )
+                        }
                 }
                 if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression)?.let {

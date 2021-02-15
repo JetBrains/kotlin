@@ -29,8 +29,9 @@ public:
 
 private:
     GlobalData();
-    ~GlobalData();
+    ~GlobalData() = delete;
 
+    // This `GlobalData` is never destroyed.
     static GlobalData instance_;
 
     ThreadRegistry threadRegistry_;

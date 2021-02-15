@@ -24,7 +24,7 @@ class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             typeParameters = typeParameters.result,
             visibility = visibility.result,
             modality = modality.result,
-            containingClassDetails = null,
+            containingClass = null, // does not matter
             valueParameters = valueParameters.valueParameters,
             hasStableParameterNames = valueParameters.hasStableParameterNames,
             extensionReceiver = extensionReceiver.result,

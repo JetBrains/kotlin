@@ -39,6 +39,7 @@ public:
         // Make sure to clean everything allocated by the tests.
         for (auto& threadData : threadDatas_) {
             threadData->objectFactoryThreadQueue().ClearForTests();
+            threadData->globalsThreadQueue().ClearForTests();
         }
     }
 

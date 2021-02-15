@@ -28,4 +28,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val tryExpressionCheckers: Set<FirTryExpressionChecker> = setOf(
         FirCatchParameterChecker
     )
+
+    override val whenExpressionCheckers: Set<FirWhenExpressionChecker> = setOf(
+        FirExhaustiveWhenChecker
+    )
 }

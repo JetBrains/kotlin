@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -544,13 +543,11 @@ class RawFirBuilder(
             delegatedSelfTypeRef: FirTypeRef?,
             delegatedEnumSuperTypeRef: FirTypeRef?,
             classKind: ClassKind,
-            containerTypeParameters: List<FirTypeParameterRef>,
-            containerSymbol: AbstractFirBasedSymbol<*>
+            containerTypeParameters: List<FirTypeParameterRef>
         ): FirTypeRef {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperTypeRef: FirTypeRef? = null
-            var delegateNumber = 0
-            val initializeDelegateStatements = mutableListOf<FirStatement>()
+            val delegateFields = mutableListOf<FirField>()
             for (superTypeListEntry in superTypeListEntries) {
                 when (superTypeListEntry) {
                     is KtSuperTypeEntry -> {
@@ -565,7 +562,7 @@ class RawFirBuilder(
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
                         container.superTypeRefs += type
-                        val delegateName = Name.special("<\$\$delegate_$delegateNumber>")
+                        val delegateName = Name.special("<\$\$delegate_${delegateFields.size}>")
                         val delegateSource = superTypeListEntry.delegateExpression?.toFirSourceElement()
                         val delegateField = buildField {
                             source = delegateSource
@@ -576,28 +573,9 @@ class RawFirBuilder(
                             symbol = FirFieldSymbol(@OptIn(LocalCallableIdConstructor::class) CallableId(name))
                             isVar = false
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            initializer = delegateExpression
                         }
-                        initializeDelegateStatements.add(
-                            buildVariableAssignment {
-                                source = delegateSource
-                                calleeReference =
-                                    buildResolvedNamedReference {
-                                        source = delegateSource
-                                        name = delegateName
-                                        resolvedSymbol = delegateField.symbol
-                                    }
-                                rValue = delegateExpression
-                                dispatchReceiver = buildThisReceiverExpression {
-                                    source = delegateSource
-                                    calleeReference = buildImplicitThisReference {
-                                        boundSymbol = containerSymbol
-                                    }
-                                    delegatedSelfTypeRef?.let { typeRef = it }
-                                }
-                            }
-                        )
-                        container.declarations.add(delegateField)
-                        delegateNumber++
+                        delegateFields.add(delegateField)
                     }
                 }
             }
@@ -637,27 +615,22 @@ class RawFirBuilder(
                 container.superTypeRefs += implicitAnyType
                 delegatedSuperTypeRef = implicitAnyType
             }
-            if (this is KtClass && this.isInterface()) return delegatedSuperTypeRef ?: implicitAnyType
 
             // TODO: in case we have no primary constructor,
             // it may be not possible to determine delegated super type right here
             delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
-            if (!this.hasPrimaryConstructor()) return delegatedSuperTypeRef
-
-            val firPrimaryConstructor = primaryConstructor.toFirConstructor(
-                superTypeCallEntry,
-                delegatedSuperTypeRef,
-                delegatedSelfTypeRef ?: delegatedSuperTypeRef,
-                owner = this,
-                containerTypeParameters,
-                body = if (initializeDelegateStatements.isNotEmpty()) buildBlock {
-                    for (statement in initializeDelegateStatements) {
-                        statements += statement
-                    }
-                } else null
-            )
-
-            container.declarations += firPrimaryConstructor
+            if ((this !is KtClass || !this.isInterface()) && this.hasPrimaryConstructor()) {
+                val firPrimaryConstructor = primaryConstructor.toFirConstructor(
+                    superTypeCallEntry,
+                    delegatedSuperTypeRef,
+                    delegatedSelfTypeRef ?: delegatedSuperTypeRef,
+                    owner = this,
+                    containerTypeParameters,
+                    body = null
+                )
+                container.declarations += firPrimaryConstructor
+            }
+            container.declarations += delegateFields
             return delegatedSuperTypeRef
         }
 
@@ -861,8 +834,7 @@ class RawFirBuilder(
                             delegatedSelfType,
                             null,
                             classKind,
-                            typeParameters,
-                            symbol
+                            typeParameters
                         )
 
                         val primaryConstructor = classOrObject.primaryConstructor
@@ -890,9 +862,7 @@ class RawFirBuilder(
                         }
 
                         if (classOrObject.hasModifier(DATA_KEYWORD) && firPrimaryConstructor != null) {
-                            val zippedParameters = classOrObject.primaryConstructorParameters.zip(
-                                declarations.filterIsInstance<FirProperty>(),
-                            )
+                            val zippedParameters = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
                             DataClassMembersGenerator(
                                 baseSession,
                                 classOrObject,
@@ -905,7 +875,7 @@ class RawFirBuilder(
                                     // just making a shallow copy isn't enough type ref may be a function type ref
                                     // and contain value parameters inside
                                     withDefaultSourceElementKind(newKind) {
-                                        (property.returnTypeRef.psi as KtTypeReference).toFirOrImplicitType()
+                                        (property.returnTypeRef.psi as KtTypeReference?).toFirOrImplicitType()
                                     }
                                 },
                             ).generate()
@@ -947,8 +917,7 @@ class RawFirBuilder(
                         delegatedSelfType,
                         null,
                         ClassKind.CLASS,
-                        containerTypeParameters = emptyList(),
-                        symbol
+                        containerTypeParameters = emptyList()
                     )
                     typeRef = delegatedSelfType
 
@@ -1577,6 +1546,7 @@ class RawFirBuilder(
                         result = expression.`else`.toFirBlock()
                     }
                 }
+                usedAsExpression = expression.usedAsExpression
             }
         }
 
@@ -1614,6 +1584,7 @@ class RawFirBuilder(
                 source = expression.toFirSourceElement()
                 this.subject = subjectExpression
                 this.subjectVariable = subjectVariable
+                usedAsExpression = expression.usedAsExpression
 
                 for (entry in expression.entries) {
                     val entrySource = entry.toFirSourceElement()
@@ -1651,6 +1622,24 @@ class RawFirBuilder(
                 }
             }
         }
+
+        private val KtExpression.usedAsExpression: Boolean
+            get() {
+                var parent = parent
+                if (parent.elementType == KtNodeTypes.ANNOTATED_EXPRESSION) {
+                    parent = parent.parent
+                }
+                if (parent is KtBlockExpression) return false
+                when (parent.elementType) {
+                    KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
+                        return (parent.parent as? KtExpression)?.usedAsExpression ?: true
+                    }
+                }
+                // Here we check that when used is a single statement of a loop
+                if (parent !is KtContainerNodeForControlStructureBody) return true
+                val type = parent.parent.elementType
+                return !(type == KtNodeTypes.FOR || type == KtNodeTypes.WHILE || type == KtNodeTypes.DO_WHILE)
+            }
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: Unit): FirElement {
             return FirDoWhileLoopBuilder().apply {

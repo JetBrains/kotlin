@@ -59,11 +59,10 @@ internal fun checkPropertyInitializer(
         return
     }
 
-    // TODO: not exactly...
     val backingFieldRequired = property.hasBackingField
     if (inInterface && backingFieldRequired && property.hasAccessorImplementation) {
         property.source?.let {
-            // reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE, context)
+            reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE, context)
         }
     }
 
@@ -80,10 +79,10 @@ internal fun checkPropertyInitializer(
                         reporter.reportOn(it, FirErrors.EXPECTED_PROPERTY_INITIALIZER, context)
                     }
                     !backingFieldRequired -> {
-                        // reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD, context)
+                        reporter.reportOn(it, FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD, context)
                     }
                     property.receiverTypeRef != null -> {
-                        // reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD, context)
+                        reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD, context)
                     }
                 }
             }

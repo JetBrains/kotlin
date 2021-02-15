@@ -58,6 +58,12 @@ fun ControlFlowGraphBuilder.createPropertyInitializerExitNode(fir: FirProperty):
 fun ControlFlowGraphBuilder.createPropertyInitializerEnterNode(fir: FirProperty): PropertyInitializerEnterNode =
     PropertyInitializerEnterNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createFieldInitializerExitNode(fir: FirField): FieldInitializerExitNode =
+    FieldInitializerExitNode(currentGraph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createFieldInitializerEnterNode(fir: FirField): FieldInitializerEnterNode =
+    FieldInitializerEnterNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction<*>): FunctionEnterNode =
     FunctionEnterNode(currentGraph, fir, levelCounter, createId()).also {
         currentGraph.enterNode = it

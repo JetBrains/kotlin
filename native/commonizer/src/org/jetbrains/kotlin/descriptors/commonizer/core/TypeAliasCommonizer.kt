@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.name.Name
 
 /**
  * Primary (optimistic) branch:
@@ -45,7 +44,7 @@ class TypeAliasCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCo
 private class TypeAliasShortCircuitingCommonizer(
     private val classifiers: CirKnownClassifiers
 ) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
-    private lateinit var name: Name
+    private lateinit var name: CirName
     private val typeParameters = TypeParameterListCommonizer(classifiers)
     private var underlyingType: CirClassOrTypeAliasType? = null // null means not computed yet
     private val expandedType = TypeCommonizer(classifiers)
@@ -79,7 +78,7 @@ private class TypeAliasShortCircuitingCommonizer(
 }
 
 private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeAlias, CirTypeAlias>() {
-    private lateinit var name: Name
+    private lateinit var name: CirName
     private val typeParameters = TypeParameterListCommonizer(classifiers)
     private val underlyingType = TypeCommonizer(classifiers)
     private val visibility = VisibilityCommonizer.lowering()
@@ -111,7 +110,7 @@ private class TypeAliasLiftingUpCommonizer(classifiers: CirKnownClassifiers) : A
 }
 
 private class TypeAliasExpectClassCommonizer : AbstractStandardCommonizer<CirTypeAlias, CirClass>() {
-    private lateinit var name: Name
+    private lateinit var name: CirName
     private val classVisibility = VisibilityCommonizer.equalizing()
 
     override fun commonizationResult(): CirClass = CirClassFactory.create(

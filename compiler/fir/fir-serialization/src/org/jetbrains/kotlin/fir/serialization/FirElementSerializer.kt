@@ -24,12 +24,11 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.varargElementType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.suspendFunctionTypeToFunctionTypeWithContinuation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.sealedInheritors
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
@@ -891,7 +890,7 @@ class FirElementSerializer private constructor(
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
-                val parentClass = klass.session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
+                val parentClass = klass.session.symbolProvider.getClassLikeSymbolByFqName(parentClassId)!!.fir as FirRegularClass
                 parentSerializer ?: create(parentClass, extension, null, typeApproximator)
             } else {
                 createTopLevel(klass.session, extension, typeApproximator)

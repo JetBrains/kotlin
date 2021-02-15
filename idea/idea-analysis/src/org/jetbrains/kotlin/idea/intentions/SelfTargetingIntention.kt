@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 abstract class SelfTargetingIntention<TElement : PsiElement>(
     val elementType: Class<TElement>,
     @Nls private var textGetter: () -> String,
-    @Nls private val familyNameGetter: () -> String = textGetter,
+    @Nls private var familyNameGetter: () -> String = textGetter,
 ) : IntentionAction {
     @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention<TElement>(elementType, { text }, { familyName })"))
     constructor(
@@ -48,12 +48,21 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         this.textGetter = textGetter
     }
 
+    protected fun setFamilyNameGetter(@Nls familyNameGetter: () -> String) {
+        this.familyNameGetter = familyNameGetter
+    }
+
+
     final override fun getText() = textGetter()
     final override fun getFamilyName() = familyNameGetter()
 
     abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
     abstract fun applyTo(element: TElement, editor: Editor?)
+
+    open fun applyTo(element: TElement, project: Project, editor: Editor?) {
+        applyTo(element, editor)
+    }
 
     fun getTarget(offset: Int, file: PsiFile): TElement? {
         val leaf1 = file.findElementAt(offset)
@@ -100,7 +109,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         editor ?: return
         val target = getTarget(editor, file) ?: return
         if (!preparePsiElementForWriteIfNeeded(target)) return
-        applyTo(target, editor)
+        applyTo(target, project, editor)
     }
 
     /**

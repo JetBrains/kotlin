@@ -8,20 +8,16 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 
 data class CirClassImpl(
     override val annotations: List<CirAnnotation>,
-    override val name: Name,
+    override val name: CirName,
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: DescriptorVisibility,
     override val modality: Modality,
     override val kind: ClassKind,
-    override var companion: Name?,
+    override var companion: CirName?,
     override val isCompanion: Boolean,
     override val isData: Boolean,
     override val isInline: Boolean,

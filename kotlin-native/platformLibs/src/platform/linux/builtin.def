@@ -1,3 +1,4 @@
+depends = posix
 package = platform.builtin
 headerFilter =
 language = C

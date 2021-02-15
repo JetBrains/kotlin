@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 sealed class Base {
     sealed class A : Base() {
         object A1 : A()

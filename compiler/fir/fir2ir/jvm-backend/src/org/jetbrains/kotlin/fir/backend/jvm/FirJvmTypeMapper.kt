@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -101,7 +101,7 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
         val parentClassId = classId?.outerClassId ?: return null
-        return session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId) as? FirRegularClassSymbol?
+        return session.symbolProvider.getClassLikeSymbolByFqName(parentClassId) as? FirRegularClassSymbol?
     }
 
     private fun ConeClassLikeType.buildPossiblyInnerType(classifier: FirRegularClassSymbol?, index: Int): PossiblyInnerConeType? {
@@ -191,7 +191,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
     val context: ConeTypeContext
 ) : TypeSystemCommonBackendContext by context, TypeSystemCommonBackendContextForTypeMapping {
     private val session = context.session
-    private val symbolProvider = session.firSymbolProvider
+    private val symbolProvider = session.symbolProvider
 
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         return this is ConeTypeParameterLookupTag

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -315,6 +316,13 @@ class JavaSymbolProvider(
                     ownerClassBuilder = this,
                     valueParametersForAnnotationConstructor = valueParametersForAnnotationConstructor
                 )
+        }
+    }.apply {
+        if (modality == Modality.SEALED) {
+            sealedInheritors = javaClass.permittedTypes.mapNotNull { classifierType ->
+                val classifier = classifierType.classifier as? JavaClass
+                classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) }
+            }
         }
     }
 

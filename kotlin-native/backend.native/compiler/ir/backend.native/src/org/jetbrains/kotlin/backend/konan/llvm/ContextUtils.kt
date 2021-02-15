@@ -314,12 +314,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun importMemset(): LLVMValueRef {
         val functionType = functionType(voidType, false, int8TypePtr, int8Type, int32Type, int1Type)
-        return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
-    }
-
-    private fun importMemcpy(): LLVMValueRef {
-        val functionType = functionType(voidType, false, int8TypePtr, int8TypePtr, int32Type, int1Type)
-        return LLVMAddFunction(llvmModule, "llvm.memcpy.p0i8.p0i8.i32", functionType)!!
+        return llvmIntrinsic("llvm.memset.p0i8.i32", functionType)
     }
 
     private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LLVMValueRef {
@@ -350,7 +345,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         } else {
             // As exported functions are written in C++ they assume sign extension for promoted types -
             // mention that in attributes.
-            val function = LLVMAddFunction(llvmModule, name, type)!!
+            val function = addLlvmFunctionWithDefaultAttributes(context, llvmModule, name, type)
             return memScoped {
                 val paramCount = LLVMCountParamTypes(type)
                 val paramTypes = allocArray<LLVMTypeRefVar>(paramCount)

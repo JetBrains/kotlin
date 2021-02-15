@@ -33,11 +33,21 @@ sealed class KtDenotableType : KtType {
     abstract fun asString(): String
 }
 
-abstract class KtClassType : KtDenotableType(), KtTypeWithNullability {
+sealed class KtClassType : KtDenotableType(), KtTypeWithNullability {
     abstract val classId: ClassId
     abstract val classSymbol: KtClassLikeSymbol
     abstract val typeArguments: List<KtTypeArgument>
 }
+
+abstract class KtFunctionalType : KtClassType() {
+    abstract val isSuspend: Boolean
+    abstract val arity: Int
+    abstract val receiverType: KtType?
+    abstract val parameterTypes: List<KtType>
+    abstract val returnType: KtType
+}
+
+abstract class KtUsualClassType : KtClassType()
 
 abstract class KtErrorType : KtType {
     abstract val error: String

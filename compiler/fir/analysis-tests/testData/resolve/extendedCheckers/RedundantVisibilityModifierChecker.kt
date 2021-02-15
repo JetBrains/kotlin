@@ -80,7 +80,7 @@ open class J {
             field = value
         }
 
-    var bar = 0
+    var bar = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>
         get() = 3.1415926535
         set(value) {}
 }

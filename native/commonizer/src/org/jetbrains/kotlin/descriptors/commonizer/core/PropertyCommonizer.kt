@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyGetterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.PropertyCommonizer.ConstCommonizationState.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirProperty>(classifiers) {
     private val setter = PropertySetterCommonizer()
@@ -34,7 +34,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             typeParameters = typeParameters.result,
             visibility = visibility.result,
             modality = modality.result,
-            containingClassDetails = null,
+            containingClass = null, // does not matter
             isExternal = isExternal,
             extensionReceiver = extensionReceiver.result,
             returnType = returnType.result,
@@ -109,7 +109,7 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             val properties: MutableList<CirProperty> = mutableListOf()
         }
 
-        class ConstSameValue(val compileTimeInitializer: ConstantValue<*>) : Const()
+        class ConstSameValue(val compileTimeInitializer: CirConstantValue<*>) : Const()
         class ConstMultipleValues(previous: ConstSameValue) : Const() {
             init {
                 properties += previous.properties

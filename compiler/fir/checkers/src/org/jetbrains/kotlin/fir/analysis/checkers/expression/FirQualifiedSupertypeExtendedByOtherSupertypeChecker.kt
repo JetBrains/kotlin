@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccessChecker() {
@@ -26,8 +25,8 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
             ?.takeIf { it.hadExplicitTypeInSource() }
             ?: return
 
-        val explicitType = superReference.superTypeRef.safeAs<FirResolvedTypeRef>()
-            ?.firClassLike(context.session)
+        val explicitType = superReference.superTypeRef
+            .firClassLike(context.session)
             ?.followAllAlias(context.session).safeAs<FirClass<*>>()
             ?: return
 

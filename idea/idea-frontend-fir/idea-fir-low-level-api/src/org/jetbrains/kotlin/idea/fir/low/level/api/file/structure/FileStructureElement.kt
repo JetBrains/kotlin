@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -23,11 +26,11 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.psi.*
 
 internal class FileStructureElementDiagnostics(
-    private val map: Map<KtElement, List<Diagnostic>>
+    private val map: Map<PsiElement, List<FirPsiDiagnostic<*>>>
 ) {
-    fun diagnosticsFor(element: KtElement): List<Diagnostic> = map[element] ?: emptyList()
+    fun diagnosticsFor(element: PsiElement): List<FirPsiDiagnostic<*>> = map[element] ?: emptyList()
 
-    inline fun forEach(action: (List<Diagnostic>) -> Unit) = map.values.forEach(action)
+    inline fun forEach(action: (List<FirPsiDiagnostic<*>>) -> Unit) = map.values.forEach(action)
 }
 
 internal sealed class FileStructureElement {

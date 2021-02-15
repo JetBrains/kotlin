@@ -354,6 +354,7 @@ internal class ObjCExportCodeGenerator(
         if (externalGlobalInitializers.isEmpty()) return
 
         val initializer = generateFunction(codegen, functionType(voidType, false), "initObjCExportGlobals") {
+            forbidRuntime = true
             externalGlobalInitializers.forEach { (global, value) ->
                 store(value.llvm, global)
             }
@@ -742,7 +743,12 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         debugInfo: Boolean = false,
         genBody: FunctionGenerationContext.() -> Unit
 ): LLVMValueRef {
-    val result = LLVMAddFunction(context.llvmModule, "objc2kotlin", objCFunctionType(context, methodBridge))!!
+    val result = addLlvmFunctionWithDefaultAttributes(
+            context,
+            context.llvmModule!!,
+            "objc2kotlin",
+            objCFunctionType(context, methodBridge)
+    )
 
     val location = if (debugInfo) {
         setupBridgeDebugInfo(context, result)

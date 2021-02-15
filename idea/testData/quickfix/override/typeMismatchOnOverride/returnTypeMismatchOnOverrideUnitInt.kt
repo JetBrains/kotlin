@@ -2,3 +2,5 @@
 abstract class A : java.util.Iterator<Int> {
     public abstract override fun remove() : Int<caret>;
 }
+
+/* FIR_COMPARISON */

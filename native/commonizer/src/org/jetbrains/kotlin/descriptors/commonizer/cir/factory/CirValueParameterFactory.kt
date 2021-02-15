@@ -7,20 +7,19 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirValueParameterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
-import org.jetbrains.kotlin.name.Name
 
 object CirValueParameterFactory {
     private val interner = Interner<CirValueParameter>()
 
     fun create(source: ValueParameterDescriptor): CirValueParameter = create(
         annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-        name = source.name.intern(),
+        name = CirName.create(source.name),
         returnType = CirTypeFactory.create(source.returnType!!),
         varargElementType = source.varargElementType?.let(CirTypeFactory::create),
         declaresDefaultValue = source.declaresDefaultValue(),
@@ -30,7 +29,7 @@ object CirValueParameterFactory {
 
     fun create(
         annotations: List<CirAnnotation>,
-        name: Name,
+        name: CirName,
         returnType: CirType,
         varargElementType: CirType?,
         declaresDefaultValue: Boolean,

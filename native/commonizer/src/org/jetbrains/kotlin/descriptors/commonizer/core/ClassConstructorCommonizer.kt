@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassConstructor
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirContainingClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassConstructorFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirContainingClassDetailsFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 class ClassConstructorCommonizer(
@@ -27,7 +28,7 @@ class ClassConstructorCommonizer(
             annotations = emptyList(),
             typeParameters = typeParameters.result,
             visibility = visibility.result,
-            containingClassDetails = CirContainingClassDetailsFactory.DOES_NOT_MATTER,
+            containingClass = CONTAINING_CLASS_DOES_NOT_MATTER, // does not matter
             valueParameters = valueParameters.valueParameters,
             hasStableParameterNames = valueParameters.hasStableParameterNames,
             isPrimary = isPrimary
@@ -39,11 +40,19 @@ class ClassConstructorCommonizer(
     }
 
     override fun doCommonizeWith(next: CirClassConstructor): Boolean {
-        return !next.containingClassDetails.kind.isSingleton // don't commonize constructors for objects and enum entries
-                && next.containingClassDetails.modality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
+        return !next.containingClass.kind.isSingleton // don't commonize constructors for objects and enum entries
+                && next.containingClass.modality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
                 && isPrimary == next.isPrimary
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)
                 && valueParameters.commonizeWith(next)
+    }
+
+    companion object {
+        private val CONTAINING_CLASS_DOES_NOT_MATTER = object : CirContainingClass {
+            override val modality get() = Modality.FINAL
+            override val kind get() = ClassKind.CLASS
+            override val isData get() = false
+        }
     }
 }

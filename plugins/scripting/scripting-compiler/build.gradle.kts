@@ -45,8 +45,6 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
         freeCompilerArgs = freeCompilerArgs - "-progressive" + "-Xskip-metadata-version-check"
     }
 }

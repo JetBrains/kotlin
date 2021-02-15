@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -86,6 +87,18 @@ object FirDiagnosticRenderers {
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<AbstractFirBasedSymbol<*>> ->
         candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
             SYMBOL.render(symbol)
+        }
+    }
+
+    private const val WHEN_MISSING_LIMIT = 7
+
+    val WHEN_MISSING_CASES = Renderer { missingCases: List<WhenMissingCase> ->
+        if (missingCases.firstOrNull() == WhenMissingCase.Unknown) {
+            "'else' branch"
+        } else {
+            val list = missingCases.joinToString(", ", limit = WHEN_MISSING_LIMIT) { "'$it'" }
+            val branches = if (missingCases.size > 1) "branches" else "branch"
+            "$list $branches or 'else' branch instead"
         }
     }
 }

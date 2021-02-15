@@ -12,7 +12,7 @@ data class CirClassConstructorImpl(
     override val annotations: List<CirAnnotation>,
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: DescriptorVisibility,
-    override val containingClassDetails: CirContainingClassDetails,
+    override val containingClass: CirContainingClass,
     override var valueParameters: List<CirValueParameter>,
     override var hasStableParameterNames: Boolean,
     override val isPrimary: Boolean

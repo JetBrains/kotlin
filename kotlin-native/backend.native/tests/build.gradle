@@ -2396,6 +2396,11 @@ task hash_map0(type: KonanLocalTest) {
     source = "runtime/collections/hash_map0.kt"
 }
 
+task hash_map1(type: KonanLocalTest) {
+    goldValue = "OK\n"
+    source = "runtime/collections/hash_map1.kt"
+}
+
 task hash_set0(type: KonanLocalTest) {
     goldValue = "OK\n"
     source = "runtime/collections/hash_set0.kt"
@@ -2862,6 +2867,10 @@ task lambda13(type: KonanLocalTest) {
 standaloneTest("lambda14") {
     source = "codegen/lambda/lambda14.kt"
     flags = ['-tr']
+}
+
+task funInterface_implIsNotFunction(type: KonanLocalTest) {
+    source = "codegen/funInterface/implIsNotFunction.kt"
 }
 
 task objectExpression1(type: KonanLocalTest) {
@@ -4222,7 +4231,7 @@ interopTest("interop_kt43265") {
 }
 
 dynamicTest("interop_kt43502") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.target.name != project.hostName)
     interop = "kt43502"
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"

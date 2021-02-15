@@ -389,7 +389,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     val DEINIT_GLOBALS = 3
 
     private fun createInitBody(): LLVMValueRef {
-        val initFunction = LLVMAddFunction(context.llvmModule, "", kInitFuncType)!!
+        val initFunction = addLlvmFunctionWithDefaultAttributes(
+                context,
+                context.llvmModule!!,
+                "",
+                kInitFuncType
+        )
         LLVMSetLinkage(initFunction, LLVMLinkage.LLVMPrivateLinkage)
         generateFunction(codegen, initFunction) {
             using(FunctionScope(initFunction, "init_body", it)) {
@@ -500,9 +505,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun createInitCtor(initNodePtr: LLVMValueRef): LLVMValueRef {
-        val ctorFunction = LLVMAddFunction(context.llvmModule, "", kVoidFuncType)!!
+        val ctorFunction = addLlvmFunctionWithDefaultAttributes(
+                context,
+                context.llvmModule!!,
+                "",
+                kVoidFuncType
+        )
         LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMPrivateLinkage)
         generateFunction(codegen, ctorFunction) {
+            forbidRuntime = true
             call(context.llvm.appendToInitalizersTail, listOf(initNodePtr))
             ret(null)
         }
@@ -2403,6 +2414,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             // Runtime is linked into stdlib module only, so import runtime global from it.
             val global = codegen.importGlobal(name, value.llvmType, context.standardLlvmSymbolsOrigin)
             val initializer = generateFunction(codegen, functionType(voidType, false), "") {
+                forbidRuntime = true
                 store(value.llvm, global)
                 ret(null)
             }
@@ -2480,7 +2492,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 context.config.moduleId.moduleConstructorName
             }
 
-            val ctorFunction = LLVMAddFunction(context.llvmModule, ctorName, kVoidFuncType)!!
+            val ctorFunction = addLlvmFunctionWithDefaultAttributes(
+                    context,
+                    context.llvmModule!!,
+                    ctorName,
+                    kVoidFuncType
+            )
             LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMExternalLinkage)
 
             val initializers = libraryToInitializers.getValue(library)
@@ -2504,6 +2521,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun appendStaticInitializers(ctorFunction: LLVMValueRef, initializers: List<LLVMValueRef>) {
         generateFunction(codegen, ctorFunction) {
+            forbidRuntime = true
             val initGuardName = ctorFunction.name.orEmpty() + "_guard"
             val initGuard = LLVMAddGlobal(context.llvmModule, int32Type, initGuardName)
             LLVMSetInitializer(initGuard, kImmZero)
@@ -2535,9 +2553,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun appendGlobalCtors(ctorFunctions: List<LLVMValueRef>) {
         if (context.config.produce.isFinalBinary) {
             // Generate function calling all [ctorFunctions].
-            val globalCtorFunction = LLVMAddFunction(context.llvmModule, "_Konan_constructors", kVoidFuncType)!!
+            val globalCtorFunction = addLlvmFunctionWithDefaultAttributes(
+                    context,
+                    context.llvmModule!!,
+                    "_Konan_constructors",
+                    kVoidFuncType
+            )
             LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMPrivateLinkage)
             generateFunction(codegen, globalCtorFunction) {
+                forbidRuntime = true
                 ctorFunctions.forEach {
                     call(it, emptyList(), Lifetime.IRRELEVANT,
                             exceptionHandler = ExceptionHandler.Caller, verbatim = true)

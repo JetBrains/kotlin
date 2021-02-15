@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), FirDeclarationPresenter {
@@ -21,7 +21,7 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
     private fun getInspector(context: CheckerContext) = inspector ?: FirDeclarationInspector(this).apply {
         val anyClassId = context.session.builtinTypes.anyType.id
 
-        context.session.firSymbolProvider.getClassLikeSymbolByFqName(anyClassId)
+        context.session.symbolProvider.getClassLikeSymbolByFqName(anyClassId)
             ?.fir.safeAs<FirRegularClass>()
             ?.declarations
             ?.filterIsInstance<FirSimpleFunction>()

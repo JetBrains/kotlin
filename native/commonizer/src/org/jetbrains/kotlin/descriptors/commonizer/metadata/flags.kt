@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.resolve.constants.NullValue
 
 internal const val NO_FLAGS: Flags = 0
 
@@ -172,7 +171,7 @@ private inline val CirProperty.modifiersFlags: Flags
     get() = flagsOfNotNull(
         Flag.Property.IS_VAR.takeIf { isVar },
         Flag.Property.IS_CONST.takeIf { isConst },
-        Flag.Property.HAS_CONSTANT.takeIf { compileTimeInitializer.takeIf { it !is NullValue } != null },
+        Flag.Property.HAS_CONSTANT.takeIf { compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue } != null },
         Flag.Property.IS_LATEINIT.takeIf { isLateInit },
         Flag.Property.IS_EXTERNAL.takeIf { isExternal }
     )

@@ -5,15 +5,20 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
 internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -25,7 +30,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
         return when (symbol.origin) {
             KtSymbolOrigin.SOURCE, KtSymbolOrigin.SOURCE_MEMBER_GENERATED ->
                 getContainingDeclarationForKotlinInSourceSymbol(symbol)
-            KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA, KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY -> getContainingDeclarationForLibrarySymbol(symbol)
+            KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA, KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY ->
+                getContainingDeclarationForLibrarySymbol(symbol)
             KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
             KtSymbolOrigin.SAM_CONSTRUCTOR -> TODO()
             KtSymbolOrigin.DELEGATED -> TODO()
@@ -34,7 +40,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
     private fun getContainingDeclarationForKotlinInSourceSymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
         require(symbol.origin == KtSymbolOrigin.SOURCE || symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED)
-        val psi = symbol.psi ?: error("PSI should present for declaration built by Kotlin code")
+        val psi = symbol.getPsi()
+
         check(psi is KtDeclaration) { "PSI of kotlin declaration should be KtDeclaration" }
         val containingDeclaration = when (symbol.origin) {
             KtSymbolOrigin.SOURCE -> psi.parentOfType()
@@ -49,6 +56,18 @@ internal class KtFirSymbolContainingDeclarationProvider(
             check(containingSymbol is KtSymbolWithKind)
             containingSymbol
         }
+    }
+
+    private fun KtSymbolWithKind.getPsi(): PsiElement {
+        require(this is KtFirSymbol<*>)
+        return getPropertyByParameterPsi()
+            ?: psi
+            ?: error("PSI should present for declaration built by Kotlin code")
+    }
+
+    private fun KtFirSymbol<*>.getPropertyByParameterPsi() = firRef.withFir { fir ->
+        if (fir.source?.kind == FirFakeSourceElementKind.PropertyFromParameter) fir.psi?.parentOfType<KtPrimaryConstructor>()
+        else null
     }
 
     private fun getContainingDeclarationForLibrarySymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {

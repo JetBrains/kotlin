@@ -38,6 +38,7 @@ internal class FirFieldImpl(
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirField>,
+    override var initializer: FirExpression?,
     override val isVar: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
@@ -46,7 +47,6 @@ internal class FirFieldImpl(
     override val dispatchReceiverType: ConeKotlinType?,
 ) : FirField() {
     override val receiverTypeRef: FirTypeRef? get() = null
-    override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
     override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>? get() = null
     override val isVal: Boolean get() = !isVar
@@ -60,6 +60,7 @@ internal class FirFieldImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
+        initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
@@ -67,6 +68,7 @@ internal class FirFieldImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         transformReturnTypeRef(transformer, data)
+        transformInitializer(transformer, data)
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
@@ -83,6 +85,7 @@ internal class FirFieldImpl(
     }
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        initializer = initializer?.transformSingle(transformer, data)
         return this
     }
 
@@ -128,5 +131,7 @@ internal class FirFieldImpl(
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
 
-    override fun replaceInitializer(newInitializer: FirExpression?) {}
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
+    }
 }

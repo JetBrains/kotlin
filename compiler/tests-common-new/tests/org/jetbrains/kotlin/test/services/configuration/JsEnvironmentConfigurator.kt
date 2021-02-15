@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
-import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -21,7 +20,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
     override val directivesContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives)
 
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule, project: MockProject) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val moduleKinds = module.directives[JsEnvironmentConfigurationDirectives.MODULE_KIND]
         val moduleKind = when (moduleKinds.size) {
             0 -> ModuleKind.PLAIN

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -15,21 +15,28 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
+import org.jetbrains.kotlin.idea.frontend.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtTypeProvider(), KtFirAnalysisSessionComponent {
-    override fun isBuiltinFunctionalType(type: KtType): Boolean = withValidityAssertion {
-        check(type is KtFirType)
-        type.coneType.isBuiltinFunctionalType(analysisSession.firResolveState.rootModuleSession) //TODO use correct session here
-    }
-
     override val builtinTypes: KtBuiltinTypes =
         KtFirBuiltInTypes(analysisSession.firResolveState.rootModuleSession.builtinTypes, analysisSession.firSymbolBuilder, token)
+
+    override fun approximateToPublicDenotable(type: KtType): KtType? {
+        require(type is KtFirType)
+        val coneType = type.coneType
+        val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
+            coneType,
+            rootModuleSession.inferenceComponents.ctx,
+            rootModuleSession
+        )
+        return approximatedConeType?.asKtType()
+    }
+
 
     override fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType {
         require(symbol is KtFirClassOrObjectSymbol)

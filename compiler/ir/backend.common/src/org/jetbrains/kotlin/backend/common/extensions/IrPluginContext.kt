@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -51,4 +53,7 @@ interface IrPluginContext : IrGeneratorContext {
     fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol>
     fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol>
     fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol>
+
+    // temporary solution to load synthetic top-level declaration
+    fun referenceTopLevel(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleDescriptor: ModuleDescriptor): IrSymbol?
 }

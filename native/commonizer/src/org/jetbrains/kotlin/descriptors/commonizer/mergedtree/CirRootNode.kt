@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirRootNode(
     override val targetDeclarations: CommonizedGroup<CirRoot>,
     override val commonDeclaration: NullableLazyValue<CirRoot>
 ) : CirNode<CirRoot, CirRoot> {
-    val modules: MutableMap<Name, CirModuleNode> = THashMap()
+    val modules: MutableMap<CirName, CirModuleNode> = THashMap()
 
     fun getTarget(targetIndex: Int): CommonizerTarget =
         (if (targetIndex == indexOfCommon) commonDeclaration() else targetDeclarations[targetIndex])!!.target

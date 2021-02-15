@@ -197,7 +197,7 @@ class ScopeTowerLevel(
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
         candidate.fir.importedFromObjectData?.let { data ->
             val objectClassId = data.objectClassId
-            val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(objectClassId)
+            val symbol = session.symbolProvider.getClassLikeSymbolByFqName(objectClassId)
             if (symbol is FirRegularClassSymbol) {
                 val resolvedQualifier = buildResolvedQualifier {
                     packageFqName = objectClassId.packageFqName

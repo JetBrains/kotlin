@@ -50,4 +50,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val libraryToSourceAnalysis by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val extendedCompilerChecks by AnalysisFlag.Delegates.Boolean
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
@@ -68,6 +68,7 @@ open class CompilerConfigurationProviderImpl(
         }
     }
 
+    @OptIn(TestInfrastructureInternals::class)
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         val platform = module.targetPlatform
         val configFiles = when {
@@ -85,12 +86,13 @@ open class CompilerConfigurationProviderImpl(
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment)
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
-            createCompilerConfiguration(module, projectEnv.project),
+            createCompilerConfiguration(module),
             configFiles
         )
     }
 
-    private fun createCompilerConfiguration(module: TestModule, project: MockProject): CompilerConfiguration {
+    @TestInfrastructureInternals
+    fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
         val configuration = CompilerConfiguration()
         configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
 
@@ -108,7 +110,7 @@ open class CompilerConfigurationProviderImpl(
         }
         configuration.languageVersionSettings = module.languageVersionSettings
 
-        configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module, project) }
+        configurators.forEach { it.configureCompileConfigurationWithAdditionalConfigurationKeys(configuration, module) }
 
         return configuration
     }

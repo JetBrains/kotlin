@@ -422,7 +422,7 @@ fun case_21() {
 // TESTCASE NUMBER: 22
 fun case_22(a: (() -> Unit)?) {
     if (a != implicitNullableNothingProperty) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_CALL!>a<!>()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>a<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>a<!><!UNSAFE_CALL!>.<!>propAny
@@ -438,7 +438,7 @@ fun case_22(a: (() -> Unit)?) {
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
     if (a != z && b !== z && b !== z) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (x != z || x !== implicitNullableNothingProperty) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
@@ -457,7 +457,7 @@ fun case_23(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
 // TESTCASE NUMBER: 24
 fun case_24(a: ((() -> Unit) -> Unit)?, b: (() -> Unit)?, z: Nothing?) =
     if (a !== z && b !== z) {
-        <!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>)
+        <!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit>?")!>b<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>?")!>a<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Function0<kotlin.Unit>, kotlin.Unit>?")!>a<!><!UNSAFE_CALL!>.<!>propAny
@@ -489,7 +489,7 @@ fun case_25(b: Boolean, z: Nothing?) {
     val y = if (b) x else z
 
     if (y !== z || y != implicitNullableNothingProperty) {
-        val z1 = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val z1 = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
         if (z1 != z && implicitNullableNothingProperty !== z1) {
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z1<!><!UNSAFE_CALL!>.<!>a
@@ -511,7 +511,7 @@ fun case_26(a: ((Float) -> Int?)?, b: Float?) {
     var z = null
 
     if (a != z == true && b != implicitNullableNothingProperty == true) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (x != implicitNullableNothingProperty == true || z !== x) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
@@ -575,7 +575,7 @@ fun case_29(x: Boolean) {
     val y = if (x) z else null
 
     if (false || false || false || false || y !== v) {
-        val t = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val t = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
         if (z !== t || false) {
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>t<!><!UNSAFE_CALL!>.<!>a
@@ -595,7 +595,7 @@ fun case_29(x: Boolean) {
 // TESTCASE NUMBER: 30
 fun case_30(a: ((Float) -> Int?)?, b: Float?) {
     if (implicitNullableNothingProperty != a == true && b != implicitNullableNothingProperty == true || false || false || false || false || false || false || false || false || false) {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>)<!>
         if (false || implicitNullableNothingProperty != x == true) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
@@ -651,7 +651,7 @@ fun case_33(a: ((Float) -> Int?)?, b: Float?, c: Boolean?) {
     if (true && a == z == true || b == null == true) {
 
     } else {
-        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>)<!>
+        val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Float?")!>b<!>)<!>
         if (x == z == true && x === z || (c != z && <!UNSAFE_CALL!>!<!>c)) {
 
         } else {
@@ -1054,7 +1054,7 @@ fun case_60(b: Boolean) {
     val y = if (b) x else nullableNothingProperty
 
     if (y != nullableNothingProperty) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
         if (z == nullableNothingProperty) {
             <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>?")!>z<!>
