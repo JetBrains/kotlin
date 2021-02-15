@@ -112,7 +112,7 @@ internal class AdapterGenerator(
         adapteeSymbol: IrFunctionSymbol,
         type: IrSimpleType
     ): IrExpression {
-        val firAdaptee = callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as? FirSimpleFunction
+        val firAdaptee = callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as? FirFunction
         val adaptee = adapteeSymbol.owner
         val expectedReturnType = type.arguments.last().typeOrNull
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
@@ -164,7 +164,7 @@ internal class AdapterGenerator(
         callableReferenceAccess: FirCallableReferenceAccess,
         startOffset: Int,
         endOffset: Int,
-        firAdaptee: FirSimpleFunction,
+        firAdaptee: FirFunction<*>,
         adaptee: IrFunction,
         type: IrSimpleType,
         boundDispatchReceiver: IrExpression?,
@@ -172,6 +172,7 @@ internal class AdapterGenerator(
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrNull!!
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
+        val firMemberAdaptee = firAdaptee as FirMemberDeclaration
         return irFactory.createFunction(
             startOffset, endOffset,
             IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
@@ -180,13 +181,13 @@ internal class AdapterGenerator(
             DescriptorVisibilities.LOCAL,
             Modality.FINAL,
             returnType,
-            isInline = firAdaptee.isInline,
-            isExternal = firAdaptee.isExternal,
-            isTailrec = firAdaptee.isTailRec,
-            isSuspend = firAdaptee.isSuspend || type.isSuspendFunction(),
-            isOperator = firAdaptee.isOperator,
-            isInfix = firAdaptee.isInfix,
-            isExpect = firAdaptee.isExpect,
+            isInline = firMemberAdaptee.isInline,
+            isExternal = firMemberAdaptee.isExternal,
+            isTailrec = firMemberAdaptee.isTailRec,
+            isSuspend = firMemberAdaptee.isSuspend || type.isSuspendFunction(),
+            isOperator = firMemberAdaptee.isOperator,
+            isInfix = firMemberAdaptee.isInfix,
+            isExpect = firMemberAdaptee.isExpect,
             isFakeOverride = false
         ).also { irAdapterFunction ->
             irAdapterFunction.metadata = FirMetadataSource.Function(firAdaptee)
