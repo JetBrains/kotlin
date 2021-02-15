@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 internal sealed class EnclosingDeclarationContext {
     companion object {
         fun detect(originalFile: KtFile, positionInFakeFile: KtElement): EnclosingDeclarationContext {
-            val fakeFunction = positionInFakeFile.getNonStrictParentOfType<KtNamedFunction>()
+            val fakeFunction = positionInFakeFile.parentsOfType<KtNamedFunction>().firstOrNull { !it.isLocal }
             if (fakeFunction != null) {
                 val originalFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeFunction.textOffset)
                     ?: error("Cannot find original function matching to ${fakeFunction.getElementTextInContext()} in $originalFile")
