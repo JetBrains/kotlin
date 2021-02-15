@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.resolve.getCorrespondingClassSymbolOrNull
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 private val RETENTION_CLASS_ID = ClassId.fromString("kotlin/annotation/Retention")
@@ -32,19 +33,15 @@ private fun FirAnnotationCall.toAnnotationClass(session: FirSession): FirRegular
     toAnnotationLookupTag().toSymbol(session)?.fir as? FirRegularClass
 
 // TODO: this is temporary solution, we need something better
-private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
-    get() =
-        (this as? FirQualifiedAccessExpression)?.let {
-            val callableSymbol = (it.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>
-            callableSymbol?.callableId?.callableName
-        }
+private val FirExpression.enumEntryName: Name?
+    get() = ((this as? FirQualifiedAccessExpression)?.calleeReference as? FirNamedReference)?.name
 
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotationCall> =
     annotations.filter { annotation ->
         val firAnnotationClass = annotation.toAnnotationClass(session)
         firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
             meta.toAnnotationClassId() == RETENTION_CLASS_ID &&
-                    meta.argumentList.arguments.singleOrNull()?.callableNameOfMetaAnnotationArgument == Name.identifier("SOURCE")
+                    meta.argumentList.arguments.singleOrNull()?.enumEntryName == Name.identifier("SOURCE")
         }
     }
 
@@ -58,12 +55,15 @@ fun FirAnnotationCall.useSiteTargetsFromMetaAnnotation(session: FirSession): Set
     toAnnotationClass(session)?.annotations?.find { it.toAnnotationClassId() == TARGET_CLASS_ID }?.argumentList?.arguments
         ?.toAnnotationUseSiteTargets() ?: DEFAULT_USE_SITE_TARGETS
 
+private val FirExpression.unwrapNamedArgument: FirExpression
+    get() = if (this is FirNamedArgumentExpression) expression else this
+
 private fun List<FirExpression>.toAnnotationUseSiteTargets(): Set<AnnotationUseSiteTarget> =
     flatMapTo(mutableSetOf()) { arg ->
-        when (val unwrappedArg = if (arg is FirNamedArgumentExpression) arg.expression else arg) {
+        when (val unwrappedArg = arg.unwrapNamedArgument) {
             is FirArrayOfCall -> unwrappedArg.argumentList.arguments.toAnnotationUseSiteTargets()
             is FirVarargArgumentsExpression -> unwrappedArg.arguments.toAnnotationUseSiteTargets()
-            else -> USE_SITE_TARGET_NAME_MAP[unwrappedArg.callableNameOfMetaAnnotationArgument?.identifier] ?: setOf()
+            else -> USE_SITE_TARGET_NAME_MAP[unwrappedArg.enumEntryName?.identifier] ?: setOf()
         }
     }
 
@@ -87,4 +87,35 @@ private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
 
 fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.any { it.toAnnotationClassId() == classId }
+}
+
+private val DEPRECATED_ANNOTATION = ClassId(FqName("kotlin"), Name.identifier("Deprecated"))
+
+fun FirAnnotatedDeclaration.deprecationStatus(): DeprecationLevel? {
+    for (annotation in annotations) {
+        // TODO: also check Kotlin version annotations
+        // TODO: to correctly determine visibility of star-imported classifiers in `FirAbstractImportingScope`,
+        //   types of annotations need to be resolved in topological order, or else this breaks.
+        if (annotation.toAnnotationClassId() != DEPRECATED_ANNOTATION) continue
+
+        val deprecatedClass = annotation.getCorrespondingClassSymbolOrNull(session)!!
+        val deprecatedConstructor = deprecatedClass.fir.declarations.single { it is FirConstructor } as FirConstructor
+        val parameterMapping = annotation.argumentMapping?.entries?.associate { it.value to it.key }
+            ?: annotation.arguments.withIndex().associate { (index, argument) ->
+                // TODO: this is super fragile, better resolve annotations before everything else
+                val parameter = if (argument is FirNamedArgumentExpression)
+                    deprecatedConstructor.valueParameters.find { it.name == argument.name }
+                else
+                    deprecatedConstructor.valueParameters.getOrNull(index)
+                parameter to argument
+            }
+        val (_ /*message*/, _ /*replaceWith*/, level) = deprecatedConstructor.valueParameters
+        // TODO: return the message too (constant string, no default)
+        return when (parameterMapping[level]?.unwrapNamedArgument?.enumEntryName?.asString()) {
+            "ERROR" -> DeprecationLevel.ERROR
+            "HIDDEN" -> DeprecationLevel.HIDDEN
+            else -> DeprecationLevel.WARNING
+        }
+    }
+    return null
 }

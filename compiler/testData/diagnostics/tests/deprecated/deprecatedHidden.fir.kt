@@ -5,7 +5,7 @@ open class Foo
 
 fun test(f: Foo) {
     f.toString()
-    val g: Foo? = Foo()
+    val g: Foo? = <!HIDDEN!>Foo<!>()
 }
 
-class Bar : Foo()
+class Bar : <!HIDDEN!>Foo<!>()

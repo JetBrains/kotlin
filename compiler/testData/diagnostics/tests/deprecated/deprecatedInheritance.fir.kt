@@ -114,7 +114,7 @@ fun use(
 ) {
     wd.f()
     ed.f()
-    hd.f()
+    hd.<!HIDDEN!>f<!>()
 
     we.f()
     wh.f()

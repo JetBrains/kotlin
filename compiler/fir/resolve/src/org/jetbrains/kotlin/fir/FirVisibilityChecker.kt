@@ -52,6 +52,10 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             return isVisible(declaration.originalIfFakeOverride() as T, candidate)
         }
 
+        if (declaration.deprecationStatus() == DeprecationLevel.HIDDEN) {
+            return false
+        }
+
         val callInfo = candidate.callInfo
         val useSiteFile = callInfo.containingFile
         val containingDeclarations = callInfo.containingDeclarations

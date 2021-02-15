@@ -17,7 +17,7 @@ fun String.topLevelExtensionFun(){}
 val String.topLevelExtensionProperty: Int get() = 1
 
 open class A {
-    constructor(p: Int) : this("") {}
+    constructor(p: Int) : <!INAPPLICABLE_CANDIDATE!>this<!>("") {}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     constructor(s: String){}
@@ -35,17 +35,17 @@ open class A {
     val String.memberExtensionProperty: Int get() = 1
 
     fun foo() {
-        topLevelFun()
-        topLevelProperty++
-        "".topLevelExtensionFun()
-        "".topLevelExtensionProperty
+        <!HIDDEN!>topLevelFun<!>()
+        <!HIDDEN, HIDDEN!>topLevelProperty<!>++
+        "".<!HIDDEN!>topLevelExtensionFun<!>()
+        "".<!HIDDEN!>topLevelExtensionProperty<!>
 
-        memberFun()
-        memberProperty
-        "".memberExtensionFun()
-        "".memberExtensionProperty
+        <!HIDDEN!>memberFun<!>()
+        <!HIDDEN!>memberProperty<!>
+        "".<!HIDDEN!>memberExtensionFun<!>()
+        "".<!HIDDEN!>memberExtensionProperty<!>
 
-        A("")
+        <!INAPPLICABLE_CANDIDATE!>A<!>("")
     }
 }
 
@@ -62,13 +62,13 @@ class X : I {
     }
 }
 
-class B : A("") {
+class B : <!INAPPLICABLE_CANDIDATE!>A<!>("") {
     // still can override it
     override fun memberFun() {
-        super.memberFun() // but cannot call super :)
+        super.<!HIDDEN!>memberFun<!>() // but cannot call super :)
     }
 }
 
 class C : A {
-    constructor() : super("")
+    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>("")
 }
